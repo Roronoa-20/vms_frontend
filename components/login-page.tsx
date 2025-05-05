@@ -1,6 +1,6 @@
-import Logo from "../atoms/Logo";
-import AchievementBanner from "../molecules/AchievementBanner";
-import LoginForm from "../organisms/LoginForm";
+import Logo from "./logo";
+import LoginForm from "./login-form";
+import AchievementBanner from "./achievement-banner";
 
 export default function LoginPage() {
   return (
