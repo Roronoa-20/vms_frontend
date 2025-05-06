@@ -1,6 +1,6 @@
-import Logo from "./logo";
-import LoginForm from "./login-form";
-import AchievementBanner from "./achievement-banner";
+import Logo from "../molecules/logo";
+import LoginForm from "../templates/login-form";
+import AchievementBanner from "../molecules/achievement-banner";
 
 export default function LoginPage() {
   return (
