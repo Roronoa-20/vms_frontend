@@ -7,10 +7,10 @@ export default function RootLayout({
 }>) {
   return (
     <div className="h-screen w-full flex">
-      <Sidebar/>
+      <Sidebar />
       <div className="w-full overflow-y-scroll">
-      <Navbar/>
-      {children}
+        <Navbar />
+        {children}
       </div>
     </div>
   );

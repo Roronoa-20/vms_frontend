@@ -70,12 +70,7 @@ const DashboardCards = () => {
         >
           <div className={`flex w-full justify-between`}>
             <h1 className="text-[13px]">{item?.name}</h1>
-            <Image
-              src={`${item?.icon}`}
-              alt=""
-              width={25}
-              height={30}
-            />
+            <Image src={`${item?.icon}`} alt="" width={25} height={30} />
           </div>
           <div className="text-[20px] font-bold">{item?.count}</div>
         </div>

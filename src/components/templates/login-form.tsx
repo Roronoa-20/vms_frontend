@@ -17,8 +17,7 @@ export default function LoginForm() {
         </div>
 
         <div>
-          <div className="flex items-center justify-between">
-          </div>
+          <div className="flex items-center justify-between"></div>
           <div className="relative mt-2">
             <input
               id="password"

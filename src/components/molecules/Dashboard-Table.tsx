@@ -28,35 +28,35 @@ const DashboardTable = () => {
           Total Vendors
         </h1>
         <div className="flex gap-4">
-        <Input placeholder="Search..." />
-        <Select>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select Company" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup className="w-full">
-              <SelectItem value="apple">Apple</SelectItem>
-              <SelectItem value="banana">Banana</SelectItem>
-              <SelectItem value="blueberry">Blueberry</SelectItem>
-              <SelectItem value="grapes">Grapes</SelectItem>
-              <SelectItem value="pineapple">Pineapple</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <Select>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="apple">Apple</SelectItem>
-              <SelectItem value="banana">Banana</SelectItem>
-              <SelectItem value="blueberry">Blueberry</SelectItem>
-              <SelectItem value="grapes">Grapes</SelectItem>
-              <SelectItem value="pineapple">Pineapple</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+          <Input placeholder="Search..." />
+          <Select>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select Company" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup className="w-full">
+                <SelectItem value="apple">Apple</SelectItem>
+                <SelectItem value="banana">Banana</SelectItem>
+                <SelectItem value="blueberry">Blueberry</SelectItem>
+                <SelectItem value="grapes">Grapes</SelectItem>
+                <SelectItem value="pineapple">Pineapple</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Select>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="apple">Apple</SelectItem>
+                <SelectItem value="banana">Banana</SelectItem>
+                <SelectItem value="blueberry">Blueberry</SelectItem>
+                <SelectItem value="grapes">Grapes</SelectItem>
+                <SelectItem value="pineapple">Pineapple</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
       </div>
       <Table>
@@ -82,10 +82,12 @@ const DashboardTable = () => {
               <TableCell>{item?.vendor_name}</TableCell>
               <TableCell>{item?.company_name}</TableCell>
               <TableCell>
-                <div className={`px-2 py-3 rounded-xl ${item?.status == "pending"?"bg-yellow-100 text-yellow-800":item?.status == "approved"?"bg-green-100 text-green-800":"bg-red-100 text-red-800"}`}>
-                {item?.status}
+                <div
+                  className={`px-2 py-3 rounded-xl ${item?.status == "pending" ? "bg-yellow-100 text-yellow-800" : item?.status == "approved" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+                >
+                  {item?.status}
                 </div>
-                </TableCell>
+              </TableCell>
               <TableCell>{item?.purchase_team}</TableCell>
               <TableCell>{item?.purchase_head}</TableCell>
               <TableCell>{item?.accounts_team}</TableCell>
