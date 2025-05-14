@@ -1,16 +1,63 @@
+"use client";
+import requestWrapper from "@/src/services/apiCall";
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import { Tlogin } from "@/src/types/types";
+import { AxiosResponse } from "axios";
 import { Eye } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { FormEvent } from "react";
 
 export default function LoginForm() {
+  const router = useRouter();
+  const [form, setForm] = useState<Tlogin>();
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const url = API_END_POINTS?.login;
+    const response: AxiosResponse = await requestWrapper({
+      url: url,
+      method: "POST",
+      data: { data: form },
+    });
+    if (response.status == 200) {
+      router.push("/dashboard");
+    }
+  };
+
+  const handlefieldChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }) as Tlogin);
+  };
+
+  const handlePasswordEye = () => {
+    const pwd = document.getElementById("password") as HTMLInputElement | null;
+    if (pwd) {
+      pwd.type = pwd.type == "password" ? "test" : "password";
+    }
+  };
+
   return (
-    <form>
+    <form
+      onSubmit={(e) => {
+        handleSubmit(e);
+      }}
+    >
       <div className="space-y-6 px-[50px] pt-4">
         <div>
           <input
             id="email"
-            name="email"
+            name="usr"
             type="email"
             autoComplete="email"
             placeholder="Username"
+            onChange={(e) => {
+              handlefieldChange(e);
+            }}
             required
             className="rounded-[8px] border border-[#D9D9D9] shadow-sm placeholder: p-3 text-[14px] text-[#03111F] font-normal leading-[19.36px] pl-3 outline-blue-500 w-full"
           />
@@ -21,10 +68,13 @@ export default function LoginForm() {
           <div className="relative mt-2">
             <input
               id="password"
-              name="password"
+              name="pwd"
               type="password"
               autoComplete="current-password"
               placeholder="Password"
+              onChange={(e) => {
+                handlefieldChange(e);
+              }}
               required
               className="rounded-[8px] border border-[#D9D9D9] shadow-sm placeholder: p-3 text-[14px] text-[#03111F] font-normal leading-[19.36px] pl-3 outline-blue-500 w-full"
             />
@@ -33,7 +83,7 @@ export default function LoginForm() {
               className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500"
               aria-label="Toggle password visibility"
             >
-              <Eye className="h-5 w-5" />
+              <Eye className="h-5 w-5" onClick={() => handlePasswordEye()} />
             </button>
           </div>
         </div>

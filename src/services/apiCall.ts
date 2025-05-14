@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestHeaders } from "axios";
+import axios, { AxiosError, AxiosRequestHeaders, AxiosResponse } from "axios";
 
 type RequestWrapperType = {
   url: string;
@@ -10,10 +10,10 @@ type RequestWrapperType = {
 
 const requestWrapper = async <TResponse>({
   url,
-  method = "GET",
+  method,
   headers,
   ...rest
-}: RequestWrapperType): Promise<TResponse> => {
+}: RequestWrapperType): Promise<AxiosResponse<any, any>> => {
   try {
     const data = await axios({
       method: method,
@@ -23,7 +23,7 @@ const requestWrapper = async <TResponse>({
         ...headers,
       },
     });
-    return data.data;
+    return data;
   } catch (e) {
     const error = e as AxiosError;
     throw error.message || "Something went wrong";
