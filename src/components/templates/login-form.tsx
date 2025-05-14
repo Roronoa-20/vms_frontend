@@ -28,7 +28,7 @@ export default function LoginForm() {
   const handlefieldChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }) as Tlogin);

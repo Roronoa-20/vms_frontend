@@ -12,7 +12,7 @@ const OnboardingSidebar = () => {
         <div
           onClick={() => {
             router.push(
-              `/vendor-details-form?tabtype=${encodeURIComponent(item)}`
+              `/vendor-details-form?tabtype=${encodeURIComponent(item)}`,
             );
           }}
           className={`cursor-pointer p-2 ${item == tabType ? "bg-[#0C72F5] text-white" : "bg-[#E8F0F7]  text-[#0C72F5]"} text-nowrap rounded-lg`}
