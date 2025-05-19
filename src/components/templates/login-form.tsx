@@ -7,10 +7,18 @@ import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FormEvent } from "react";
+import EmailDialog from "../molecules/forgotPassword/EmailDialog";
+import OtpDialog from "../molecules/forgotPassword/OtpDialog";
+import PasswordDialog from "../molecules/forgotPassword/PasswordDialog";
 
 export default function LoginForm() {
   const router = useRouter();
   const [form, setForm] = useState<Tlogin>();
+  const [isEmailIdDialog,setIsEmailIdDialog] = useState<boolean>(false);
+  const [isOtpDialog,setIsOtpDialog] = useState<boolean>(false);
+  const [email,setEmail] = useState<string | "">("")
+  const [isPasswordDialog,setIsPasswordDialog] = useState<boolean>(false);
+  const [authorization,setAuthorization] = useState<string | "">("")
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -18,6 +26,7 @@ export default function LoginForm() {
     const response: AxiosResponse = await requestWrapper({
       url: url,
       method: "POST",
+      headers:{"Content-Type":"application/json"},
       data: { data: form },
     });
     if (response.status == 200) {
@@ -42,6 +51,7 @@ export default function LoginForm() {
   };
 
   return (
+    <>
     <form
       onSubmit={(e) => {
         handleSubmit(e);
@@ -92,19 +102,32 @@ export default function LoginForm() {
           <button
             type="submit"
             className="bg-[#5291CD] text-[#FFFFFF] text-[18px] font-semibold px-8 py-2 rounded-[10px]"
-          >
+            >
             Login
           </button>
         </div>
         <div className="flex justify-center">
-          <a
-            href="#"
-            className="text-sm font-medium hover:text-blue-500 text-[#5291CD]"
-          >
+          <h1
+           onClick={()=>{setIsEmailIdDialog(prev=>!prev)}}
+            className="text-sm font-medium hover:text-blue-500 text-[#5291CD] cursor-pointer"
+            >
             Forgot Password?
-          </a>
+          </h1>
         </div>
       </div>
-    </form>
+      </form>
+      {
+        isEmailIdDialog &&
+        <EmailDialog setIsEmailDialog = {setIsEmailIdDialog} setIsOtpDialog={setIsOtpDialog} setUsr={setEmail} setAuthorization={setAuthorization}/>
+      }
+      {
+        isOtpDialog && 
+        <OtpDialog setIsPasswordDialog = {setIsPasswordDialog} setIsOtpDialog={setIsOtpDialog} authorization={authorization} user={email}/>
+      }
+      {
+        isPasswordDialog && 
+        <PasswordDialog setIsPasswordDialog={setIsPasswordDialog} email={email} authorization={authorization}/>
+      }
+      </>
   );
 }

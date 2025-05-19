@@ -1,9 +1,6 @@
-"use client";
 import React from "react";
 import CompanyDetailForm from "../templates/vendor-detail-form/CompanyDetails";
 import VMSLogo from "../atoms/vms-logo";
-import { sidebarTabs } from "@/src/constants/vendorDetailSidebarTab";
-import { useSearchParams } from "next/navigation";
 import CompanyAddress from "../templates/vendor-detail-form/CompanyAddress";
 import DocumentDetails from "../templates/vendor-detail-form/DocumentDetails";
 import OnboardingSidebar from "../molecules/OnboardingSidebar";
@@ -15,9 +12,37 @@ import MachineryDetail from "../templates/vendor-detail-form/MachineryDetail";
 import TestingFacility from "../templates/vendor-detail-form/TestingFacility";
 import ReputedPartners from "../templates/vendor-detail-form/ReputedPartners";
 import Certificate from "../templates/vendor-detail-form/Certificate";
-const VendorDetail = () => {
-  const param = useSearchParams();
-  const tabType = param?.get("tabtype");
+import { TcompanyDetailDropdown, TvendorOnboardingDetail } from "@/src/types/types";
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import { AxiosResponse } from "axios";
+import requestWrapper from "@/src/services/apiCall";
+
+
+interface Props {
+  vendor_onboarding:string,
+  tabtype:string
+}
+
+const VendorDetail = async({vendor_onboarding,tabtype}:Props) => {
+
+  const refno = vendor_onboarding;
+  const tabType = tabtype;
+  const onboardingDetailUrl = API_END_POINTS?.vendorOnboardingDetail;
+  const response: AxiosResponse = await requestWrapper({
+    url: `${onboardingDetailUrl}?vendor_onboarding=${refno}`,
+    method: "GET",
+  });
+  const Data: TvendorOnboardingDetail["message"]["data"] =
+  response?.status == 200 ? response?.data?.message?.data : "";
+
+  const companyDetailDropdownUrl = API_END_POINTS?.companyDetailDropdown;
+  const companyDetailresponse: AxiosResponse = await requestWrapper({
+    url: `${companyDetailDropdownUrl}`,
+    method: "GET",
+  });
+  const companyDetailDropdown: TcompanyDetailDropdown["message"]["data"] =
+  companyDetailresponse?.status == 200 ? companyDetailresponse?.data?.message?.data : "";
+
   return (
     <div className="h-screen flex flex-col bg-gray-200 relative">
       {/* navbar */}
@@ -32,7 +57,7 @@ const VendorDetail = () => {
         <OnboardingSidebar />
         {/* form */}
         {tabType == "Company Detail" ? (
-          <CompanyDetailForm />
+          <CompanyDetailForm vendor_master={Data?.vendor_master} vendor_onboarding={Data?.vendor_onboarding} companyDetailDropdown={companyDetailDropdown}/>
         ) : tabType == "Company Address" ? (
           <CompanyAddress />
         ) : tabType == "Document Detail" ? (

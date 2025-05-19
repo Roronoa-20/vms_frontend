@@ -1,11 +1,12 @@
-import axios, { AxiosError, AxiosRequestHeaders, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from "axios";
 
 type RequestWrapperType = {
   url: string;
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   data?: unknown;
   params?: unknown;
-  headers?: AxiosRequestHeaders;
+  headers?: AxiosRequestConfig['headers'];
+
 };
 
 const requestWrapper = async <TResponse>({
@@ -22,7 +23,14 @@ const requestWrapper = async <TResponse>({
       headers: {
         ...headers,
       },
+      withCredentials:true
     });
+
+    if(data?.status != 200 ){
+      console.log("error this is api:- ", url);
+      return data
+    }
+
     return data;
   } catch (e) {
     const error = e as AxiosError;
