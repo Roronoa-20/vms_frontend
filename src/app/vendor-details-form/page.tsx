@@ -9,8 +9,9 @@ const page = async({ searchParams }: { searchParams: { [key: string]: string | s
 
   const vendor_onboarding = await searchParams["vendor_onboarding"];
   const tabtype = await searchParams["tabtype"];
+  const refno = await searchParams["refno"]
   console.log(vendor_onboarding,tabtype)
-  return <VendorDetail vendor_onboarding={ vendor_onboarding as string} tabtype={tabtype as string}/>;
+  return <VendorDetail vendor_onboarding={ vendor_onboarding as string} tabtype={tabtype as string} refno={refno as string}/>;
 };
 
 export default page;

@@ -24,6 +24,18 @@ export type TvendorRegistrationDropdown = {
     }
 }
 
+
+export type TCompanyAddressDropdown = {
+  message:{
+    data:{
+      city_master:{name:string,city_code:string,city_name:string}[],
+      district_master:{name:string,district_code:string,district_name:string}[],
+      state_master:{state_name:string}[],
+      country_master:{country_name:string}[]
+    }
+  }
+}
+
 export type TcompanyNameBasedDropdown = {
     message:{
         data:{
@@ -247,6 +259,54 @@ export type VendorType = {
         }
     }
   }
+
+  export type TVendorCompanyDetail = {
+    name: string;
+  owner: string;
+  creation: string;
+  modified: string;
+  modified_by: string;
+  docstatus: number;
+  idx: number;
+  naming_series: string;
+  ref_no: string;
+  vendor_onboarding: string;
+  gst: string | null;
+  company_pan_number: string | null;
+  vendor_title: string | null;
+  company_name: string | null;
+  type_of_business: string | null;
+  website: string | null;
+  office_email_primary: string | null;
+  office_email_secondary: string | null;
+  telephone_number: string | null;
+  whatsapp_number: string | null;
+  vendor_name: string | null;
+  cin_date: string | null;
+  nature_of_company: string | null;
+  size_of_company: string | null;
+  registered_office_number: string | null;
+  established_year: string | null;
+  nature_of_business: string | null;
+  corporate_identification_number: string | null;
+  address_line_1: string | null;
+  address_line_2: string | null;
+  city: string | null;
+  district: string | null;
+  state: string | null;
+  country: string | null;
+  pincode: string | null;
+  same_as_above: number;
+  street_1: string | null;
+  street_2: string | null;
+  manufacturing_city: string | null;
+  manufacturing_district: string | null;
+  manufacturing_state: string | null;
+  manufacturing_country: string | null;
+  manufacturing_pincode: string | null;
+  multiple_locations: number;
+  address_proofattachment: string | null;
+  }
   
 
   export type TvendorOnboardingDetail = {
@@ -254,6 +314,7 @@ export type VendorType = {
         data:{
             vendor_onboarding: VendorOnboarding;
             vendor_master:VendorMaster;
+            vendor_company_details:TVendorCompanyDetail[]
         }
     }
   }
@@ -274,5 +335,37 @@ export type VendorType = {
     established_year:string,
     nature_of_business:string,
     corporate_identification_number:string
+  }
+
+
+  export type TmultipleLocation = {
+    address_line_1:string,
+    address_line2:string,
+    ma_pincode:string,
+    ma_district:string,
+    ma_city:string,
+    ma_state:string,
+    ma_country:string
+  } 
+
+  export type Address = {
+    address_line1:string,
+    address_line2:string,
+    pincode:string,
+    district:string,
+    city:string,
+    state:string,
+    country:string
+  }
+
+
+  export type TCompanyAddressDetail = {
+    ref_no:string,
+    vendor_onboarding:string,
+    billing_address:Address,
+    shipping_address:Address,
+    same_as_above:number,
+    multiple_locations:number,
+    multiple_location_table:TmultipleLocation[]
   }
   

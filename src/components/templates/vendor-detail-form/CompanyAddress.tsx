@@ -9,8 +9,16 @@ import {
 } from "../../atoms/select";
 import { Input } from "../../atoms/input";
 import { SelectContent } from "../../atoms/select";
+import { TCompanyAddressDropdown } from "@/src/types/types";
+import { useCompanyAddressFormStore } from "@/src/store/companyAddressStore";
 
-const CompanyAddress = () => {
+interface Props {
+  companyAddressDropdown:TCompanyAddressDropdown["message"]["data"]
+}
+
+
+const CompanyAddress = ({companyAddressDropdown}:Props) => {
+  const {billingAddress,updatebillingAddress} = useCompanyAddressFormStore()
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
@@ -22,7 +30,7 @@ const CompanyAddress = () => {
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Address 1
           </h1>
-          <Input placeholder="" />
+          <Input placeholder="" onChange={(e)=>{updatebillingAddress("address_line1",e.target.value)}}/>
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -40,26 +48,78 @@ const CompanyAddress = () => {
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             District
           </h1>
-          <Input placeholder="" />
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="Select Vendor Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {
+                  companyAddressDropdown?.district_master?.map((item,index)=>(
+                    <SelectItem key={index} value={item?.name}>{item?.district_name}</SelectItem>
+                  ))
+                }
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
         <div className="grid grid-cols-3 col-span-4 gap-4">
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               City
             </h1>
-            <Input placeholder="" />
+            <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Vendor Type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {
+                              companyAddressDropdown?.city_master?.map((item,index)=>(
+                                <SelectItem key={index} value={item?.name}>{item?.city_name}</SelectItem>
+                              ))
+                            }
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               State
             </h1>
-            <Input placeholder="" />
+            <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Vendor Type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {
+                              companyAddressDropdown?.state_master?.map((item,index)=>(
+                                <SelectItem key={index} value={item?.state_name}>{item?.state_name}</SelectItem>
+                              ))
+                            }
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Country
             </h1>
-            <Input placeholder="" />
+            <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Vendor Type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {
+                              companyAddressDropdown?.country_master?.map((item,index)=>(
+                                <SelectItem key={index} value={item?.country_name}>{item?.country_name}</SelectItem>
+                              ))
+                            }
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
           </div>
         </div>
       </div>
