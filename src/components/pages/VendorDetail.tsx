@@ -12,28 +12,31 @@ import MachineryDetail from "../templates/vendor-detail-form/MachineryDetail";
 import TestingFacility from "../templates/vendor-detail-form/TestingFacility";
 import ReputedPartners from "../templates/vendor-detail-form/ReputedPartners";
 import Certificate from "../templates/vendor-detail-form/Certificate";
-import { TcompanyDetailDropdown, TvendorOnboardingDetail } from "@/src/types/types";
+import {
+  TCompanyAddressDropdown,
+  TcompanyDetailDropdown,
+  TvendorOnboardingDetail,
+} from "@/src/types/types";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 
-
 interface Props {
-  vendor_onboarding:string,
-  tabtype:string
+  vendor_onboarding: string;
+  tabtype: string;
+  refno: string;
 }
 
-const VendorDetail = async({vendor_onboarding,tabtype}:Props) => {
-
-  const refno = vendor_onboarding;
+const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
+  const vendorOnboardingRefno = vendor_onboarding;
   const tabType = tabtype;
   const onboardingDetailUrl = API_END_POINTS?.vendorOnboardingDetail;
   const response: AxiosResponse = await requestWrapper({
-    url: `${onboardingDetailUrl}?vendor_onboarding=${refno}`,
+    url: `${onboardingDetailUrl}?vendor_onboarding=${vendorOnboardingRefno}`,
     method: "GET",
   });
   const Data: TvendorOnboardingDetail["message"]["data"] =
-  response?.status == 200 ? response?.data?.message?.data : "";
+    response?.status == 200 ? response?.data?.message?.data : "";
 
   const companyDetailDropdownUrl = API_END_POINTS?.companyDetailDropdown;
   const companyDetailresponse: AxiosResponse = await requestWrapper({
@@ -41,8 +44,17 @@ const VendorDetail = async({vendor_onboarding,tabtype}:Props) => {
     method: "GET",
   });
   const companyDetailDropdown: TcompanyDetailDropdown["message"]["data"] =
-  companyDetailresponse?.status == 200 ? companyDetailresponse?.data?.message?.data : "";
+    companyDetailresponse?.status == 200
+      ? companyDetailresponse?.data?.message?.data
+      : "";
 
+  const companyAddressDropdownUrl = API_END_POINTS?.companyAddressDropdown;
+  const companyAddressDropdownResponse:AxiosResponse = await requestWrapper({
+    url:`${companyAddressDropdownUrl}`,
+    method:"GET"
+  })
+  const companyAddressDropdown:TCompanyAddressDropdown["message"]["data"] = companyAddressDropdownResponse?.status == 200 ? companyAddressDropdownResponse?.data?.message?.data:"";
+  console.log(companyAddressDropdown,"this is dropdwon")
   return (
     <div className="h-screen flex flex-col bg-gray-200 relative">
       {/* navbar */}
@@ -54,12 +66,19 @@ const VendorDetail = async({vendor_onboarding,tabtype}:Props) => {
       </div>
       <div className="flex px-10 justify-between gap-5">
         {/* sidebar */}
-        <OnboardingSidebar />
+        <OnboardingSidebar onboarding_refno={vendorOnboardingRefno} refno={refno} />
         {/* form */}
         {tabType == "Company Detail" ? (
-          <CompanyDetailForm vendor_master={Data?.vendor_master} vendor_onboarding={Data?.vendor_onboarding} companyDetailDropdown={companyDetailDropdown}/>
+          <CompanyDetailForm
+            vendor_master={Data?.vendor_master}
+            vendor_onboarding={Data?.vendor_onboarding}
+            companyDetailDropdown={companyDetailDropdown}
+            onboarding_refno={vendorOnboardingRefno}
+            vendor_company_details={Data?.vendor_company_details}
+            refno={refno}
+          />
         ) : tabType == "Company Address" ? (
-          <CompanyAddress />
+          <CompanyAddress companyAddressDropdown={companyAddressDropdown} />
         ) : tabType == "Document Detail" ? (
           <DocumentDetails />
         ) : tabType?.includes("Payment Detail") ? (
