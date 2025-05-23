@@ -54,7 +54,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
     method:"GET"
   })
   const companyAddressDropdown:TCompanyAddressDropdown["message"]["data"] = companyAddressDropdownResponse?.status == 200 ? companyAddressDropdownResponse?.data?.message?.data:"";
-  console.log(companyAddressDropdown,"this is dropdwon")
+  console.log(Data,"this is dropdwon")
   return (
     <div className="h-screen flex flex-col bg-gray-200 relative">
       {/* navbar */}
@@ -78,23 +78,23 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
             refno={refno}
           />
         ) : tabType == "Company Address" ? (
-          <CompanyAddress companyAddressDropdown={companyAddressDropdown} />
+          <CompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} onboarding_data={Data}/>
         ) : tabType == "Document Detail" ? (
           <DocumentDetails />
         ) : tabType?.includes("Payment Detail") ? (
           <PaymentDetail />
         ) : tabType?.includes("Contact Detail") ? (
-          <ContactDetail />
+          <ContactDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} />
         ) : tabType == "Manufacturing Detail" ? (
-          <ManufacturingDetail />
+          <ManufacturingDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno}/>
         ) : tabType == "Employee Detail" ? (
-          <EmployeeDetail />
+          <EmployeeDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno}/>
         ) : tabType == "Machinery Detail" ? (
-          <MachineryDetail />
+          <MachineryDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno}/>
         ) : tabType == "Testing Facility" ? (
-          <TestingFacility />
+          <TestingFacility ref_no={refno} onboarding_ref_no={vendorOnboardingRefno}/>
         ) : tabType == "Reputed Partners" ? (
-          <ReputedPartners />
+          <ReputedPartners ref_no={refno} onboarding_ref_no={vendorOnboardingRefno}/>
         ) : tabType == "Certificate" ? (
           <Certificate />
         ) : (

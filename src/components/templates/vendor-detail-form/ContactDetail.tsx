@@ -1,5 +1,5 @@
 'use client'
-import React from "react";
+import React, { useState } from "react";
 import {
   Select,
   SelectGroup,
@@ -9,8 +9,37 @@ import {
 } from "../../atoms/select";
 import { Input } from "../../atoms/input";
 import { SelectContent } from "../../atoms/select";
+import { useContactDetailStore,TcontactDetail } from "@/src/store/ContactDetailStore";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
+import { Button } from "@/components/ui/button";
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import requestWrapper from "@/src/services/apiCall";
+import { AxiosResponse } from "axios";
 
-const ContactDetail = () => {
+type Props = {
+  ref_no:string,
+  onboarding_ref_no:string
+}
+
+const ContactDetail = ({ref_no,onboarding_ref_no}:Props) => {
+
+  const {contactDetail,addContactDetail} = useContactDetailStore()
+  const [contact,setContact] = useState<Partial<TcontactDetail>>()
+
+
+  const handleAdd = ()=>{
+    addContactDetail(contact)
+    setContact({});
+  }
+
+  const handleSubmit = async()=>{
+    const submitUrl = API_END_POINTS?.contactDetailSubmit;
+    const submitResponse:AxiosResponse = await requestWrapper({url:submitUrl,data:{data:{contact_details:contactDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}},method:"POST"});
+    if(submitResponse?.status == 200){
+      console.log("successfully submitted")
+    }
+  }
+
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
@@ -22,187 +51,78 @@ const ContactDetail = () => {
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             First Name
           </h1>
-          <Input placeholder="" />
+          <Input placeholder="" onChange={(e)=>{setContact((prev: any)=>({...prev,first_name:e.target.value}))}} value={contact?.first_name ?? ""} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Last Name
           </h1>
-          <Input placeholder="" />
+          <Input placeholder="" onChange={(e)=>{setContact((prev:any)=>({...prev,last_name:e.target.value}))}} value={contact?.last_name ?? ""}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Designation
           </h1>
-          <Input placeholder="" />
+          <Input placeholder="" onChange={(e)=>{setContact((prev:any)=>({...prev,designation:e.target.value}))}} value={contact?.designation ?? ""}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">Email</h1>
-          <Input placeholder="" />
+          <Input placeholder="" onChange={(e)=>{setContact((prev:any)=>({...prev,email:e.target.value}))}} value={contact?.email ?? ""}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Contact Number
           </h1>
-          <Input placeholder="" />
+          <Input placeholder="" onChange={(e)=>{setContact((prev:any)=>({...prev,contact_number:e.target.value}))}} value={contact?.contact_number ?? ""}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Department Name
           </h1>
-          <Input placeholder="" />
+          <Input placeholder="" onChange={(e)=>{setContact((prev:any)=>({...prev,department_name:e.target.value}))}} value={contact?.department_name ?? ""}/>
         </div>
       </div>
-      <h1 className="pl-5">Contact Person 2</h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            First Name
-          </h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Last Name
-          </h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Designation
-          </h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">Email</h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Contact Number
-          </h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Department Name
-          </h1>
-          <Input placeholder="" />
-        </div>
+      <div className="flex justify-end pb-4">
+        <Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleAdd()}}>Add</Button>
       </div>
-      <h1 className="pl-5">Contact Person 3</h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            First Name
-          </h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Last Name
-          </h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Designation
-          </h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">Email</h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Contact Number
-          </h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Department Name
-          </h1>
-          <Input placeholder="" />
-        </div>
-      </div>
-      <h1 className="pl-5">Contact Person 4</h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            First Name
-          </h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Last Name
-          </h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Designation
-          </h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">Email</h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Contact Number
-          </h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Department Name
-          </h1>
-          <Input placeholder="" />
-        </div>
-      </div>
-      <h1 className="pl-5">Contact Person 5</h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            First Name
-          </h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Last Name
-          </h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Designation
-          </h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">Email</h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Contact Number
-          </h1>
-          <Input placeholder="" />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Department Name
-          </h1>
-          <Input placeholder="" />
-        </div>
-      </div>
+      <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
+            <div className="flex w-full justify-between pb-4">
+              <h1 className="text-[20px] text-[#03111F] font-semibold">
+                Multiple Contact
+              </h1>
+            </div>
+            <Table className=" max-h-40 overflow-y-scroll">
+              {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+              <TableHeader className="text-center">
+                <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
+                  <TableHead className="w-[100px]">Sr No.</TableHead>
+                  <TableHead className="text-center">Address1</TableHead>
+                  <TableHead className="text-center">Address2</TableHead>
+                  <TableHead className="text-center">Pincode</TableHead>
+                  <TableHead className="text-center">District</TableHead>
+                  <TableHead className="text-center">City</TableHead>
+                  <TableHead className="text-center">State</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="text-center">
+                {contactDetail?.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">{index}</TableCell>
+                    <TableCell>{item?.contact_number}</TableCell>
+                    <TableCell>{item?.department_name}</TableCell>
+                    <TableCell>{item?.designation}</TableCell>
+                    <TableCell>
+                      {item?.email}
+                    </TableCell>
+                    <TableCell>{item?.first_name}</TableCell>
+                    <TableCell>{item?.last_name}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          <div className="flex justify-end pr-4"><Button onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };
-
-export default ContactDetail;
+export default ContactDetail

@@ -9,8 +9,11 @@ import {
 } from "../../atoms/select";
 import { Input } from "../../atoms/input";
 import { SelectContent } from "../../atoms/select";
+import { usePaymentDetailStore } from "@/src/store/paymentDetailStore";
 
 const PaymentDetail = () => {
+  const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
+  console.log(paymentDetail,"payment detail value")
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
@@ -22,7 +25,7 @@ const PaymentDetail = () => {
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Bank Name
           </h1>
-          <Select>
+          <Select onValueChange={(value)=>{updatePaymentDetail("bank_name",value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -38,26 +41,26 @@ const PaymentDetail = () => {
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             IFSC Code
           </h1>
-          <Input placeholder="" />
+          <Input placeholder="" onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Account Number
           </h1>
-          <Input placeholder="" />
+          <Input placeholder="" onChange={(e)=>{updatePaymentDetail("account_name",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Name of Account Holder
           </h1>
-          <Input placeholder="" />
+          <Input placeholder="" onChange={(e)=>{updatePaymentDetail("name_of_account_holder",e.target.value)}}/>
         </div>
 
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Type of Account
           </h1>
-          <Select>
+          <Select onValueChange={(value)=>{updatePaymentDetail("type_of_account",value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -73,7 +76,7 @@ const PaymentDetail = () => {
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Currency
           </h1>
-          <Select>
+          <Select onValueChange={(value)=>{updatePaymentDetail("currency",value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -97,11 +100,11 @@ const PaymentDetail = () => {
           </h1>
           <div className="flex justify-start gap-3">
             <div className="flex items-center gap-3">
-              <Input placeholder="" type="checkbox" className="w-4" />
+              <Input placeholder="" type="checkbox" className="w-4" onChange={(e)=>{updatePaymentDetail("rtgs",e.target.checked)}}/>
               <h1>RTGS</h1>
             </div>
             <div className="flex items-center gap-3">
-              <Input placeholder="" type="checkbox" className="w-4" />
+              <Input placeholder="" type="checkbox" className="w-4" onChange={(e)=>{updatePaymentDetail("neft",e.target.checked)}}/>
               <h1>NEFT</h1>
             </div>
           </div>
