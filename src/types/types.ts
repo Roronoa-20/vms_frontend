@@ -339,18 +339,18 @@ export type VendorType = {
 
 
   export type TmultipleLocation = {
-    address_line_1:string,
-    address_line2:string,
-    ma_pincode:string,
-    ma_district:string,
-    ma_city:string,
-    ma_state:string,
-    ma_country:string
+    address_line_1?:string,
+    address_line_2?:string,
+    ma_pincode?:string,
+    ma_district?:string,
+    ma_city?:string,
+    ma_state?:string,
+    ma_country?:string
   } 
 
   export type Address = {
-    address_line1:string,
-    address_line2:string,
+    address_line_1:string,
+    address_line_2:string,
     pincode:string,
     district:string,
     city:string,
@@ -362,10 +362,21 @@ export type VendorType = {
   export type TCompanyAddressDetail = {
     ref_no:string,
     vendor_onboarding:string,
-    billing_address:Address,
-    shipping_address:Address,
+    billing_address:Partial<Address>,
+    shipping_address:Partial<Address>,
     same_as_above:number,
     multiple_locations:number,
     multiple_location_table:TmultipleLocation[]
+  }
+
+  export type pincodeBasedData = {
+    message:{
+      data:{
+        city:{name:string,city_code:string,city_name:string}[],
+        district:{name:string,district_code:string,district_name:string}[],
+        state:{name:string,state_code:string,state_name:string}[],
+        country:{name:string,country_name:string,country_code:string}[]
+      }
+    }
   }
   
