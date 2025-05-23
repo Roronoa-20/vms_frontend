@@ -1,10 +1,15 @@
 import Image from "next/image";
 import React from "react";
+import { dashboardCardData } from "@/src/types/types";
+type Props = {
+  cardData:dashboardCardData
+}
 
-const cardData = [
+const DashboardCards = ({...Props}:Props) => {
+  const cardData = [
   {
     name: "Total Vendors",
-    count: 42,
+    count: Props.cardData?.total_vendor_count,
     icon: "/dashboard-assests/cards_icon/total_count.svg",
     text_color: "text-yellow-800",
     bg_color: "bg-yellow-100",
@@ -12,7 +17,7 @@ const cardData = [
   },
   {
     name: "Pending Vendors",
-    count: 30,
+    count: Props.cardData?.pending_vendor_count,
     icon: "/dashboard-assests/cards_icon/hour_glass.svg",
     text_color: "text-rose-800",
     bg_color: "bg-rose-100",
@@ -20,7 +25,7 @@ const cardData = [
   },
   {
     name: "Onboarded Vendors",
-    count: 11,
+    count: 0,
     icon: "/dashboard-assests/cards_icon/tick.svg",
     text_color: "text-emerald-800",
     bg_color: "bg-emerald-100",
@@ -28,7 +33,7 @@ const cardData = [
   },
   {
     name: "Dispatch Details",
-    count: 6,
+    count: 0,
     icon: "/dashboard-assests/cards_icon/truck.svg",
     text_color: "text-blue-800",
     bg_color: "bg-blue-100",
@@ -36,7 +41,7 @@ const cardData = [
   },
   {
     name: "Purchase & Ongoing Orders",
-    count: 17,
+    count: 0,
     icon: "/dashboard-assests/cards_icon/package.svg",
     text_color: "text-violet-800",
     bg_color: "bg-violet-100",
@@ -44,7 +49,7 @@ const cardData = [
   },
   {
     name: "Payment Request",
-    count: 2,
+    count: 0,
     icon: "/dashboard-assests/cards_icon/hand.svg",
     text_color: "text-orange-800",
     bg_color: "bg-orange-100",
@@ -52,15 +57,13 @@ const cardData = [
   },
   {
     name: "Current Month Vendors",
-    count: 3,
+    count: Props.cardData?.current_month_vendor,
     icon: "/dashboard-assests/cards_icon/calender.svg",
     text_color: "text-black-800",
     bg_color: "bg-gray-100",
     hover: "hover:border-gray-400",
   },
 ];
-
-const DashboardCards = () => {
   return (
     <div className="grid sm:grid-cols-3 md:grid-cols-4 gap-6 pb-10">
       {cardData?.map((item, index) => (

@@ -16,7 +16,9 @@ const API_END_POINTS = {
   companyDetailDropdown:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration_masters.vendor_onboarding_company_dropdown_master`,
   companyDetailSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_company_details.update_vendor_onboarding_company_details`,
   companyAddressSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_company_details.update_vendor_onboarding_company_address`,
-  companyAddressDropdown:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration_masters.all_address_masters`
+  companyAddressDropdown:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration_masters.all_address_masters`,
+  dashboardCardURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.dashboard_card`,
+  dashboardTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.get_vendors_details`,
 };
 
 export default API_END_POINTS;

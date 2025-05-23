@@ -7,7 +7,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/src/components/atoms/table";
-
 import {
   Select,
   SelectContent,
@@ -16,11 +15,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/atoms/select";
-
 import { tableData } from "@/src/constants/dashboardTableData";
 import { Input } from "../atoms/input";
+import { DashboardTableType } from "@/src/types/types";
+type Props = {
+  dashboardTableData:DashboardTableType
+}
 
-const DashboardTable = () => {
+const DashboardTable = ({dashboardTableData}:Props) => {
+  console.log(dashboardTableData,":Props -----------------------")
   return (
     <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
       <div className="flex w-full justify-between pb-4">
@@ -75,10 +78,10 @@ const DashboardTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody className="text-center">
-          {tableData?.map((item, index) => (
+          {dashboardTableData.vendor_master?.map((item, index) => (
             <TableRow key={index}>
-              <TableCell className="font-medium">{item?.srno}</TableCell>
-              <TableCell>{item?.refno}</TableCell>
+              <TableCell className="font-medium">{item?.idx}</TableCell>
+              <TableCell>{item?.name}</TableCell>
               <TableCell>{item?.vendor_name}</TableCell>
               <TableCell>{item?.company_name}</TableCell>
               <TableCell>
