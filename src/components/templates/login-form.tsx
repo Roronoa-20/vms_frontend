@@ -7,10 +7,11 @@ import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FormEvent } from "react";
+import Cookies from "js-cookie";
 import EmailDialog from "../molecules/forgotPassword/EmailDialog";
 import OtpDialog from "../molecules/forgotPassword/OtpDialog";
 import PasswordDialog from "../molecules/forgotPassword/PasswordDialog";
-
+import { useAuth } from "../../context/AuthContext";
 export default function LoginForm() {
   const router = useRouter();
   const [form, setForm] = useState<Tlogin>();
@@ -19,7 +20,7 @@ export default function LoginForm() {
   const [email,setEmail] = useState<string | "">("")
   const [isPasswordDialog,setIsPasswordDialog] = useState<boolean>(false);
   const [authorization,setAuthorization] = useState<string | "">("")
-
+const { setAuthData } = useAuth();
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const url = API_END_POINTS?.login;
@@ -30,6 +31,10 @@ export default function LoginForm() {
       data: { data: form },
     });
     if (response.status == 200) {
+      const savedRole = Cookies.get("role");
+      const savedName = Cookies.get("full_name");
+      const savedid = Cookies.get("user_id");
+      setAuthData(savedRole, savedName, savedid);
       router.push("/dashboard");
     }
   };

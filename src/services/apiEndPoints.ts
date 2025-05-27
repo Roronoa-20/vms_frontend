@@ -18,7 +18,13 @@ const API_END_POINTS = {
   companyAddressSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_company_details.update_vendor_onboarding_company_address`,
   companyAddressDropdown:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration_masters.all_address_masters`,
   dashboardCardURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.dashboard_card`,
-  dashboardTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.get_vendors_details`,
+  dashboardPOTableURL:`${url}/api/method/vms.APIs.dashboard_api.po_data.get_po`,
+  dashboardTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.get_vendors_based_on_status`,
+  getPoDetailURL:`${url}/api/method/vms.APIs.dashboard_api.po_data.get_po_details`,
+  dashboardTotalVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.total_vendor_details`,
+  dashboardPendingVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.pending_vendor_details`,
+  dashboardApprovedVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.approved_vendor_details`,
+  dashboardRejectedVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.rejected_vendor_details`
 };
 
 export default API_END_POINTS;

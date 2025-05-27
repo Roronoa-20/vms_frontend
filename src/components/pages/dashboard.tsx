@@ -1,16 +1,17 @@
 import React from "react";
 import DashboardCardCounter from "../molecules/Dashboard-Card-Count";
-import DashboardTable from "../molecules/Dashboard-Table";
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
-import { TvendorRegistrationDropdown, dashboardCardData } from "@/src/types/types";
+import { DashboardPOTableData, dashboardCardData,DashboardTableType } from "@/src/types/types";
 import { cookies } from "next/headers";
 const Dashboard = async () => {
-  const cookie = await cookies()
+  // const cookie = await cookies()
   const cookieStore = await cookies();
-  const user = cookie.get("user_id")?.value
+  const user = cookieStore.get("user_id")?.value
+  console.log(user, "user")
   const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
+  //card data
   const dashboardCardApi: AxiosResponse = await requestWrapper({
     url: `${API_END_POINTS?.dashboardCardURL}?usr=${user}`,
     method: "GET",
@@ -21,23 +22,82 @@ const Dashboard = async () => {
   const CardData: dashboardCardData["message"] =
     dashboardCardApi?.status == 200 ? dashboardCardApi?.data?.message : "";
 
-
-  const dashboardTableDataApi: AxiosResponse = await requestWrapper({
-    url:`${API_END_POINTS?.dashboardTableURL}?usr=${user}`,
+  //po table 
+  const dashboardPOTableDataApi: AxiosResponse = await requestWrapper({
+    url: `${API_END_POINTS?.dashboardPOTableURL}`,
     method: "GET",
     headers: {
       cookie: cookieHeaderString
     }
   });
-  const dashboardTableData: dashboardCardData["message"] =
-    dashboardTableDataApi?.status == 200 ? dashboardTableDataApi?.data?.message : "";
+  const dashboardPOTableData: DashboardPOTableData["message"] =
+    dashboardPOTableDataApi?.status == 200 ? dashboardPOTableDataApi?.data?.message : "";
+  //total vendor table
+  const dashboardTotalVendorTableDataApi: AxiosResponse = await requestWrapper({
+    url: `${API_END_POINTS?.dashboardTotalVendorTableURL}?usr=${user}`,
+    method: "GET",
+    headers: {
+      cookie: cookieHeaderString
+    }
+  });
+  const dashboardTotalVendorTableData: DashboardTableType["message"] =
+  dashboardTotalVendorTableDataApi?.status == 200 ? dashboardTotalVendorTableDataApi?.data?.message : "";
 
-  console.log("dashboardCardData", dashboardTableData)
+// pending vendor table
+  const dashboardPendingVendorTableDataApi: AxiosResponse = await requestWrapper({
+    url: `${API_END_POINTS?.dashboardPendingVendorTableURL}?usr=${user}`,
+    method: "GET",
+    headers: {
+      cookie: cookieHeaderString
+    }
+  });
+  const dashboardPendingVendorTableData: DashboardTableType["message"] =
+  dashboardPendingVendorTableDataApi?.status == 200 ? dashboardPendingVendorTableDataApi?.data?.message : "";
+
+// approved vendor table
+  const dashboardApprovedVendorTableDataApi: AxiosResponse = await requestWrapper({
+    url: `${API_END_POINTS?.dashboardApprovedVendorTableURL}?usr=${user}`,
+    method: "GET",
+    headers: {
+      cookie: cookieHeaderString
+    }
+  });
+  const dashboardApprovedVendorTableData: DashboardTableType["message"] =
+  dashboardApprovedVendorTableDataApi?.status == 200 ? dashboardApprovedVendorTableDataApi?.data?.message : "";
+
+  // rejected vendor table
+  const dashboardRejectedVendorTableDataApi: AxiosResponse = await requestWrapper({
+    url: `${API_END_POINTS?.dashboardRejectedVendorTableURL}?usr=${user}`,
+    method: "GET",
+    headers: {
+      cookie: cookieHeaderString
+    }
+  });
+  const dashboardRejectedVendorTableData: DashboardTableType["message"] =
+  dashboardRejectedVendorTableDataApi?.status == 200 ? dashboardRejectedVendorTableDataApi?.data?.message : "";
+  // const dashboardTableDataApi: AxiosResponse = await requestWrapper({
+  //   url: `${API_END_POINTS?.dashboardTableURL}?usr=${user}`,
+  //   method: "GET",
+  //   headers: {
+  //     cookie: cookieHeaderString
+  //   }
+  // });
+  // const dashboardTableData: dashboardCardData["message"] =
+  //   dashboardTableDataApi?.status == 200 ? dashboardTableDataApi?.data?.message : "";
+  // console.log(dashboardTableData, "dashboardTableData")
+
+  console.log(dashboardTotalVendorTableDataApi,"-----------------========","=pending---","=-09876543333333333333333333333333")
   return (
     <div className="p-8">
       {/* Cards */}
-      <DashboardCardCounter cardData={CardData} />
-      <DashboardTable dashboardTableData={dashboardTableData}/>
+      <DashboardCardCounter
+        cardData={CardData}
+        dashboardPOTableData={dashboardPOTableData}
+        dashboardTotalVendorTableData={dashboardTotalVendorTableData} 
+        dashboardPendingVendorTableData={dashboardPendingVendorTableData}
+        dashboardApprovedVendorTableData={dashboardApprovedVendorTableData}
+        dashboardRejectedVendorTableData={dashboardRejectedVendorTableData}
+        />
     </div>
   );
 };
