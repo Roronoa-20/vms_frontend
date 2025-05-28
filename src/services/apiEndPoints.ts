@@ -31,7 +31,8 @@ const API_END_POINTS = {
   currencyDropdown:`${url}/api/resource/Currency%20Master`,
   documentDetailSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.update_vendor_onboarding_document_details`,
   fetchDetails:`${url}/api/method/vms.APIs.vendor_onboarding.get_full_data_of_ven_onboarding.get_vendor_onboarding_details`,
-  documentDetail_dropdown:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration_masters.vendor_onboarding_document_dropdown_master`  
+  documentDetail_dropdown:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration_masters.vendor_onboarding_document_dropdown_master`,
+  deleteCertificate:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_certificate_details.delete_vendor_onboarding_certificate_row`  
 };
 
 export default API_END_POINTS;
