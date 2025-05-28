@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../atoms/select";
-import { TcompanyDetailDropdown, TCompanyDetailForm, TvendorOnboardingDetail } from "@/src/types/types";
+import { TcompanyDetailDropdown, TCompanyDetailForm, TvendorOnboardingDetail, VendorOnboardingResponse } from "@/src/types/types";
 import { useCompanyDetailFormStore } from "@/src/store/companyDetailStore";
 import { Button } from "../../atoms/button";
 import API_END_POINTS from "@/src/services/apiEndPoints";
@@ -18,15 +18,14 @@ import requestWrapper from "@/src/services/apiCall";
 import { useRouter } from "next/navigation";
 
 interface Props {
-  vendor_master:TvendorOnboardingDetail["message"]["data"]["vendor_master"]
-  vendor_onboarding:TvendorOnboardingDetail["message"]["data"]["vendor_onboarding"]
-  vendor_company_details:TvendorOnboardingDetail["message"]["data"]["vendor_company_details"]
   companyDetailDropdown:TcompanyDetailDropdown["message"]["data"]
   onboarding_refno?:string
-  refno?:string
+  refno?:string,
+  OnboardingDetail:VendorOnboardingResponse["message"]["company_details_tab"]
 }
 
-const CompanyDetailForm = ({vendor_master,vendor_onboarding,companyDetailDropdown,onboarding_refno,refno,vendor_company_details}:Props) => {
+const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,OnboardingDetail}:Props) => {
+console.log(OnboardingDetail,"this is detail")
   const {data,updateField,resetForm} = useCompanyDetailFormStore(); 
   const router = useRouter();
 
@@ -51,13 +50,13 @@ const CompanyDetailForm = ({vendor_master,vendor_onboarding,companyDetailDropdow
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Vendor Title
               </h1>
-              <Input className="col-span-2" placeholder="Enter Company Name" defaultValue={vendor_master?.vendor_title} disabled={true} />
+              <Input className="col-span-2" placeholder="Enter Company Name" defaultValue={OnboardingDetail?.vendor_title ?? ""} disabled={true} />
             </div>
             <div className="col-span-3">
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Company Name
               </h1>
-              <Input className="col-span-2" placeholder="Enter Company Name" defaultValue={vendor_master?.vendor_name} disabled={true} />
+              <Input className="col-span-2" placeholder="Enter Company Name" defaultValue={OnboardingDetail?.vendor_name ?? ""} disabled={true} />
             </div>
           </div>
         </div>
@@ -65,7 +64,7 @@ const CompanyDetailForm = ({vendor_master,vendor_onboarding,companyDetailDropdow
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Type Of Business (Please select any one)
           </h1>
-          <Select onValueChange={(value)=>{updateField('type_of_business',value)}} defaultValue={vendor_company_details[0]?.type_of_business as string}>
+          <Select onValueChange={(value)=>{updateField('type_of_business',value)}} value={data?.type_of_business ?? OnboardingDetail?.type_of_business}>
             <SelectTrigger>
               <SelectValue placeholder="Select Vendor Type" />
             </SelectTrigger>
@@ -84,7 +83,7 @@ const CompanyDetailForm = ({vendor_master,vendor_onboarding,companyDetailDropdow
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Size of Company
           </h1>
-          <Select onValueChange={(value)=>{updateField("size_of_company",value)}} defaultValue={vendor_company_details[0]?.size_of_company as string}>
+          <Select onValueChange={(value)=>{updateField("size_of_company",value)}} value={data?.size_of_company ?? OnboardingDetail?.size_of_company}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -100,61 +99,61 @@ const CompanyDetailForm = ({vendor_master,vendor_onboarding,companyDetailDropdow
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Website
           </h1>
-          <Input placeholder="" onChange={(e)=>{updateField("website",e.target.value)}} defaultValue={vendor_company_details[0]?.website as string}/>
+          <Input placeholder="" onChange={(e)=>{updateField("website",e.target.value)}} value={data?.website ?? OnboardingDetail?.website}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Reg No.
           </h1>
-          <Input placeholder="Enter Reg No." onChange={(e)=>{updateField("registered_office_number",e.target.value)}} defaultValue={vendor_company_details[0]?.registered_office_number as string}/>
+          <Input placeholder="Enter Reg No." onChange={(e)=>{updateField("registered_office_number",e.target.value)}} value={data?.registered_office_number ?? OnboardingDetail?.registered_office_number}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Mobile Number
           </h1>
-          <Input placeholder="Enter Mobile Number" onChange={(e)=>{updateField("telephone_number",e.target.value)}} defaultValue={vendor_company_details[0]?.telephone_number as string}/>
+          <Input placeholder="Enter Mobile Number" onChange={(e)=>{updateField("telephone_number",e.target.value)}} value={data?.telephone_number ?? OnboardingDetail?.telephone_number}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             WhatsApp Number (If applicable)
           </h1>
-          <Input placeholder="" onChange={(e)=>{updateField("whatsapp_number",e.target.value)}} defaultValue={vendor_company_details[0]?.whatsapp_number as string}/>
+          <Input placeholder="" onChange={(e)=>{updateField("whatsapp_number",e.target.value)}} value={data?.whatsapp_number ?? OnboardingDetail?.whatsapp_number}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Established Year
           </h1>
-          <Input placeholder="" onChange={(e)=>{updateField("established_year",e.target.value)}} defaultValue={vendor_company_details[0]?.established_year as string}/>
+          <Input placeholder="" onChange={(e)=>{updateField("established_year",e.target.value)}} value={data?.established_year ?? OnboardingDetail?.established_year}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Office Email Primary
           </h1>
-          <Input placeholder="" onChange={(e)=>{updateField("office_email_primary",e.target.value)}} defaultValue={vendor_company_details[0]?.office_email_primary as string}/>
+          <Input placeholder="" onChange={(e)=>{updateField("office_email_primary",e.target.value)}} value={data?.office_email_primary ?? OnboardingDetail?.office_email_primary}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Office Email (Secondary)
           </h1>
-          <Input placeholder="" onChange={(e)=>{updateField("office_email_secondary",e.target.value)}} defaultValue={vendor_company_details[0]?.office_email_secondary as string}/>
+          <Input placeholder="" onChange={(e)=>{updateField("office_email_secondary",e.target.value)}} value={data?.office_email_secondary ?? OnboardingDetail?.office_email_secondary}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Corporate Identification No.(CIN No.)
           </h1>
-          <Input placeholder="" onChange={(e)=>{updateField("corporate_identification_number",e.target.value)}} defaultValue={vendor_company_details[0]?.corporate_identification_number as string}/>
+          <Input placeholder="" onChange={(e)=>{updateField("corporate_identification_number",e.target.value)}} value={data?.corporate_identification_number ?? OnboardingDetail?.corporate_identification_number}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Date
           </h1>
-          <Input type="date" placeholder="Enter Mobile Number" onChange={(e)=>{updateField("cin_date",e.target.value)}} defaultValue={vendor_company_details[0]?.cin_date as string}/>
+          <Input type="date" placeholder="Enter Mobile Number" onChange={(e)=>{updateField("cin_date",e.target.value)}} value={data?.cin_date ?? OnboardingDetail?.cin_date}/>
         </div>
         <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Nature of Company(Please select anyone)
           </h1>
-          <Select onValueChange={(value)=>{updateField('nature_of_company',value)}} defaultValue={vendor_company_details[0]?.nature_of_company as string}>
+          <Select onValueChange={(value)=>{updateField('nature_of_company',value)}} value={data?.nature_of_company ?? OnboardingDetail?.nature_of_company}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -173,7 +172,7 @@ const CompanyDetailForm = ({vendor_master,vendor_onboarding,companyDetailDropdow
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Nature of Business (Please Select anyone)
           </h1>
-          <Select onValueChange={(value)=>{updateField('nature_of_business',value)}} defaultValue={vendor_company_details[0]?.nature_of_business as string}>
+          <Select onValueChange={(value)=>{updateField('nature_of_business',value)}} value={data?.nature_of_business ?? OnboardingDetail?.nature_of_business}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -192,13 +191,13 @@ const CompanyDetailForm = ({vendor_master,vendor_onboarding,companyDetailDropdow
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Vendor Type
           </h1>
-          <Input placeholder="" defaultValue={vendor_onboarding?.vendor_types?.map((item)=>(item?.vendor_type))} disabled={true} />
+          <Input placeholder="" defaultValue={OnboardingDetail?.vendor_types?.map((item)=>(item))} disabled={true} />
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Meril Associated Companies
           </h1>
-          <Input placeholder="" defaultValue={vendor_onboarding?.company_name} disabled={true}/>
+          <Input placeholder="" defaultValue={OnboardingDetail?.company_name ?? ""} disabled={true}/>
         </div>
       </div>
       <div className="flex justify-end pr-6">

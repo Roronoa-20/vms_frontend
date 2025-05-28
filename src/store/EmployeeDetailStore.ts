@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-type TEmployeeDetail = {
+export type TEmployeeDetail = {
     qaqc:string,
     logistics:string,
     marketing:string,
@@ -11,18 +11,13 @@ type TEmployeeDetail = {
 }
 
 type EmployeeDetailStore = {
-    employeeDetail:Partial<TEmployeeDetail>,
-    updateEmployeeDetail:(field: keyof TEmployeeDetail, value:any)=>void
+    employeeDetail:Partial<TEmployeeDetail>[],
+    updateEmployeeDetail:(data:any)=>void
 }
 
 export const useEmployeeDetailStore = create<EmployeeDetailStore>((set)=>({
-    employeeDetail:{},
-    updateEmployeeDetail(field,value){
-        set((state)=>({
-            employeeDetail:{
-                ...state?.employeeDetail,
-                [field]:value
-            }
-        }))
-    }
+    employeeDetail:[],
+    updateEmployeeDetail:(data)=>set((state)=>({
+        employeeDetail:[...state?.employeeDetail,data]
+    }))
 }))

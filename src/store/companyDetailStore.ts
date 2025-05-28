@@ -3,7 +3,7 @@ import { TCompanyDetailForm } from '../types/types';
 
 
 type CompanyDetailFormStore = {
-    data:TCompanyDetailForm | {}
+    data:Partial<TCompanyDetailForm>
 
     updateField:(field: keyof TCompanyDetailForm, value:any)=>void,
 

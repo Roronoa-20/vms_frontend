@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "../../atoms/input";
 import { Button } from "../../atoms/button";
 import { TMachineDetail, useMachineDetailStore } from "@/src/store/MachinaryDetailStore";
@@ -7,14 +7,22 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
+import { VendorOnboardingResponse } from "@/src/types/types";
 
 interface Props {
   ref_no:string,
   onboarding_ref_no:string
+  OnboardingDetail:VendorOnboardingResponse["message"]["machinery_details_tab"]
 }
 
-const MachineryDetail = ({ref_no,onboarding_ref_no}:Props) => {
+const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   const {machineDetail,updateMachineDetail} = useMachineDetailStore();
+
+  useEffect(()=>{
+    OnboardingDetail?.map((item,index)=>{
+      updateMachineDetail(item)
+    })
+  },[])
 
   const [multipleMachineDetail,setMultipleMachineDetail] = useState<TMachineDetail | null>(null);
   

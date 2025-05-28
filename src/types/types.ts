@@ -342,20 +342,20 @@ export type VendorType = {
     address_line_1?:string,
     address_line_2?:string,
     ma_pincode?:string,
-    ma_district?:string,
-    ma_city?:string,
-    ma_state?:string,
-    ma_country?:string
+    ma_district?:{name:string,district_code:string,district_name:string},
+    ma_city?:{name:string,city_code:string,city_name:string},
+    ma_state?:{name:string,state_code:string,state_name:string},
+    ma_country?:{name:string,country_name:string,country_code:string},
   } 
 
   export type Address = {
     address_line_1:string,
     address_line_2:string,
     pincode:string,
-    district:string,
-    city:string,
-    state:string,
-    country:string
+    district:{name:string,district_code:string,district_name:string},
+    city:{name:string,city_code:string,city_name:string},
+    state:{name:string,state_code:string,state_name:string},
+    country:{name:string,country_name:string,country_code:string},
   }
 
 
@@ -379,4 +379,360 @@ export type VendorType = {
       }
     }
   }
+
+
+  export type TcertificateCodeDropdown = {
+    message:{
+      data:{
+        certificate_names:{
+          name:string,
+          certificate_name:string,
+          certificate_code:string
+        }[]
+      }
+    }
+  }
+
+
+  export type TbankNameDropdown = {
+    data:{
+      name:string
+    }[]
+  }
+
+
+  export type TCurrencyDropdown = {
+    data:{
+      name:string
+    }[]
+  }
+
+
+
+
+  export type VendorOnboardingResponse = {
+    message: {
+      status: string;
+      message: string;
+      company_details_tab: CompanyDetailsTab;
+      company_address_tab: CompanyAddressDetails;
+      document_details_tab: DocumentDetailsTab;
+      payment_details_tab: PaymentDetailsTab;
+      contact_details_tab: ContactDetails[];
+      manufacturing_details_tab: ManufacturingDetailsTab;
+      employee_details_tab:EmployeeDetail[];
+      machinery_details_tab:MachineryDetail[];
+      testing_details_tab:TestingDetail[];
+      reputed_partners_details_tab:ReputedPartnerDetail[];
+      certificate_details_tab:CertificateDetail[]
+    };
+  };
+
+  type CompanyAddressDetails = {
+    same_as_above: number;
+    multiple_locations: number;
+    billing_address: BillingAddress;
+    shipping_address: ShippingAddress;
+    multiple_location_table: MultipleLocationEntry[];
+    address_proofattachment: AddressProofAttachment;
+  };
+
+
+  type LocationDetail = {
+    name: string;
+    city_code?: string;
+    city_name?: string;
+    district_code?: string;
+    district_name?: string;
+    state_code?: string;
+    state_name?: string;
+    country_code?: string;
+    country_name?: string;
+  };
+  
+  type BillingAddress = {
+    address_line_1: string;
+    address_line_2: string;
+    pincode: string;
+    city: string;
+    district: string;
+    state: string;
+    country: string;
+    city_details: LocationDetail;
+    district_details: LocationDetail;
+    state_details: LocationDetail;
+    country_details: LocationDetail;
+  };
+  
+  type ShippingAddress = {
+    street_1: string ;
+    street_2: string ;
+    manufacturing_pincode: string ;
+    manufacturing_city: string ;
+    manufacturing_district: string ;
+    manufacturing_state: string ;
+    manufacturing_country: string ;
+    city_details: LocationDetail ;
+    district_details: LocationDetail ;
+    state_details: LocationDetail ;
+    country_details: LocationDetail ;
+  };
+  
+
+  type MultipleLocationEntry = {
+    name: string;
+    owner: string;
+    creation: string;
+    modified: string;
+    modified_by: string;
+    docstatus: number;
+    idx: number;
+    address_line_1: string;
+    address_line_2: string;
+    ma_pincode: string;
+    ma_district: string;
+    ma_city: string;
+    ma_state: string;
+    ma_country: string;
+    parent: string;
+    parentfield: string;
+    parenttype: string;
+    doctype: string;
+    city_details: LocationDetail;
+    district_details: LocationDetail;
+    state_details: LocationDetail;
+    country_details: LocationDetail;
+  };
+  
+
+  type AddressProofAttachment = {
+    url: string;
+    name: string;
+  };
+  
+  
+  export type CertificateAttachment = {
+    url: string;
+    name: string;
+    file_name: string;
+  };
+  
+  type CertificateDetail = {
+    name: string;
+    idx: number;
+    certificate_code: string;
+    valid_till: string; // format: YYYY-MM-DD
+    certificate_attach: CertificateAttachment;
+  };
+
+
+  type ReputedPartnerDetail = {
+    name: string;
+    owner: string;
+    creation: string;
+    modified: string;
+    modified_by: string;
+    docstatus: number;
+    idx: number;
+    company_name: string;
+    test: string | null;
+    supplied_qtyyear: string;
+    remark: string;
+    parent: string;
+    parentfield: string;
+    parenttype: string;
+    doctype: string;
+  };
+
+  type TestingDetail = {
+    name: string;
+    owner: string;
+    creation: string;
+    modified: string;
+    modified_by: string;
+    docstatus: number;
+    idx: number;
+    equipment_name: string;
+    equipment_qty: string;
+    capacity: string;
+    remarks: string;
+    parent: string;
+    parentfield: string;
+    parenttype: string;
+    doctype: string;
+  };
+
+  type MachineryDetail = {
+    name: string;
+    owner: string;
+    creation: string; // ISO timestamp
+    modified: string; // ISO timestamp
+    modified_by: string;
+    docstatus: number;
+    idx: number;
+    equipment_name: string;
+    equipment_qty: string;
+    capacity: string;
+    remarks: string;
+    parent: string;
+    parentfield: string;
+    parenttype: string;
+    doctype: string;
+  };
+
+  type EmployeeDetail = {
+    name: string;
+    owner: string;
+    creation: string; // ISO timestamp as string
+    modified: string; // ISO timestamp as string
+    modified_by: string;
+    docstatus: number;
+    idx: number;
+    production: string;
+    qaqc: string;
+    logistics: string;
+    marketing: string;
+    r_d: string;
+    hse: string;
+    other: string;
+    parent: string;
+    parentfield: string;
+    parenttype: string;
+    doctype: string;
+  };
+  
+  type CompanyDetailsTab = {
+    vendor_title: string | null;
+    vendor_name: string | null;
+    company_name: string | null;
+    type_of_business: string;
+    size_of_company: string;
+    website: string;
+    registered_office_number: string;
+    telephone_number: string;
+    whatsapp_number: string;
+    established_year: string;
+    office_email_primary: string;
+    office_email_secondary: string;
+    corporate_identification_number: string;
+    cin_date: string;
+    nature_of_company: string;
+    nature_of_business: string;
+    vendor_types: string[];
+  };
+  
+
+  
+  type FileAttachment = {
+    url: string;
+    name: string;
+    file_name?: string;
+  };
+  
+  type DocumentDetailsTab = {
+    company_pan_number: string;
+    name_on_company_pan: string;
+    enterprise_registration_number: string;
+    msme_registered: string;
+    msme_enterprise_type: string;
+    udyam_number: string;
+    name_on_udyam_certificate: string ;
+    pan_proof: FileAttachment;
+    entity_proof: FileAttachment;
+    msme_proof: FileAttachment;
+    gst_table: any[]; // Adjust if GST structure is known
+  };
+  
+  type PaymentDetailsTab = {
+    bank_name: string;
+    ifsc_code: string;
+    account_number: string;
+    name_of_account_holder: string;
+    type_of_account: string;
+    currency: string;
+    rtgs: number;
+    neft: number;
+    bank_proof: FileAttachment;
+  };
+  
+  type ContactDetails = {
+    name: string;
+    owner: string;
+    creation: string;
+    modified: string;
+    modified_by: string;
+    docstatus: number;
+    idx: number;
+    first_name: string;
+    last_name: string;
+    designation: string;
+    email: string;
+    contact_number: string;
+    department_name: string;
+    parent: string;
+    parentfield: string;
+    parenttype: string;
+    doctype: string;
+  };
+  
+  type ManufacturingDetailsTab = {
+    total_godown: string;
+    storage_capacity: string;
+    spare_capacity: string;
+    type_of_premises: string;
+    working_hours: string;
+    weekly_holidays: string;
+    number_of_manpower: string;
+    annual_revenue: string;
+    cold_storage: number;
+    materials_supplied: SuppliedMaterial[];
+    brochure_proof: FileAttachment;
+    organisation_structure_document: FileAttachment;
+  };
+  
+  type SuppliedMaterial = {
+    name: string;
+    owner: string;
+    creation: string;
+    modified: string;
+    modified_by: string;
+    docstatus: number;
+    idx: number;
+    material_description: string;
+    material_images: FileAttachment;
+    annual_capacity: string;
+    hsnsac_code: string;
+    parent: string;
+    parentfield: string;
+    parenttype: string;
+    doctype: string;
+  };
+
+
+  type GstVendorType = {
+    name: string;
+    registration_ven_code: string;
+    registration_ven_name: string;
+  };
+  
+  type StateMaster = {
+    name: string;
+    state_code: string;
+    state_name: string;
+  };
+  
+  type DropdownMasters = {
+    gst_vendor_type: GstVendorType[];
+    state_master: StateMaster[];
+  };
+
+  export type TdocumentDetailDropdown = {
+    message:{
+      status: string; // e.g., "success"
+      message: string; // e.g., "Dropdown masters fetched successfully."
+      data: DropdownMasters;
+    }
+  }
+  
+  
   

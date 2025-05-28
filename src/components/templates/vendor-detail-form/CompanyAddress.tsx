@@ -1,20 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import {
-  Select,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../atoms/select";
 import { Input } from "../../atoms/input";
-import { SelectContent } from "../../atoms/select";
 import {
   pincodeBasedData,
-  TCompanyAddressDetail,
   TCompanyAddressDropdown,
   TmultipleLocation,
   TvendorOnboardingDetail,
+  VendorOnboardingResponse,
 } from "@/src/types/types";
 import { useCompanyAddressFormStore } from "@/src/store/companyAddressStore";
 import API_END_POINTS from "@/src/services/apiEndPoints";
@@ -29,21 +21,20 @@ import {
   TableHeader,
   TableRow,
 } from "../../atoms/table";
-import { tableData } from "@/src/constants/dashboardTableData";
-import ManufacturingDetail from "./ManufacturingDetail";
 
 interface Props {
   companyAddressDropdown?: TCompanyAddressDropdown["message"]["data"];
   ref_no: string;
   onboarding_ref_no: string;
   onboarding_data:TvendorOnboardingDetail["message"]["data"]
+  OnboardingDetail:VendorOnboardingResponse["message"]["company_address_tab"];
 }
 
 interface pincodeFetchData {
-  district?: string;
-  city?: string;
-  state?: string;
-  country?: string;
+  district?: {name: string; district_name: string; district_code: string};
+  city?: {name: string; city_name: string; city_code: string};
+  state?:  {name: string; state_name: string; state_code: string};
+  country?: {name: string; country_name: string; country_code: string};
 }
 
 interface shippingData {
@@ -67,16 +58,25 @@ interface multipleAddress {
 }
 
 const CompanyAddress = ({
-  companyAddressDropdown,
   ref_no,
   onboarding_ref_no,
-  onboarding_data
+  OnboardingDetail
 }: Props) => {
 
-  // useEffect(()=>{
-    
-  // },[])
-  console.log(onboarding_data,"htis is onboarding data")
+  useEffect(()=>{
+    OnboardingDetail?.multiple_location_table?.map((item)=>{
+      addMultipleLocation({address_line_1:item?.address_line_1,
+        address_line_2:item?.address_line_2,
+        ma_pincode:item?.ma_pincode,
+        ma_district:{name:item?.district_details?.district_name as string,district_name:item?.district_details?.district_name as string,district_code:item?.district_details?.district_code as string},
+        ma_state:{name:item?.state_details?.state_name as string,state_name:item?.state_details?.state_name as string,state_code:item?.state_details?.state_code as string},
+        ma_city:{name:item?.city_details?.name,
+          city_name:item?.city_details?.city_name as string,
+          city_code:item?.city_details?.city_code as string},
+        ma_country:{name:item?.country_details?.country_name as string,country_code:item?.country_details?.country_code as string,country_name:item?.country_details?.country_name as string}}) 
+    })
+  },[])
+  console.log(OnboardingDetail,"htis is onboarding data")
 
   const {
     billingAddress,
@@ -92,8 +92,9 @@ const CompanyAddress = ({
   const [isShippingSame, setIsShippingSame] = useState<boolean>(false);
   const [shippingData, setShippingData] = useState<shippingData>();
   const [MultipleAddress, setMultipleAddress] = useState<multipleAddress>();
+  const [file,setFile] = useState<FileList | null>(null);
 
-  const [isMultipleLocation, setIsMultipleLocation] = useState<boolean>(false);
+  const [isMultipleLocation, setIsMultipleLocation] = useState<boolean>(OnboardingDetail?.multiple_locations ? true : false);
 
   const handlePincodeChange = async (value: string) => {
     updatebillingAddress("pincode", value);
@@ -108,10 +109,10 @@ const CompanyAddress = ({
           ? pincodeChangeResponse?.data?.message
           : "";
       if (data) {
-        updatebillingAddress("city", data?.data?.city[0]?.name);
-        updatebillingAddress("district", data?.data?.district[0]?.name);
-        updatebillingAddress("state", data?.data?.state[0]?.name);
-        updatebillingAddress("country", data?.data?.country[0]?.name);
+        updatebillingAddress("city", data?.data?.city);
+        updatebillingAddress("district", data?.data?.district);
+        updatebillingAddress("state", data?.data?.state);
+        updatebillingAddress("country", data?.data?.country);
       }
     }
   };
@@ -129,10 +130,10 @@ const CompanyAddress = ({
           ? pincodeChangeResponse?.data?.message
           : "";
       if (data) {
-        updateshippingAddress("city", data?.data?.city[0]?.city_name);
-        updateshippingAddress("district", data?.data?.district[0]?.name);
-        updateshippingAddress("state", data?.data?.state[0]?.name);
-        updateshippingAddress("country", data?.data?.country[0]?.name);
+        updateshippingAddress("city", data?.data?.city[0]);
+        updateshippingAddress("district", data?.data?.district[0]);
+        updateshippingAddress("state", data?.data?.state[0]);
+        updateshippingAddress("country", data?.data?.country[0]);
         setShippingData((prev) => ({
           ...prev,
           country: data?.data?.country[0]?.country_name,
@@ -180,10 +181,10 @@ const CompanyAddress = ({
       address_line_1: MultipleAddress?.address1,
       address_line_2: MultipleAddress?.address2,
       ma_pincode: MultipleAddress?.pincode,
-      ma_district: MultipleAddress?.district?.name,
-      ma_state: MultipleAddress?.state?.name,
-      ma_city: MultipleAddress?.city?.name,
-      ma_country: MultipleAddress?.country?.name,
+      ma_district: MultipleAddress?.district,
+      ma_state: MultipleAddress?.state,
+      ma_city: MultipleAddress?.city,
+      ma_country: MultipleAddress?.country,
     };
     addMultipleLocation(updatedData);
     setMultipleAddress({});
@@ -192,19 +193,20 @@ const CompanyAddress = ({
   const handleShippingCheck = (e: boolean) => {
     setIsShippingSame(e);
     if (e) {
+      handleShippingPincodeChange(billingAddress?.pincode ?? "");
       setShippingData((prev) => ({
         ...prev,
         address1: billingAddress?.address_line_1,
         address2: billingAddress?.address_line_2,
         pincode: billingAddress?.pincode,
-        district: pincodeFetchData?.district,
-        city: pincodeFetchData?.city,
-        state: pincodeFetchData?.state,
-        country: pincodeFetchData?.country,
+        district: billingAddress?.district?.district_name,
+        city: billingAddress?.city?.city_name,
+        state: billingAddress?.state?.state_name,
+        country: billingAddress?.country?.country_name,
       }));
     }
   };
-
+  console.log(isShippingSame, "is shipping same");
   const handleSubmit = async () => {
     const submitUrl = API_END_POINTS?.companyAddressSubmit;
     const Data = {
@@ -213,20 +215,31 @@ const CompanyAddress = ({
       street_1: shippingAddress?.address_line_1,
       street_2:shippingAddress?.address_line_2,
       manufacturing_pincode:shippingAddress?.pincode,
-      manufacturing_country:shippingAddress?.country,
-      manufacturing_state:shippingAddress?.state,
-      manufacturing_city:shippingAddress?.city,
-      manufacturing_district:shippingAddress?.district,
+      manufacturing_country:shippingAddress?.country?.name,
+      manufacturing_state:shippingAddress?.state?.name,
+      manufacturing_city:shippingAddress?.city?.name,
+      manufacturing_district:shippingAddress?.district?.name,
       same_as_above: isShippingSame ? 1 : 0,
       vendor_onboarding: onboarding_ref_no,
       multiple_locations: isMultipleLocation ? 1 : 0,
-      multiple_location_table: multiple_location_table,
+      multiple_location_table: multiple_location_table?.map((item) => ({
+        address_line_1: item?.address_line_1,
+        address_line_2: item?.address_line_2,
+        ma_pincode: item?.ma_pincode,
+        ma_district: item?.ma_district?.name,
+        ma_state: item?.ma_state?.name,
+        ma_city: item?.ma_city?.name,
+        ma_country: item?.ma_country?.name,
+      })),
     };
-    const updatedData = {data:Data}
+    // const updatedData = {data:Data}
 
     const formData = new FormData();
-    formData.append("data",JSON.stringify(updatedData));
-    const submitResponse:AxiosResponse = await requestWrapper({url:submitUrl,method:"POST",data:updatedData});
+    formData.append("data",JSON.stringify(Data));
+    if(file){
+      formData.append("file",file[0])
+    }
+    const submitResponse:AxiosResponse = await requestWrapper({url:submitUrl,method:"POST",data:formData});
     if(submitResponse?.status == 200){
       console.log("successfully submitted");
     }
@@ -250,7 +263,7 @@ const CompanyAddress = ({
             onChange={(e) => {
               updatebillingAddress("address_line_1", e.target.value);
             }}
-            value={billingAddress?.address_line_1 as string ?? onboarding_data?.vendor_company_details[0]?.address_line_1 as string ?? ""}
+            value={billingAddress?.address_line_1 as string ??   OnboardingDetail?.billing_address?.address_line_1}
           />
         </div>
         <div className="col-span-2">
@@ -262,7 +275,7 @@ const CompanyAddress = ({
             onChange={(e) => {
               updatebillingAddress("address_line_2", e.target.value);
             }}
-            value={billingAddress?.address_line_2?? onboarding_data?.vendor_company_details[0]?.address_line_2 as string ?? ""}
+            value={billingAddress?.address_line_2?? OnboardingDetail?.billing_address?.address_line_2}
             // defaultValue={}
           />
         </div>
@@ -275,7 +288,7 @@ const CompanyAddress = ({
             onChange={(e) => {
               handlePincodeChange(e.target.value);
             }}
-            value={billingAddress?.pincode?? onboarding_data?.vendor_company_details[0]?.pincode as string ?? ""}
+            value={billingAddress?.pincode?? OnboardingDetail?.billing_address?.pincode}
             // defaultValue={}
           />
         </div>
@@ -285,7 +298,7 @@ const CompanyAddress = ({
           </h1>
           <Input
             placeholder=""
-            value={billingAddress?.district ?? onboarding_data?.vendor_company_details[0]?.district as string ?? ""}
+            value={billingAddress?.district?.district_name ?? OnboardingDetail?.billing_address?.district_details?.district_name}
             // defaultValue={}
             readOnly
           />
@@ -297,7 +310,7 @@ const CompanyAddress = ({
             </h1>
             <Input
               placeholder=""
-              value={billingAddress?.city?? onboarding_data?.vendor_company_details[0]?.city as string ?? ""}
+              value={billingAddress?.city?.city_name?? OnboardingDetail?.billing_address?.city_details?.city_name}
               // defaultValue={}
               readOnly
             />
@@ -308,7 +321,7 @@ const CompanyAddress = ({
             </h1>
             <Input
               placeholder=""
-              value={billingAddress?.state ?? onboarding_data?.vendor_company_details[0]?.state as string ?? ""}
+              value={billingAddress?.state?.state_name ?? OnboardingDetail?.billing_address?.state_details?.state_name}
               // defaultValue={}
               readOnly
             />
@@ -319,7 +332,7 @@ const CompanyAddress = ({
             </h1>
             <Input
               placeholder=""
-              value={billingAddress?.country ?? onboarding_data?.vendor_company_details[0]?.country as string ?? ""}
+              value={billingAddress?.country?.country_name ?? OnboardingDetail?.billing_address?.country_details?.country_name}
               
               readOnly
             />
@@ -336,6 +349,8 @@ const CompanyAddress = ({
               handleShippingCheck(e.target.checked);
             }}
             value={isShippingSame?1:0}
+
+            checked={isShippingSame ?? OnboardingDetail?.same_as_above}
           />
           <h1 className="font-normal">Same as above</h1>
         </div>
@@ -347,7 +362,7 @@ const CompanyAddress = ({
           </h1>
           <Input
             // placeholder={shippingData?.address1}
-            value={shippingAddress?.address_line_1 ?? ""}
+            value={shippingAddress?.address_line_1 ?? OnboardingDetail?.shipping_address?.street_1 ?? ""}
             readOnly={isShippingSame ? true : false}
             onChange={(e) => {
               updateshippingAddress("address_line_1", e.target.value);
@@ -360,7 +375,7 @@ const CompanyAddress = ({
           </h1>
           <Input
             // placeholder={shippingData?.address2}
-            value={shippingAddress?.address_line_2 ?? ""}
+            value={shippingAddress?.address_line_2 ?? OnboardingDetail?.shipping_address?.street_2 ?? ""}
             readOnly={isShippingSame ? true : false}
             onChange={(e) => {
               updateshippingAddress("address_line_2", e.target.value);
@@ -373,7 +388,7 @@ const CompanyAddress = ({
           </h1>
           <Input
             // placeholder={shippingData?.pincode}
-            value={shippingAddress?.pincode ?? ""}
+            value={shippingAddress?.pincode ?? OnboardingDetail?.shipping_address?.manufacturing_pincode ?? ""}
             readOnly={isShippingSame ? true : false}
             onChange={(e) => {
               handleShippingPincodeChange(e.target.value);
@@ -386,7 +401,7 @@ const CompanyAddress = ({
           </h1>
           <Input
             // placeholder={shippingData?.district}
-            value={shippingAddress?.district ?? ""}
+            value={shippingAddress?.district?.district_name ?? ""}
             readOnly={isShippingSame ? true : false}
             onChange={()=>{}}
           />
@@ -398,7 +413,7 @@ const CompanyAddress = ({
             </h1>
             <Input
               // placeholder={shippingData?.city}
-              value={shippingAddress?.city ?? ""}
+              value={shippingAddress?.city?.city_name ?? ""}
               readOnly={isShippingSame ? true : false}
               onChange={()=>{}}
             />
@@ -409,7 +424,7 @@ const CompanyAddress = ({
             </h1>
             <Input
               // placeholder={shippingData?.state}
-              value={shippingAddress?.state ?? ""}
+              value={shippingAddress?.state?.state_name ?? ""}
               readOnly={isShippingSame ? true : false}
               onChange={()=>{}}
             />
@@ -420,7 +435,7 @@ const CompanyAddress = ({
             </h1>
             <Input
               // placeholder={shippingData?.country}
-              value={shippingAddress?.country ?? ""}
+              value={shippingAddress?.country?.country_name ?? ""}
               readOnly={isShippingSame ? true : false}
               onChange={()=>{}}
             />
@@ -434,6 +449,7 @@ const CompanyAddress = ({
           onChange={(e) => {
             setIsMultipleLocation(e.target.checked);
           }}
+          checked={isMultipleLocation ?? OnboardingDetail?.multiple_locations == 1}
         />
         <h1>Do you have multiple locations?</h1>
       </div>
@@ -559,11 +575,11 @@ const CompanyAddress = ({
                     <TableCell>{item?.address_line_2}</TableCell>
                     <TableCell>{item?.ma_pincode}</TableCell>
                     <TableCell>
-                      <div>{item?.ma_district}</div>
+                      <div>{item?.ma_district?.district_name}</div>
                     </TableCell>
-                    <TableCell>{item?.ma_city}</TableCell>
-                    <TableCell>{item?.ma_state}</TableCell>
-                    <TableCell>{item?.ma_country}</TableCell>
+                    <TableCell>{item?.ma_city?.city_name}</TableCell>
+                    <TableCell>{item?.ma_state?.state_name}</TableCell>
+                    <TableCell>{item?.ma_country?.country_name}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -576,7 +592,7 @@ const CompanyAddress = ({
         <h1 className="text-[12px] font-normal text-[#626973]">
           Upload Address Proof (Light Bill, Telephone Bill, etc.)
         </h1>
-        <Input type="file" className="w-fit" />
+        <Input type="file" className="w-fit" onChange={(e)=>{setFile(e.target.files)}} />
       </div>
       <div className="flex justify-end gap-4">
         <Button

@@ -10,7 +10,7 @@ export type ManufacturingDetail = {
     number_of_manpower:string,
     annual_revenue:string,
     cold_storage:number,
-    details_of_product_manufactured:string,
+    material_description:string,
     hsnsac_code:string,
     annual_capacity:string,
 }
