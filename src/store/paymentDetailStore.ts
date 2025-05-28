@@ -3,7 +3,7 @@ import { create } from 'zustand';
 type paymentDetail = {
     bank_name:string,
     ifsc_code:string,
-    account_name:string,
+    account_number:string,
     name_of_account_holder:string,
     type_of_account:string,
     currency:string

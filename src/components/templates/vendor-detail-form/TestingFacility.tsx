@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "../../atoms/input";
 import { Button } from "../../atoms/button";
 import { TTestingFacility, useTestingStore } from "@/src/store/TestingFacilityStore";
@@ -7,17 +7,25 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
+import { VendorOnboardingResponse } from "@/src/types/types";
 
 interface Props {
   ref_no:string,
   onboarding_ref_no:string
+  OnboardingDetail:VendorOnboardingResponse["message"]["testing_details_tab"]
 }
 
-const TestingDetail = ({ref_no,onboarding_ref_no}:Props) => {
+const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   const {testingDetail,updateTestingDetail} = useTestingStore();
 
   const [multipleTestingDetail,setMultipleTestingDetail] = useState<Partial<TTestingFacility>>();
   
+  useEffect(()=>{
+    OnboardingDetail?.map((item,index)=>{
+      updateTestingDetail(item)
+    })
+  },[])
+
   const handleSubmit = async()=>{
     const submitUrl = API_END_POINTS?.testingDetailSubmit;
     const updatedData = {testing_detail:testingDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}

@@ -1,25 +1,33 @@
 'use client'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "../../atoms/input";
 import { Button } from "../../atoms/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
+import { VendorOnboardingResponse } from "@/src/types/types";
 
 type TReputedPartnerDetails = {
   company_name:string,
   supplied_qtyyear:string,
-  remarks:string
+  remark:string
 }
 type Props = {
   ref_no:string,
-  onboarding_ref_no:string
+  onboarding_ref_no:string,
+  OnboardingDetail:VendorOnboardingResponse["message"]["reputed_partners_details_tab"]
 }
 
-const ReputedPartners = ({ref_no,onboarding_ref_no}:Props) => {
-  const [reputedPartnersDetails,setReputedPartnersDetails] = useState<TReputedPartnerDetails[]>([]);
+const ReputedPartners = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
+  const [reputedPartnersDetails,setReputedPartnersDetails] = useState<Partial<TReputedPartnerDetails[]>>([]);
   const [reputedPartners,setReputedPartners] = useState<Partial<TReputedPartnerDetails>>()
+
+  useEffect(()=>{
+    OnboardingDetail?.map((item)=>{
+      setReputedPartnersDetails([item])
+    })
+  },[])
 
   const handleSubmit = async()=>{
     const url = API_END_POINTS?.reputedDetailSubmit;
@@ -59,7 +67,7 @@ console.log(reputedPartnersDetails,"this is reputed partners")
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Remarks
           </h1>
-          <Input placeholder="" value={reputedPartners?.remarks ?? ""} onChange={(e)=>{setReputedPartners((prev)=>({...prev,remarks:e.target.value}))}}/>
+          <Input placeholder="" value={reputedPartners?.remark ?? ""} onChange={(e)=>{setReputedPartners((prev)=>({...prev,remark:e.target.value}))}}/>
         </div>
         <div className="col-span-1 flex items-end">
           <Button className="bg-blue-400 hover:bg-blue-300" onClick={()=>{handleAdd()}}>Add</Button>
@@ -87,7 +95,7 @@ console.log(reputedPartnersDetails,"this is reputed partners")
                     <TableCell className="font-medium">{index}</TableCell>
                     <TableCell>{item?.company_name}</TableCell>
                     <TableCell>{item?.supplied_qtyyear}</TableCell>
-                    <TableCell>{item?.remarks}</TableCell>
+                    <TableCell>{item?.remark}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

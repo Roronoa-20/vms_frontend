@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectGroup,
@@ -15,16 +15,25 @@ import { Button } from "@/components/ui/button";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
+import { VendorOnboardingResponse } from "@/src/types/types";
 
 type Props = {
   ref_no:string,
   onboarding_ref_no:string
+  OnboardingDetail:VendorOnboardingResponse["message"]["contact_details_tab"]
 }
 
-const ContactDetail = ({ref_no,onboarding_ref_no}:Props) => {
-
+const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
+  console.log(OnboardingDetail)
+  
   const {contactDetail,addContactDetail} = useContactDetailStore()
   const [contact,setContact] = useState<Partial<TcontactDetail>>()
+
+  useEffect(()=>{
+    OnboardingDetail?.map((item,index)=>{
+      addContactDetail(item)
+    })
+  },[])
 
 
   const handleAdd = ()=>{
