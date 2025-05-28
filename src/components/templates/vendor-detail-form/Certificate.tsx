@@ -15,6 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "..
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
+import { CrossIcon } from "lucide-react";
 
 interface Props {
   certificateCodeDropdown:TcertificateCodeDropdown["message"]["data"]["certificate_names"];
@@ -24,23 +25,25 @@ interface Props {
 }
 
 type certificateData = {
-  certificate_name:string,
+  certificate_code:string,
   valid_till:string,
-  file:FileList
+  file?:FileList
   fileDetail:CertificateAttachment
 }
 
 const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   console.log(OnboardingDetail)
   const [certificateData,setCertificateData] = useState<Partial<certificateData>>({});
-   const [multipleCertificateData,setMultipleCertificateData] = useState<certificateData[]>([]);
+  const [multipleCertificateData,setMultipleCertificateData] = useState<certificateData[]>([]);
+   
 
   useEffect(()=>{
     OnboardingDetail?.map((item)=>{
-      setMultipleCertificateData((prev:any)=>([...prev,{certificate_name:item?.name,fileDetail:{file_name:item?.certificate_attach?.file_name,name:item?.certificate_attach?.name,url:item?.certificate_attach?.url},valid_till:item?.valid_till}]))
+      setMultipleCertificateData((prev:any)=>([...prev,{certificate_code:item?.certificate_code,fileDetail:{file_name:item?.certificate_attach?.file_name,name:item?.certificate_attach?.name,url:item?.certificate_attach?.url},valid_till:item?.valid_till}]))
     })
   },[])
 
+    console.log(OnboardingDetail,"this is data of certificate")
 
   const fileInput = useRef<HTMLInputElement>(null);
 
@@ -69,12 +72,36 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
     const certificateSubmit:AxiosResponse = await requestWrapper({url:url,data:formData,method:"POST"})
     if(certificateSubmit?.status == 200){
       console.log("Successfully submit")
+      tableFetch
     }
     setCertificateData({})
     if(fileInput?.current){
       fileInput.current.value =''
     }
   }
+
+
+  const tableFetch = async ()=>{
+    const url = `${API_END_POINTS?.fetchDetails}?ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
+    const fetchOnboardingDetailResponse:AxiosResponse = await requestWrapper({url:url,method:"GET"});
+  const OnboardingDetail:VendorOnboardingResponse["message"]["certificate_details_tab"] = fetchOnboardingDetailResponse?.status == 200 ?fetchOnboardingDetailResponse?.data?.message?.certificate_details_tab : "";
+  console.log(OnboardingDetail,"this is after api")
+  OnboardingDetail?.map((item)=>{
+      setMultipleCertificateData([
+  {
+    certificate_code: item?.certificate_code,
+    fileDetail: {
+      file_name: item?.certificate_attach?.file_name,
+      name: item?.certificate_attach?.name,
+      url: item?.certificate_attach?.url,
+    },
+    valid_till: item?.valid_till,
+  },
+]);
+
+    })
+  }
+  
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
@@ -86,7 +113,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Certificate Name
           </h1>
-          <Select value={certificateData?.certificate_name ?? ""} onValueChange={(value)=>{setCertificateData((prev:any)=>({...prev,certificate_name:value}))}}>
+          <Select value={certificateData?.certificate_code ?? ""} onValueChange={(value)=>{setCertificateData((prev:any)=>({...prev,certificate_code:value}))}}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -114,7 +141,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
           <Input ref={fileInput} placeholder="" type="file" onChange={(e)=>{setCertificateData((prev:any)=>({...prev,file:e?.target?.files,fileDetail:{file_name:e?.target?.files != null? e.target.files[0].name:""}}))}}/>
         </div>
       </div>
-      <div className="flex justify-end pr-6"><Button onClick={()=>{handleAdd()}}>Add</Button></div>
+      <div className="flex justify-end pr-6 pb-6"><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleAdd()}}>Add</Button></div>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
                   <div className="flex w-full justify-between pb-4">
                     <h1 className="text-[20px] text-[#03111F] font-semibold">
@@ -126,24 +153,26 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
                     <TableHeader className="text-center">
                       <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                         <TableHead className="w-[100px]">Sr No.</TableHead>
-                        <TableHead className="text-center">Address1</TableHead>
-                        <TableHead className="text-center">Address2</TableHead>
-                        <TableHead className="text-center">Pincode</TableHead>
+                        <TableHead className="text-center">Company Code</TableHead>
+                        <TableHead className="text-center">Valid Till</TableHead>
+                        <TableHead className="text-center">File</TableHead>
+                        <TableHead className="text-center">Action</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody className="text-center">
                       {multipleCertificateData?.map((item, index) => (
                         <TableRow key={index}>
                           <TableCell className="font-medium">{index}</TableCell>
-                          <TableCell>{item?.certificate_name}</TableCell>
+                          <TableCell>{item?.certificate_code}</TableCell>
                           <TableCell>{item?.valid_till}</TableCell>
                           <TableCell>{item?.fileDetail?.file_name}</TableCell>
+                          <TableCell className="flex justify-center items-center"><CrossIcon className="rotate-45 text-red-400 cursor-pointer"/></TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
                 </div>
-      <div className="flex justify-end pr-4"><Button onClick={()=>{handleSubmit()}}>Submit</Button></div>
+      <div className="flex justify-end pr-4"><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Submit</Button></div>
     </div>
   );
 };
