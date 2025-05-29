@@ -734,4 +734,256 @@ export type TCompanyDetailForm = {
     multiple_locations:number,
     multiple_location_table:TmultipleLocation[]
   }
+
+
+  export type dashboardCardData = {
+    status: string;
+    message: string;
+    role: string[];
+    team: string;
+    total_vendor_count: number;
+    pending_vendor_count: number;
+    approved_vendor_count: number;
+    current_month_vendor: number;
+    rejected_vendor_count:number;
+  }
+  
+  export interface DashboardPOTableItem {
+    name: string;
+    creation: string;
+    modified: string;
+    modified_by: string;
+    owner: string;
+    docstatus: number;
+    idx: number;
+    supplier_name: string;
+    po_no: string;
+    bill_to_company: string;
+    ship_to_company: string;
+    rfq_code: string | null;
+    vendor_gst_no: string | null;
+    contact_person: string | null;
+    phonemobile_no: string | null;
+    email: string | null;
+    delivery_terms: string | null;
+    dispatch_mode: string;
+    currency: string;
+    supplier_quote_ref: string | null;
+    po_date: string | null;
+    ref_pr_date: string | null;
+    contact_person2: string | null;
+    telephone_no: string;
+    email2: string;
+    total_gross_amount: string;
+    total_value_in_words: string | null;
+    vendor_code: string;
+    purchase_order_type: string;
+    purchase_order_category: string;
+    purchase_organization: string;
+    company_code: string;
+    collection_number: string;
+    delivery_date: string | null;
+    purchase_group: string;
+    ref_pr_no: string;
+    ref_pr_person: string | null;
+    phone_no: string;
+    msme_no: string | null;
+    total_input_cgst: string;
+    delivery_schedule: string | null;
+    po_change_date: string | null;
+    po_release_date: string | null;
+    tax_code: string;
+    exchange_rate: string;
+    total_input_sgst: string;
+    vendors_reason_to_reject: string | null;
+    storage_location: string;
+    po_plant: string;
+    lead_time: string | null;
+    packaging_shipping_details: string;
+    warranty_support_details: string | null;
+    return_refund_policy: string | null;
+    quote_vol_per_unit: string | null;
+    total_order_pricing: string | null;
+    rfq_date: string | null;
+    status: string;
+    po_number: string;
+    dl_no: string | null;
+    gstin_no: string | null;
+    terms_of_payment: string;
+    terms_of_payment_code: string;
+    total_value_of_po__so: string | null;
+    other_note: string | null;
+    total_input_igst: string;
+    vendor_status: string;
+    vendors_tentative_delivery_date: string | null;
+    street_1: string;
+    street_4: string;
+    city: string;
+    district: string;
+    state: string | null;
+    street_2: string;
+    street_3: string;
+    country: string;
+    pincode: string;
+    shipping_street1: string;
+    shipping_street4: string;
+    shipping_city: string;
+    shipping_state: string | null;
+    description: string | null;
+    shipping_street2: string;
+    shipping_street3: string;
+    shipping_district: string | null;
+    shipping_country: string;
+    shipping_pincode: string;
+    instructions: string | null;
+    _user_tags: string | null;
+    _comments: string | null;
+    _assign: string | null;
+    _liked_by: string | null;
+  }
+  
+  export interface DashboardPOTableData {
+    message: DashboardPOTableItem[];
+  }
+  
+  export interface PurchaseOrderItem {
+    name: string;
+    owner: string;
+    creation: string;
+    modified: string;
+    modified_by: string;
+    docstatus: number;
+    idx: number;
+    product_code: string;
+    product_name: string | null;
+    material_code: string;
+    material_type: string;
+    material_category: string;
+    product_category: string;
+    hsnsac: string;
+    uom: string;
+    quantity: string;
+    rate: string;
+    pending_qty: string | null;
+    dispatch_qty: string | null;
+    price: string;
+    base_amount: string;
+    total_input_sgst: string;
+    total_input_cgst: string;
+    total_input_igst: string;
+    short_text: string;
+    plant: string;
+    schedule_date: string | null;
+    po_date: string | null;
+    delivery_date: string | null;
+    parent: string;
+    parentfield: string;
+    parenttype: string;
+    doctype: string;
+  }
+  
+  export interface PurchaseOrder {
+    name: string;
+    owner: string;
+    creation: string;
+    modified: string;
+    modified_by: string;
+    docstatus: number;
+    idx: number;
+    supplier_name: string;
+    po_no: string;
+    bill_to_company: string;
+    ship_to_company: string;
+    rfq_code: string | null;
+    vendor_gst_no: string | null;
+    contact_person: string | null;
+    phonemobile_no: string | null;
+    email: string | null;
+    delivery_terms: string | null;
+    dispatch_mode: string;
+    currency: string;
+    supplier_quote_ref: string | null;
+    po_date: string | null;
+    ref_pr_date: string | null;
+    contact_person2: string | null;
+    telephone_no: string;
+    email2: string;
+    total_gross_amount: string;
+    total_value_in_words: string | null;
+    vendor_code: string;
+    purchase_order_type: string;
+    purchase_order_category: string;
+    purchase_organization: string;
+    company_code: string;
+    collection_number: string;
+    delivery_date: string | null;
+    purchase_group: string;
+    ref_pr_no: string;
+    ref_pr_person: string | null;
+    phone_no: string;
+    msme_no: string | null;
+    total_input_cgst: string;
+    delivery_schedule: string | null;
+    po_change_date: string | null;
+    po_release_date: string | null;
+    tax_code: string;
+    exchange_rate: string;
+    total_input_sgst: string;
+    vendors_reason_to_reject: string | null;
+    storage_location: string;
+    po_plant: string;
+    lead_time: string | null;
+    packaging_shipping_details: string;
+    warranty_support_details: string | null;
+    return_refund_policy: string | null;
+    quote_vol_per_unit: string | null;
+    total_order_pricing: string | null;
+    rfq_date: string | null;
+    status: string;
+    po_number: string;
+    dl_no: string | null;
+    gstin_no: string | null;
+    terms_of_payment: string;
+    terms_of_payment_code: string;
+    total_value_of_po__so: string | null;
+    other_note: string | null;
+    total_input_igst: string;
+    vendor_status: string;
+    vendors_tentative_delivery_date: string | null;
+    street_1: string;
+    street_4: string;
+    city: string;
+    district: string;
+    state: string | null;
+    street_2: string;
+    street_3: string;
+    country: string;
+    pincode: string;
+    shipping_street1: string;
+    shipping_street4: string;
+    shipping_city: string;
+    shipping_state: string | null;
+    description: string | null;
+    shipping_street2: string;
+    shipping_street3: string;
+    shipping_district: string | null;
+    shipping_country: string;
+    shipping_pincode: string;
+    instructions: string | null;
+    doctype: string;
+    po_items: PurchaseOrderItem[];
+  }
+  
+  export interface PurchaseOrderResponse {
+    message: PurchaseOrder;
+  }
+  
+  export interface DashboardTableType {
+    status: string;
+    message: string;
+    total_vendor_onboarding: VendorOnboarding[];
+    pending_vendor_onboarding:VendorOnboarding[];
+    rejected_vendor_onboarding:VendorOnboarding[];
+    approved_vendor_onboarding:VendorOnboarding[];
+  }
   

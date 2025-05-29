@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { Tlogin } from "@/src/types/types";
@@ -11,7 +11,7 @@ import Cookies from "js-cookie";
 import EmailDialog from "../molecules/forgotPassword/EmailDialog";
 import OtpDialog from "../molecules/forgotPassword/OtpDialog";
 import PasswordDialog from "../molecules/forgotPassword/PasswordDialog";
-import { useAuth } from "../../context/AuthContext";
+import { AuthProvider, useAuth } from "../../context/AuthContext";
 export default function LoginForm() {
   const router = useRouter();
   const [form, setForm] = useState<Tlogin>();

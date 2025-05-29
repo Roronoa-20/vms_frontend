@@ -2,8 +2,11 @@ import Logo from "../atoms/vms-logo";
 import LoginForm from "../templates/login-form";
 import Slider from "../molecules/slider";
 import Image from "next/image";
+import { AuthProvider } from "@/src/context/AuthContext";
 export default function LoginPage() {
   return (
+    <AuthProvider>
+
     <div className="flex min-h-screen">
       {/* banner section */}
       <div className="w-[60%] relative">
@@ -24,5 +27,6 @@ export default function LoginPage() {
         <LoginForm />
       </div>
     </div>
+    </AuthProvider>
   );
 }
