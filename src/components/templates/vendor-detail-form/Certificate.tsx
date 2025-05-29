@@ -16,6 +16,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import { CrossIcon } from "lucide-react";
+import { it } from "node:test";
 
 interface Props {
   certificateCodeDropdown:TcertificateCodeDropdown["message"]["data"]["certificate_names"];
@@ -38,11 +39,9 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
   const [multipleCertificateData,setMultipleCertificateData] = useState<certificateData[]>([]);
    
 
-  // useEffect(()=>{
-  //   OnboardingDetail?.map((item)=>{
-  //     setMultipleCertificateData((prev:any)=>([...prev,{certificate_code:item?.certificate_code,fileDetail:{file_name:item?.certificate_attach?.file_name,name:item?.certificate_attach?.name,url:item?.certificate_attach?.url},valid_till:item?.valid_till,name:item?.name}]))
-  //   })
-  // },[])
+  useEffect(()=>{
+    
+  },[multipleCertificateData])
 
 
 
@@ -91,7 +90,6 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
   console.log(OnboardingDetails,"this is after api")
   await Promise.all(OnboardingDetails?.map((item)=>{
       setMultipleCertificateData((prev:any)=>([...prev,{certificate_code:item?.certificate_code,fileDetail:{file_name:item?.certificate_attach?.file_name,name:item?.certificate_attach?.name,url:item?.certificate_attach?.url},valid_till:item?.valid_till,name:item?.name}]))
-
     }))
   }
   
@@ -99,6 +97,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
     const url = `${API_END_POINTS?.deleteCertificate}?row_id=${row_id}&ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`
     const deleteResponse:AxiosResponse = await requestWrapper({url:url,method:"POST"});
     if(deleteResponse?.status == 200){
+      setMultipleCertificateData([]);
       tableFetch();
     }
   }
@@ -159,30 +158,29 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
                         <TableHead className="text-center">Action</TableHead>
                       </TableRow>
                     </TableHeader>
-                    
-                      {multipleCertificateData?multipleCertificateData.map((item, index) => (
-                        <TableBody className="text-center">
-                        <TableRow key={index}>
-                        <TableCell className="font-medium">{index}</TableCell>
-                        <TableCell>{item?.certificate_code}</TableCell>
-                        <TableCell>{item?.valid_till}</TableCell>
-                        <TableCell>{item?.fileDetail?.file_name}</TableCell>
-                        <TableCell className="flex justify-center items-center"><CrossIcon onClick={()=>{deleteRow(item?.name?item?.name:"")}} className="rotate-45 text-red-400 cursor-pointer"/></TableCell>
+                    <TableBody>
+                    {multipleCertificateData?.length > 0 ?
+                      multipleCertificateData.map((item, index) => (
+                        <TableRow key={item?.name?item?.name:""}>
+                          <TableCell className="font-medium">{index}</TableCell>
+                          <TableCell>{item?.certificate_code}</TableCell>
+                          <TableCell>{item?.valid_till}</TableCell>
+                          <TableCell>{item?.fileDetail?.file_name}</TableCell>
+                          <TableCell className="flex justify-center items-center"><CrossIcon onClick={()=>{deleteRow(item?.name?item?.name:"")}} className="rotate-45 text-red-400 cursor-pointer"/></TableCell>
                         </TableRow>
-                        </TableBody>
                       )):
-                      OnboardingDetail.map((item, index) => (
-                        <TableBody>
-                        <TableRow key={index}>
+                      OnboardingDetail?.map((item, index) => (  
+                       
+                        <TableRow key={item?.name?item?.name:""}>
                           <TableCell className="font-medium">{index}</TableCell>
                           <TableCell>{item?.certificate_code}</TableCell>
                           <TableCell>{item?.valid_till}</TableCell>
                           <TableCell>{item?.certificate_attach?.file_name}</TableCell>
                           <TableCell className="flex justify-center items-center"><CrossIcon onClick={()=>{deleteRow(item?.name?item?.name:"")}} className="rotate-45 text-red-400 cursor-pointer"/></TableCell>
                         </TableRow>
-                        </TableBody>
                       ))
                     }
+                    </TableBody>
                   </Table>
                 </div>
       <div className="flex justify-end pr-4"><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Submit</Button></div>
