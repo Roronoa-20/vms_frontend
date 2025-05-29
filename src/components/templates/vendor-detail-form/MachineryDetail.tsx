@@ -1,9 +1,46 @@
 'use client'
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "../../atoms/input";
 import { Button } from "../../atoms/button";
+import { TMachineDetail, useMachineDetailStore } from "@/src/store/MachinaryDetailStore";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import { AxiosResponse } from "axios";
+import requestWrapper from "@/src/services/apiCall";
+import { VendorOnboardingResponse } from "@/src/types/types";
 
-const MachineryDetail = () => {
+interface Props {
+  ref_no:string,
+  onboarding_ref_no:string
+  OnboardingDetail:VendorOnboardingResponse["message"]["machinery_details_tab"]
+}
+
+const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
+  const {machineDetail,updateMachineDetail} = useMachineDetailStore();
+
+  useEffect(()=>{
+    OnboardingDetail?.map((item,index)=>{
+      updateMachineDetail(item)
+    })
+  },[])
+
+  const [multipleMachineDetail,setMultipleMachineDetail] = useState<TMachineDetail | null>(null);
+  
+  const handleSubmit = async()=>{
+    const submitUrl = API_END_POINTS?.machineDetailSubmit;
+    const updatedData = {machinery_detail:machineDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}
+    const machineDetailResponse:AxiosResponse = await requestWrapper({url:submitUrl,data:{data:updatedData},method:"POST"});
+
+    if(machineDetailResponse?.status == 200){
+      console.log("successfully submitted");
+    }
+  }
+
+  const handleAdd = async()=>{
+    updateMachineDetail(multipleMachineDetail);
+    setMultipleMachineDetail(null);
+  }
+
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
@@ -14,30 +51,63 @@ const MachineryDetail = () => {
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Equipment Name
           </h1>
-          <Input placeholder="" />
+          <Input placeholder="" value={multipleMachineDetail?.equipment_name ?? ""} onChange={(e)=>{setMultipleMachineDetail((prev:any)=>({...prev,equipment_name:e.target.value}))}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Equipment Qty.
           </h1>
-          <Input placeholder="" />
+          <Input placeholder="" value={multipleMachineDetail?.equipment_qty ?? ""} onChange={(e)=>{setMultipleMachineDetail((prev:any)=>({...prev,equipment_qty:e.target.value}))}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Capacity
           </h1>
-          <Input placeholder="" />
+          <Input placeholder="" value={multipleMachineDetail?.capacity ?? ""} onChange={(e)=>{setMultipleMachineDetail((prev:any)=>({...prev,capacity:e.target.value}))}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Remarks
           </h1>
-          <Input placeholder="" />
+          <Input placeholder="" value={multipleMachineDetail?.remarks ?? ""} onChange={(e)=>{setMultipleMachineDetail((prev:any)=>({...prev,remarks:e.target.value}))}} />
         </div>
         <div className="col-span-1 flex items-end">
-          <Button className="bg-blue-400 hover:bg-blue-300">Add</Button>
+          <Button className="bg-blue-400 hover:bg-blue-300" onClick={()=>{handleAdd()}}>Add</Button>
         </div>
       </div>
+      <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
+            <div className="flex w-full justify-between pb-4">
+              <h1 className="text-[20px] text-[#03111F] font-semibold">
+                Multiple Contact
+              </h1>
+            </div>
+            <Table className=" max-h-40 overflow-y-scroll">
+              {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+              <TableHeader className="text-center">
+                <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
+                  <TableHead className="w-[100px]">Sr No.</TableHead>
+                  <TableHead className="text-center">Address1</TableHead>
+                  <TableHead className="text-center">Address2</TableHead>
+                  <TableHead className="text-center">Pincode</TableHead>
+                  <TableHead className="text-center">District</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="text-center">
+                {machineDetail?.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">{index}</TableCell>
+                    <TableCell>{item?.capacity}</TableCell>
+                    <TableCell>{item?.equipment_name}</TableCell>
+                    <TableCell>{item?.equipment_qty}</TableCell>
+                    <TableCell>
+                      {item?.remarks}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          <div className="flex justify-end pr-4"><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };
