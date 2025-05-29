@@ -13,7 +13,7 @@ import DashboardCurrentMonthsVendorsTable from "./Dashboard-Current-Months-Vendo
 
 type Props = {
   cardData: dashboardCardData
-  dashboardPOTableData: DashboardPOTableItem[]
+  dashboardPOTableData?: DashboardTableType
   dashboardTotalVendorTableData:DashboardTableType
   dashboardPendingVendorTableData: DashboardTableType
   dashboardApprovedVendorTableData:DashboardTableType
@@ -129,10 +129,10 @@ const DashboardCards = ({ ...Props }: Props) => {
             {item.name === "Total Vendors" && <DashboardTotalVendorsTable dashboardTableData={Props.dashboardTotalVendorTableData} />}
             {item.name === "Pending Vendors" && <DashboardPendingVendorsTable dashboardTableData={Props.dashboardPendingVendorTableData} />}
             {item.name === "Onboarded Vendors" && <DashboardApprovedVendorsTable dashboardTableData={Props.dashboardApprovedVendorTableData} />}
-            {item.name === "Dispatch Details" && <DashboardDispatchVendorsTable dashboardTableData={Props.dashboardPOTableData} />}
-            {item.name === "Purchase & Ongoing Orders" && <PurchaseAndOngoingOrders dashboardPOTableData={Props.dashboardPOTableData} />}
-            {item.name === "Payment Request" && <DashboardPaymentVendorsTable dashboardTableData={Props.dashboardPOTableData} />}
-            {item.name === "Current Month Vendors" && <DashboardCurrentMonthsVendorsTable dashboardTableData={Props.dashboardPOTableData} />}
+            {/* {item.name === "Dispatch Details" && <DashboardDispatchVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
+            {/* {item.name === "Purchase & Ongoing Orders" && <PurchaseAndOngoingOrders dashboardPOTableData={Props.dashboardPOTableData} />} */}
+            {/* {item.name === "Payment Request" && <DashboardPaymentVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
+            {/* {item.name === "Current Month Vendors" && <DashboardCurrentMonthsVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
             {item.name === "Rejcted Vendors" && <DashboardRejectedVendorsTable dashboardTableData={Props.dashboardRejectedVendorTableData} />}
           </TabsContent>
         ))}

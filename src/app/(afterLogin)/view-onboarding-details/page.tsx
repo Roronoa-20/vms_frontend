@@ -5,10 +5,12 @@ import { TvendorOnboardingDetail, TvendorRegistrationDropdown } from '@/src/type
 import { AxiosResponse } from 'axios';
 import React from 'react'
 
-const page = () => {
-
+const page = async({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
+  const vendor_onboarding = await searchParams["vendor_onboarding"];
+  const tabtype = await searchParams["tabtype"];
+  const refno = await searchParams["refno"]
   return (
-    <ViewOnboardingDetails/>
+    <ViewOnboardingDetails vendor_onboarding={ vendor_onboarding as string} tabtype={tabtype as string} refno={refno as string}/>
   )
 }
 

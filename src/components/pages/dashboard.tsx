@@ -19,7 +19,7 @@ const Dashboard = async () => {
       cookie: cookieHeaderString
     }
   });
-  const CardData: dashboardCardData["message"] =
+  const CardData: dashboardCardData =
     dashboardCardApi?.status == 200 ? dashboardCardApi?.data?.message : "";
 
   //po table 
@@ -30,8 +30,11 @@ const Dashboard = async () => {
       cookie: cookieHeaderString
     }
   });
-  const dashboardPOTableData: DashboardPOTableData["message"] =
+  const dashboardPOTableData: DashboardPOTableData =
     dashboardPOTableDataApi?.status == 200 ? dashboardPOTableDataApi?.data?.message : "";
+
+  console.log(dashboardPOTableData, "dashboardPOTableData-------------------------")
+
   //total vendor table
   const dashboardTotalVendorTableDataApi: AxiosResponse = await requestWrapper({
     url: `${API_END_POINTS?.dashboardTotalVendorTableURL}?usr=${user}`,
@@ -40,7 +43,7 @@ const Dashboard = async () => {
       cookie: cookieHeaderString
     }
   });
-  const dashboardTotalVendorTableData: DashboardTableType["message"] =
+  const dashboardTotalVendorTableData: DashboardTableType =
   dashboardTotalVendorTableDataApi?.status == 200 ? dashboardTotalVendorTableDataApi?.data?.message : "";
 
 // pending vendor table
@@ -51,7 +54,7 @@ const Dashboard = async () => {
       cookie: cookieHeaderString
     }
   });
-  const dashboardPendingVendorTableData: DashboardTableType["message"] =
+  const dashboardPendingVendorTableData: DashboardTableType =
   dashboardPendingVendorTableDataApi?.status == 200 ? dashboardPendingVendorTableDataApi?.data?.message : "";
 
 // approved vendor table
@@ -62,7 +65,7 @@ const Dashboard = async () => {
       cookie: cookieHeaderString
     }
   });
-  const dashboardApprovedVendorTableData: DashboardTableType["message"] =
+  const dashboardApprovedVendorTableData: DashboardTableType =
   dashboardApprovedVendorTableDataApi?.status == 200 ? dashboardApprovedVendorTableDataApi?.data?.message : "";
 
   // rejected vendor table
@@ -73,7 +76,7 @@ const Dashboard = async () => {
       cookie: cookieHeaderString
     }
   });
-  const dashboardRejectedVendorTableData: DashboardTableType["message"] =
+  const dashboardRejectedVendorTableData: DashboardTableType =
   dashboardRejectedVendorTableDataApi?.status == 200 ? dashboardRejectedVendorTableDataApi?.data?.message : "";
   // const dashboardTableDataApi: AxiosResponse = await requestWrapper({
   //   url: `${API_END_POINTS?.dashboardTableURL}?usr=${user}`,
@@ -92,7 +95,8 @@ const Dashboard = async () => {
       {/* Cards */}
       <DashboardCardCounter
         cardData={CardData}
-        dashboardPOTableData={dashboardPOTableData}
+        // dashboardPOTableData={dashboardPOTableData}
+        // dashboardDispatchVendorTableData={dashboardTotalVendorTableData}
         dashboardTotalVendorTableData={dashboardTotalVendorTableData} 
         dashboardPendingVendorTableData={dashboardPendingVendorTableData}
         dashboardApprovedVendorTableData={dashboardApprovedVendorTableData}

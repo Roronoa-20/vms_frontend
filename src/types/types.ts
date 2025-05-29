@@ -184,6 +184,7 @@ type VendorOnboarding = {
   testing_detail: any[];
   machinery_detail: any[];
   vendor_name:string;
+  qms_form:string
 };
 
 type MultipleCompanyData = {
@@ -977,6 +978,27 @@ export type TCompanyDetailForm = {
   export interface PurchaseOrderResponse {
     message: PurchaseOrder;
   }
+
+  type dispatch_vendor_onboarding = {
+    name: string;
+    owner: string;
+    creation: string;
+    modified: string;
+    modified_by: string;
+    docstatus: number;
+    idx: number;
+    ref_no: string;
+    vendor_name: string;
+    company_name: string;
+    onboarding_form_status: string 
+    purchase_t_approval: string 
+    purchase_h_approval: string 
+    accounts_t_approval: string 
+    qms_form: string 
+    purchase_team_undertaking: number;
+    accounts_team_undertaking: number;
+    purchase_head_undertaking: number;
+  }
   
   export interface DashboardTableType {
     status: string;
@@ -985,5 +1007,7 @@ export type TCompanyDetailForm = {
     pending_vendor_onboarding:VendorOnboarding[];
     rejected_vendor_onboarding:VendorOnboarding[];
     approved_vendor_onboarding:VendorOnboarding[];
+    dispatch_vendor_onboarding:dispatch_vendor_onboarding[]
+    qms_form:string
   }
   
