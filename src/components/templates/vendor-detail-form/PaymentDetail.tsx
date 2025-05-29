@@ -15,6 +15,7 @@ import { Button } from "../../atoms/button";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
+import { useAuth } from "@/src/context/AuthContext";
 
 interface Props {
   ref_no:string,
@@ -28,6 +29,12 @@ interface Props {
 const PaymentDetail = ({ref_no,onboarding_ref_no,bankNameDropown,currencyDropown,OnboardingDetail}:Props) => {
   const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
   const [bankProofFile,setBankProofFile] = useState<FileList | null>(null);
+  const {designation} = useAuth();
+  if(!designation){
+    return(
+      <div>Loading...</div>
+    )
+  }
   const handleSubmit = async()=>{
     const submitUrl = API_END_POINTS?.bankSubmit;
     const updatedData = {...paymentDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}
@@ -143,7 +150,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,bankNameDropown,currencyDropown
           </div>
         </div>
       </div>
-      <div className="flex justify-end pr-4"><Button className="bg-blue-400 hover:to-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
+      <div className={`flex justify-end pr-4 ${designation?"hidden":""} `}><Button className="bg-blue-400 hover:to-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };

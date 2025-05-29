@@ -17,6 +17,7 @@ import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import { CrossIcon } from "lucide-react";
 import { it } from "node:test";
+import { useAuth } from "@/src/context/AuthContext";
 
 interface Props {
   certificateCodeDropdown:TcertificateCodeDropdown["message"]["data"]["certificate_names"];
@@ -37,17 +38,21 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
   console.log(OnboardingDetail)
   const [certificateData,setCertificateData] = useState<Partial<certificateData>>({});
   const [multipleCertificateData,setMultipleCertificateData] = useState<certificateData[]>([]);
-   
-
+  
+  
   useEffect(()=>{
     
   },[multipleCertificateData])
-
-
-
-    console.log(OnboardingDetail,"this is data of certificate")
-
+  
+  
+  
+  console.log(OnboardingDetail,"this is data of certificate")
+  
   const fileInput = useRef<HTMLInputElement>(null);
+  const { designation } = useAuth();
+  if(!designation){
+    return <div>Loading</div>
+  }
 
   const handleSubmit = async ()=>{
     const url = API_END_POINTS?.certificateSubmit;
@@ -88,9 +93,9 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
     const fetchOnboardingDetailResponse:AxiosResponse = await requestWrapper({url:url,method:"GET"});
   const OnboardingDetails:VendorOnboardingResponse["message"]["certificate_details_tab"] = fetchOnboardingDetailResponse?.status == 200 ?fetchOnboardingDetailResponse?.data?.message?.certificate_details_tab : "";
   console.log(OnboardingDetails,"this is after api")
-  await Promise.all(OnboardingDetails?.map((item)=>{
+  OnboardingDetails?.map((item)=>{
       setMultipleCertificateData((prev:any)=>([...prev,{certificate_code:item?.certificate_code,fileDetail:{file_name:item?.certificate_attach?.file_name,name:item?.certificate_attach?.name,url:item?.certificate_attach?.url},valid_till:item?.valid_till,name:item?.name}]))
-    }))
+    })
   }
   
   const deleteRow = async(row_id:string)=>{
@@ -140,7 +145,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
           <Input ref={fileInput} placeholder="" type="file" onChange={(e)=>{setCertificateData((prev:any)=>({...prev,file:e?.target?.files,fileDetail:{file_name:e?.target?.files != null? e.target.files[0].name:""}}))}}/>
         </div>
       </div>
-      <div className="flex justify-end pr-6 pb-6"><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleAdd()}}>Add</Button></div>
+      <div className={`flex justify-end pr-6 pb-6 ${designation?"hidden":""}`}><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleAdd()}}>Add</Button></div>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
                   <div className="flex w-full justify-between pb-4">
                     <h1 className="text-[20px] text-[#03111F] font-semibold">
@@ -183,7 +188,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
                     </TableBody>
                   </Table>
                 </div>
-      <div className="flex justify-end pr-4"><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Submit</Button></div>
+      <div className="flex justify-end pr-4"><Button className={`bg-blue-400 hover:bg-blue-400 ${designation ? 'hidden' : ''}`} onClick={()=>{handleSubmit()}}>Submit</Button></div>
     </div>
   );
 };

@@ -34,7 +34,10 @@ const { setAuthData } = useAuth();
       const savedRole = Cookies.get("role");
       const savedName = Cookies.get("full_name");
       const savedid = Cookies.get("user_id");
-      setAuthData(savedRole, savedName, savedid);
+      // const designation = response?.data?.message?.employee?.designation;
+      const designation = await response?.data?.message?.employee.designation as string;
+      Cookies.set("designation", designation);
+      setAuthData(savedRole, savedName, savedid,designation);
       router.push("/dashboard");
     }
   };

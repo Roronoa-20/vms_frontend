@@ -17,6 +17,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import { TbankNameDropdown, TcertificateCodeDropdown, TCompanyAddressDropdown, TcompanyDetailDropdown, TCurrencyDropdown, TdocumentDetailDropdown, TvendorOnboardingDetail, VendorOnboardingResponse } from '@/src/types/types'
+import ApprovalButton from '../molecules/ApprovalButton'
 
 interface Props {
   vendor_onboarding: any;
@@ -25,7 +26,6 @@ interface Props {
 }
 
 const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props) => {
-
       const cookie = await cookies()
       const cookieStore = await cookies();
       const user = cookie.get("user_id")?.value
@@ -125,10 +125,7 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
           ""
         )}
       </div>
-      <div className='w-full flex justify-end gap-5 px-5 pt-4'>
-        <Button className={`bg-blue-400 hover:bg-blue-400 ${tabType == "Company Detail"?"hidden":""}`}>Back</Button>
-        <Button className={`bg-blue-400 hover:bg-blue-400 ${tabType == "Certificate"?"hidden":""}`}>Next</Button>
-      </div>
+      <ApprovalButton tabtype={tabType} ref_no={refno}/>
     </div>
   )
 }

@@ -8,6 +8,7 @@ import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
 import { VendorOnboardingResponse } from "@/src/types/types";
+import { useAuth } from "@/src/context/AuthContext";
 
 interface Props {
   ref_no:string,
@@ -16,15 +17,23 @@ interface Props {
 }
 
 const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
+  const {designation} = useAuth();
   const {testingDetail,updateTestingDetail} = useTestingStore();
-
+  
   const [multipleTestingDetail,setMultipleTestingDetail] = useState<Partial<TTestingFacility>>();
   
+  
+  if(!designation){
+    return(
+      <div>Loading...</div>
+    )
+  }
   useEffect(()=>{
     OnboardingDetail?.map((item,index)=>{
       updateTestingDetail(item)
     })
   },[])
+  
 
   const handleSubmit = async()=>{
     const submitUrl = API_END_POINTS?.testingDetailSubmit;
@@ -71,7 +80,7 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
           <Input placeholder="" value={multipleTestingDetail?.remarks ?? ""} onChange={(e)=>{setMultipleTestingDetail((prev:any)=>({...prev,remarks:e.target.value}))}}/>
         </div>
         <div className="col-span-1 flex items-end">
-          <Button className="bg-blue-400 hover:bg-blue-300" onClick={()=>{handleAdd()}}>Add</Button>
+          <Button className={`bg-blue-400 hover:bg-blue-300 ${designation?"hidden":""}`} onClick={()=>{handleAdd()}}>Add</Button>
         </div>
       </div>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
@@ -106,7 +115,7 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               </TableBody>
             </Table>
           </div>
-      <div className="flex justify-end pr-4" onClick={()=>{handleSubmit()}}><Button>Next</Button></div>
+      <div className={`flex justify-end pr-4 ${designation?"hidden":""}`} onClick={()=>{handleSubmit()}}><Button>Next</Button></div>
     </div>
   );
 };

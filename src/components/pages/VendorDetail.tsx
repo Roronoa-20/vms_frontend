@@ -27,6 +27,7 @@ import {
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
+import { useAuth } from "@/src/context/AuthContext";
 
 interface Props {
   vendor_onboarding: string;
@@ -35,7 +36,6 @@ interface Props {
 }
 
 const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
-
   const cookie = await cookies()
   const cookieStore = await cookies();
   const user = cookie.get("user_id")?.value

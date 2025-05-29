@@ -16,6 +16,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/src/context/AuthContext";
 
 interface Props {
   companyDetailDropdown:TcompanyDetailDropdown["message"]["data"]
@@ -25,7 +26,12 @@ interface Props {
 }
 
 const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,OnboardingDetail}:Props) => {
-console.log(OnboardingDetail,"this is detail")
+  const {designation} = useAuth();
+  if(!designation){
+    return(
+      <div>Loading...</div>
+    )
+  }
   const {data,updateField,resetForm} = useCompanyDetailFormStore(); 
   const router = useRouter();
 
@@ -201,7 +207,7 @@ console.log(OnboardingDetail,"this is detail")
         </div>
       </div>
       <div className="flex justify-end pr-6">
-      <Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>handleSubmit()}>Next</Button>
+      <Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`} onClick={()=>handleSubmit()}>Next</Button>
       </div>
     </div>
   );

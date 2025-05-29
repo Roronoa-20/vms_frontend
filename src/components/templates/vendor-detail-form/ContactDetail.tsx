@@ -16,6 +16,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import { VendorOnboardingResponse } from "@/src/types/types";
+import { useAuth } from "@/src/context/AuthContext";
 
 type Props = {
   ref_no:string,
@@ -24,16 +25,22 @@ type Props = {
 }
 
 const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
-  console.log(OnboardingDetail)
-  
   const {contactDetail,addContactDetail} = useContactDetailStore()
   const [contact,setContact] = useState<Partial<TcontactDetail>>()
-
   useEffect(()=>{
     OnboardingDetail?.map((item,index)=>{
       addContactDetail(item)
     })
   },[])
+  const {designation} = useAuth();
+
+  if(!designation){
+    return(
+      <div>Loading...</div>
+    )
+  }
+  
+
 
 
   const handleAdd = ()=>{
@@ -91,7 +98,7 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
           <Input placeholder="" onChange={(e)=>{setContact((prev:any)=>({...prev,department_name:e.target.value}))}} value={contact?.department_name ?? ""}/>
         </div>
       </div>
-      <div className="flex justify-end pb-4">
+      <div className={`flex justify-end pb-4 ${designation?"hidden":""}`}>
         <Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleAdd()}}>Add</Button>
       </div>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
@@ -130,7 +137,7 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               </TableBody>
             </Table>
           </div>
-          <div className="flex justify-end pr-4"><Button onClick={()=>{handleSubmit()}}>Next</Button></div>
+          <div className={`flex justify-end pr-4 ${designation?"hidden":""}`}><Button onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };

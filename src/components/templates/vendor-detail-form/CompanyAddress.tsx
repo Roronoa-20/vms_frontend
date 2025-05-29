@@ -21,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../atoms/table";
+import { useAuth } from "@/src/context/AuthContext";
 
 interface Props {
   companyAddressDropdown?: TCompanyAddressDropdown["message"]["data"];
@@ -63,6 +64,11 @@ const CompanyAddress = ({
   OnboardingDetail
 }: Props) => {
 
+
+  const { designation } = useAuth();
+  if(!designation){
+    return <div className="flex justify-center items-center h-screen">Loading...</div>
+  }
   useEffect(()=>{
     OnboardingDetail?.multiple_location_table?.map((item)=>{
       addMultipleLocation({address_line_1:item?.address_line_1,
@@ -180,7 +186,7 @@ const CompanyAddress = ({
     const updatedData: TmultipleLocation = {
       address_line_1: MultipleAddress?.address1,
       address_line_2: MultipleAddress?.address2,
-      ma_pincode: MultipleAddress?.pincode,
+      ma_pincode: MultipleAddress?.pincode ?? "",
       ma_district: MultipleAddress?.district,
       ma_state: MultipleAddress?.state,
       ma_city: MultipleAddress?.city,
@@ -532,7 +538,7 @@ const CompanyAddress = ({
                   readOnly
                 />
               </div>
-              <div>
+              <div className={`${designation?"hidden":""}`}>
                 <Button
                   className="bg-blue-400 hover:bg-blue-400 rounded-3xl"
                   onClick={() => {
@@ -594,9 +600,9 @@ const CompanyAddress = ({
         </h1>
         <Input type="file" className="w-fit" onChange={(e)=>{setFile(e.target.files)}} />
       </div>
-      <div className="flex justify-end gap-4">
+      <div className={`flex justify-end gap-4 ${designation?"hidden":""}`}>
         <Button
-        className="bg-blue-400 hover:bg-blue-400"
+        className={`bg-blue-400 hover:bg-blue-400`}
           onClick={() => {
             handleSubmit();
           }}

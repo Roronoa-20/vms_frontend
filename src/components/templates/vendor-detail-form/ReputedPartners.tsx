@@ -7,6 +7,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { VendorOnboardingResponse } from "@/src/types/types";
+import { useAuth } from "@/src/context/AuthContext";
 
 type TReputedPartnerDetails = {
   company_name:string,
@@ -22,6 +23,14 @@ type Props = {
 const ReputedPartners = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   const [reputedPartnersDetails,setReputedPartnersDetails] = useState<Partial<TReputedPartnerDetails[]>>([]);
   const [reputedPartners,setReputedPartners] = useState<Partial<TReputedPartnerDetails>>()
+
+  const {designation} = useAuth();
+
+  if(!designation){
+    return(
+      <div>Loading...</div>
+    )
+  }
 
   useEffect(()=>{
     OnboardingDetail?.map((item)=>{
@@ -43,7 +52,6 @@ const handleAdd = ()=>{
   setReputedPartners({});
 }
 
-console.log(reputedPartnersDetails,"this is reputed partners")
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
@@ -70,7 +78,7 @@ console.log(reputedPartnersDetails,"this is reputed partners")
           <Input placeholder="" value={reputedPartners?.remark ?? ""} onChange={(e)=>{setReputedPartners((prev)=>({...prev,remark:e.target.value}))}}/>
         </div>
         <div className="col-span-1 flex items-end">
-          <Button className="bg-blue-400 hover:bg-blue-300" onClick={()=>{handleAdd()}}>Add</Button>
+          <Button className={`bg-blue-400 hover:bg-blue-300 ${designation?"hidden":""}`} onClick={()=>{handleAdd()}}>Add</Button>
         </div>
       </div>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
@@ -101,7 +109,7 @@ console.log(reputedPartnersDetails,"this is reputed partners")
               </TableBody>
             </Table>
           </div>
-          <div className="flex justify-end pr-4"><Button onClick={()=>{handleSubmit()}}>Next</Button></div>
+          <div className={`flex justify-end pr-4 ${designation?"hidden":""}`}><Button onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };

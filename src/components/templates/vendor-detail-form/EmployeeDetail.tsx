@@ -8,6 +8,7 @@ import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
 import { VendorOnboardingResponse } from "@/src/types/types";
+import { useAuth } from "@/src/context/AuthContext";
 
 type Props = {
   ref_no:string,
@@ -17,7 +18,12 @@ type Props = {
 
 const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   const {employeeDetail,updateEmployeeDetail} = useEmployeeDetailStore()
-  console.log(OnboardingDetail,"kjsfdfksbdk")
+  const {designation} = useAuth();
+  if(!designation){
+    return(
+      <div>Loading...</div>
+    )
+  }
   useEffect(()=>{
     OnboardingDetail?.map((item)=>{
       updateEmployeeDetail(item)
@@ -89,7 +95,7 @@ const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
           <Input placeholder="" value={addEmployeeDetail?.other ?? ""} onChange={(e)=>{setEmployeeDetail((prev:any)=>({...prev,other:e.target.value}))}} />
         </div>
       </div>
-      <div className="flex justify-end pr-6 pb-4"><Button onClick={()=>{handleAdd()}} className="bg-blue-400 hover:bg-blue-400">Add</Button></div>
+      <div className={`flex justify-end pr-6 pb-4 ${designation?"hidden":""}`}><Button onClick={()=>{handleAdd()}} className="bg-blue-400 hover:bg-blue-400">Add</Button></div>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
             <div className="flex w-full justify-between pb-4">
               <h1 className="text-[20px] text-[#03111F] font-semibold">
@@ -134,7 +140,7 @@ const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               </TableBody>
             </Table>
           </div>
-      <div className="flex justify-end pr-6"><Button className="hover:bg-blue-400 bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
+      <div className={`flex justify-end pr-6 ${designation?"hidden":""}`}><Button className="hover:bg-blue-400 bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };

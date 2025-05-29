@@ -8,6 +8,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { VendorOnboardingResponse } from "@/src/types/types";
+import { useAuth } from "@/src/context/AuthContext";
 
 interface Props {
   ref_no:string,
@@ -17,7 +18,13 @@ interface Props {
 
 const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   const {machineDetail,updateMachineDetail} = useMachineDetailStore();
+  const {designation} = useAuth();
 
+  if(!designation){
+    return (
+      <div>Loading...</div>
+    )
+  }
   useEffect(()=>{
     OnboardingDetail?.map((item,index)=>{
       updateMachineDetail(item)
@@ -71,7 +78,7 @@ const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
           </h1>
           <Input placeholder="" value={multipleMachineDetail?.remarks ?? ""} onChange={(e)=>{setMultipleMachineDetail((prev:any)=>({...prev,remarks:e.target.value}))}} />
         </div>
-        <div className="col-span-1 flex items-end">
+        <div className={`col-span-1 flex items-end ${designation?"hidden":""}`}>
           <Button className="bg-blue-400 hover:bg-blue-300" onClick={()=>{handleAdd()}}>Add</Button>
         </div>
       </div>
@@ -107,7 +114,7 @@ const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               </TableBody>
             </Table>
           </div>
-          <div className="flex justify-end pr-4"><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
+          <div className={`flex justify-end pr-4 ${designation?"hidden":""}`}><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };

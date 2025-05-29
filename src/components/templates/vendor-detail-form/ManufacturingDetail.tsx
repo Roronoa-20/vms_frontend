@@ -15,6 +15,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { VendorOnboardingResponse } from "@/src/types/types";
+import { useAuth } from "@/src/context/AuthContext";
 
 type Props = {
   ref_no:string,
@@ -25,6 +26,14 @@ type Props = {
 
 const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   const {ManufacturingDetail,updateManufacturingDetail} = useManufacturingDetailStore()
+  const {designation} = useAuth()
+
+
+  if(!designation){
+    return (
+      <div>Loading...</div>
+    )
+  }
   
   const [manufacturedFile,setManufacturedFile] = useState<FileList | null>(null)
   const [brochure_proof,setBrochure_proof] = useState<FileList | null>(null)
@@ -161,7 +170,7 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
           <Input placeholder="" type="file" onChange={(e)=>{setOrganisation_structure_document(e.target.files)}} />
         </div>
       </div>
-      <div className="flex justify-end pr-4"><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
+      <div className={`flex justify-end pr-4 ${designation?"hidden":""}`}><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };

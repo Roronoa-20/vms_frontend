@@ -15,6 +15,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { TdocumentDetailDropdown, TvendorOnboardingDetail, VendorOnboardingResponse } from "@/src/types/types";
+import { useAuth } from "@/src/context/AuthContext";
 
 
 interface documentDetail  {
@@ -51,6 +52,13 @@ const DocumentDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,documentDeta
   console.log(documentDetailDropdown,"htis is data");
 
   const [documentDetails,setDocumentDetail] = useState<Partial<documentDetail>>();
+
+  const {designation} = useAuth();
+  if(!designation){
+    return(
+      <div>Loading</div>
+    )
+  }
 
   const handleSubmit = async()=>{
     const url = API_END_POINTS?.documentDetailSubmit;
@@ -247,7 +255,7 @@ const DocumentDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,documentDeta
         </div>
       </div>
       </div>
-      <div className="flex justify-end pr-6"><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
+      <div className="flex justify-end pr-6"><Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`} onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };

@@ -342,7 +342,7 @@ export type TCompanyDetailForm = {
 
   export type TmultipleLocation = {
     address_line_1?:string,
-    address_line2?:string,
+    address_line_2?:string,
     ma_pincode:string,
     ma_district?:{name:string,district_code:string,district_name:string},
     ma_city?:{name:string,city_code:string,city_name:string},
