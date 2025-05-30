@@ -15,6 +15,7 @@ import requestWrapper from "@/src/services/apiCall";
 import { useVendorStore } from '../../../store/VendorRegistrationStore';
 import { AxiosResponse } from "axios";
 import { Button } from "../../atoms/button";
+import { useRouter } from "next/navigation";
 
 interface Props {
   incoTermsDropdown:TvendorRegistrationDropdown["message"]["data"]["incoterm_master"]
@@ -26,7 +27,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
   const { data, updateField,updateVendorTypes, resetForm } = useVendorStore();
   const [companyBasedDropdown,setCompanyBasedDropdown] = useState<TcompanyNameBasedDropdown["message"]["data"]>();
   const [purchaseOrganizationBasedDropdown,setPurchaseOrganizationBasedDropdown] = useState<TpurchaseOrganizationBasedDropdown["message"]>()
-
+  const router = useRouter();
   const handleCompanyDropdownChange = async(value:string)=>{
     updateField('company_name',value);
     const url = API_END_POINTS?.companyBasedDropdown;
@@ -59,6 +60,8 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
     if(response?.status == 200){
       resetForm();
       console.log("handle submit successfully");
+      alert("Submit Successfully");
+      router.push("/dashboard");
       return;
     }
   }

@@ -5,8 +5,6 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import { TvendorRegistrationDropdown } from "@/src/types/types";
-import { Button } from "../atoms/button";
-import { useVendorStore } from "@/src/store/VendorRegistrationStore";
 
 const VendorRegistration = async () => {
   const dropdownUrl = API_END_POINTS?.vendorRegistrationDropdown;
