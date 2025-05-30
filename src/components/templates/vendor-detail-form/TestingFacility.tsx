@@ -17,10 +17,15 @@ interface Props {
 }
 
 const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
+  const [multipleTestingDetail,setMultipleTestingDetail] = useState<Partial<TTestingFacility>>();
   const {designation} = useAuth();
   const {testingDetail,updateTestingDetail} = useTestingStore();
   
-  const [multipleTestingDetail,setMultipleTestingDetail] = useState<Partial<TTestingFacility>>();
+  useEffect(()=>{
+    OnboardingDetail?.map((item,index)=>{
+      updateTestingDetail(item)
+    })
+  },[])
   
   
   if(!designation){
@@ -28,11 +33,6 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
       <div>Loading...</div>
     )
   }
-  useEffect(()=>{
-    OnboardingDetail?.map((item,index)=>{
-      updateTestingDetail(item)
-    })
-  },[])
   
 
   const handleSubmit = async()=>{

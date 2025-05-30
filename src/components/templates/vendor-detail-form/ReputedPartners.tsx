@@ -25,6 +25,12 @@ const ReputedPartners = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   const [reputedPartners,setReputedPartners] = useState<Partial<TReputedPartnerDetails>>()
 
   const {designation} = useAuth();
+  
+  useEffect(()=>{
+    OnboardingDetail?.map((item)=>{
+      setReputedPartnersDetails([item])
+    })
+  },[])
 
   if(!designation){
     return(
@@ -32,11 +38,6 @@ const ReputedPartners = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
     )
   }
 
-  useEffect(()=>{
-    OnboardingDetail?.map((item)=>{
-      setReputedPartnersDetails([item])
-    })
-  },[])
 
   const handleSubmit = async()=>{
     const url = API_END_POINTS?.reputedDetailSubmit;

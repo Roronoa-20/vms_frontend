@@ -26,6 +26,9 @@ type Props = {
 
 const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   const {ManufacturingDetail,updateManufacturingDetail} = useManufacturingDetailStore()
+  const [manufacturedFile,setManufacturedFile] = useState<FileList | null>(null)
+  const [brochure_proof,setBrochure_proof] = useState<FileList | null>(null)
+  const [organisation_structure_document,setOrganisation_structure_document] = useState<FileList | null>(null)
   const {designation} = useAuth()
 
 
@@ -34,11 +37,6 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
       <div>Loading...</div>
     )
   }
-  
-  const [manufacturedFile,setManufacturedFile] = useState<FileList | null>(null)
-  const [brochure_proof,setBrochure_proof] = useState<FileList | null>(null)
-  const [organisation_structure_document,setOrganisation_structure_document] = useState<FileList | null>(null)
-  console.log(manufacturedFile,"this file")
   const handleSubmit = async()=>{
     const manufacturingUrl = API_END_POINTS?.manufacturingDetailSubmit;
     const updatedData = {...ManufacturingDetail,materials_supplied:[{hsnsac_code:ManufacturingDetail?.hsnsac_code,annual_capacity:ManufacturingDetail?.annual_capacity,material_description:ManufacturingDetail?.material_description}],ref_no:ref_no,vendor_onboarding:onboarding_ref_no}

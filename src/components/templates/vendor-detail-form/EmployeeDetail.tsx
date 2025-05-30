@@ -18,19 +18,19 @@ type Props = {
 
 const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   const {employeeDetail,updateEmployeeDetail} = useEmployeeDetailStore()
+  const [addEmployeeDetail,setEmployeeDetail] = useState<TEmployeeDetail | null>();
+  useEffect(()=>{
+    OnboardingDetail?.map((item)=>{
+      updateEmployeeDetail(item)
+    })
+  },[])
   const {designation} = useAuth();
   if(!designation){
     return(
       <div>Loading...</div>
     )
   }
-  useEffect(()=>{
-    OnboardingDetail?.map((item)=>{
-      updateEmployeeDetail(item)
-    })
-  },[])
 
-  const [addEmployeeDetail,setEmployeeDetail] = useState<TEmployeeDetail | null>();
 
   const handleSubmit = async()=>{
     const employeeSubmitUrl = API_END_POINTS?.employeeDetailSubmit;

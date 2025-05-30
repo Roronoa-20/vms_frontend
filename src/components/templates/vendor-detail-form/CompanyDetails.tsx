@@ -26,14 +26,14 @@ interface Props {
 }
 
 const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,OnboardingDetail}:Props) => {
+  const {data,updateField,resetForm} = useCompanyDetailFormStore(); 
+  const router = useRouter();
   const {designation} = useAuth();
   if(!designation){
     return(
       <div>Loading...</div>
     )
   }
-  const {data,updateField,resetForm} = useCompanyDetailFormStore(); 
-  const router = useRouter();
 
   const handleSubmit = async()=>{
     const companyDetailSubmitUrl = API_END_POINTS?.companyDetailSubmit

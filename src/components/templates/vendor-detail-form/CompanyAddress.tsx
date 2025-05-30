@@ -63,12 +63,22 @@ const CompanyAddress = ({
   onboarding_ref_no,
   OnboardingDetail
 }: Props) => {
+  const {
+    billingAddress,
+    shippingAddress,
+    multiple_location_table,
+    updatebillingAddress,
+    updateshippingAddress,
+    updateLocationAtIndex,
+    addMultipleLocation,
+  } = useCompanyAddressFormStore();
+  const [pincodeFetchData, setPincodeData] = useState<pincodeFetchData>();
+  const [isShippingSame, setIsShippingSame] = useState<boolean>(false);
+  const [shippingData, setShippingData] = useState<shippingData>();
+  const [MultipleAddress, setMultipleAddress] = useState<multipleAddress>();
+  const [file,setFile] = useState<FileList | null>(null);
 
-
-  const { designation } = useAuth();
-  if(!designation){
-    return <div className="flex justify-center items-center h-screen">Loading...</div>
-  }
+  const [isMultipleLocation, setIsMultipleLocation] = useState<boolean>(OnboardingDetail?.multiple_locations ? true : false);
   useEffect(()=>{
     OnboardingDetail?.multiple_location_table?.map((item)=>{
       addMultipleLocation({address_line_1:item?.address_line_1,
@@ -82,25 +92,15 @@ const CompanyAddress = ({
         ma_country:{name:item?.country_details?.country_name as string,country_code:item?.country_details?.country_code as string,country_name:item?.country_details?.country_name as string}}) 
     })
   },[])
+
+
+  const { designation } = useAuth();
+  if(!designation){
+    return <div className="flex justify-center items-center h-screen">Loading...</div>
+  }
   console.log(OnboardingDetail,"htis is onboarding data")
 
-  const {
-    billingAddress,
-    shippingAddress,
-    multiple_location_table,
-    updatebillingAddress,
-    updateshippingAddress,
-    updateLocationAtIndex,
-    addMultipleLocation,
-  } = useCompanyAddressFormStore();
 
-  const [pincodeFetchData, setPincodeData] = useState<pincodeFetchData>();
-  const [isShippingSame, setIsShippingSame] = useState<boolean>(false);
-  const [shippingData, setShippingData] = useState<shippingData>();
-  const [MultipleAddress, setMultipleAddress] = useState<multipleAddress>();
-  const [file,setFile] = useState<FileList | null>(null);
-
-  const [isMultipleLocation, setIsMultipleLocation] = useState<boolean>(OnboardingDetail?.multiple_locations ? true : false);
 
   const handlePincodeChange = async (value: string) => {
     updatebillingAddress("pincode", value);

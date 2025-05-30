@@ -18,6 +18,12 @@ interface Props {
 
 const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   const {machineDetail,updateMachineDetail} = useMachineDetailStore();
+  const [multipleMachineDetail,setMultipleMachineDetail] = useState<TMachineDetail | null>(null);
+  useEffect(()=>{
+    OnboardingDetail?.map((item,index)=>{
+      updateMachineDetail(item)
+    })
+  },[])
   const {designation} = useAuth();
 
   if(!designation){
@@ -25,13 +31,7 @@ const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
       <div>Loading...</div>
     )
   }
-  useEffect(()=>{
-    OnboardingDetail?.map((item,index)=>{
-      updateMachineDetail(item)
-    })
-  },[])
 
-  const [multipleMachineDetail,setMultipleMachineDetail] = useState<TMachineDetail | null>(null);
   
   const handleSubmit = async()=>{
     const submitUrl = API_END_POINTS?.machineDetailSubmit;
