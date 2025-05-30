@@ -27,7 +27,7 @@ import {
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
-import { useAuth } from "@/src/context/AuthContext";
+import { AuthProvider, useAuth } from "@/src/context/AuthContext";
 
 interface Props {
   vendor_onboarding: string;
@@ -99,6 +99,8 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
   const OnboardingDetail:VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ?fetchOnboardingDetailResponse?.data?.message : "";
 
   return (
+    <AuthProvider>
+
     <div className="h-screen flex flex-col bg-gray-200 relative">
       {/* navbar */}
       <div className="bg-white py-4 px-10 flex gap-5 items-center mb-6 sticky top-0">
@@ -113,10 +115,10 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
         {/* form */}
         {tabType == "Company Detail" ? (
           <CompanyDetailForm
-            companyDetailDropdown={companyDetailDropdown}
-            onboarding_refno={vendorOnboardingRefno}
-            refno={refno}
-            OnboardingDetail={OnboardingDetail?.company_details_tab}
+          companyDetailDropdown={companyDetailDropdown}
+          onboarding_refno={vendorOnboardingRefno}
+          refno={refno}
+          OnboardingDetail={OnboardingDetail?.company_details_tab}
           />
         ) : tabType == "Company Address" ? (
           <CompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} onboarding_data={Data} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
@@ -143,6 +145,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
         )}
       </div>
     </div>
+        </AuthProvider>
   );
 };
 
