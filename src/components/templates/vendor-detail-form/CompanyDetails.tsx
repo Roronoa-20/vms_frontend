@@ -29,12 +29,12 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
   const {data,updateField,resetForm} = useCompanyDetailFormStore(); 
   const router = useRouter();
   const {designation} = useAuth();
-  if(!designation){
-    return(
-      <div>Loading...</div>
-    )
-  }
-
+  // if(!designation){
+  //   return(
+  //     <div>Loading...</div>
+  //   )
+  // }
+  console.log(OnboardingDetail,"this is onboarding detail")
   const handleSubmit = async()=>{
     const companyDetailSubmitUrl = API_END_POINTS?.companyDetailSubmit
     const updatedData:TCompanyDetailForm | {} = {...data,vendor_onboarding:onboarding_refno as string,ref_no:refno as string}
@@ -105,61 +105,61 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Website
           </h1>
-          <Input placeholder="" onChange={(e)=>{updateField("website",e.target.value)}} value={data?.website ?? OnboardingDetail?.website}/>
+          <Input placeholder="" onChange={(e)=>{updateField("website",e.target.value)}} value={data?.website ?? OnboardingDetail?.website ?? ""}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Reg No.
           </h1>
-          <Input placeholder="Enter Reg No." onChange={(e)=>{updateField("registered_office_number",e.target.value)}} value={data?.registered_office_number ?? OnboardingDetail?.registered_office_number}/>
+          <Input placeholder="Enter Reg No." onChange={(e)=>{updateField("registered_office_number",e.target.value)}} value={data?.registered_office_number ?? OnboardingDetail?.registered_office_number ?? ""}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Mobile Number
           </h1>
-          <Input placeholder="Enter Mobile Number" onChange={(e)=>{updateField("telephone_number",e.target.value)}} value={data?.telephone_number ?? OnboardingDetail?.telephone_number}/>
+          <Input placeholder="Enter Mobile Number" onChange={(e)=>{updateField("telephone_number",e.target.value)}} value={data?.telephone_number ?? OnboardingDetail?.telephone_number ?? ""}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             WhatsApp Number (If applicable)
           </h1>
-          <Input placeholder="" onChange={(e)=>{updateField("whatsapp_number",e.target.value)}} value={data?.whatsapp_number ?? OnboardingDetail?.whatsapp_number}/>
+          <Input placeholder="" onChange={(e)=>{updateField("whatsapp_number",e.target.value)}} value={data?.whatsapp_number ?? OnboardingDetail?.whatsapp_number ?? ""}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Established Year
           </h1>
-          <Input placeholder="" onChange={(e)=>{updateField("established_year",e.target.value)}} value={data?.established_year ?? OnboardingDetail?.established_year}/>
+          <Input placeholder="" onChange={(e)=>{updateField("established_year",e.target.value)}} value={data?.established_year ?? OnboardingDetail?.established_year ?? ""}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Office Email Primary
           </h1>
-          <Input placeholder="" onChange={(e)=>{updateField("office_email_primary",e.target.value)}} value={data?.office_email_primary ?? OnboardingDetail?.office_email_primary}/>
+          <Input placeholder="" onChange={(e)=>{updateField("office_email_primary",e.target.value)}} value={data?.office_email_primary ?? OnboardingDetail?.office_email_primary ?? ""}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Office Email (Secondary)
           </h1>
-          <Input placeholder="" onChange={(e)=>{updateField("office_email_secondary",e.target.value)}} value={data?.office_email_secondary ?? OnboardingDetail?.office_email_secondary}/>
+          <Input placeholder="" onChange={(e)=>{updateField("office_email_secondary",e.target.value)}} value={data?.office_email_secondary ?? OnboardingDetail?.office_email_secondary ?? ""}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Corporate Identification No.(CIN No.)
           </h1>
-          <Input placeholder="" onChange={(e)=>{updateField("corporate_identification_number",e.target.value)}} value={data?.corporate_identification_number ?? OnboardingDetail?.corporate_identification_number}/>
+          <Input placeholder="" onChange={(e)=>{updateField("corporate_identification_number",e.target.value)}} value={data?.corporate_identification_number ?? OnboardingDetail?.corporate_identification_number ?? ""}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Date
           </h1>
-          <Input type="date" placeholder="Enter Mobile Number" onChange={(e)=>{updateField("cin_date",e.target.value)}} value={data?.cin_date ?? OnboardingDetail?.cin_date}/>
+          <Input type="date" placeholder="Enter Mobile Number" onChange={(e)=>{updateField("cin_date",e.target.value)}} value={data?.cin_date ?? OnboardingDetail?.cin_date ?? ""}/>
         </div>
         <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Nature of Company(Please select anyone)
           </h1>
-          <Select onValueChange={(value)=>{updateField('nature_of_company',value)}} value={data?.nature_of_company ?? OnboardingDetail?.nature_of_company}>
+          <Select onValueChange={(value)=>{updateField('nature_of_company',value)}} value={data?.nature_of_company ?? OnboardingDetail?.nature_of_company ?? ""}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>

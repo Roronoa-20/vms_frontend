@@ -50,26 +50,20 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
   
   const fileInput = useRef<HTMLInputElement>(null);
   const { designation } = useAuth();
-  if(!designation){
-    return <div>Loading</div>
-  }
+  // if(!designation){
+  //   return <div>Loading</div>
+  // }
 
   const handleSubmit = async ()=>{
     const url = API_END_POINTS?.certificateSubmit;
-    const formData = new FormData()
-    formData.append("data",JSON.stringify({ref_no:ref_no,vendor_onboarding:onboarding_ref_no,certificates:[certificateData]}))
-    if(certificateData?.file){
-      formData.append("certificate_attach",certificateData.file[0])
-    }
-    console?.log(formData?.values)
-    const certificateSubmit:AxiosResponse = await requestWrapper({url:url,data:formData,method:"POST"})
+    const certificateSubmit:AxiosResponse = await requestWrapper({url:url,data:{data:{onb_id:onboarding_ref_no,completed:1}},method:"POST"})
     if(certificateSubmit?.status == 200){
       console.log("Successfully submit")
     }
   }
 
   const handleAdd = async()=>{
-    const url = API_END_POINTS?.certificateSubmit;
+    const url = API_END_POINTS?.certificateSave;
     const formData = new FormData()
     formData.append("data",JSON.stringify({ref_no:ref_no,vendor_onboarding:onboarding_ref_no,certificates:[certificateData]}))
     if(certificateData?.file){
@@ -93,6 +87,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
     const fetchOnboardingDetailResponse:AxiosResponse = await requestWrapper({url:url,method:"GET"});
   const OnboardingDetails:VendorOnboardingResponse["message"]["certificate_details_tab"] = fetchOnboardingDetailResponse?.status == 200 ?fetchOnboardingDetailResponse?.data?.message?.certificate_details_tab : "";
   console.log(OnboardingDetails,"this is after api")
+  setMultipleCertificateData([]);
   OnboardingDetails?.map((item)=>{
       setMultipleCertificateData((prev:any)=>([...prev,{certificate_code:item?.certificate_code,fileDetail:{file_name:item?.certificate_attach?.file_name,name:item?.certificate_attach?.name,url:item?.certificate_attach?.url},valid_till:item?.valid_till,name:item?.name}]))
     })
@@ -188,7 +183,9 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
                     </TableBody>
                   </Table>
                 </div>
-      <div className="flex justify-end pr-4"><Button className={`bg-blue-400 hover:bg-blue-400 ${designation ? 'hidden' : ''}`} onClick={()=>{handleSubmit()}}>Submit</Button></div>
+      <div className="flex justify-end pr-4">
+        <Button className={`bg-blue-400 hover:bg-blue-400 ${designation ? 'hidden' : ''}`} onClick={()=>{handleSubmit()}}>Submit</Button>
+        </div>
     </div>
   );
 };

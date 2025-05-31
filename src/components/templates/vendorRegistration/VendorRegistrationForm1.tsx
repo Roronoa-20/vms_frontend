@@ -59,7 +59,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
       })
     )
     updateVendorTypes(newArray2)
-    if(newArray?.includes("Material Vendor")){
+    if(newArray?.includes("Material Vendor-001")){
       setIsQa(true);
     }else{
       setIsQa(false);

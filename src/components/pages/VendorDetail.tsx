@@ -97,7 +97,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
   const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${refno}&vendor_onboarding=${vendorOnboardingRefno}`;
   const fetchOnboardingDetailResponse:AxiosResponse = await requestWrapper({url:fetchOnboardingDetailUrl,method:"GET"});
   const OnboardingDetail:VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ?fetchOnboardingDetailResponse?.data?.message : "";
-
+  console.log(OnboardingDetail,"this is data")
   return (
     <AuthProvider>
 

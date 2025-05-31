@@ -28,15 +28,15 @@ const ReputedPartners = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   
   useEffect(()=>{
     OnboardingDetail?.map((item)=>{
-      setReputedPartnersDetails([item])
+      setReputedPartnersDetails((prev)=>([...prev,item]))
     })
   },[])
 
-  if(!designation){
-    return(
-      <div>Loading...</div>
-    )
-  }
+  // if(!designation){
+  //   return(
+  //     <div>Loading...</div>
+  //   )
+  // }
 
 
   const handleSubmit = async()=>{

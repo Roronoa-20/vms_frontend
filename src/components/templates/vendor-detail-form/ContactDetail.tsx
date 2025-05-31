@@ -34,11 +34,11 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   },[])
   const {designation} = useAuth();
 
-  if(!designation){
-    return(
-      <div>Loading...</div>
-    )
-  }
+  // if(!designation){
+  //   return(
+  //     <div>Loading...</div>
+  //   )
+  // }
   
 
 

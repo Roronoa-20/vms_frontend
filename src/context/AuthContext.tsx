@@ -35,7 +35,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (savedName) setName(savedName);
         if (savedid) setUserId(savedid);
         if (savedDesignation) setDesignation(savedDesignation);
-        if (user_email) setDesignation(user_email);
+        if (user_email) setUser_Email(user_email);
     }
 
   const setAuthData = (newRole: string|null|undefined , newName: string|null|undefined,userid:string|null|undefined,designation?: string | null|undefined,user_email?:string | null| undefined) => {
@@ -43,7 +43,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setName(newName);
     setUserId(userid);
     if (designation) setDesignation(designation);
-    if (user_email) setDesignation(user_email);
+    if (user_email) setUser_Email(user_email);
   };
 
   const clearAuthData = () => {

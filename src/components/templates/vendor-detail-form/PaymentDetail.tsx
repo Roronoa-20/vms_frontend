@@ -30,11 +30,11 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,bankNameDropown,currencyDropown
   const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
   const [bankProofFile,setBankProofFile] = useState<FileList | null>(null);
   const {designation} = useAuth();
-  if(!designation){
-    return(
-      <div>Loading...</div>
-    )
-  }
+  // if(!designation){
+  //   return(
+  //     <div>Loading...</div>
+  //   )
+  // }
   const handleSubmit = async()=>{
     const submitUrl = API_END_POINTS?.bankSubmit;
     const updatedData = {...paymentDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}

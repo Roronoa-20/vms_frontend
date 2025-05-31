@@ -25,7 +25,7 @@ const API_END_POINTS = {
   testingDetailSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_testing_details.update_vendor_onboarding_testing_details`,
   reputedDetailSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.reputed_company_details.update_vendor_onboarding_reputed_company_details`,
   certifcateCodeDropdown:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_certificate_details.vendor_certificate_name_masters`,
-  certificateSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_certificate_details.update_vendor_onboarding_certificate_details`,
+  certificateSave:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_certificate_details.update_vendor_onboarding_certificate_details`,
   bankNameDropdown:`${url}/api/resource/Bank%20Master`,
   bankSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_vendor_onboarding_payment_details`,
   currencyDropdown:`${url}/api/resource/Currency%20Master`,
@@ -40,7 +40,8 @@ const API_END_POINTS = {
   dashboardTotalVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.total_vendor_details`,
   dashboardPendingVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.pending_vendor_details`,
   dashboardApprovedVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.approved_vendor_details`,
-  dashboardRejectedVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.rejected_vendor_details`
+  dashboardRejectedVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.rejected_vendor_details`,
+  certificateSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration.onboarding_form_submit`
 };
 
 export default API_END_POINTS;

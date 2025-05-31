@@ -95,9 +95,9 @@ const CompanyAddress = ({
 
 
   const { designation } = useAuth();
-  if(!designation){
-    return <div className="flex justify-center items-center h-screen">Loading...</div>
-  }
+  // if(!designation){
+  //   return <div className="flex justify-center items-center h-screen">Loading...</div>
+  // }
   console.log(OnboardingDetail,"htis is onboarding data")
 
 
@@ -114,12 +114,14 @@ const CompanyAddress = ({
         pincodeChangeResponse?.status == 200
           ? pincodeChangeResponse?.data?.message
           : "";
+          console.log(data,"this is billing api data")
       if (data) {
-        updatebillingAddress("city", data?.data?.city);
-        updatebillingAddress("district", data?.data?.district);
-        updatebillingAddress("state", data?.data?.state);
-        updatebillingAddress("country", data?.data?.country);
+        updatebillingAddress("city", data?.data?.city[0]);
+        updatebillingAddress("district", data?.data?.district[0]);
+        updatebillingAddress("state", data?.data?.state[0]);
+        updatebillingAddress("country", data?.data?.country[0]);
       }
+      console.log("aftre api data set",billingAddress)
     }
   };
 
@@ -253,6 +255,8 @@ const CompanyAddress = ({
 
   };
 
+  console.log(billingAddress,shippingAddress,multiple_location_table,"this is form data")
+
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg z-50">
@@ -269,7 +273,7 @@ const CompanyAddress = ({
             onChange={(e) => {
               updatebillingAddress("address_line_1", e.target.value);
             }}
-            value={billingAddress?.address_line_1 as string ??   OnboardingDetail?.billing_address?.address_line_1}
+            value={billingAddress?.address_line_1 as string ??   OnboardingDetail?.billing_address?.address_line_1 ?? ""}
           />
         </div>
         <div className="col-span-2">
@@ -281,7 +285,7 @@ const CompanyAddress = ({
             onChange={(e) => {
               updatebillingAddress("address_line_2", e.target.value);
             }}
-            value={billingAddress?.address_line_2?? OnboardingDetail?.billing_address?.address_line_2}
+            value={billingAddress?.address_line_2?? OnboardingDetail?.billing_address?.address_line_2 ?? ""}
             // defaultValue={}
           />
         </div>
@@ -294,7 +298,7 @@ const CompanyAddress = ({
             onChange={(e) => {
               handlePincodeChange(e.target.value);
             }}
-            value={billingAddress?.pincode?? OnboardingDetail?.billing_address?.pincode}
+            value={billingAddress?.pincode?? OnboardingDetail?.billing_address?.pincode ?? ""}
             // defaultValue={}
           />
         </div>
@@ -304,7 +308,7 @@ const CompanyAddress = ({
           </h1>
           <Input
             placeholder=""
-            value={billingAddress?.district?.district_name ?? OnboardingDetail?.billing_address?.district_details?.district_name}
+            value={billingAddress?.district?.district_name ?? OnboardingDetail?.billing_address?.district_details?.district_name ?? ""}
             // defaultValue={}
             readOnly
           />
@@ -316,7 +320,7 @@ const CompanyAddress = ({
             </h1>
             <Input
               placeholder=""
-              value={billingAddress?.city?.city_name?? OnboardingDetail?.billing_address?.city_details?.city_name}
+              value={billingAddress?.city?.city_name?? OnboardingDetail?.billing_address?.city_details?.city_name ?? ""}
               // defaultValue={}
               readOnly
             />
@@ -327,7 +331,7 @@ const CompanyAddress = ({
             </h1>
             <Input
               placeholder=""
-              value={billingAddress?.state?.state_name ?? OnboardingDetail?.billing_address?.state_details?.state_name}
+              value={billingAddress?.state?.state_name ?? OnboardingDetail?.billing_address?.state_details?.state_name ?? ""}
               // defaultValue={}
               readOnly
             />
@@ -338,7 +342,7 @@ const CompanyAddress = ({
             </h1>
             <Input
               placeholder=""
-              value={billingAddress?.country?.country_name ?? OnboardingDetail?.billing_address?.country_details?.country_name}
+              value={billingAddress?.country?.country_name ?? OnboardingDetail?.billing_address?.country_details?.country_name ?? ""}
               
               readOnly
             />
@@ -473,7 +477,7 @@ const CompanyAddress = ({
                     address1: e.target.value,
                   }));
                 }}
-                value={MultipleAddress?.address1 || ""}
+                value={MultipleAddress?.address1 ?? ""}
               />
             </div>
             <div className="col-span-2">
@@ -487,7 +491,7 @@ const CompanyAddress = ({
                     address2: e.target.value,
                   }));
                 }}
-                value={MultipleAddress?.address2 || ""}
+                value={MultipleAddress?.address2 ?? ""}
               />
             </div>
             <div className="col-span-2">
@@ -506,7 +510,7 @@ const CompanyAddress = ({
                 District
               </h1>
               <Input
-                value={MultipleAddress?.district?.district_name || ""}
+                value={MultipleAddress?.district?.district_name ?? ""}
                 readOnly
               />
             </div>
@@ -516,7 +520,7 @@ const CompanyAddress = ({
                   City
                 </h1>
                 <Input
-                  value={MultipleAddress?.city?.city_name || ""}
+                  value={MultipleAddress?.city?.city_name ?? ""}
                   readOnly
                 />
               </div>
@@ -525,7 +529,7 @@ const CompanyAddress = ({
                   State
                 </h1>
                 <Input
-                  value={MultipleAddress?.state?.state_name || ""}
+                  value={MultipleAddress?.state?.state_name ?? ""}
                   readOnly
                 />
               </div>
@@ -534,7 +538,7 @@ const CompanyAddress = ({
                   Country
                 </h1>
                 <Input
-                  value={MultipleAddress?.country?.country_name || ""}
+                  value={MultipleAddress?.country?.country_name ?? ""}
                   readOnly
                 />
               </div>

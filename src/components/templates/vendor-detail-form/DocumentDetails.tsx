@@ -54,11 +54,11 @@ const DocumentDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,documentDeta
   const [documentDetails,setDocumentDetail] = useState<Partial<documentDetail>>();
 
   const {designation} = useAuth();
-  if(!designation){
-    return(
-      <div>Loading</div>
-    )
-  }
+  // if(!designation){
+  //   return(
+  //     <div>Loading</div>
+  //   )
+  // }
 
   const handleSubmit = async()=>{
     const url = API_END_POINTS?.documentDetailSubmit;
@@ -92,7 +92,7 @@ const DocumentDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,documentDeta
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Company PAN Number
           </h1>
-          <Input placeholder="Enter Reg No." value={documentDetails?.company_pan_number ?? OnboardingDetail?.company_pan_number} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,company_pan_number:e.target.value}))}} />
+          <Input placeholder="Enter Reg No." value={documentDetails?.company_pan_number ?? OnboardingDetail?.company_pan_number ?? ""} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,company_pan_number:e.target.value}))}} />
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">

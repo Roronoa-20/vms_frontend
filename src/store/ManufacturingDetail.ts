@@ -6,7 +6,7 @@ export type ManufacturingDetail = {
     spare_capacity:string,
     type_of_premises:string,
     working_hours:string,
-    weekly_holiday:string,
+    weekly_holidays:string,
     number_of_manpower:string,
     annual_revenue:string,
     cold_storage:number,
@@ -19,6 +19,7 @@ export type ManufacturingDetail = {
 type TmanufacturingDetailStore = {
     ManufacturingDetail:Partial<ManufacturingDetail>;
     updateManufacturingDetail:(field: keyof ManufacturingDetail, value:any)=>void
+    resetForm:()=>void;
 }
 
 export const useManufacturingDetailStore = create<TmanufacturingDetailStore>((set)=>({
@@ -30,6 +31,8 @@ export const useManufacturingDetailStore = create<TmanufacturingDetailStore>((se
                 [field]:value
             }
         }))
-    }
+    },
+
+    resetForm:()=>set({ManufacturingDetail:{}})
 
     }))
