@@ -2,10 +2,11 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import NavbarMenu from "./NavbarMenu";
 const Navbar = () => {
   const { role, name } = useAuth();
    const { designation } = useAuth();
-   const [isDialog,setIsDialog] = useState()
+   const [isDialog,setIsDialog] = useState<boolean>(false);
   const logoLetter = name?.charAt(0).toUpperCase();
   return (
     <div className="bg-white w-full shadow-sm flex justify-between p-3 items-center sticky top-0 z-50">
@@ -17,8 +18,12 @@ const Navbar = () => {
           <h1 className='text-[#5f5f5f] text-right'>{designation}</h1>
         </div>
         {/* <Image className='rounded-full w-12 h-12' src={"/boy.jpg"} alt={""} width={30} height={30} /> */}
-        <div onClick={()=>{}} className="w-8 h-8 rounded-full bg-purple-400 flex items-center justify-center text-white text-xl">
+        <div onClick={()=>{setIsDialog((prev)=> !prev)}} className="relative w-8 h-8 rounded-full bg-purple-400 flex items-center justify-center text-white text-xl">
           {logoLetter ? logoLetter : ''}
+          {
+            isDialog && 
+            <NavbarMenu/>
+          }
         </div>
       </div>
     </div>
