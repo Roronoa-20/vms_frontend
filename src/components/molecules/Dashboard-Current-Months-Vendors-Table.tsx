@@ -80,7 +80,7 @@ const DashboardCurrentMonthsVendorsTable = ({ dashboardTableData }: Props) => {
           </TableRow>
         </TableHeader>
         <TableBody className="text-center">
-          {dashboardTableData.payment_vendor_onboarding && dashboardTableData.payment_vendor_onboarding.length > 0 ? (
+          {dashboardTableData.pending_vendor_onboarding && dashboardTableData.pending_vendor_onboarding.length > 0 ? (
             dashboardTableData.pending_vendor_onboarding.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{index + 1}.</TableCell>

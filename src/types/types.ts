@@ -185,6 +185,13 @@ type VendorOnboarding = {
   machinery_detail: any[];
   vendor_name:string;
   qms_form:string
+  vendor_code:string,
+  country:string,
+  register_by:string
+  status:string,
+  purchase_team:string,
+  purchase_head:string,
+  accounts_team:string
 };
 
 type MultipleCompanyData = {
