@@ -8,6 +8,7 @@ import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { VendorOnboardingResponse } from "@/src/types/types";
 import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 type TReputedPartnerDetails = {
   company_name:string,
@@ -38,14 +39,13 @@ const ReputedPartners = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   //   )
   // }
 
+    const router = useRouter();
 
   const handleSubmit = async()=>{
     const url = API_END_POINTS?.reputedDetailSubmit;
     const updateData = {reputed_partners:reputedPartnersDetails}
     const response:AxiosResponse = await requestWrapper({url:url,data:{data:{...updateData,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}},method:"POST"})
-    if(response?.status == 200){
-      console.log("successfully submitted")
-    }
+    if(response?.status == 200) router.push(`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   }
 
 const handleAdd = ()=>{

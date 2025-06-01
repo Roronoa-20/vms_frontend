@@ -16,6 +16,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 interface Props {
   ref_no:string,
@@ -35,6 +36,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,bankNameDropown,currencyDropown
   //     <div>Loading...</div>
   //   )
   // }
+  const router = useRouter()
   const handleSubmit = async()=>{
     const submitUrl = API_END_POINTS?.bankSubmit;
     const updatedData = {...paymentDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}
@@ -44,9 +46,9 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,bankNameDropown,currencyDropown
       formData.append("file",bankProofFile[0])
     }
     const response:AxiosResponse = await requestWrapper({url:submitUrl,method:"POST",data:formData})
-    if(response?.status == 200){
-      console.log("successfully submitted")
-    }
+    
+      if(response?.status == 200) router.push(`/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    
   }
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">

@@ -16,6 +16,7 @@ import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { TdocumentDetailDropdown, TvendorOnboardingDetail, VendorOnboardingResponse } from "@/src/types/types";
 import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 
 interface documentDetail  {
@@ -48,9 +49,7 @@ interface Props {
 const DocumentDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,documentDetailDropdown}:Props) => {
   const [BusinessType, setBusinessType] = useState<string>(OnboardingDetail?.gst_table[0]?.gst_ven_type);
   const [isMSME, setIsMSME] = useState<string>(OnboardingDetail?.msme_registered);
-
-  console.log(documentDetailDropdown,"htis is data");
-
+  const router = useRouter();
   const [documentDetails,setDocumentDetail] = useState<Partial<documentDetail>>();
 
   const {designation} = useAuth();
@@ -78,9 +77,7 @@ const DocumentDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,documentDeta
       formData.append("msme_proof",documentDetails?.udyamCertificate[0])
     }
     const Response:AxiosResponse = await requestWrapper({url:url,data:formData,method:"POST"});
-    if(Response?.status == 200){
-      console.log("submited successfuly")
-    }
+    if(Response?.status == 200) router.push(`/vendor-details-form?tabtype=Payment%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   }
 
   return (
@@ -98,7 +95,7 @@ const DocumentDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,documentDeta
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Name of Company on PAN Card
           </h1>
-          <Input placeholder="Enter Reg No." value={documentDetails?.name_on_company_pan ?? OnboardingDetail?.name_on_company_pan} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,name_on_company_pan:e.target.value}))}} />
+          <Input placeholder="Enter Reg No." value={documentDetails?.name_on_company_pan ?? OnboardingDetail?.name_on_company_pan ?? ""} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,name_on_company_pan:e.target.value}))}} />
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -225,13 +222,13 @@ const DocumentDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,documentDeta
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Udyam Registration No.
           </h1>
-          <Input placeholder="" value={documentDetails?.udyam_number ?? OnboardingDetail?.udyam_number} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,udyam_number:e.target.value}))}} />
+          <Input placeholder="" value={documentDetails?.udyam_number ?? OnboardingDetail?.udyam_number ?? ""} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,udyam_number:e.target.value}))}} />
         </div>
         <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Name of Company in Udyam Certificate
           </h1>
-          <Input placeholder="" value={documentDetails?.name_on_udyam_certificate ??OnboardingDetail?.name_on_udyam_certificate} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,name_on_udyam_certificate:e.target.value}))}}/>
+          <Input placeholder="" value={documentDetails?.name_on_udyam_certificate ??OnboardingDetail?.name_on_udyam_certificate ?? ""} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,name_on_udyam_certificate:e.target.value}))}}/>
         </div>
         <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -245,7 +242,7 @@ const DocumentDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,documentDeta
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Enterprise Registration Number
           </h1>
-          <Input placeholder="Enter Enterprise Registration Number" value={documentDetails?.enterprise_registration_number ?? OnboardingDetail?.enterprise_registration_number}  onChange={(e)=>{setDocumentDetail((prev)=>({...prev,enterprise_registration_number:e.target.value}))}}/>
+          <Input placeholder="Enter Enterprise Registration Number" value={documentDetails?.enterprise_registration_number ?? OnboardingDetail?.enterprise_registration_number ?? ""}  onChange={(e)=>{setDocumentDetail((prev)=>({...prev,enterprise_registration_number:e.target.value}))}}/>
         </div>
         <div className={``}>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">

@@ -45,7 +45,7 @@ const Dashboard = async () => {
   });
   const dashboardTotalVendorTableData: DashboardTableType =
   dashboardTotalVendorTableDataApi?.status == 200 ? dashboardTotalVendorTableDataApi?.data?.message : "";
-
+  console.log(dashboardTotalVendorTableData,"lkshklsdzlkjsdflksd.jfvbh")
 // pending vendor table
   const dashboardPendingVendorTableDataApi: AxiosResponse = await requestWrapper({
     url: `${API_END_POINTS?.dashboardPendingVendorTableURL}?usr=${user}`,

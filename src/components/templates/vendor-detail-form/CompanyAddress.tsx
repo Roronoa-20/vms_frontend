@@ -22,6 +22,7 @@ import {
   TableRow,
 } from "../../atoms/table";
 import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 interface Props {
   companyAddressDropdown?: TCompanyAddressDropdown["message"]["data"];
@@ -63,6 +64,9 @@ const CompanyAddress = ({
   onboarding_ref_no,
   OnboardingDetail
 }: Props) => {
+
+  const router = useRouter();
+
   const {
     billingAddress,
     shippingAddress,
@@ -248,9 +252,7 @@ const CompanyAddress = ({
       formData.append("file",file[0])
     }
     const submitResponse:AxiosResponse = await requestWrapper({url:submitUrl,method:"POST",data:formData});
-    if(submitResponse?.status == 200){
-      console.log("successfully submitted");
-    }
+    if(submitResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Company%20Address&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
 
 
   };

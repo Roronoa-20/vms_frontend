@@ -9,6 +9,7 @@ import { AxiosResponse } from "axios";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
 import { VendorOnboardingResponse } from "@/src/types/types";
 import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 interface Props {
   ref_no:string,
@@ -34,15 +35,13 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   //   )
   // }
   
-
+  const router = useRouter()
   const handleSubmit = async()=>{
     const submitUrl = API_END_POINTS?.testingDetailSubmit;
     const updatedData = {testing_detail:testingDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}
     const machineDetailResponse:AxiosResponse = await requestWrapper({url:submitUrl,data:{data:updatedData},method:"POST"});
 
-    if(machineDetailResponse?.status == 200){
-      console.log("successfully submitted");
-    }
+    if(machineDetailResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   }
 
   const handleAdd = async()=>{

@@ -5,6 +5,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import { TvendorRegistrationDropdown } from "@/src/types/types";
+import { handleSubmit } from "../templates/vendorRegistration/utility";
 
 const VendorRegistration = async () => {
   const dropdownUrl = API_END_POINTS?.vendorRegistrationDropdown;
@@ -24,6 +25,7 @@ const VendorRegistration = async () => {
 
   return (
     <div className="p-6">
+      <form onSubmit={handleSubmit}>
       <VendorRegistration1
         vendorTitleDropdown={vendorTitleDropdown}
         vendorTypeDropdown={vendorTypeDropdown}
@@ -33,7 +35,8 @@ const VendorRegistration = async () => {
         companyDropdown = {companyDropdown}
         incoTermsDropdown = {incoTermsDropdown}
         currencyDropdown={currencyDropdown}
-      />
+        />
+        </form>
     </div>
   );
 };

@@ -16,6 +16,7 @@ import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { VendorOnboardingResponse } from "@/src/types/types";
 import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 type Props = {
   ref_no:string,
@@ -37,6 +38,7 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
   //     <div>Loading...</div>
   //   )
   // }
+  const router = useRouter();
   const handleSubmit = async()=>{
     const manufacturingUrl = API_END_POINTS?.manufacturingDetailSubmit;
     const updatedData = {...ManufacturingDetail,materials_supplied:[{hsnsac_code:ManufacturingDetail?.hsnsac_code,annual_capacity:ManufacturingDetail?.annual_capacity,material_description:ManufacturingDetail?.material_description}],ref_no:ref_no,vendor_onboarding:onboarding_ref_no}
@@ -52,9 +54,7 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
       formData.append("organisation_structure_document",organisation_structure_document[0]);
     }
     const manufacturingDetailResponse:AxiosResponse = await requestWrapper({url:manufacturingUrl,data:formData,method:"POST"});
-    if(manufacturingDetailResponse?.status == 200){
-      console.log("successfully submitted")
-    }
+    if(manufacturingDetailResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Employee%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   }
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">

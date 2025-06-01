@@ -78,7 +78,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Vendor Type
           </h1>
-          <MultiSelect onChange={(value)=>{handleVendorTypeChange(value)}} instanceId="multiselect" options={newVendorTypeDropdown} isMulti/>
+          <MultiSelect onChange={(value)=>{handleVendorTypeChange(value)}} instanceId="multiselect" options={newVendorTypeDropdown} isMulti required={true}/>
         </div>
         {
               isQa &&
@@ -126,13 +126,13 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Vendor Name
               </h1>
-              <Input className="col-span-2" placeholder="Enter Vendor Name"  onChange={(e) => updateField('vendor_name', e.target.value)}/>
+              <Input className="col-span-2" required placeholder="Enter Vendor Name"  onChange={(e) => updateField('vendor_name', e.target.value)}/>
             </div>
           </div>
         </div>
         <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">Email</h1>
-          <Input onChange={(e)=>{updateField("office_email_primary",e.target.value)}} placeholder="Enter Email Address" />
+          <Input required onChange={(e)=>{updateField("office_email_primary",e.target.value)}} placeholder="Enter Email Address" />
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">

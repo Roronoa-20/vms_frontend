@@ -105,7 +105,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
                  <TableCell>{item?.vendor_code?item?.vendor_code:"-"}</TableCell>
                 <TableCell>{item?.country}</TableCell>
                 <TableCell>{item?.register_by}</TableCell>
-                <TableCell><Link href={`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.name}`}><Button variant={"outline"}>View</Button></Link></TableCell>
+                <TableCell><Link href={`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.name}`}><Button variant={"outline"}>View</Button></Link></TableCell>
                 <TableCell className="text-right">{item?.qms_form}</TableCell>
               </TableRow>
             ))

@@ -9,6 +9,7 @@ import requestWrapper from "@/src/services/apiCall";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
 import { VendorOnboardingResponse } from "@/src/types/types";
 import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 type Props = {
   ref_no:string,
@@ -30,15 +31,13 @@ const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   //     <div>Loading...</div>
   //   )
   // }
-
+  const router = useRouter()
 
   const handleSubmit = async()=>{
     const employeeSubmitUrl = API_END_POINTS?.employeeDetailSubmit;
     const updatedData = {data:{number_of_employee:[...employeeDetail],ref_no:ref_no,vendor_onboarding:onboarding_ref_no}}
     const employeeDetailResponse:AxiosResponse = await requestWrapper({url:employeeSubmitUrl,data:updatedData,method:"POST"});
-    if(employeeDetailResponse?.status == 200){
-      console.log("submitted successfully")
-    }
+    if(employeeDetailResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Testing%20Facility&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   }
 
   const handleAdd = ()=>{

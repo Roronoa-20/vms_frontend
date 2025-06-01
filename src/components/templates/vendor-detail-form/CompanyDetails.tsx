@@ -49,6 +49,7 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
   return (
     <div className="flex flex-col bg-white rounded-lg p-4 w-full">
       <h1 className="border-b-2 pb-2">Company Detail</h1>
+      <form onSubmit={handleSubmit}>
       <div className="grid grid-cols-3 gap-6 p-5 overflow-y-scroll max-h-[70vh]">
         <div>
           <div className="grid grid-cols-4 gap-1">
@@ -70,7 +71,7 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Type Of Business (Please select any one)
           </h1>
-          <Select onValueChange={(value)=>{updateField('type_of_business',value)}} value={data?.type_of_business ?? OnboardingDetail?.type_of_business}>
+          <Select required  onValueChange={(value)=>{updateField('type_of_business',value)}} value={data?.type_of_business ?? OnboardingDetail?.type_of_business}>
             <SelectTrigger>
               <SelectValue placeholder="Select Vendor Type" />
             </SelectTrigger>
@@ -105,7 +106,7 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Website
           </h1>
-          <Input placeholder="" onChange={(e)=>{updateField("website",e.target.value)}} value={data?.website ?? OnboardingDetail?.website ?? ""}/>
+          <Input placeholder="" required onChange={(e)=>{updateField("website",e.target.value)}} value={data?.website ?? OnboardingDetail?.website ?? ""}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -207,8 +208,9 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
         </div>
       </div>
       <div className="flex justify-end pr-6">
-      <Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`} onClick={()=>handleSubmit()}>Next</Button>
+      <Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`} >Next</Button>
       </div>
+      </form>
     </div>
   );
 };

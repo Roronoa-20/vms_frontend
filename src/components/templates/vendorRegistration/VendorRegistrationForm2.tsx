@@ -44,28 +44,6 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
     setPurchaseOrganizationBasedDropdown(data?.message);
   }
 
-  const handleSubmit = async()=>{
-    const url = API_END_POINTS?.vendorRegistrationSubmit
-    const response:AxiosResponse = await requestWrapper({
-      url:url,
-      method:"POST",
-      data:{data:data}
-    });
-
-    if(response?.status == 500){
-      console.log("error in submitting this form");
-      return;
-    }
-
-    if(response?.status == 200){
-      resetForm();
-      console.log("handle submit successfully");
-      alert("Submit Successfully");
-      router.push("/dashboard");
-      return;
-    }
-  }
-
   console.log(companyBasedDropdown)
   return (
     <div>
@@ -250,7 +228,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
       </div>
       <div className="flex justify-end gap-3">
         <Button className="bg-blue-400 hover:bg-blue-400">Cancel</Button>
-        <Button onClick={()=>{handleSubmit()}} className="bg-blue-400 hover:bg-blue-400">Submit</Button>
+        <Button className="bg-blue-400 hover:bg-blue-400">Submit</Button>
       </div>
     </div>
   );
