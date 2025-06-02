@@ -138,7 +138,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Country
           </h1>
-          <Select onValueChange={(value)=>updateField('country', value)}>
+          <Select required onValueChange={(value)=>updateField('country', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select Country" />
             </SelectTrigger>
@@ -161,11 +161,11 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Mobile No.
               </h1>
-              <Input placeholder="+91" />
+              <Input placeholder="+91" required/>
             </div>
             <div className="col-span-3 flex flex-col justify-end">
               {/* <h1 className="text-[12px] font-normal text-[#626973] pb-3">Mobile No.</h1> */}
-              <Input placeholder="Enter Mobile Number"  onChange={(e) => updateField('mobile_number', e.target.value)}/>
+              <Input placeholder="Enter Mobile Number" required  onChange={(e) => updateField('mobile_number', e.target.value)}/>
             </div>
           </div>
         </div>
@@ -173,7 +173,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Search Terms
           </h1>
-          <Input placeholder="Enter Search Terms"  onChange={(e) => updateField('search_term', e.target.value)}/>
+          <Input placeholder="Enter Search Terms"  required onChange={(e) => updateField('search_term', e.target.value)}/>
         </div>
       </div>
     </div>

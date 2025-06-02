@@ -9,13 +9,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../atoms/select";
-import { TcompanyNameBasedDropdown, TpurchaseOrganizationBasedDropdown, TvendorRegistrationDropdown } from "@/src/types/types";
+import { TcompanyNameBasedDropdown, TpurchaseOrganizationBasedDropdown, TvendorRegistrationDropdown, VendorRegistrationData } from "@/src/types/types";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { useVendorStore } from '../../../store/VendorRegistrationStore';
 import { AxiosResponse } from "axios";
 import { Button } from "../../atoms/button";
 import { useRouter } from "next/navigation";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { handleSubmit } from "./utility";
 
 interface Props {
   incoTermsDropdown:TvendorRegistrationDropdown["message"]["data"]["incoterm_master"]
@@ -81,7 +83,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Company Name
           </h1>
-          <Select onValueChange={(value)=>{handleCompanyDropdownChange(value)}} value={data?.company_name}>
+          <Select required={true} onValueChange={(value)=>{handleCompanyDropdownChange(value)}} value={data?.company_name}>
             <SelectTrigger>
               <SelectValue placeholder="Select Company Name" />
             </SelectTrigger>
@@ -102,7 +104,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Purchase Organization
           </h1>
-          <Select onValueChange={(value)=>{handlePurchaseOrganizationDropdownChange(value)}} value={data?.purchase_organization}>
+          <Select required onValueChange={(value)=>{handlePurchaseOrganizationDropdownChange(value)}} value={data?.purchase_organization}>
             <SelectTrigger>
               <SelectValue placeholder="Select Purchase Organization" />
             </SelectTrigger>
@@ -123,7 +125,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Account Group
           </h1>
-          <Select onValueChange={(value)=>{updateField('account_group',value)}}>
+          <Select required onValueChange={(value)=>{updateField('account_group',value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Account Group" />
             </SelectTrigger>
@@ -145,7 +147,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Purchase Group
           </h1>
-          <Select onValueChange={(value)=>{updateField('purchase_group',value)}}>
+          <Select required onValueChange={(value)=>{updateField('purchase_group',value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Purchase Group" />
             </SelectTrigger>
@@ -166,7 +168,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Terms Of Payment
           </h1>
-          <Select onValueChange={(value)=>{updateField('terms_of_payment',value)}}>
+          <Select required onValueChange={(value)=>{updateField('terms_of_payment',value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Terms Of Payment" />
             </SelectTrigger>
@@ -187,7 +189,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Order Currency
           </h1>
-          <Select onValueChange={(value)=>{updateField('order_currency',value)}}>
+          <Select required onValueChange={(value)=>{updateField('order_currency',value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Order Currency" />
             </SelectTrigger>
@@ -208,7 +210,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Inco Terms
           </h1>
-          <Select onValueChange={(value)=>{updateField('incoterms',value)}}>
+          <Select required onValueChange={(value)=>{updateField('incoterms',value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Inco Terms" />
             </SelectTrigger>
@@ -228,7 +230,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
       </div>
       <div className="flex justify-end gap-3">
         <Button className="bg-blue-400 hover:bg-blue-400">Cancel</Button>
-        <Button className="bg-blue-400 hover:bg-blue-400">Submit</Button>
+        <Button type="submit" className="bg-blue-400 hover:bg-blue-400">Submit</Button>
       </div>
     </div>
   );
