@@ -41,7 +41,6 @@ interface documentDetail  {
 interface Props {
   ref_no:string,
   onboarding_ref_no:string,
-  onboarding_data:TvendorOnboardingDetail["message"]["data"]
   OnboardingDetail:VendorOnboardingResponse["message"]["document_details_tab"]
   documentDetailDropdown:TdocumentDetailDropdown["message"]["data"]
 }

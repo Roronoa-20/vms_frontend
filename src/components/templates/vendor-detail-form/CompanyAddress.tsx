@@ -28,7 +28,6 @@ interface Props {
   companyAddressDropdown?: TCompanyAddressDropdown["message"]["data"];
   ref_no: string;
   onboarding_ref_no: string;
-  onboarding_data:TvendorOnboardingDetail["message"]["data"]
   OnboardingDetail:VendorOnboardingResponse["message"]["company_address_tab"];
 }
 
