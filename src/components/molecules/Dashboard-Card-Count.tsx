@@ -25,7 +25,7 @@ const DashboardCards = ({ ...Props }: Props) => {
   const cardData = [
     {
       name: "Total Vendors",
-      count: Props.cardData?.total_vendor_count,
+      count: Props.cardData?.total_vendor_count ?? 0,
       icon: "/dashboard-assests/cards_icon/total_count.svg",
       text_color: "text-yellow-800",
       bg_color: "bg-yellow-100",
@@ -33,7 +33,7 @@ const DashboardCards = ({ ...Props }: Props) => {
     },
     {
       name: "Pending Vendors",
-      count: Props.cardData?.pending_vendor_count,
+      count: Props.cardData?.pending_vendor_count ?? 0,
       icon: "/dashboard-assests/cards_icon/hour_glass.svg",
       text_color: "text-rose-800",
       bg_color: "bg-rose-100",
@@ -41,7 +41,7 @@ const DashboardCards = ({ ...Props }: Props) => {
     },
     {
       name: "Onboarded Vendors",
-      count: Props.cardData?.approved_vendor_count,
+      count: Props.cardData?.approved_vendor_count ?? 0,
       icon: "/dashboard-assests/cards_icon/tick.svg",
       text_color: "text-emerald-800",
       bg_color: "bg-emerald-100",
@@ -73,7 +73,7 @@ const DashboardCards = ({ ...Props }: Props) => {
     },
     {
       name: "Current Month Vendors",
-      count: Props.cardData?.current_month_vendor,
+      count: Props.cardData?.current_month_vendor ?? 0,
       icon: "/dashboard-assests/cards_icon/calender.svg",
       text_color: "text-black-800",
       bg_color: "bg-gray-100",
@@ -81,7 +81,7 @@ const DashboardCards = ({ ...Props }: Props) => {
     },
     {
       name: "Rejcted Vendors",
-      count: Props.cardData?.rejected_vendor_count,
+      count: Props.cardData?.rejected_vendor_count ?? 0,
       icon: "/dashboard-assests/cards_icon/hour_glass.svg",
       text_color: "text-rose-800",
       bg_color: "bg-rose-100",

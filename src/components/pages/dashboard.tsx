@@ -90,6 +90,7 @@ const Dashboard = async () => {
   // console.log(dashboardTableData, "dashboardTableData")
 
   console.log(dashboardTotalVendorTableDataApi,"-----------------========","=pending---","=-09876543333333333333333333333333")
+  console.log(CardData,"this is card Data")
   return (
     <div className="p-8">
       {/* Cards */}
