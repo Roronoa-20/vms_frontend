@@ -23,7 +23,7 @@ const VendorRegistration = ({...Props}:Props) => {
 
   const vendorTitleDropdown = Props?.vendorTitleDropdown;
   const vendorTypeDropdown = Props?.vendorTypeDropdown;
-  const countryDropdown = Props?.companyDropdown;
+  const countryDropdown = Props?.countryDropdown;
   const companyDropdown = Props?.companyDropdown;
   const incoTermsDropdown = Props?.incoTermsDropdown;
   const currencyDropdown = Props?.currencyDropdown;
