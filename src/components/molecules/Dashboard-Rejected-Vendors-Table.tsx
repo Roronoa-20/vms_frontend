@@ -23,9 +23,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 type Props = {
   dashboardTableData: DashboardTableType
+  companyDropdown: {name:string}[]
 }
 
-const DashboardRejectedVendorsTable = ({ dashboardTableData }: Props) => {
+const DashboardRejectedVendorsTable = ({ dashboardTableData,companyDropdown }: Props) => {
   console.log(dashboardTableData.rejected_vendor_onboarding,"dashboardTableData-rejected  ---------")
   return (
 
@@ -42,11 +43,11 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData }: Props) => {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup className="w-full">
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
+                {
+                  companyDropdown?.map((item,index)=>(
+                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                  ))
+                }
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -88,7 +89,7 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData }: Props) => {
                 <TableCell className="font-medium">{item?.idx}</TableCell>
                 <TableCell>{item?.name}</TableCell>
                 <TableCell>{item?.vendor_name}</TableCell>
-                <TableCell>{item?.company_name}</TableCell>
+                <TableCell>{item?.company}</TableCell>
                 <TableCell>
                   <div
                     className={`px-2 py-3 rounded-xl ${item?.status === "pending"

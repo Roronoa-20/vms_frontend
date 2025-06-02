@@ -10,6 +10,9 @@ import DashboardRejectedVendorsTable from "./Dashboard-Rejected-Vendors-Table";
 import DashboardDispatchVendorsTable from "./Dashboard-Dispatch-Vendors-Table";
 import DashboardPaymentVendorsTable from "./Dashboard-Payment-Vendors-Table";
 import DashboardCurrentMonthsVendorsTable from "./Dashboard-Current-Months-Vendors-Table";
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import { AxiosResponse } from "axios";
+import requestWrapper from "@/src/services/apiCall";
 
 type Props = {
   cardData: dashboardCardData
@@ -20,7 +23,7 @@ type Props = {
   dashboardRejectedVendorTableData: DashboardTableType
 }
 
-const DashboardCards = ({ ...Props }: Props) => {
+const DashboardCards = async({ ...Props }: Props) => {
   console.log(Props.cardData,"cardData")
   const cardData = [
     {
@@ -88,6 +91,12 @@ const DashboardCards = ({ ...Props }: Props) => {
       hover: "hover:border-rose-400",
     },
   ];
+
+  const companyDropdownUrl = API_END_POINTS?.companyDropdown
+  const companyDropdownResponse:AxiosResponse = await requestWrapper({url:companyDropdownUrl,method:"GET"});
+  const companyDropdown:{name:string}[] =  companyDropdownResponse?.status == 200?companyDropdownResponse?.data?.data : ""; 
+
+
   return (
     <div className="">
       {/* {cardData?.map((item, index) => (
@@ -126,14 +135,14 @@ const DashboardCards = ({ ...Props }: Props) => {
         </div>
         {cardData.map((item, index) => (
           <TabsContent key={item.name || index} value={item.name}>
-            {item.name === "Total Vendors" && <DashboardTotalVendorsTable dashboardTableData={Props.dashboardTotalVendorTableData} />}
-            {item.name === "Pending Vendors" && <DashboardPendingVendorsTable dashboardTableData={Props.dashboardPendingVendorTableData} />}
-            {item.name === "Onboarded Vendors" && <DashboardApprovedVendorsTable dashboardTableData={Props.dashboardApprovedVendorTableData} />}
+            {item.name === "Total Vendors" && <DashboardTotalVendorsTable dashboardTableData={Props.dashboardTotalVendorTableData} companyDropdown={companyDropdown} />}
+            {item.name === "Pending Vendors" && <DashboardPendingVendorsTable dashboardTableData={Props.dashboardPendingVendorTableData} companyDropdown={companyDropdown}/>}
+            {item.name === "Onboarded Vendors" && <DashboardApprovedVendorsTable dashboardTableData={Props.dashboardApprovedVendorTableData} companyDropdown={companyDropdown}/>}
             {/* {item.name === "Dispatch Details" && <DashboardDispatchVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
             {/* {item.name === "Purchase & Ongoing Orders" && <PurchaseAndOngoingOrders dashboardPOTableData={Props.dashboardPOTableData} />} */}
             {/* {item.name === "Payment Request" && <DashboardPaymentVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
             {/* {item.name === "Current Month Vendors" && <DashboardCurrentMonthsVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
-            {item.name === "Rejcted Vendors" && <DashboardRejectedVendorsTable dashboardTableData={Props.dashboardRejectedVendorTableData} />}
+            {item.name === "Rejcted Vendors" && <DashboardRejectedVendorsTable dashboardTableData={Props.dashboardRejectedVendorTableData} companyDropdown={companyDropdown} />}
           </TabsContent>
         ))}
       </Tabs>

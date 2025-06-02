@@ -191,7 +191,8 @@ type VendorOnboarding = {
   status:string,
   purchase_team:string,
   purchase_head:string,
-  accounts_team:string
+  accounts_team:string,
+  company:string
 };
 
 type MultipleCompanyData = {

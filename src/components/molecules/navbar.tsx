@@ -18,7 +18,7 @@ const Navbar = () => {
           <h1 className='text-[#5f5f5f] text-right'>{designation}</h1>
         </div>
         {/* <Image className='rounded-full w-12 h-12' src={"/boy.jpg"} alt={""} width={30} height={30} /> */}
-        <div onClick={()=>{setIsDialog((prev)=> !prev)}} className="relative w-8 h-8 rounded-full bg-purple-400 flex items-center justify-center text-white text-xl">
+        <div onClick={()=>{setIsDialog((prev)=> !prev)}} className="relative cursor-pointer w-8 h-8 rounded-full bg-purple-400 flex items-center justify-center text-white text-xl">
           {logoLetter ? logoLetter : ''}
           {
             isDialog && 

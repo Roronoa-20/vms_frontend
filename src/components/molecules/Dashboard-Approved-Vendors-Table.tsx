@@ -23,9 +23,10 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 type Props = {
   dashboardTableData: DashboardTableType
+  companyDropdown:{name:string}[]
 }
 
-const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
+const DashboardApprovedVendorsTable = ({ dashboardTableData,companyDropdown }: Props) => {
   console.log(dashboardTableData.approved_vendor_onboarding,"dashboardTableData-approved  ---------")
   return (
 
@@ -37,20 +38,20 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
         <div className="flex gap-4">
           <Input placeholder="Search..." />
           <Select>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger>
               <SelectValue placeholder="Select Company" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup className="w-full">
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
+                {
+                  companyDropdown?.map((item,index)=>(
+                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                  ))
+                }
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Select>
+          {/* <Select>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
@@ -63,7 +64,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
                 <SelectItem value="pineapple">Pineapple</SelectItem>
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
         </div>
       </div>
       <Table>
@@ -89,7 +90,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
                 <TableCell className="font-medium">{index + 1}.</TableCell>
                 <TableCell>{item?.name}</TableCell>
                 <TableCell>{item?.vendor_name}</TableCell>
-                <TableCell>{item?.company_name}</TableCell>
+                <TableCell>{item?.company}</TableCell>
                 <TableCell>
                   <div
                     className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "pending"

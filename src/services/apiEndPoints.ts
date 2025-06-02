@@ -42,7 +42,8 @@ const API_END_POINTS = {
   dashboardApprovedVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.approved_vendor_details`,
   dashboardRejectedVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.rejected_vendor_details`,
   certificateSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration.onboarding_form_submit`,
-  logout:`${url}/api/method/logout`
+  logout:`${url}/api/method/logout`,
+  companyDropdown:`${url}/api/resource/Company%20Master`
 };
 
 export default API_END_POINTS;
