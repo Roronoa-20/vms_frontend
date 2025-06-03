@@ -13,7 +13,7 @@ type companyAddressFormStore = {
     updatedData: Partial<TCompanyAddressDetail["multiple_location_table"]>
   ) => void;
   addMultipleLocation: (location: TmultipleLocation) => void,
-    reset:()=>void
+    resetMultiple:()=>void
 }
 
 
@@ -50,5 +50,5 @@ export const useCompanyAddressFormStore = create<companyAddressFormStore>((set)=
       }
       return { multiple_location_table: updated };
     }),
-    reset:()=>set({billingAddress:{}})
+    resetMultiple:()=>set({multiple_location_table:[]})
 }))

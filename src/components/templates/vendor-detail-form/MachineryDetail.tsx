@@ -9,6 +9,7 @@ import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { VendorOnboardingResponse } from "@/src/types/types";
 import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 interface Props {
   ref_no:string,
@@ -17,9 +18,11 @@ interface Props {
 }
 
 const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
-  const {machineDetail,updateMachineDetail} = useMachineDetailStore();
+  const {machineDetail,updateMachineDetail,resetMachineDetail} = useMachineDetailStore();
   const [multipleMachineDetail,setMultipleMachineDetail] = useState<TMachineDetail | null>(null);
+  const router = useRouter();
   useEffect(()=>{
+    resetMachineDetail();
     OnboardingDetail?.map((item,index)=>{
       updateMachineDetail(item)
     })
@@ -38,9 +41,7 @@ const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
     const updatedData = {machinery_detail:machineDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}
     const machineDetailResponse:AxiosResponse = await requestWrapper({url:submitUrl,data:{data:updatedData},method:"POST"});
 
-    if(machineDetailResponse?.status == 200){
-      console.log("successfully submitted");
-    }
+    if(machineDetailResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Testing%20Facility&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   }
 
   const handleAdd = async()=>{

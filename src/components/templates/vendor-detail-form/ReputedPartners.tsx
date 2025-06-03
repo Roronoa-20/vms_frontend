@@ -28,6 +28,7 @@ const ReputedPartners = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   const {designation} = useAuth();
   
   useEffect(()=>{
+    setReputedPartnersDetails([])
     OnboardingDetail?.map((item)=>{
       setReputedPartnersDetails((prev)=>([...prev,item]))
     })

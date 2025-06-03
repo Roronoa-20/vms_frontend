@@ -20,9 +20,10 @@ interface Props {
 const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   const [multipleTestingDetail,setMultipleTestingDetail] = useState<Partial<TTestingFacility>>();
   const {designation} = useAuth();
-  const {testingDetail,updateTestingDetail} = useTestingStore();
+  const {testingDetail,updateTestingDetail,reset} = useTestingStore();
   
   useEffect(()=>{
+    reset();
     OnboardingDetail?.map((item,index)=>{
       updateTestingDetail(item)
     })

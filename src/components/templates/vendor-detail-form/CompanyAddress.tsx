@@ -74,6 +74,7 @@ const CompanyAddress = ({
     updateshippingAddress,
     updateLocationAtIndex,
     addMultipleLocation,
+    resetMultiple
   } = useCompanyAddressFormStore();
   const [pincodeFetchData, setPincodeData] = useState<pincodeFetchData>();
   const [isShippingSame, setIsShippingSame] = useState<boolean>(false);
@@ -83,6 +84,7 @@ const CompanyAddress = ({
 
   const [isMultipleLocation, setIsMultipleLocation] = useState<boolean>(OnboardingDetail?.multiple_locations ? true : false);
   useEffect(()=>{
+    resetMultiple();
     OnboardingDetail?.multiple_location_table?.map((item)=>{
       addMultipleLocation({address_line_1:item?.address_line_1,
         address_line_2:item?.address_line_2,
@@ -255,8 +257,6 @@ const CompanyAddress = ({
 
 
   };
-
-  console.log(billingAddress,shippingAddress,multiple_location_table,"this is form data")
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">

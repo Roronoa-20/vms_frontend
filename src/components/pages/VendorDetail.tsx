@@ -43,14 +43,6 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
 
   const vendorOnboardingRefno = vendor_onboarding;
   const tabType = tabtype;
-  // const onboardingDetailUrl = API_END_POINTS?.vendorOnboardingDetail;
-  
-  // const response: AxiosResponse = await requestWrapper({
-  //   url: `${onboardingDetailUrl}?vendor_onboarding=${vendorOnboardingRefno}`,
-  //   method: "GET",
-  // });
-  // const Data: TvendorOnboardingDetail["message"]["data"] =
-  //   response?.status == 200 ? response?.data?.message?.data : "";
 
   const companyDetailDropdownUrl = API_END_POINTS?.companyDetailDropdown;
   const companyDetailresponse: AxiosResponse = await requestWrapper({

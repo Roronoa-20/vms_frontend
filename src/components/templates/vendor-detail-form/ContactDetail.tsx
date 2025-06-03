@@ -17,6 +17,7 @@ import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import { VendorOnboardingResponse } from "@/src/types/types";
 import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 type Props = {
   ref_no:string,
@@ -25,9 +26,11 @@ type Props = {
 }
 
 const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
-  const {contactDetail,addContactDetail} = useContactDetailStore()
+  const {contactDetail,addContactDetail,resetContactDetail} = useContactDetailStore()
   const [contact,setContact] = useState<Partial<TcontactDetail>>()
+  const router = useRouter();
   useEffect(()=>{
+    resetContactDetail();
     OnboardingDetail?.map((item,index)=>{
       addContactDetail(item)
     })
@@ -51,9 +54,7 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   const handleSubmit = async()=>{
     const submitUrl = API_END_POINTS?.contactDetailSubmit;
     const submitResponse:AxiosResponse = await requestWrapper({url:submitUrl,data:{data:{contact_details:contactDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}},method:"POST"});
-    if(submitResponse?.status == 200){
-      console.log("successfully submitted")
-    }
+    if(submitResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   }
 
   return (

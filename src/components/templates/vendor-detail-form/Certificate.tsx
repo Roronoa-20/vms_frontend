@@ -58,7 +58,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
     const url = API_END_POINTS?.certificateSubmit;
     const certificateSubmit:AxiosResponse = await requestWrapper({url:url,data:{data:{onb_id:onboarding_ref_no,completed:1}},method:"POST"})
     if(certificateSubmit?.status == 200){
-      console.log("Successfully submit")
+      alert("Successfully submit")
     }
   }
 

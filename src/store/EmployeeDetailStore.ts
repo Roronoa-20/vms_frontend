@@ -13,11 +13,13 @@ export type TEmployeeDetail = {
 type EmployeeDetailStore = {
     employeeDetail:Partial<TEmployeeDetail>[],
     updateEmployeeDetail:(data:any)=>void
+    resetEmployeeDetail:()=>void
 }
 
 export const useEmployeeDetailStore = create<EmployeeDetailStore>((set)=>({
     employeeDetail:[],
     updateEmployeeDetail:(data)=>set((state)=>({
         employeeDetail:[...state?.employeeDetail,data]
-    }))
+    })),
+    resetEmployeeDetail:()=>set({employeeDetail: []})
 }))
