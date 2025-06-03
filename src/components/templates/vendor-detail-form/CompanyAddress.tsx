@@ -23,6 +23,9 @@ import {
 } from "../../atoms/table";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
+import FilePreview from "../../molecules/FilePreview";
+import Link from "next/link";
+import { CropIcon, Cross, CrossIcon, X } from "lucide-react";
 
 interface Props {
   companyAddressDropdown?: TCompanyAddressDropdown["message"]["data"];
@@ -81,6 +84,7 @@ const CompanyAddress = ({
   const [shippingData, setShippingData] = useState<shippingData>();
   const [MultipleAddress, setMultipleAddress] = useState<multipleAddress>();
   const [file,setFile] = useState<FileList | null>(null);
+  const [isFilePreview,setIsFilePreview] = useState<boolean>(true);
 
   const [isMultipleLocation, setIsMultipleLocation] = useState<boolean>(OnboardingDetail?.multiple_locations ? true : false);
   useEffect(()=>{
@@ -89,12 +93,12 @@ const CompanyAddress = ({
       addMultipleLocation({address_line_1:item?.address_line_1,
         address_line_2:item?.address_line_2,
         ma_pincode:item?.ma_pincode,
-        ma_district:{name:item?.district_details?.district_name as string,district_name:item?.district_details?.district_name as string,district_code:item?.district_details?.district_code as string},
-        ma_state:{name:item?.state_details?.state_name as string,state_name:item?.state_details?.state_name as string,state_code:item?.state_details?.state_code as string},
+        ma_district:{name:item?.district_details?.name as string,district_name:item?.district_details?.district_name as string,district_code:item?.district_details?.district_code as string},
+        ma_state:{name:item?.state_details?.name as string,state_name:item?.state_details?.state_name as string,state_code:item?.state_details?.state_code as string},
         ma_city:{name:item?.city_details?.name,
           city_name:item?.city_details?.city_name as string,
           city_code:item?.city_details?.city_code as string},
-        ma_country:{name:item?.country_details?.country_name as string,country_code:item?.country_details?.country_code as string,country_name:item?.country_details?.country_name as string}}) 
+        ma_country:{name:item?.country_details?.name as string,country_code:item?.country_details?.country_code as string,country_name:item?.country_details?.country_name as string}}) 
     })
   },[])
 
@@ -253,10 +257,9 @@ const CompanyAddress = ({
       formData.append("file",file[0])
     }
     const submitResponse:AxiosResponse = await requestWrapper({url:submitUrl,method:"POST",data:formData});
-    if(submitResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Company%20Address&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
-
-
+    if(submitResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Document%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   };
+  
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
@@ -598,12 +601,23 @@ const CompanyAddress = ({
           </div>
         </>
       )}
+      
       <div className="flex flex-col gap-2 justify-center pl-4 pt-2">
         <h1 className="font-medium">Main Office Address Proof</h1>
         <h1 className="text-[12px] font-normal text-[#626973]">
           Upload Address Proof (Light Bill, Telephone Bill, etc.)
         </h1>
         <Input type="file" className="w-fit" onChange={(e)=>{setFile(e.target.files)}} />
+      {/* file preview */}
+      {
+       isFilePreview && !file && OnboardingDetail?.address_proofattachment?.url &&
+        <div className="flex gap-2">
+      <Link target="blank" href={OnboardingDetail?.address_proofattachment?.url} className="underline text-blue-300 max-w-44 truncate">
+      <span>{OnboardingDetail?.address_proofattachment?.file_name}</span>
+      </Link>
+      <X className="cursor-pointer" onClick={()=>{setIsFilePreview((prev)=>!prev)}}/>
+      </div>
+      }
       </div>
       <div className={`flex justify-end gap-4 ${designation?"hidden":""}`}>
         <Button

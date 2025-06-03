@@ -16,7 +16,7 @@ export type TvendorRegistrationDropdown = {
     data: {
       vendor_type: { name: string }[],
       vendor_title: { name: string }[],
-      country_master: { name: string }[],
+      country_master: { name: string, mobile_code:string }[],
       company_master: { name: string }[],
       incoterm_master: { name: string }[],
       currency_master: { name: string }[]
@@ -507,6 +507,7 @@ export type TCompanyDetailForm = {
   type AddressProofAttachment = {
     url: string;
     name: string;
+    file_name:string
   };
   
   

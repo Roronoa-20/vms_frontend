@@ -17,6 +17,8 @@ import requestWrapper from "@/src/services/apiCall";
 import { VendorOnboardingResponse } from "@/src/types/types";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { X } from "lucide-react";
 
 type Props = {
   ref_no:string,
@@ -30,6 +32,9 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
   const [manufacturedFile,setManufacturedFile] = useState<FileList | null>(null)
   const [brochure_proof,setBrochure_proof] = useState<FileList | null>(null)
   const [organisation_structure_document,setOrganisation_structure_document] = useState<FileList | null>(null)
+  const [isManufacturedFilePreview,setIsManufacturedFilePreview] = useState<boolean>(true);
+  const [isBrochureFilePreview,setIsBrochureFilePreview] = useState<boolean>(true);
+  const [isStructureFilePreview,setIsStructureFilePreview] = useState<boolean>(true);
   const {designation} = useAuth()
 
 
@@ -166,7 +171,30 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Upload manufactured product image
           </h1>
+          <div className="flex gap-4">
+
           <Input placeholder="" type="file" onChange={(e)=>{setManufacturedFile(e.target.files)}}/>
+          {/* file preview */}
+          {isManufacturedFilePreview &&
+              !manufacturedFile &&
+              OnboardingDetail?.materials_supplied?.[0]?.material_images?.url && (
+                <div className="flex gap-2">
+                  <Link
+                  target="blank"
+                  href={OnboardingDetail?.materials_supplied?.[0]?.material_images?.url}
+                  className="underline text-blue-300 max-w-44 truncate"
+                  >
+                    <span>{OnboardingDetail?.materials_supplied?.[0]?.material_images?.file_name}</span>
+                  </Link>
+                  <X
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setIsManufacturedFilePreview((prev) => !prev);
+                    }}
+                    />
+                </div>
+              )}
+              </div>
         </div>
       </div>
       <div className="grid grid-cols-3 gap-3 pl-5 pb-6">
@@ -174,7 +202,29 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
           <h1 className="text-[16px] font-normal text-[#626973] pb-3">
             Upload your Material Brochure (PDF)
           </h1>
+          <div className="flex gap-4">
           <Input placeholder="" type="file" onChange={(e)=>{setBrochure_proof(e.target.files)}}/>
+          {/* file preview */}
+          {isBrochureFilePreview &&
+              !brochure_proof &&
+              OnboardingDetail?.brochure_proof?.url && (
+                <div className="flex gap-2">
+                  <Link
+                  target="blank"
+                  href={OnboardingDetail?.brochure_proof?.url}
+                  className="underline text-blue-300 max-w-44 truncate"
+                  >
+                    <span>{OnboardingDetail?.brochure_proof?.file_name}</span>
+                  </Link>
+                  <X
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setIsBrochureFilePreview((prev) => !prev);
+                    }}
+                    />
+                </div>
+              )}
+              </div>
         </div>
       </div>
       <div className="grid grid-cols-3 gap-3 pl-5">
@@ -182,7 +232,29 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
           <h1 className="text-[16px] font-normal text-[#626973] pb-3">
             Organization Structure Document
           </h1>
+          <div className="flex gap-4">
           <Input placeholder="" type="file" onChange={(e)=>{setOrganisation_structure_document(e.target.files)}} />
+          {/* file preview */}
+          {isStructureFilePreview &&
+              !organisation_structure_document &&
+              OnboardingDetail?.organisation_structure_document?.url && (
+                <div className="flex gap-2">
+                  <Link
+                  target="blank"
+                  href={OnboardingDetail?.organisation_structure_document?.url}
+                  className="underline text-blue-300 max-w-44 truncate"
+                  >
+                    <span>{OnboardingDetail?.organisation_structure_document?.file_name}</span>
+                  </Link>
+                  <X
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setIsStructureFilePreview((prev) => !prev);
+                    }}
+                    />
+                </div>
+              )}
+              </div>
         </div>
       </div>
       <div className={`flex justify-end pr-4 ${designation?"hidden":""}`}><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>

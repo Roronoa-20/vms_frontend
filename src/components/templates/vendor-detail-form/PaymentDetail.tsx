@@ -17,6 +17,8 @@ import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { X } from "lucide-react";
 
 interface Props {
   ref_no:string,
@@ -30,6 +32,7 @@ interface Props {
 const PaymentDetail = ({ref_no,onboarding_ref_no,bankNameDropown,currencyDropown,OnboardingDetail}:Props) => {
   const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
   const [bankProofFile,setBankProofFile] = useState<FileList | null>(null);
+  const [isBankFilePreview, setIsBankFilePreview] = useState<boolean>(true);
   const {designation} = useAuth();
   // if(!designation){
   //   return(
@@ -43,13 +46,14 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,bankNameDropown,currencyDropown
     const formData = new FormData()
     formData.append("data",JSON.stringify(updatedData));
     if(bankProofFile){
-      formData.append("file",bankProofFile[0])
+      formData.append("bank_proof",bankProofFile[0])
     }
     const response:AxiosResponse = await requestWrapper({url:submitUrl,method:"POST",data:formData})
     
       if(response?.status == 200) router.push(`/vendor-details-form?tabtype=Contact%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
     
   }
+  console.log(OnboardingDetail?.bank_proof?.file_name,"thiskjdvb")
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
@@ -134,7 +138,29 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,bankNameDropown,currencyDropown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Bank Proof (Upload Passbook Leaf/Cancelled Cheque)
           </h1>
+          <div className="flex gap-4">
           <Input placeholder=""  type="file" onChange={(e)=>{setBankProofFile(e.target.files)}} />
+          {/* file preview */}
+          {isBankFilePreview &&
+              !bankProofFile &&
+              OnboardingDetail?.bank_proof?.url && (
+                <div className="flex gap-2">
+                  <Link
+                  target="blank"
+                  href={OnboardingDetail?.bank_proof?.url}
+                  className="underline text-blue-300 max-w-44 truncate"
+                  >
+                    <span>{OnboardingDetail?.bank_proof?.file_name}</span>
+                  </Link>
+                  <X
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setIsBankFilePreview((prev) => !prev);
+                    }}
+                    />
+                </div>
+              )}
+              </div>
         </div>
         <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">

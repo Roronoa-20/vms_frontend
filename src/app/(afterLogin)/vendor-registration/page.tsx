@@ -14,6 +14,7 @@ const page = async() => {
   });
   const dropdownData: TvendorRegistrationDropdown["message"]["data"] =
     dropDownApi?.status == 200 ? dropDownApi?.data?.message?.data : "";
+    console.log(dropdownData,"this is dropdown")
 
   const vendorTitleDropdown = dropdownData?.vendor_title;
   const vendorTypeDropdown = dropdownData?.vendor_type;

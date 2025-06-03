@@ -2,17 +2,17 @@ export const sidebarMenu = [
   {
     logo: "/sidebar-assests/home-logo.svg",
     name: "Home",
-    href:""
-  },
-  {
-    logo: "/sidebar-assests/raise-rfq-logo.svg",
-    name: "Raise RFQ",
-    href:""
+    href:"/dashboard"
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "Vendor",
     href:"/vendor-registration"
+  },
+  {
+    logo: "/sidebar-assests/raise-rfq-logo.svg",
+    name: "Raise RFQ",
+    href:""
   },
   {
     logo: "/sidebar-assests/view-pr.svg",
