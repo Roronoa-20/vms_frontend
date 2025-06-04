@@ -33,7 +33,7 @@ const ApprovalButton = ({tabtype,ref_no,onboardingRefno}:Props) => {
         }
         // const geturl = url[designation];
         const geturl = url[designation];
-        const Response:AxiosResponse = await requestWrapper({url:geturl,method:"POST",data:{data:{onboard_id:onboardingRefno,user:user_email,approve:isApprove,reject:isReject,rejected_reason:isReject?comments:""},}});
+        const Response:AxiosResponse = await requestWrapper({url:geturl,method:"POST",data:{data:{onboard_id:onboardingRefno,user:user_email,approve:isApprove,reject:isReject,rejected_reason:isReject?comments:"",comments:isApprove?comments:""},}});
         if(Response?.status == 200){
             if(isApprove && !isReject){
                 alert("Approved Successfully");
