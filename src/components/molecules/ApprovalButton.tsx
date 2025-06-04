@@ -5,7 +5,7 @@ import { useAuth } from '@/src/context/AuthContext';
 import { AxiosResponse } from 'axios';
 import requestWrapper from '@/src/services/apiCall';
 import Comment_box from './CommentBox';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 interface Props {
     tabtype: string;
