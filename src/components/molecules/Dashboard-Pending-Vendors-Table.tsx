@@ -106,7 +106,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData,companyDropdown }: Pr
                 <TableCell>{item?.purchase_t_approval}</TableCell>
                 <TableCell>{item?.purchase_h_approval}</TableCell>
                 <TableCell>{item?.accounts_t_approval}</TableCell>
-                <TableCell><Link href={`/view-onboarding-details??tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.name}`}><Button variant={"outline"}>View</Button></Link></TableCell>
+                <TableCell><Link href={`/view-onboarding-details??tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
                 <TableCell className="text-right">{item?.qms_form}</TableCell>
               </TableRow>
             ))
