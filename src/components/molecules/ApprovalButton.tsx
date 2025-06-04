@@ -5,6 +5,7 @@ import { useAuth } from '@/src/context/AuthContext';
 import { AxiosResponse } from 'axios';
 import requestWrapper from '@/src/services/apiCall';
 import Comment_box from './CommentBox';
+import { useRouter } from 'next/router';
 
 interface Props {
     tabtype: string;
@@ -18,6 +19,7 @@ const ApprovalButton = ({tabtype,ref_no,onboardingRefno}:Props) => {
     const [comments,setComments] = useState<string>("")
     const [isApprove,setIsApprove] = useState<boolean>(false);
     const [isReject,setIsReject] = useState<boolean>(false);
+    const router = useRouter();
     const { designation, user_email } = useAuth() as { designation: "Purchase Team" | "Accounts Team" | "Purchase Head"; user_email: string };
     if(!designation){
         return <div>Loading</div>
@@ -42,6 +44,7 @@ const ApprovalButton = ({tabtype,ref_no,onboardingRefno}:Props) => {
             setIsReject(false);
             setComments("");
             setIsCommentBox(false);
+            router.push("/dashboard");
         }
     }
 
