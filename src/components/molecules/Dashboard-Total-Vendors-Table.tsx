@@ -77,8 +77,8 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
             <TableHead className="text-center">Company Name</TableHead>
             <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Purchase Team</TableHead>
-            <TableHead className="text-center">Purchase Head</TableHead>
             <TableHead className="text-center">Account Team</TableHead>
+            <TableHead className="text-center">Purchase Head</TableHead>
             <TableHead className="text-center">View Details</TableHead>
             <TableHead className="text-center">QMS Form</TableHead>
           </TableRow>
@@ -105,8 +105,8 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
                   </div>
                 </TableCell>
                 <TableCell>{item?.purchase_t_approval}</TableCell>
-                <TableCell>{item?.purchase_h_approval}</TableCell>
                 <TableCell>{item?.accounts_t_approval}</TableCell>
+                <TableCell>{item?.purchase_h_approval}</TableCell>
                 <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
                 <TableCell className="text-right">{item?.qms_form}</TableCell>
               </TableRow>

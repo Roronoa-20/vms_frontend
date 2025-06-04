@@ -76,8 +76,8 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData,companyDropdown }: P
             <TableHead>Vendor Name</TableHead>
             <TableHead className="text-center">Company Name</TableHead>
             <TableHead className="text-center">Status</TableHead>
-            <TableHead className="text-center">Purchase Team</TableHead>
             <TableHead className="text-center">Account Team</TableHead>
+            <TableHead className="text-center">Purchase Team</TableHead>
             <TableHead className="text-center">View Details</TableHead>
             <TableHead className="text-center">QMS Form</TableHead>
           </TableRow>
@@ -103,8 +103,8 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData,companyDropdown }: P
                   </div>
                 </TableCell>
                 <TableCell>{item?.purchase_team}</TableCell>
-                <TableCell>{item?.purchase_head}</TableCell>
                 <TableCell>{item?.accounts_team}</TableCell>
+                <TableCell>{item?.purchase_head}</TableCell>
                 <TableCell><Link href={`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
                 <TableCell className="text-right">{item?.qms_form}</TableCell>
               </TableRow>

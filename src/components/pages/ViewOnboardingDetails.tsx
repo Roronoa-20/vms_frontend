@@ -117,7 +117,7 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
           ""
         )}
       </div>
-      <ApprovalButton tabtype={tabType} ref_no={refno}/>
+      <ApprovalButton tabtype={tabType} ref_no={refno} onboardingRefno={vendorOnboardingRefno}/>
     </div>
   )
 }

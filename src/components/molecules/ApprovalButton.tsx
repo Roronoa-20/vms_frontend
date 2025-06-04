@@ -9,10 +9,11 @@ import Comment_box from './CommentBox';
 interface Props {
     tabtype: string;
     ref_no:string
+    onboardingRefno:string
 }
 
 
-const ApprovalButton = ({tabtype,ref_no}:Props) => {
+const ApprovalButton = ({tabtype,ref_no,onboardingRefno}:Props) => {
     const [isCommentBox,setIsCommentBox] = useState<boolean>(false);
     const [comments,setComments] = useState<string>("")
     const [isApprove,setIsApprove] = useState<boolean>(false);
@@ -30,9 +31,9 @@ const ApprovalButton = ({tabtype,ref_no}:Props) => {
         }
         // const geturl = url[designation];
         const geturl = url[designation];
-        const Response:AxiosResponse = await requestWrapper({url:geturl,method:"POST",data:{data:{onboard_id:ref_no,user:user_email,approve:isApprove,reject:isReject,rejected_reason:comments},}});
+        const Response:AxiosResponse = await requestWrapper({url:geturl,method:"POST",data:{data:{onboard_id:onboardingRefno,user:user_email,approve:isApprove,reject:isReject,rejected_reason:isReject?comments:""},}});
         if(Response?.status == 200){
-            if(isApprove){
+            if(isApprove && !isReject){
                 alert("Approved Successfully");
             }else{
                 alert("Rejected Successfully");
