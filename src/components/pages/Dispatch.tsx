@@ -49,6 +49,21 @@ export interface TDisptachDetails {
   }[]
 }
 
+
+export type DispatchStateAndPlant = {
+  states:{
+    name:string,
+    state_name:string,
+    state_code:string,
+    country_name:string
+  }[],
+  plants:{
+    name:string,
+    plant_name:string,
+    company:string
+  }[]
+}
+
 const Dispatch = async({refno}:Props) => {
 
   const cookieStore = await cookies();
@@ -62,10 +77,13 @@ const Dispatch = async({refno}:Props) => {
     DispatchDetails = response?.status == 200? response?.data?.message?.data : null
   }
 
-  console.log(DispatchDetails,"this is dispatch details")
+  const StateAndPlantResponse:AxiosResponse = await requestWrapper({url:API_END_POINTS?.DispatchStateAndPlant,method:"GET"});
+  const StateAndPlant:DispatchStateAndPlant =  StateAndPlantResponse?.status == 200 ? StateAndPlantResponse?.data?.message?.data : ""
+
+  console.log(StateAndPlant,"this is state and plant")
 
   return (
-    <DispatchForm DispatchDetails={DispatchDetails} refno={refno}/>
+    <DispatchForm DispatchDetails={DispatchDetails} refno={refno} StateAndPlant={StateAndPlant}/>
   )
 }
 

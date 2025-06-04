@@ -17,7 +17,7 @@ const PopUp = ({ handleClose,children,headerText,isSubmit,Submitbutton, classnam
   const DialogRef = useOutsideClick<HTMLDivElement>(handleClose)
   return (
      <div className="absolute z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
-    <div ref={!disableRef?null:DialogRef}  className={cn(`bg-white rounded-xl border p-4 md:max-w-[450px] md:max-h-[300px] h-full w-full gap-8 text-black md:text-md font-light`,classname)}>
+    <div ref={!disableRef?null:DialogRef}  className={cn(`bg-white rounded-xl border p-4 md:max-w-[450px] md:max-h-[300px] w-full gap-8 text-black md:text-md font-light`,classname)}>
       <div className="flex justify-between items-center w-full pb-4">
         <h1 className="text-2xl font-poppins">{headerText}</h1>
         <Button
