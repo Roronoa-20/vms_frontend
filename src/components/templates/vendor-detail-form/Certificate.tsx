@@ -18,6 +18,7 @@ import { AxiosResponse } from "axios";
 import { CrossIcon } from "lucide-react";
 import { it } from "node:test";
 import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 interface Props {
   certificateCodeDropdown:TcertificateCodeDropdown["message"]["data"]["certificate_names"];
@@ -38,7 +39,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
   console.log(OnboardingDetail)
   const [certificateData,setCertificateData] = useState<Partial<certificateData>>({});
   const [multipleCertificateData,setMultipleCertificateData] = useState<certificateData[]>([]);
-  
+  const router = useRouter();
   
   useEffect(()=>{
     
@@ -58,7 +59,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
     const url = API_END_POINTS?.certificateSubmit;
     const certificateSubmit:AxiosResponse = await requestWrapper({url:url,data:{data:{onb_id:onboarding_ref_no,completed:1}},method:"POST"})
     if(certificateSubmit?.status == 200){
-      alert("Successfully submit")
+      router.push("/Success");
     }
   }
 
