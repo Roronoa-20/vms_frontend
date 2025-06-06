@@ -80,7 +80,7 @@ const CompanyAddress = ({
     resetMultiple
   } = useCompanyAddressFormStore();
   const [pincodeFetchData, setPincodeData] = useState<pincodeFetchData>();
-  const [isShippingSame, setIsShippingSame] = useState<boolean>(false);
+  const [isShippingSame, setIsShippingSame] = useState<boolean>(OnboardingDetail?.same_as_above == 1?true: false);
   const [shippingData, setShippingData] = useState<shippingData>();
   const [MultipleAddress, setMultipleAddress] = useState<multipleAddress>();
   const [file,setFile] = useState<FileList | null>(null);

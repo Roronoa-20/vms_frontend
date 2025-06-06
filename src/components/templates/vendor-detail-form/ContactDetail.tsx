@@ -62,7 +62,7 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
         Contact Detail
       </h1>
-      <h1 className="pl-5">Contact Person 1</h1>
+      <h1 className="pl-5">Contact Person</h1>
       <div className="grid grid-cols-3 gap-6 p-5">
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -113,12 +113,12 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                   <TableHead className="w-[100px]">Sr No.</TableHead>
-                  <TableHead className="text-center">Address1</TableHead>
-                  <TableHead className="text-center">Address2</TableHead>
-                  <TableHead className="text-center">Pincode</TableHead>
-                  <TableHead className="text-center">District</TableHead>
-                  <TableHead className="text-center">City</TableHead>
-                  <TableHead className="text-center">State</TableHead>
+                  <TableHead className="text-center">First Name</TableHead>
+                  <TableHead className="text-center">Last Name</TableHead>
+                  <TableHead className="text-center">Designation</TableHead>
+                  <TableHead className="text-center">Email</TableHead>
+                  <TableHead className="text-center">Contact Number</TableHead>
+                  <TableHead className="text-center">Department Name</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { Input } from "../../atoms/input";
 import {
   Select,
@@ -66,6 +66,20 @@ const DocumentDetails = ({
   const [documentDetails, setDocumentDetail] =
     useState<Partial<documentDetail>>();
 
+  useEffect(()=>{
+    setDocumentDetail((prev)=>(
+      {...prev,gst_table:[
+        {
+          name:OnboardingDetail?.gst_table?.[0]?.name,
+          gst_state:OnboardingDetail?.gst_table?.[0]?.gst_state,
+          gst_number:OnboardingDetail?.gst_table?.[0]?.gst_number,
+          gst_registration_date:OnboardingDetail?.gst_table?.[0]?.gst_registration_date,
+          gst_ven_type:OnboardingDetail?.gst_table?.[0]?.gst_ven_type
+        }
+      ]}
+    ))
+  },[])
+
   const { designation } = useAuth();
   // if(!designation){
   //   return(
@@ -85,6 +99,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
       msme_registered: isMSME,
       gst_table: [
         {
+          name:OnboardingDetail?.gst_table?.[0]?.name,
           gst_state: documentDetails?.gst_state,
           gst_number: documentDetails?.gst_number,
           gst_registration_date: documentDetails?.gst_registration_date,
@@ -114,6 +129,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
       method: "POST",
     });
     if (Response?.status == 200)
+      setDocumentDetail({})
       router.push(
         `/vendor-details-form?tabtype=Payment%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
       );
@@ -203,7 +219,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           <div className="col-span-3 grid grid-cols-3 gap-6">
             <div className="flex flex-col">
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                Type Of Business (Please select any one)
+                GST Vendor Type
               </h1>
               <Select
                 onValueChange={(value) => {

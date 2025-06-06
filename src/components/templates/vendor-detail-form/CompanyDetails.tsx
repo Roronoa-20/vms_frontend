@@ -119,7 +119,7 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Mobile Number
           </h1>
-          <Input placeholder="Enter Mobile Number" onChange={(e)=>{updateField("telephone_number",e.target.value)}} value={data?.telephone_number ?? OnboardingDetail?.telephone_number ?? ""}/>
+          <Input placeholder="Enter Mobile Number" disabled onChange={(e)=>{updateField("telephone_number",e.target.value)}} value={data?.telephone_number ?? OnboardingDetail?.telephone_number ?? ""}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -137,7 +137,7 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Office Email Primary
           </h1>
-          <Input placeholder="" onChange={(e)=>{updateField("office_email_primary",e.target.value)}} value={data?.office_email_primary ?? OnboardingDetail?.office_email_primary ?? ""}/>
+          <Input placeholder="" disabled onChange={(e)=>{updateField("office_email_primary",e.target.value)}} value={data?.office_email_primary ?? OnboardingDetail?.office_email_primary ?? ""}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">

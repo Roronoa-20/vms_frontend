@@ -94,10 +94,10 @@ const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                   <TableHead className="w-[100px]">Sr No.</TableHead>
-                  <TableHead className="text-center">Address1</TableHead>
-                  <TableHead className="text-center">Address2</TableHead>
-                  <TableHead className="text-center">Pincode</TableHead>
-                  <TableHead className="text-center">District</TableHead>
+                  <TableHead className="text-center">Equipment Name</TableHead>
+                  <TableHead className="text-center">Equipment Qty</TableHead>
+                  <TableHead className="text-center">Capacity</TableHead>
+                  <TableHead className="text-center">Remarks</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
