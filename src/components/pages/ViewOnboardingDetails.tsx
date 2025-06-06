@@ -18,6 +18,7 @@ import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import { TbankNameDropdown, TcertificateCodeDropdown, TCompanyAddressDropdown, TcompanyDetailDropdown, TCurrencyDropdown, TdocumentDetailDropdown, TvendorOnboardingDetail, VendorOnboardingResponse } from '@/src/types/types'
 import ApprovalButton from '../molecules/ApprovalButton'
+import PurchaseDetails from '../templates/vendor-detail-form/PurchaseDetails'
 
 interface Props {
   vendor_onboarding: any;
@@ -80,7 +81,7 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
       const fetchOnboardingDetailResponse:AxiosResponse = await requestWrapper({url:fetchOnboardingDetailUrl,method:"GET"});
       const OnboardingDetail:VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ?fetchOnboardingDetailResponse?.data?.message : "";
     
-
+      console.log(OnboardingDetail,"this is onboarding details")
   return (
     <div>
         <OnboardingTab onboarding_refno={vendorOnboardingRefno} refno={refno} />
@@ -113,7 +114,10 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
           <ReputedPartners ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.reputed_partners_details_tab}/>
         ) : tabType == "Certificate" ? (
           <Certificate certificateCodeDropdown={certificateCodeDropdown?.certificate_names} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.certificate_details_tab}/>
-        ) : (
+        ) : tabType == "Purchase Detail"?(
+          <PurchaseDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.purchasing_details?.[0]}/>
+        )
+        : (
           ""
         )}
       </div>

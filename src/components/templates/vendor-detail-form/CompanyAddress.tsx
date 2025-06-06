@@ -208,13 +208,15 @@ const CompanyAddress = ({
   };
 
   const handleShippingCheck = (e: boolean) => {
+    console.log(e,"this is check")
     setIsShippingSame(e);
+    // setShippingData((prev)=>({...prev,address1:billingAddress?.address_line_1,address2:billingAddress?.address_line_2}))
     if (e) {
       handleShippingPincodeChange(billingAddress?.pincode ?? "");
       setShippingData((prev) => ({
         ...prev,
-        address1: billingAddress?.address_line_1,
-        address2: billingAddress?.address_line_2,
+        address_line_1: billingAddress?.address_line_1,
+        address_line_2: billingAddress?.address_line_2,
         pincode: billingAddress?.pincode,
         district: billingAddress?.district?.district_name,
         city: billingAddress?.city?.city_name,
@@ -377,7 +379,7 @@ const CompanyAddress = ({
           <Input
             // placeholder={shippingData?.address1}
             value={shippingAddress?.address_line_1 ?? OnboardingDetail?.shipping_address?.street_1 ?? ""}
-            readOnly={isShippingSame ? true : false}
+            disabled={isShippingSame ? true : false}
             onChange={(e) => {
               updateshippingAddress("address_line_1", e.target.value);
             }}
@@ -390,7 +392,7 @@ const CompanyAddress = ({
           <Input
             // placeholder={shippingData?.address2}
             value={shippingAddress?.address_line_2 ?? OnboardingDetail?.shipping_address?.street_2 ?? ""}
-            readOnly={isShippingSame ? true : false}
+            disabled={isShippingSame ? true : false}
             onChange={(e) => {
               updateshippingAddress("address_line_2", e.target.value);
             }}
@@ -403,7 +405,7 @@ const CompanyAddress = ({
           <Input
             // placeholder={shippingData?.pincode}
             value={shippingAddress?.pincode ?? OnboardingDetail?.shipping_address?.manufacturing_pincode ?? ""}
-            readOnly={isShippingSame ? true : false}
+            disabled={isShippingSame ? true : false}
             onChange={(e) => {
               handleShippingPincodeChange(e.target.value);
             }}
@@ -416,7 +418,7 @@ const CompanyAddress = ({
           <Input
             // placeholder={shippingData?.district}
             value={shippingAddress?.district?.district_name ?? ""}
-            readOnly={isShippingSame ? true : false}
+            disabled={isShippingSame ? true : false}
             onChange={()=>{}}
           />
         </div>
@@ -428,7 +430,7 @@ const CompanyAddress = ({
             <Input
               // placeholder={shippingData?.city}
               value={shippingAddress?.city?.city_name ?? ""}
-              readOnly={isShippingSame ? true : false}
+              disabled={isShippingSame ? true : false}
               onChange={()=>{}}
             />
           </div>
@@ -439,7 +441,7 @@ const CompanyAddress = ({
             <Input
               // placeholder={shippingData?.state}
               value={shippingAddress?.state?.state_name ?? ""}
-              readOnly={isShippingSame ? true : false}
+              disabled={isShippingSame ? true : false}
               onChange={()=>{}}
             />
           </div>
@@ -450,7 +452,7 @@ const CompanyAddress = ({
             <Input
               // placeholder={shippingData?.country}
               value={shippingAddress?.country?.country_name ?? ""}
-              readOnly={isShippingSame ? true : false}
+              disabled={isShippingSame ? true : false}
               onChange={()=>{}}
             />
           </div>

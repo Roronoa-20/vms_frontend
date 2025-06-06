@@ -406,6 +406,19 @@ export type TCompanyDetailForm = {
     }[]
   }
 
+    export type TPurchaseDetails = {
+      account_group:string,
+      company_name:string,
+      incoterms:string,
+      order_currency:string,
+      purchase_group:string,
+      purchase_head_remarks:string,
+      purchase_organization:string,
+      purchase_team_remarks:string,
+      qa_team_remarks:string,
+      reconciliation_account:string,
+      terms_of_payment:string
+    }
 
 
 
@@ -423,7 +436,8 @@ export type TCompanyDetailForm = {
       machinery_details_tab:MachineryDetail[];
       testing_details_tab:TestingDetail[];
       reputed_partners_details_tab:ReputedPartnerDetail[];
-      certificate_details_tab:CertificateDetail[]
+      certificate_details_tab:CertificateDetail[],
+      purchasing_details:TPurchaseDetails[]
     };
   };
 
