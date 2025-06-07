@@ -118,10 +118,10 @@ const DashboardCards = async({ ...Props }: Props) => {
               <TabsTrigger
                 key={item.name || index}
                 value={item.name}
-                className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-black text-gray-500 rounded-2xl p-0 transition-all duration-300 ease-in-out overflow-hidden"
+                className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-black text-gray-500 rounded-2xl p-0 transition-all duration-300 ease-in-out"
               >
                 <div
-                  className={`group w-full h-full rounded-2xl ${item.bg_color} flex flex-col p-3 ${item.text_color} h-28 justify-between border-2 ${item.hover} hover:scale-[1.06] transition duration-300 transform cursor-pointer shadow-md`}
+                  className={`group w-full h-full rounded-2xl ${item.bg_color} flex flex-col p-3 ${item.text_color} h-28 justify-between border-2 ${item.hover} hover:scale-105 transition duration-300 transform cursor-pointer shadow-md`}
                 >
                   <div className="flex w-full justify-between">
                     <h1 className="text-[13px]">{item.name}</h1>

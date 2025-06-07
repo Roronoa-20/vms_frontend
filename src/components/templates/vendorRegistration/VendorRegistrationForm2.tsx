@@ -44,6 +44,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
     const response = await requestWrapper({url:url,method:"GET",params:{purchase_organization:value}})
     const data:TpurchaseOrganizationBasedDropdown = response?.status == 200?response?.data:"";
     setPurchaseOrganizationBasedDropdown(data?.message);
+    console.log(data?.message,"this is account group")
   }
 
   console.log(companyBasedDropdown)
@@ -113,7 +114,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                 {
                   companyBasedDropdown?.purchase_organizations ?
                   companyBasedDropdown?.purchase_organizations?.map((item)=>(
-                    <SelectItem value={item?.name} key={item?.name}>{item?.purchase_organization_name}</SelectItem>
+                    <SelectItem value={item?.name} key={item?.name}>{item?.name}</SelectItem>
                   )):
                   <div className="text-center">No Value</div>
                 }
@@ -135,7 +136,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                   purchaseOrganizationBasedDropdown ?
                   purchaseOrganizationBasedDropdown?.map((item)=>(
 
-                    <SelectItem value={item?.name} key={item?.name}>{item?.account_group_name}</SelectItem>
+                    <SelectItem value={item?.name} key={item?.name}>{item?.account_group_description}</SelectItem>
                   )):
                   <div className="text-center">No Value</div>
                 }
@@ -156,7 +157,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                 {
                   companyBasedDropdown?
                   companyBasedDropdown?.purchase_groups?.map((item)=>(
-                    <SelectItem value={item?.name} key={item?.name}>{item?.purchase_group_name}</SelectItem>
+                    <SelectItem value={item?.name} key={item?.name}>{item?.name}</SelectItem>
                   )):
                   <div className="text-center">No Value</div>
                 }

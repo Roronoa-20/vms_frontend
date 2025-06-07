@@ -60,7 +60,8 @@ export type TcompanyNameBasedDropdown = {
 export type TpurchaseOrganizationBasedDropdown = {
   message: {
     name: string,
-    account_group_name: string
+    account_group_name: string,
+    account_group_description:string
   }[]
 }
 

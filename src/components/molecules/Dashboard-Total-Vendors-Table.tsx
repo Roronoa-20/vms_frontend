@@ -27,7 +27,6 @@ type Props = {
 }
 
 const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Props) => {
-  console.log(dashboardTableData.total_vendor_onboarding,"dashboardTableData-98764646---------")
   return (
 
     <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
@@ -35,10 +34,11 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
         <h1 className="text-[20px] text-[#03111F] font-semibold">
           Total Vendors
         </h1>
-        <div className="flex gap-4">
+        <div className="flex gap-4 justify-end w-full">
+          <div className="w-fit flex gap-4">
           <Input placeholder="Search..." />
           <Select>
-            <SelectTrigger>
+            <SelectTrigger className="w-96">
               <SelectValue placeholder="Select Company" />
             </SelectTrigger>
             <SelectContent>
@@ -51,6 +51,7 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
               </SelectGroup>
             </SelectContent>
           </Select>
+          </div>
           {/* <Select>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Status" />
