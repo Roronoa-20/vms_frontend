@@ -102,7 +102,7 @@ const handleAdd = ()=>{
               <TableBody className="text-center">
                 {reputedPartnersDetails?.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">{index}</TableCell>
+                    <TableCell className="font-medium">{index+1}</TableCell>
                     <TableCell>{item?.company_name}</TableCell>
                     <TableCell>{item?.supplied_qtyyear}</TableCell>
                     <TableCell>{item?.remark}</TableCell>

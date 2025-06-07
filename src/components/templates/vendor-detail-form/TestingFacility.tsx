@@ -103,7 +103,7 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               <TableBody className="text-center">
                 {testingDetail?.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">{index}</TableCell>
+                    <TableCell className="font-medium">{index + 1}</TableCell>
                     <TableCell>{item?.capacity}</TableCell>
                     <TableCell>{item?.equipment_name}</TableCell>
                     <TableCell>{item?.equipment_qty}</TableCell>

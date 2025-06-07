@@ -586,7 +586,7 @@ const CompanyAddress = ({
               <TableBody className="text-center">
                 {multiple_location_table?.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">{index}</TableCell>
+                    <TableCell className="font-medium">{index +1}</TableCell>
                     <TableCell>{item?.address_line_1}</TableCell>
                     <TableCell>{item?.address_line_2}</TableCell>
                     <TableCell>{item?.ma_pincode}</TableCell>

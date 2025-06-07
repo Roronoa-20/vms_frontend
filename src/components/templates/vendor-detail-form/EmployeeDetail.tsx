@@ -119,7 +119,7 @@ const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               <TableBody className="text-center">
                 {employeeDetail?.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">{index}</TableCell>
+                    <TableCell className="font-medium">{index +1}</TableCell>
                     <TableCell>{item?.production}</TableCell>
                     <TableCell>{item?.qaqc}</TableCell>
                     <TableCell>{item?.logistics}</TableCell>

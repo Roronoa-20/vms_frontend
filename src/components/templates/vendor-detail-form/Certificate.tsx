@@ -163,7 +163,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
                     {multipleCertificateData?.length > 0 ?
                       multipleCertificateData.map((item, index) => (
                         <TableRow key={item?.name?item?.name:""}>
-                          <TableCell className="font-medium">{index}</TableCell>
+                          <TableCell className="font-medium">{index +1}</TableCell>
                           <TableCell>{item?.certificate_code}</TableCell>
                           <TableCell>{item?.valid_till}</TableCell>
                           <TableCell>{item?.fileDetail?.file_name}</TableCell>
