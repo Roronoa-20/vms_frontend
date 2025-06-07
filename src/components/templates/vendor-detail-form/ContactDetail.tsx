@@ -124,15 +124,15 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               <TableBody className="text-center">
                 {contactDetail?.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">{index}</TableCell>
-                    <TableCell>{item?.contact_number}</TableCell>
-                    <TableCell>{item?.department_name}</TableCell>
+                    <TableCell className="font-medium">{index +1}</TableCell>
+                    <TableCell>{item?.first_name}</TableCell>
+                    <TableCell>{item?.last_name}</TableCell>
                     <TableCell>{item?.designation}</TableCell>
                     <TableCell>
                       {item?.email}
                     </TableCell>
-                    <TableCell>{item?.first_name}</TableCell>
-                    <TableCell>{item?.last_name}</TableCell>
+                    <TableCell>{item?.contact_number}</TableCell>
+                    <TableCell>{item?.department_name}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

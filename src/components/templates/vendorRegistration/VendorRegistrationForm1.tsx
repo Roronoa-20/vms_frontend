@@ -65,6 +65,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
       setIsQa(false);
     }
   }
+  console.log(countryDropdown,"this is country dropdown")
 
   console.log(data,"htis is data")
 
