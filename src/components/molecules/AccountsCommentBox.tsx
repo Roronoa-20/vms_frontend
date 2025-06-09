@@ -2,15 +2,17 @@ import React from "react";
 import { Button } from "@/src/components/atoms/button";
 import { X } from 'lucide-react'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../atoms/select";
+import { TReconsiliationDropdown } from "@/src/types/types";
 type props = {
   handleClose: () => void;
   handleComment: (value: string) => void;
   Submitbutton: () => void;
   handleReconsiliation:(value:string)=>void;
-  dropdown:{name:string}[]
+  dropdown?:TReconsiliationDropdown["message"]["data"]
 }
 
 const AccountsCommentBox = ({ handleClose, handleComment, Submitbutton,handleReconsiliation,dropdown }: props) => {
+  console.log(dropdown,"inside dialog")
   return (
     // <div className="absolute z-50 flex pt-10 items-center justify-center bg-black bg-opacity-50">
     <div className="bg-white rounded-xl border p-7 md:max-w-[650px] md:max-h-[400px] h-full w-full gap-8 text-black md:text-md font-light flex flex-col items-center justify-center">
@@ -36,7 +38,7 @@ const AccountsCommentBox = ({ handleClose, handleComment, Submitbutton,handleRec
                       <SelectGroup>
                         {
                             dropdown?.map((item,index)=>(
-                                <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                                <SelectItem key={index} value={item?.name}>{item?.reconcil_description}</SelectItem>
                             ))
                         }
                       </SelectGroup>

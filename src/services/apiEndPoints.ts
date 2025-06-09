@@ -44,7 +44,7 @@ const API_END_POINTS = {
   certificateSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration.onboarding_form_submit`,
   logout:`${url}/api/method/logout`,
   companyDropdown:`${url}/api/resource/Company%20Master`,
-  reconsiliationDropdown:`${url}/api/resource/Reconciliation%20Account`,
+  reconsiliationDropdown:`${url}/api/method/vms.APIs.master_apis.get_reconcilation_account.get_reconcilation_list`,
   mobileCodeBasedOnCountry:`${url}/api/method/vms.APIs.master_apis.get_country.country_details`
 };
 

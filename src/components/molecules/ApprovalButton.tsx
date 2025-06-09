@@ -8,15 +8,17 @@ import Comment_box from "./CommentBox";
 import { useRouter } from "next/navigation";
 import AccountsCommentBox from "./AccountsCommentBox";
 import API_END_POINTS from "@/src/services/apiEndPoints";
+import { TReconsiliationDropdown } from "@/src/types/types";
 
 interface Props {
   tabtype: string;
   ref_no: string;
   onboardingRefno: string;
+  reconsiliationDrodown?:TReconsiliationDropdown["message"]["data"]
 }
 
 
-const ApprovalButton = ({ tabtype, ref_no, onboardingRefno }: Props) => {
+const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown }: Props) => {
   const [isCommentBox, setIsCommentBox] = useState<boolean>(false);
   const [comments, setComments] = useState<string>("");
   const [isApprove, setIsApprove] = useState<boolean>(false);
@@ -25,17 +27,6 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno }: Props) => {
   const [reconsiliation, setReconsiliation] = useState<string>("");
   const [reconsiliationDropdown,setReconsiliationDropdown] = useState<{name:string}[]>([]);
   const router = useRouter();
-  useEffect(()=>{
-    const fetchDropdown = async()=>{
-        const reconsiliationUrl = API_END_POINTS?.reconsiliationDropdown;
-        const dropDownApi:AxiosResponse = await requestWrapper({url:reconsiliationUrl,method:"GET"});
-        if(dropDownApi?.status == 200) {
-          console.log(dropDownApi?.data,"this is drodown data")
-          setReconsiliationDropdown(dropDownApi?.data?.data)
-        }
-      }
-    fetchDropdown();
-  },[])
   const { designation, user_email } = useAuth() as {
     designation: "Purchase Team" | "Accounts Team" | "Purchase Head";
     user_email: string;
@@ -154,7 +145,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno }: Props) => {
             handleComment={setComments}
             handleReconsiliation={setReconsiliation}
             Submitbutton={approval}
-            dropdown={reconsiliationDropdown}
+            dropdown={reconsiliationDrodown}
           />
         </div>
       )}

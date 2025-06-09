@@ -16,7 +16,7 @@ import { cookies } from 'next/headers'
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
-import { TbankNameDropdown, TcertificateCodeDropdown, TCompanyAddressDropdown, TcompanyDetailDropdown, TCurrencyDropdown, TdocumentDetailDropdown, TvendorOnboardingDetail, VendorOnboardingResponse } from '@/src/types/types'
+import { TbankNameDropdown, TcertificateCodeDropdown, TCompanyAddressDropdown, TcompanyDetailDropdown, TCurrencyDropdown, TdocumentDetailDropdown, TReconsiliationDropdown, TvendorOnboardingDetail, VendorOnboardingResponse } from '@/src/types/types'
 import ApprovalButton from '../molecules/ApprovalButton'
 import PurchaseDetails from '../templates/vendor-detail-form/PurchaseDetails'
 
@@ -80,7 +80,12 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
       const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${refno}&vendor_onboarding=${vendorOnboardingRefno}`;
       const fetchOnboardingDetailResponse:AxiosResponse = await requestWrapper({url:fetchOnboardingDetailUrl,method:"GET"});
       const OnboardingDetail:VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ?fetchOnboardingDetailResponse?.data?.message : "";
-    
+      
+
+      const reconsiliationUrl = API_END_POINTS?.reconsiliationDropdown;
+      const ReconciliationdropDownApi:AxiosResponse = await requestWrapper({url:reconsiliationUrl,method:"POST",data:{data:{account_group:OnboardingDetail?.purchasing_details?.[0]?.account_group}}});
+      const reconciliationDropdown:TReconsiliationDropdown["message"]["data"] = ReconciliationdropDownApi?.status == 200 ? ReconciliationdropDownApi?.data?.message?.data : ""
+      console.log(reconciliationDropdown,"this is reconciliation")
       console.log(OnboardingDetail,"this is onboarding details")
   return (
     <div>
@@ -121,7 +126,7 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
           ""
         )}
       </div>
-      <ApprovalButton tabtype={tabType} ref_no={refno} onboardingRefno={vendorOnboardingRefno}/>
+      <ApprovalButton tabtype={tabType} ref_no={refno} onboardingRefno={vendorOnboardingRefno} reconsiliationDrodown={reconciliationDropdown}/>
     </div>
   )
 }

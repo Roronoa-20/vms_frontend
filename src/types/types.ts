@@ -1034,4 +1034,14 @@ export type TCompanyDetailForm = {
     dispatch_vendor_onboarding:dispatch_vendor_onboarding[]
     qms_form:string
   }
+
+  export type TReconsiliationDropdown = {
+    message:{
+      data:{
+        name:string,
+        reconcil_account_code:string,
+        reconcil_description:string
+      }[]
+    }
+  }
   

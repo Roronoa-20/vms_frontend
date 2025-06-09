@@ -10,7 +10,7 @@ interface Props {
 }
 
 const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
-  console.log(OnboardingDetail)
+  console.log(OnboardingDetail,"purchase")
   return (
     <div className="flex flex-col bg-white rounded-lg p-4 w-full">
     <h1 className="border-b-2 pb-2">Purchasing Details</h1>
