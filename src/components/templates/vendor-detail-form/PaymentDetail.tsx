@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectGroup,
@@ -23,16 +23,17 @@ import { X } from "lucide-react";
 interface Props {
   ref_no:string,
   onboarding_ref_no:string,
-  bankNameDropown:TbankNameDropdown["data"];
-  currencyDropown:TCurrencyDropdown["data"]
-  OnboardingDetail:VendorOnboardingResponse["message"]["payment_details_tab"]
+  OnboardingDetail:VendorOnboardingResponse["message"]["payment_details_tab"],
+  company_name?:string
 }
 
 
-const PaymentDetail = ({ref_no,onboarding_ref_no,bankNameDropown,currencyDropown,OnboardingDetail}:Props) => {
+const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:Props) => {
   const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
   const [bankProofFile,setBankProofFile] = useState<FileList | null>(null);
   const [isBankFilePreview, setIsBankFilePreview] = useState<boolean>(true);
+  const [bankNameDropown,setBankNameDropown] = useState<TbankNameDropdown["message"]["data"]>([])
+  const [currencyDropdown,setCurrencyDropdown] = useState<TCurrencyDropdown["message"]["data"]>([])
   const {designation} = useAuth();
   // if(!designation){
   //   return(
@@ -40,6 +41,28 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,bankNameDropown,currencyDropown
   //   )
   // }
   const router = useRouter()
+  useEffect(()=>{
+    const fetchBank = async ()=>{
+
+      const bankNameDropdownUrl = `${API_END_POINTS?.bankNameDropdown}?company_name=${company_name}`;
+      const bankNameResponse:AxiosResponse = await requestWrapper({url:bankNameDropdownUrl,method:"GET"});
+      if(bankNameResponse?.status == 200){
+        setBankNameDropown(bankNameResponse?.data?.message?.data)
+      }
+    }
+
+    const fetchCurrency = async ()=>{
+
+      const currencyUrl = `${API_END_POINTS?.currencyDropdown}`;
+      const currencyResponse:AxiosResponse = await requestWrapper({url:currencyUrl,method:"GET"});
+      if(currencyResponse?.status == 200){
+        setCurrencyDropdown(currencyResponse?.data?.message?.data)
+      }
+    }
+
+    fetchBank();
+    fetchCurrency();
+  },[])
   const handleSubmit = async()=>{
     const submitUrl = API_END_POINTS?.bankSubmit;
     const updatedData = {...paymentDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}
@@ -126,7 +149,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,bankNameDropown,currencyDropown
             <SelectContent>
               <SelectGroup>
                 {
-                  currencyDropown?.map((item,index)=>(
+                  currencyDropdown?.map((item,index)=>(
                     <SelectItem value={item?.name} key={index}>{item?.name}</SelectItem>
                   ))
                 }

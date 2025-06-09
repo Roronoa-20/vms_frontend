@@ -395,16 +395,20 @@ export type TCompanyDetailForm = {
 
 
   export type TbankNameDropdown = {
-    data:{
-      name:string
-    }[]
+    message:{
+      data:{
+        name:string
+      }[]
+    }
   }
 
 
   export type TCurrencyDropdown = {
-    data:{
-      name:string
-    }[]
+    message:{
+      data:{
+        name:string
+      }[]
+    }
   }
 
     export type TPurchaseDetails = {
@@ -619,7 +623,7 @@ export type TCompanyDetailForm = {
   type CompanyDetailsTab = {
     vendor_title: string | null;
     vendor_name: string | null;
-    company_name: string | null;
+    company_name: string
     type_of_business: string;
     size_of_company: string;
     website: string;

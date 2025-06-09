@@ -72,20 +72,6 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
   const documentDetailDropdownApi:AxiosResponse = await requestWrapper({url:gst_vendor_type_dropdown_url,method:"GET"});
   const documentDetailDropdown:TdocumentDetailDropdown["message"]["data"] =  documentDetailDropdownApi?.status == 200?documentDetailDropdownApi?.data?.message?.data:"";
 
-
-  const bankNameDropdownUrl = API_END_POINTS?.bankNameDropdown;
-  const bankNameResponse:AxiosResponse = await requestWrapper({url:bankNameDropdownUrl,method:"GET",headers: {
-    cookie: cookieHeaderString
-  }});
-  const bankNameDropown:TbankNameDropdown["data"] = bankNameResponse?.status == 200?bankNameResponse?.data?.data :"";
-
-
-  const currencyDropdownUrl = API_END_POINTS?.currencyDropdown;
-  const currencyDropdownResponse:AxiosResponse = await requestWrapper({url:currencyDropdownUrl,method:"GET",headers: {
-    cookie: cookieHeaderString
-  }});
-  const currencyDropown:TCurrencyDropdown["data"] = currencyDropdownResponse?.status == 200?currencyDropdownResponse?.data?.data :"";
-
   const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${refno}&vendor_onboarding=${vendorOnboardingRefno}`;
   const fetchOnboardingDetailResponse:AxiosResponse = await requestWrapper({url:fetchOnboardingDetailUrl,method:"GET"});
   const OnboardingDetail:VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ?fetchOnboardingDetailResponse?.data?.message : "";
@@ -117,7 +103,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
         ) : tabType == "Document Detail" ? (
           <DocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
         ) : tabType?.includes("Payment Detail") ? ( 
-          <PaymentDetail bankNameDropown={bankNameDropown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} currencyDropown={currencyDropown} OnboardingDetail={OnboardingDetail?.payment_details_tab}/>
+          <PaymentDetail ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab}/>
         ) : tabType?.includes("Contact Detail") ? (
           <ContactDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.contact_details_tab}/>
         ) : tabType == "Manufacturing Detail" ? (
