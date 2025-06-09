@@ -157,7 +157,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                 {
                   companyBasedDropdown?
                   companyBasedDropdown?.purchase_groups?.map((item)=>(
-                    <SelectItem value={item?.name} key={item?.name}>{item?.name}</SelectItem>
+                    <SelectItem value={item?.name} key={item?.name}>{item?.descriptionn}</SelectItem>
                   )):
                   <div className="text-center">No Value</div>
                 }
