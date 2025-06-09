@@ -46,7 +46,7 @@ export type TcompanyNameBasedDropdown = {
       purchase_groups: {
         name: string,
         purchase_group_name: string,
-        descriptionn: string
+        description: string
       }[],
       terms_of_payment: {
         name: string,
