@@ -22,6 +22,9 @@ interface Props {
 }
 
 import { MultiValue } from 'react-select';
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import { AxiosResponse } from "axios";
+import requestWrapper from "@/src/services/apiCall";
 
 type OptionType = {
   value: string;
@@ -32,6 +35,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
   const { data, updateField,updateVendorTypes, resetForm } = useVendorStore();
   const [isQa,setIsQa] = useState<boolean>(false);
   const [newVendorTypeDropdown,setNewVendorTypeDropdown] = useState<MultiValue<OptionType>>([]);
+  const [countryMobileCode,setCountryMobileCode] = useState<string>("");
   useEffect(()=>{
     const newVendorType = vendorTypeDropdown?.map((item,index)=>{
       return (
@@ -65,6 +69,15 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
       setIsQa(false);
     }
   }
+
+  const fetchCountryCode = async(value:string)=>{
+    const url = API_END_POINTS?.mobileCodeBasedOnCountry;
+    const countryCodeApi:AxiosResponse = await requestWrapper({url:url,data:{data:{country:value}},method:"POST"});
+    if(countryCodeApi?.status == 200){
+      setCountryMobileCode(countryCodeApi?.data?.message);
+    }
+  }
+
   console.log(countryDropdown,"this is country dropdown")
 
   console.log(data,"htis is data")
@@ -139,7 +152,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Country
           </h1>
-          <Select required onValueChange={(value)=>updateField('country', value)}>
+          <Select required onValueChange={(value)=>{updateField('country', value),fetchCountryCode(value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Country" />
             </SelectTrigger>
@@ -162,7 +175,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Mobile No.
               </h1>
-              <Input placeholder="+91" required/>
+              <Input placeholder="+91" value={countryMobileCode ?? ""} disabled/>
             </div>
             <div className="col-span-3 flex flex-col justify-end">
               {/* <h1 className="text-[12px] font-normal text-[#626973] pb-3">Mobile No.</h1> */}

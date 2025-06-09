@@ -27,8 +27,7 @@ const AccountsCommentBox = ({ handleClose, handleComment, Submitbutton,handleRec
       </div>
       <div className="flex flex-col w-full max-w-96">
                   <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                    Size of Company
-                  </h1>
+                    Reconciliation Account                  </h1>
                   <Select onValueChange={(value)=>{handleReconsiliation(value)}}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select" />

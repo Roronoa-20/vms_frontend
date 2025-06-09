@@ -93,7 +93,7 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
         </div> */}
         <div className="flex flex-col">
                   <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                    Size of Company
+                    Type Of Premises
                   </h1>
                   <Select onValueChange={(value)=>{updateManufacturingDetail("type_of_premises",value)}} value={ManufacturingDetail?.type_of_premises ?? OnboardingDetail?.type_of_premises ?? ""}>
                     <SelectTrigger>
