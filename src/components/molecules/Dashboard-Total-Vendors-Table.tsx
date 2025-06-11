@@ -1,5 +1,5 @@
 "use client"
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -21,14 +21,81 @@ import { Input } from "../atoms/input";
 import { DashboardTableType } from "@/src/types/types";
 import Link from "next/link";
 import { Button } from "../atoms/button";
+import { AxiosResponse } from "axios";
+import requestWrapper from "@/src/services/apiCall";
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import Cookies from "js-cookie";
+import Pagination from "./Pagination";
+import { Eye } from "lucide-react";
+import VendorCodeDialog from "./VendorCodeDialog";
 type Props = {
   dashboardTableData: DashboardTableType,
   companyDropdown:{name:string}[]
 }
 
-const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Props) => {
-  return (
+  const useDebounce = (value: any, delay: any) => {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+  
+    useEffect(() => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+      return () => {
+        clearTimeout(handler);
+      };
+    }, [value, delay]);
+  
+    return debouncedValue;
+  };
 
+const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Props) => {
+  const [table,setTable] = useState<DashboardTableType["total_vendor_onboarding"]>(dashboardTableData?.total_vendor_onboarding);
+  const [selectedCompany,setSelectedCompany] = useState<string>("")
+  const [search,setSearch] = useState<string>("");
+
+   const [total_event_list,settotalEventList] = useState(0);
+  const [record_per_page,setRecordPerPage] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const [isVendorCodeDialog,setIsVendorCodeDialog] = useState<boolean>(false);
+  const [refno,setRefno] = useState("");
+
+  const user = Cookies?.get("user_id");
+  console.log(user,"this is user")
+
+  const debouncedSearchName = useDebounce(search, 300);
+  
+  useEffect(()=>{
+      fetchTable();
+  },[debouncedSearchName,selectedCompany])
+  
+  
+  const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    console.log(value,"this is search name")
+    setSearch(value);
+  }
+  
+  const fetchTable = async()=>{
+    const dashboardTotalVendorTableDataApi: AxiosResponse = await requestWrapper({
+      url: `${API_END_POINTS?.dashboardTotalVendorTableURL}?usr=${user}&company=${selectedCompany}&refno=${search}&page_no=${currentPage}`,
+      method: "GET",
+    });
+    if(dashboardTotalVendorTableDataApi?.status == 200 ){
+      setTable(dashboardTotalVendorTableDataApi?.data?.message?.total_vendor_onboarding);
+      console.log(dashboardTotalVendorTableDataApi?.data?.message,"this is after filter api")
+      // setRecordPerPage()
+    } 
+  }
+
+  const handleVendorCodeDialog = (refno:string)=>{
+    setRefno(refno);
+    setIsVendorCodeDialog((prev)=>!prev);
+  }
+
+  
+  return (
+    <>
     <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
       <div className="flex w-full justify-between pb-4">
         <h1 className="text-[20px] text-[#03111F] font-semibold">
@@ -36,8 +103,8 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
         </h1>
         <div className="flex gap-4 justify-end w-full">
           <div className="w-fit flex gap-4">
-          <Input placeholder="Search..." />
-          <Select>
+          <Input placeholder="Search..." onChange={(e=>{handlesearchname(e)})} />
+          <Select onValueChange={(value)=>{setSelectedCompany(value)}}>
             <SelectTrigger className="w-96">
               <SelectValue placeholder="Select Company" />
             </SelectTrigger>
@@ -82,14 +149,15 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
             <TableHead className="text-center">Purchase Head</TableHead>
             <TableHead className="text-center">View Details</TableHead>
             <TableHead className="text-center">QMS Form</TableHead>
+            <TableHead className="text-center">Vendor code</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="text-center text-black">
-          {dashboardTableData.total_vendor_onboarding && dashboardTableData.total_vendor_onboarding.length > 0 ? (
-            dashboardTableData.total_vendor_onboarding.map((item, index) => (
+          {table?.length> 0 ? (
+            table.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{index + 1}.</TableCell>
-                <TableCell>{item?.name}</TableCell>
+                <TableCell>{item?.ref_no}</TableCell>
                 <TableCell>{item?.vendor_name?item?.vendor_name:'-'}</TableCell>
                 <TableCell>{item?.company_name?item?.company:"-"}</TableCell>
                 <TableCell>
@@ -109,7 +177,8 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
                 <TableCell>{item?.accounts_t_approval}</TableCell>
                 <TableCell>{item?.purchase_h_approval}</TableCell>
                 <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                <TableCell className="text-right">{item?.qms_form}</TableCell>
+                <TableCell className="text-center">{item?.qms_form}</TableCell>
+                <TableCell className="pl-6"><button onClick={()=>{handleVendorCodeDialog(item?.ref_no)}}><Eye/></button></TableCell>
               </TableRow>
             ))
           ) : (
@@ -123,6 +192,12 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
 
       </Table>
     </div>
+      <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list}/>
+      {
+        isVendorCodeDialog && 
+        <VendorCodeDialog handleClose={setIsVendorCodeDialog} vendor_ref_no={refno}/>
+      }
+      </>
   );
 };
 

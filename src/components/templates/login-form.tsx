@@ -12,6 +12,7 @@ import EmailDialog from "../molecules/forgotPassword/EmailDialog";
 import OtpDialog from "../molecules/forgotPassword/OtpDialog";
 import PasswordDialog from "../molecules/forgotPassword/PasswordDialog";
 import { AuthProvider, useAuth } from "../../context/AuthContext";
+import { TMultipleVendorCode, useMultipleVendorCodeStore } from "@/src/store/MultipleVendorCodeStore";
 export default function LoginForm() {
   const router = useRouter();
   const [form, setForm] = useState<Tlogin>();
@@ -21,6 +22,7 @@ export default function LoginForm() {
   const [isPasswordDialog,setIsPasswordDialog] = useState<boolean>(false);
   const [authorization,setAuthorization] = useState<string | "">("")
 const { setAuthData } = useAuth();
+const {MultipleVendorCode,addMultipleVendorCode,reset} = useMultipleVendorCodeStore();
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const url = API_END_POINTS?.login;
@@ -35,9 +37,20 @@ const { setAuthData } = useAuth();
       const savedName = Cookies.get("full_name");
       const savedid = Cookies.get("user_id");
       // const designation = response?.data?.message?.employee?.designation;
-      const designation = await response?.data?.message?.employee.designation as string;
-      Cookies.set("designation", designation);
-      setAuthData(savedRole, savedName, savedid,designation);
+      const designation = await response?.data?.message?.employee?.designation as string;
+      const designationVendor = await response?.data?.message?.designation as string;
+      if(designationVendor){
+        reset();
+        response?.data?.message?.vendor_codes?.map((item:TMultipleVendorCode)=>(
+          addMultipleVendorCode(item)
+        ))
+      }
+      Cookies.set("designation", designation || designationVendor);
+      setAuthData(savedRole, savedName, savedid,designation || designationVendor);
+      if(designationVendor){
+        router.push("/vendor-dashboard");
+        return
+      }
       router.push("/dashboard");
     }
   };

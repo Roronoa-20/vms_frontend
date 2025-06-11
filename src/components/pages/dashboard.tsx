@@ -89,14 +89,20 @@ const Dashboard = async () => {
   //   dashboardTableDataApi?.status == 200 ? dashboardTableDataApi?.data?.message : "";
   // console.log(dashboardTableData, "dashboardTableData")
 
-  console.log(dashboardTotalVendorTableDataApi,"-----------------========","=pending---","=-09876543333333333333333333333333")
+
+  const companyDropdownUrl = API_END_POINTS?.companyDropdown
+              const companyDropdownResponse:AxiosResponse = await requestWrapper({url:companyDropdownUrl,method:"GET"});
+              const companyDropdown:{name:string}[] =  companyDropdownResponse?.status == 200?companyDropdownResponse?.data?.data : ""; 
+
+  console.log(dashboardPOTableData,"-----------------========","=pending---","=-09876543333333333333333333333333")
   console.log(CardData,"this is card Data")
   return (
     <div className="p-8">
       {/* Cards */}
       <DashboardCardCounter
         cardData={CardData}
-        // dashboardPOTableData={dashboardPOTableData}
+        companyDropdown={companyDropdown}
+        dashboardPOTableData={dashboardPOTableData}
         // dashboardDispatchVendorTableData={dashboardTotalVendorTableData}
         dashboardTotalVendorTableData={dashboardTotalVendorTableData} 
         dashboardPendingVendorTableData={dashboardPendingVendorTableData}

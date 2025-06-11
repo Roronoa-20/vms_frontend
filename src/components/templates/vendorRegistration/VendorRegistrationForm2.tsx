@@ -37,6 +37,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
     const data:TcompanyNameBasedDropdown = response?.status == 200?response?.data:"";
     setCompanyBasedDropdown(data?.message?.data);
   }
+  console.log(companyBasedDropdown,"company based dropdown")
 
   const handlePurchaseOrganizationDropdownChange = async(value:string)=>{
     updateField('purchase_organization',value);
@@ -93,7 +94,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                 {
                   companyDropdown ?
                   companyDropdown?.map((item)=>(
-                    <SelectItem value={item?.name} key={item?.name}>{item?.name}</SelectItem>
+                    <SelectItem value={item?.name} key={item?.name}>{item?.description}</SelectItem>
                   )):
                   <div className="text-center">No Value</div>
                 }
@@ -114,7 +115,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                 {
                   companyBasedDropdown?.purchase_organizations ?
                   companyBasedDropdown?.purchase_organizations?.map((item)=>(
-                    <SelectItem value={item?.name} key={item?.name}>{item?.name}</SelectItem>
+                    <SelectItem value={item?.name} key={item?.name}>{item?.description}</SelectItem>
                   )):
                   <div className="text-center">No Value</div>
                 }

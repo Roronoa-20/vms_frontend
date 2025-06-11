@@ -37,15 +37,17 @@ const API_END_POINTS = {
   dashboardPOTableURL:`${url}/api/method/vms.APIs.dashboard_api.po_data.get_po`,
   dashboardTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.get_vendors_based_on_status`,
   getPoDetailURL:`${url}/api/method/vms.APIs.dashboard_api.po_data.get_po_details`,
-  dashboardTotalVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.total_vendor_details`,
-  dashboardPendingVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.pending_vendor_details`,
+  dashboardTotalVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.total_vendor_details`,
+  dashboardPendingVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.pending_vendor_details`,
   dashboardApprovedVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.approved_vendor_details`,
   dashboardRejectedVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.rejected_vendor_details`,
   certificateSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration.onboarding_form_submit`,
   logout:`${url}/api/method/logout`,
   companyDropdown:`${url}/api/resource/Company%20Master`,
   reconsiliationDropdown:`${url}/api/method/vms.APIs.master_apis.get_reconcilation_account.get_reconcilation_list`,
-  mobileCodeBasedOnCountry:`${url}/api/method/vms.APIs.master_apis.get_country.country_details`
+  mobileCodeBasedOnCountry:`${url}/api/method/vms.APIs.master_apis.get_country.country_details`,
+  vendorPOTable:`${url}/api/method/vms.APIs.vendors_dashboards_api.get_vendor_details_for_dashboard.get_po_from_vendor_code`,
+  vendorCodeDialogApi:`${url}/api/method/vms.APIs.dashboard_api.get_vendor_code.collect_vendor_code_data`
 };
 
 export default API_END_POINTS;

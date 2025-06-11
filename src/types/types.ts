@@ -17,7 +17,7 @@ export type TvendorRegistrationDropdown = {
       vendor_type: { name: string }[],
       vendor_title: { name: string }[],
       country_master: { name: string, mobile_code:string }[],
-      company_master: { name: string }[],
+      company_master: { name: string,description:string }[],
       incoterm_master: { name: string }[],
       currency_master: { name: string }[]
     }
@@ -41,7 +41,8 @@ export type TcompanyNameBasedDropdown = {
     data: {
       purchase_organizations: {
         name: string,
-        purchase_organization_name: string
+        purchase_organization_name: string,
+        description:string
       }[],
       purchase_groups: {
         name: string,
@@ -1027,6 +1028,69 @@ export type TCompanyDetailForm = {
     accounts_team_undertaking: number;
     purchase_head_undertaking: number;
   }
+
+  export type TvendorPOTable = {
+      name: string;
+      creation: string;
+      modified: string;
+      modified_by: string;
+      owner: string;
+      docstatus: number;
+      idx: number;
+      _user_tags: string | null;
+      _comments: string | null;
+      _assign: string | null;
+      _liked_by: string | null;
+      supplier_name: string | null;
+      po_no: string | null;
+      bill_to_company: string | null;
+      ship_to_company: string | null;
+      rfq_code: string | null;
+      vendor_gst_no: string | null;
+      contact_person: string | null;
+      phonemobile_no: string | null;
+      email: string | null;
+      delivery_terms: string | null;
+      dispatch_mode: string | null;
+      currency: string;
+      supplier_quote_ref: string | null;
+      po_date: string | null;
+      ref_pr_date: string | null;
+      contact_person2: string | null;
+      telephone_no: string | null;
+      email2: string | null;
+      total_gross_amount: string | null;
+      total_value_in_words: string | null;
+      vendor_code: string;
+      purchase_order_type: string | null;
+      purchase_order_category: string | null;
+      purchase_organization: string | null;
+      company_code: string | null;
+      collection_number: string | null;
+      delivery_date: string | null;
+      purchase_group: string | null;
+      ref_pr_no: string | null;
+      ref_pr_person: string | null;
+      phone_no: string | null;
+      msme_no: string | null;
+      total_input_cgst: string | null;
+      delivery_schedule: string | null;
+      po_change_date: string | null;
+      po_release_date: string | null;
+      tax_code: string | null;
+      exchange_rate: string | null;
+      total_input_sgst: string | null;
+      vendors_reason_to_reject: string | null;
+      storage_location: string | null;
+      po_plant: string | null;
+      lead_time: string | null;
+      packaging_shipping_details: string | null;
+      warranty_support_details: string | null;
+      return_refund_policy: string | null;
+      quote_vol_per_unit: string | null;
+      total_order_pricing: string | null;
+    
+  } 
   
   export interface DashboardTableType {
     status: string;
@@ -1035,7 +1099,8 @@ export type TCompanyDetailForm = {
     pending_vendor_onboarding:VendorOnboarding[];
     rejected_vendor_onboarding:VendorOnboarding[];
     approved_vendor_onboarding:VendorOnboarding[];
-    dispatch_vendor_onboarding:dispatch_vendor_onboarding[]
+    dispatch_vendor_onboarding:dispatch_vendor_onboarding[],
+    vendor_purchase_orders:TvendorPOTable[]
     qms_form:string
   }
 

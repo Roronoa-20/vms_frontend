@@ -22,12 +22,11 @@ import { DashboardTableType } from "@/src/types/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 type Props = {
-  dashboardTableData: DashboardTableType
+  dashboardTableData?: DashboardTableType
   companyDropdown: {name:string}[]
 }
 
 const DashboardRejectedVendorsTable = ({ dashboardTableData,companyDropdown }: Props) => {
-  console.log(dashboardTableData.rejected_vendor_onboarding,"dashboardTableData-rejected  ---------")
   return (
 
     <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
@@ -83,7 +82,7 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData,companyDropdown }: P
           </TableRow>
         </TableHeader>
         <TableBody className="text-center">
-          {dashboardTableData.approved_vendor_onboarding && dashboardTableData.approved_vendor_onboarding.length > 0 ? (
+          {dashboardTableData?.approved_vendor_onboarding && dashboardTableData.approved_vendor_onboarding.length > 0 ? (
             dashboardTableData.approved_vendor_onboarding.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{item?.idx}</TableCell>

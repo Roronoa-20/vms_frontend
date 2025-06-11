@@ -23,6 +23,8 @@ const page = async() => {
   const incoTermsDropdown = dropdownData?.incoterm_master;
   const currencyDropdown = dropdownData?.currency_master;
 
+  
+
   return <VendorRegistration 
   vendorTitleDropdown={vendorTitleDropdown}
   vendorTypeDropdown={vendorTypeDropdown}

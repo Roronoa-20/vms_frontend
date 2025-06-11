@@ -1,5 +1,5 @@
+"use client"
 import Image from "next/image";
-import React from "react";
 import { dashboardCardData, DashboardPOTableData, DashboardPOTableItem, DashboardTableType } from "@/src/types/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import PurchaseAndOngoingOrders from "./Purchase-and-Ongoing-Orders";
@@ -13,104 +13,174 @@ import DashboardCurrentMonthsVendorsTable from "./Dashboard-Current-Months-Vendo
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
+import Cookies from "js-cookie";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../atoms/select";
+import { useMultipleVendorCodeStore } from "@/src/store/MultipleVendorCodeStore";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/src/context/AuthContext";
 
 type Props = {
   cardData: dashboardCardData
   dashboardPOTableData?: DashboardTableType
   dashboardTotalVendorTableData:DashboardTableType
-  dashboardPendingVendorTableData: DashboardTableType
-  dashboardApprovedVendorTableData:DashboardTableType
-  dashboardRejectedVendorTableData: DashboardTableType
+  dashboardPendingVendorTableData?: DashboardTableType
+  dashboardApprovedVendorTableData?:DashboardTableType
+  dashboardRejectedVendorTableData?: DashboardTableType
+  companyDropdown:{name:string}[]
 }
 
-const DashboardCards = async({ ...Props }: Props) => {
-  console.log(Props.cardData,"cardData")
-  const cardData = [
-    {
-      name: "Total Vendors",
-      count: Props.cardData?.total_vendor_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/total_count.svg",
-      text_color: "text-yellow-800",
-      bg_color: "bg-yellow-100",
-      hover: "hover:border-yellow-400",
-    },
-    {
-      name: "Pending Vendors",
-      count: Props.cardData?.pending_vendor_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/hour_glass.svg",
-      text_color: "text-rose-800",
-      bg_color: "bg-rose-100",
-      hover: "hover:border-rose-400",
-    },
-    {
-      name: "Onboarded Vendors",
-      count: Props.cardData?.approved_vendor_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/tick.svg",
-      text_color: "text-emerald-800",
-      bg_color: "bg-emerald-100",
-      hover: "hover:border-emerald-400",
-    },
-    {
-      name: "Dispatch Details",
-      count: 0,
-      icon: "/dashboard-assests/cards_icon/truck.svg",
-      text_color: "text-blue-800",
-      bg_color: "bg-blue-100",
-      hover: "hover:border-blue-400",
-    },
-    {
-      name: "Purchase & Ongoing Orders",
-      count: 0,
-      icon: "/dashboard-assests/cards_icon/package.svg",
-      text_color: "text-violet-800",
-      bg_color: "bg-violet-100",
-      hover: "hover:border-violet-400",
-    },
-    {
-      name: "Payment Request",
-      count: 0,
-      icon: "/dashboard-assests/cards_icon/hand.svg",
-      text_color: "text-orange-800",
-      bg_color: "bg-orange-100",
-      hover: "hover:border-orange-400",
-    },
-    {
-      name: "Current Month Vendors",
-      count: Props.cardData?.current_month_vendor ?? 0,
-      icon: "/dashboard-assests/cards_icon/calender.svg",
-      text_color: "text-black-800",
-      bg_color: "bg-gray-100",
-      hover: "hover:border-gray-400",
-    },
-    {
-      name: "Rejcted Vendors",
-      count: Props.cardData?.rejected_vendor_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/hour_glass.svg",
-      text_color: "text-rose-800",
-      bg_color: "bg-rose-100",
-      hover: "hover:border-rose-400",
-    },
-  ];
+const DashboardCards = ({ ...Props }: Props) => {
+const {MultipleVendorCode} = useMultipleVendorCodeStore();
+  // const cookieStore = await cookies();
+  const {designation} = useAuth();
+  const user = designation;
+  const [loading,setLoading] = useState<boolean>(true);
 
-  const companyDropdownUrl = API_END_POINTS?.companyDropdown
-  const companyDropdownResponse:AxiosResponse = await requestWrapper({url:companyDropdownUrl,method:"GET"});
-  const companyDropdown:{name:string}[] =  companyDropdownResponse?.status == 200?companyDropdownResponse?.data?.data : ""; 
+  // console.log(user,"this is desingation")
+    // const user = cookieStore.get("designation")?.value;
+  let cardData: any[] = [];
+  
+  if(user == "Vendor"){
+    cardData = [
+      {
+        name: "Quotation",
+        count: Props.cardData?.total_vendor_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/doc.svg",
+        text_color: "text-blue-800",
+        bg_color: "bg-blue-100",
+        hover: "hover:border-blue-400",
+      },
+      {
+        name: "Purchase & Ongoing Orders",
+        count: Props.cardData?.pending_vendor_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/bar.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-rose-100",
+        hover: "hover:border-rose-400",
+      },
+      {
+        name: "Dispatch Details",
+        count: Props.cardData?.approved_vendor_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/truck.svg",
+        text_color: "text-emerald-800",
+        bg_color: "bg-emerald-100",
+        hover: "hover:border-emerald-400",
+      },
+      {
+        name: "Purchase Order History",
+        count: 0,
+        icon: "/dashboard-assests/cards_icon/clock.svg",
+        text_color: "text-blue-800",
+        bg_color: "bg-blue-100",
+        hover: "hover:border-blue-400",
+      },
+    ];
+  }else{
+    cardData = [
+      {
+        name: "Total Vendors",
+        count: Props.cardData?.total_vendor_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/total_count.svg",
+        text_color: "text-yellow-800",
+        bg_color: "bg-yellow-100",
+        hover: "hover:border-yellow-400",
+      },
+      {
+        name: "Pending Vendors",
+        count: Props.cardData?.pending_vendor_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/hour_glass.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-rose-100",
+        hover: "hover:border-rose-400",
+      },
+      {
+        name: "Onboarded Vendors",
+        count: Props.cardData?.approved_vendor_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/tick.svg",
+        text_color: "text-emerald-800",
+        bg_color: "bg-emerald-100",
+        hover: "hover:border-emerald-400",
+      },
+      {
+        name: "Dispatch Details",
+        count: 0,
+        icon: "/dashboard-assests/cards_icon/truck.svg",
+        text_color: "text-blue-800",
+        bg_color: "bg-blue-100",
+        hover: "hover:border-blue-400",
+      },
+      {
+        name: "Purchase & Ongoing Orders",
+        count: 0,
+        icon: "/dashboard-assests/cards_icon/package.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
+      {
+        name: "Payment Request",
+        count: 0,
+        icon: "/dashboard-assests/cards_icon/hand.svg",
+        text_color: "text-orange-800",
+        bg_color: "bg-orange-100",
+        hover: "hover:border-orange-400",
+      },
+      {
+        name: "Current Month Vendors",
+        count: Props.cardData?.current_month_vendor ?? 0,
+        icon: "/dashboard-assests/cards_icon/calender.svg",
+        text_color: "text-black-800",
+        bg_color: "bg-gray-100",
+        hover: "hover:border-gray-400",
+      },
+      {
+        name: "Rejcted Vendors",
+        count: Props.cardData?.rejected_vendor_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/hour_glass.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-rose-100",
+        hover: "hover:border-rose-400",
+      },
+    ];
+  }
+
+  useEffect(()=>{
+    if(user){
+      setLoading(false);
+    }
+  },[user])
 
 
+  const fetchPoBasedOnVendorCode = async()=>{
+    const url = `${API_END_POINTS?.vendorPOTable}?vendor_code`;
+  }
+
+  if(loading){
+    return <div>Loading...</div>
+  }
+
+  console.log(Props?.dashboardPOTableData,"this is po table")
   return (
     <div className="">
-      {/* {cardData?.map((item, index) => (
-        <div
-          key={index}
-          className={`group rounded-2xl ${item?.bg_color} flex flex-col p-3 ${item?.text_color} h-28 justify-between border-2 ${item?.hover} hover:scale-[1.06] transition duration-300 transform cursor-pointer shadow-md`}
-        >
-          <div className={`flex w-full justify-between`}>
-            <h1 className="text-[13px]">{item?.name}</h1>
-            <Image src={`${item?.icon}`} alt="" width={25} height={30} />
-          </div>
-          <div className="text-[20px] font-bold">{item?.count}</div>
+      {
+        user == "Vendor" &&
+        <div className="flex justify-start pb-4 gap-6">
+        <Select>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select Vendor code" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup className="w-full">
+            {
+              MultipleVendorCode?.map((item,index)=>(
+                <SelectItem key={index} value={item?.vendor_code}>{item?.company_name}</SelectItem>
+              ))
+            }
+          </SelectGroup>
+        </SelectContent>
+      </Select>
         </div>
-      ))} */}
+      }
       <Tabs defaultValue={cardData?.[0]?.name} className="">
         <div className="">
           <TabsList className="grid grid-cols-4 gap-4 h-full pb-6 bg-white">
@@ -133,18 +203,38 @@ const DashboardCards = async({ ...Props }: Props) => {
             ))}
           </TabsList>
         </div>
-        {cardData.map((item, index) => (
-          <TabsContent key={item.name || index} value={item.name}>
-            {item.name === "Total Vendors" && <DashboardTotalVendorsTable dashboardTableData={Props.dashboardTotalVendorTableData} companyDropdown={companyDropdown} />}
-            {item.name === "Pending Vendors" && <DashboardPendingVendorsTable dashboardTableData={Props.dashboardPendingVendorTableData} companyDropdown={companyDropdown}/>}
-            {item.name === "Onboarded Vendors" && <DashboardApprovedVendorsTable dashboardTableData={Props.dashboardApprovedVendorTableData} companyDropdown={companyDropdown}/>}
-            {/* {item.name === "Dispatch Details" && <DashboardDispatchVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
-            {/* {item.name === "Purchase & Ongoing Orders" && <PurchaseAndOngoingOrders dashboardPOTableData={Props.dashboardPOTableData} />} */}
-            {/* {item.name === "Payment Request" && <DashboardPaymentVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
-            {/* {item.name === "Current Month Vendors" && <DashboardCurrentMonthsVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
-            {item.name === "Rejcted Vendors" && <DashboardRejectedVendorsTable dashboardTableData={Props.dashboardRejectedVendorTableData} companyDropdown={companyDropdown} />}
-          </TabsContent>
-        ))}
+        { cardData.map((item, index) => {
+          if(user == "Vendor"){
+            return(
+
+              <TabsContent key={item.name || index} value={item.name}>
+              {item.name === "Quotation" && <DashboardTotalVendorsTable dashboardTableData={Props.dashboardTotalVendorTableData} companyDropdown={Props?.companyDropdown} />}
+              {item.name === "Purchase & Ongoing Orders" && <PurchaseAndOngoingOrders dashboardPOTableData={Props?.dashboardPOTableData}/>}
+              {item.name === "Dispatch Details" && <DashboardApprovedVendorsTable dashboardTableData={Props.dashboardApprovedVendorTableData} companyDropdown={Props?.companyDropdown}/>}
+              {/* {item.name === "Dispatch Details" && <DashboardDispatchVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
+              {item.name === "Payment History" && <PurchaseAndOngoingOrders dashboardPOTableData={Props.dashboardPOTableData} />}
+              {/* {item.name === "Payment Request" && <DashboardPaymentVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
+              {/* {item.name === "Current Month Vendors" && <DashboardCurrentMonthsVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
+              {item.name === "Purchase Order History" && <DashboardRejectedVendorsTable dashboardTableData={Props.dashboardRejectedVendorTableData} companyDropdown={Props?.companyDropdown} />}
+            </TabsContent>
+            )
+        }else{
+          return(
+            <TabsContent key={item.name || index} value={item.name}>
+          {item.name === "Total Vendors" && <DashboardTotalVendorsTable dashboardTableData={Props.dashboardTotalVendorTableData} companyDropdown={Props?.companyDropdown} />}
+          {item.name === "Pending Vendors" && <DashboardPendingVendorsTable dashboardTableData={Props.dashboardPendingVendorTableData} companyDropdown={Props?.companyDropdown}/>}
+          {item.name === "Onboarded Vendors" && <DashboardApprovedVendorsTable dashboardTableData={Props.dashboardApprovedVendorTableData} companyDropdown={Props?.companyDropdown}/>}
+          {/* {item.name === "Dispatch Details" && <DashboardDispatchVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
+          {item.name === "Purchase & Ongoing Orders" && <PurchaseAndOngoingOrders dashboardPOTableData={Props.dashboardPOTableData} />}
+          {/* {item.name === "Payment Request" && <DashboardPaymentVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
+          {/* {item.name === "Current Month Vendors" && <DashboardCurrentMonthsVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
+          {item.name === "Rejcted Vendors" && <DashboardRejectedVendorsTable dashboardTableData={Props.dashboardRejectedVendorTableData} companyDropdown={Props?.companyDropdown} />}
+        </TabsContent>
+        )
+        }
+          }
+        )
+        }
       </Tabs>
     </div>
 
