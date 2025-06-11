@@ -18,7 +18,7 @@ import {
 } from "@/src/components/atoms/select";
 import { tableData } from "@/src/constants/dashboardTableData";
 import { Input } from "../atoms/input";
-import { DashboardTableType } from "@/src/types/types";
+import { DashboardTableType, TvendorRegistrationDropdown } from "@/src/types/types";
 import Link from "next/link";
 import { Button } from "../atoms/button";
 import { AxiosResponse } from "axios";
@@ -30,7 +30,7 @@ import { Eye } from "lucide-react";
 import VendorCodeDialog from "./VendorCodeDialog";
 type Props = {
   dashboardTableData: DashboardTableType,
-  companyDropdown:{name:string}[]
+  companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
 }
 
   const useDebounce = (value: any, delay: any) => {
@@ -114,7 +114,7 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
               <SelectGroup className="w-full">
                 {
                   companyDropdown?.map((item,index)=>(
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                    <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
                   ))
                 }
               </SelectGroup>

@@ -86,7 +86,7 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
             <div className="flex w-full justify-between pb-4">
               <h1 className="text-[20px] text-[#03111F] font-semibold">
-                Multiple Contact
+                Multiple Testing Facility
               </h1>
             </div>
             <Table className=" max-h-40 overflow-y-scroll">

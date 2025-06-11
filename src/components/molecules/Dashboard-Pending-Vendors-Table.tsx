@@ -18,7 +18,7 @@ import {
 } from "@/src/components/atoms/select";
 import { tableData } from "@/src/constants/dashboardTableData";
 import { Input } from "../atoms/input";
-import { DashboardTableType } from "@/src/types/types";
+import { DashboardTableType, TvendorRegistrationDropdown } from "@/src/types/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Cookies from "js-cookie";
@@ -30,7 +30,7 @@ import Pagination from "./Pagination";
 
 type Props = {
   dashboardTableData: DashboardTableType,
-  companyDropdown:{name:string}[]
+  companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
 }
 
 
@@ -66,7 +66,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData,companyDropdown }: Pr
   
   useEffect(()=>{
       fetchTable();
-  },[debouncedSearchName,selectedCompany])
+  },[debouncedSearchName,selectedCompany,currentPage])
   
   
   const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -84,6 +84,8 @@ const DashboardPendingVendorsTable = ({ dashboardTableData,companyDropdown }: Pr
       setTable(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding
       );
       settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count);
+      settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count)
+      setRecordPerPage(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding?.length)
     } 
   }
 
@@ -105,7 +107,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData,companyDropdown }: Pr
               <SelectGroup className="w-full">
                 {
                   companyDropdown?.map((item,index)=>(
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                    <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
                   ))
                 }
               </SelectGroup>

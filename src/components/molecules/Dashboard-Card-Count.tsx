@@ -1,6 +1,6 @@
 "use client"
 import Image from "next/image";
-import { dashboardCardData, DashboardPOTableData, DashboardPOTableItem, DashboardTableType } from "@/src/types/types";
+import { dashboardCardData, DashboardPOTableData, DashboardPOTableItem, DashboardTableType, TvendorRegistrationDropdown } from "@/src/types/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import PurchaseAndOngoingOrders from "./Purchase-and-Ongoing-Orders";
 import DashboardTotalVendorsTable from "./Dashboard-Total-Vendors-Table";
@@ -26,7 +26,7 @@ type Props = {
   dashboardPendingVendorTableData?: DashboardTableType
   dashboardApprovedVendorTableData?:DashboardTableType
   dashboardRejectedVendorTableData?: DashboardTableType
-  companyDropdown:{name:string}[]
+  companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
 }
 
 const DashboardCards = ({ ...Props }: Props) => {

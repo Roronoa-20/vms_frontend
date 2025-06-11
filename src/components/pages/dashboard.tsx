@@ -3,7 +3,7 @@ import DashboardCardCounter from "../molecules/Dashboard-Card-Count";
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
-import { DashboardPOTableData, dashboardCardData,DashboardTableType } from "@/src/types/types";
+import { DashboardPOTableData, dashboardCardData,DashboardTableType, TvendorRegistrationDropdown } from "@/src/types/types";
 import { cookies } from "next/headers";
 const Dashboard = async () => {
   // const cookie = await cookies()
@@ -90,12 +90,21 @@ const Dashboard = async () => {
   // console.log(dashboardTableData, "dashboardTableData")
 
 
-  const companyDropdownUrl = API_END_POINTS?.companyDropdown
-              const companyDropdownResponse:AxiosResponse = await requestWrapper({url:companyDropdownUrl,method:"GET"});
-              const companyDropdown:{name:string}[] =  companyDropdownResponse?.status == 200?companyDropdownResponse?.data?.data : ""; 
+  // const companyDropdownUrl = API_END_POINTS?.companyDropdown
+  //             const companyDropdownResponse:AxiosResponse = await requestWrapper({url:companyDropdownUrl,method:"GET"});
+  //             const companyDropdown:{name:string}[] =  companyDropdownResponse?.status == 200?companyDropdownResponse?.data?.data : ""; 
 
   console.log(dashboardPOTableData,"-----------------========","=pending---","=-09876543333333333333333333333333")
   console.log(CardData,"this is card Data")
+  const dropdownUrl = API_END_POINTS?.vendorRegistrationDropdown;
+  const dropDownApi: AxiosResponse = await requestWrapper({
+    url: dropdownUrl,
+    method: "GET",
+  });
+  const dropdownData: TvendorRegistrationDropdown["message"]["data"] =
+    dropDownApi?.status == 200 ? dropDownApi?.data?.message?.data : "";
+  const companyDropdown = dropdownData?.company_master
+
   return (
     <div className="p-8">
       {/* Cards */}

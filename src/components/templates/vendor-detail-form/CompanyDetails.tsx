@@ -199,7 +199,7 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Meril Associated Companies
           </h1>
-          <Input placeholder="" defaultValue={OnboardingDetail?.company_name ?? ""} disabled={true}/>
+          <Input placeholder="" defaultValue={OnboardingDetail?.company_name_description ?? ""} disabled={true}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">

@@ -179,7 +179,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                 {
                   companyBasedDropdown?.terms_of_payment ?
                   companyBasedDropdown?.terms_of_payment?.map((item)=>(
-                    <SelectItem value={item?.name} key={item?.name}>{item?.terms_of_payment_name}</SelectItem>
+                    <SelectItem value={item?.name} key={item?.name}>{item?.description}</SelectItem>
                   )):
                   <div className="text-center">No Value</div>
                 }
