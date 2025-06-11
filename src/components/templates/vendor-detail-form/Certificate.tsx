@@ -15,7 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "..
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
-import { CrossIcon } from "lucide-react";
+import { CrossIcon, Trash, Trash2 } from "lucide-react";
 import { it } from "node:test";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
@@ -41,6 +41,8 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
   const [multipleCertificateData,setMultipleCertificateData] = useState<certificateData[]>([]);
   const router = useRouter();
   
+  const [isOtherField,setIsOtherField] = useState<boolean>(false);
+
   useEffect(()=>{
     
   },[multipleCertificateData])
@@ -102,6 +104,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
       tableFetch();
     }
   }
+  
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
@@ -113,7 +116,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Certificate Name
           </h1>
-          <Select value={certificateData?.certificate_code ?? ""} onValueChange={(value)=>{setCertificateData((prev:any)=>({...prev,certificate_code:value}))}}>
+          <Select value={certificateData?.certificate_code ?? ""} onValueChange={(value)=>{setCertificateData((prev:any)=>({...prev,certificate_code:value}));}}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -121,7 +124,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
               <SelectGroup>
                 {
                   certificateCodeDropdown?.map((item,index)=>(
-                    <SelectItem value={item?.name} key={index}>{item?.certificate_name}</SelectItem>
+                    <SelectItem value={item?.name} key={index}>{item?.name}</SelectItem>
                   ))
                 }
               </SelectGroup>
@@ -140,6 +143,14 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
           </h1>
           <Input ref={fileInput} placeholder="" type="file" onChange={(e)=>{setCertificateData((prev:any)=>({...prev,file:e?.target?.files,fileDetail:{file_name:e?.target?.files != null? e.target.files[0].name:""}}))}}/>
         </div>
+        { certificateData?.certificate_code == "others" &&
+          <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Others
+          </h1>
+          <Input />
+        </div>
+        }
       </div>
       <div className={`flex justify-end pr-6 pb-6 ${designation?"hidden":""}`}><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleAdd()}}>Add</Button></div>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
@@ -152,7 +163,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
                     {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
                     <TableHeader className="text-center">
                       <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                        <TableHead className="w-[100px]">Sr No.</TableHead>
+                        <TableHead className="text-center">Sr No.</TableHead>
                         <TableHead className="text-center">Company Code</TableHead>
                         <TableHead className="text-center">Valid Till</TableHead>
                         <TableHead className="text-center">File</TableHead>
@@ -163,21 +174,21 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
                     {multipleCertificateData?.length > 0 ?
                       multipleCertificateData.map((item, index) => (
                         <TableRow key={item?.name?item?.name:""}>
-                          <TableCell className="font-medium">{index +1}</TableCell>
-                          <TableCell>{item?.certificate_code}</TableCell>
-                          <TableCell>{item?.valid_till}</TableCell>
-                          <TableCell>{item?.fileDetail?.file_name}</TableCell>
-                          <TableCell className="flex justify-center items-center"><CrossIcon onClick={()=>{deleteRow(item?.name?item?.name:"")}} className="rotate-45 text-red-400 cursor-pointer"/></TableCell>
+                          <TableCell className="font-medium text-center">{index +1}</TableCell>
+                          <TableCell className="text-center">{item?.certificate_code}</TableCell>
+                          <TableCell className="text-center">{item?.valid_till}</TableCell>
+                          <TableCell className="text-center">{item?.fileDetail?.file_name}</TableCell>
+                          <TableCell className="flex justify-center items-center text-center"><CrossIcon onClick={()=>{deleteRow(item?.name?item?.name:"")}} className="rotate-45 text-red-400 cursor-pointer"/></TableCell>
                         </TableRow>
                       )):
                       OnboardingDetail?.map((item, index) => (  
                        
                         <TableRow key={item?.name?item?.name:""}>
-                          <TableCell className="font-medium">{index}</TableCell>
-                          <TableCell>{item?.certificate_code}</TableCell>
-                          <TableCell>{item?.valid_till}</TableCell>
-                          <TableCell>{item?.certificate_attach?.file_name}</TableCell>
-                          <TableCell className="flex justify-center items-center"><CrossIcon onClick={()=>{deleteRow(item?.name?item?.name:"")}} className="rotate-45 text-red-400 cursor-pointer"/></TableCell>
+                          <TableCell className="font-medium text-center">{index}</TableCell>
+                          <TableCell className="text-center">{item?.certificate_code}</TableCell>
+                          <TableCell className="text-center">{item?.valid_till}</TableCell>
+                          <TableCell className="text-center">{item?.certificate_attach?.file_name}</TableCell>
+                          <TableCell className="flex justify-center items-center text-center"><Trash2 onClick={()=>{deleteRow(item?.name?item?.name:"")}} className=" text-red-400 cursor-pointer"/></TableCell>
                         </TableRow>
                       ))
                     }

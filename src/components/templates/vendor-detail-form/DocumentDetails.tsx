@@ -145,7 +145,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
               Company PAN Number
             </h1>
             <Input
-              placeholder="Enter Reg No."
+              placeholder="Enter Company Pan Number"
               value={
                 documentDetails?.company_pan_number ??
                 OnboardingDetail?.company_pan_number ??
@@ -164,7 +164,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
               Name of Company on PAN Card
             </h1>
             <Input
-              placeholder="Enter Reg No."
+              placeholder="Enter Pan Card"
               value={
                 documentDetails?.name_on_company_pan ??
                 OnboardingDetail?.name_on_company_pan ??
@@ -417,7 +417,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
               Udyam Registration No.
             </h1>
             <Input
-              placeholder=""
+              placeholder=" Enter Udyam Registration No"
               value={
                 documentDetails?.udyam_number ??
                 OnboardingDetail?.udyam_number ??

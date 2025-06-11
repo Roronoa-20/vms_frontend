@@ -87,14 +87,14 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData,companyDropdown }: P
             dashboardTableData.approved_vendor_onboarding.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{index + 1}.</TableCell>
-                <TableCell>{item?.name}</TableCell>
-                <TableCell>{item?.vendor_name}</TableCell>
-                <TableCell>{item?.company}</TableCell>
+                <TableCell className="text-nowrap">{item?.name}</TableCell>
+                <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
+                <TableCell className="text-nowrap">{item?.company}</TableCell>
                 <TableCell>
                   <div
-                    className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "pending"
+                    className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "Pending"
                         ? "bg-yellow-100 text-yellow-800"
-                        : item?.onboarding_form_status === "approved"
+                        : item?.onboarding_form_status === "Approved"
                           ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-800"
                       }`}

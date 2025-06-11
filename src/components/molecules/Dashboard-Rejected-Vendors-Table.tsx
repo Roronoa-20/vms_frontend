@@ -75,8 +75,9 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData,companyDropdown }: P
             <TableHead>Vendor Name</TableHead>
             <TableHead className="text-center">Company Name</TableHead>
             <TableHead className="text-center">Status</TableHead>
-            <TableHead className="text-center">Account Team</TableHead>
             <TableHead className="text-center">Purchase Team</TableHead>
+            <TableHead className="text-center">Purchase Head</TableHead>
+            <TableHead className="text-center">Account Team</TableHead>
             <TableHead className="text-center">View Details</TableHead>
             <TableHead className="text-center">QMS Form</TableHead>
           </TableRow>
@@ -86,9 +87,9 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData,companyDropdown }: P
             dashboardTableData.approved_vendor_onboarding.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{item?.idx}</TableCell>
-                <TableCell>{item?.name}</TableCell>
-                <TableCell>{item?.vendor_name}</TableCell>
-                <TableCell>{item?.company}</TableCell>
+                <TableCell className="text-nowrap">{item?.name}</TableCell>
+                <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
+                <TableCell className="text-nowrap">{item?.company}</TableCell>
                 <TableCell>
                   <div
                     className={`px-2 py-3 rounded-xl ${item?.status === "pending"
@@ -102,8 +103,8 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData,companyDropdown }: P
                   </div>
                 </TableCell>
                 <TableCell>{item?.purchase_team}</TableCell>
-                <TableCell>{item?.accounts_team}</TableCell>
                 <TableCell>{item?.purchase_head}</TableCell>
+                <TableCell>{item?.accounts_team}</TableCell>
                 <TableCell><Link href={`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
                 <TableCell className="text-right">{item?.qms_form}</TableCell>
               </TableRow>

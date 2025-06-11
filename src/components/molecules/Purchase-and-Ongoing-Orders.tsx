@@ -24,6 +24,7 @@ import PODialog from './PODialog'
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { useMultipleVendorCodeStore } from "@/src/store/MultipleVendorCodeStore";
+import { useAuth } from "@/src/context/AuthContext";
 type Props = {
   dashboardPOTableData: DashboardPOTableItem[];
 };
@@ -36,6 +37,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData }: Props) => {
 
   const {MultipleVendorCode,addMultipleVendorCode,reset} = useMultipleVendorCodeStore();
   console.log(MultipleVendorCode,"this is multiple vendor store")
+  const {designation} = useAuth();
   const downloadPoDetails = async (name: string) => {
     try {
       const Data = await fetch(
@@ -142,7 +144,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData }: Props) => {
             <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Early Delivery</TableHead>
             <TableHead className="text-center">View details</TableHead>
-            <TableHead className="text-center">Action</TableHead>
+            <TableHead className={`text-center ${designation == "Vendor"?"":"hidden"}`}>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="text-center">
@@ -179,7 +181,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData }: Props) => {
                     view
                   </Button>
                 </TableCell>
-                <TableCell className="flex gap-4">
+                <TableCell className={`flex gap-4 ${designation == "Vendor"?"":"hidden"}`}>
                   <Button
                     variant={"outline"}
                     onClick={()=>{setStatus("approve"); setIsDialog((prev)=>!prev); setPONumber(item?.name)}}

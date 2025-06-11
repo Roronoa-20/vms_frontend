@@ -104,9 +104,9 @@ const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
                 {machineDetail?.map((item, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">{index +1}</TableCell>
-                    <TableCell>{item?.capacity}</TableCell>
                     <TableCell>{item?.equipment_name}</TableCell>
                     <TableCell>{item?.equipment_qty}</TableCell>
+                    <TableCell>{item?.capacity}</TableCell>
                     <TableCell>
                       {item?.remarks}
                     </TableCell>

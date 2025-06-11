@@ -153,7 +153,7 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Date
+            Cin Date
           </h1>
           <Input type="date" placeholder="Enter Mobile Number" onChange={(e)=>{updateField("cin_date",e.target.value)}} value={data?.cin_date ?? OnboardingDetail?.cin_date ?? ""}/>
         </div>
@@ -197,15 +197,15 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Vendor Type
-          </h1>
-          <Input placeholder="" defaultValue={OnboardingDetail?.vendor_types?.map((item)=>(item))} disabled={true} />
-        </div>
-        <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Meril Associated Companies
           </h1>
           <Input placeholder="" defaultValue={OnboardingDetail?.company_name ?? ""} disabled={true}/>
+        </div>
+        <div>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Vendor Type
+          </h1>
+          <Input placeholder="" defaultValue={OnboardingDetail?.vendor_types?.map((item)=>(item))} disabled={true} />
         </div>
       </div>
       <div className="flex justify-end pr-6">

@@ -137,8 +137,8 @@ const DashboardPendingVendorsTable = ({ dashboardTableData,companyDropdown }: Pr
             <TableHead className="text-center">Company Name</TableHead>
             <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Purchase Team</TableHead>
-            <TableHead className="text-center">Account Team</TableHead>
             <TableHead className="text-center">Purchase Head</TableHead>
+            <TableHead className="text-center">Account Team</TableHead>
             <TableHead className="text-center">View Details</TableHead>
             <TableHead className="text-center">QMS Form</TableHead>
           </TableRow>
@@ -148,14 +148,14 @@ const DashboardPendingVendorsTable = ({ dashboardTableData,companyDropdown }: Pr
             table.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{index + 1}.</TableCell>
-                <TableCell>{item?.ref_no}</TableCell>
-                <TableCell>{item?.vendor_name}</TableCell>
-                <TableCell>{item?.company_name}</TableCell>
+                <TableCell className="text-nowrap">{item?.ref_no}</TableCell>
+                <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
+                <TableCell className="text-nowrap">{item?.company_name}</TableCell>
                 <TableCell>
                   <div
-                    className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "pending"
+                    className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "Pending"
                         ? "bg-yellow-100 text-yellow-800"
-                        : item?.onboarding_form_status === "approved"
+                        : item?.onboarding_form_status === "Approved"
                           ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-800"
                       }`}
@@ -164,8 +164,8 @@ const DashboardPendingVendorsTable = ({ dashboardTableData,companyDropdown }: Pr
                   </div>
                 </TableCell>
                 <TableCell>{item?.purchase_t_approval}</TableCell>
-                <TableCell>{item?.accounts_t_approval}</TableCell>
                 <TableCell>{item?.purchase_h_approval}</TableCell>
+                <TableCell>{item?.accounts_t_approval}</TableCell>
                 <TableCell><Link href={`/view-onboarding-details??tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
                 <TableCell className="text-right">{item?.qms_form}</TableCell>
               </TableRow>

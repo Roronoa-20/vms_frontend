@@ -52,7 +52,7 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
-        Details of Machinery & Other Equipment
+        Details of Testing Facility
       </h1>
       <div className="grid grid-cols-3 gap-6 p-5">
         <div className="col-span-1">
@@ -104,9 +104,9 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
                 {testingDetail?.map((item, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">{index + 1}</TableCell>
-                    <TableCell>{item?.capacity}</TableCell>
                     <TableCell>{item?.equipment_name}</TableCell>
                     <TableCell>{item?.equipment_qty}</TableCell>
+                    <TableCell>{item?.capacity}</TableCell>
                     <TableCell>
                       {item?.remarks}
                     </TableCell>
