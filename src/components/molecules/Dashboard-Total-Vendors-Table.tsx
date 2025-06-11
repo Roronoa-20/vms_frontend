@@ -67,7 +67,7 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
   
   useEffect(()=>{
       fetchTable();
-  },[debouncedSearchName,selectedCompany])
+  },[debouncedSearchName,selectedCompany,currentPage])
   
   
   const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
