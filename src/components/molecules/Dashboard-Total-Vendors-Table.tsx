@@ -83,6 +83,8 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
     });
     if(dashboardTotalVendorTableDataApi?.status == 200 ){
       setTable(dashboardTotalVendorTableDataApi?.data?.message?.total_vendor_onboarding);
+      settotalEventList(dashboardTotalVendorTableDataApi?.data?.message?.total_count)
+      setRecordPerPage(dashboardTotalVendorTableDataApi?.data?.message?.total_vendor_onboarding?.length)
       console.log(dashboardTotalVendorTableDataApi?.data?.message,"this is after filter api")
       // setRecordPerPage()
     } 

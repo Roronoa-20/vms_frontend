@@ -371,7 +371,7 @@ const CompanyAddress = ({
           <h1 className="font-normal">Same as above</h1>
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-6 p-5">
+      <div className={`grid grid-cols-4 gap-6 p-5 ${isShippingSame?"hidden":""}`}>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Address 1
