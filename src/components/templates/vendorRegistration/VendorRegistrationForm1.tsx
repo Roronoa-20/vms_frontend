@@ -142,13 +142,13 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Vendor Name
               </h1>
-              <Input className="col-span-2" required placeholder="Enter Vendor Name" value={formData?.vendor_name ?? ""}  onChange={(e) => handlefieldChange(e)}/>
+              <Input className="col-span-2" required placeholder="Enter Vendor Name" name="vendor_name" value={formData?.vendor_name ?? ""}  onChange={(e) => handlefieldChange(e)}/>
             </div>
           </div>
         </div>
         <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">Email</h1>
-          <Input required onChange={(e)=>{handlefieldChange(e)}} value={formData?.office_email_primary ?? ""} placeholder="Enter Email Address" />
+          <Input required onChange={(e)=>{handlefieldChange(e)}} value={formData?.office_email_primary ?? ""} name="office_email_primary" placeholder="Enter Email Address" />
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
