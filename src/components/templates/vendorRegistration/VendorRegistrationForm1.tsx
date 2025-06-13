@@ -102,7 +102,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           QA Required
           </h1>
-          <Select onValueChange={(value)=>{handleSelectChange(value,'qa_required')}} value={formData?.qa_required}>
+          <Select onValueChange={(value)=>{handleSelectChange(value,'qa_required')}} value={formData?.qa_required ?? ""}>
             <SelectTrigger>
               <SelectValue placeholder="Select Country" />
             </SelectTrigger>
@@ -121,7 +121,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Vendor Title
               </h1>
-              <Select onValueChange={(value)=>{handleSelectChange(value,'vendor_title')}} value={formData?.vendor_title}>
+              <Select onValueChange={(value)=>{handleSelectChange(value,'vendor_title')}} value={formData?.vendor_title ?? ""}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
@@ -142,19 +142,19 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Vendor Name
               </h1>
-              <Input className="col-span-2" required placeholder="Enter Vendor Name" value={formData?.vendor_name}  onChange={(e) => handlefieldChange(e)}/>
+              <Input className="col-span-2" required placeholder="Enter Vendor Name" value={formData?.vendor_name ?? ""}  onChange={(e) => handlefieldChange(e)}/>
             </div>
           </div>
         </div>
         <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">Email</h1>
-          <Input required onChange={(e)=>{handlefieldChange(e)}} value={formData?.office_email_primary} placeholder="Enter Email Address" />
+          <Input required onChange={(e)=>{handlefieldChange(e)}} value={formData?.office_email_primary ?? ""} placeholder="Enter Email Address" />
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Country
           </h1>
-          <Select required onValueChange={(value)=>{handleSelectChange(value,'country'),fetchCountryCode(value)}}>
+          <Select required value={formData?.country ?? ""} onValueChange={(value)=>{handleSelectChange(value,'country'),fetchCountryCode(value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Country" />
             </SelectTrigger>
@@ -181,7 +181,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
             </div>
             <div className="col-span-3 flex flex-col justify-end">
               {/* <h1 className="text-[12px] font-normal text-[#626973] pb-3">Mobile No.</h1> */}
-              <Input placeholder="Enter Mobile Number" name="mobile_number" required value={formData?.mobile_number}  onChange={(e) => handlefieldChange(e)}/>
+              <Input placeholder="Enter Mobile Number" name="mobile_number" required value={formData?.mobile_number ?? ""}  onChange={(e) => handlefieldChange(e)}/>
             </div>
           </div>
         </div>
@@ -189,7 +189,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Search Terms
           </h1>
-          <Input placeholder="Enter Search Terms" name="search_term"  required onChange={(e) => handlefieldChange(e)}/>
+          <Input placeholder="Enter Search Terms" name="search_term" value={formData?.search_term ?? ""}  required onChange={(e) => handlefieldChange(e)}/>
         </div>
       </div>
     </div>
