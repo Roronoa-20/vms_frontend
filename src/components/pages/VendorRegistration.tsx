@@ -1,8 +1,8 @@
 "use client"
-import React from "react";
+import React, { useState } from "react";
 import VendorRegistration1 from "../templates/vendorRegistration/VendorRegistrationForm1";
 import VendorRegistration2 from "../templates/vendorRegistration/VendorRegistrationForm2";
-import { TvendorRegistrationDropdown } from "@/src/types/types";
+import { TvendorRegistrationDropdown, VendorRegistrationData } from "@/src/types/types";
 import { handleSubmit } from "../templates/vendorRegistration/utility";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
@@ -21,6 +21,20 @@ interface Props {
 
 const VendorRegistration = ({...Props}:Props) => {
 
+const [formData,setFormData] = useState<Partial<VendorRegistrationData>>({})
+  const handlefieldChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value } as VendorRegistrationData));
+  };
+  const handleSelectChange = (value: any, name: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value } as VendorRegistrationData));
+  };
+
+
   const vendorTitleDropdown = Props?.vendorTitleDropdown;
   const vendorTypeDropdown = Props?.vendorTypeDropdown;
   const countryDropdown = Props?.countryDropdown;
@@ -29,7 +43,7 @@ const VendorRegistration = ({...Props}:Props) => {
   const currencyDropdown = Props?.currencyDropdown;
 
 
-  const {data,resetForm} = useVendorStore()
+  // const {data,resetForm} = useVendorStore()
   const router = useRouter();
    const handleSubmit = async(e:React.FormEvent)=>{
     e.preventDefault()
@@ -37,7 +51,7 @@ const VendorRegistration = ({...Props}:Props) => {
     const response:AxiosResponse = await requestWrapper({
       url:url,
       method:"POST",
-      data:{data:data}
+      data:{data:formData}
     });
   
     if(response?.status == 500){
@@ -46,7 +60,7 @@ const VendorRegistration = ({...Props}:Props) => {
     }
   
     if(response?.status == 200){
-      resetForm();
+      // resetForm();
       console.log("handle submit successfully");
       alert("Submit Successfully");
       router.push("/dashboard");
@@ -63,11 +77,17 @@ const VendorRegistration = ({...Props}:Props) => {
         vendorTitleDropdown={vendorTitleDropdown}
         vendorTypeDropdown={vendorTypeDropdown}
         countryDropdown={countryDropdown}
+        formData={formData}
+        handlefieldChange={handlefieldChange}
+        handleSelectChange={handleSelectChange}
         />
       <VendorRegistration2 
         companyDropdown = {companyDropdown}
         incoTermsDropdown = {incoTermsDropdown}
         currencyDropdown={currencyDropdown}
+        formData={formData}
+        handlefieldChange={handlefieldChange}
+        handleSelectChange={handleSelectChange}
         />
         </form>
     </div>

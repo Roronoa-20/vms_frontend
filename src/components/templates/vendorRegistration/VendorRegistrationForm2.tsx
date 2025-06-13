@@ -18,27 +18,24 @@ import { Button } from "../../atoms/button";
 import { useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { handleSubmit } from "./utility";
-import React from "react";
 
 interface Props {
   incoTermsDropdown:TvendorRegistrationDropdown["message"]["data"]["incoterm_master"]
   companyDropdown:TvendorRegistrationDropdown["message"]["data"]["company_master"]
   currencyDropdown:TvendorRegistrationDropdown["message"]["data"]["currency_master"]
+  formData:Partial<VendorRegistrationData>
+  handlefieldChange:(e:React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>)=>void
+      handleSelectChange:(value:any,name:string)=>void
 }
 
-const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown}:Props) => {
+const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown,formData,handlefieldChange,handleSelectChange}:Props) => {
   // const { data, updateField,updateVendorTypes, resetForm } = useVendorStore();
-  const updateField = useVendorStore(state => state.updateField);
-const updateVendorTypes = useVendorStore(state => state.updateVendorTypes);
-const resetForm = useVendorStore(state => state.resetForm);
-
-// Only get data when you actually need it for display
-const currentData = useVendorStore(state => state.data);
   const [companyBasedDropdown,setCompanyBasedDropdown] = useState<TcompanyNameBasedDropdown["message"]["data"]>();
   const [purchaseOrganizationBasedDropdown,setPurchaseOrganizationBasedDropdown] = useState<TpurchaseOrganizationBasedDropdown["message"]>()
   const router = useRouter();
   const handleCompanyDropdownChange = async(value:string)=>{
-    updateField('company_name',value);
+    handleSelectChange(value,'company_name');
     const url = API_END_POINTS?.companyBasedDropdown;
     const response = await requestWrapper({url:url,method:"GET",params:{company_name:value}})
     const data:TcompanyNameBasedDropdown = response?.status == 200?response?.data:"";
@@ -46,7 +43,7 @@ const currentData = useVendorStore(state => state.data);
   }
 
   const handlePurchaseOrganizationDropdownChange = async(value:string)=>{
-    updateField('purchase_organization',value);
+    handleSelectChange(value,'purchase_organization');
     const url = API_END_POINTS?.purchaseGroupBasedDropdown;
     const response = await requestWrapper({url:url,method:"GET",params:{purchase_organization:value}})
     const data:TpurchaseOrganizationBasedDropdown = response?.status == 200?response?.data:"";
@@ -89,7 +86,7 @@ const currentData = useVendorStore(state => state.data);
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Company Name
           </h1>
-          <Select required={true} onValueChange={(value)=>{handleCompanyDropdownChange(value)}} value={currentData?.company_name}>
+          <Select required={true} onValueChange={(value)=>{handleCompanyDropdownChange(value)}} value={formData?.company_name}>
             <SelectTrigger>
               <SelectValue placeholder="Select Company Name" />
             </SelectTrigger>
@@ -110,7 +107,7 @@ const currentData = useVendorStore(state => state.data);
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Purchase Organization
           </h1>
-          <Select required onValueChange={(value)=>{handlePurchaseOrganizationDropdownChange(value)}} value={currentData?.purchase_organization}>
+          <Select required onValueChange={(value)=>{handlePurchaseOrganizationDropdownChange(value)}} value={formData?.purchase_organization}>
             <SelectTrigger>
               <SelectValue placeholder="Select Purchase Organization" />
             </SelectTrigger>
@@ -131,7 +128,7 @@ const currentData = useVendorStore(state => state.data);
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Account Group
           </h1>
-          <Select required onValueChange={(value)=>{updateField('account_group',value)}} value={currentData?.account_group}>
+          <Select required onValueChange={(value)=>{handleSelectChange(value,'account_group')}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Account Group" />
             </SelectTrigger>
@@ -153,7 +150,7 @@ const currentData = useVendorStore(state => state.data);
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Purchase Group
           </h1>
-          <Select required onValueChange={(value)=>{updateField('purchase_group',value)}} value={currentData?.purchase_group}>
+          <Select required onValueChange={(value)=>{handleSelectChange(value,'purchase_group')}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Purchase Group" />
             </SelectTrigger>
@@ -174,7 +171,7 @@ const currentData = useVendorStore(state => state.data);
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Terms Of Payment
           </h1>
-          <Select required onValueChange={(value)=>{updateField('terms_of_payment',value)}} value={currentData?.terms_of_payment}>
+          <Select required onValueChange={(value)=>{handleSelectChange(value,'terms_of_payment')}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Terms Of Payment" />
             </SelectTrigger>
@@ -195,7 +192,7 @@ const currentData = useVendorStore(state => state.data);
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Order Currency
           </h1>
-          <Select required onValueChange={(value)=>{updateField('order_currency',value)}} value={currentData?.order_currency}>
+          <Select required onValueChange={(value)=>{handleSelectChange(value,'order_currency')}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Order Currency" />
             </SelectTrigger>
@@ -216,7 +213,7 @@ const currentData = useVendorStore(state => state.data);
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Inco Terms
           </h1>
-          <Select required onValueChange={(value)=>{updateField('incoterms',value)}} value={currentData?.incoterms}>
+          <Select required onValueChange={(value)=>{handleSelectChange(value,'incoterms')}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Inco Terms" />
             </SelectTrigger>
@@ -242,5 +239,5 @@ const currentData = useVendorStore(state => state.data);
   );
 };
 
-export default React.memo(VendorRegistration2);
+export default VendorRegistration2;
 
