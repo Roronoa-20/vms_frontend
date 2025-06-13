@@ -12,8 +12,10 @@ export type TMultipleVendorCode = {
 type MultipleVendorCodeStore = {
     MultipleVendorCode: TMultipleVendorCode[];
    addMultipleVendorCode: (code: TMultipleVendorCode) => void,
-
-    reset: () => void
+    selectedVendorCode:string
+    setSelectedVendorCode:(code:string)=>void;
+    reset: () => void,
+    resetVendorCode:()=>void
 }
 
 
@@ -21,11 +23,16 @@ export const useMultipleVendorCodeStore = create<MultipleVendorCodeStore>()(
     persist(
       (set) => ({
         MultipleVendorCode: [],
+        selectedVendorCode:"",
+        setSelectedVendorCode:(code)=>set((state)=>({
+          selectedVendorCode:code
+        })),
         addMultipleVendorCode: (code) =>
           set((state) => ({
             MultipleVendorCode: [...state.MultipleVendorCode, code],
           })),
         reset: () => set({ MultipleVendorCode: [] }),
+        resetVendorCode:()=>set({selectedVendorCode:""})
       }),
       {
         name: 'multiple-vendor-code-storage', // key in localStorage

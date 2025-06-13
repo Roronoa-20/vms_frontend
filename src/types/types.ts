@@ -777,6 +777,7 @@ export type TCompanyDetailForm = {
     approved_vendor_count: number;
     current_month_vendor: number;
     rejected_vendor_count:number;
+    purchase_order_count:number
   }
   
   export interface DashboardPOTableItem {
@@ -874,7 +875,12 @@ export type TCompanyDetailForm = {
   }
   
   export interface DashboardPOTableData {
-    message: DashboardPOTableItem[];
+    message:{
+      purchase_orders:DashboardPOTableItem[],
+      total_count:number,
+      page_no:number,
+      page_length:number
+    } 
   }
   
   export interface PurchaseOrderItem {

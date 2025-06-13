@@ -22,7 +22,7 @@ export default function LoginForm() {
   const [isPasswordDialog,setIsPasswordDialog] = useState<boolean>(false);
   const [authorization,setAuthorization] = useState<string | "">("")
 const { setAuthData } = useAuth();
-const {MultipleVendorCode,addMultipleVendorCode,reset} = useMultipleVendorCodeStore();
+const {MultipleVendorCode,addMultipleVendorCode,reset,resetVendorCode} = useMultipleVendorCodeStore();
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const url = API_END_POINTS?.login;
@@ -41,6 +41,7 @@ const {MultipleVendorCode,addMultipleVendorCode,reset} = useMultipleVendorCodeSt
       const designationVendor = await response?.data?.message?.designation as string;
       if(designationVendor){
         reset();
+        resetVendorCode();
         response?.data?.message?.vendor_codes?.map((item:TMultipleVendorCode)=>(
           addMultipleVendorCode(item)
         ))

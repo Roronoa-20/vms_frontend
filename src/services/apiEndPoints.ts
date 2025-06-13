@@ -47,7 +47,8 @@ const API_END_POINTS = {
   reconsiliationDropdown:`${url}/api/method/vms.APIs.master_apis.get_reconcilation_account.get_reconcilation_list`,
   mobileCodeBasedOnCountry:`${url}/api/method/vms.APIs.master_apis.get_country.country_details`,
   vendorPOTable:`${url}/api/method/vms.APIs.vendors_dashboards_api.get_vendor_details_for_dashboard.get_po_from_vendor_code`,
-  vendorCodeDialogApi:`${url}/api/method/vms.APIs.dashboard_api.get_vendor_code.collect_vendor_code_data`
+  vendorCodeDialogApi:`${url}/api/method/vms.APIs.dashboard_api.get_vendor_code.collect_vendor_code_data`,
+  VendorCodeBasedCardCount:`${url}/api/method/vms.APIs.vendors_dashboards_api.get_vendor_details_for_dashboard.get_po_count_from_vendor_code`
 };
 
 export default API_END_POINTS;

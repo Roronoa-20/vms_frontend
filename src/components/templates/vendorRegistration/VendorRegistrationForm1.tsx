@@ -46,22 +46,20 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
   },[])
 
   const handleVendorTypeChange = async(value:MultiValue<OptionType>)=>{
-    const newArray = await Promise.all(
-      value?.map((item)=>{
+    const newArray = value?.map((item)=>{
         return (
           item?.value
         )
       })
-      )
-    const newArray2 = await Promise.all(
-      value?.map((item)=>{
+      
+    const newArray2 =  value?.map((item)=>{
         return ({
           vendor_type:
           item?.value
         }
         )
       })
-    )
+  
     updateVendorTypes(newArray2)
     if(newArray?.includes("Material Vendor")){
       setIsQa(true);
@@ -77,10 +75,6 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
       setCountryMobileCode(countryCodeApi?.data?.message);
     }
   }
-
-  console.log(countryDropdown,"this is country dropdown")
-
-  console.log(data,"htis is data")
 
   return (
     <div>
@@ -100,7 +94,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           QA Required
           </h1>
-          <Select onValueChange={(value)=>{updateField('qa_required', value)}} value={data?.qa_required}>
+          <Select onValueChange={(value)=>{updateField('qa_required', value)}} value={data?.qa_required ?? ""}>
             <SelectTrigger>
               <SelectValue placeholder="Select Country" />
             </SelectTrigger>
@@ -119,7 +113,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Vendor Title
               </h1>
-              <Select onValueChange={(value)=>{updateField('vendor_title', value)}} value={data?.vendor_title}>
+              <Select onValueChange={(value)=>{updateField('vendor_title', value)}} value={data?.vendor_title ?? ""}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
@@ -140,19 +134,19 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Vendor Name
               </h1>
-              <Input className="col-span-2" required placeholder="Enter Vendor Name"  onChange={(e) => updateField('vendor_name', e.target.value)}/>
+              <Input className="col-span-2" required value={data?.vendor_name ?? ""} placeholder="Enter Vendor Name"  onChange={(e) => updateField('vendor_name', e.target.value)}/>
             </div>
           </div>
         </div>
         <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">Email</h1>
-          <Input required onChange={(e)=>{updateField("office_email_primary",e.target.value)}} placeholder="Enter Email Address" />
+          <Input required onChange={(e)=>{updateField("office_email_primary",e.target.value)}} placeholder="Enter Email Address" value={data?.office_email_primary ?? ""} />
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Country
           </h1>
-          <Select required onValueChange={(value)=>{updateField('country', value),fetchCountryCode(value)}}>
+          <Select required onValueChange={(value)=>{updateField('country', value),fetchCountryCode(value)}} value={data?.country ?? ""}>
             <SelectTrigger>
               <SelectValue placeholder="Select Country" />
             </SelectTrigger>
@@ -179,7 +173,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
             </div>
             <div className="col-span-3 flex flex-col justify-end">
               {/* <h1 className="text-[12px] font-normal text-[#626973] pb-3">Mobile No.</h1> */}
-              <Input placeholder="Enter Mobile Number" required  onChange={(e) => updateField('mobile_number', e.target.value)}/>
+              <Input placeholder="Enter Mobile Number" required  onChange={(e) => updateField('mobile_number', e.target.value)} value={data?.mobile_number ?? ""}/>
             </div>
           </div>
         </div>
@@ -187,11 +181,11 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Search Terms
           </h1>
-          <Input placeholder="Enter Search Terms"  required onChange={(e) => updateField('search_term', e.target.value)}/>
+          <Input placeholder="Enter Search Terms"  required onChange={(e) => updateField('search_term', e.target.value)} value={data?.search_term ?? ""}/>
         </div>
       </div>
     </div>
   );
 };
 
-export default VendorRegistration1;
+export default React.memo(VendorRegistration1);

@@ -18,6 +18,7 @@ import { Button } from "../../atoms/button";
 import { useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { handleSubmit } from "./utility";
+import React from "react";
 
 interface Props {
   incoTermsDropdown:TvendorRegistrationDropdown["message"]["data"]["incoterm_master"]
@@ -37,7 +38,6 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
     const data:TcompanyNameBasedDropdown = response?.status == 200?response?.data:"";
     setCompanyBasedDropdown(data?.message?.data);
   }
-  console.log(companyBasedDropdown,"company based dropdown")
 
   const handlePurchaseOrganizationDropdownChange = async(value:string)=>{
     updateField('purchase_organization',value);
@@ -45,10 +45,8 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
     const response = await requestWrapper({url:url,method:"GET",params:{purchase_organization:value}})
     const data:TpurchaseOrganizationBasedDropdown = response?.status == 200?response?.data:"";
     setPurchaseOrganizationBasedDropdown(data?.message);
-    console.log(data?.message,"this is account group")
   }
 
-  console.log(companyBasedDropdown)
   return (
     <div>
       <h1 className="text-[20px] font-medium pb-1 leading-[24px] text-[#03111F] border-b border-slate-500">
@@ -238,5 +236,5 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
   );
 };
 
-export default VendorRegistration2;
+export default React.memo(VendorRegistration2);
 

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -18,26 +18,81 @@ import {
 } from "@/src/components/atoms/select";
 import { Input } from "../atoms/input";
 // import { useEffect } from 'react';
-import { DashboardPOTableItem } from "@/src/types/types";
+import { DashboardPOTableData, DashboardPOTableItem, TvendorRegistrationDropdown } from "@/src/types/types";
 import { Button } from "@/components/ui/button";
 import PODialog from './PODialog'
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { useMultipleVendorCodeStore } from "@/src/store/MultipleVendorCodeStore";
 import { useAuth } from "@/src/context/AuthContext";
+import API_END_POINTS from "@/src/services/apiEndPoints";
+
+
 type Props = {
-  dashboardPOTableData: DashboardPOTableItem[];
+  dashboardPOTableData?: DashboardPOTableData["message"];
+  companyDropdown:TvendorRegistrationDropdown["message"]["data"]["company_master"]
 };
-const PurchaseAndOngoingOrders = ({ dashboardPOTableData }: Props) => {
+
+  const useDebounce = (value: any, delay: any) => {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+  
+    useEffect(() => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+      return () => {
+        clearTimeout(handler);
+      };
+    }, [value, delay]);
+  
+    return debouncedValue;
+  };
+
+const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Props) => {
   const [status,setStatus] = useState<"approve" | "reject" | "">("");
   const [date,setDate] = useState("");
   const [comments,setComments] = useState("");
   const [isDialog,setIsDialog] = useState(false);
-  const [poNumber,setPONumber] = useState("")
-
-  const {MultipleVendorCode,addMultipleVendorCode,reset} = useMultipleVendorCodeStore();
-  console.log(MultipleVendorCode,"this is multiple vendor store")
+  const [poNumber,setPONumber] = useState("");
+  const [tableData,setTableData] = useState<DashboardPOTableItem[]>(dashboardPOTableData?.purchase_orders ?? []);
+  const {MultipleVendorCode,addMultipleVendorCode,reset,selectedVendorCode} = useMultipleVendorCodeStore();
+  const [search,setSearch] = useState<string>("");
+  
+  const [total_event_list,settotalEventList] = useState(0);
+  const [record_per_page,setRecordPerPage] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  
   const {designation} = useAuth();
+  
+  const debouncedSearchName = useDebounce(search, 300);
+
+  useEffect(()=>{
+    const fetchPoTable = async()=>{
+      const POUrl = `${API_END_POINTS?.vendorPOTable}?vendor_code=${selectedVendorCode}&po_no=${search}`
+          const dashboardPOTableDataApi: AxiosResponse = await requestWrapper({
+            url: POUrl,
+            method: "GET",
+          });
+
+              if(dashboardPOTableDataApi?.status == 200) {
+                setTableData(dashboardPOTableDataApi?.data?.message?.purchase_orders)
+              }
+            }
+            if(selectedVendorCode || debouncedSearchName || currentPage){
+              fetchPoTable();
+            }
+  },[selectedVendorCode,debouncedSearchName,currentPage])
+
+
+    
+    
+    const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      console.log(value,"this is search name")
+      setSearch(value);
+    }
+
+
   const downloadPoDetails = async (name: string) => {
     try {
       const Data = await fetch(
@@ -92,6 +147,8 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData }: Props) => {
     setComments("");
   }
 
+  console.log(companyDropdown,"this is company dropdown")
+
   return (
     <>
     <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
@@ -100,18 +157,18 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData }: Props) => {
           Purchase and Ongoing Orders
         </h1>
         <div className="flex gap-4">
-          <Input placeholder="Search..." />
+          <Input placeholder="Search..." onChange={(e)=>{handlesearchname(e)}}/>
           <Select>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select Company" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup className="w-full">
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
+                {
+                  companyDropdown?.map((item,index)=>(
+                    <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                  ))
+                }
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -148,11 +205,11 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData }: Props) => {
           </TableRow>
         </TableHeader>
         <TableBody className="text-center">
-          {dashboardPOTableData && dashboardPOTableData?.length > 0 ? (
-            dashboardPOTableData.map((item, index) => (
+          {tableData && tableData?.length > 0 ? (
+            tableData.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{item?.idx}</TableCell>
-                <TableCell>{item?.po_no}</TableCell>
+                <TableCell>{item?.name}</TableCell>
                 <TableCell>
                   {item?.supplier_name ? item.supplier_name : "-"}
                 </TableCell>
