@@ -27,7 +27,13 @@ interface Props {
 }
 
 const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown}:Props) => {
-  const { data, updateField,updateVendorTypes, resetForm } = useVendorStore();
+  // const { data, updateField,updateVendorTypes, resetForm } = useVendorStore();
+  const updateField = useVendorStore(state => state.updateField);
+const updateVendorTypes = useVendorStore(state => state.updateVendorTypes);
+const resetForm = useVendorStore(state => state.resetForm);
+
+// Only get data when you actually need it for display
+const currentData = useVendorStore(state => state.data);
   const [companyBasedDropdown,setCompanyBasedDropdown] = useState<TcompanyNameBasedDropdown["message"]["data"]>();
   const [purchaseOrganizationBasedDropdown,setPurchaseOrganizationBasedDropdown] = useState<TpurchaseOrganizationBasedDropdown["message"]>()
   const router = useRouter();
@@ -83,7 +89,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Company Name
           </h1>
-          <Select required={true} onValueChange={(value)=>{handleCompanyDropdownChange(value)}} value={data?.company_name}>
+          <Select required={true} onValueChange={(value)=>{handleCompanyDropdownChange(value)}} value={currentData?.company_name}>
             <SelectTrigger>
               <SelectValue placeholder="Select Company Name" />
             </SelectTrigger>
@@ -104,7 +110,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Purchase Organization
           </h1>
-          <Select required onValueChange={(value)=>{handlePurchaseOrganizationDropdownChange(value)}} value={data?.purchase_organization}>
+          <Select required onValueChange={(value)=>{handlePurchaseOrganizationDropdownChange(value)}} value={currentData?.purchase_organization}>
             <SelectTrigger>
               <SelectValue placeholder="Select Purchase Organization" />
             </SelectTrigger>
@@ -125,7 +131,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Account Group
           </h1>
-          <Select required onValueChange={(value)=>{updateField('account_group',value)}}>
+          <Select required onValueChange={(value)=>{updateField('account_group',value)}} value={currentData?.account_group}>
             <SelectTrigger>
               <SelectValue placeholder="Select Account Group" />
             </SelectTrigger>
@@ -147,7 +153,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Purchase Group
           </h1>
-          <Select required onValueChange={(value)=>{updateField('purchase_group',value)}}>
+          <Select required onValueChange={(value)=>{updateField('purchase_group',value)}} value={currentData?.purchase_group}>
             <SelectTrigger>
               <SelectValue placeholder="Select Purchase Group" />
             </SelectTrigger>
@@ -168,7 +174,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Terms Of Payment
           </h1>
-          <Select required onValueChange={(value)=>{updateField('terms_of_payment',value)}}>
+          <Select required onValueChange={(value)=>{updateField('terms_of_payment',value)}} value={currentData?.terms_of_payment}>
             <SelectTrigger>
               <SelectValue placeholder="Select Terms Of Payment" />
             </SelectTrigger>
@@ -189,7 +195,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Order Currency
           </h1>
-          <Select required onValueChange={(value)=>{updateField('order_currency',value)}}>
+          <Select required onValueChange={(value)=>{updateField('order_currency',value)}} value={currentData?.order_currency}>
             <SelectTrigger>
               <SelectValue placeholder="Select Order Currency" />
             </SelectTrigger>
@@ -210,7 +216,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Inco Terms
           </h1>
-          <Select required onValueChange={(value)=>{updateField('incoterms',value)}}>
+          <Select required onValueChange={(value)=>{updateField('incoterms',value)}} value={currentData?.incoterms}>
             <SelectTrigger>
               <SelectValue placeholder="Select Inco Terms" />
             </SelectTrigger>
