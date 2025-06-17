@@ -58,11 +58,6 @@ export const VendorsidebarMenu = [
     name: "Home",
     href:"/vendor-dashboard"
   },
-  {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "Vendor",
-    href:"/vendor-registration"
-  },
   // {
   //   logo: "/sidebar-assests/raise-rfq-logo.svg",
   //   name: "Raise RFQ",

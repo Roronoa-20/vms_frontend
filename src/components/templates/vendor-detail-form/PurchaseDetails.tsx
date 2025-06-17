@@ -1,16 +1,21 @@
-import { VendorOnboardingResponse } from '@/src/types/types'
-import React from 'react'
+"use client"
+import { TReconsiliationDropdown, VendorOnboardingResponse } from '@/src/types/types'
+import React, { useState } from 'react'
 import { Input } from '../../atoms/input'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../../atoms/select'
+import ApprovalButton from '../../molecules/ApprovalButton'
 
 interface Props {
   ref_no:string,
   onboarding_ref_no:string,
-  OnboardingDetail?:VendorOnboardingResponse["message"]["purchasing_details"][0]
+  OnboardingDetail?:VendorOnboardingResponse["message"]["purchasing_details"][0],
+  reconciliationDropdown:TReconsiliationDropdown["message"]["data"],
+  tabType:string
 }
 
-const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
-  console.log(OnboardingDetail,"purchase")
+const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,reconciliationDropdown,tabType}:Props) => {
+  const [reconciliationAccount,setReconciliationAccountt] = useState<string>("");
+  console.log(reconciliationDropdown,"this is reconsiliation dropdown")
   return (
     <div className="flex flex-col bg-white rounded-lg p-4 w-full">
     <h1 className="border-b-2 pb-2">Purchasing Details</h1>
@@ -67,11 +72,26 @@ const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           Reconciliation Account
         </h1>
-        <Input placeholder="" disabled defaultValue={OnboardingDetail?.reconciliation_account}/>
+        {/* <Input placeholder="" disabled defaultValue={OnboardingDetail?.reconciliation_account}/> */}
+        <Select onValueChange={(value)=>{setReconciliationAccountt(value)}}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {
+                          reconciliationDropdown?.map((item,index)=>(
+                            <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                          ))
+                        }
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
       </div>
     </div>
     <div className="flex justify-end pr-6">
     {/* <Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`}>Next</Button> */}
+    <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount}/>
     </div>
   </div>
   )

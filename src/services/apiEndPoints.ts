@@ -48,7 +48,8 @@ const API_END_POINTS = {
   mobileCodeBasedOnCountry:`${url}/api/method/vms.APIs.master_apis.get_country.country_details`,
   vendorPOTable:`${url}/api/method/vms.APIs.vendors_dashboards_api.get_vendor_details_for_dashboard.get_po_from_vendor_code`,
   vendorCodeDialogApi:`${url}/api/method/vms.APIs.dashboard_api.get_vendor_code.collect_vendor_code_data`,
-  VendorCodeBasedCardCount:`${url}/api/method/vms.APIs.vendors_dashboards_api.get_vendor_details_for_dashboard.get_po_count_from_vendor_code`
+  VendorCodeBasedCardCount:`${url}/api/method/vms.APIs.vendors_dashboards_api.get_vendor_details_for_dashboard.get_po_count_from_vendor_code`,
+  vendorPurchaseRequestDropdown:`${url}/api/method/vms.APIs.purchase_api.create_pr.purchase_requsition_masters`
 };
 
 export default API_END_POINTS;

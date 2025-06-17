@@ -7,12 +7,9 @@ type props = {
   handleClose: () => void;
   handleComment: (value: string) => void;
   Submitbutton: () => void;
-  handleReconsiliation:(value:string)=>void;
-  dropdown?:TReconsiliationDropdown["message"]["data"]
 }
 
-const AccountsCommentBox = ({ handleClose, handleComment, Submitbutton,handleReconsiliation,dropdown }: props) => {
-  console.log(dropdown,"inside dialog")
+const AccountsCommentBox = ({ handleClose, handleComment, Submitbutton }: props) => {
   return (
     // <div className="absolute z-50 flex pt-10 items-center justify-center bg-black bg-opacity-50">
     <div className="bg-white rounded-xl border p-7 md:max-w-[650px] md:max-h-[400px] h-full w-full gap-8 text-black md:text-md font-light flex flex-col items-center justify-center">
@@ -27,7 +24,7 @@ const AccountsCommentBox = ({ handleClose, handleComment, Submitbutton,handleRec
           <X className="h-6 w-6" />
         </Button>
       </div>
-      <div className="flex flex-col w-full max-w-96">
+      {/* <div className="flex flex-col w-full max-w-96">
                   <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                     Reconciliation Account                  </h1>
                   <Select onValueChange={(value)=>{handleReconsiliation(value)}}>
@@ -44,7 +41,7 @@ const AccountsCommentBox = ({ handleClose, handleComment, Submitbutton,handleRec
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
       <textarea onChange={(e) => handleComment(e.target.value)} className="h-full w-full max-w-[80%] border-2 rounded-lg p-4 md:max-h-40"
       />
       <div className="flex justify-end pt-5 gap-4 w-full">

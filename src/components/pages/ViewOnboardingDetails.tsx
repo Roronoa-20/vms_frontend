@@ -72,7 +72,7 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
       const ReconciliationdropDownApi:AxiosResponse = await requestWrapper({url:reconsiliationUrl,method:"POST",data:{data:{account_group:OnboardingDetail?.purchasing_details?.[0]?.account_group}}});
       const reconciliationDropdown:TReconsiliationDropdown["message"]["data"] = ReconciliationdropDownApi?.status == 200 ? ReconciliationdropDownApi?.data?.message?.data : ""
       console.log(reconciliationDropdown,"this is reconciliation")
-      console.log(OnboardingDetail,"this is onboarding details")
+      console.log(OnboardingDetail?.purchasing_details?.[0]?.account_group,"this is onboarding details")
   return (
     <div>
         <OnboardingTab onboarding_refno={vendorOnboardingRefno} refno={refno} />
@@ -106,13 +106,12 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
         ) : tabType == "Certificate" ? (
           <Certificate certificateCodeDropdown={certificateCodeDropdown?.certificate_names} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.certificate_details_tab}/>
         ) : tabType == "Purchase Detail"?(
-          <PurchaseDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.purchasing_details?.[0]}/>
+          <PurchaseDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.purchasing_details?.[0]} reconciliationDropdown={reconciliationDropdown} tabType={tabType}/>
         )
         : (
           ""
         )}
       </div>
-      <ApprovalButton tabtype={tabType} ref_no={refno} onboardingRefno={vendorOnboardingRefno} reconsiliationDrodown={reconciliationDropdown}/>
     </div>
   )
 }

@@ -15,17 +15,17 @@ interface Props {
   ref_no: string;
   onboardingRefno: string;
   reconsiliationDrodown?:TReconsiliationDropdown["message"]["data"]
+  reconciliationAccount:string
 }
 
 
-const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown }: Props) => {
+const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown,reconciliationAccount }: Props) => {
   const [isCommentBox, setIsCommentBox] = useState<boolean>(false);
   const [comments, setComments] = useState<string>("");
   const [isApprove, setIsApprove] = useState<boolean>(false);
   const [isReject, setIsReject] = useState<boolean>(false);
   const [isAccountBox, setIsAccountBox] = useState<boolean>(false);
   const [reconsiliation, setReconsiliation] = useState<string>("");
-  const [reconsiliationDropdown,setReconsiliationDropdown] = useState<{name:string}[]>([]);
   const router = useRouter();
   const { designation, user_email } = useAuth() as {
     designation: "Purchase Team" | "Accounts Team" | "Purchase Head";
@@ -56,7 +56,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
           reject: isReject,
           rejected_reason: isReject ? comments : "",
           comments: isApprove ? comments : "",
-          reconciliation_account:reconsiliation?reconsiliation:""
+          reconciliation_account:reconciliationAccount?reconciliationAccount:""
         },
       },
     });
@@ -143,9 +143,8 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
           <AccountsCommentBox
             handleClose={handleAccountClose}
             handleComment={setComments}
-            handleReconsiliation={setReconsiliation}
+            // handleReconsiliation={setReconsiliation}
             Submitbutton={approval}
-            dropdown={reconsiliationDrodown}
           />
         </div>
       )}
