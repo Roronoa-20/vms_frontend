@@ -128,3 +128,59 @@ export type PurchaseRequestDropdown = {
   account_category: AccountCategory[];
     }
 }
+
+interface PurchaseRequisitionFormTable {
+  name: string;
+  owner: string;
+  creation: string;
+  modified: string;
+  modified_by: string;
+  docstatus: number;
+  idx: number;
+  purchase_requisition_item: string | null;
+  item_number_of_purchase_requisition: string;
+  purchase_requisition_date: string;
+  delivery_date: string;
+  store_location: string;
+  item_category: string;
+  material_group: string;
+  uom: string;
+  cost_center: string;
+  main_asset_no: string;
+  asset_subnumber: string;
+  profit_ctr: string;
+  short_text: string;
+  quantity: string;
+  price_of_purchase_requisition: string;
+  gl_account_number: string;
+  material_code: string;
+  account_assignment_category: string;
+  purchase_group: string;
+  parent: string;
+  parentfield: string;
+  parenttype: string;
+  doctype: string;
+}
+
+export type PurchaseRequestData = {
+  message:{
+    data:{
+      name: string;
+  owner: string;
+  creation: string;
+  modified: string;
+  modified_by: string;
+  docstatus: number;
+  idx: number;
+  naming_series: string;
+  purchase_requisition_form_link: string;
+  purchase_requisition_type: string;
+  plant: string;
+  company_code_area: string;
+  company: string;
+  requisitioner: string;
+  doctype: string;
+  purchase_requisition_form_table: PurchaseRequisitionFormTable[];
+    }
+  }
+}

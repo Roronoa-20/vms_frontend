@@ -9,6 +9,11 @@ export const sidebarMenu = [
     name: "Vendor",
     href:"/vendor-registration"
   },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "PR",
+    href:"/pr-request"
+  },
   // {
   //   logo: "/sidebar-assests/raise-rfq-logo.svg",
   //   name: "Raise RFQ",

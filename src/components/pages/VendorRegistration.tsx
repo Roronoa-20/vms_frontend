@@ -41,8 +41,6 @@ const [formData,setFormData] = useState<Partial<VendorRegistrationData>>({})
   const companyDropdown = Props?.companyDropdown;
   const incoTermsDropdown = Props?.incoTermsDropdown;
   const currencyDropdown = Props?.currencyDropdown;
-
-
   // const {data,resetForm} = useVendorStore()
   const router = useRouter();
    const handleSubmit = async(e:React.FormEvent)=>{

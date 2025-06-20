@@ -3,8 +3,18 @@ import PRRequestForm from '../templates/PRRequestForm'
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios';
 import requestWrapper from '@/src/services/apiCall';
+import { PurchaseRequestData } from '@/src/types/PurchaseRequestType';
 
-export const PRRequest = async() => {
+
+interface PageProps {
+  pur_req?:string
+}
+
+export const PRRequest = async({ pur_req }:PageProps) => {
+
+  const PRDataUrl = `${API_END_POINTS?.getPRData}?pur_req=${pur_req}`;
+  const PRDataResponse:AxiosResponse = await requestWrapper({url:PRDataUrl,method:"GET"})
+  const PRData:PurchaseRequestData["message"]["data"] = PRDataResponse?.status == 200 ?PRDataResponse?.data?.message?.data : "";
 
     const dropdownApiUrl = API_END_POINTS?.vendorPurchaseRequestDropdown;
     const resposne:AxiosResponse = await requestWrapper({url:dropdownApiUrl,method:"GET"});
@@ -12,7 +22,7 @@ export const PRRequest = async() => {
 
   return (
     
-    <PRRequestForm Dropdown={Dropdown}/>
+    <PRRequestForm Dropdown={Dropdown} PRData={PRData}/>
     
   )
 }

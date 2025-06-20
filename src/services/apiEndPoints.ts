@@ -49,7 +49,9 @@ const API_END_POINTS = {
   vendorPOTable:`${url}/api/method/vms.APIs.vendors_dashboards_api.get_vendor_details_for_dashboard.get_po_from_vendor_code`,
   vendorCodeDialogApi:`${url}/api/method/vms.APIs.dashboard_api.get_vendor_code.collect_vendor_code_data`,
   VendorCodeBasedCardCount:`${url}/api/method/vms.APIs.vendors_dashboards_api.get_vendor_details_for_dashboard.get_po_count_from_vendor_code`,
-  vendorPurchaseRequestDropdown:`${url}/api/method/vms.APIs.purchase_api.create_pr.purchase_requsition_masters`
+  vendorPurchaseRequestDropdown:`${url}/api/method/vms.APIs.purchase_api.create_pr.purchase_requsition_masters`,
+  submitPR:`${url}/api/method/vms.APIs.purchase_api.create_pr.create_purchase_requisition`,
+  getPRData:`${url}/api/method/vms.APIs.purchase_api.create_pr.send_purchase_requisition_data`
 };
 
 export default API_END_POINTS;

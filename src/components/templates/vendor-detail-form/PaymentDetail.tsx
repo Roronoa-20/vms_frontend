@@ -19,6 +19,7 @@ import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { X } from "lucide-react";
+import { UsePurchaseTeamApprovalStore } from "@/src/store/PurchaseTeamApprovalStore";
 
 interface Props {
   ref_no:string,
@@ -32,9 +33,11 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
   const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
   const [bankProofFile,setBankProofFile] = useState<FileList | null>(null);
   const [isBankFilePreview, setIsBankFilePreview] = useState<boolean>(true);
+  const [isPurchaseBankFilePreview, setPurchaseIsBankFilePreview] = useState<boolean>(true);
   const [bankNameDropown,setBankNameDropown] = useState<TbankNameDropdown["message"]["data"]>([])
   const [currencyDropdown,setCurrencyDropdown] = useState<TCurrencyDropdown["message"]["data"]>([])
   const {designation} = useAuth();
+  const {setBankProof,bank_proof} = UsePurchaseTeamApprovalStore();
   // if(!designation){
   //   return(
   //     <div>Loading...</div>
@@ -198,7 +201,40 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
               <Input placeholder="" type="checkbox" checked={(paymentDetail?.neft ?? OnboardingDetail?.neft) == 1} className="w-4" onChange={(e)=>{updatePaymentDetail("neft",e.target.checked?1:0)}}/>
               <h1>NEFT</h1>
             </div>
+            <div className="flex items-center gap-3">
+              <Input placeholder="" type="checkbox" checked={(paymentDetail?.ift ?? OnboardingDetail?.ift) == 1} className="w-4" onChange={(e)=>{updatePaymentDetail("ift",e.target.checked?1:0)}}/>
+              <h1>IFT</h1>
+            </div>
           </div>
+        </div>
+        <div></div>
+        <div>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Bank Proof (By Purchase Team)
+          </h1>
+          <div className="flex gap-4">
+          <Input placeholder="" type="file" onChange={(e)=>{setBankProof(e.target.files)}} />
+          {/* file preview */}
+          {isPurchaseBankFilePreview &&
+              !bank_proof &&
+              OnboardingDetail?.bank_proof_by_purchase_team?.url && (
+                <div className="flex gap-2">
+                  <Link
+                  target="blank"
+                  href={OnboardingDetail?.bank_proof_by_purchase_team?.url}
+                  className="underline text-blue-300 max-w-44 truncate"
+                  >
+                    <span>{OnboardingDetail?.bank_proof_by_purchase_team?.file_name}</span>
+                  </Link>
+                  <X
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setPurchaseIsBankFilePreview((prev) => !prev);
+                    }}
+                    />
+                </div>
+              )}
+              </div>
         </div>
       </div>
       <div className={`flex justify-end pr-4 ${designation?"hidden":""} `}><Button className="bg-blue-400 hover:to-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>

@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import AccountsCommentBox from "./AccountsCommentBox";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { TReconsiliationDropdown } from "@/src/types/types";
+import { UsePurchaseTeamApprovalStore } from "@/src/store/PurchaseTeamApprovalStore";
 
 interface Props {
   tabtype: string;
@@ -26,6 +27,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
   const [isReject, setIsReject] = useState<boolean>(false);
   const [isAccountBox, setIsAccountBox] = useState<boolean>(false);
   const [reconsiliation, setReconsiliation] = useState<string>("");
+  const {bank_proof,is_file_uploaded} = UsePurchaseTeamApprovalStore();
   const router = useRouter();
   const { designation, user_email } = useAuth() as {
     designation: "Purchase Team" | "Accounts Team" | "Purchase Head";
@@ -34,8 +36,10 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
   if (!designation) {
     return <div>Loading</div>;
   }
+  
 
-
+  
+  console.log(bank_proof,"this is bank proof")
 
   const approval = async () => {
     const url = {
@@ -45,20 +49,29 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
     };
     // const geturl = url[designation];
     const geturl = url[designation];
-    const Response: AxiosResponse = await requestWrapper({
+    // if(designation == "Purchase Team"){
+
+    //   return;
+    // }
+    const formData = new FormData();
+    if(designation == "Purchase Team"){
+      const purchaseTeamData = {
+         onboard_id: onboardingRefno,
+            user: user_email,
+            approve: isApprove,
+            reject: isReject,
+            rejected_reason: isReject ? comments : "",
+            comments: isApprove ? comments : "",
+            reconciliation_account:reconsiliation?reconsiliation:"",
+      } 
+      formData?.append("data",JSON.stringify(purchaseTeamData));
+      formData?.append("bank_proof_by_purchase_team",bank_proof?.[0])
+      const Response: AxiosResponse = await requestWrapper({
       url: geturl,
       method: "POST",
-      data: {
-        data: {
-          onboard_id: onboardingRefno,
-          user: user_email,
-          approve: isApprove,
-          reject: isReject,
-          rejected_reason: isReject ? comments : "",
-          comments: isApprove ? comments : "",
-          reconciliation_account:reconciliationAccount?reconciliationAccount:""
-        },
-      },
+      data: 
+       formData
+      ,
     });
     if (Response?.status == 200) {
       if (isApprove && !isReject) {
@@ -66,14 +79,51 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
       } else {
         alert("Rejected Successfully");
       }
-      setIsApprove(false);
-      setIsReject(false);
-      setComments("");
-      setIsCommentBox(false);
-      setReconsiliation("");
-      router.push("/dashboard");
     }
-  };
+    if (Response?.status == 200) {
+    if (isApprove && !isReject) {
+      alert("Approved Successfully");
+    } else {
+      alert("Rejected Successfully");
+    }
+    setIsApprove(false);
+    setIsReject(false);
+    setComments("");
+    setIsCommentBox(false);
+    setReconsiliation("");
+    router.push("/dashboard");
+  }
+  }else{
+  const Response: AxiosResponse = await requestWrapper({
+    url: geturl,
+    method: "POST",
+    data: {
+      data: {
+        onboard_id: onboardingRefno,
+        user: user_email,
+        approve: isApprove,
+        reject: isReject,
+        rejected_reason: isReject ? comments : "",
+        comments: isApprove ? comments : "",
+        reconciliation_account:reconsiliation?reconsiliation:"",
+      },
+    },
+  });
+  if (Response?.status == 200) {
+    if (isApprove && !isReject) {
+      alert("Approved Successfully");
+    } else {
+      alert("Rejected Successfully");
+    }
+    setIsApprove(false);
+    setIsReject(false);
+    setComments("");
+    setIsCommentBox(false);
+    setReconsiliation("");
+    router.push("/dashboard");
+  }
+}
+  }
 
   const handleClose = () => {
     setIsCommentBox((prev) => !prev);
@@ -88,7 +138,10 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
     setIsReject(false);
     setComments("");
     setReconsiliation("");
+    
   };
+  
+  
   return (
     <>
       <div className="w-full flex justify-end gap-5 px-5 pt-4">

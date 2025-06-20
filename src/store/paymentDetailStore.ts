@@ -8,7 +8,8 @@ type paymentDetail = {
     type_of_account:string,
     currency:string
     rtgs:number,
-    neft:number
+    neft:number,
+    ift:number
 }
 
 type paymentStore = {
@@ -17,7 +18,7 @@ type paymentStore = {
 }
 
 export const usePaymentDetailStore = create<paymentStore>((set)=>({
-    paymentDetail:{},
+    paymentDetail:{rtgs:1,neft:1,ift:1},
     updatePaymentDetail(field, value) {
         set((state)=>({
             paymentDetail:{

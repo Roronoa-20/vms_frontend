@@ -60,10 +60,13 @@ export type TcompanyNameBasedDropdown = {
 
 export type TpurchaseOrganizationBasedDropdown = {
   message: {
-    name: string,
-    account_group_name: string,
-    account_group_description:string
-  }[]
+    all_account_groups:{
+      name: string,
+      account_group_name: string,
+      account_group_description:string
+    }[],
+    org_type:string
+  }
 }
 
 
@@ -93,7 +96,7 @@ export type VendorRegistrationData = {
   qms_required: number;
 
   multiple_company_data: CompanyData[];
-  vendor_types: VendorType[];
+  vendor_type: VendorType[];
 
   purchase_organization: string;
   account_group: string;
@@ -673,7 +676,9 @@ export type TCompanyDetailForm = {
     currency: string;
     rtgs: number;
     neft: number;
+    ift:number;
     bank_proof: FileAttachment;
+    bank_proof_by_purchase_team:FileAttachment
   };
   
   type ContactDetails = {

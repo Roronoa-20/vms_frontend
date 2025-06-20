@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../atoms/select";
-import { TcompanyNameBasedDropdown, TpurchaseOrganizationBasedDropdown, TvendorRegistrationDropdown, VendorRegistrationData } from "@/src/types/types";
+import { TcompanyNameBasedDropdown, TpurchaseOrganizationBasedDropdown, TReconsiliationDropdown, TvendorRegistrationDropdown, VendorRegistrationData } from "@/src/types/types";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { useVendorStore } from '../../../store/VendorRegistrationStore';
@@ -32,7 +32,8 @@ interface Props {
 const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown,formData,handlefieldChange,handleSelectChange}:Props) => {
   // const { data, updateField,updateVendorTypes, resetForm } = useVendorStore();
   const [companyBasedDropdown,setCompanyBasedDropdown] = useState<TcompanyNameBasedDropdown["message"]["data"]>();
-  const [purchaseOrganizationBasedDropdown,setPurchaseOrganizationBasedDropdown] = useState<TpurchaseOrganizationBasedDropdown["message"]>()
+  const [purchaseOrganizationBasedDropdown,setPurchaseOrganizationBasedDropdown] = useState<TpurchaseOrganizationBasedDropdown["message"]["all_account_groups"]>()
+  const [reconciliationDropdown,setReconciliationDropdown] = useState<TReconsiliationDropdown["message"]["data"]>([])
   const router = useRouter();
   const handleCompanyDropdownChange = async(value:string)=>{
     handleSelectChange(value,'company_name');
@@ -45,9 +46,21 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
   const handlePurchaseOrganizationDropdownChange = async(value:string)=>{
     handleSelectChange(value,'purchase_organization');
     const url = API_END_POINTS?.purchaseGroupBasedDropdown;
-    const response = await requestWrapper({url:url,method:"GET",params:{purchase_organization:value}})
+    const response = await requestWrapper({url:url,method:"POST",data:{data:{purchase_organization:value,vendor_types:formData?.vendor_type}}})
     const data:TpurchaseOrganizationBasedDropdown = response?.status == 200?response?.data:"";
-    setPurchaseOrganizationBasedDropdown(data?.message);
+    setPurchaseOrganizationBasedDropdown(data?.message?.all_account_groups);
+    if(data?.message?.org_type == "Domestic"){
+      handleSelectChange('INR','order_currency');
+    }else{
+      handleSelectChange('','order_currency');
+    }
+  }
+
+  const fetchReconciliationAccount = async (value:string)=>{
+    const reconsiliationUrl = API_END_POINTS?.reconsiliationDropdown;
+      const ReconciliationdropDownApi:AxiosResponse = await requestWrapper({url:reconsiliationUrl,method:"POST",data:{data:{account_group:value}}});
+      const reconciliationDropdown:TReconsiliationDropdown["message"]["data"] = ReconciliationdropDownApi?.status == 200 ? ReconciliationdropDownApi?.data?.message?.data : ""
+      setReconciliationDropdown(reconciliationDropdown);
   }
 
   return (
@@ -128,7 +141,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Account Group
           </h1>
-          <Select required onValueChange={(value)=>{handleSelectChange(value,'account_group')}}>
+          <Select required onValueChange={(value)=>{handleSelectChange(value,'account_group'); fetchReconciliationAccount(value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Account Group" />
             </SelectTrigger>
@@ -192,7 +205,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Order Currency
           </h1>
-          <Select required onValueChange={(value)=>{handleSelectChange(value,'order_currency')}}>
+          <Select required value={formData?.order_currency ?? ""} onValueChange={(value)=>{handleSelectChange(value,'order_currency')}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Order Currency" />
             </SelectTrigger>
@@ -230,6 +243,26 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
             </SelectContent>
           </Select>
         </div>
+        <div>
+                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                  Reconciliation Account
+                </h1>
+                {/* <Input placeholder="" disabled defaultValue={OnboardingDetail?.reconciliation_account}/> */}
+                <Select onValueChange={(value)=>{handleSelectChange(value,"reconciliation_account")}} required={true}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                {
+                                  reconciliationDropdown?.map((item,index)=>(
+                                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                                  ))
+                                }
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+              </div>
       </div>
       <div className="flex justify-end gap-3">
         <Button className="bg-blue-400 hover:bg-blue-400">Cancel</Button>
