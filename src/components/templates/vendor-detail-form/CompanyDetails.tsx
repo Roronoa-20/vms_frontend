@@ -23,9 +23,12 @@ interface Props {
   onboarding_refno?:string
   refno?:string,
   OnboardingDetail:VendorOnboardingResponse["message"]["company_details_tab"]
+  multipleCompany:{company:string}[]
+  ismulticompany:boolean
 }
 
-const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,OnboardingDetail}:Props) => {
+const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,OnboardingDetail,multipleCompany,ismulticompany}:Props) => {
+  console.log(OnboardingDetail,"this is data")
   const {data,updateField,resetForm} = useCompanyDetailFormStore(); 
   const router = useRouter();
 
@@ -59,7 +62,7 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Company Name
               </h1>
-              <Input className="col-span-2" placeholder="Enter Company Name" defaultValue={OnboardingDetail?.vendor_name ?? ""} disabled={true} />
+                <Input className="col-span-2 w-full border rounded-lg" placeholder="Enter Company Name" defaultValue={OnboardingDetail?.vendor_name ?? ""} disabled={true} />
             </div>
           </div>
         </div>
@@ -194,7 +197,12 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Meril Associated Companies
           </h1>
-          <Input placeholder="" defaultValue={OnboardingDetail?.company_name_description ?? ""} disabled={true}/>
+          {
+                ismulticompany?
+                <textarea className="col-span-2 w-full border rounded-lg p-2" placeholder="Enter Company Name" defaultValue={multipleCompany.map((item,index)=>(item?.company)) ?? ""} disabled={true} />
+                :
+                <Input placeholder="" defaultValue={OnboardingDetail?.company_name_description ?? ""} disabled={true}/>
+              }
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">

@@ -97,6 +97,8 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
           onboarding_refno={vendorOnboardingRefno}
           refno={refno}
           OnboardingDetail={OnboardingDetail?.company_details_tab}
+          multipleCompany={OnboardingDetail?.multi_company_data}
+          ismulticompany={OnboardingDetail?.is_multi_company}
           />
         ) : tabType == "Company Address" ? (
           <CompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
