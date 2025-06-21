@@ -103,7 +103,10 @@ const CompanyAddress = ({
   },[])
 
 
-
+  const { designation } = useAuth();
+  // if(!designation){
+  //   return <div className="flex justify-center items-center h-screen">Loading...</div>
+  // }
   console.log(OnboardingDetail,"htis is onboarding data")
 
 
@@ -545,7 +548,7 @@ const CompanyAddress = ({
                   readOnly
                 />
               </div>
-              <div className={``}>
+              <div className={`${designation?"hidden":""}`}>
                 <Button
                   className="bg-blue-400 hover:bg-blue-400 rounded-3xl"
                   onClick={() => {
@@ -618,7 +621,7 @@ const CompanyAddress = ({
       </div>
       }
       </div>
-      <div className={`flex justify-end gap-4`}>
+      <div className={`flex justify-end gap-4 ${designation?"hidden":""}`}>
         <Button
         className={`bg-blue-400 hover:bg-blue-400`}
           onClick={() => {

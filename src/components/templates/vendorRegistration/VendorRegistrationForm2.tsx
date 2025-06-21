@@ -18,6 +18,9 @@ import { Button } from "../../atoms/button";
 import { useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { handleSubmit } from "./utility";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
+import { EyeIcon } from "lucide-react";
+import { TtableData } from "../../pages/VendorRegistration";
 
 interface Props {
   incoTermsDropdown:TvendorRegistrationDropdown["message"]["data"]["incoterm_master"]
@@ -27,16 +30,22 @@ interface Props {
   handlefieldChange:(e:React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>)=>void
       handleSelectChange:(value:any,name:string)=>void
+  tableData:TtableData[]
+  setTableData:React.Dispatch<React.SetStateAction<TtableData[]>>
+  handleSubmit:()=>void
 }
 
-const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown,formData,handlefieldChange,handleSelectChange}:Props) => {
+
+const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown,formData,handlefieldChange,handleSelectChange,setTableData,tableData,handleSubmit}:Props) => {
   // const { data, updateField,updateVendorTypes, resetForm } = useVendorStore();
   const [companyBasedDropdown,setCompanyBasedDropdown] = useState<TcompanyNameBasedDropdown["message"]["data"]>();
   const [purchaseOrganizationBasedDropdown,setPurchaseOrganizationBasedDropdown] = useState<TpurchaseOrganizationBasedDropdown["message"]["all_account_groups"]>()
   const [reconciliationDropdown,setReconciliationDropdown] = useState<TReconsiliationDropdown["message"]["data"]>([])
+  const [singleTableData,setSingleTableData] = useState<TtableData | null>(null);
   const router = useRouter();
   const handleCompanyDropdownChange = async(value:string)=>{
-    handleSelectChange(value,'company_name');
+    // handleSelectChange(value,'company_name');
+    setSingleTableData((prev:any)=>({...prev,company_name:value}));
     const url = API_END_POINTS?.companyBasedDropdown;
     const response = await requestWrapper({url:url,method:"GET",params:{company_name:value}})
     const data:TcompanyNameBasedDropdown = response?.status == 200?response?.data:"";
@@ -44,7 +53,8 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
   }
 
   const handlePurchaseOrganizationDropdownChange = async(value:string)=>{
-    handleSelectChange(value,'purchase_organization');
+    // handleSelectChange(value,'purchase_organization');
+    setSingleTableData((prev:any)=>({...prev,purchase_organization:value}));
     const url = API_END_POINTS?.purchaseGroupBasedDropdown;
     const response = await requestWrapper({url:url,method:"POST",data:{data:{purchase_organization:value,vendor_types:formData?.vendor_type}}})
     const data:TpurchaseOrganizationBasedDropdown = response?.status == 200?response?.data:"";
@@ -61,6 +71,11 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
       const ReconciliationdropDownApi:AxiosResponse = await requestWrapper({url:reconsiliationUrl,method:"POST",data:{data:{account_group:value}}});
       const reconciliationDropdown:TReconsiliationDropdown["message"]["data"] = ReconciliationdropDownApi?.status == 200 ? ReconciliationdropDownApi?.data?.message?.data : ""
       setReconciliationDropdown(reconciliationDropdown);
+  }
+
+  const handleAdd = ()=>{
+    setTableData((prev:any)=>([...prev,singleTableData]))
+    setSingleTableData(null);
   }
 
   return (
@@ -99,7 +114,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Company Name
           </h1>
-          <Select required={true} onValueChange={(value)=>{handleCompanyDropdownChange(value)}} value={formData?.company_name}>
+          <Select required={true} onValueChange={(value)=>{handleCompanyDropdownChange(value)}} value={singleTableData?.company_name ?? ""}>
             <SelectTrigger>
               <SelectValue placeholder="Select Company Name" />
             </SelectTrigger>
@@ -120,7 +135,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Purchase Organization
           </h1>
-          <Select required onValueChange={(value)=>{handlePurchaseOrganizationDropdownChange(value)}} value={formData?.purchase_organization}>
+          <Select required onValueChange={(value)=>{handlePurchaseOrganizationDropdownChange(value)}} value={singleTableData?.purchase_organization??""}>
             <SelectTrigger>
               <SelectValue placeholder="Select Purchase Organization" />
             </SelectTrigger>
@@ -141,7 +156,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Account Group
           </h1>
-          <Select required onValueChange={(value)=>{handleSelectChange(value,'account_group'); fetchReconciliationAccount(value)}}>
+          <Select required value={singleTableData?.account_group ?? ""} onValueChange={(value)=>{setSingleTableData((prev:any)=>({...prev,account_group:value})); fetchReconciliationAccount(value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Account Group" />
             </SelectTrigger>
@@ -163,7 +178,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Purchase Group
           </h1>
-          <Select required onValueChange={(value)=>{handleSelectChange(value,'purchase_group')}}>
+          <Select required value={singleTableData?.purchase_group ?? ""} onValueChange={(value)=>{setSingleTableData((prev:any)=>({...prev,purchase_group:value}))}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Purchase Group" />
             </SelectTrigger>
@@ -184,7 +199,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Terms Of Payment
           </h1>
-          <Select required onValueChange={(value)=>{handleSelectChange(value,'terms_of_payment')}}>
+          <Select required value={singleTableData?.terms_of_payment ?? ""} onValueChange={(value)=>{setSingleTableData((prev:any)=>({...prev,terms_of_payment:value}))}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Terms Of Payment" />
             </SelectTrigger>
@@ -205,7 +220,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Order Currency
           </h1>
-          <Select required value={formData?.order_currency ?? ""} onValueChange={(value)=>{handleSelectChange(value,'order_currency')}}>
+          <Select required value={singleTableData?.order_currency ?? ""} onValueChange={(value)=>{setSingleTableData((prev:any)=>({...prev,order_currency:value}))}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Order Currency" />
             </SelectTrigger>
@@ -226,7 +241,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Inco Terms
           </h1>
-          <Select required onValueChange={(value)=>{handleSelectChange(value,'incoterms')}}>
+          <Select required value={singleTableData?.inco_terms ?? ""} onValueChange={(value)=>{setSingleTableData((prev:any)=>({...prev,inco_terms:value}))}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Inco Terms" />
             </SelectTrigger>
@@ -248,7 +263,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                   Reconciliation Account
                 </h1>
                 {/* <Input placeholder="" disabled defaultValue={OnboardingDetail?.reconciliation_account}/> */}
-                <Select onValueChange={(value)=>{handleSelectChange(value,"reconciliation_account")}} required={true}>
+                <Select value={singleTableData?.reconcilition_account ?? ""} onValueChange={(value)=>{setSingleTableData((prev:any)=>({...prev,reconcilition_account:value}))}} required={true}>
                             <SelectTrigger>
                               <SelectValue placeholder="Select" />
                             </SelectTrigger>
@@ -264,9 +279,53 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                           </Select>
               </div>
       </div>
+      <div className="flex justify-end mb-4"><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleAdd()}}>Add</Button></div>
+      <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
+            <div className="flex w-full justify-between pb-4">
+              <h1 className="text-[20px] text-[#03111F] font-semibold">
+                
+              </h1>
+            </div>
+            <Table className=" max-h-40 overflow-y-scroll">
+              {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+              <TableHeader className="text-center">
+                <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
+                  <TableHead className="w-[100px]">Sr No.</TableHead>
+                  <TableHead className="text-center">Company</TableHead>
+                  <TableHead className="text-center">Purchase Organization</TableHead>
+                  <TableHead className="text-center">Account Group</TableHead>
+                  <TableHead className="text-center">Purchase Group</TableHead>
+                  <TableHead className="text-center">Terms Of Payment</TableHead>
+                  <TableHead className="text-center">Order Currency</TableHead>
+                  <TableHead className="text-center">Inco Terms</TableHead>
+                  <TableHead className="text-center">Reconciliation Account</TableHead>
+                  <TableHead className="text-center">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="text-center">
+                {tableData?.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">{index +1}</TableCell>
+                    <TableCell>{item?.company_name}</TableCell>
+                    <TableCell>{item?.purchase_organization}</TableCell>
+                    <TableCell>{item?.account_group}</TableCell>
+                    <TableCell>{item?.purchase_group}</TableCell>
+                    <TableCell>{item?.terms_of_payment}</TableCell>
+                    <TableCell>{item?.order_currency}</TableCell>
+                    <TableCell>{item?.inco_terms}</TableCell>
+                    <TableCell>{item?.reconcilition_account}</TableCell>
+                    <TableCell><div className='flex gap-4 justify-center items-center'>
+                        <EyeIcon className='cursor-pointer'/>
+                        </div>
+                        </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
       <div className="flex justify-end gap-3">
         <Button className="bg-blue-400 hover:bg-blue-400">Cancel</Button>
-        <Button type="submit" className="bg-blue-400 hover:bg-blue-400">Submit</Button>
+        <Button type="submit" className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Submit</Button>
       </div>
     </div>
   );

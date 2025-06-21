@@ -35,14 +35,7 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
   const [isManufacturedFilePreview,setIsManufacturedFilePreview] = useState<boolean>(true);
   const [isBrochureFilePreview,setIsBrochureFilePreview] = useState<boolean>(true);
   const [isStructureFilePreview,setIsStructureFilePreview] = useState<boolean>(true);
-  const {designation} = useAuth()
 
-
-  // if(!designation){
-  //   return (
-  //     <div>Loading...</div>
-  //   )
-  // }
   const router = useRouter();
   const handleSubmit = async()=>{
     const manufacturingUrl = API_END_POINTS?.manufacturingDetailSubmit;
@@ -257,7 +250,7 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
               </div>
         </div>
       </div>
-      <div className={`flex justify-end pr-4 ${designation?"hidden":""}`}><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
+      <div className={`flex justify-end pr-4`}><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };

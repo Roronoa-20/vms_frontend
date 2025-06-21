@@ -1,6 +1,6 @@
 "use client"
 import Image from "next/image";
-import { dashboardCardData, DashboardPOTableData, DashboardPOTableItem, DashboardTableType, TvendorRegistrationDropdown } from "@/src/types/types";
+import { dashboardCardData, DashboardPOTableData, DashboardPOTableItem, DashboardTableType, PurchaseRequisition, TPRInquiryTable, TvendorRegistrationDropdown } from "@/src/types/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import PurchaseAndOngoingOrders from "./Purchase-and-Ongoing-Orders";
 import DashboardTotalVendorsTable from "./Dashboard-Total-Vendors-Table";
@@ -18,6 +18,8 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { useMultipleVendorCodeStore } from "@/src/store/MultipleVendorCodeStore";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/src/context/AuthContext";
+import DashboardPurchaseEnquiryTable from "./Dashboard-Purchase-Enquiry-Table";
+import DashboardPurchaseRequisitionTable from "./Dashboard-Purchase-Requisition-Table";
 
 type Props = {
   cardData: dashboardCardData
@@ -27,6 +29,8 @@ type Props = {
   dashboardApprovedVendorTableData?:DashboardTableType
   dashboardRejectedVendorTableData?: DashboardTableType
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
+  prInquiryData:TPRInquiryTable[]
+  prData:PurchaseRequisition[]
 }
 
 const DashboardCards = ({ ...Props }: Props) => {
@@ -38,45 +42,7 @@ const {MultipleVendorCode} = useMultipleVendorCodeStore();
 
   // console.log(user,"this is desingation")
     // const user = cookieStore.get("designation")?.value;
-  let cardData: any[] = [];
-  
-  if(user == "Vendor"){
-    cardData = [
-      {
-        name: "Quotation",
-        count: Props.cardData?.total_vendor_count ?? 0,
-        icon: "/dashboard-assests/cards_icon/doc.svg",
-        text_color: "text-blue-800",
-        bg_color: "bg-blue-100",
-        hover: "hover:border-blue-400",
-      },
-      {
-        name: "Purchase & Ongoing Orders",
-        count: Props.cardData?.pending_vendor_count ?? 0,
-        icon: "/dashboard-assests/cards_icon/bar.svg",
-        text_color: "text-rose-800",
-        bg_color: "bg-rose-100",
-        hover: "hover:border-rose-400",
-      },
-      {
-        name: "Dispatch Details",
-        count: Props.cardData?.approved_vendor_count ?? 0,
-        icon: "/dashboard-assests/cards_icon/truck.svg",
-        text_color: "text-emerald-800",
-        bg_color: "bg-emerald-100",
-        hover: "hover:border-emerald-400",
-      },
-      {
-        name: "Purchase Order History",
-        count: 0,
-        icon: "/dashboard-assests/cards_icon/clock.svg",
-        text_color: "text-blue-800",
-        bg_color: "bg-blue-100",
-        hover: "hover:border-blue-400",
-      },
-    ];
-  }else{
-    cardData = [
+  let cardData: any[] = [
       {
         name: "Total Vendors",
         count: Props.cardData?.total_vendor_count ?? 0,
@@ -141,8 +107,23 @@ const {MultipleVendorCode} = useMultipleVendorCodeStore();
         bg_color: "bg-rose-100",
         hover: "hover:border-rose-400",
       },
+      {
+        name: "Purchase Inquiry",
+        count: Props.cardData?.cart_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/hour_glass.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-rose-100",
+        hover: "hover:border-rose-400",
+      },
+      {
+        name: "Purchase Requisition",
+        count: Props.cardData?.pr_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/hour_glass.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-rose-100",
+        hover: "hover:border-rose-400",
+      },
     ];
-  }
 
   useEffect(()=>{
     if(user){
@@ -204,21 +185,6 @@ const {MultipleVendorCode} = useMultipleVendorCodeStore();
           </TabsList>
         </div>
         { cardData.map((item, index) => {
-          if(user == "Vendor"){
-            return(
-
-              <TabsContent key={item.name || index} value={item.name}>
-              {item.name === "Quotation" && <DashboardTotalVendorsTable dashboardTableData={Props.dashboardTotalVendorTableData} companyDropdown={Props?.companyDropdown} />}
-              {item.name === "Purchase & Ongoing Orders" && <PurchaseAndOngoingOrders dashboardPOTableData={Props?.dashboardPOTableData}/>}
-              {item.name === "Dispatch Details" && <DashboardApprovedVendorsTable dashboardTableData={Props.dashboardApprovedVendorTableData} companyDropdown={Props?.companyDropdown}/>}
-              {/* {item.name === "Dispatch Details" && <DashboardDispatchVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
-              {item.name === "Payment History" && <PurchaseAndOngoingOrders dashboardPOTableData={Props.dashboardPOTableData} />}
-              {/* {item.name === "Payment Request" && <DashboardPaymentVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
-              {/* {item.name === "Current Month Vendors" && <DashboardCurrentMonthsVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
-              {item.name === "Purchase Order History" && <DashboardRejectedVendorsTable dashboardTableData={Props.dashboardRejectedVendorTableData} companyDropdown={Props?.companyDropdown} />}
-            </TabsContent>
-            )
-        }else{
           return(
             <TabsContent key={item.name || index} value={item.name}>
           {item.name === "Total Vendors" && <DashboardTotalVendorsTable dashboardTableData={Props.dashboardTotalVendorTableData} companyDropdown={Props?.companyDropdown} />}
@@ -229,10 +195,11 @@ const {MultipleVendorCode} = useMultipleVendorCodeStore();
           {/* {item.name === "Payment Request" && <DashboardPaymentVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
           {/* {item.name === "Current Month Vendors" && <DashboardCurrentMonthsVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
           {item.name === "Rejcted Vendors" && <DashboardRejectedVendorsTable dashboardTableData={Props.dashboardRejectedVendorTableData} companyDropdown={Props?.companyDropdown} />}
+          {item.name === "Purchase Inquiry" && <DashboardPurchaseEnquiryTable dashboardTableData={Props.prInquiryData} companyDropdown={Props?.companyDropdown}/>}
+          {item.name === "Purchase Requisition" && <DashboardPurchaseRequisitionTable dashboardTableData={Props.prData} companyDropdown={Props?.companyDropdown}/>}
         </TabsContent>
         )
         }
-          }
         )
         }
       </Tabs>

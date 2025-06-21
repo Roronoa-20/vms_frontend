@@ -28,7 +28,12 @@ interface Props {
 const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,OnboardingDetail}:Props) => {
   const {data,updateField,resetForm} = useCompanyDetailFormStore(); 
   const router = useRouter();
-
+  const {designation} = useAuth();
+  // if(!designation){
+  //   return(
+  //     <div>Loading...</div>
+  //   )
+  // }
   console.log(OnboardingDetail,"this is onboarding detail")
   const handleSubmit = async(e:FormEvent)=>{
     e.preventDefault();
@@ -204,7 +209,7 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
         </div>
       </div>
       <div className="flex justify-end pr-6">
-      <Button className={`bg-blue-400 hover:bg-blue-400`}>Next</Button>
+      <Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`}>Next</Button>
       </div>
       </form>
     </div>

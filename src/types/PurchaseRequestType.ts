@@ -180,7 +180,10 @@ export type PurchaseRequestData = {
   company: string;
   requisitioner: string;
   doctype: string;
+  purchase_group:string
   purchase_requisition_form_table: PurchaseRequisitionFormTable[];
+  hod:boolean,
+  purchase_head:boolean
     }
   }
 }

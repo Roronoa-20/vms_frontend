@@ -52,7 +52,10 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
   console.log(OnboardingDetail,"this is data of certificate")
   
   const fileInput = useRef<HTMLInputElement>(null);
-
+  const { designation } = useAuth();
+  // if(!designation){
+  //   return <div>Loading</div>
+  // }
 
   const handleSubmit = async ()=>{
     const url = API_END_POINTS?.certificateSubmit;
@@ -108,48 +111,6 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
         Certificate Details
       </h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
-        <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Certificate Name
-          </h1>
-          <Select value={certificateData?.certificate_code ?? ""} onValueChange={(value)=>{setCertificateData((prev:any)=>({...prev,certificate_code:value}));}}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  certificateCodeDropdown?.map((item,index)=>(
-                    <SelectItem value={item?.name} key={index}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Valid Till
-          </h1>
-          <Input value={certificateData?.valid_till ?? ""} placeholder="" type="date" onChange={(e)=>{setCertificateData((prev:any)=>({...prev,valid_till:e.target.value}))}}/>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Upload Certificate File
-          </h1>
-          <Input ref={fileInput} placeholder="" type="file" onChange={(e)=>{setCertificateData((prev:any)=>({...prev,file:e?.target?.files,fileDetail:{file_name:e?.target?.files != null? e.target.files[0].name:""}}))}}/>
-        </div>
-        { certificateData?.certificate_code == "others" &&
-          <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Others
-          </h1>
-          <Input />
-        </div>
-        }
-      </div>
-      <div className={`flex justify-end pr-6 pb-6`}><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleAdd()}}>Add</Button></div>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
                   <div className="flex w-full justify-between pb-4">
                     <h1 className="text-[20px] text-[#03111F] font-semibold">
@@ -193,7 +154,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
                   </Table>
                 </div>
       <div className="flex justify-end pr-4">
-        <Button className={`bg-blue-400 hover:bg-blue-400`} onClick={()=>{handleSubmit()}}>Submit</Button>
+        <Button className={`bg-blue-400 hover:bg-blue-400 ${designation ? 'hidden' : ''}`} onClick={()=>{handleSubmit()}}>Submit</Button>
         </div>
     </div>
   );

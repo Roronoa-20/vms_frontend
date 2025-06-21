@@ -80,12 +80,7 @@ const DocumentDetails = ({
     ))
   },[])
 
-  const { designation } = useAuth();
-  // if(!designation){
-  //   return(
-  //     <div>Loading</div>
-  //   )
-  // }
+
 console.log(OnboardingDetail?.gst_table[0],"this is gst document")
   const [isRegistrationFilePreview, setIsRegistrationFilePreview] = useState<boolean>(true);
   const [isMsmeFilePreview, setIsMsmeFilePreview] = useState<boolean>(true);
@@ -549,7 +544,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
         </div>
         <div className="flex justify-end pr-6">
           <Button
-            className={`bg-blue-400 hover:bg-blue-400 ${designation ? "hidden" : ""}`}
+            className={`bg-blue-400 hover:bg-blue-400`}
             onClick={() => {
               handleSubmit();
             }}

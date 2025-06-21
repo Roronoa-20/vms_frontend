@@ -3,7 +3,7 @@ import DashboardCardCounter from "../molecules/Dashboard-Card-Count";
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
-import { DashboardPOTableData, dashboardCardData,DashboardTableType, TvendorRegistrationDropdown } from "@/src/types/types";
+import { DashboardPOTableData, dashboardCardData,DashboardTableType, TvendorRegistrationDropdown, TPRInquiryTable, PurchaseRequisition } from "@/src/types/types";
 import { cookies } from "next/headers";
 const Dashboard = async () => {
   // const cookie = await cookies()
@@ -105,6 +105,21 @@ const Dashboard = async () => {
     dropDownApi?.status == 200 ? dropDownApi?.data?.message?.data : "";
   const companyDropdown = dropdownData?.company_master
 
+
+    const prInquiryDashboardUrl = API_END_POINTS?.prInquiryDashboardTable;
+  const prInquiryApi: AxiosResponse = await requestWrapper({
+    url: prInquiryDashboardUrl,
+    method: "GET",
+  });
+  const prInquiryData:TPRInquiryTable[]  =
+    prInquiryApi?.status == 200 ? prInquiryApi?.data?.message : "";
+
+    const prDashboardUrl = API_END_POINTS?.prTableData;
+    const prApi:AxiosResponse = await requestWrapper({url:prDashboardUrl,method:"GET"});
+    const prData:PurchaseRequisition[] = prApi?.status == 200 ? prApi?.data?.message : "";
+
+    console.log(prData,"this is pr data");
+
   return (
     <div className="p-8">
       {/* Cards */}
@@ -117,6 +132,8 @@ const Dashboard = async () => {
         dashboardPendingVendorTableData={dashboardPendingVendorTableData}
         dashboardApprovedVendorTableData={dashboardApprovedVendorTableData}
         dashboardRejectedVendorTableData={dashboardRejectedVendorTableData}
+        prInquiryData={prInquiryData}
+        prData={prData}
         />
     </div>
   );

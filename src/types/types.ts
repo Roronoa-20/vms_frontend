@@ -1125,4 +1125,90 @@ export type TCompanyDetailForm = {
       }[]
     }
   }
+
+  export type TPRInquiryTable = {
+  ack_mail_to_user: number;
+  acknowledged_remarks: string | null;
+  cart_date: string | null;
+  cart_use: string; // e.g., "Individual Use"
+  category_type: string | null;
+  creation: string; // ISO timestamp
+  docstatus: number;
+  enquirer_status: string | null;
+  hod_approval_remarks: string | null;
+  hod_approval_status: string | null;
+  hod_approved: number;
+  idx: number;
+  mail_sent_to_hod: number;
+  mail_sent_to_purchase_team: number;
+  modified: string; // ISO timestamp
+  modified_by: string; // email
+  name: string; // e.g., "CART-25-06-20-00004"
+  naming_series: string; // e.g., "CART-.YY.-.MM.-.DD.-"
+  new_transfer_email: string | null;
+  owner: string; // email
+  purchase_team_approval_remarks: string | null;
+  purchase_team_approval_status: string | null;
+  purchase_team_approved: number;
+  purchase_team_status: string; // e.g., "Pending"
+  reason_for_rejection: string | null;
+  rejected: number;
+  rejected_by: string | null;
+  rejection_reason: string | null;
+  remarks: string | null;
+  representative_head_status: string; // e.g., "Pending"
+  sender_email: string | null;
+  sub_head_email: string | null;
+  sub_head_transfer_status: string; // e.g., "Not Transferred"
+  transfer_reason: string | null;
+  transfer_status: string; // e.g., "Not Transferred"
+  user: string; // email
+  _assign: string | null;
+  _comments: string | null;
+  _liked_by: string | null;
+  _user_tags: string | null;
+  hod:string,
+  purchase_team:string
+}
+
+export interface PurchaseRequisition {
+  name: string;
+  creation: string;
+  modified: string;
+  modified_by: string;
+  owner: string;
+  docstatus: number;
+  idx: number;
+  purchase_requisition_type: string;
+  plant: string;
+  company_code_area: string;
+  company: string;
+  requisitioner: string;
+  _user_tags: string | null;
+  _comments: string | null;
+  _assign: string | null;
+  _liked_by: string | null;
+  purchase_requisition_form_link: string;
+  naming_series: string;
+  cart_details_id: string | null;
+  hod_approval_status: string | null;
+  hod_approval_remarks: string | null;
+  purchase_team_status: string | null;
+  purchase_team_approval_remarks: string | null;
+  purchase_head_status: string | null;
+  purchase_head_approval_remarks: string | null;
+  rejected_by: string | null;
+  reason_for_rejection: string | null;
+  rejected: number;
+  hod_approved: number;
+  purchase_team_approved: number;
+  purchase_head_approved: number;
+  mail_sent_to_hod: number;
+  mail_sent_to_purchase_team: number;
+  mail_sent_to_purchase_head: number;
+  ack_mail_to_user: number;
+  purchase_group: string | null;
+}
+
+
   

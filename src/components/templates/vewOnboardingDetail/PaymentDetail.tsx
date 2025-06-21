@@ -208,6 +208,34 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
           </div>
         </div>
         <div></div>
+        <div>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Bank Proof (By Purchase Team)
+          </h1>
+          <div className="flex gap-4">
+          <Input placeholder="" type="file" onChange={(e)=>{setBankProof(e.target.files)}} />
+          {/* file preview */}
+          {isPurchaseBankFilePreview &&
+              !bank_proof &&
+              OnboardingDetail?.bank_proof_by_purchase_team?.url && (
+                <div className="flex gap-2">
+                  <Link
+                  target="blank"
+                  href={OnboardingDetail?.bank_proof_by_purchase_team?.url}
+                  className="underline text-blue-300 max-w-44 truncate"
+                  >
+                    <span>{OnboardingDetail?.bank_proof_by_purchase_team?.file_name}</span>
+                  </Link>
+                  <X
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setPurchaseIsBankFilePreview((prev) => !prev);
+                    }}
+                    />
+                </div>
+              )}
+              </div>
+        </div>
       </div>
       <div className={`flex justify-end pr-4 ${designation?"hidden":""} `}><Button className="bg-blue-400 hover:to-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>

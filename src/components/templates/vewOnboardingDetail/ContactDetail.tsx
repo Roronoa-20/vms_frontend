@@ -35,7 +35,14 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
       addContactDetail(item)
     })
   },[])
+  const {designation} = useAuth();
 
+  // if(!designation){
+  //   return(
+  //     <div>Loading...</div>
+  //   )
+  // }
+  
 
 
 
@@ -55,46 +62,6 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
         Contact Detail
       </h1>
-      <h1 className="pl-5">Contact Person</h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            First Name
-          </h1>
-          <Input placeholder="" onChange={(e)=>{setContact((prev: any)=>({...prev,first_name:e.target.value}))}} value={contact?.first_name ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Last Name
-          </h1>
-          <Input placeholder="" onChange={(e)=>{setContact((prev:any)=>({...prev,last_name:e.target.value}))}} value={contact?.last_name ?? ""}/>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Designation
-          </h1>
-          <Input placeholder="" onChange={(e)=>{setContact((prev:any)=>({...prev,designation:e.target.value}))}} value={contact?.designation ?? ""}/>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">Email</h1>
-          <Input placeholder="" onChange={(e)=>{setContact((prev:any)=>({...prev,email:e.target.value}))}} value={contact?.email ?? ""}/>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Contact Number
-          </h1>
-          <Input placeholder="" onChange={(e)=>{setContact((prev:any)=>({...prev,contact_number:e.target.value}))}} value={contact?.contact_number ?? ""}/>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Department Name
-          </h1>
-          <Input placeholder="" onChange={(e)=>{setContact((prev:any)=>({...prev,department_name:e.target.value}))}} value={contact?.department_name ?? ""}/>
-        </div>
-      </div>
-      <div className={`flex justify-end pb-4`}>
-        <Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleAdd()}}>Add</Button>
-      </div>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
             <div className="flex w-full justify-between pb-4">
               <h1 className="text-[20px] text-[#03111F] font-semibold">
@@ -131,7 +98,7 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               </TableBody>
             </Table>
           </div>
-          <div className={`flex justify-end pr-4`}><Button onClick={()=>{handleSubmit()}}>Next</Button></div>
+          <div className={`flex justify-end pr-4 ${designation?"hidden":""}`}><Button onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };

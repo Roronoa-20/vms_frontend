@@ -3,14 +3,22 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import NavbarMenu from "./NavbarMenu";
+import { useRouter,usePathname } from "next/navigation";
 const Navbar = () => {
   const { role, name } = useAuth();
    const { designation } = useAuth();
    const [isDialog,setIsDialog] = useState<boolean>(false);
   const logoLetter = name?.charAt(0).toUpperCase();
+  const pathname = usePathname();
+  console.log(pathname)
   return (
     <div className="bg-white w-full shadow-sm flex justify-between p-3 items-center sticky top-0 z-50">
-      <h1 className="text-[24px] text-[#03111F] font-semibold">Dashboard</h1>
+      <h1 className="text-[24px] text-[#03111F] font-semibold">
+        {pathname == '/vendor-registration'?"Vendor Registration":
+         pathname == "/dashboard"?"Dashboard":
+         pathname == "/pr-request"?"Purchase Request":
+         pathname == "/pr-inquiry"?"Purchase Inquiry":""}
+      </h1>
       <div className='flex items-center gap-4'>
         {/* Notification Icon & Modal */}
         <div className='flex flex-col gap-1 justify-center items-center'>

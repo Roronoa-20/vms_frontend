@@ -8,9 +8,10 @@ import { PurchaseRequestData } from '@/src/types/PurchaseRequestType';
 
 interface PageProps {
   pur_req?:string
+  cartId?:string
 }
 
-export const PRRequest = async({ pur_req }:PageProps) => {
+export const PRRequest = async({ pur_req , cartId}:PageProps) => {
 
   const PRDataUrl = `${API_END_POINTS?.getPRData}?pur_req=${pur_req}`;
   const PRDataResponse:AxiosResponse = await requestWrapper({url:PRDataUrl,method:"GET"})
@@ -22,7 +23,7 @@ export const PRRequest = async({ pur_req }:PageProps) => {
 
   return (
     
-    <PRRequestForm Dropdown={Dropdown} PRData={PRData}/>
+    <PRRequestForm Dropdown={Dropdown} PRData={PRData} cartId={cartId}/>
     
   )
 }

@@ -19,9 +19,21 @@ interface Props {
   currencyDropdown:TvendorRegistrationDropdown["message"]["data"]["currency_master"]
 }
 
+export type TtableData = {
+  company_name:string,
+  purchase_organization:string,
+  account_group:string,
+  purchase_group:string,
+  terms_of_payment:string,
+  order_currency:string,
+  inco_terms:string,
+  reconcilition_account:string
+}
+
 const VendorRegistration = ({...Props}:Props) => {
 
 const [formData,setFormData] = useState<Partial<VendorRegistrationData>>({})
+const [tableData,setTableData] = useState<TtableData[]>([]);
   const handlefieldChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -43,13 +55,30 @@ const [formData,setFormData] = useState<Partial<VendorRegistrationData>>({})
   const currencyDropdown = Props?.currencyDropdown;
   // const {data,resetForm} = useVendorStore()
   const router = useRouter();
-   const handleSubmit = async(e:React.FormEvent)=>{
-    e.preventDefault()
-    const url = API_END_POINTS?.vendorRegistrationSubmit
+   const handleSubmit = async()=>{
+    const url = API_END_POINTS?.vendorRegistrationSubmit;
+    let updateFormData;
+    if(tableData?.length > 1){
+      updateFormData = {...formData,
+        purchase_details:tableData,
+        inco_terms:tableData?.[0]?.inco_terms,
+        for_multiple_company:1
+      }
+    }else{
+       updateFormData = {...formData,
+        company_name:tableData?.[0]?.company_name,
+        purchase_organization:tableData?.[0]?.purchase_organization,
+        account_group:tableData?.[0]?.account_group,
+        terms_of_payment:tableData?.[0]?.terms_of_payment,
+        purchase_group:tableData?.[0]?.purchase_group,
+        order_currency:tableData?.[0]?.order_currency,
+        for_multiple_company:0
+       }
+    }
     const response:AxiosResponse = await requestWrapper({
       url:url,
       method:"POST",
-      data:{data:formData}
+      data:{data:updateFormData}
     });
   
     if(response?.status == 500){
@@ -70,7 +99,7 @@ const [formData,setFormData] = useState<Partial<VendorRegistrationData>>({})
 
   return (
     <div className="p-6">
-      <form onSubmit={(e)=>{handleSubmit(e)}}>
+      {/* <form onSubmit={(e)=>{handleSubmit(e)}}> */}
       <VendorRegistration1
         vendorTitleDropdown={vendorTitleDropdown}
         vendorTypeDropdown={vendorTypeDropdown}
@@ -86,8 +115,11 @@ const [formData,setFormData] = useState<Partial<VendorRegistrationData>>({})
         formData={formData}
         handlefieldChange={handlefieldChange}
         handleSelectChange={handleSelectChange}
+        tableData={tableData}
+        setTableData={setTableData}
+        handleSubmit={handleSubmit}
         />
-        </form>
+        {/* </form> */}
     </div>
   );
 };

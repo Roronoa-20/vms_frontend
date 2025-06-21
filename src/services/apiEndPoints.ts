@@ -33,7 +33,7 @@ const API_END_POINTS = {
   fetchDetails:`${url}/api/method/vms.APIs.vendor_onboarding.get_full_data_of_ven_onboarding.get_vendor_onboarding_details`,
   documentDetail_dropdown:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration_masters.vendor_onboarding_document_dropdown_master`,
   deleteCertificate:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_certificate_details.delete_vendor_onboarding_certificate_row`,
-  dashboardCardURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.dashboard_card`,
+  dashboardCardURL:`${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.dashboard_card`,
   dashboardPOTableURL:`${url}/api/method/vms.APIs.dashboard_api.po_data.get_po`,
   dashboardTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.get_vendors_based_on_status`,
   getPoDetailURL:`${url}/api/method/vms.APIs.dashboard_api.po_data.get_po_details`,
@@ -51,7 +51,15 @@ const API_END_POINTS = {
   VendorCodeBasedCardCount:`${url}/api/method/vms.APIs.vendors_dashboards_api.get_vendor_details_for_dashboard.get_po_count_from_vendor_code`,
   vendorPurchaseRequestDropdown:`${url}/api/method/vms.APIs.purchase_api.create_pr.purchase_requsition_masters`,
   submitPR:`${url}/api/method/vms.APIs.purchase_api.create_pr.create_purchase_requisition`,
-  getPRData:`${url}/api/method/vms.APIs.purchase_api.create_pr.send_purchase_requisition_data`
+  getPRData:`${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pr_w_details`,
+  getInquiryDropdown:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.cart_details_masters`,
+  fetchProductNameBasedOnCategory:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.filter_product_name`,
+  submitPrInquiry:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.create_purchase_inquiry`,
+  prInquiryCount:`${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.dashboard_card`,
+  prInquiryDashboardTable:`${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pi`,
+  prInquiryData:`${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pi_details`,
+  prInquiryHodApproval:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.hod_approval_check`,
+  prTableData:`${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pr_w`
 };
 
 export default API_END_POINTS;

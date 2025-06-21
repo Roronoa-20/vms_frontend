@@ -10,11 +10,15 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import Cookies from 'js-cookie'
+import { useRouter } from 'next/navigation'
+import Comment_box from '../molecules/CommentBox'
 
 interface Props {
     Dropdown:PurchaseRequestDropdown["message"]
     PRData:PurchaseRequestData["message"]["data"]
-    cartId?:string
+    hod:boolean,
+    purchase_head:boolean,
+    refno?:string
 }
 
 type TableData = {
@@ -45,17 +49,23 @@ type formData = {
     plant:string,
     requisitioner:string,
     company_code_area:string,
-    purchase_requisition_form_table:TableData[]
     purchase_group:string
+    purchase_requisition_form_table:TableData[]
 }
 
 
-const PRRequestForm = ({Dropdown,PRData,cartId}:Props) => {
+const ViewPRRequestForm = ({Dropdown,PRData,hod,purchase_head,refno}:Props) => {
+  console.log(PRData,"this si data")
     const user = Cookies.get("user_id");
     const [formData,setFormData] = useState<formData | null>(PRData?{...PRData,requisitioner:PRData?.requisitioner ?? user}:null);
     const [singleTableRow,setSingleTableRow] = useState<TableData | null>(null);
     const [tableData,setTableData] = useState<TableData[]>(PRData?PRData?.purchase_requisition_form_table:[]);
     const [index,setIndex] = useState<number>(-1)
+        const [isApproved,setIsApproved] = useState(false);
+        const [isReject,setIsReject] = useState(false);
+        const [isDialog,setIsDialog] = useState(false);
+        const [comment,setComment] = useState<string>("")
+        const router = useRouter();
     const handleSelectChange = (value: any, name: string ,isTable:boolean) => {
         if(isTable){
         setSingleTableRow((prev:any) => ({ ...prev, [name]: value }));    
@@ -102,16 +112,32 @@ const PRRequestForm = ({Dropdown,PRData,cartId}:Props) => {
         // handleTableAdd(index);
      }
 
+let url = "";
+     if(PRData?.hod){
+      url = `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.purchase_api.purchase_requisition_approval.hod_approval_check`
+     }else if(PRData?.purchase_head){
+      url = `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.purchase_api.purchase_requisition_approval.purchase_head_approval_check`
+     }
 
-     const handleSubmit = async()=>{
-        const url = API_END_POINTS?.submitPR;
-        const response:AxiosResponse = await requestWrapper({url:url,data:{data:{...formData,requisitioner:user,purchase_requisition_form_table:tableData,cart_details_id:cartId}},method:"POST"});
+     const handleApproval = async()=>{
+        const response:AxiosResponse = await requestWrapper({url:url,data:{data:{pur_req:refno,approve:isApproved,reject:isReject,user:user,comments:comment}},method:"POST"});
         if(response?.status == 200){
-            setFormData(null);
-            alert("submission successfull");
+          setComment("");
+          setIsApproved(false);
+          setIsReject(false);
+          router.push("/dashboard");
+            alert("Approved Successfully");
         }else{
-            alert("error");
+          alert("error");
         }
+     }
+
+     const handleClose = ()=>{
+      setIsDialog(false);
+     }
+     
+     const handleComment = (value:string)=>{
+      setComment(value)
      }
 
   return (
@@ -220,223 +246,8 @@ const PRRequestForm = ({Dropdown,PRData,cartId}:Props) => {
             </SelectContent>
           </Select>
         </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">Cart Id</h1>
-          <Input placeholder="" name='requisitioner' defaultValue={cartId ?? ""} disabled/>
-        </div>
       </div>
       <h1 className="pl-5">Purchase Request Items</h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Item Number of Purchase Requisition
-          </h1>
-          <Input placeholder="" name='item_number_of_purchase_requisition' onChange={(e)=>{handleFieldChange(true,e)}} value={singleTableRow?.item_number_of_purchase_requisition ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Purchase Requisition Date
-          </h1>
-          <Input placeholder="" name='purchase_requisition_date' onChange={(e)=>{handleFieldChange(true,e)}} type="date" value={singleTableRow?.purchase_requisition_date ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Store Location
-          </h1>
-          <Input placeholder="" name='store_location' onChange={(e)=>{handleFieldChange(true,e)}} value={singleTableRow?.store_location ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Delivery Date
-          </h1>
-          <Input placeholder="" type="date" name='delivery_date' onChange={(e)=>{handleFieldChange(true,e)}} value={singleTableRow?.delivery_date ?? ""}/>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Item Category
-          </h1>
-          <Select onValueChange={(value)=>{handleSelectChange(value,"item_category",true)}} value={singleTableRow?.item_category ?? ""}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  Dropdown?.item_category_master?.map((item,index)=>(
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Material Group
-          </h1>
-          <Select onValueChange={(value)=>{handleSelectChange(value,"material_group",true)}} value={singleTableRow?.material_group ?? ""}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  Dropdown?.material_group_master?.map((item,index)=>(
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            UOM
-          </h1>
-          <Select onValueChange={(value)=>{handleSelectChange(value,"uom",true)}} value={singleTableRow?.uom ?? ""}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  Dropdown?.uom_master?.map((item,index)=>(
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Cost Center
-          </h1>
-          <Select onValueChange={(value)=>{handleSelectChange(value,"cost_center",true)}} value={singleTableRow?.cost_center ?? ""}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  Dropdown?.cost_center?.map((item,index)=>(
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Main Asset No
-          </h1>
-          <Input placeholder="" name='main_asset_no' onChange={(e)=>{handleFieldChange(true,e)}} value={singleTableRow?.main_asset_no ?? ""}/>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Asset Subnumber
-          </h1>
-          <Input placeholder="" name='asset_subnumber'onChange={(e)=>{handleFieldChange(true,e)}} value={singleTableRow?.asset_subnumber ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Profit Center
-          </h1>
-          <Select onValueChange={(value)=>{handleSelectChange(value,"profit_ctr",true)}} value={singleTableRow?.profit_ctr ?? ""}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  Dropdown?.profit_center?.map((item,index)=>(
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Description
-          </h1>
-          <Input placeholder="" name='short_text' onChange={(e)=>{handleFieldChange(true,e)}} value={singleTableRow?.short_text ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Quantity
-          </h1>
-          <Input placeholder="" name='quantity' onChange={(e)=>{handleFieldChange(true,e)}} value={singleTableRow?.quantity ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Price Of Purchase Requisition
-          </h1>
-          <Input placeholder="" name='price_of_purchase_requisition' onChange={(e)=>{handleFieldChange(true,e)}} value={singleTableRow?.price_of_purchase_requisition ?? ""}/>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            GL Account Number
-          </h1>
-          <Select onValueChange={(value)=>{handleSelectChange(value,"gl_account_number",true)}} value={singleTableRow?.gl_account_number ?? ""}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  Dropdown?.gl_account_number?.map((item,index)=>(
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Material Code
-          </h1>
-          <Select onValueChange={(value)=>{handleSelectChange(value,"material_code",true)}} value={singleTableRow?.material_code ?? ""}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  Dropdown?.material_code?.map((item,index)=>(
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Account Assignment Category
-          </h1>
-          <Select onValueChange={(value)=>{handleSelectChange(value,"account_assignment_category",true)}} value={singleTableRow?.account_assignment_category ?? ""}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  Dropdown?.account_assignment_category?.map((item,index)=>(
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        </div>
-      <div className={`flex justify-end pb-4`}>
-        <Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>handleTableAdd()}>Add</Button>
-      </div>
         <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
             <div className="flex w-full justify-between pb-4">
               <h1 className="text-[20px] text-[#03111F] font-semibold">
@@ -498,9 +309,16 @@ const PRRequestForm = ({Dropdown,PRData,cartId}:Props) => {
               </TableBody>
             </Table>
           </div>
-          <div className={`flex justify-end pr-4`}><Button className='bg-blue-400 hover:bg-blue-400' onClick={()=>{handleSubmit()}}>Next</Button></div>
+          <div className={`flex justify-end pr-4 gap-4`}><Button className='bg-blue-400 hover:bg-blue-400' onClick={()=>{setIsApproved(true);setIsDialog(true)}}>Approve</Button>
+          <Button className='bg-blue-400 hover:bg-blue-400' onClick={()=>{setIsReject(true);setIsDialog(true)}}>Reject</Button></div>
+          {
+            isDialog && 
+            <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
+            <Comment_box handleClose={handleClose} Submitbutton={handleApproval} handleComment={handleComment}/>
+            </div>
+          }
     </div>
   )
 }
 
-export default PRRequestForm
+export default ViewPRRequestForm
