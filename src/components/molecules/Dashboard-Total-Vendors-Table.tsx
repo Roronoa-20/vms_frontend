@@ -95,7 +95,6 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
     setIsVendorCodeDialog((prev)=>!prev);
   }
 
-  
   return (
     <>
     <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
@@ -150,7 +149,6 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
             <TableHead className="text-center">Purchase Head</TableHead>
             <TableHead className="text-center">Account Team</TableHead>
             <TableHead className="text-center">View Details</TableHead>
-            <TableHead className="text-center">QMS Form</TableHead>
             <TableHead className="text-center">Vendor code</TableHead>
           </TableRow>
         </TableHeader>
@@ -179,7 +177,6 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
                 <TableCell>{item?.purchase_h_approval}</TableCell>
                 <TableCell>{item?.accounts_t_approval}</TableCell>
                 <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                <TableCell className="text-center">{item?.qms_form}</TableCell>
                 <TableCell className="pl-6"><button onClick={()=>{handleVendorCodeDialog(item?.ref_no)}}><Eye/></button></TableCell>
               </TableRow>
             ))
