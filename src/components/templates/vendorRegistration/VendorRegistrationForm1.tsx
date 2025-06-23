@@ -69,7 +69,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
       })
     )
     // updateVendorTypes(newArray2)
-    handleSelectChange(newArray2,"vendor_type");
+    handleSelectChange(newArray2,"vendor_types");
     setMultiVendor(newArray)
     if(newArray?.includes("Material Vendor")){
       setIsQa(true);
