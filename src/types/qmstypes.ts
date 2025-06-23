@@ -11,7 +11,7 @@ export type QMSForm = {
   status?: string;
   vendor_signature?: string;
   qms_form_status?: string;
-  quality_control_system?: string | string[];
+  quality_control_system?: string[];
   others_certificates?: string;
   have_documentsprocedure?: string | string[];
   if_yes_for_prior_notification?: string | string[];
@@ -39,7 +39,7 @@ export type QMSForm = {
   water_disposal?: string;
   approved_supplierlist?: string;
   control_and_inspection?: string;
-  inspection_reports?: string;
+  inspection_reports?: string | string[];
   agreements?: string;
   defined_areas?: string;
   qc_independent_of_production?: string;

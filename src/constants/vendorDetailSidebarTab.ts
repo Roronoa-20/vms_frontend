@@ -48,5 +48,5 @@ export const QMSFormTabs = [
   "Complaint",
   "Supplement",
   "Quality Agreement",
-  "Conclusions"
+  "Conclusion"
 ];

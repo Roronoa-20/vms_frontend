@@ -10,6 +10,7 @@ import { ProductionForm } from "../templates/qms-form/production-form";
 import { ComplaintForm } from "../templates/qms-form/complaint-form";
 import { SupplementForm } from "../templates/qms-form/supplement-form";
 import ViewQMSFormDetails from '../molecules/qmsformtab';
+import { ConclusionForm } from "../templates/qms-form/conclusion-form";
 
 
 interface Props {
@@ -27,6 +28,7 @@ const formComponents: { [key: string]: React.FC<{ vendor_onboarding: string; }> 
     production: ProductionForm,
     complaint: ComplaintForm,
     supplement: SupplementForm,
+    conclusion: ConclusionForm
 };
 
 const ViewQMSForm = async ({ vendor_onboarding, tabtype }: Props) => {
