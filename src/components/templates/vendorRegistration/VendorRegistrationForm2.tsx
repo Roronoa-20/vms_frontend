@@ -33,10 +33,11 @@ interface Props {
   tableData:TtableData[]
   setTableData:React.Dispatch<React.SetStateAction<TtableData[]>>
   handleSubmit:()=>void
+  multiVendor:any
 }
 
 
-const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown,formData,handlefieldChange,handleSelectChange,setTableData,tableData,handleSubmit}:Props) => {
+const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown,formData,handlefieldChange,handleSelectChange,setTableData,tableData,handleSubmit,multiVendor}:Props) => {
   // const { data, updateField,updateVendorTypes, resetForm } = useVendorStore();
   const [companyBasedDropdown,setCompanyBasedDropdown] = useState<TcompanyNameBasedDropdown["message"]["data"]>();
   const [purchaseOrganizationBasedDropdown,setPurchaseOrganizationBasedDropdown] = useState<TpurchaseOrganizationBasedDropdown["message"]["all_account_groups"]>()
@@ -56,7 +57,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
     // handleSelectChange(value,'purchase_organization');
     setSingleTableData((prev:any)=>({...prev,purchase_organization:value}));
     const url = API_END_POINTS?.purchaseGroupBasedDropdown;
-    const response = await requestWrapper({url:url,method:"POST",data:{data:{purchase_organization:value,vendor_types:formData?.vendor_type}}})
+    const response = await requestWrapper({url:url,method:"POST",data:{data:{purchase_organization:value,vendor_types:multiVendor}}})
     const data:TpurchaseOrganizationBasedDropdown = response?.status == 200?response?.data:"";
     setPurchaseOrganizationBasedDropdown(data?.message?.all_account_groups);
     if(data?.message?.org_type == "Domestic"){

@@ -23,6 +23,7 @@ interface Props {
   handlefieldChange:(e:React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>)=>void
       handleSelectChange:(value:any,name:string)=>void
+      setMultiVendor:(data:any)=>void;
 
 }
 
@@ -36,7 +37,7 @@ type OptionType = {
   label: string;
 };
 
-const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDropdown,formData,handlefieldChange,handleSelectChange}:Props) => {
+const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDropdown,formData,handlefieldChange,handleSelectChange,setMultiVendor}:Props) => {
   // const { data, updateField,updateVendorTypes, resetForm } = useVendorStore();
   const [isQa,setIsQa] = useState<boolean>(false);
   const [newVendorTypeDropdown,setNewVendorTypeDropdown] = useState<MultiValue<OptionType>>([]);
@@ -68,7 +69,8 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
       })
     )
     // updateVendorTypes(newArray2)
-    handleSelectChange(newArray,"vendor_type");
+    handleSelectChange(newArray2,"vendor_type");
+    setMultiVendor(newArray)
     if(newArray?.includes("Material Vendor")){
       setIsQa(true);
     }else{

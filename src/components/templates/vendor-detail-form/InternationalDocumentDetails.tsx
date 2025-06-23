@@ -56,35 +56,19 @@ const DocumentDetails = ({
   OnboardingDetail,
   documentDetailDropdown,
 }: Props) => {
-  const [BusinessType, setBusinessType] = useState<string>(
-    OnboardingDetail?.gst_table[0]?.gst_ven_type
-  );
-  const [isMSME, setIsMSME] = useState<string>(
-    OnboardingDetail?.msme_registered
-  );
+ 
   const router = useRouter();
   const [documentDetails, setDocumentDetail] =
     useState<Partial<documentDetail>>();
 
-  useEffect(()=>{
-    setDocumentDetail((prev)=>(
-      {...prev,gst_table:[
-        {
-          name:OnboardingDetail?.gst_table?.[0]?.name,
-          gst_state:OnboardingDetail?.gst_table?.[0]?.gst_state,
-          gst_number:OnboardingDetail?.gst_table?.[0]?.gst_number,
-          gst_registration_date:OnboardingDetail?.gst_table?.[0]?.gst_registration_date,
-          gst_ven_type:OnboardingDetail?.gst_table?.[0]?.gst_ven_type
-        }
-      ]}
-    ))
-  },[])
+ 
 
 
-console.log(OnboardingDetail?.gst_table[0],"this is gst document")
-  const [isRegistrationFilePreview, setIsRegistrationFilePreview] = useState<boolean>(true);
-  const [isMsmeFilePreview, setIsMsmeFilePreview] = useState<boolean>(true);
-  const [isGstFilePreview, setIsGstFilePreview] = useState<boolean>(true);
+
+
+  const [isIecFilePreview, setIsPanFilePreview] = useState<boolean>(true);
+  const [isPanFilePreview, setIsPanFilePreview] = useState<boolean>(true);
+  const [isPanFilePreview, setIsPanFilePreview] = useState<boolean>(true);
   const [isPanFilePreview, setIsPanFilePreview] = useState<boolean>(true);
 
   const handleSubmit = async () => {
