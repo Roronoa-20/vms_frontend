@@ -14,6 +14,7 @@ import { purchaseInquiryDropdown, TableData, TPRInquiry } from '../pages/Pr-Inqu
 import Comment_box from '../molecules/CommentBox'
 import { Value } from '@radix-ui/react-select'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/src/context/AuthContext'
 
 interface Props {
   Dropdown?: PurchaseRequestDropdown["message"]
@@ -132,6 +133,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno }: Props) => {
     setComment(value)
   }
 
+  const {designation} = useAuth()
+
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
@@ -224,8 +227,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno }: Props) => {
           </TableBody>
         </Table>
       </div>
-      <div className={`flex justify-end pr-4 gap-4`}><Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { setIsApproved(true); setIsDialog(true) }}>Approve</Button>
-        <Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { setIsReject(true); setIsDialog(true) }}>Reject</Button></div>
+      <div className={`flex justify-end pr-4 gap-4 ${designation != "Enquirer" }`}><Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { setIsApproved(true); setIsDialog(true) }}>Approve</Button>
+        <Button className={`bg-blue-400 hover:bg-blue-400 ${designation != "Enquirer" }`} onClick={() => { setIsReject(true); setIsDialog(true) }}>Reject</Button></div>
       {
         isDialog &&
         <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
