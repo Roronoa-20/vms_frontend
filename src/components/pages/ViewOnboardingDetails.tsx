@@ -67,6 +67,7 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
       const fetchOnboardingDetailResponse:AxiosResponse = await requestWrapper({url:fetchOnboardingDetailUrl,method:"GET"});
       const OnboardingDetail:VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ?fetchOnboardingDetailResponse?.data?.message : "";
       
+      console.log(OnboardingDetail,"this is onboarding data")
 
       const reconsiliationUrl = API_END_POINTS?.reconsiliationDropdown;
       const ReconciliationdropDownApi:AxiosResponse = await requestWrapper({url:reconsiliationUrl,method:"POST",data:{data:{account_group:OnboardingDetail?.purchasing_details?.[0]?.account_group}}});
@@ -106,7 +107,7 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
         ) : tabType == "Certificate" ? (
           <Certificate certificateCodeDropdown={certificateCodeDropdown?.certificate_names} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.certificate_details_tab}/>
         ) : tabType == "Purchase Detail"?(
-          <PurchaseDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.purchasing_details?.[0]} reconciliationDropdown={reconciliationDropdown} tabType={tabType}/>
+          <PurchaseDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.purchasing_details?.[0]} reconciliationDropdown={reconciliationDropdown} tabType={tabType} validation_check={OnboardingDetail?.validation_check}/>
         )
         : (
           ""

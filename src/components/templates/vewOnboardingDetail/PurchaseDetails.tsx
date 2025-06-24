@@ -6,15 +6,25 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import ApprovalButton from '../../molecules/ApprovalButton'
 import { useAuth } from '@/src/context/AuthContext'
 
+interface IvalidationChecks  {
+    accounts_team_undertaking: number;
+  form_fully_submitted_by_vendor: number;
+  mandatory_data_filled: number;
+  purchase_head_undertaking: number;
+  purchase_team_undertaking: number;
+}
+
+
 interface Props {
   ref_no:string,
   onboarding_ref_no:string,
   OnboardingDetail?:VendorOnboardingResponse["message"]["purchasing_details"][0],
   reconciliationDropdown:TReconsiliationDropdown["message"]["data"],
   tabType:string
+  validation_check:IvalidationChecks
 }
 
-const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,reconciliationDropdown,tabType}:Props) => {
+const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,reconciliationDropdown,tabType,validation_check}:Props) => {
   const [reconciliationAccount,setReconciliationAccountt] = useState<string>("");
   const {designation} = useAuth();
   console.log(OnboardingDetail,"htis is data")
@@ -94,7 +104,18 @@ const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,reconciliati
     </div>
     <div className="flex justify-end pr-6">
     {/* <Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`}>Next</Button> */}
+    {
+      designation == "Purchase Team" && validation_check?.purchase_team_undertaking == 0 && 
     <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount}/>
+    }
+    {
+      designation == "Purchase Head" && validation_check?.purchase_head_undertaking == 0 && 
+    <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount}/>
+    }
+    {
+      designation == "Accounts Team" && validation_check?.accounts_team_undertaking == 0 && 
+    <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount}/>
+    }
     </div>
   </div>
   )
