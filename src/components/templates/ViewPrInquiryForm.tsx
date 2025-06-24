@@ -60,34 +60,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno }: Props) => {
     } else {
       setFormData((prev: any) => ({ ...prev, [name]: value }));
     }
-  }
-
-  const handleTableAdd = () => {
-    if (!singleTableRow) return;
-
-    setTableData(prev => {
-      const rows = [...prev];
-      if (index !== -1) {
-        // Editing existing row
-        rows[index] = { ...singleTableRow };
-      } else {
-        // Adding new row
-        rows.push({ ...singleTableRow });
-      }
-      return rows;
-    });
-
-    // Clear form
-    setSingleTableRow(null);
-    setIndex(-1);
   };
-
-
-  const handleEdit = (data: TableData, index: number) => {
-    setIndex(index);
-    setSingleTableRow({ ...data });
-    // handleTableAdd(index);
-  }
 
   let url = "";
   if (PRInquiryData?.hod) {
@@ -97,25 +70,24 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno }: Props) => {
   }
 
   const handleApproval = async () => {
-    // let APIurl = "";
-    // if (PRInquiryData?.hod) {
-    //   APIurl = API_END_POINTS?.prInquiryHodApproval
-    // } else if (PRInquiryData?.purchase_team) {
-    //   APIurl = API_END_POINTS?.prInquiryPurchaseApproval
-    // }
-    // console.log(APIurl,"APIurl",PRInquiryData?.hod,)
-    // const url = APIurl;
     const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { cart_id: refno, approve: isApproved, reject: isReject, user: user, comments: comment } }, method: "POST" });
     if (response?.status == 200) {
       setComment("");
       setIsApproved(false);
       setIsReject(false);
       router.push("/dashboard");
-      alert("Approved Successfully");
+
+      if (isReject) {
+        alert("Rejected Successfully");
+      } else if (isApproved) {
+        alert("Approved Successfully");
+      } else {
+        alert("Action completed successfully");
+      }
     } else {
-      alert("error");
+      alert("Something went wrong");
     }
-  }
+  };
 
   const fetchProductName = async (value: string) => {
     const fetchProductNameUrl = API_END_POINTS?.fetchProductNameBasedOnCategory;
@@ -133,24 +105,23 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno }: Props) => {
     setComment(value)
   }
 
-  const {designation} = useAuth()
+  const { designation } = useAuth()
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
         Purchase Inquiry
       </h1>
-      {/* <h1 className="pl-5">Contact Person</h1> */}
       <div className="grid grid-cols-3 gap-6 p-5">
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">user</h1>
-          <Input placeholder="" name='user' onChange={(e) => { handleFieldChange(false, e) }} value={formData?.user ?? user ?? ""} disabled />
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">User</h1>
+          <Input placeholder="" name='user' onChange={(e) => {handleFieldChange(false, e) }} value={formData?.user ?? user ?? ""} disabled />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Cart Use
           </h1>
-          <Select value={formData?.cart_use ?? ""} onValueChange={(value) => { handleSelectChange(value, "cart_use", false) }}>
+          <Select value={formData?.cart_use ?? ""} onValueChange={(value) => {handleSelectChange(value, "cart_use", false) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -164,26 +135,21 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno }: Props) => {
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">Cart Date</h1>
-          <Input placeholder="" name='cart_date' onChange={(e) => { handleFieldChange(false, e) }} value={formData?.cart_date ?? currentDate?.toLocaleDateString() ?? ""} disabled />
+          <Input placeholder="" name='cart_date' onChange={(e) => {handleFieldChange(false, e) }} value={formData?.cart_date ?? currentDate?.toLocaleDateString() ?? ""} disabled />
         </div>
-        {/* <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">Requisitioner</h1>
-          <Input placeholder="" name='requisitioner' onChange={(e)=>{handleFieldChange(false,e)}} value={formData?.requisitioner ?? user ?? ""} disabled/>
-        </div> */}
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Category Type
           </h1>
-          <Select value={formData?.category_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "category_type", false); fetchProductName(value) }}>
+          <Select value={formData?.category_type ?? ""} onValueChange={(value) => {handleSelectChange(value, "category_type", false); fetchProductName(value) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {
-                  dropdown?.category_type?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.category_name}</SelectItem>
-                  ))
+                {dropdown?.category_type?.map((item, index) => (
+                  <SelectItem key={index} value={item?.name}>{item?.category_name}</SelectItem>
+                ))
                 }
               </SelectGroup>
             </SelectContent>
@@ -192,13 +158,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno }: Props) => {
       </div>
       <h1 className="pl-5">Purchase Inquiry Items</h1>
       <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
-        <div className="flex w-full justify-between pb-4">
-          <h1 className="text-[20px] text-[#03111F] font-semibold">
-
-          </h1>
-        </div>
         <Table className=" max-h-40 overflow-y-scroll">
-          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
               <TableHead className="w-[100px]">Sr No.</TableHead>
@@ -227,10 +187,9 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno }: Props) => {
           </TableBody>
         </Table>
       </div>
-      <div className={`flex justify-end pr-4 gap-4 ${designation != "Enquirer"?"":"hidden" }`}><Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { setIsApproved(true); setIsDialog(true) }}>Approve</Button>
-        <Button className={`bg-blue-400 hover:bg-blue-400 ${designation != "Enquirer"?"":"hidden" }`} onClick={() => { setIsReject(true); setIsDialog(true) }}>Reject</Button></div>
-      {
-        isDialog &&
+      <div className={`flex justify-end pr-4 gap-4 ${designation != "Enquirer" ? "" : "hidden"}`}><Button className='bg-blue-400 hover:bg-blue-400' onClick={() => {setIsApproved(true); setIsDialog(true) }}>Approve</Button>
+        <Button className={`bg-blue-400 hover:bg-blue-400 ${designation != "Enquirer" ? "" : "hidden"}`} onClick={() => {setIsReject(true); setIsDialog(true) }}>Reject</Button></div>
+      {isDialog &&
         <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
           <Comment_box handleClose={handleClose} Submitbutton={handleApproval} handleComment={handleComment} />
         </div>
