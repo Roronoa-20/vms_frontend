@@ -22,12 +22,16 @@ import { DashboardTableType, TPRInquiryTable } from "@/src/types/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Cookies from "js-cookie";
+import { log } from "console";
 type Props = {
   dashboardTableData?: TPRInquiryTable[]
   companyDropdown: {name:string}[]
 }
 
 const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData,companyDropdown }: Props) => {
+
+  console.log("DashboardTableData--->",dashboardTableData);
+  
   const user = Cookies?.get("user_id");
   return (
 
@@ -70,7 +74,6 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData,companyDropdo
       </div>
       <div className="overflow-y-scroll max-h-[55vh]">
       <Table className="">
-        {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
         <TableHeader className="text-center">
           <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
             <TableHead className="">Sr No.</TableHead>

@@ -229,13 +229,13 @@ const DashboardCards = ({ ...Props }: Props) => {
                   companyDropdown={Props?.companyDropdown}
                 />
               )}
-              {item.name === "Purchase Inquiry" && user === "Enquirer" && (
+              {item.name === "Purchase Inquiry" && (user === "Enquirer" || user === "Purchase Team") && (
                 <DashboardPurchaseEnquiryTable
                   dashboardTableData={Props.prInquiryData}
                   companyDropdown={Props?.companyDropdown}
                 />
               )}
-              {item.name === "Purchase Requisition" && user === "Enquirer" && (
+              {item.name === "Purchase Requisition" && (user === "Enquirer" || user === "Purchase Team") && (
                 <DashboardPurchaseRequisitionTable
                   dashboardTableData={Props.prData}
                   companyDropdown={Props?.companyDropdown}

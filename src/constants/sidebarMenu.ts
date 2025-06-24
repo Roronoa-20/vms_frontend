@@ -14,11 +14,11 @@ export const sidebarMenu = [
     name: "PR",
     href:"/pr-request"
   },
-  {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "Inquiry",
-    href:"/pr-inquiry"
-  },
+  // {
+  //   logo: "/sidebar-assests/vendor-icon.svg",
+  //   name: "Inquiry",
+  //   href:"/pr-inquiry"
+  // },
   // {
   //   logo: "/sidebar-assests/raise-rfq-logo.svg",
   //   name: "Raise RFQ",
@@ -114,7 +114,7 @@ export const EnquirysidebarMenu = [
   {
     logo: "/sidebar-assests/home-logo.svg",
     name: "Home",
-    href:"/vendor-dashboard"
+    href:"/dashboard"
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
