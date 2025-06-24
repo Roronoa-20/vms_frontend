@@ -31,14 +31,15 @@ type certificateData = {
   certificate_code:string,
   valid_till:string,
   file?:FileList
-  fileDetail:CertificateAttachment,
+  fileDetail?:CertificateAttachment,
   name?:string
+  certificate_attach?:CertificateAttachment
 }
 
 const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   console.log(OnboardingDetail)
   const [certificateData,setCertificateData] = useState<Partial<certificateData>>({});
-  const [multipleCertificateData,setMultipleCertificateData] = useState<certificateData[]>([]);
+  const [multipleCertificateData,setMultipleCertificateData] = useState<certificateData[]>(OnboardingDetail);
   const router = useRouter();
   
   const [isOtherField,setIsOtherField] = useState<boolean>(false);
@@ -55,6 +56,10 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
 
 
   const handleSubmit = async ()=>{
+    if(OnboardingDetail?.length < 1){
+      alert("Upload At Least 1 Certificate")
+      return;
+    }
     const url = API_END_POINTS?.certificateSubmit;
     const certificateSubmit:AxiosResponse = await requestWrapper({url:url,data:{data:{onb_id:onboarding_ref_no,completed:1}},method:"POST"})
     if(certificateSubmit?.status == 200){
@@ -168,17 +173,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                    {multipleCertificateData?.length > 0 ?
-                      multipleCertificateData.map((item, index) => (
-                        <TableRow key={item?.name?item?.name:""}>
-                          <TableCell className="font-medium text-center">{index +1}</TableCell>
-                          <TableCell className="text-center">{item?.certificate_code}</TableCell>
-                          <TableCell className="text-center">{item?.valid_till}</TableCell>
-                          <TableCell className="text-center">{item?.fileDetail?.file_name}</TableCell>
-                          <TableCell className="flex justify-center items-center text-center"><CrossIcon onClick={()=>{deleteRow(item?.name?item?.name:"")}} className="rotate-45 text-red-400 cursor-pointer"/></TableCell>
-                        </TableRow>
-                      )):
-                      OnboardingDetail?.map((item, index) => (  
+                    {multipleCertificateData?.map((item, index) => (  
                        
                         <TableRow key={item?.name?item?.name:""}>
                           <TableCell className="font-medium text-center">{index}</TableCell>
@@ -188,6 +183,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
                           <TableCell className="flex justify-center items-center text-center"><Trash2 onClick={()=>{deleteRow(item?.name?item?.name:"")}} className=" text-red-400 cursor-pointer"/></TableCell>
                         </TableRow>
                       ))
+                      
                     }
                     </TableBody>
                   </Table>

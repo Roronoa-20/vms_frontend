@@ -62,7 +62,7 @@ const [tableData,setTableData] = useState<TtableData[]>([]);
     if(tableData?.length > 1){
       updateFormData = {...formData,
         purchase_details:tableData,
-        inco_terms:tableData?.[0]?.inco_terms,
+        incoterms:tableData?.[0]?.inco_terms,
         for_multiple_company:1
       }
     }else{

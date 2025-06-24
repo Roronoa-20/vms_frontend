@@ -557,6 +557,7 @@ export type TCompanyDetailForm = {
     certificate_code: string;
     valid_till: string; // format: YYYY-MM-DD
     certificate_attach: CertificateAttachment;
+    fileDetail?:CertificateAttachment
   };
 
 

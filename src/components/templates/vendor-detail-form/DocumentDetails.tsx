@@ -87,7 +87,65 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
   const [isGstFilePreview, setIsGstFilePreview] = useState<boolean>(true);
   const [isPanFilePreview, setIsPanFilePreview] = useState<boolean>(true);
 
+    const [errors, setErrors] = useState<any>({});
+  const validate = () => {
+    const errors:any = {};
+    if (!documentDetails?.company_pan_number) {
+      errors.company_pan_number = "Please Enter Company Pan Number";
+    }
+    if (!documentDetails?.name_on_company_pan) {
+      errors.name_on_company_pan = "Please Enter Name On Company Pan";
+    }
+
+    if (documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_state) {
+      errors.gst_state = "Please Select Gst State";
+
+    } 
+    if (documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_number) {
+      errors.gst_number = "Please Enter Gst Number";
+
+    } 
+    if (documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_registration_date) {
+      errors.gst_registration_date = "Please Select Gst Registration Date";
+
+    } 
+    if (documentDetails?.gst_ven_type == "Registered" && documentDetails?.gstDocument?.length && documentDetails?.gstDocument?.length == 0) {
+      errors.gst_state = "Please Upload Gst File";
+
+    } 
+
+    if (documentDetails?.msme_registered == "Yes" && !documentDetails?.msme_enterprise_type) {
+      errors.msme_enterprise_type = "Please Select Enterprise Type";
+    } 
+
+    if (documentDetails?.msme_registered == "Yes" && !documentDetails?.udyam_number) {
+      errors.udyam_number = "Please Enter Udhyam Registration Number";
+    } 
+
+    if (documentDetails?.msme_registered == "Yes" && !documentDetails?.name_on_udyam_certificate) {
+      errors.name_on_udyam_certificate = "Please Enter Name Udhyam Certificate";
+    } 
+
+    if (documentDetails?.msme_registered == "Yes" && documentDetails?.udyamCertificate?.length && documentDetails?.udyamCertificate?.length == 0) {
+      errors.udyamCertificate = "Please Upload Udhyam Certificate";
+    } 
+
+
+    if (!documentDetails?.enterprise_registration_number) {
+      errors.enterprise_registration_number = "Please Enter Enterprice Registration Number";
+    }
+
+    return errors;
+  };
+
+
   const handleSubmit = async () => {
+    const validationErrors = validate();
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
     const url = API_END_POINTS?.documentDetailSubmit;
     const updatedData = {
       ...documentDetails,
@@ -153,6 +211,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                 }));
               }}
             />
+            {errors?.company_pan_number && !documentDetails?.company_pan_number && <span style={{ color: 'red' }}>{errors?.company_pan_number}</span>}
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -172,6 +231,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                 }));
               }}
             />
+            {errors?.name_on_company_pan && !documentDetails?.name_on_company_pan && <span style={{ color: 'red' }}>{errors?.name_on_company_pan}</span>}
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -209,6 +269,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                     />
                 </div>
               )}
+              {errors?.panDocument && !documentDetails?.panDocument && <span style={{ color: 'red' }}>{errors?.panDocument}</span>}
               </div>
           </div>
           <div className="col-span-3 grid grid-cols-3 gap-6">
@@ -241,6 +302,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                   </SelectGroup>
                 </SelectContent>
               </Select>
+              {errors?.gst_ven_type && !documentDetails?.gst_ven_type && <span style={{ color: 'red' }}>{errors?.gst_ven_type}</span>}
             </div>
           </div>
           <div
@@ -275,6 +337,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                   </SelectGroup>
                 </SelectContent>
               </Select>
+              {errors?.gst_state && !documentDetails?.gst_state && <span style={{ color: 'red' }}>{errors?.gst_state}</span>}
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -294,6 +357,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                   }));
                 }}
               />
+              {errors?.gst_number && !documentDetails?.gst_number && <span style={{ color: 'red' }}>{errors?.gst_number}</span>}
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -314,6 +378,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                   }));
                 }}
               />
+              {errors?.gst_registration_date && !documentDetails?.gst_registration_date && <span style={{ color: 'red' }}>{errors?.gst_registration_date}</span>}
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -329,6 +394,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                   }));
                 }}
                 />
+                {errors?.gstDocument && !documentDetails?.gstDocument && <span style={{ color: 'red' }}>{errors?.gstDocument}</span>}
               {/* file preview */}
             {isGstFilePreview &&
               !documentDetails?.gstDocument &&
@@ -406,6 +472,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                 </SelectGroup>
               </SelectContent>
             </Select>
+            {errors?.msme_enterprise_type && !documentDetails?.msme_enterprise_type && <span style={{ color: 'red' }}>{errors?.msme_enterprise_type}</span>}
           </div>
           <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -425,6 +492,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                 }));
               }}
             />
+            {errors?.udyam_number && !documentDetails?.udyam_number && <span style={{ color: 'red' }}>{errors?.udyam_number}</span>}
           </div>
           <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -444,6 +512,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                 }));
               }}
             />
+            {errors?.name_on_udyam_certificate && !documentDetails?.name_on_udyam_certificate && <span style={{ color: 'red' }}>{errors?.name_on_udyam_certificate}</span>}
           </div>
           <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -460,6 +529,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                 }));
               }}
               />
+              {errors?.udyamCertificate && !documentDetails?.udyamCertificate && <span style={{ color: 'red' }}>{errors?.udyamCertificate}</span>}
             {/* file preview */}
             {isMsmeFilePreview &&
               !documentDetails?.udyamCertificate &&
@@ -502,6 +572,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                 }));
               }}
             />
+            {errors?.enterprise_registration_number && !documentDetails?.enterprise_registration_number && <span style={{ color: 'red' }}>{errors?.enterprise_registration_number}</span>}
           </div>
           <div className={``}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -519,6 +590,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                 }));
               }}
               />
+              {errors?.registrationDocument && !documentDetails?.registrationDocument && <span style={{ color: 'red' }}>{errors?.registrationDocument}</span>}
             {/* file preview */}
             {isRegistrationFilePreview &&
               !documentDetails?.registrationDocument &&
