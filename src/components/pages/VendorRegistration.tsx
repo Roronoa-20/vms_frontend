@@ -33,6 +33,7 @@ export type TtableData = {
 const VendorRegistration = ({...Props}:Props) => {
 
 const [formData,setFormData] = useState<Partial<VendorRegistrationData>>({})
+const [multiVendor,setMultiVendor] = useState();
 const [tableData,setTableData] = useState<TtableData[]>([]);
   const handlefieldChange = (
     e: React.ChangeEvent<
@@ -107,6 +108,7 @@ const [tableData,setTableData] = useState<TtableData[]>([]);
         formData={formData}
         handlefieldChange={handlefieldChange}
         handleSelectChange={handleSelectChange}
+        setMultiVendor={setMultiVendor}
         />
       <VendorRegistration2 
         companyDropdown = {companyDropdown}
@@ -118,6 +120,7 @@ const [tableData,setTableData] = useState<TtableData[]>([]);
         tableData={tableData}
         setTableData={setTableData}
         handleSubmit={handleSubmit}
+        multiVendor={multiVendor}
         />
         {/* </form> */}
     </div>
