@@ -88,22 +88,22 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno }: Props) => {
     // handleTableAdd(index);
   }
 
-  // let url = "";
-  // if (PRInquiryData?.hod) {
-  //   url = `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.hod_approval_check`
-  // } else if (PRInquiryData?.purchase_team) {
-  //   url = `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.purchase_approval_check`
-  // }
+  let url = "";
+  if (PRInquiryData?.hod) {
+    url = `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.hod_approval_check`
+  } else if (PRInquiryData?.purchase_team) {
+    url = `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.purchase_approval_check`
+  }
 
   const handleApproval = async () => {
-    let APIurl = "";
-    if (PRInquiryData?.hod) {
-      APIurl = API_END_POINTS?.prInquiryHodApproval
-    } else if (PRInquiryData?.purchase_team) {
-      APIurl = API_END_POINTS?.prInquiryPurchaseApproval
-    }
-    console.log(APIurl,"APIurl",PRInquiryData?.hod,)
-    const url = APIurl;
+    // let APIurl = "";
+    // if (PRInquiryData?.hod) {
+    //   APIurl = API_END_POINTS?.prInquiryHodApproval
+    // } else if (PRInquiryData?.purchase_team) {
+    //   APIurl = API_END_POINTS?.prInquiryPurchaseApproval
+    // }
+    // console.log(APIurl,"APIurl",PRInquiryData?.hod,)
+    // const url = APIurl;
     const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { cart_id: refno, approve: isApproved, reject: isReject, user: user, comments: comment } }, method: "POST" });
     if (response?.status == 200) {
       setComment("");
