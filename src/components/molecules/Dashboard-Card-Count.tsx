@@ -45,20 +45,20 @@ const DashboardCards = ({ ...Props }: Props) => {
   // const user = cookieStore.get("designation")?.value;
   let allCardData: any[] = [
     {
-      name: "Total Vendors",
-      count: Props.cardData?.total_vendor_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/total_count.svg",
-      text_color: "text-yellow-800",
-      bg_color: "bg-yellow-100",
-      hover: "hover:border-yellow-400",
-    },
-    {
       name: "Pending Vendors",
       count: Props.cardData?.pending_vendor_count ?? 0,
       icon: "/dashboard-assests/cards_icon/doc.svg",
       text_color: "text-rose-800",
       bg_color: "bg-rose-100",
       hover: "hover:border-rose-400",
+    },
+    {
+      name: "Total Vendors",
+      count: Props.cardData?.total_vendor_count ?? 0,
+      icon: "/dashboard-assests/cards_icon/total_count.svg",
+      text_color: "text-yellow-800",
+      bg_color: "bg-yellow-100",
+      hover: "hover:border-yellow-400",
     },
     {
       name: "Onboarded Vendors",

@@ -165,7 +165,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
             Bank Proof (Upload Passbook Leaf/Cancelled Cheque)
           </h1>
           <div className="flex gap-4">
-          <Input placeholder=""  type="file" onChange={(e)=>{setBankProofFile(e.target.files)}} />
+          {/* <Input placeholder=""  type="file" onChange={(e)=>{setBankProofFile(e.target.files)}} /> */}
           {/* file preview */}
           {isBankFilePreview &&
               !bankProofFile &&
@@ -178,12 +178,12 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
                   >
                     <span>{OnboardingDetail?.bank_proof?.file_name}</span>
                   </Link>
-                  <X
+                  {/* <X
                     className="cursor-pointer"
                     onClick={() => {
                       setIsBankFilePreview((prev) => !prev);
                     }}
-                    />
+                    /> */}
                 </div>
               )}
               </div>
@@ -237,7 +237,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
               </div>
         </div>
       </div>
-      <div className={`flex justify-end pr-4 ${designation?"hidden":""} `}><Button className="bg-blue-400 hover:to-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
+      {/* <div className={`flex justify-end pr-4 ${designation?"hidden":""} `}><Button className="bg-blue-400 hover:to-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div> */}
     </div>
   );
 };

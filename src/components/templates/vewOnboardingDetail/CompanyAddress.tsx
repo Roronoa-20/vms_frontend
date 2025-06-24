@@ -609,7 +609,7 @@ const CompanyAddress = ({
         <h1 className="text-[12px] font-normal text-[#626973]">
           Upload Address Proof (Light Bill, Telephone Bill, etc.)
         </h1>
-        <Input type="file" className="w-fit" onChange={(e)=>{setFile(e.target.files)}} />
+        {/* <Input type="file" className="w-fit" onChange={(e)=>{setFile(e.target.files)}} /> */}
       {/* file preview */}
       {
        isFilePreview && !file && OnboardingDetail?.address_proofattachment?.url &&
@@ -617,7 +617,7 @@ const CompanyAddress = ({
       <Link target="blank" href={process.env.NEXT_PUBLIC_BACKEND_END + OnboardingDetail?.address_proofattachment?.url} className="underline text-blue-300 max-w-44 truncate">
       <span>{OnboardingDetail?.address_proofattachment?.file_name}</span>
       </Link>
-      <X className="cursor-pointer" onClick={()=>{setIsFilePreview((prev)=>!prev)}}/>
+      {/* <X className="cursor-pointer" onClick={()=>{setIsFilePreview((prev)=>!prev)}}/> */}
       </div>
       }
       </div>

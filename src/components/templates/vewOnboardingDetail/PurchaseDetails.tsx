@@ -67,7 +67,7 @@ const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,reconciliati
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           Purchase Head Remarks
         </h1>
-        <Input placeholder="Enter Mobile Number" disabled defaultValue={OnboardingDetail?.purchase_head_remarks} />
+        <Input  disabled defaultValue={OnboardingDetail?.purchase_head_remarks} />
       </div>
       <div>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
