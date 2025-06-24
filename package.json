@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env PORT=3001 next dev -H 127.0.0.1 --turbo && start http://127.0.0.1:3001",
+    "dev": "next dev --turbopack",
     "dev:local": "env-cmd -f .env.local next dev",
     "dev:prod": "env-cmd -f .env.prod next dev",
     "build": "next build",
