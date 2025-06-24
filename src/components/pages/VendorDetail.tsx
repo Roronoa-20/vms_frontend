@@ -28,6 +28,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { AuthProvider, useAuth } from "@/src/context/AuthContext";
+import InternationalDocumentDetails from "../templates/vendor-detail-form/InternationalDocumentDetails";
 
 interface Props {
   vendor_onboarding: string;
@@ -121,7 +122,8 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
         ) : tabType == "Certificate" ? (
           <Certificate certificateCodeDropdown={certificateCodeDropdown?.certificate_names} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.certificate_details_tab}/>
         ) : (
-          ""
+          <InternationalDocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno}/>
+          // <InternationalPaymentDetail/>
         )}
       </div>
     </div>
