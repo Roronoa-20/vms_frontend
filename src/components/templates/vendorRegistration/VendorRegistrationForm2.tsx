@@ -242,7 +242,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Inco Terms
           </h1>
-          <Select required value={singleTableData?.inco_terms ?? ""} onValueChange={(value)=>{setSingleTableData((prev:any)=>({...prev,inco_terms:value}))}}>
+          <Select required value={singleTableData?.incoterms ?? ""} onValueChange={(value)=>{setSingleTableData((prev:any)=>({...prev,incoterms:value}))}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Inco Terms" />
             </SelectTrigger>
@@ -264,7 +264,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                   Reconciliation Account
                 </h1>
                 {/* <Input placeholder="" disabled defaultValue={OnboardingDetail?.reconciliation_account}/> */}
-                <Select value={singleTableData?.reconcilition_account ?? ""} onValueChange={(value)=>{setSingleTableData((prev:any)=>({...prev,reconcilition_account:value}))}} required={true}>
+                <Select value={singleTableData?.reconciliation_account ?? ""} onValueChange={(value)=>{setSingleTableData((prev:any)=>({...prev,reconciliation_account:value}))}} required={true}>
                             <SelectTrigger>
                               <SelectValue placeholder="Select" />
                             </SelectTrigger>
@@ -313,8 +313,8 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                     <TableCell>{item?.purchase_group}</TableCell>
                     <TableCell>{item?.terms_of_payment}</TableCell>
                     <TableCell>{item?.order_currency}</TableCell>
-                    <TableCell>{item?.inco_terms}</TableCell>
-                    <TableCell>{item?.reconcilition_account}</TableCell>
+                    <TableCell>{item?.incoterms}</TableCell>
+                    <TableCell>{item?.reconciliation_account}</TableCell>
                     {/* <TableCell><div className='flex gap-4 justify-center items-center'>
                         <EyeIcon className='cursor-pointer'/>
                         </div>

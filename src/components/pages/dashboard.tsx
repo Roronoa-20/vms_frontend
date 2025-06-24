@@ -78,7 +78,7 @@ const Dashboard = async () => {
     }
   });
   const dashboardRejectedVendorTableData: DashboardTableType =
-  dashboardRejectedVendorTableDataApi?.status == 200 ? dashboardRejectedVendorTableDataApi?.data?.message : "";
+  dashboardRejectedVendorTableDataApi?.status == 200 ? dashboardRejectedVendorTableDataApi?.data : "";
   // const dashboardTableDataApi: AxiosResponse = await requestWrapper({
   //   url: `${API_END_POINTS?.dashboardTableURL}?usr=${user}`,
   //   method: "GET",
@@ -95,7 +95,7 @@ const Dashboard = async () => {
   //             const companyDropdownResponse:AxiosResponse = await requestWrapper({url:companyDropdownUrl,method:"GET"});
   //             const companyDropdown:{name:string}[] =  companyDropdownResponse?.status == 200?companyDropdownResponse?.data?.data : ""; 
 
-  console.log(dashboardPOTableData,"-----------------========","=pending---","=-09876543333333333333333333333333")
+  console.log(dashboardRejectedVendorTableData,"-----------------========","=pending---","=-09876543333333333333333333333333")
   console.log(CardData,"this is card Data")
   const dropdownUrl = API_END_POINTS?.vendorRegistrationDropdown;
   const dropDownApi: AxiosResponse = await requestWrapper({
