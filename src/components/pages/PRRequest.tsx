@@ -12,10 +12,13 @@ interface PageProps {
 }
 
 export const PRRequest = async({ pur_req , cartId}:PageProps) => {
-
-  const PRDataUrl = `${API_END_POINTS?.getPRData}?pur_req=${pur_req}`;
-  const PRDataResponse:AxiosResponse = await requestWrapper({url:PRDataUrl,method:"GET"})
-  const PRData:PurchaseRequestData["message"]["data"] = PRDataResponse?.status == 200 ?PRDataResponse?.data?.message?.data : "";
+  let PRDataUrl ; 
+  let PRData:PurchaseRequestData["message"]["data"] | null = null;
+  if(pur_req){
+    PRDataUrl = `${API_END_POINTS?.getPRData}?pur_req=${pur_req}`;
+    const PRDataResponse:AxiosResponse = await requestWrapper({url:PRDataUrl,method:"GET"})
+    PRData = PRDataResponse?.status == 200 ?PRDataResponse?.data?.message?.data : "";
+  }
 
     const dropdownApiUrl = API_END_POINTS?.vendorPurchaseRequestDropdown;
     const resposne:AxiosResponse = await requestWrapper({url:dropdownApiUrl,method:"GET"});

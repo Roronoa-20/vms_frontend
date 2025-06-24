@@ -13,7 +13,7 @@ import Cookies from 'js-cookie'
 
 interface Props {
     Dropdown:PurchaseRequestDropdown["message"]
-    PRData:PurchaseRequestData["message"]["data"]
+    PRData:PurchaseRequestData["message"]["data"] | null
     cartId?:string
 }
 
