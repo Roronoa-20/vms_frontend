@@ -5,6 +5,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import { DashboardPOTableData, dashboardCardData,DashboardTableType, TvendorRegistrationDropdown, TPRInquiryTable, PurchaseRequisition } from "@/src/types/types";
 import { cookies } from "next/headers";
+
 const Dashboard = async () => {
   // const cookie = await cookies()
   const cookieStore = await cookies();
@@ -126,7 +127,7 @@ const Dashboard = async () => {
       <DashboardCardCounter
         cardData={CardData}
         companyDropdown={companyDropdown}
-        dashboardPOTableData={dashboardPOTableData}
+        // dashboardPOTableData={dashboardPOTableData}
         // dashboardDispatchVendorTableData={dashboardTotalVendorTableData}
         dashboardTotalVendorTableData={dashboardTotalVendorTableData} 
         dashboardPendingVendorTableData={dashboardPendingVendorTableData}

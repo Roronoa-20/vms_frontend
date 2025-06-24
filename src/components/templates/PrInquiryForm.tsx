@@ -199,7 +199,7 @@ const PRInquiryForm = ({PRInquiryData,dropdown}:Props) => {
               <SelectGroup>
                 {
                   dropdown?.uom_master?.map((item,index)=>(
-                    <SelectItem key={index} value={item?.name}>{item?.uom}</SelectItem>
+                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
                   ))
                 }
               </SelectGroup>
@@ -269,7 +269,7 @@ const PRInquiryForm = ({PRInquiryData,dropdown}:Props) => {
               </TableBody>
             </Table>
           </div>
-          <div className={`flex justify-end pr-4`}><Button className='bg-blue-400 hover:bg-blue-400' onClick={()=>{handleSubmit()}}>Next</Button></div>
+          <div className={`flex justify-end pr-4`}><Button className='bg-blue-400 hover:bg-blue-400' onClick={()=>{handleSubmit()}}>Submit</Button></div>
     </div>
   )
 }

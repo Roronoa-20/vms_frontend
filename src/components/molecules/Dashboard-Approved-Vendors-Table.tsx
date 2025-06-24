@@ -26,7 +26,7 @@ type Props = {
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
 }
 
-const DashboardApprovedVendorsTable = ({ dashboardTableData,companyDropdown }: Props) => {
+const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
   return (
 
     <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
@@ -43,7 +43,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData,companyDropdown }: P
             <SelectContent>
               <SelectGroup className="w-full">
                 {
-                  companyDropdown?.map((item,index)=>(
+                  companyDropdown?.map((item, index) => (
                     <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
                   ))
                 }
@@ -75,7 +75,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData,companyDropdown }: P
             <TableHead>Vendor Name</TableHead>
             <TableHead className="text-center">Company Name</TableHead>
             <TableHead className="text-center">Status</TableHead>
-             <TableHead className="text-center">Vendor Code</TableHead>
+            <TableHead className="text-center">Vendor Code</TableHead>
             <TableHead className="text-center">Country</TableHead>
             <TableHead className="text-center">Register By</TableHead>
             <TableHead className="text-center">View Details</TableHead>
@@ -93,20 +93,20 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData,companyDropdown }: P
                 <TableCell>
                   <div
                     className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "Pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : item?.onboarding_form_status === "Approved"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : item?.onboarding_form_status === "Approved"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
                       }`}
                   >
                     {item?.onboarding_form_status}
                   </div>
                 </TableCell>
-                 <TableCell>{item?.vendor_code?item?.vendor_code:"-"}</TableCell>
+                <TableCell>{item?.vendor_code ? item?.vendor_code : "-"}</TableCell>
                 <TableCell>{item?.country}</TableCell>
                 <TableCell>{item?.register_by}</TableCell>
                 <TableCell><Link href={`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                <TableCell className="text-right">{item?.qms_form}</TableCell>
+                <TableCell><Link href={`/qms-details?tabtype=vendor%20information&vendor_onboarding=${item?.name}`}><Button variant={"outline"}>View</Button></Link></TableCell>
               </TableRow>
             ))
           ) : (
