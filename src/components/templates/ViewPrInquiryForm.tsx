@@ -227,8 +227,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno }: Props) => {
           </TableBody>
         </Table>
       </div>
-      <div className={`flex justify-end pr-4 gap-4 ${designation != "Enquirer" }`}><Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { setIsApproved(true); setIsDialog(true) }}>Approve</Button>
-        <Button className={`bg-blue-400 hover:bg-blue-400 ${designation != "Enquirer" }`} onClick={() => { setIsReject(true); setIsDialog(true) }}>Reject</Button></div>
+      <div className={`flex justify-end pr-4 gap-4 ${designation != "Enquirer"?"":"hidden" }`}><Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { setIsApproved(true); setIsDialog(true) }}>Approve</Button>
+        <Button className={`bg-blue-400 hover:bg-blue-400 ${designation != "Enquirer"?"":"hidden" }`} onClick={() => { setIsReject(true); setIsDialog(true) }}>Reject</Button></div>
       {
         isDialog &&
         <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
