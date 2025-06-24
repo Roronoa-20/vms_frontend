@@ -118,7 +118,7 @@ export const EnquirysidebarMenu = [
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
-    name: "Inquiry",
+    name: "Enquiry",
     href:"/pr-inquiry"
   },
   {

@@ -30,7 +30,14 @@ type Props = {
 
 const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData,companyDropdown }: Props) => {
 
-  console.log("DashboardTableData--->",dashboardTableData);
+  console.log("DashboardTableData PPRRRPRR--->",dashboardTableData);
+
+  const formatDate = (date: Date): string => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
   
   const user = Cookies?.get("user_id");
   return (
@@ -61,13 +68,6 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData,companyDropdo
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              {/* <SelectGroup>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
-              </SelectGroup> */}
             </SelectContent>
           </Select>
         </div>
@@ -94,7 +94,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData,companyDropdo
               <TableRow key={index}>
                 <TableCell className="font-medium text-center">{index + 1}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
-                <TableCell className="text-nowrap text-center">{item?.cart_date}</TableCell>
+                <TableCell className="text-nowrap text-center">{item?.cart_date ? formatDate(new Date(item.cart_date)) : "-"}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.user}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.transfer_status}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.category_type}</TableCell>
