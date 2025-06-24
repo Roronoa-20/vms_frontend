@@ -52,14 +52,14 @@ const DashboardCards = ({ ...Props }: Props) => {
       bg_color: "bg-rose-100",
       hover: "hover:border-rose-400",
     },
-    {
-      name: "Total Vendors",
-      count: Props.cardData?.total_vendor_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/total_count.svg",
-      text_color: "text-yellow-800",
-      bg_color: "bg-yellow-100",
-      hover: "hover:border-yellow-400",
-    },
+    // {
+    //   name: "Total Vendors",
+    //   count: Props.cardData?.total_vendor_count ?? 0,
+    //   icon: "/dashboard-assests/cards_icon/total_count.svg",
+    //   text_color: "text-yellow-800",
+    //   bg_color: "bg-yellow-100",
+    //   hover: "hover:border-yellow-400",
+    // },
     {
       name: "Onboarded Vendors",
       count: Props.cardData?.approved_vendor_count ?? 0,

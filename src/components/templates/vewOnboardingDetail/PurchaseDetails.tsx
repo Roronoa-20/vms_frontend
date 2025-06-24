@@ -25,10 +25,11 @@ interface Props {
 }
 
 const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,reconciliationDropdown,tabType,validation_check}:Props) => {
-  const [reconciliationAccount,setReconciliationAccountt] = useState<string>("");
+  const [reconciliationAccount,setReconciliationAccountt] = useState<string>(OnboardingDetail?.reconciliation_account as string);
   const {designation} = useAuth();
   console.log(OnboardingDetail,"htis is data")
   console.log(reconciliationDropdown,"this is dropdown")
+  console.log(OnboardingDetail?.reconciliation_account,"this is reconsiliation")
   return (
     <div className="flex flex-col bg-white rounded-lg p-4 w-full">
     <h1 className="border-b-2 pb-2">Purchasing Details</h1>
