@@ -144,12 +144,12 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
             <TableHead className="w-[100px]">Sr No.</TableHead>
             <TableHead>Ref No.</TableHead>
             <TableHead>Vendor Name</TableHead>
-            <TableHead className="text-center">Company Name</TableHead>
+            {/* <TableHead className="text-center">Company Name</TableHead> */}
             <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Purchase Team</TableHead>
             <TableHead className="text-center">Purchase Head</TableHead>
             <TableHead className="text-center">Account Team</TableHead>
-            <TableHead className="text-center">View Details</TableHead>
+            {/* <TableHead className="text-center">View Details</TableHead> */}
             <TableHead className="text-center">QMS Form</TableHead>
             <TableHead className="text-center">Vendor code</TableHead>
           </TableRow>
@@ -161,7 +161,7 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
                 <TableCell className="font-medium">{index + 1}.</TableCell>
                 <TableCell className="text-nowrap">{item?.ref_no}</TableCell>
                 <TableCell>{item?.vendor_name?item?.vendor_name:'-'}</TableCell>
-                <TableCell className="text-nowrap">{item?.company_name?item?.company:"-"}</TableCell>
+                {/* <TableCell className="text-nowrap">{item?.company_name?item?.company:"-"}</TableCell> */}
                 <TableCell>
                   <div
                     className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "Pending"
@@ -178,7 +178,7 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
                 <TableCell>{item?.purchase_t_approval}</TableCell>
                 <TableCell>{item?.purchase_h_approval}</TableCell>
                 <TableCell>{item?.accounts_t_approval}</TableCell>
-                <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
+                {/* <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell> */}
                 <TableCell className="text-center">{item?.qms_form}</TableCell>
                 <TableCell className="pl-6"><button onClick={()=>{handleVendorCodeDialog(item?.ref_no)}}><Eye/></button></TableCell>
               </TableRow>
