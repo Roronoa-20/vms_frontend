@@ -48,7 +48,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
   useEffect(()=>{
     const fetchBank = async ()=>{
 
-      const bankNameDropdownUrl = `${API_END_POINTS?.bankNameDropdown}?company_name=${company_name}}`;
+      const bankNameDropdownUrl = `${API_END_POINTS?.bankNameDropdown}?company_name=${company_name}`;
       const bankNameResponse:AxiosResponse = await requestWrapper({url:bankNameDropdownUrl,method:"GET"});
       if(bankNameResponse?.status == 200){
         setBankNameDropown(bankNameResponse?.data?.message?.data)
