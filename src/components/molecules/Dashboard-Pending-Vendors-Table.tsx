@@ -49,71 +49,71 @@ const useDebounce = (value: any, delay: any) => {
   return debouncedValue;
 };
 
-const DashboardPendingVendorsTable = ({ dashboardTableData,companyDropdown }: Props) => {
+const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
 
-  const [table,setTable] = useState<DashboardTableType["pending_vendor_onboarding"]>(dashboardTableData?.pending_vendor_onboarding);
-  const [selectedCompany,setSelectedCompany] = useState<string>("")
-  const [search,setSearch] = useState<string>("");
+  const [table, setTable] = useState<DashboardTableType["pending_vendor_onboarding"]>(dashboardTableData?.pending_vendor_onboarding);
+  const [selectedCompany, setSelectedCompany] = useState<string>("")
+  const [search, setSearch] = useState<string>("");
 
-     const [total_event_list,settotalEventList] = useState(0);
-    const [record_per_page,setRecordPerPage] = useState<number>(5);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+  const [total_event_list, settotalEventList] = useState(0);
+  const [record_per_page, setRecordPerPage] = useState<number>(5);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   const user = Cookies?.get("user_id");
-  console.log(user,"this is user")
+  console.log(user, "this is user")
 
   const debouncedSearchName = useDebounce(search, 300);
-  
-  useEffect(()=>{
-      fetchTable();
-  },[debouncedSearchName,selectedCompany,currentPage])
-  
-  
+
+  useEffect(() => {
+    fetchTable();
+  }, [debouncedSearchName, selectedCompany, currentPage])
+
+
   const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    console.log(value,"this is search name")
+    console.log(value, "this is search name")
     setSearch(value);
   }
-  
-  const fetchTable = async()=>{
+
+  const fetchTable = async () => {
     const dashboardPendingVendorTableDataApi: AxiosResponse = await requestWrapper({
       url: `${API_END_POINTS?.dashboardPendingVendorTableURL}?usr=${user}&company=${selectedCompany}&refno=${search}`,
       method: "GET",
     });
-    if(dashboardPendingVendorTableDataApi?.status == 200 ){
+    if (dashboardPendingVendorTableDataApi?.status == 200) {
       setTable(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding
       );
       settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count);
       settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count)
       setRecordPerPage(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding?.length)
-    } 
+    }
   }
 
 
   return (
     <>
-    <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
-      <div className="flex w-full justify-between pb-4">
-        <h1 className="text-[20px] text-[#03111F] font-semibold">
-          Total Pending Vendors
-        </h1>
-        <div className="flex gap-4">
-          <Input placeholder="Search..." onChange={(e)=>{handlesearchname(e)}} />
-          <Select onValueChange={(value)=>{setSelectedCompany(value)}}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select Company" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup className="w-full">
-                {
-                  companyDropdown?.map((item,index)=>(
-                    <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          {/* <Select>
+      <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
+        <div className="flex w-full justify-between pb-4">
+          <h1 className="text-[20px] text-[#03111F] font-semibold">
+            Total Pending Vendors
+          </h1>
+          <div className="flex gap-4">
+            <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
+            <Select onValueChange={(value) => { setSelectedCompany(value) }}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Company" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup className="w-full">
+                  {
+                    companyDropdown?.map((item, index) => (
+                      <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                    ))
+                  }
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            {/* <Select>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
@@ -127,35 +127,35 @@ const DashboardPendingVendorsTable = ({ dashboardTableData,companyDropdown }: Pr
               </SelectGroup>
             </SelectContent>
           </Select> */}
+          </div>
         </div>
-      </div>
-      <Table>
-        {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-        <TableHeader className="text-center">
-          <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-            <TableHead className="w-[100px]">Sr No.</TableHead>
-            <TableHead>Ref No.</TableHead>
-            <TableHead>Vendor Name</TableHead>
-            <TableHead className="text-center">Company Name</TableHead>
-            <TableHead className="text-center">Status</TableHead>
-            <TableHead className="text-center">Purchase Team</TableHead>
-            <TableHead className="text-center">Purchase Head</TableHead>
-            <TableHead className="text-center">Account Team</TableHead>
-            <TableHead className="text-center">View Details</TableHead>
-            <TableHead className="text-center">QMS Form</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody className="text-center">
-          {table? (
-            table.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-medium">{index + 1}.</TableCell>
-                <TableCell className="text-nowrap">{item?.ref_no}</TableCell>
-                <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
-                <TableCell className="text-nowrap">{item?.company_name}</TableCell>
-                <TableCell>
-                  <div
-                    className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "Pending"
+        <Table>
+          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+          <TableHeader className="text-center">
+            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
+              <TableHead className="w-[100px]">Sr No.</TableHead>
+              <TableHead>Ref No.</TableHead>
+              <TableHead>Vendor Name</TableHead>
+              <TableHead className="text-center">Company Name</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+              <TableHead className="text-center">Purchase Team</TableHead>
+              <TableHead className="text-center">Purchase Head</TableHead>
+              <TableHead className="text-center">Account Team</TableHead>
+              <TableHead className="text-center">View Details</TableHead>
+              <TableHead className="text-center">QMS Form</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="text-center">
+            {table ? (
+              table.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium">{index + 1}.</TableCell>
+                  <TableCell className="text-nowrap">{item?.ref_no}</TableCell>
+                  <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
+                  <TableCell className="text-nowrap">{item?.company_name}</TableCell>
+                  <TableCell>
+                    <div
+                      className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "Pending"
                         ? "bg-yellow-100 text-yellow-800"
                         : item?.onboarding_form_status === "Approved"
                           ? "bg-green-100 text-green-800"
@@ -181,9 +181,9 @@ const DashboardPendingVendorsTable = ({ dashboardTableData,companyDropdown }: Pr
           )}
         </TableBody>
 
-      </Table>
-    </div>
-    <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list}/>
+        </Table>
+      </div>
+      <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
     </>
   );
 };
