@@ -65,7 +65,7 @@ if (refno) {
     } });
     PRInquiryData = PRInquiryDataResponse?.status == 200 ? PRInquiryDataResponse?.data?.message : "";
 }
-console.log(PRInquiryData, "this is data");
+console.log(PRInquiryData, "this is data PRInquiryData");
 return (
     <ViewPrInquiryForm PRInquiryData={PRInquiryData} dropdown={dropdown} refno={refno} />
 )
