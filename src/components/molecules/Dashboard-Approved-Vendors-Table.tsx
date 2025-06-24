@@ -106,7 +106,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                 <TableCell>{item?.country}</TableCell>
                 <TableCell>{item?.register_by}</TableCell>
                 <TableCell><Link href={`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                <TableCell><Link href={`/qms-details?vendor_onboarding=${item?.name}`}><Button variant={"outline"}>View</Button></Link></TableCell>
+                <TableCell><Link href={`/qms-details?tabtype=vendor%20information&vendor_onboarding=${item?.name}`}><Button variant={"outline"}>View</Button></Link></TableCell>
               </TableRow>
             ))
           ) : (

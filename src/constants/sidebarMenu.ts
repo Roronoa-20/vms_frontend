@@ -109,3 +109,21 @@ export const VendorsidebarMenu = [
   //   href:""
   // },
 ];
+
+export const EnquirysidebarMenu = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href:"/vendor-dashboard"
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "Inquiry",
+    href:"/pr-inquiry"
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "PR",
+    href:"/pr-request"
+  },
+];
