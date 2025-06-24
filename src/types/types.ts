@@ -447,6 +447,8 @@ export type TCompanyDetailForm = {
       reputed_partners_details_tab:ReputedPartnerDetail[];
       certificate_details_tab:CertificateDetail[],
       purchasing_details:TPurchaseDetails[]
+      multi_company_data:{company:string}[]
+      is_multi_company:boolean
     };
   };
 
