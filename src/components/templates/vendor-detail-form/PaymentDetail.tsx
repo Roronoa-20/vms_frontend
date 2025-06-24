@@ -44,6 +44,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
   //   )
   // }
   const router = useRouter()
+  console.log(OnboardingDetail,"this is country");
   useEffect(()=>{
     const fetchBank = async ()=>{
 
@@ -188,7 +189,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
               )}
               </div>
         </div>
-        <div className="flex flex-col">
+        {/* <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Preferred Transaction:
           </h1>
@@ -206,7 +207,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
               <h1>IFT</h1>
             </div>
           </div>
-        </div>
+        </div> */}
         <div></div>
       </div>
       <div className={`flex justify-end pr-4 ${designation?"hidden":""} `}><Button className="bg-blue-400 hover:to-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>

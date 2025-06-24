@@ -24,23 +24,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { X } from "lucide-react";
 
-interface documentDetail {
-  company_pan_number: string;
-  name_on_company_pan: string;
-  msme_registered: string;
-  enterprise_registration_number: string;
-  msme_enterprise_type: string;
-  udyam_number: string;
-  name_on_udyam_certificate: string;
-  panDocument: FileList;
-  registrationDocument: FileList;
-  gst_state: string;
-  gst_number: string;
-  gst_registration_date: string;
-  gstDocument: FileList;
-  companyNameUdyamCertificate: string;
-  udyamCertificate: FileList;
-  gst_ven_type: string;
+type formData = {
+  iec:string,
+  trc_certificate_no:string
 }
 
 interface Props {
@@ -56,79 +42,56 @@ const DocumentDetails = ({
   OnboardingDetail,
   documentDetailDropdown,
 }: Props) => {
-  const [BusinessType, setBusinessType] = useState<string>(
-    OnboardingDetail?.gst_table[0]?.gst_ven_type
-  );
-  const [isMSME, setIsMSME] = useState<string>(
-    OnboardingDetail?.msme_registered
-  );
   const router = useRouter();
-  const [documentDetails, setDocumentDetail] =
-    useState<Partial<documentDetail>>();
 
-  useEffect(()=>{
-    setDocumentDetail((prev)=>(
-      {...prev,gst_table:[
-        {
-          name:OnboardingDetail?.gst_table?.[0]?.name,
-          gst_state:OnboardingDetail?.gst_table?.[0]?.gst_state,
-          gst_number:OnboardingDetail?.gst_table?.[0]?.gst_number,
-          gst_registration_date:OnboardingDetail?.gst_table?.[0]?.gst_registration_date,
-          gst_ven_type:OnboardingDetail?.gst_table?.[0]?.gst_ven_type
-        }
-      ]}
-    ))
-  },[])
+    const [formData,setFormData] = useState<formData | null>(null);
 
-
-console.log(OnboardingDetail?.gst_table[0],"this is gst document")
-  const [isRegistrationFilePreview, setIsRegistrationFilePreview] = useState<boolean>(true);
-  const [isMsmeFilePreview, setIsMsmeFilePreview] = useState<boolean>(true);
-  const [isGstFilePreview, setIsGstFilePreview] = useState<boolean>(true);
-  const [isPanFilePreview, setIsPanFilePreview] = useState<boolean>(true);
-
+  const [isIECProofPreview, setIsIECProofPreview] = useState<boolean>(true);
+  const [isTRCProofPreview, setIsTRCProofPreview] = useState<boolean>(true);
+  const [is10FProofPreview, setIs10FProofPreview] = useState<boolean>(true);
+  const [isPEProofPreview, setIsPEProofPreview] = useState<boolean>(true);
+  const [IECProof, setIECProof] = useState<FileList | null>(null);
+  const [TRCProof, setTRCProof] = useState<FileList | null>(null);
+  const [file10FProof, setFile10FProof] = useState<FileList | null>(null);
+  const [PEProof, setPEProof] = useState<FileList | null>(null);
+  
   const handleSubmit = async () => {
     const url = API_END_POINTS?.documentDetailSubmit;
-    const updatedData = {
-      ...documentDetails,
-      msme_registered: isMSME,
-      gst_table: [
-        {
-          name:OnboardingDetail?.gst_table?.[0]?.name,
-          gst_state: documentDetails?.gst_state,
-          gst_number: documentDetails?.gst_number,
-          gst_registration_date: documentDetails?.gst_registration_date,
-          gst_ven_type: documentDetails?.gst_ven_type,
-        },
-      ],
-      ref_no: ref_no,
-      vendor_onboarding: onboarding_ref_no,
-    };
-    const formData = new FormData();
-    formData.append("data", JSON.stringify(updatedData));
-    if (documentDetails?.registrationDocument) {
-      formData.append("entity_proof", documentDetails?.registrationDocument[0]);
+    const updatedFormData = {...formData,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}
+    const formdata = new FormData();
+    formdata.append("data",JSON.stringify(updatedFormData));
+    if(IECProof){
+      formdata.append("iec_proof",IECProof[0]);
     }
-    if (documentDetails?.panDocument) {
-      formData.append("pan_proof", documentDetails?.panDocument[0]);
+    if(TRCProof){
+      formdata.append("trc_certificate",TRCProof[0]);
     }
-    if (documentDetails?.gstDocument) {
-      formData.append("gst_document", documentDetails?.gstDocument[0]);
+    if(file10FProof){
+      formdata.append("form_10f_proof",file10FProof[0]);
     }
-    if (documentDetails?.udyamCertificate) {
-      formData.append("msme_proof", documentDetails?.udyamCertificate[0]);
+    if(PEProof){
+      formdata.append("pe_certificate",PEProof[0]);
     }
-    const Response: AxiosResponse = await requestWrapper({
-      url: url,
-      data: formData,
-      method: "POST",
-    });
-    if (Response?.status == 200)
-      setDocumentDetail({})
+
+    const response:AxiosResponse = await requestWrapper({url:url,data:formdata,method:"POST"});
+    if(response?.status == 200){
+      setFormData(null)
+      setIECProof(null);
+      setFile10FProof(null);
+      setTRCProof(null);
+      setPEProof(null);
       router.push(
         `/vendor-details-form?tabtype=Payment%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
       );
+    }
   };
+  
+        const handleFieldChange = (e:React.ChangeEvent<
+              HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+            >)=>{
+          const {name,value} = e.target;
+              setFormData((prev:any)=>({...prev,[name]:value}));
+        }
 
   return (
     <div className="flex flex-col bg-white rounded-lg p-4 w-full max-h-[80vh]">
@@ -141,16 +104,15 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
             </h1>
             <Input
               placeholder="Enter Company Pan Number"
-              value={
-                documentDetails?.company_pan_number ??
-                OnboardingDetail?.company_pan_number ??
-                ""
-              }
+              // value={
+              //   documentDetails?.company_pan_number ??
+              //   OnboardingDetail?.company_pan_number ??
+              //   ""
+              // }
+              value={formData?.iec ?? ""}
+              name="iec"
               onChange={(e) => {
-                setDocumentDetail((prev) => ({
-                  ...prev,
-                  company_pan_number: e.target.value,
-                }));
+                handleFieldChange(e)
               }}
             />
           </div>
@@ -164,15 +126,12 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
               placeholder=""
               type="file"
               onChange={(e) => {
-                setDocumentDetail((prev: any) => ({
-                  ...prev,
-                  panDocument: e.target.files,
-                }));
+                setIECProof(e.target.files)
               }}
               />
             {/* file preview */}
-            {isPanFilePreview &&
-              !documentDetails?.panDocument &&
+            {isIECProofPreview &&
+               !IECProof &&
               OnboardingDetail?.pan_proof?.url && (
                 <div className="flex gap-2">
                   <Link
@@ -185,7 +144,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                   <X
                     className="cursor-pointer"
                     onClick={() => {
-                      setIsPanFilePreview((prev) => !prev);
+                      setIsIECProofPreview((prev) => !prev);
                     }}
                     />
                 </div>
@@ -198,16 +157,15 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
             </h1>
             <Input
               placeholder="Enter Company Pan Number"
-              value={
-                documentDetails?.company_pan_number ??
-                OnboardingDetail?.company_pan_number ??
-                ""
-              }
+              // value={
+              //   // documentDetails?.company_pan_number ??
+              //   OnboardingDetail?.company_pan_number ??
+              //   ""
+              // }
+              value={formData?.trc_certificate_no ?? ""}
+              name="trc_certificate_no"
               onChange={(e) => {
-                setDocumentDetail((prev) => ({
-                  ...prev,
-                  company_pan_number: e.target.value,
-                }));
+                handleFieldChange(e)
               }}
             />
           </div>
@@ -221,15 +179,12 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
               placeholder=""
               type="file"
               onChange={(e) => {
-                setDocumentDetail((prev: any) => ({
-                  ...prev,
-                  panDocument: e.target.files,
-                }));
+                setTRCProof(e.target.files)
               }}
               />
             {/* file preview */}
-            {isPanFilePreview &&
-              !documentDetails?.panDocument &&
+            {isTRCProofPreview &&
+              !TRCProof &&
               OnboardingDetail?.pan_proof?.url && (
                 <div className="flex gap-2">
                   <Link
@@ -242,7 +197,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                   <X
                     className="cursor-pointer"
                     onClick={() => {
-                      setIsPanFilePreview((prev) => !prev);
+                      setIsTRCProofPreview((prev) => !prev);
                     }}
                     />
                 </div>
@@ -268,15 +223,12 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
               placeholder=""
               type="file"
               onChange={(e) => {
-                setDocumentDetail((prev: any) => ({
-                  ...prev,
-                  panDocument: e.target.files,
-                }));
+               setFile10FProof(e.target.files);
               }}
               />
             {/* file preview */}
-            {isPanFilePreview &&
-              !documentDetails?.panDocument &&
+            {is10FProofPreview &&
+               !file10FProof &&
               OnboardingDetail?.pan_proof?.url && (
                 <div className="flex gap-2">
                   <Link
@@ -289,7 +241,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                   <X
                     className="cursor-pointer"
                     onClick={() => {
-                      setIsPanFilePreview((prev) => !prev);
+                      setIs10FProofPreview((prev) => !prev);
                     }}
                     />
                 </div>
@@ -307,15 +259,12 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
               placeholder=""
               type="file"
               onChange={(e) => {
-                setDocumentDetail((prev: any) => ({
-                  ...prev,
-                  panDocument: e.target.files,
-                }));
+                setPEProof(e.target.files)
               }}
               />
             {/* file preview */}
-            {isPanFilePreview &&
-              !documentDetails?.panDocument &&
+            {isPEProofPreview &&
+               !PEProof &&
               OnboardingDetail?.pan_proof?.url && (
                 <div className="flex gap-2">
                   <Link
@@ -328,7 +277,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                   <X
                     className="cursor-pointer"
                     onClick={() => {
-                      setIsPanFilePreview((prev) => !prev);
+                      setIsPEProofPreview((prev) => !prev);
                     }}
                     />
                 </div>

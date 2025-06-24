@@ -160,26 +160,26 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
                         : item?.onboarding_form_status === "Approved"
                           ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-800"
-                        }`}
-                    >
-                      {item?.onboarding_form_status}
-                    </div>
-                  </TableCell>
-                  <TableCell>{item?.purchase_t_approval}</TableCell>
-                  <TableCell>{item?.purchase_h_approval}</TableCell>
-                  <TableCell>{item?.accounts_t_approval}</TableCell>
-                  <TableCell><Link href={`/view-onboarding-details??tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                  <TableCell><Link href={`/qms-details?vendor_onboarding=${item?.name}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={9} className="text-center text-gray-500 py-4">
-                  No results found
+                      }`}
+                  >
+                    {item?.onboarding_form_status}
+                  </div>
                 </TableCell>
+                <TableCell>{item?.purchase_t_approval}</TableCell>
+                <TableCell>{item?.purchase_h_approval}</TableCell>
+                <TableCell>{item?.accounts_t_approval}</TableCell>
+                <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
+                <TableCell className="text-right">{item?.qms_form}</TableCell>
               </TableRow>
-            )}
-          </TableBody>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={9} className="text-center text-gray-500 py-4">
+                No results found
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
 
         </Table>
       </div>

@@ -26,7 +26,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
   const [isApprove, setIsApprove] = useState<boolean>(false);
   const [isReject, setIsReject] = useState<boolean>(false);
   const [isAccountBox, setIsAccountBox] = useState<boolean>(false);
-  const [reconsiliation, setReconsiliation] = useState<string>("");
+  // const [reconsiliation, setReconsiliation] = useState<string>("");
   const {bank_proof,is_file_uploaded} = UsePurchaseTeamApprovalStore();
   const router = useRouter();
   const { designation, user_email } = useAuth() as {
@@ -62,7 +62,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
             reject: isReject,
             rejected_reason: isReject ? comments : "",
             comments: isApprove ? comments : "",
-            reconciliation_account:reconsiliation?reconsiliation:"",
+            reconciliation_account:reconciliationAccount?reconciliationAccount:"",
       } 
       formData?.append("data",JSON.stringify(purchaseTeamData));
       formData?.append("bank_proof_by_purchase_team",bank_proof?.[0])
@@ -90,7 +90,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
     setIsReject(false);
     setComments("");
     setIsCommentBox(false);
-    setReconsiliation("");
+    // setReconsiliation("");
     router.push("/dashboard");
   }
   }else{
@@ -105,7 +105,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
         reject: isReject,
         rejected_reason: isReject ? comments : "",
         comments: isApprove ? comments : "",
-        reconciliation_account:reconsiliation?reconsiliation:"",
+        reconciliation_account:reconciliationAccount?reconciliationAccount:"",
       },
     },
   });
@@ -119,7 +119,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
     setIsReject(false);
     setComments("");
     setIsCommentBox(false);
-    setReconsiliation("");
+    // setReconsiliation("");
     router.push("/dashboard");
   }
 }
@@ -137,7 +137,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
     setIsApprove(false);
     setIsReject(false);
     setComments("");
-    setReconsiliation("");
+    // setReconsiliation("");
     
   };
   

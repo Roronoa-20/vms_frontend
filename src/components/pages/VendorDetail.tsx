@@ -122,7 +122,9 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
         ) : tabType == "Certificate" ? (
           <Certificate certificateCodeDropdown={certificateCodeDropdown?.certificate_names} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.certificate_details_tab}/>
         ) : (
-          <InternationalDocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno}/>
+          // <InternationalDocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno}/>
+          // <InternationalPaymentDetail/>
+          ""
         )}
       </div>
     </div>
