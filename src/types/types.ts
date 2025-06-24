@@ -92,8 +92,8 @@ export type VendorRegistrationData = {
   country: string;
   mobile_number: string;
   registered_date: string;
-  qa_required: string;
-  qms_required: number;
+  // qa_required: string;
+  qms_required: string;
 
   multiple_company_data: CompanyData[];
   vendor_type: VendorType[];

@@ -104,7 +104,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           QA Required
           </h1>
-          <Select onValueChange={(value)=>{handleSelectChange(value,'qa_required')}} value={formData?.qa_required ?? ""}>
+          <Select onValueChange={(value)=>{handleSelectChange(value,'qms_required')}} value={formData?.qms_required ?? ""}>
             <SelectTrigger>
               <SelectValue placeholder="Select Country" />
             </SelectTrigger>
