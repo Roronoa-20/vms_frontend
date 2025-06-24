@@ -59,7 +59,9 @@ const API_END_POINTS = {
   prInquiryDashboardTable:`${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pi`,
   prInquiryData:`${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pi_details`,
   prInquiryHodApproval:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.hod_approval_check`,
-  prTableData:`${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pr_w`
+  prInquiryPurchaseApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.purchase_approval_check`,
+  prTableData:`${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pr_w`,
+  qmsformdetails:`${url}/api/method/vms.APIs.assessment_apis.qms_api.get_qms_details_without_label`
 };
 
 export default API_END_POINTS;

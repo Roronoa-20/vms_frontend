@@ -126,7 +126,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
     if (Response?.status == 200)
       setDocumentDetail({})
       router.push(
-        `/vendor-details-form?tabtype=Payment%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
+        `/vendor-details-form?tabtype=Payment Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
       );
   };
 

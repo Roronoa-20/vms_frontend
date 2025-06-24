@@ -22,7 +22,7 @@ const OnboardingSidebar = ({onboarding_refno,refno}:Props) => {
               `/vendor-details-form?tabtype=${encodeURIComponent(item)}&vendor_onboarding=${onboarding_refno}&refno=${refno}`,
             );
           }}
-          className={`cursor-pointer p-2 ${item == tabType ? "bg-[#0C72F5] text-white" : "bg-[#E8F0F7]  text-[#0C72F5]"} text-wrap rounded-lg`}
+          className={`cursor-pointer p-2 ${item.includes(tabType as string) ? "bg-[#0C72F5] text-white" : "bg-[#E8F0F7]  text-[#0C72F5]"} text-wrap rounded-lg`}
           key={index}
         >
           {item}

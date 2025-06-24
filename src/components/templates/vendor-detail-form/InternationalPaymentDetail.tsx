@@ -28,11 +28,39 @@ interface Props {
   company_name?:string
 }
 
+interface IformData {
+  beneficiary_name:string,
+  beneficiary_bank_name:string,
+  beneficiary_account_no:string,
+  beneficiary_iban_no:string,
+  beneficiary_address:string,
+  beneficiary_bank_swift_code:string,
+  beneficiary_aba_no:string,
+  beneficiary_ach_no:string,
+  beneficiary_routing_no:string,
+  beneficiary_currency:string,
+  intermidiate_name:string,
+  intermidiate_bank_name:string,
+  intermidiate_account_no:string,
+  intermidiate_iban_no:string,
+  intermidiate_bank_address:string,
+  intermidiate_bank_swift_code:string,
+  intermidiate_aba_no:string,
+  intermidiate_ach_no:string,
+  intermidiate_routing_no:string,
+  intermidiate_currency:string
+}
+
 
 const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:Props) => {
-  const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
-  const [bankProofFile,setBankProofFile] = useState<FileList | null>(null);
-  const [isBankFilePreview, setIsBankFilePreview] = useState<boolean>(true);
+  // const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
+  const [formData,setFormData] = useState<IformData>();
+  // const [bankProofFile,setBankProofFile] = useState<FileList | null>(null);
+  const [bankProofBeneficiaryFile,setBankProofBeneficiaryFile] = useState<FileList | null>(null);
+  const [bankProofIntermediateFile,setBankProofIntermediateFile] = useState<FileList | null>(null);
+  const [isBankFileBeneficiaryPreview,setIsBankFileBeneficiaryPreview] = useState<boolean>(true);
+  const [isBankFileIntermediatePreview,setIsBankFileIntermediatePreview] = useState<boolean>(true);
+  // const [isBankFilePreview, setIsBankFilePreview] = useState<boolean>(true);
   const [isPurchaseBankFilePreview, setPurchaseIsBankFilePreview] = useState<boolean>(true);
   const [bankNameDropown,setBankNameDropown] = useState<TbankNameDropdown["message"]["data"]>([])
   const [currencyDropdown,setCurrencyDropdown] = useState<TCurrencyDropdown["message"]["data"]>([])
@@ -68,17 +96,32 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
   },[])
   const handleSubmit = async()=>{
     const submitUrl = API_END_POINTS?.bankSubmit;
-    const updatedData = {...paymentDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}
-    const formData = new FormData()
-    formData.append("data",JSON.stringify(updatedData));
-    if(bankProofFile){
-      formData.append("bank_proof",bankProofFile[0])
+    const updatedData = {...formData,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}
+    const formdata = new FormData()
+    formdata.append("data",JSON.stringify(updatedData));
+    if(bankProofBeneficiaryFile){
+      formdata.append("bank_proof_for_beneficiary_bank",bankProofBeneficiaryFile[0])
+    }
+    if(bankProofIntermediateFile){
+      formdata.append("bank_proof_for_intermediate_bank",bankProofIntermediateFile[0])
     }
     const response:AxiosResponse = await requestWrapper({url:submitUrl,method:"POST",data:formData})
     
       if(response?.status == 200) router.push(`/vendor-details-form?tabtype=Contact%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
     
   }
+
+
+  const handleSelectChange = (value: any, name: string ) => {
+              setFormData((prev:any) => ({ ...prev, [name]: value }))
+        };
+  
+        const handleFieldChange = (e:React.ChangeEvent<
+              HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+            >)=>{
+          const {name,value} = e.target;
+              setFormData((prev:any)=>({...prev,[name]:value}));
+        }
   console.log(OnboardingDetail?.bank_proof?.file_name,"thiskjdvb")
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
@@ -91,95 +134,85 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Beneficiary Name
           </h1>
-          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
+          <Input placeholder="" name="beneficiary_name" value={formData?.beneficiary_name ?? OnboardingDetail?.beneficiary_name ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Beneficiary Bank Name
           </h1>
-          <Select value={paymentDetail?.type_of_account ?? OnboardingDetail?.type_of_account ?? ""} onValueChange={(value)=>{updatePaymentDetail("type_of_account",value)}}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="Savings Account">Savings Account</SelectItem>
-                <SelectItem value="Current Account">Current Account</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <Input placeholder="" name="beneficiary_bank_name" value={formData?.beneficiary_bank_name ?? OnboardingDetail?.beneficiary_bank_name ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Beneficiary Account No.
           </h1>
-          <Input placeholder="" value={paymentDetail?.account_number ?? OnboardingDetail?.account_number ?? ""} onChange={(e)=>{updatePaymentDetail("account_number",e.target.value)}}/>
+          <Input placeholder="" name="beneficiary_account_no" value={formData?.beneficiary_account_no ?? OnboardingDetail?.beneficiary_account_no ?? ""} onChange={(e)=>{handleFieldChange((e))}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Beneficiary IBAN No.
           </h1>
-          <Input placeholder="" value={paymentDetail?.name_of_account_holder ?? OnboardingDetail?.name_of_account_holder ?? ""} onChange={(e)=>{updatePaymentDetail("name_of_account_holder",e.target.value)}}/>
+          <Input placeholder=""name="beneficiary_aba_no" value={formData?.beneficiary_aba_no ?? OnboardingDetail?.beneficiary_aba_no ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
 
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Beneficiary Bank Address
           </h1>
-          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
+          <Input placeholder="" name="beneficiary_address" value={formData?.beneficiary_address ?? OnboardingDetail?.beneficiary_address ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Beneficiary Bank Swift Code
           </h1>
-         <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
+         <Input placeholder="" name="beneficiary_bank_swift_code" value={formData?.beneficiary_bank_swift_code ?? OnboardingDetail?.beneficiary_bank_swift_code ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Beneficiary ABA No.
           </h1>
-          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
+          <Input placeholder="" name="beneficiary_aba_no" value={formData?.beneficiary_aba_no ?? OnboardingDetail?.beneficiary_aba_no ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Beneficiary ACH No.
           </h1>
-          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
+          <Input placeholder="" name="beneficiary_ach_no" value={formData?.beneficiary_ach_no ?? OnboardingDetail?.beneficiary_ach_no ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Beneficiary Routing No.
           </h1>
-          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
+          <Input placeholder="" name="beneficiary_routing_no" value={formData?.beneficiary_routing_no ?? OnboardingDetail?.beneficiary_routing_no ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Beneficiary Currency
           </h1>
-          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
+          <Input placeholder="" name="beneficiary_currency" value={formData?.beneficiary_currency ?? OnboardingDetail?.beneficiary_currency ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Bank Proof (Upload Passbook Leaf/Cancelled Cheque)
           </h1>
           <div className="flex gap-4">
-          <Input placeholder=""  type="file" onChange={(e)=>{setBankProofFile(e.target.files)}} />
+          <Input placeholder=""  type="file" onChange={(e)=>{setBankProofBeneficiaryFile(e.target.files)}} />
           {/* file preview */}
-          {isBankFilePreview &&
-              !bankProofFile &&
-              OnboardingDetail?.bank_proof?.url && (
+          {isBankFileBeneficiaryPreview &&
+              !bankProofBeneficiaryFile &&
+              OnboardingDetail?.bank_proof_for_beneficiary_bank?.url && (
                 <div className="flex gap-2">
                   <Link
                   target="blank"
-                  href={OnboardingDetail?.bank_proof?.url}
+                  href={OnboardingDetail?.bank_proof_for_beneficiary_bank?.url}
                   className="underline text-blue-300 max-w-44 truncate"
                   >
-                    <span>{OnboardingDetail?.bank_proof?.file_name}</span>
+                    <span>{OnboardingDetail?.bank_proof_for_beneficiary_bank?.file_name}</span>
                   </Link>
                   <X
                     className="cursor-pointer"
                     onClick={() => {
-                      setIsBankFilePreview((prev) => !prev);
+                      setIsBankFileBeneficiaryPreview((prev) => !prev);
                     }}
                     />
                 </div>
@@ -195,95 +228,85 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Intermidiate Name
           </h1>
-          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
+          <Input placeholder="" name="intermidiate_name" value={formData?.intermidiate_name ?? OnboardingDetail?.intermidiate_name ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Intermidiate Bank Name
           </h1>
-          <Select value={paymentDetail?.type_of_account ?? OnboardingDetail?.type_of_account ?? ""} onValueChange={(value)=>{updatePaymentDetail("type_of_account",value)}}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="Savings Account">Savings Account</SelectItem>
-                <SelectItem value="Current Account">Current Account</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <Input placeholder="" name="intermidiate_bank_name" value={formData?.intermidiate_bank_name ?? OnboardingDetail?.intermidiate_bank_name ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Intermidiate Account No.
           </h1>
-          <Input placeholder="" value={paymentDetail?.account_number ?? OnboardingDetail?.account_number ?? ""} onChange={(e)=>{updatePaymentDetail("account_number",e.target.value)}}/>
+          <Input placeholder="" name="intermidiate_account_no" value={formData?.intermidiate_account_no ?? OnboardingDetail?.intermidiate_account_no ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Intermidiate IBAN No.
           </h1>
-          <Input placeholder="" value={paymentDetail?.name_of_account_holder ?? OnboardingDetail?.name_of_account_holder ?? ""} onChange={(e)=>{updatePaymentDetail("name_of_account_holder",e.target.value)}}/>
+          <Input placeholder="" name="intermidiate_iban_no" value={formData?.intermidiate_iban_no ?? OnboardingDetail?.intermidiate_iban_no ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
 
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Intermidiate Bank Address
           </h1>
-          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
+          <Input placeholder="" name="intermidiate_bank_address" value={formData?.intermidiate_bank_address ?? OnboardingDetail?.intermidiate_bank_address ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Intermidiate Bank Swift Code
           </h1>
-         <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
+         <Input placeholder="" name="intermidiate_bank_swift_code" value={formData?.intermidiate_bank_swift_code ?? OnboardingDetail?.intermidiate_bank_swift_code ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Intermidiate ABA No.
           </h1>
-          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
+          <Input placeholder="" name="intermidiate_aba_no" value={formData?.intermidiate_aba_no ?? OnboardingDetail?.intermidiate_aba_no ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Intermidiate ACH No.
           </h1>
-          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
+          <Input placeholder="" name="intermidiate_ach_no" value={formData?.intermidiate_ach_no ?? OnboardingDetail?.intermidiate_ach_no ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Intermidiate Routing No.
           </h1>
-          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
+          <Input placeholder="" name="intermidiate_routing_no" value={formData?.intermidiate_routing_no ?? OnboardingDetail?.intermidiate_routing_no ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Intermidiate Currency
           </h1>
-          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
+          <Input placeholder="" name="intermidiate_currency" value={formData?.intermidiate_currency ?? OnboardingDetail?.intermidiate_currency ?? ""} onChange={(e)=>{handleFieldChange(e)}}/>
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Bank Proof (Upload Passbook Leaf/Cancelled Cheque)
           </h1>
           <div className="flex gap-4">
-          <Input placeholder=""  type="file" onChange={(e)=>{setBankProofFile(e.target.files)}} />
+          <Input placeholder=""  type="file" onChange={(e)=>{setBankProofIntermediateFile(e.target.files)}} />
           {/* file preview */}
-          {isBankFilePreview &&
-              !bankProofFile &&
-              OnboardingDetail?.bank_proof?.url && (
+          {isBankFileIntermediatePreview &&
+              !bankProofBeneficiaryFile &&
+              OnboardingDetail?.bank_proof_for_intermediate_bank?.url && (
                 <div className="flex gap-2">
                   <Link
                   target="blank"
-                  href={OnboardingDetail?.bank_proof?.url}
+                  href={OnboardingDetail?.bank_proof_for_intermediate_bank?.url}
                   className="underline text-blue-300 max-w-44 truncate"
                   >
-                    <span>{OnboardingDetail?.bank_proof?.file_name}</span>
+                    <span>{OnboardingDetail?.bank_proof_for_intermediate_bank?.file_name}</span>
                   </Link>
                   <X
                     className="cursor-pointer"
                     onClick={() => {
-                      setIsBankFilePreview((prev) => !prev);
+                      setIsBankFileIntermediatePreview((prev) => !prev);
                     }}
                     />
                 </div>

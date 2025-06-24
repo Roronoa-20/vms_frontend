@@ -300,7 +300,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                   <TableHead className="text-center">Order Currency</TableHead>
                   <TableHead className="text-center">Inco Terms</TableHead>
                   <TableHead className="text-center">Reconciliation Account</TableHead>
-                  <TableHead className="text-center">Action</TableHead>
+                  {/* <TableHead className="text-center">Action</TableHead> */}
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
@@ -315,10 +315,10 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                     <TableCell>{item?.order_currency}</TableCell>
                     <TableCell>{item?.inco_terms}</TableCell>
                     <TableCell>{item?.reconcilition_account}</TableCell>
-                    <TableCell><div className='flex gap-4 justify-center items-center'>
+                    {/* <TableCell><div className='flex gap-4 justify-center items-center'>
                         <EyeIcon className='cursor-pointer'/>
                         </div>
-                        </TableCell>
+                        </TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>

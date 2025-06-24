@@ -95,7 +95,6 @@ const DashboardTotalVendorsTable = ({ dashboardTableData,companyDropdown }: Prop
     setIsVendorCodeDialog((prev)=>!prev);
   }
 
-  
   return (
     <>
     <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">

@@ -35,3 +35,18 @@ export const OnboardingTabs = [
   "Reputed Partners",
   "Certificate"
 ];
+
+
+export const QMSFormTabs = [
+  "Vendor Information",
+  "QAS",
+  "Organizational",
+  "Building",
+  "Material",
+  "Quality",
+  "Production",
+  "Complaint",
+  "Supplement",
+  "Quality Agreement",
+  "Conclusion"
+];

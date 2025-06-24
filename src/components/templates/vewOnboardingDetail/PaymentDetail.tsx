@@ -47,7 +47,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
   useEffect(()=>{
     const fetchBank = async ()=>{
 
-      const bankNameDropdownUrl = `${API_END_POINTS?.bankNameDropdown}?company_name=${company_name}`;
+      const bankNameDropdownUrl = `${API_END_POINTS?.bankNameDropdown}?country=${OnboardingDetail?.address?.country}`;
       const bankNameResponse:AxiosResponse = await requestWrapper({url:bankNameDropdownUrl,method:"GET"});
       if(bankNameResponse?.status == 200){
         setBankNameDropown(bankNameResponse?.data?.message?.data)
@@ -91,7 +91,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Bank Name
           </h1>
-          <Select value={paymentDetail?.bank_name ?? OnboardingDetail?.bank_name ?? ""} onValueChange={(value)=>{updatePaymentDetail("bank_name",value)}}>
+          <Select disabled value={paymentDetail?.bank_name ?? OnboardingDetail?.bank_name ?? ""} onValueChange={(value)=>{updatePaymentDetail("bank_name",value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -110,26 +110,26 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             IFSC Code
           </h1>
-          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
+          <Input disabled placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Account Number
           </h1>
-          <Input placeholder="" value={paymentDetail?.account_number ?? OnboardingDetail?.account_number ?? ""} onChange={(e)=>{updatePaymentDetail("account_number",e.target.value)}}/>
+          <Input disabled placeholder="" value={paymentDetail?.account_number ?? OnboardingDetail?.account_number ?? ""} onChange={(e)=>{updatePaymentDetail("account_number",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Name of Account Holder
           </h1>
-          <Input placeholder="" value={paymentDetail?.name_of_account_holder ?? OnboardingDetail?.name_of_account_holder ?? ""} onChange={(e)=>{updatePaymentDetail("name_of_account_holder",e.target.value)}}/>
+          <Input disabled placeholder="" value={paymentDetail?.name_of_account_holder ?? OnboardingDetail?.name_of_account_holder ?? ""} onChange={(e)=>{updatePaymentDetail("name_of_account_holder",e.target.value)}}/>
         </div>
 
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Type of Account
           </h1>
-          <Select value={paymentDetail?.type_of_account ?? OnboardingDetail?.type_of_account ?? ""} onValueChange={(value)=>{updatePaymentDetail("type_of_account",value)}}>
+          <Select disabled value={paymentDetail?.type_of_account ?? OnboardingDetail?.type_of_account ?? ""} onValueChange={(value)=>{updatePaymentDetail("type_of_account",value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -145,7 +145,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Currency
           </h1>
-          <Select value={paymentDetail?.currency ?? OnboardingDetail?.currency ?? ""} onValueChange={(value)=>{updatePaymentDetail("currency",value)}}>
+          <Select disabled value={paymentDetail?.currency ?? OnboardingDetail?.currency ?? ""} onValueChange={(value)=>{updatePaymentDetail("currency",value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -165,7 +165,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
             Bank Proof (Upload Passbook Leaf/Cancelled Cheque)
           </h1>
           <div className="flex gap-4">
-          <Input placeholder=""  type="file" onChange={(e)=>{setBankProofFile(e.target.files)}} />
+          {/* <Input placeholder=""  type="file" onChange={(e)=>{setBankProofFile(e.target.files)}} /> */}
           {/* file preview */}
           {isBankFilePreview &&
               !bankProofFile &&
@@ -173,22 +173,22 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
                 <div className="flex gap-2">
                   <Link
                   target="blank"
-                  href={OnboardingDetail?.bank_proof?.url}
+                  href={process.env.NEXT_PUBLIC_BACKEND_END +OnboardingDetail?.bank_proof?.url}
                   className="underline text-blue-300 max-w-44 truncate"
                   >
                     <span>{OnboardingDetail?.bank_proof?.file_name}</span>
                   </Link>
-                  <X
+                  {/* <X
                     className="cursor-pointer"
                     onClick={() => {
                       setIsBankFilePreview((prev) => !prev);
                     }}
-                    />
+                    /> */}
                 </div>
               )}
               </div>
         </div>
-        <div className="flex flex-col">
+        <div className={` hidden`}>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Preferred Transaction:
           </h1>
@@ -221,7 +221,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
                 <div className="flex gap-2">
                   <Link
                   target="blank"
-                  href={OnboardingDetail?.bank_proof_by_purchase_team?.url}
+                  href={process.env.NEXT_PUBLIC_BACKEND_END + OnboardingDetail?.bank_proof_by_purchase_team?.url}
                   className="underline text-blue-300 max-w-44 truncate"
                   >
                     <span>{OnboardingDetail?.bank_proof_by_purchase_team?.file_name}</span>
@@ -237,7 +237,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
               </div>
         </div>
       </div>
-      <div className={`flex justify-end pr-4 ${designation?"hidden":""} `}><Button className="bg-blue-400 hover:to-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
+      {/* <div className={`flex justify-end pr-4 ${designation?"hidden":""} `}><Button className="bg-blue-400 hover:to-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div> */}
     </div>
   );
 };

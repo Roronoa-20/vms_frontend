@@ -86,7 +86,7 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               </TableBody>
             </Table>
           </div>
-      <div className={`flex justify-end pr-4 ${designation?"hidden":""}`} onClick={()=>{handleSubmit()}}><Button>Next</Button></div>
+      {/* <div className={`flex justify-end pr-4 ${designation?"hidden":""}`} onClick={()=>{handleSubmit()}}><Button>Next</Button></div> */}
     </div>
   );
 };

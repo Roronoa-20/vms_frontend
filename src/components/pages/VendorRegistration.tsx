@@ -73,6 +73,8 @@ const [tableData,setTableData] = useState<TtableData[]>([]);
         terms_of_payment:tableData?.[0]?.terms_of_payment,
         purchase_group:tableData?.[0]?.purchase_group,
         order_currency:tableData?.[0]?.order_currency,
+        reconciliation_account:tableData?.[0]?.reconcilition_account,
+        incoterms:tableData?.[0]?.inco_terms,
         for_multiple_company:0
        }
     }

@@ -449,8 +449,17 @@ export type TCompanyDetailForm = {
       purchasing_details:TPurchaseDetails[]
       multi_company_data:{company:string}[]
       is_multi_company:boolean
+      validation_check:IvalidationChecks
     };
   };
+
+  interface IvalidationChecks  {
+    accounts_team_undertaking: number;
+  form_fully_submitted_by_vendor: number;
+  mandatory_data_filled: number;
+  purchase_head_undertaking: number;
+  purchase_team_undertaking: number;
+}
 
   type CompanyAddressDetails = {
     same_as_above: number;
@@ -681,6 +690,29 @@ export type TCompanyDetailForm = {
     ift:number;
     bank_proof: FileAttachment;
     bank_proof_by_purchase_team:FileAttachment
+    beneficiary_name:string,
+  beneficiary_bank_name:string,
+  beneficiary_account_no:string,
+  beneficiary_iban_no:string,
+  beneficiary_address:string,
+  beneficiary_bank_swift_code:string,
+  beneficiary_aba_no:string,
+  beneficiary_ach_no:string,
+  beneficiary_routing_no:string,
+  beneficiary_currency:string,
+  intermidiate_name:string,
+  intermidiate_bank_name:string,
+  intermidiate_account_no:string,
+  intermidiate_iban_no:string,
+  intermidiate_bank_address:string,
+  intermidiate_bank_swift_code:string,
+  intermidiate_aba_no:string,
+  intermidiate_ach_no:string,
+  intermidiate_routing_no:string,
+  intermidiate_currency:string
+  bank_proof_for_beneficiary_bank:FileAttachment,
+  bank_proof_for_intermediate_bank:FileAttachment
+  address:{country:string}
   };
   
   type ContactDetails = {

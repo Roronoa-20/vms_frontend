@@ -86,7 +86,7 @@ const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               </TableBody>
             </Table>
           </div>
-          <div className={`flex justify-end pr-4 ${designation?"hidden":""}`}><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
+          {/* <div className={`flex justify-end pr-4 ${designation?"hidden":""}`}><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div> */}
     </div>
   );
 };
