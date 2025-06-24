@@ -86,7 +86,7 @@ const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,reconciliati
           Reconciliation Account
         </h1>
         {/* <Input placeholder="" disabled defaultValue={OnboardingDetail?.reconciliation_account}/> */}
-        <Select value={OnboardingDetail?.reconciliation_account ?? ""} onValueChange={(value)=>{setReconciliationAccountt(value)}}>
+        <Select value={ reconciliationAccount ?? OnboardingDetail?.reconciliation_account ?? ""} onValueChange={(value)=>{setReconciliationAccountt(value)}}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>

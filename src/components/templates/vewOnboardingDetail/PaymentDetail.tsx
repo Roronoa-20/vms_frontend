@@ -173,7 +173,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
                 <div className="flex gap-2">
                   <Link
                   target="blank"
-                  href={OnboardingDetail?.bank_proof?.url}
+                  href={process.env.NEXT_PUBLIC_BACKEND_END +OnboardingDetail?.bank_proof?.url}
                   className="underline text-blue-300 max-w-44 truncate"
                   >
                     <span>{OnboardingDetail?.bank_proof?.file_name}</span>
@@ -188,7 +188,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
               )}
               </div>
         </div>
-        <div className="flex flex-col">
+        <div className={` hidden`}>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Preferred Transaction:
           </h1>
@@ -221,7 +221,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
                 <div className="flex gap-2">
                   <Link
                   target="blank"
-                  href={OnboardingDetail?.bank_proof_by_purchase_team?.url}
+                  href={process.env.NEXT_PUBLIC_BACKEND_END + OnboardingDetail?.bank_proof_by_purchase_team?.url}
                   className="underline text-blue-300 max-w-44 truncate"
                   >
                     <span>{OnboardingDetail?.bank_proof_by_purchase_team?.file_name}</span>

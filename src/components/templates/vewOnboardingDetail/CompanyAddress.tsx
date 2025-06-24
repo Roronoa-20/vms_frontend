@@ -614,14 +614,14 @@ const CompanyAddress = ({
       {
        isFilePreview && !file && OnboardingDetail?.address_proofattachment?.url &&
         <div className="flex gap-2">
-      <Link target="blank" href={OnboardingDetail?.address_proofattachment?.url} className="underline text-blue-300 max-w-44 truncate">
+      <Link target="blank" href={process.env.NEXT_PUBLIC_BACKEND_END + OnboardingDetail?.address_proofattachment?.url} className="underline text-blue-300 max-w-44 truncate">
       <span>{OnboardingDetail?.address_proofattachment?.file_name}</span>
       </Link>
       <X className="cursor-pointer" onClick={()=>{setIsFilePreview((prev)=>!prev)}}/>
       </div>
       }
       </div>
-      <div className={`flex justify-end gap-4 ${designation?"hidden":""}`}>
+      {/* <div className={`flex justify-end gap-4 ${designation?"hidden":""}`}>
         <Button
         className={`bg-blue-400 hover:bg-blue-400`}
           onClick={() => {
@@ -630,7 +630,7 @@ const CompanyAddress = ({
         >
           Next
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 };

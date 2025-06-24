@@ -208,9 +208,9 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
           <Input placeholder="" defaultValue={OnboardingDetail?.vendor_types?.map((item)=>(item))} disabled={true} />
         </div>
       </div>
-      <div className="flex justify-end pr-6">
+      {/* <div className="flex justify-end pr-6">
       <Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`}>Next</Button>
-      </div>
+      </div> */}
       </form>
     </div>
   );
