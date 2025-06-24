@@ -46,6 +46,8 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
   const vendorOnboardingRefno = vendor_onboarding;
   const tabType = tabtype;
 
+  console.log(tabType,"this is tabtype");
+
   const companyDetailDropdownUrl = API_END_POINTS?.companyDetailDropdown;
   const companyDetailresponse: AxiosResponse = await requestWrapper({
     url: `${companyDetailDropdownUrl}`,

@@ -51,7 +51,9 @@ const PrInquiryPage = async({refno}:Props) => {
   const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
 
     const categoryDropdownUrl = API_END_POINTS?.getInquiryDropdown;
-    const dropdownResponse:AxiosResponse = await requestWrapper({url:categoryDropdownUrl,method:"GET"});
+    const dropdownResponse:AxiosResponse = await requestWrapper({url:categoryDropdownUrl,method:"GET",headers:{
+        cookie:cookieHeaderString
+    }});
     const dropdown:purchaseInquiryDropdown["message"] = dropdownResponse?.status == 200? dropdownResponse?.data?.message : ""
   
 let PRInquiryData: TPRInquiry | null   = null;
