@@ -19,6 +19,7 @@ import { CrossIcon, Trash, Trash2 } from "lucide-react";
 import { it } from "node:test";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface Props {
   certificateCodeDropdown:TcertificateCodeDropdown["message"]["data"]["certificate_names"];
@@ -125,7 +126,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
                         <TableHead className="text-center">Company Code</TableHead>
                         <TableHead className="text-center">Valid Till</TableHead>
                         <TableHead className="text-center">File</TableHead>
-                        <TableHead className="text-center">Action</TableHead>
+                        {/* <TableHead className="text-center">Action</TableHead> */}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -135,7 +136,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
                           <TableCell className="font-medium text-center">{index +1}</TableCell>
                           <TableCell className="text-center">{item?.certificate_code}</TableCell>
                           <TableCell className="text-center">{item?.valid_till}</TableCell>
-                          <TableCell className="text-center">{item?.fileDetail?.file_name}</TableCell>
+                          <TableCell className="text-center"><Link href={ process.env.NEXT_PUBLIC_BACKEND_END + item?.fileDetail?.url}>{item?.fileDetail?.file_name}</Link></TableCell>
                           <TableCell className="flex justify-center items-center text-center"><CrossIcon onClick={()=>{deleteRow(item?.name?item?.name:"")}} className="rotate-45 text-red-400 cursor-pointer"/></TableCell>
                         </TableRow>
                       )):
@@ -145,17 +146,17 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
                           <TableCell className="font-medium text-center">{index}</TableCell>
                           <TableCell className="text-center">{item?.certificate_code}</TableCell>
                           <TableCell className="text-center">{item?.valid_till}</TableCell>
-                          <TableCell className="text-center">{item?.certificate_attach?.file_name}</TableCell>
-                          <TableCell className="flex justify-center items-center text-center"><Trash2 onClick={()=>{deleteRow(item?.name?item?.name:"")}} className=" text-red-400 cursor-pointer"/></TableCell>
+                          <TableCell className="text-center"><Link href={process.env.NEXT_PUBLIC_BACKEND_END + item?.certificate_attach?.url}>{item?.certificate_attach?.file_name}</Link></TableCell>
+                          {/* <TableCell className="flex justify-center items-center text-center"><Trash2 onClick={()=>{deleteRow(item?.name?item?.name:"")}} className=" text-red-400 cursor-pointer"/></TableCell> */}
                         </TableRow>
                       ))
                     }
                     </TableBody>
                   </Table>
                 </div>
-      <div className="flex justify-end pr-4">
+      {/* <div className="flex justify-end pr-4">
         <Button className={`bg-blue-400 hover:bg-blue-400 ${designation ? 'hidden' : ''}`} onClick={()=>{handleSubmit()}}>Submit</Button>
-        </div>
+        </div> */}
     </div>
   );
 };

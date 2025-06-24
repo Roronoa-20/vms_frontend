@@ -88,7 +88,7 @@ const handleAdd = ()=>{
               </TableBody>
             </Table>
           </div>
-          <div className={`flex justify-end pr-4 ${designation?"hidden":""}`}><Button onClick={()=>{handleSubmit()}}>Next</Button></div>
+          {/* <div className={`flex justify-end pr-4 ${designation?"hidden":""}`}><Button onClick={()=>{handleSubmit()}}>Next</Button></div> */}
     </div>
   );
 };

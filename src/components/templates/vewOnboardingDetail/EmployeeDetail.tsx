@@ -95,7 +95,7 @@ const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               </TableBody>
             </Table>
           </div>
-      <div className={`flex justify-end pr-6 ${designation?"hidden":""}`}><Button className="hover:bg-blue-400 bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
+      {/* <div className={`flex justify-end pr-6 ${designation?"hidden":""}`}><Button className="hover:bg-blue-400 bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div> */}
     </div>
   );
 };

@@ -275,6 +275,7 @@ const CompanyAddress = ({
             Address 1
           </h1>
           <Input
+          disabled
             placeholder=""
             onChange={(e) => {
               updatebillingAddress("address_line_1", e.target.value);
@@ -287,6 +288,7 @@ const CompanyAddress = ({
             Address 2
           </h1>
           <Input
+          disabled
             placeholder=""
             onChange={(e) => {
               updatebillingAddress("address_line_2", e.target.value);
@@ -300,6 +302,7 @@ const CompanyAddress = ({
             Pincode/Zipcode
           </h1>
           <Input
+          disabled
             placeholder=""
             onChange={(e) => {
               handlePincodeChange(e.target.value);
@@ -313,6 +316,7 @@ const CompanyAddress = ({
             District
           </h1>
           <Input
+          disabled
             placeholder=""
             value={billingAddress?.district?.district_name ?? OnboardingDetail?.billing_address?.district_details?.district_name ?? ""}
             // defaultValue={}
@@ -325,6 +329,7 @@ const CompanyAddress = ({
               City
             </h1>
             <Input
+            disabled
               placeholder=""
               value={billingAddress?.city?.city_name?? OnboardingDetail?.billing_address?.city_details?.city_name ?? ""}
               // defaultValue={}
@@ -336,6 +341,7 @@ const CompanyAddress = ({
               State
             </h1>
             <Input
+            disabled
               placeholder=""
               value={billingAddress?.state?.state_name ?? OnboardingDetail?.billing_address?.state_details?.state_name ?? ""}
               // defaultValue={}
@@ -347,6 +353,7 @@ const CompanyAddress = ({
               Country
             </h1>
             <Input
+            disabled
               placeholder=""
               value={billingAddress?.country?.country_name ?? OnboardingDetail?.billing_address?.country_details?.country_name ?? ""}
               
@@ -359,6 +366,7 @@ const CompanyAddress = ({
         <h1 className="pl-2 ">Manufacturing Address</h1>
         <div className="flex items-center gap-1">
           <Input
+          disabled
             type="checkbox"
             className="w-4"
             onChange={(e) => {
@@ -460,6 +468,7 @@ const CompanyAddress = ({
       </div>
       <div className="pl-4 flex gap-4 items-center">
         <Input
+        disabled
           type="checkbox"
           className="w-4"
           onChange={(e) => {
@@ -477,6 +486,7 @@ const CompanyAddress = ({
                 Address 1
               </h1>
               <Input
+              disabled
                 onChange={(e) => {
                   setMultipleAddress((prev) => ({
                     ...prev,
@@ -491,6 +501,7 @@ const CompanyAddress = ({
                 Address 2
               </h1>
               <Input
+              disabled
                 onChange={(e) => {
                   setMultipleAddress((prev) => ({
                     ...prev,
@@ -505,6 +516,7 @@ const CompanyAddress = ({
                 Pincode/Zipcode
               </h1>
               <Input
+              disabled
                 onChange={(e) => {
                   handleMultiplePincodeChange(e.target.value);
                 }}
@@ -516,6 +528,7 @@ const CompanyAddress = ({
                 District
               </h1>
               <Input
+              disabled
                 value={MultipleAddress?.district?.district_name ?? ""}
                 readOnly
               />
@@ -526,6 +539,7 @@ const CompanyAddress = ({
                   City
                 </h1>
                 <Input
+                disabled
                   value={MultipleAddress?.city?.city_name ?? ""}
                   readOnly
                 />
@@ -535,6 +549,7 @@ const CompanyAddress = ({
                   State
                 </h1>
                 <Input
+                disabled
                   value={MultipleAddress?.state?.state_name ?? ""}
                   readOnly
                 />
@@ -544,6 +559,7 @@ const CompanyAddress = ({
                   Country
                 </h1>
                 <Input
+                disabled
                   value={MultipleAddress?.country?.country_name ?? ""}
                   readOnly
                 />
@@ -609,19 +625,19 @@ const CompanyAddress = ({
         <h1 className="text-[12px] font-normal text-[#626973]">
           Upload Address Proof (Light Bill, Telephone Bill, etc.)
         </h1>
-        <Input type="file" className="w-fit" onChange={(e)=>{setFile(e.target.files)}} />
+        {/* <Input type="file" className="w-fit" onChange={(e)=>{setFile(e.target.files)}} /> */}
       {/* file preview */}
       {
        isFilePreview && !file && OnboardingDetail?.address_proofattachment?.url &&
         <div className="flex gap-2">
-      <Link target="blank" href={OnboardingDetail?.address_proofattachment?.url} className="underline text-blue-300 max-w-44 truncate">
+      <Link target="blank" href={process.env.NEXT_PUBLIC_BACKEND_END + OnboardingDetail?.address_proofattachment?.url} className="underline text-blue-300 max-w-44 truncate">
       <span>{OnboardingDetail?.address_proofattachment?.file_name}</span>
       </Link>
-      <X className="cursor-pointer" onClick={()=>{setIsFilePreview((prev)=>!prev)}}/>
+      {/* <X className="cursor-pointer" onClick={()=>{setIsFilePreview((prev)=>!prev)}}/> */}
       </div>
       }
       </div>
-      <div className={`flex justify-end gap-4 ${designation?"hidden":""}`}>
+      {/* <div className={`flex justify-end gap-4 ${designation?"hidden":""}`}>
         <Button
         className={`bg-blue-400 hover:bg-blue-400`}
           onClick={() => {
@@ -630,7 +646,7 @@ const CompanyAddress = ({
         >
           Next
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 };
