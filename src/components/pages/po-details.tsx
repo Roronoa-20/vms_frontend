@@ -7,7 +7,7 @@ import { DashboardPOTableData, PurchaseOrderResponse, dashboardCardData } from "
 import { cookies } from "next/headers";
 import PoDetailsPage from "./po-details-page";
 type Props = {
-    name:string;
+    name:string | undefined;
 }
 const PODetails = async ({name}:Props) => {
     console.log(name,"name-------------------------")

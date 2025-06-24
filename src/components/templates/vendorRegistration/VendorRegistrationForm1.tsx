@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "../../atoms/select";
 import MultiSelect from 'react-select'
-import { TvendorRegistrationDropdown } from "@/src/types/types";
+import { TvendorRegistrationDropdown, VendorRegistrationData } from "@/src/types/types";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useVendorStore } from '../../../store/VendorRegistrationStore';
@@ -19,19 +19,29 @@ interface Props {
   vendorTypeDropdown:TvendorRegistrationDropdown["message"]["data"]["vendor_type"]
   vendorTitleDropdown:TvendorRegistrationDropdown["message"]["data"]["vendor_title"]
   countryDropdown:TvendorRegistrationDropdown["message"]["data"]["country_master"]
+  formData:Partial<VendorRegistrationData>
+  handlefieldChange:(e:React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>)=>void
+      handleSelectChange:(value:any,name:string)=>void
+      setMultiVendor:(data:any)=>void;
+
 }
 
 import { MultiValue } from 'react-select';
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import { AxiosResponse } from "axios";
+import requestWrapper from "@/src/services/apiCall";
 
 type OptionType = {
   value: string;
   label: string;
 };
 
-const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDropdown}:Props) => {
-  const { data, updateField,updateVendorTypes, resetForm } = useVendorStore();
+const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDropdown,formData,handlefieldChange,handleSelectChange,setMultiVendor}:Props) => {
+  // const { data, updateField,updateVendorTypes, resetForm } = useVendorStore();
   const [isQa,setIsQa] = useState<boolean>(false);
   const [newVendorTypeDropdown,setNewVendorTypeDropdown] = useState<MultiValue<OptionType>>([]);
+  const [countryMobileCode,setCountryMobileCode] = useState<string>("");
   useEffect(()=>{
     const newVendorType = vendorTypeDropdown?.map((item,index)=>{
       return (
@@ -58,7 +68,9 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
         )
       })
     )
-    updateVendorTypes(newArray2)
+    // updateVendorTypes(newArray2)
+    handleSelectChange(newArray2,"vendor_types");
+    setMultiVendor(newArray)
     if(newArray?.includes("Material Vendor")){
       setIsQa(true);
     }else{
@@ -66,7 +78,13 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
     }
   }
 
-  console.log(data,"htis is data")
+  const fetchCountryCode = async(value:string)=>{
+    const url = API_END_POINTS?.mobileCodeBasedOnCountry;
+    const countryCodeApi:AxiosResponse = await requestWrapper({url:url,data:{data:{country:value}},method:"POST"});
+    if(countryCodeApi?.status == 200){
+      setCountryMobileCode(countryCodeApi?.data?.message);
+    }
+  }
 
   return (
     <div>
@@ -78,7 +96,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Vendor Type
           </h1>
-          <MultiSelect onChange={(value)=>{handleVendorTypeChange(value)}} instanceId="multiselect" options={newVendorTypeDropdown} isMulti/>
+          <MultiSelect onChange={(value)=>{handleVendorTypeChange(value)}} instanceId="multiselect" options={newVendorTypeDropdown} isMulti required={true}/>
         </div>
         {
               isQa &&
@@ -86,7 +104,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           QA Required
           </h1>
-          <Select onValueChange={(value)=>{updateField('qa_required', value)}} value={data?.qa_required}>
+          <Select onValueChange={(value)=>{handleSelectChange(value,'qa_required')}} value={formData?.qa_required ?? ""}>
             <SelectTrigger>
               <SelectValue placeholder="Select Country" />
             </SelectTrigger>
@@ -105,7 +123,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Vendor Title
               </h1>
-              <Select onValueChange={(value)=>{updateField('vendor_title', value)}} value={data?.vendor_title}>
+              <Select onValueChange={(value)=>{handleSelectChange(value,'vendor_title')}} value={formData?.vendor_title ?? ""}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
@@ -126,19 +144,19 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Vendor Name
               </h1>
-              <Input className="col-span-2" placeholder="Enter Vendor Name"  onChange={(e) => updateField('vendor_name', e.target.value)}/>
+              <Input className="col-span-2" required placeholder="Enter Vendor Name" name="vendor_name" value={formData?.vendor_name ?? ""}  onChange={(e) => handlefieldChange(e)}/>
             </div>
           </div>
         </div>
         <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">Email</h1>
-          <Input onChange={(e)=>{updateField("office_email_primary",e.target.value)}} placeholder="Enter Email Address" />
+          <Input required onChange={(e)=>{handlefieldChange(e)}} value={formData?.office_email_primary ?? ""} name="office_email_primary" placeholder="Enter Email Address" />
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Country
           </h1>
-          <Select onValueChange={(value)=>updateField('country', value)}>
+          <Select required value={formData?.country ?? ""} onValueChange={(value)=>{handleSelectChange(value,'country'),fetchCountryCode(value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Country" />
             </SelectTrigger>
@@ -161,11 +179,11 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Mobile No.
               </h1>
-              <Input placeholder="+91" />
+              <Input placeholder="+91" value={countryMobileCode ?? ""} disabled/>
             </div>
             <div className="col-span-3 flex flex-col justify-end">
               {/* <h1 className="text-[12px] font-normal text-[#626973] pb-3">Mobile No.</h1> */}
-              <Input placeholder="Enter Mobile Number"  onChange={(e) => updateField('mobile_number', e.target.value)}/>
+              <Input placeholder="Enter Mobile Number" name="mobile_number" required value={formData?.mobile_number ?? ""}  onChange={(e) => handlefieldChange(e)}/>
             </div>
           </div>
         </div>
@@ -173,7 +191,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Search Terms
           </h1>
-          <Input placeholder="Enter Search Terms"  onChange={(e) => updateField('search_term', e.target.value)}/>
+          <Input placeholder="Enter Search Terms" name="search_term" value={formData?.search_term ?? ""}  required onChange={(e) => handlefieldChange(e)}/>
         </div>
       </div>
     </div>

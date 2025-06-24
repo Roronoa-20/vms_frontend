@@ -18,14 +18,14 @@ import {
 } from "@/src/components/atoms/select";
 import { tableData } from "@/src/constants/dashboardTableData";
 import { Input } from "../atoms/input";
-import { DashboardTableType } from "@/src/types/types";
+import { DashboardPOTableData, DashboardTableType } from "@/src/types/types";
 import Link from "next/link";
 type Props = {
-  dashboardTableData: DashboardTableType
+  dashboardTableData?: any
 }
 
 const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
-  console.log(dashboardTableData.pending_vendor_onboarding,"dashboardTableData-dispatch  ---------")
+  console.log(dashboardTableData?.pending_vendor_onboarding,"dashboardTableData-dispatch  ---------")
   return (
 
     <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
@@ -83,7 +83,7 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
         </TableHeader>
         <TableBody className="text-center">
           {dashboardTableData.dispatch_vendor_onboarding && dashboardTableData.dispatch_vendor_onboarding.length > 0 ? (
-            dashboardTableData.pending_vendor_onboarding.map((item, index) => (
+            dashboardTableData.pending_vendor_onboarding.map((item:any, index:number) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{index + 1}.</TableCell>
                 <TableCell>{item?.name}</TableCell>

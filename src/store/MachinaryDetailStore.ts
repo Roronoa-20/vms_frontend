@@ -9,7 +9,8 @@ export type TMachineDetail = {
 
 type MachineDetailStore = {
     machineDetail:Partial<TMachineDetail>[],
-    updateMachineDetail:(data:any)=>void
+    updateMachineDetail:(data:any)=>void,
+    resetMachineDetail:()=>void
 }
 
 
@@ -17,5 +18,6 @@ export const useMachineDetailStore = create<MachineDetailStore>((set)=>({
     machineDetail:[],
     updateMachineDetail:(data)=>set((state)=>({
         machineDetail:[...state?.machineDetail,data]
-    }))
+    })),
+    resetMachineDetail:()=>set({machineDetail:[]})
 }))

@@ -8,6 +8,8 @@ import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
 import { VendorOnboardingResponse } from "@/src/types/types";
+import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 type Props = {
   ref_no:string,
@@ -16,23 +18,22 @@ type Props = {
 }
 
 const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
-  const {employeeDetail,updateEmployeeDetail} = useEmployeeDetailStore()
-  console.log(OnboardingDetail,"kjsfdfksbdk")
+  const {employeeDetail,updateEmployeeDetail,resetEmployeeDetail} = useEmployeeDetailStore()
+  const [addEmployeeDetail,setEmployeeDetail] = useState<TEmployeeDetail | null>();
   useEffect(()=>{
+    resetEmployeeDetail();
     OnboardingDetail?.map((item)=>{
       updateEmployeeDetail(item)
     })
   },[])
 
-  const [addEmployeeDetail,setEmployeeDetail] = useState<TEmployeeDetail | null>();
+  const router = useRouter()
 
   const handleSubmit = async()=>{
     const employeeSubmitUrl = API_END_POINTS?.employeeDetailSubmit;
     const updatedData = {data:{number_of_employee:[...employeeDetail],ref_no:ref_no,vendor_onboarding:onboarding_ref_no}}
     const employeeDetailResponse:AxiosResponse = await requestWrapper({url:employeeSubmitUrl,data:updatedData,method:"POST"});
-    if(employeeDetailResponse?.status == 200){
-      console.log("submitted successfully")
-    }
+    if(employeeDetailResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Machinery%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   }
 
   const handleAdd = ()=>{
@@ -89,11 +90,11 @@ const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
           <Input placeholder="" value={addEmployeeDetail?.other ?? ""} onChange={(e)=>{setEmployeeDetail((prev:any)=>({...prev,other:e.target.value}))}} />
         </div>
       </div>
-      <div className="flex justify-end pr-6 pb-4"><Button onClick={()=>{handleAdd()}} className="bg-blue-400 hover:bg-blue-400">Add</Button></div>
+      <div className={`flex justify-end pr-6 pb-4`}><Button onClick={()=>{handleAdd()}} className="bg-blue-400 hover:bg-blue-400">Add</Button></div>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
             <div className="flex w-full justify-between pb-4">
               <h1 className="text-[20px] text-[#03111F] font-semibold">
-                Multiple Contact
+                Multiple Employees
               </h1>
             </div>
             <Table className=" max-h-40 overflow-y-scroll">
@@ -101,19 +102,19 @@ const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                   <TableHead className="w-[100px]">Sr No.</TableHead>
-                  <TableHead className="text-center">Address1</TableHead>
-                  <TableHead className="text-center">Address2</TableHead>
-                  <TableHead className="text-center">Pincode</TableHead>
-                  <TableHead className="text-center">District</TableHead>
-                  <TableHead className="text-center">District</TableHead>
-                  <TableHead className="text-center">District</TableHead>
-                  <TableHead className="text-center">District</TableHead>
+                  <TableHead className="text-center">Employees in Production</TableHead>
+                  <TableHead className="text-center">Employees in QA/QC</TableHead>
+                  <TableHead className="text-center">Employees in Logistics</TableHead>
+                  <TableHead className="text-center">Employees in Marketing</TableHead>
+                  <TableHead className="text-center">Employees in R&D</TableHead>
+                  <TableHead className="text-center">Employees in HSE</TableHead>
+                  <TableHead className="text-center">Employees in Other Department</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
                 {employeeDetail?.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">{index}</TableCell>
+                    <TableCell className="font-medium">{index +1}</TableCell>
                     <TableCell>{item?.production}</TableCell>
                     <TableCell>{item?.qaqc}</TableCell>
                     <TableCell>{item?.logistics}</TableCell>
@@ -134,7 +135,7 @@ const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               </TableBody>
             </Table>
           </div>
-      <div className="flex justify-end pr-6"><Button className="hover:bg-blue-400 bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
+      <div className={`flex justify-end pr-6`}><Button className="hover:bg-blue-400 bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };

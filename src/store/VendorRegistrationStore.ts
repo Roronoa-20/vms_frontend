@@ -26,7 +26,7 @@ const defaultVendorData: VendorRegistrationData = {
 
 // Define the store type
 type VendorStore = {
-  data: VendorRegistrationData;
+  data: Partial<VendorRegistrationData>;
 
   // Update any single field
   updateField: (field: keyof VendorRegistrationData, value: any) => void;
@@ -43,7 +43,7 @@ type VendorStore = {
 
 // Zustand store (no persistence)
 export const useVendorStore = create<VendorStore>((set) => ({
-  data: defaultVendorData,
+  data: "",
 
   updateField: (field, value) =>
     set((state) => ({
@@ -69,5 +69,5 @@ export const useVendorStore = create<VendorStore>((set) => ({
       },
     })),
 
-  resetForm: () => set({ data: defaultVendorData }),
+  resetForm: () => set({ data: {} }),
 }));

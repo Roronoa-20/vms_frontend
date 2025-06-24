@@ -7,6 +7,8 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { VendorOnboardingResponse } from "@/src/types/types";
+import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 type TReputedPartnerDetails = {
   company_name:string,
@@ -23,19 +25,28 @@ const ReputedPartners = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   const [reputedPartnersDetails,setReputedPartnersDetails] = useState<Partial<TReputedPartnerDetails[]>>([]);
   const [reputedPartners,setReputedPartners] = useState<Partial<TReputedPartnerDetails>>()
 
+  const {designation} = useAuth();
+  
   useEffect(()=>{
+    setReputedPartnersDetails([])
     OnboardingDetail?.map((item)=>{
-      setReputedPartnersDetails([item])
+      setReputedPartnersDetails((prev)=>([...prev,item]))
     })
   },[])
+
+  // if(!designation){
+  //   return(
+  //     <div>Loading...</div>
+  //   )
+  // }
+
+    const router = useRouter();
 
   const handleSubmit = async()=>{
     const url = API_END_POINTS?.reputedDetailSubmit;
     const updateData = {reputed_partners:reputedPartnersDetails}
     const response:AxiosResponse = await requestWrapper({url:url,data:{data:{...updateData,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}},method:"POST"})
-    if(response?.status == 200){
-      console.log("successfully submitted")
-    }
+    if(response?.status == 200) router.push(`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   }
 
 const handleAdd = ()=>{
@@ -43,7 +54,6 @@ const handleAdd = ()=>{
   setReputedPartners({});
 }
 
-console.log(reputedPartnersDetails,"this is reputed partners")
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
@@ -70,7 +80,7 @@ console.log(reputedPartnersDetails,"this is reputed partners")
           <Input placeholder="" value={reputedPartners?.remark ?? ""} onChange={(e)=>{setReputedPartners((prev)=>({...prev,remark:e.target.value}))}}/>
         </div>
         <div className="col-span-1 flex items-end">
-          <Button className="bg-blue-400 hover:bg-blue-300" onClick={()=>{handleAdd()}}>Add</Button>
+          <Button className={`bg-blue-400 hover:bg-blue-300 ${designation?"hidden":""}`} onClick={()=>{handleAdd()}}>Add</Button>
         </div>
       </div>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
@@ -92,7 +102,7 @@ console.log(reputedPartnersDetails,"this is reputed partners")
               <TableBody className="text-center">
                 {reputedPartnersDetails?.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">{index}</TableCell>
+                    <TableCell className="font-medium">{index+1}</TableCell>
                     <TableCell>{item?.company_name}</TableCell>
                     <TableCell>{item?.supplied_qtyyear}</TableCell>
                     <TableCell>{item?.remark}</TableCell>
@@ -101,7 +111,7 @@ console.log(reputedPartnersDetails,"this is reputed partners")
               </TableBody>
             </Table>
           </div>
-          <div className="flex justify-end pr-4"><Button onClick={()=>{handleSubmit()}}>Next</Button></div>
+          <div className={`flex justify-end pr-4 ${designation?"hidden":""}`}><Button onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };

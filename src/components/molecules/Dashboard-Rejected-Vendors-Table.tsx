@@ -22,11 +22,11 @@ import { DashboardTableType } from "@/src/types/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 type Props = {
-  dashboardTableData: DashboardTableType
+  dashboardTableData?: DashboardTableType
+  companyDropdown: {name:string}[]
 }
 
-const DashboardRejectedVendorsTable = ({ dashboardTableData }: Props) => {
-  console.log(dashboardTableData.rejected_vendor_onboarding,"dashboardTableData-rejected  ---------")
+const DashboardRejectedVendorsTable = ({ dashboardTableData,companyDropdown }: Props) => {
   return (
 
     <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
@@ -42,11 +42,11 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData }: Props) => {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup className="w-full">
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
+                {
+                  companyDropdown?.map((item,index)=>(
+                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                  ))
+                }
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -76,19 +76,20 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData }: Props) => {
             <TableHead className="text-center">Company Name</TableHead>
             <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Purchase Team</TableHead>
+            <TableHead className="text-center">Purchase Head</TableHead>
             <TableHead className="text-center">Account Team</TableHead>
             <TableHead className="text-center">View Details</TableHead>
             <TableHead className="text-center">QMS Form</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="text-center">
-          {dashboardTableData.approved_vendor_onboarding && dashboardTableData.approved_vendor_onboarding.length > 0 ? (
+          {dashboardTableData?.approved_vendor_onboarding && dashboardTableData.approved_vendor_onboarding.length > 0 ? (
             dashboardTableData.approved_vendor_onboarding.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{item?.idx}</TableCell>
-                <TableCell>{item?.name}</TableCell>
-                <TableCell>{item?.vendor_name}</TableCell>
-                <TableCell>{item?.company_name}</TableCell>
+                <TableCell className="text-nowrap">{item?.name}</TableCell>
+                <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
+                <TableCell className="text-nowrap">{item?.company}</TableCell>
                 <TableCell>
                   <div
                     className={`px-2 py-3 rounded-xl ${item?.status === "pending"
@@ -104,7 +105,7 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData }: Props) => {
                 <TableCell>{item?.purchase_team}</TableCell>
                 <TableCell>{item?.purchase_head}</TableCell>
                 <TableCell>{item?.accounts_team}</TableCell>
-                <TableCell><Link href={`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.name}`}><Button variant={"outline"}>View</Button></Link></TableCell>
+                <TableCell><Link href={`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
                 <TableCell className="text-right">{item?.qms_form}</TableCell>
               </TableRow>
             ))

@@ -5,11 +5,20 @@ import { TvendorOnboardingDetail } from "@/src/types/types";
 import { AxiosResponse } from "axios";
 import React from "react";
 
-const page = async({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
 
-  const vendor_onboarding = await searchParams["vendor_onboarding"];
-  const tabtype = await searchParams["tabtype"];
-  const refno = await searchParams["refno"]
+interface PageProps {
+  searchParams: Promise<{ 
+    vendor_onboarding?: string | string[];
+    tabtype?: string | string[];
+    refno?: string | string[];
+  }>
+}
+
+const page = async({ searchParams }: PageProps) => {
+  const params = await searchParams;
+  const vendor_onboarding = params["vendor_onboarding"];
+  const tabtype = params["tabtype"];
+  const refno = params["refno"]
   console.log(vendor_onboarding,tabtype)
   return <VendorDetail vendor_onboarding={ vendor_onboarding as string} tabtype={tabtype as string} refno={refno as string}/>;
 };

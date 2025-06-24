@@ -1,41 +1,128 @@
-import React from "react";
+"use client"
+import React, { useState } from "react";
 import VendorRegistration1 from "../templates/vendorRegistration/VendorRegistrationForm1";
 import VendorRegistration2 from "../templates/vendorRegistration/VendorRegistrationForm2";
+import { TvendorRegistrationDropdown, VendorRegistrationData } from "@/src/types/types";
+import { handleSubmit } from "../templates/vendorRegistration/utility";
 import API_END_POINTS from "@/src/services/apiEndPoints";
-import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
-import { TvendorRegistrationDropdown } from "@/src/types/types";
-import { Button } from "../atoms/button";
+import requestWrapper from "@/src/services/apiCall";
 import { useVendorStore } from "@/src/store/VendorRegistrationStore";
+import { useRouter } from "next/navigation";
 
-const VendorRegistration = async () => {
-  const dropdownUrl = API_END_POINTS?.vendorRegistrationDropdown;
-  const dropDownApi: AxiosResponse = await requestWrapper({
-    url: dropdownUrl,
-    method: "GET",
-  });
-  const dropdownData: TvendorRegistrationDropdown["message"]["data"] =
-    dropDownApi?.status == 200 ? dropDownApi?.data?.message?.data : "";
+interface Props {
+  vendorTitleDropdown:TvendorRegistrationDropdown["message"]["data"]["vendor_title"]
+  vendorTypeDropdown:TvendorRegistrationDropdown["message"]["data"]["vendor_type"]
+  countryDropdown:TvendorRegistrationDropdown["message"]["data"]["country_master"]
+  companyDropdown:TvendorRegistrationDropdown["message"]["data"]["company_master"]
+  incoTermsDropdown:TvendorRegistrationDropdown["message"]["data"]["incoterm_master"]
+  currencyDropdown:TvendorRegistrationDropdown["message"]["data"]["currency_master"]
+}
 
-  const vendorTitleDropdown = dropdownData?.vendor_title;
-  const vendorTypeDropdown = dropdownData?.vendor_type;
-  const countryDropdown = dropdownData?.country_master;
-  const companyDropdown = dropdownData?.company_master;
-  const incoTermsDropdown = dropdownData?.incoterm_master;
-  const currencyDropdown = dropdownData?.currency_master;
+export type TtableData = {
+  company_name:string,
+  purchase_organization:string,
+  account_group:string,
+  purchase_group:string,
+  terms_of_payment:string,
+  order_currency:string,
+  inco_terms:string,
+  reconcilition_account:string
+}
+
+const VendorRegistration = ({...Props}:Props) => {
+
+const [formData,setFormData] = useState<Partial<VendorRegistrationData>>({})
+const [multiVendor,setMultiVendor] = useState();
+const [tableData,setTableData] = useState<TtableData[]>([]);
+  const handlefieldChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value } as VendorRegistrationData));
+  };
+  const handleSelectChange = (value: any, name: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value } as VendorRegistrationData));
+  };
+
+
+  const vendorTitleDropdown = Props?.vendorTitleDropdown;
+  const vendorTypeDropdown = Props?.vendorTypeDropdown;
+  const countryDropdown = Props?.countryDropdown;
+  const companyDropdown = Props?.companyDropdown;
+  const incoTermsDropdown = Props?.incoTermsDropdown;
+  const currencyDropdown = Props?.currencyDropdown;
+  // const {data,resetForm} = useVendorStore()
+  const router = useRouter();
+   const handleSubmit = async()=>{
+    const url = API_END_POINTS?.vendorRegistrationSubmit;
+    let updateFormData;
+    if(tableData?.length > 1){
+      updateFormData = {...formData,
+        purchase_details:tableData,
+        inco_terms:tableData?.[0]?.inco_terms,
+        for_multiple_company:1
+      }
+    }else{
+       updateFormData = {...formData,
+        company_name:tableData?.[0]?.company_name,
+        purchase_organization:tableData?.[0]?.purchase_organization,
+        account_group:tableData?.[0]?.account_group,
+        terms_of_payment:tableData?.[0]?.terms_of_payment,
+        purchase_group:tableData?.[0]?.purchase_group,
+        order_currency:tableData?.[0]?.order_currency,
+        for_multiple_company:0
+       }
+    }
+    const response:AxiosResponse = await requestWrapper({
+      url:url,
+      method:"POST",
+      data:{data:updateFormData}
+    });
+  
+    if(response?.status == 500){
+      console.log("error in submitting this form");
+      return;
+    }
+  
+    if(response?.status == 200){
+      // resetForm();
+      console.log("handle submit successfully");
+      alert("Submit Successfully");
+      router.push("/dashboard");
+      return;
+    }
+  }
+
+
 
   return (
     <div className="p-6">
+      {/* <form onSubmit={(e)=>{handleSubmit(e)}}> */}
       <VendorRegistration1
         vendorTitleDropdown={vendorTitleDropdown}
         vendorTypeDropdown={vendorTypeDropdown}
         countryDropdown={countryDropdown}
+        formData={formData}
+        handlefieldChange={handlefieldChange}
+        handleSelectChange={handleSelectChange}
+        setMultiVendor={setMultiVendor}
         />
       <VendorRegistration2 
         companyDropdown = {companyDropdown}
         incoTermsDropdown = {incoTermsDropdown}
         currencyDropdown={currencyDropdown}
-      />
+        formData={formData}
+        handlefieldChange={handlefieldChange}
+        handleSelectChange={handleSelectChange}
+        tableData={tableData}
+        setTableData={setTableData}
+        handleSubmit={handleSubmit}
+        multiVendor={multiVendor}
+        />
+        {/* </form> */}
     </div>
   );
 };

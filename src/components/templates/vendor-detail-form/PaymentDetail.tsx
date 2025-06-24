@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectGroup,
@@ -15,44 +15,84 @@ import { Button } from "../../atoms/button";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
+import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { X } from "lucide-react";
+import { UsePurchaseTeamApprovalStore } from "@/src/store/PurchaseTeamApprovalStore";
 
 interface Props {
   ref_no:string,
   onboarding_ref_no:string,
-  bankNameDropown:TbankNameDropdown["data"];
-  currencyDropown:TCurrencyDropdown["data"]
-  OnboardingDetail:VendorOnboardingResponse["message"]["payment_details_tab"]
+  OnboardingDetail:VendorOnboardingResponse["message"]["payment_details_tab"],
+  company_name?:string
 }
 
 
-const PaymentDetail = ({ref_no,onboarding_ref_no,bankNameDropown,currencyDropown,OnboardingDetail}:Props) => {
+const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:Props) => {
   const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
   const [bankProofFile,setBankProofFile] = useState<FileList | null>(null);
+  const [isBankFilePreview, setIsBankFilePreview] = useState<boolean>(true);
+  const [isPurchaseBankFilePreview, setPurchaseIsBankFilePreview] = useState<boolean>(true);
+  const [bankNameDropown,setBankNameDropown] = useState<TbankNameDropdown["message"]["data"]>([])
+  const [currencyDropdown,setCurrencyDropdown] = useState<TCurrencyDropdown["message"]["data"]>([])
+  const {designation} = useAuth();
+  const {setBankProof,bank_proof} = UsePurchaseTeamApprovalStore();
+  // if(!designation){
+  //   return(
+  //     <div>Loading...</div>
+  //   )
+  // }
+  const router = useRouter()
+  console.log(OnboardingDetail,"this is country");
+  useEffect(()=>{
+    const fetchBank = async ()=>{
+
+      const bankNameDropdownUrl = `${API_END_POINTS?.bankNameDropdown}?company_name=${company_name}`;
+      const bankNameResponse:AxiosResponse = await requestWrapper({url:bankNameDropdownUrl,method:"GET"});
+      if(bankNameResponse?.status == 200){
+        setBankNameDropown(bankNameResponse?.data?.message?.data)
+      }
+    }
+    console.log(OnboardingDetail,"payment details data")
+    const fetchCurrency = async ()=>{
+
+      const currencyUrl = `${API_END_POINTS?.currencyDropdown}`;
+      const currencyResponse:AxiosResponse = await requestWrapper({url:currencyUrl,method:"GET"});
+      if(currencyResponse?.status == 200){
+        setCurrencyDropdown(currencyResponse?.data?.message?.data)
+      }
+    }
+
+    fetchBank();
+    fetchCurrency();
+  },[])
   const handleSubmit = async()=>{
     const submitUrl = API_END_POINTS?.bankSubmit;
     const updatedData = {...paymentDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}
     const formData = new FormData()
     formData.append("data",JSON.stringify(updatedData));
     if(bankProofFile){
-      formData.append("file",bankProofFile[0])
+      formData.append("bank_proof",bankProofFile[0])
     }
     const response:AxiosResponse = await requestWrapper({url:submitUrl,method:"POST",data:formData})
-    if(response?.status == 200){
-      console.log("successfully submitted")
-    }
+    
+      if(response?.status == 200) router.push(`/vendor-details-form?tabtype=Contact%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    
   }
+  console.log(OnboardingDetail?.bank_proof?.file_name,"thiskjdvb")
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
-        Company Address
+        Bank Details
       </h1>
-      <h1 className="pl-2 ">Billing Address</h1>
+      {/* <h1 className="pl-2 ">Billing Address</h1> */}
       <div className="grid grid-cols-3 gap-6 p-5">
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Bank Name
           </h1>
-          <Select value={paymentDetail?.bank_name ?? OnboardingDetail?.bank_name} onValueChange={(value)=>{updatePaymentDetail("bank_name",value)}}>
+          <Select value={paymentDetail?.bank_name ?? OnboardingDetail?.bank_name ?? ""} onValueChange={(value)=>{updatePaymentDetail("bank_name",value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -71,26 +111,26 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,bankNameDropown,currencyDropown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             IFSC Code
           </h1>
-          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
+          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Account Number
           </h1>
-          <Input placeholder="" value={paymentDetail?.account_number ?? OnboardingDetail?.account_number} onChange={(e)=>{updatePaymentDetail("account_number",e.target.value)}}/>
+          <Input placeholder="" value={paymentDetail?.account_number ?? OnboardingDetail?.account_number ?? ""} onChange={(e)=>{updatePaymentDetail("account_number",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Name of Account Holder
           </h1>
-          <Input placeholder="" value={paymentDetail?.name_of_account_holder ?? OnboardingDetail?.name_of_account_holder} onChange={(e)=>{updatePaymentDetail("name_of_account_holder",e.target.value)}}/>
+          <Input placeholder="" value={paymentDetail?.name_of_account_holder ?? OnboardingDetail?.name_of_account_holder ?? ""} onChange={(e)=>{updatePaymentDetail("name_of_account_holder",e.target.value)}}/>
         </div>
 
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Type of Account
           </h1>
-          <Select value={paymentDetail?.type_of_account ?? OnboardingDetail?.type_of_account} onValueChange={(value)=>{updatePaymentDetail("type_of_account",value)}}>
+          <Select value={paymentDetail?.type_of_account ?? OnboardingDetail?.type_of_account ?? ""} onValueChange={(value)=>{updatePaymentDetail("type_of_account",value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -106,14 +146,14 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,bankNameDropown,currencyDropown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Currency
           </h1>
-          <Select value={paymentDetail?.currency ?? OnboardingDetail?.currency} onValueChange={(value)=>{updatePaymentDetail("currency",value)}}>
+          <Select value={paymentDetail?.currency ?? OnboardingDetail?.currency ?? ""} onValueChange={(value)=>{updatePaymentDetail("currency",value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 {
-                  currencyDropown?.map((item,index)=>(
+                  currencyDropdown?.map((item,index)=>(
                     <SelectItem value={item?.name} key={index}>{item?.name}</SelectItem>
                   ))
                 }
@@ -125,9 +165,31 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,bankNameDropown,currencyDropown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Bank Proof (Upload Passbook Leaf/Cancelled Cheque)
           </h1>
+          <div className="flex gap-4">
           <Input placeholder=""  type="file" onChange={(e)=>{setBankProofFile(e.target.files)}} />
+          {/* file preview */}
+          {isBankFilePreview &&
+              !bankProofFile &&
+              OnboardingDetail?.bank_proof?.url && (
+                <div className="flex gap-2">
+                  <Link
+                  target="blank"
+                  href={OnboardingDetail?.bank_proof?.url}
+                  className="underline text-blue-300 max-w-44 truncate"
+                  >
+                    <span>{OnboardingDetail?.bank_proof?.file_name}</span>
+                  </Link>
+                  <X
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setIsBankFilePreview((prev) => !prev);
+                    }}
+                    />
+                </div>
+              )}
+              </div>
         </div>
-        <div className="flex flex-col">
+        {/* <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Preferred Transaction:
           </h1>
@@ -140,10 +202,15 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,bankNameDropown,currencyDropown
               <Input placeholder="" type="checkbox" checked={(paymentDetail?.neft ?? OnboardingDetail?.neft) == 1} className="w-4" onChange={(e)=>{updatePaymentDetail("neft",e.target.checked?1:0)}}/>
               <h1>NEFT</h1>
             </div>
+            <div className="flex items-center gap-3">
+              <Input placeholder="" type="checkbox" checked={(paymentDetail?.ift ?? OnboardingDetail?.ift) == 1} className="w-4" onChange={(e)=>{updatePaymentDetail("ift",e.target.checked?1:0)}}/>
+              <h1>IFT</h1>
+            </div>
           </div>
-        </div>
+        </div> */}
+        <div></div>
       </div>
-      <div className="flex justify-end pr-4"><Button className="bg-blue-400 hover:to-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
+      <div className={`flex justify-end pr-4 ${designation?"hidden":""} `}><Button className="bg-blue-400 hover:to-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };

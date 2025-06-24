@@ -1,57 +1,116 @@
-'use client'
 import React from 'react'
 import OnboardingTab from '../molecules/OnboardingTab'
-import CompanyDetailForm from '../templates/vendor-detail-form/CompanyDetails'
-import CompanyAddress from '../templates/vendor-detail-form/CompanyAddress'
+import CompanyDetailForm from '../templates/vewOnboardingDetail/CompanyDetails'
+import CompanyAddress from '../templates/vewOnboardingDetail/CompanyAddress'
 import DocumentDetails from '../templates/vendor-detail-form/DocumentDetails'
-import PaymentDetail from '../templates/vendor-detail-form/PaymentDetail'
-import ContactDetail from '../templates/vendor-detail-form/ContactDetail'
+import PaymentDetail from '../templates/vewOnboardingDetail/PaymentDetail'
+import ContactDetail from '../templates/vewOnboardingDetail/ContactDetail'
 import ManufacturingDetail from '../templates/vendor-detail-form/ManufacturingDetail'
-import EmployeeDetail from '../templates/vendor-detail-form/EmployeeDetail'
-import MachineryDetail from '../templates/vendor-detail-form/MachineryDetail'
-import TestingFacility from '../templates/vendor-detail-form/TestingFacility'
-import ReputedPartners from '../templates/vendor-detail-form/ReputedPartners'
-import Certificate from '../templates/vendor-detail-form/Certificate'
-import { useSearchParams } from 'next/navigation'
+import EmployeeDetail from '../templates/vewOnboardingDetail/EmployeeDetail'
+import MachineryDetail from '../templates/vewOnboardingDetail/MachineryDetail'
+import TestingFacility from '../templates/vewOnboardingDetail/TestingFacility'
+import ReputedPartners from '../templates/vewOnboardingDetail/ReputedPartners'
+import Certificate from '../templates/vewOnboardingDetail/Certificate'
 import { Button } from '../atoms/button'
+import { cookies } from 'next/headers'
+import API_END_POINTS from '@/src/services/apiEndPoints'
+import { AxiosResponse } from 'axios'
+import requestWrapper from '@/src/services/apiCall'
+import { TbankNameDropdown, TcertificateCodeDropdown, TCompanyAddressDropdown, TcompanyDetailDropdown, TCurrencyDropdown, TdocumentDetailDropdown, TReconsiliationDropdown, TvendorOnboardingDetail, VendorOnboardingResponse } from '@/src/types/types'
+import ApprovalButton from '../molecules/ApprovalButton'
+import PurchaseDetails from '../templates/vewOnboardingDetail/PurchaseDetails'
 
-const ViewOnboardingDetails = () => {
-      const param = useSearchParams();
-      const tabType = param?.get("tabtype");
+interface Props {
+  vendor_onboarding: any;
+  tabtype: string;
+  refno: string;
+}
+
+const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props) => {
+      const cookie = await cookies()
+      const cookieStore = await cookies();
+      const user = cookie.get("user_id")?.value
+      const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
+    
+      const vendorOnboardingRefno = vendor_onboarding;
+      const tabType = tabtype;
+    
+      const companyDetailDropdownUrl = API_END_POINTS?.companyDetailDropdown;
+      const companyDetailresponse: AxiosResponse = await requestWrapper({
+        url: `${companyDetailDropdownUrl}`,
+        method: "GET",
+      });
+      const companyDetailDropdown: TcompanyDetailDropdown["message"]["data"] =
+        companyDetailresponse?.status == 200
+          ? companyDetailresponse?.data?.message?.data
+          : "";
+    
+      const companyAddressDropdownUrl = API_END_POINTS?.companyAddressDropdown;
+      const companyAddressDropdownResponse:AxiosResponse = await requestWrapper({
+        url:`${companyAddressDropdownUrl}`,
+        method:"GET"
+      })
+      const companyAddressDropdown:TCompanyAddressDropdown["message"]["data"] = companyAddressDropdownResponse?.status == 200 ? companyAddressDropdownResponse?.data?.message?.data:"";
+    
+      const certificateUrl = API_END_POINTS?.certifcateCodeDropdown;
+      const certificateResponse:AxiosResponse = await requestWrapper({
+        url:certificateUrl,
+        method:"GET"
+      })
+      const certificateCodeDropdown:TcertificateCodeDropdown["message"]["data"] = certificateResponse?.status == 200?certificateResponse?.data?.message?.data : "";
+    
+      const gst_vendor_type_dropdown_url =API_END_POINTS?.documentDetail_dropdown;
+      const documentDetailDropdownApi:AxiosResponse = await requestWrapper({url:gst_vendor_type_dropdown_url,method:"GET"});
+      const documentDetailDropdown:TdocumentDetailDropdown["message"]["data"] =  documentDetailDropdownApi?.status == 200?documentDetailDropdownApi?.data?.message?.data:"";
+    
+      const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${refno}&vendor_onboarding=${vendorOnboardingRefno}`;
+      const fetchOnboardingDetailResponse:AxiosResponse = await requestWrapper({url:fetchOnboardingDetailUrl,method:"GET"});
+      const OnboardingDetail:VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ?fetchOnboardingDetailResponse?.data?.message : "";
+      
+
+      const reconsiliationUrl = API_END_POINTS?.reconsiliationDropdown;
+      const ReconciliationdropDownApi:AxiosResponse = await requestWrapper({url:reconsiliationUrl,method:"POST",data:{data:{account_group:OnboardingDetail?.purchasing_details?.[0]?.account_group}}});
+      const reconciliationDropdown:TReconsiliationDropdown["message"]["data"] = ReconciliationdropDownApi?.status == 200 ? ReconciliationdropDownApi?.data?.message?.data : ""
+      console.log(reconciliationDropdown,"this is reconciliation")
+      console.log(OnboardingDetail?.purchasing_details?.[0]?.account_group,"this is onboarding details")
   return (
     <div>
-        <OnboardingTab/>
+        <OnboardingTab onboarding_refno={vendorOnboardingRefno} refno={refno} />
         <div className="flex px-10 justify-center gap-5 max-h-[70vh] w-full">
         {/* form */}
         {tabType == "Company Detail" ? (
-          <CompanyDetailForm />
+          <CompanyDetailForm
+            companyDetailDropdown={companyDetailDropdown}
+            onboarding_refno={vendorOnboardingRefno}
+            refno={refno}
+            OnboardingDetail={OnboardingDetail?.company_details_tab}
+          />
         ) : tabType == "Company Address" ? (
-          <CompanyAddress />
+          <CompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
         ) : tabType == "Document Detail" ? (
-          <DocumentDetails />
-        ) : tabType?.includes("Payment Detail") ? (
-          <PaymentDetail />
+          <DocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
+        ) : tabType?.includes("Payment Detail") ? ( 
+          <PaymentDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} company_name={OnboardingDetail?.company_details_tab?.company_name} OnboardingDetail={OnboardingDetail?.payment_details_tab}/>
         ) : tabType?.includes("Contact Detail") ? (
-          <ContactDetail />
+          <ContactDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.contact_details_tab}/>
         ) : tabType == "Manufacturing Detail" ? (
-          <ManufacturingDetail />
+          <ManufacturingDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.manufacturing_details_tab}/>
         ) : tabType == "Employee Detail" ? (
-          <EmployeeDetail />
+          <EmployeeDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.employee_details_tab}/>
         ) : tabType == "Machinery Detail" ? (
-          <MachineryDetail />
+          <MachineryDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.machinery_details_tab}/>
         ) : tabType == "Testing Facility" ? (
-          <TestingFacility />
+          <TestingFacility ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.testing_details_tab}/>
         ) : tabType == "Reputed Partners" ? (
-          <ReputedPartners />
+          <ReputedPartners ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.reputed_partners_details_tab}/>
         ) : tabType == "Certificate" ? (
-          <Certificate />
-        ) : (
+          <Certificate certificateCodeDropdown={certificateCodeDropdown?.certificate_names} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.certificate_details_tab}/>
+        ) : tabType == "Purchase Detail"?(
+          <PurchaseDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.purchasing_details?.[0]} reconciliationDropdown={reconciliationDropdown} tabType={tabType}/>
+        )
+        : (
           ""
         )}
-      </div>
-      <div className='w-full flex justify-end gap-5 px-5 pt-4'>
-        <Button className={`bg-blue-400 hover:bg-blue-400 ${tabType == "Company Detail"?"hidden":""}`}>Back</Button>
-        <Button className={`bg-blue-400 hover:bg-blue-400 ${tabType == "Certificate"?"hidden":""}`}>Next</Button>
       </div>
     </div>
   )

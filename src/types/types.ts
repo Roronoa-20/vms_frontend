@@ -16,8 +16,8 @@ export type TvendorRegistrationDropdown = {
     data: {
       vendor_type: { name: string }[],
       vendor_title: { name: string }[],
-      country_master: { name: string }[],
-      company_master: { name: string }[],
+      country_master: { name: string, mobile_code:string }[],
+      company_master: { name: string,description:string }[],
       incoterm_master: { name: string }[],
       currency_master: { name: string }[]
     }
@@ -41,12 +41,13 @@ export type TcompanyNameBasedDropdown = {
     data: {
       purchase_organizations: {
         name: string,
-        purchase_organization_name: string
+        purchase_organization_name: string,
+        description:string
       }[],
       purchase_groups: {
         name: string,
         purchase_group_name: string,
-        descriptionn: string
+        description: string
       }[],
       terms_of_payment: {
         name: string,
@@ -59,9 +60,13 @@ export type TcompanyNameBasedDropdown = {
 
 export type TpurchaseOrganizationBasedDropdown = {
   message: {
-    name: string,
-    account_group_name: string
-  }[]
+    all_account_groups:{
+      name: string,
+      account_group_name: string,
+      account_group_description:string
+    }[],
+    org_type:string
+  }
 }
 
 
@@ -91,7 +96,7 @@ export type VendorRegistrationData = {
   qms_required: number;
 
   multiple_company_data: CompanyData[];
-  vendor_types: VendorType[];
+  vendor_type: VendorType[];
 
   purchase_organization: string;
   account_group: string;
@@ -184,6 +189,15 @@ type VendorOnboarding = {
   testing_detail: any[];
   machinery_detail: any[];
   vendor_name:string;
+  qms_form:string
+  vendor_code:string,
+  country:string,
+  register_by:string
+  status:string,
+  purchase_team:string,
+  purchase_head:string,
+  accounts_team:string,
+  company:string
 };
 
 type MultipleCompanyData = {
@@ -341,7 +355,7 @@ export type TCompanyDetailForm = {
 
   export type TmultipleLocation = {
     address_line_1?:string,
-    address_line2?:string,
+    address_line_2?:string,
     ma_pincode:string,
     ma_district?:{name:string,district_code:string,district_name:string},
     ma_city?:{name:string,city_code:string,city_name:string},
@@ -385,18 +399,35 @@ export type TCompanyDetailForm = {
 
 
   export type TbankNameDropdown = {
-    data:{
-      name:string
-    }[]
+    message:{
+      data:{
+        name:string
+      }[]
+    }
   }
 
 
   export type TCurrencyDropdown = {
-    data:{
-      name:string
-    }[]
+    message:{
+      data:{
+        name:string
+      }[]
+    }
   }
 
+    export type TPurchaseDetails = {
+      account_group:string,
+      company_name:string,
+      incoterms:string,
+      order_currency:string,
+      purchase_group:string,
+      purchase_head_remarks:string,
+      purchase_organization:string,
+      purchase_team_remarks:string,
+      qa_team_remarks:string,
+      reconciliation_account:string,
+      terms_of_payment:string
+    }
 
 
 
@@ -414,7 +445,10 @@ export type TCompanyDetailForm = {
       machinery_details_tab:MachineryDetail[];
       testing_details_tab:TestingDetail[];
       reputed_partners_details_tab:ReputedPartnerDetail[];
-      certificate_details_tab:CertificateDetail[]
+      certificate_details_tab:CertificateDetail[],
+      purchasing_details:TPurchaseDetails[]
+      multi_company_data:{company:string}[]
+      is_multi_company:boolean
     };
   };
 
@@ -498,6 +532,7 @@ export type TCompanyDetailForm = {
   type AddressProofAttachment = {
     url: string;
     name: string;
+    file_name:string
   };
   
   
@@ -594,7 +629,7 @@ export type TCompanyDetailForm = {
   type CompanyDetailsTab = {
     vendor_title: string | null;
     vendor_name: string | null;
-    company_name: string | null;
+    company_name: string
     type_of_business: string;
     size_of_company: string;
     website: string;
@@ -609,6 +644,7 @@ export type TCompanyDetailForm = {
     nature_of_company: string;
     nature_of_business: string;
     vendor_types: string[];
+    company_name_description:string
   };
   
 
@@ -642,7 +678,9 @@ export type TCompanyDetailForm = {
     currency: string;
     rtgs: number;
     neft: number;
+    ift:number;
     bank_proof: FileAttachment;
+    bank_proof_by_purchase_team:FileAttachment
   };
   
   type ContactDetails = {
@@ -746,6 +784,7 @@ export type TCompanyDetailForm = {
     approved_vendor_count: number;
     current_month_vendor: number;
     rejected_vendor_count:number;
+    purchase_order_count:number
   }
   
   export interface DashboardPOTableItem {
@@ -843,7 +882,12 @@ export type TCompanyDetailForm = {
   }
   
   export interface DashboardPOTableData {
-    message: DashboardPOTableItem[];
+    message:{
+      purchase_orders:DashboardPOTableItem[],
+      total_count:number,
+      page_no:number,
+      page_length:number
+    } 
   }
   
   export interface PurchaseOrderItem {
@@ -977,6 +1021,90 @@ export type TCompanyDetailForm = {
   export interface PurchaseOrderResponse {
     message: PurchaseOrder;
   }
+
+  type dispatch_vendor_onboarding = {
+    name: string;
+    owner: string;
+    creation: string;
+    modified: string;
+    modified_by: string;
+    docstatus: number;
+    idx: number;
+    ref_no: string;
+    vendor_name: string;
+    company_name: string;
+    onboarding_form_status: string 
+    purchase_t_approval: string 
+    purchase_h_approval: string 
+    accounts_t_approval: string 
+    qms_form: string 
+    purchase_team_undertaking: number;
+    accounts_team_undertaking: number;
+    purchase_head_undertaking: number;
+  }
+
+  export type TvendorPOTable = {
+      name: string;
+      creation: string;
+      modified: string;
+      modified_by: string;
+      owner: string;
+      docstatus: number;
+      idx: number;
+      _user_tags: string | null;
+      _comments: string | null;
+      _assign: string | null;
+      _liked_by: string | null;
+      supplier_name: string | null;
+      po_no: string | null;
+      bill_to_company: string | null;
+      ship_to_company: string | null;
+      rfq_code: string | null;
+      vendor_gst_no: string | null;
+      contact_person: string | null;
+      phonemobile_no: string | null;
+      email: string | null;
+      delivery_terms: string | null;
+      dispatch_mode: string | null;
+      currency: string;
+      supplier_quote_ref: string | null;
+      po_date: string | null;
+      ref_pr_date: string | null;
+      contact_person2: string | null;
+      telephone_no: string | null;
+      email2: string | null;
+      total_gross_amount: string | null;
+      total_value_in_words: string | null;
+      vendor_code: string;
+      purchase_order_type: string | null;
+      purchase_order_category: string | null;
+      purchase_organization: string | null;
+      company_code: string | null;
+      collection_number: string | null;
+      delivery_date: string | null;
+      purchase_group: string | null;
+      ref_pr_no: string | null;
+      ref_pr_person: string | null;
+      phone_no: string | null;
+      msme_no: string | null;
+      total_input_cgst: string | null;
+      delivery_schedule: string | null;
+      po_change_date: string | null;
+      po_release_date: string | null;
+      tax_code: string | null;
+      exchange_rate: string | null;
+      total_input_sgst: string | null;
+      vendors_reason_to_reject: string | null;
+      storage_location: string | null;
+      po_plant: string | null;
+      lead_time: string | null;
+      packaging_shipping_details: string | null;
+      warranty_support_details: string | null;
+      return_refund_policy: string | null;
+      quote_vol_per_unit: string | null;
+      total_order_pricing: string | null;
+    
+  } 
   
   export interface DashboardTableType {
     status: string;
@@ -985,5 +1113,104 @@ export type TCompanyDetailForm = {
     pending_vendor_onboarding:VendorOnboarding[];
     rejected_vendor_onboarding:VendorOnboarding[];
     approved_vendor_onboarding:VendorOnboarding[];
+    dispatch_vendor_onboarding:dispatch_vendor_onboarding[],
+    vendor_purchase_orders:TvendorPOTable[]
+    qms_form:string
   }
+
+  export type TReconsiliationDropdown = {
+    message:{
+      data:{
+        name:string,
+        reconcil_account_code:string,
+        reconcil_description:string
+      }[]
+    }
+  }
+
+  export type TPRInquiryTable = {
+  ack_mail_to_user: number;
+  acknowledged_remarks: string | null;
+  cart_date: string | null;
+  cart_use: string; // e.g., "Individual Use"
+  category_type: string | null;
+  creation: string; // ISO timestamp
+  docstatus: number;
+  enquirer_status: string | null;
+  hod_approval_remarks: string | null;
+  hod_approval_status: string | null;
+  hod_approved: number;
+  idx: number;
+  mail_sent_to_hod: number;
+  mail_sent_to_purchase_team: number;
+  modified: string; // ISO timestamp
+  modified_by: string; // email
+  name: string; // e.g., "CART-25-06-20-00004"
+  naming_series: string; // e.g., "CART-.YY.-.MM.-.DD.-"
+  new_transfer_email: string | null;
+  owner: string; // email
+  purchase_team_approval_remarks: string | null;
+  purchase_team_approval_status: string | null;
+  purchase_team_approved: number;
+  purchase_team_status: string; // e.g., "Pending"
+  reason_for_rejection: string | null;
+  rejected: number;
+  rejected_by: string | null;
+  rejection_reason: string | null;
+  remarks: string | null;
+  representative_head_status: string; // e.g., "Pending"
+  sender_email: string | null;
+  sub_head_email: string | null;
+  sub_head_transfer_status: string; // e.g., "Not Transferred"
+  transfer_reason: string | null;
+  transfer_status: string; // e.g., "Not Transferred"
+  user: string; // email
+  _assign: string | null;
+  _comments: string | null;
+  _liked_by: string | null;
+  _user_tags: string | null;
+  hod:string,
+  purchase_team:string
+}
+
+export interface PurchaseRequisition {
+  name: string;
+  creation: string;
+  modified: string;
+  modified_by: string;
+  owner: string;
+  docstatus: number;
+  idx: number;
+  purchase_requisition_type: string;
+  plant: string;
+  company_code_area: string;
+  company: string;
+  requisitioner: string;
+  _user_tags: string | null;
+  _comments: string | null;
+  _assign: string | null;
+  _liked_by: string | null;
+  purchase_requisition_form_link: string;
+  naming_series: string;
+  cart_details_id: string | null;
+  hod_approval_status: string | null;
+  hod_approval_remarks: string | null;
+  purchase_team_status: string | null;
+  purchase_team_approval_remarks: string | null;
+  purchase_head_status: string | null;
+  purchase_head_approval_remarks: string | null;
+  rejected_by: string | null;
+  reason_for_rejection: string | null;
+  rejected: number;
+  hod_approved: number;
+  purchase_team_approved: number;
+  purchase_head_approved: number;
+  mail_sent_to_hod: number;
+  mail_sent_to_purchase_team: number;
+  mail_sent_to_purchase_head: number;
+  ack_mail_to_user: number;
+  purchase_group: string | null;
+}
+
+
   

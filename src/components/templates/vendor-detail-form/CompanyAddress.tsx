@@ -21,12 +21,16 @@ import {
   TableHeader,
   TableRow,
 } from "../../atoms/table";
+import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
+import FilePreview from "../../molecules/FilePreview";
+import Link from "next/link";
+import { CropIcon, Cross, CrossIcon, X } from "lucide-react";
 
 interface Props {
   companyAddressDropdown?: TCompanyAddressDropdown["message"]["data"];
   ref_no: string;
   onboarding_ref_no: string;
-  onboarding_data:TvendorOnboardingDetail["message"]["data"]
   OnboardingDetail:VendorOnboardingResponse["message"]["company_address_tab"];
 }
 
@@ -63,20 +67,7 @@ const CompanyAddress = ({
   OnboardingDetail
 }: Props) => {
 
-  useEffect(()=>{
-    OnboardingDetail?.multiple_location_table?.map((item)=>{
-      addMultipleLocation({address_line_1:item?.address_line_1,
-        address_line_2:item?.address_line_2,
-        ma_pincode:item?.ma_pincode,
-        ma_district:{name:item?.district_details?.district_name as string,district_name:item?.district_details?.district_name as string,district_code:item?.district_details?.district_code as string},
-        ma_state:{name:item?.state_details?.state_name as string,state_name:item?.state_details?.state_name as string,state_code:item?.state_details?.state_code as string},
-        ma_city:{name:item?.city_details?.name,
-          city_name:item?.city_details?.city_name as string,
-          city_code:item?.city_details?.city_code as string},
-        ma_country:{name:item?.country_details?.country_name as string,country_code:item?.country_details?.country_code as string,country_name:item?.country_details?.country_name as string}}) 
-    })
-  },[])
-  console.log(OnboardingDetail,"htis is onboarding data")
+  const router = useRouter();
 
   const {
     billingAddress,
@@ -86,15 +77,36 @@ const CompanyAddress = ({
     updateshippingAddress,
     updateLocationAtIndex,
     addMultipleLocation,
+    resetMultiple
   } = useCompanyAddressFormStore();
-
   const [pincodeFetchData, setPincodeData] = useState<pincodeFetchData>();
-  const [isShippingSame, setIsShippingSame] = useState<boolean>(false);
+  const [isShippingSame, setIsShippingSame] = useState<boolean>(OnboardingDetail?.same_as_above == 1?true: false);
   const [shippingData, setShippingData] = useState<shippingData>();
   const [MultipleAddress, setMultipleAddress] = useState<multipleAddress>();
   const [file,setFile] = useState<FileList | null>(null);
+  const [isFilePreview,setIsFilePreview] = useState<boolean>(true);
 
   const [isMultipleLocation, setIsMultipleLocation] = useState<boolean>(OnboardingDetail?.multiple_locations ? true : false);
+  useEffect(()=>{
+    resetMultiple();
+    OnboardingDetail?.multiple_location_table?.map((item)=>{
+      addMultipleLocation({address_line_1:item?.address_line_1,
+        address_line_2:item?.address_line_2,
+        ma_pincode:item?.ma_pincode,
+        ma_district:{name:item?.district_details?.name as string,district_name:item?.district_details?.district_name as string,district_code:item?.district_details?.district_code as string},
+        ma_state:{name:item?.state_details?.name as string,state_name:item?.state_details?.state_name as string,state_code:item?.state_details?.state_code as string},
+        ma_city:{name:item?.city_details?.name,
+          city_name:item?.city_details?.city_name as string,
+          city_code:item?.city_details?.city_code as string},
+        ma_country:{name:item?.country_details?.name as string,country_code:item?.country_details?.country_code as string,country_name:item?.country_details?.country_name as string}}) 
+    })
+  },[])
+
+
+
+  console.log(OnboardingDetail,"htis is onboarding data")
+
+
 
   const handlePincodeChange = async (value: string) => {
     updatebillingAddress("pincode", value);
@@ -108,12 +120,14 @@ const CompanyAddress = ({
         pincodeChangeResponse?.status == 200
           ? pincodeChangeResponse?.data?.message
           : "";
+          console.log(data,"this is billing api data")
       if (data) {
-        updatebillingAddress("city", data?.data?.city);
-        updatebillingAddress("district", data?.data?.district);
-        updatebillingAddress("state", data?.data?.state);
-        updatebillingAddress("country", data?.data?.country);
+        updatebillingAddress("city", data?.data?.city[0]);
+        updatebillingAddress("district", data?.data?.district[0]);
+        updatebillingAddress("state", data?.data?.state[0]);
+        updatebillingAddress("country", data?.data?.country[0]);
       }
+      console.log("aftre api data set",billingAddress)
     }
   };
 
@@ -180,7 +194,7 @@ const CompanyAddress = ({
     const updatedData: TmultipleLocation = {
       address_line_1: MultipleAddress?.address1,
       address_line_2: MultipleAddress?.address2,
-      ma_pincode: MultipleAddress?.pincode,
+      ma_pincode: MultipleAddress?.pincode ?? "",
       ma_district: MultipleAddress?.district,
       ma_state: MultipleAddress?.state,
       ma_city: MultipleAddress?.city,
@@ -191,13 +205,15 @@ const CompanyAddress = ({
   };
 
   const handleShippingCheck = (e: boolean) => {
+    console.log(e,"this is check")
     setIsShippingSame(e);
+    // setShippingData((prev)=>({...prev,address1:billingAddress?.address_line_1,address2:billingAddress?.address_line_2}))
     if (e) {
       handleShippingPincodeChange(billingAddress?.pincode ?? "");
       setShippingData((prev) => ({
         ...prev,
-        address1: billingAddress?.address_line_1,
-        address2: billingAddress?.address_line_2,
+        address_line_1: billingAddress?.address_line_1,
+        address_line_2: billingAddress?.address_line_2,
         pincode: billingAddress?.pincode,
         district: billingAddress?.district?.district_name,
         city: billingAddress?.city?.city_name,
@@ -240,19 +256,16 @@ const CompanyAddress = ({
       formData.append("file",file[0])
     }
     const submitResponse:AxiosResponse = await requestWrapper({url:submitUrl,method:"POST",data:formData});
-    if(submitResponse?.status == 200){
-      console.log("successfully submitted");
-    }
-
-
+    if(submitResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Document%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   };
+  
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg z-50">
         Company Address
       </h1>
-      <h1 className="pl-2 ">Billing Address</h1>
+      <h1 className="pl-2 ">Office Address</h1>
       <div className="grid grid-cols-4 gap-6 p-5">
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -263,7 +276,7 @@ const CompanyAddress = ({
             onChange={(e) => {
               updatebillingAddress("address_line_1", e.target.value);
             }}
-            value={billingAddress?.address_line_1 as string ??   OnboardingDetail?.billing_address?.address_line_1}
+            value={billingAddress?.address_line_1 as string ??   OnboardingDetail?.billing_address?.address_line_1 ?? ""}
           />
         </div>
         <div className="col-span-2">
@@ -275,7 +288,7 @@ const CompanyAddress = ({
             onChange={(e) => {
               updatebillingAddress("address_line_2", e.target.value);
             }}
-            value={billingAddress?.address_line_2?? OnboardingDetail?.billing_address?.address_line_2}
+            value={billingAddress?.address_line_2?? OnboardingDetail?.billing_address?.address_line_2 ?? ""}
             // defaultValue={}
           />
         </div>
@@ -288,7 +301,7 @@ const CompanyAddress = ({
             onChange={(e) => {
               handlePincodeChange(e.target.value);
             }}
-            value={billingAddress?.pincode?? OnboardingDetail?.billing_address?.pincode}
+            value={billingAddress?.pincode?? OnboardingDetail?.billing_address?.pincode ?? ""}
             // defaultValue={}
           />
         </div>
@@ -298,7 +311,7 @@ const CompanyAddress = ({
           </h1>
           <Input
             placeholder=""
-            value={billingAddress?.district?.district_name ?? OnboardingDetail?.billing_address?.district_details?.district_name}
+            value={billingAddress?.district?.district_name ?? OnboardingDetail?.billing_address?.district_details?.district_name ?? ""}
             // defaultValue={}
             readOnly
           />
@@ -310,7 +323,7 @@ const CompanyAddress = ({
             </h1>
             <Input
               placeholder=""
-              value={billingAddress?.city?.city_name?? OnboardingDetail?.billing_address?.city_details?.city_name}
+              value={billingAddress?.city?.city_name?? OnboardingDetail?.billing_address?.city_details?.city_name ?? ""}
               // defaultValue={}
               readOnly
             />
@@ -321,7 +334,7 @@ const CompanyAddress = ({
             </h1>
             <Input
               placeholder=""
-              value={billingAddress?.state?.state_name ?? OnboardingDetail?.billing_address?.state_details?.state_name}
+              value={billingAddress?.state?.state_name ?? OnboardingDetail?.billing_address?.state_details?.state_name ?? ""}
               // defaultValue={}
               readOnly
             />
@@ -332,7 +345,7 @@ const CompanyAddress = ({
             </h1>
             <Input
               placeholder=""
-              value={billingAddress?.country?.country_name ?? OnboardingDetail?.billing_address?.country_details?.country_name}
+              value={billingAddress?.country?.country_name ?? OnboardingDetail?.billing_address?.country_details?.country_name ?? ""}
               
               readOnly
             />
@@ -340,7 +353,7 @@ const CompanyAddress = ({
         </div>
       </div>
       <div className="flex justify-start gap-6 items-center">
-        <h1 className="pl-2 ">Shipping Address</h1>
+        <h1 className="pl-2 ">Manufacturing Address</h1>
         <div className="flex items-center gap-1">
           <Input
             type="checkbox"
@@ -355,7 +368,7 @@ const CompanyAddress = ({
           <h1 className="font-normal">Same as above</h1>
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-6 p-5">
+      <div className={`grid grid-cols-4 gap-6 p-5 ${isShippingSame?"hidden":""}`}>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Address 1
@@ -363,7 +376,7 @@ const CompanyAddress = ({
           <Input
             // placeholder={shippingData?.address1}
             value={shippingAddress?.address_line_1 ?? OnboardingDetail?.shipping_address?.street_1 ?? ""}
-            readOnly={isShippingSame ? true : false}
+            disabled={isShippingSame ? true : false}
             onChange={(e) => {
               updateshippingAddress("address_line_1", e.target.value);
             }}
@@ -376,7 +389,7 @@ const CompanyAddress = ({
           <Input
             // placeholder={shippingData?.address2}
             value={shippingAddress?.address_line_2 ?? OnboardingDetail?.shipping_address?.street_2 ?? ""}
-            readOnly={isShippingSame ? true : false}
+            disabled={isShippingSame ? true : false}
             onChange={(e) => {
               updateshippingAddress("address_line_2", e.target.value);
             }}
@@ -389,7 +402,7 @@ const CompanyAddress = ({
           <Input
             // placeholder={shippingData?.pincode}
             value={shippingAddress?.pincode ?? OnboardingDetail?.shipping_address?.manufacturing_pincode ?? ""}
-            readOnly={isShippingSame ? true : false}
+            disabled={isShippingSame ? true : false}
             onChange={(e) => {
               handleShippingPincodeChange(e.target.value);
             }}
@@ -402,7 +415,7 @@ const CompanyAddress = ({
           <Input
             // placeholder={shippingData?.district}
             value={shippingAddress?.district?.district_name ?? ""}
-            readOnly={isShippingSame ? true : false}
+            disabled={isShippingSame ? true : false}
             onChange={()=>{}}
           />
         </div>
@@ -414,7 +427,7 @@ const CompanyAddress = ({
             <Input
               // placeholder={shippingData?.city}
               value={shippingAddress?.city?.city_name ?? ""}
-              readOnly={isShippingSame ? true : false}
+              disabled={isShippingSame ? true : false}
               onChange={()=>{}}
             />
           </div>
@@ -425,7 +438,7 @@ const CompanyAddress = ({
             <Input
               // placeholder={shippingData?.state}
               value={shippingAddress?.state?.state_name ?? ""}
-              readOnly={isShippingSame ? true : false}
+              disabled={isShippingSame ? true : false}
               onChange={()=>{}}
             />
           </div>
@@ -436,7 +449,7 @@ const CompanyAddress = ({
             <Input
               // placeholder={shippingData?.country}
               value={shippingAddress?.country?.country_name ?? ""}
-              readOnly={isShippingSame ? true : false}
+              disabled={isShippingSame ? true : false}
               onChange={()=>{}}
             />
           </div>
@@ -467,7 +480,7 @@ const CompanyAddress = ({
                     address1: e.target.value,
                   }));
                 }}
-                value={MultipleAddress?.address1 || ""}
+                value={MultipleAddress?.address1 ?? ""}
               />
             </div>
             <div className="col-span-2">
@@ -481,7 +494,7 @@ const CompanyAddress = ({
                     address2: e.target.value,
                   }));
                 }}
-                value={MultipleAddress?.address2 || ""}
+                value={MultipleAddress?.address2 ?? ""}
               />
             </div>
             <div className="col-span-2">
@@ -500,7 +513,7 @@ const CompanyAddress = ({
                 District
               </h1>
               <Input
-                value={MultipleAddress?.district?.district_name || ""}
+                value={MultipleAddress?.district?.district_name ?? ""}
                 readOnly
               />
             </div>
@@ -510,7 +523,7 @@ const CompanyAddress = ({
                   City
                 </h1>
                 <Input
-                  value={MultipleAddress?.city?.city_name || ""}
+                  value={MultipleAddress?.city?.city_name ?? ""}
                   readOnly
                 />
               </div>
@@ -519,7 +532,7 @@ const CompanyAddress = ({
                   State
                 </h1>
                 <Input
-                  value={MultipleAddress?.state?.state_name || ""}
+                  value={MultipleAddress?.state?.state_name ?? ""}
                   readOnly
                 />
               </div>
@@ -528,11 +541,11 @@ const CompanyAddress = ({
                   Country
                 </h1>
                 <Input
-                  value={MultipleAddress?.country?.country_name || ""}
+                  value={MultipleAddress?.country?.country_name ?? ""}
                   readOnly
                 />
               </div>
-              <div>
+              <div className={``}>
                 <Button
                   className="bg-blue-400 hover:bg-blue-400 rounded-3xl"
                   onClick={() => {
@@ -570,7 +583,7 @@ const CompanyAddress = ({
               <TableBody className="text-center">
                 {multiple_location_table?.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">{index}</TableCell>
+                    <TableCell className="font-medium">{index +1}</TableCell>
                     <TableCell>{item?.address_line_1}</TableCell>
                     <TableCell>{item?.address_line_2}</TableCell>
                     <TableCell>{item?.ma_pincode}</TableCell>
@@ -587,16 +600,27 @@ const CompanyAddress = ({
           </div>
         </>
       )}
+      
       <div className="flex flex-col gap-2 justify-center pl-4 pt-2">
         <h1 className="font-medium">Main Office Address Proof</h1>
         <h1 className="text-[12px] font-normal text-[#626973]">
           Upload Address Proof (Light Bill, Telephone Bill, etc.)
         </h1>
         <Input type="file" className="w-fit" onChange={(e)=>{setFile(e.target.files)}} />
+      {/* file preview */}
+      {
+       isFilePreview && !file && OnboardingDetail?.address_proofattachment?.url &&
+        <div className="flex gap-2">
+      <Link target="blank" href={OnboardingDetail?.address_proofattachment?.url} className="underline text-blue-300 max-w-44 truncate">
+      <span>{OnboardingDetail?.address_proofattachment?.file_name}</span>
+      </Link>
+      <X className="cursor-pointer" onClick={()=>{setIsFilePreview((prev)=>!prev)}}/>
       </div>
-      <div className="flex justify-end gap-4">
+      }
+      </div>
+      <div className={`flex justify-end gap-4`}>
         <Button
-        className="bg-blue-400 hover:bg-blue-400"
+        className={`bg-blue-400 hover:bg-blue-400`}
           onClick={() => {
             handleSubmit();
           }}

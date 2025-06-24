@@ -10,6 +10,7 @@ export type TTestingFacility = {
 type TestingDetailStore = {
     testingDetail:Partial<TTestingFacility>[],
     updateTestingDetail:(data:any)=>void
+    reset:()=>void
 }
 
 
@@ -17,5 +18,6 @@ export const useTestingStore = create<TestingDetailStore>((set)=>({
     testingDetail:[],
     updateTestingDetail:(data)=>set((state)=>({
         testingDetail:[...state?.testingDetail,data]
-    }))
+    })),
+    reset:()=>set({testingDetail:[]})
 }))

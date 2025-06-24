@@ -8,6 +8,8 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { VendorOnboardingResponse } from "@/src/types/types";
+import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 interface Props {
   ref_no:string,
@@ -16,24 +18,24 @@ interface Props {
 }
 
 const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
-  const {machineDetail,updateMachineDetail} = useMachineDetailStore();
-
+  const {machineDetail,updateMachineDetail,resetMachineDetail} = useMachineDetailStore();
+  const [multipleMachineDetail,setMultipleMachineDetail] = useState<TMachineDetail | null>(null);
+  const router = useRouter();
   useEffect(()=>{
+    resetMachineDetail();
     OnboardingDetail?.map((item,index)=>{
       updateMachineDetail(item)
     })
   },[])
 
-  const [multipleMachineDetail,setMultipleMachineDetail] = useState<TMachineDetail | null>(null);
+
   
   const handleSubmit = async()=>{
     const submitUrl = API_END_POINTS?.machineDetailSubmit;
     const updatedData = {machinery_detail:machineDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}
     const machineDetailResponse:AxiosResponse = await requestWrapper({url:submitUrl,data:{data:updatedData},method:"POST"});
 
-    if(machineDetailResponse?.status == 200){
-      console.log("successfully submitted");
-    }
+    if(machineDetailResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Testing%20Facility&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   }
 
   const handleAdd = async()=>{
@@ -71,14 +73,14 @@ const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
           </h1>
           <Input placeholder="" value={multipleMachineDetail?.remarks ?? ""} onChange={(e)=>{setMultipleMachineDetail((prev:any)=>({...prev,remarks:e.target.value}))}} />
         </div>
-        <div className="col-span-1 flex items-end">
+        <div className={`col-span-1 flex items-end`}>
           <Button className="bg-blue-400 hover:bg-blue-300" onClick={()=>{handleAdd()}}>Add</Button>
         </div>
       </div>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
             <div className="flex w-full justify-between pb-4">
               <h1 className="text-[20px] text-[#03111F] font-semibold">
-                Multiple Contact
+                Multiple Machinery Detail
               </h1>
             </div>
             <Table className=" max-h-40 overflow-y-scroll">
@@ -86,19 +88,19 @@ const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                   <TableHead className="w-[100px]">Sr No.</TableHead>
-                  <TableHead className="text-center">Address1</TableHead>
-                  <TableHead className="text-center">Address2</TableHead>
-                  <TableHead className="text-center">Pincode</TableHead>
-                  <TableHead className="text-center">District</TableHead>
+                  <TableHead className="text-center">Equipment Name</TableHead>
+                  <TableHead className="text-center">Equipment Qty</TableHead>
+                  <TableHead className="text-center">Capacity</TableHead>
+                  <TableHead className="text-center">Remarks</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
                 {machineDetail?.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">{index}</TableCell>
-                    <TableCell>{item?.capacity}</TableCell>
+                    <TableCell className="font-medium">{index +1}</TableCell>
                     <TableCell>{item?.equipment_name}</TableCell>
                     <TableCell>{item?.equipment_qty}</TableCell>
+                    <TableCell>{item?.capacity}</TableCell>
                     <TableCell>
                       {item?.remarks}
                     </TableCell>
@@ -107,7 +109,7 @@ const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               </TableBody>
             </Table>
           </div>
-          <div className="flex justify-end pr-4"><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
+          <div className={`flex justify-end pr-4`}><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };

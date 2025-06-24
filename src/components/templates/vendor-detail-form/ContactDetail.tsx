@@ -16,6 +16,8 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import { VendorOnboardingResponse } from "@/src/types/types";
+import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 type Props = {
   ref_no:string,
@@ -24,16 +26,17 @@ type Props = {
 }
 
 const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
-  console.log(OnboardingDetail)
-  
-  const {contactDetail,addContactDetail} = useContactDetailStore()
+  const {contactDetail,addContactDetail,resetContactDetail} = useContactDetailStore()
   const [contact,setContact] = useState<Partial<TcontactDetail>>()
-
+  const router = useRouter();
   useEffect(()=>{
+    resetContactDetail();
     OnboardingDetail?.map((item,index)=>{
       addContactDetail(item)
     })
   },[])
+
+
 
 
   const handleAdd = ()=>{
@@ -44,9 +47,7 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   const handleSubmit = async()=>{
     const submitUrl = API_END_POINTS?.contactDetailSubmit;
     const submitResponse:AxiosResponse = await requestWrapper({url:submitUrl,data:{data:{contact_details:contactDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}},method:"POST"});
-    if(submitResponse?.status == 200){
-      console.log("successfully submitted")
-    }
+    if(submitResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   }
 
   return (
@@ -54,7 +55,7 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
         Contact Detail
       </h1>
-      <h1 className="pl-5">Contact Person 1</h1>
+      <h1 className="pl-5">Contact Person</h1>
       <div className="grid grid-cols-3 gap-6 p-5">
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -91,7 +92,7 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
           <Input placeholder="" onChange={(e)=>{setContact((prev:any)=>({...prev,department_name:e.target.value}))}} value={contact?.department_name ?? ""}/>
         </div>
       </div>
-      <div className="flex justify-end pb-4">
+      <div className={`flex justify-end pb-4`}>
         <Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleAdd()}}>Add</Button>
       </div>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
@@ -105,32 +106,32 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                   <TableHead className="w-[100px]">Sr No.</TableHead>
-                  <TableHead className="text-center">Address1</TableHead>
-                  <TableHead className="text-center">Address2</TableHead>
-                  <TableHead className="text-center">Pincode</TableHead>
-                  <TableHead className="text-center">District</TableHead>
-                  <TableHead className="text-center">City</TableHead>
-                  <TableHead className="text-center">State</TableHead>
+                  <TableHead className="text-center">First Name</TableHead>
+                  <TableHead className="text-center">Last Name</TableHead>
+                  <TableHead className="text-center">Designation</TableHead>
+                  <TableHead className="text-center">Email</TableHead>
+                  <TableHead className="text-center">Contact Number</TableHead>
+                  <TableHead className="text-center">Department Name</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
                 {contactDetail?.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">{index}</TableCell>
-                    <TableCell>{item?.contact_number}</TableCell>
-                    <TableCell>{item?.department_name}</TableCell>
+                    <TableCell className="font-medium">{index +1}</TableCell>
+                    <TableCell>{item?.first_name}</TableCell>
+                    <TableCell>{item?.last_name}</TableCell>
                     <TableCell>{item?.designation}</TableCell>
                     <TableCell>
                       {item?.email}
                     </TableCell>
-                    <TableCell>{item?.first_name}</TableCell>
-                    <TableCell>{item?.last_name}</TableCell>
+                    <TableCell>{item?.contact_number}</TableCell>
+                    <TableCell>{item?.department_name}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
-          <div className="flex justify-end pr-4"><Button onClick={()=>{handleSubmit()}}>Next</Button></div>
+          <div className={`flex justify-end pr-4`}><Button onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };
