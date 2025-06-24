@@ -91,7 +91,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Bank Name
           </h1>
-          <Select value={paymentDetail?.bank_name ?? OnboardingDetail?.bank_name ?? ""} onValueChange={(value)=>{updatePaymentDetail("bank_name",value)}}>
+          <Select disabled value={paymentDetail?.bank_name ?? OnboardingDetail?.bank_name ?? ""} onValueChange={(value)=>{updatePaymentDetail("bank_name",value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -110,26 +110,26 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             IFSC Code
           </h1>
-          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
+          <Input disabled placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Account Number
           </h1>
-          <Input placeholder="" value={paymentDetail?.account_number ?? OnboardingDetail?.account_number ?? ""} onChange={(e)=>{updatePaymentDetail("account_number",e.target.value)}}/>
+          <Input disabled placeholder="" value={paymentDetail?.account_number ?? OnboardingDetail?.account_number ?? ""} onChange={(e)=>{updatePaymentDetail("account_number",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Name of Account Holder
           </h1>
-          <Input placeholder="" value={paymentDetail?.name_of_account_holder ?? OnboardingDetail?.name_of_account_holder ?? ""} onChange={(e)=>{updatePaymentDetail("name_of_account_holder",e.target.value)}}/>
+          <Input disabled placeholder="" value={paymentDetail?.name_of_account_holder ?? OnboardingDetail?.name_of_account_holder ?? ""} onChange={(e)=>{updatePaymentDetail("name_of_account_holder",e.target.value)}}/>
         </div>
 
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Type of Account
           </h1>
-          <Select value={paymentDetail?.type_of_account ?? OnboardingDetail?.type_of_account ?? ""} onValueChange={(value)=>{updatePaymentDetail("type_of_account",value)}}>
+          <Select disabled value={paymentDetail?.type_of_account ?? OnboardingDetail?.type_of_account ?? ""} onValueChange={(value)=>{updatePaymentDetail("type_of_account",value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -145,7 +145,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Currency
           </h1>
-          <Select value={paymentDetail?.currency ?? OnboardingDetail?.currency ?? ""} onValueChange={(value)=>{updatePaymentDetail("currency",value)}}>
+          <Select disabled value={paymentDetail?.currency ?? OnboardingDetail?.currency ?? ""} onValueChange={(value)=>{updatePaymentDetail("currency",value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>

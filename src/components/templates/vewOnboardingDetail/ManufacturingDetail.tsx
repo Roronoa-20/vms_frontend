@@ -64,19 +64,19 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Total Godown Area (Sq. ft.)
           </h1>
-          <Input placeholder="" value={ManufacturingDetail?.total_godown ?? OnboardingDetail?.total_godown ?? ""} onChange={(e)=>{updateManufacturingDetail("total_godown",e.target.value)}} />
+          <Input disabled placeholder="" value={ManufacturingDetail?.total_godown ?? OnboardingDetail?.total_godown ?? ""} onChange={(e)=>{updateManufacturingDetail("total_godown",e.target.value)}} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Storage Capacity, (Sq. ft.)
           </h1>
-          <Input placeholder="" value={ManufacturingDetail?.storage_capacity ?? OnboardingDetail?.storage_capacity ?? ""} onChange={(e)=>{updateManufacturingDetail("storage_capacity",e.target.value)}} />
+          <Input disabled placeholder="" value={ManufacturingDetail?.storage_capacity ?? OnboardingDetail?.storage_capacity ?? ""} onChange={(e)=>{updateManufacturingDetail("storage_capacity",e.target.value)}} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Spare Capacity(Sq. ft.)
           </h1>
-          <Input placeholder="" value={ManufacturingDetail?.spare_capacity ?? OnboardingDetail?.spare_capacity ?? ""} onChange={(e)=>{updateManufacturingDetail("spare_capacity",e.target.value)}}/>
+          <Input disabled placeholder="" value={ManufacturingDetail?.spare_capacity ?? OnboardingDetail?.spare_capacity ?? ""} onChange={(e)=>{updateManufacturingDetail("spare_capacity",e.target.value)}}/>
         </div>
         {/* <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -88,7 +88,7 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
                   <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                     Type Of Premises
                   </h1>
-                  <Select onValueChange={(value)=>{updateManufacturingDetail("type_of_premises",value)}} value={ManufacturingDetail?.type_of_premises ?? OnboardingDetail?.type_of_premises ?? ""}>
+                  <Select disabled onValueChange={(value)=>{updateManufacturingDetail("type_of_premises",value)}} value={ManufacturingDetail?.type_of_premises ?? OnboardingDetail?.type_of_premises ?? ""}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
@@ -105,31 +105,32 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Working Hours
           </h1>
-          <Input placeholder=""  value={ManufacturingDetail?.working_hours ?? OnboardingDetail?.working_hours ?? ""} onChange={(e)=>{updateManufacturingDetail("working_hours",e.target.value)}}/>
+          <Input disabled placeholder=""  value={ManufacturingDetail?.working_hours ?? OnboardingDetail?.working_hours ?? ""} onChange={(e)=>{updateManufacturingDetail("working_hours",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Weekly Holidays
           </h1>
-          <Input placeholder="" value={ManufacturingDetail?.weekly_holidays ?? OnboardingDetail?.weekly_holidays ?? ""} onChange={(e)=>{updateManufacturingDetail("weekly_holidays",e.target.value)}}/>
+          <Input disabled placeholder="" value={ManufacturingDetail?.weekly_holidays ?? OnboardingDetail?.weekly_holidays ?? ""} onChange={(e)=>{updateManufacturingDetail("weekly_holidays",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             No. of Manpower/Strength
           </h1>
-          <Input placeholder="" value={ManufacturingDetail?.number_of_manpower ?? OnboardingDetail?.number_of_manpower ?? ""} onChange={(e)=>{updateManufacturingDetail("number_of_manpower",e.target.value)}}/>
+          <Input disabled placeholder="" value={ManufacturingDetail?.number_of_manpower ?? OnboardingDetail?.number_of_manpower ?? ""} onChange={(e)=>{updateManufacturingDetail("number_of_manpower",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Annual Revenue
           </h1>
-          <Input placeholder="" value={ManufacturingDetail?.annual_revenue ?? OnboardingDetail?.annual_revenue ?? ""} onChange={(e)=>{updateManufacturingDetail("annual_revenue",e.target.value)}}/>
+          <Input disabled placeholder="" value={ManufacturingDetail?.annual_revenue ?? OnboardingDetail?.annual_revenue ?? ""} onChange={(e)=>{updateManufacturingDetail("annual_revenue",e.target.value)}}/>
         </div>
         <div className="col-span-1 flex justify-start items-end gap-4">
           <h1 className="text-[16px] font-medium text-[#626973] pb-2">
             Cold Storage
           </h1>
           <Input
+          disabled
             type="checkbox"
             placeholder=""
             className="w-4 py-0 items-end"
@@ -146,19 +147,19 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Product Manufactured
           </h1>
-          <Input placeholder="" value={ManufacturingDetail?.material_description ?? OnboardingDetail?.materials_supplied[0]?.material_description ?? ""} onChange={(e)=>{updateManufacturingDetail("material_description",e.target.value)}}/>
+          <Input disabled placeholder="" value={ManufacturingDetail?.material_description ?? OnboardingDetail?.materials_supplied[0]?.material_description ?? ""} onChange={(e)=>{updateManufacturingDetail("material_description",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             HSN/SAC Code
           </h1>
-          <Input placeholder="" value={ManufacturingDetail?.hsnsac_code ?? OnboardingDetail?.materials_supplied[0]?.hsnsac_code ?? ""} onChange={(e)=>{updateManufacturingDetail("hsnsac_code",e.target.value)}}/>
+          <Input disabled placeholder="" value={ManufacturingDetail?.hsnsac_code ?? OnboardingDetail?.materials_supplied[0]?.hsnsac_code ?? ""} onChange={(e)=>{updateManufacturingDetail("hsnsac_code",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Annual Capacity
           </h1>
-          <Input placeholder="" value={ManufacturingDetail?.annual_capacity ?? OnboardingDetail?.materials_supplied[0]?.annual_capacity ?? ""} onChange={(e)=>{updateManufacturingDetail("annual_capacity",e.target.value)}}/>
+          <Input disabled placeholder="" value={ManufacturingDetail?.annual_capacity ?? OnboardingDetail?.materials_supplied[0]?.annual_capacity ?? ""} onChange={(e)=>{updateManufacturingDetail("annual_capacity",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
