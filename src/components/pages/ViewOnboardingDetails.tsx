@@ -19,6 +19,8 @@ import requestWrapper from '@/src/services/apiCall'
 import { TbankNameDropdown, TcertificateCodeDropdown, TCompanyAddressDropdown, TcompanyDetailDropdown, TCurrencyDropdown, TdocumentDetailDropdown, TReconsiliationDropdown, TvendorOnboardingDetail, VendorOnboardingResponse } from '@/src/types/types'
 import ApprovalButton from '../molecules/ApprovalButton'
 import PurchaseDetails from '../templates/vewOnboardingDetail/PurchaseDetails'
+import InternationalDocumentDetails from '../templates/vewOnboardingDetail/InternationalDocumentDetails'
+import InternationalPaymentDetail from '../templates/vewOnboardingDetail/InternationalPaymentDetail'
 
 interface Props {
   vendor_onboarding: any;
@@ -88,9 +90,17 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
           />
         ) : tabType == "Company Address" ? (
           <CompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
-        ) : tabType == "Document Detail" ? (
+        )
+        : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
+          <InternationalDocumentDetails  ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
+        )
+        : tabType == "Document Detail" ? (
           <DocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
-        ) : tabType?.includes("Payment Detail") ? ( 
+        ) 
+        : tabType?.includes("Payment Detail") && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? ( 
+        <InternationalPaymentDetail ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab}/>
+        )
+        : tabType?.includes("Payment Detail") ? ( 
           <PaymentDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} company_name={OnboardingDetail?.company_details_tab?.company_name} OnboardingDetail={OnboardingDetail?.payment_details_tab}/>
         ) : tabType?.includes("Contact Detail") ? (
           <ContactDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.contact_details_tab}/>

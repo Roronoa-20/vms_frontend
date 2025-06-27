@@ -77,8 +77,8 @@ const Dashboard = async () => {
       cookie: cookieHeaderString
     }
   });
-  const dashboardRejectedVendorTableData: DashboardTableType =
-  dashboardRejectedVendorTableDataApi?.status == 200 ? dashboardRejectedVendorTableDataApi?.data : "";
+  const dashboardRejectedVendorTableData: DashboardTableType["rejected_vendor_onboarding"] =
+  dashboardRejectedVendorTableDataApi?.status == 200 ? dashboardRejectedVendorTableDataApi?.data?.message?.rejected_vendor_onboarding : "";
   // const dashboardTableDataApi: AxiosResponse = await requestWrapper({
   //   url: `${API_END_POINTS?.dashboardTableURL}?usr=${user}`,
   //   method: "GET",
@@ -111,6 +111,9 @@ const Dashboard = async () => {
   const prInquiryApi: AxiosResponse = await requestWrapper({
     url: prInquiryDashboardUrl,
     method: "GET",
+    headers:{
+      cookie:cookieHeaderString
+    }
   });
   const prInquiryData:TPRInquiryTable[]  =
     prInquiryApi?.status == 200 ? prInquiryApi?.data?.message : "";
@@ -119,7 +122,7 @@ const Dashboard = async () => {
     const prApi:AxiosResponse = await requestWrapper({url:prDashboardUrl,method:"GET"});
     const prData:PurchaseRequisition[] = prApi?.status == 200 ? prApi?.data?.message : "";
 
-    console.log(prData,"this is pr data");
+    console.log(prInquiryData,"this is pr data");
 
   return (
     <div className="p-8">
