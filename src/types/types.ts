@@ -676,6 +676,12 @@ export type TCompanyDetailForm = {
     pan_proof: FileAttachment;
     entity_proof: FileAttachment;
     msme_proof: FileAttachment;
+    iec:string,
+    iec_proof:FileAttachment,
+    trc_certificate_no:string,
+    trc_certificate:FileAttachment,
+    form_10f_proof:FileAttachment,
+    pe_certificate:FileAttachment,
     gst_table: any[]; // Adjust if GST structure is known
   };
   
@@ -691,28 +697,34 @@ export type TCompanyDetailForm = {
     ift:number;
     bank_proof: FileAttachment;
     bank_proof_by_purchase_team:FileAttachment
-    beneficiary_name:string,
-  beneficiary_bank_name:string,
-  beneficiary_account_no:string,
-  beneficiary_iban_no:string,
-  beneficiary_address:string,
-  beneficiary_bank_swift_code:string,
-  beneficiary_aba_no:string,
-  beneficiary_ach_no:string,
-  beneficiary_routing_no:string,
-  beneficiary_currency:string,
-  intermidiate_name:string,
-  intermidiate_bank_name:string,
-  intermidiate_account_no:string,
-  intermidiate_iban_no:string,
-  intermidiate_bank_address:string,
-  intermidiate_bank_swift_code:string,
-  intermidiate_aba_no:string,
-  intermidiate_ach_no:string,
-  intermidiate_routing_no:string,
-  intermidiate_currency:string
-  bank_proof_for_beneficiary_bank:FileAttachment,
-  bank_proof_for_intermediate_bank:FileAttachment
+    international_bank_details:{
+      name:string
+      beneficiary_name:string,
+      beneficiary_bank_name:string,
+      beneficiary_account_no:string,
+      beneficiary_iban_no:string,
+      beneficiary_bank_address:string,
+      beneficiary_swift_code:string,
+      beneficiary_aba_no:string,
+      beneficiary_ach_no:string,
+      beneficiary_routing_no:string,
+      beneficiary_currency:string,
+      bank_proof_for_beneficiary_bank:FileAttachment,
+    }[]
+    intermediate_bank_details:{
+      name:string
+      intermediate_name:string,
+      intermediate_bank_name:string,
+      intermediate_account_no:string,
+      intermediate_iban_no:string,
+      intermediate_bank_address:string,
+      intermediate_swift_code:string,
+      intermediate_aba_no:string,
+      intermediate_ach_no:string,
+      intermediate_routing_no:string,
+      intermediate_currency:string
+      bank_proof_for_intermediate_bank:FileAttachment
+    }[]
   address:{country:string}
   };
   

@@ -26,9 +26,9 @@ type Props = {
   cardData: dashboardCardData
   dashboardPOTableData?: DashboardTableType
   dashboardTotalVendorTableData: DashboardTableType
-  dashboardPendingVendorTableData?: DashboardTableType
-  dashboardApprovedVendorTableData?: DashboardTableType
-  dashboardRejectedVendorTableData?: DashboardTableType
+  dashboardPendingVendorTableData: DashboardTableType
+  dashboardApprovedVendorTableData: DashboardTableType
+  dashboardRejectedVendorTableData: DashboardTableType["rejected_vendor_onboarding"]
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
   prInquiryData: TPRInquiryTable[]
   prData: PurchaseRequisition[]
@@ -225,7 +225,7 @@ const DashboardCards = ({ ...Props }: Props) => {
               {/* {item.name === "Current Month Vendors" && <DashboardCurrentMonthsVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
               {item.name === "Rejcted Vendors" && (
                 <DashboardRejectedVendorsTable
-                  dashboardTableData={Props.dashboardRejectedVendorTableData}
+                  dashboardTableData={Props?.dashboardRejectedVendorTableData}
                   companyDropdown={Props?.companyDropdown}
                 />
               )}

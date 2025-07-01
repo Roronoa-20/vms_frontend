@@ -122,13 +122,13 @@ const DocumentDetails = ({
             </h1>
             <div className="flex gap-4">
 
-            <Input
+            {/* <Input
               placeholder=""
               type="file"
               onChange={(e) => {
                 setIECProof(e.target.files)
               }}
-              />
+              /> */}
             {/* file preview */}
             {isIECProofPreview &&
                !IECProof &&
@@ -141,12 +141,12 @@ const DocumentDetails = ({
                     >
                     <span>{OnboardingDetail?.iec_proof?.file_name}</span>
                   </Link>
-                  <X
+                  {/* <X
                     className="cursor-pointer"
                     onClick={() => {
                       setIsIECProofPreview((prev) => !prev);
                     }}
-                    />
+                    /> */}
                 </div>
               )}
               </div>
@@ -175,13 +175,13 @@ const DocumentDetails = ({
             </h1>
             <div className="flex gap-4">
 
-            <Input
+            {/* <Input
               placeholder=""
               type="file"
               onChange={(e) => {
                 setTRCProof(e.target.files)
               }}
-              />
+              /> */}
             {/* file preview */}
             {isTRCProofPreview &&
               !TRCProof &&
@@ -194,12 +194,12 @@ const DocumentDetails = ({
                     >
                     <span>{OnboardingDetail?.trc_certificate?.file_name}</span>
                   </Link>
-                  <X
+                  {/* <X
                     className="cursor-pointer"
                     onClick={() => {
                       setIsTRCProofPreview((prev) => !prev);
                     }}
-                    />
+                    /> */}
                 </div>
               )}
               </div>
@@ -219,13 +219,13 @@ const DocumentDetails = ({
             </h1>
             <div className="flex gap-4">
 
-            <Input
+            {/* <Input
               placeholder=""
               type="file"
               onChange={(e) => {
                setFile10FProof(e.target.files);
               }}
-              />
+              /> */}
             {/* file preview */}
             {is10FProofPreview &&
                !file10FProof &&
@@ -238,12 +238,12 @@ const DocumentDetails = ({
                     >
                     <span>{OnboardingDetail?.form_10f_proof?.file_name}</span>
                   </Link>
-                  <X
+                  {/* <X
                     className="cursor-pointer"
                     onClick={() => {
                       setIs10FProofPreview((prev) => !prev);
                     }}
-                    />
+                    /> */}
                 </div>
               )}
               </div>
@@ -255,13 +255,13 @@ const DocumentDetails = ({
             <Link className="text-blue-400 text-sm underline" href={""}>Download PE Certificate Format File</Link>
             <div className="flex gap-4 pt-2">
 
-            <Input
+            {/* <Input
               placeholder=""
               type="file"
               onChange={(e) => {
                 setPEProof(e.target.files)
               }}
-              />
+              /> */}
             {/* file preview */}
             {isPEProofPreview &&
                !PEProof &&
@@ -274,26 +274,16 @@ const DocumentDetails = ({
                     >
                     <span>{OnboardingDetail?.pe_certificate?.file_name}</span>
                   </Link>
-                  <X
+                  {/* <X
                     className="cursor-pointer"
                     onClick={() => {
                       setIsPEProofPreview((prev) => !prev);
                     }}
-                    />
+                    /> */}
                 </div>
               )}
               </div>
           </div>
-        </div>
-        <div className="flex justify-end pr-6">
-          <Button
-            className={`bg-blue-400 hover:bg-blue-400`}
-            onClick={() => {
-              handleSubmit();
-            }}
-          >
-            Next
-          </Button>
         </div>
       </div>
     </div>
