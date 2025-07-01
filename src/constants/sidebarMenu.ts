@@ -14,6 +14,11 @@ export const sidebarMenu = [
     name: "PR",
     href:"/pr-request"
   },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "ASA",
+    href:"/view-vendor-asa"
+  },
   // {
   //   logo: "/sidebar-assests/vendor-icon.svg",
   //   name: "Inquiry",
