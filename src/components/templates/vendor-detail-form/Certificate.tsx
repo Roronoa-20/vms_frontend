@@ -84,6 +84,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
       fileInput.current.value =''
     }
     tableFetch();
+    router.refresh();
   }
 
 
