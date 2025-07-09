@@ -83,8 +83,10 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
     if(fileInput?.current){
       fileInput.current.value =''
     }
-    tableFetch();
-    router.refresh();
+    console.log("pushring")
+    location.reload()
+    // router.push(`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    // tableFetch();
   }
 
 
@@ -104,7 +106,8 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
     const deleteResponse:AxiosResponse = await requestWrapper({url:url,method:"POST"});
     if(deleteResponse?.status == 200){
       setMultipleCertificateData([]);
-      tableFetch();
+      // tableFetch();
+      location.reload()
     }
   }
   
