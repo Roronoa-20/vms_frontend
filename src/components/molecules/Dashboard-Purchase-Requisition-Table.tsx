@@ -1,5 +1,5 @@
 "use client"
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -22,6 +22,7 @@ import { DashboardTableType, PurchaseRequisition, TPRInquiryTable } from "@/src/
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Cookies from "js-cookie";
+import Pagination from "./Pagination";
 type Props = {
   dashboardTableData?: PurchaseRequisition[]
   companyDropdown: {name:string}[]
@@ -29,8 +30,11 @@ type Props = {
 
 const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData,companyDropdown }: Props) => {
   const user = Cookies?.get("user_id");
+  const [total_event_list, settotalEventList] = useState(0);
+    const [record_per_page, setRecordPerPage] = useState<number>(5);
+    const [currentPage, setCurrentPage] = useState<number>(1);
   return (
-
+<>
     <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
       <div className="flex w-full justify-between pb-4">
         <h1 className="text-[20px] text-[#03111F] font-semibold">
@@ -131,6 +135,8 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData,companyDr
       </Table>
       </div>
     </div>
+     {/* <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} /> */}
+     </>
   );
 };
 
