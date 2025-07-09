@@ -6,20 +6,20 @@ import requestWrapper from '@/src/services/apiCall';
 import { cookies } from 'next/headers';
 
 export interface purchaseInquiryDropdown {
-    message:{
-        category_type:{
-            name:string,
-            category_name:string
+    message: {
+        category_type: {
+            name: string,
+            category_name: string
         }[],
-        uom_master:{
-            name:string,
-            uom:string
+        uom_master: {
+            name: string,
+            uom: string
         }[]
     }
 }
 
 interface Props {
-    refno?:string
+    refno?: string
 }
 
 export type TableData = {
@@ -49,12 +49,12 @@ export type TPRInquiry = {
     plant:string,
 }
 
-const PrInquiryPage = async({refno}:Props) => {
+const PrInquiryPage = async ({ refno }: Props) => {
 
     const cookieStore = await cookies();
-  const user = cookieStore.get("user_id")?.value
-  console.log(user, "user")
-  const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
+    const user = cookieStore.get("user_id")?.value
+    console.log(user, "user")
+    const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
     const categoryDropdownUrl = API_END_POINTS?.getInquiryDropdown;
     const dropdownResponse:AxiosResponse = await requestWrapper({url:categoryDropdownUrl,method:"GET",headers:{
         cookie:cookieHeaderString

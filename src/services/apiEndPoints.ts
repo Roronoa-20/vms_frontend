@@ -73,7 +73,9 @@ const API_END_POINTS = {
   AddDispatch:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.update_dispatch_item`,
   SubmitDispatch:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.submit_dispatch_item`,
   dispatchDetails:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.full_data_dispatch_item`,
-  dispatchTableRowSubmit:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.submit_child_dispatch_item`
+  dispatchTableRowSubmit:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.submit_child_dispatch_item`,
+  // qmsformdetails:`${url}/api/method/vms.APIs.assessment_apis.qms_api.get_qms_details_without_label`,
+  asaformDetails:`${url}/api/method/vms.APIs.assessment_apis.asa.get_asa_details_without_label`,
 };
 
 export default API_END_POINTS;
