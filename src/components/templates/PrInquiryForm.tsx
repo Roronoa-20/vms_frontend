@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Input } from '../atoms/input'
 import { Button } from '../atoms/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
@@ -20,6 +20,8 @@ interface Props {
   PRData?: PurchaseRequestData["message"]["data"]
   dropdown: purchaseInquiryDropdown["message"]
   PRInquiryData: TPRInquiry | null
+  companyDropdown:{name:string,description:string}[]
+  purchaseTypeDropdown:{name:string,purchase_requisition_type_name:string,description:string}[]
 }
 
 
@@ -31,7 +33,7 @@ type ProductNameDropdown = {
 }
 const currentDate = new Date();
 
-const PRInquiryForm = ({ PRInquiryData, dropdown }: Props) => {
+const PRInquiryForm = ({ PRInquiryData, dropdown,companyDropdown, purchaseTypeDropdown }: Props) => {
   const user = Cookies.get("user_id");
   const [formData, setFormData] = useState<TPRInquiry | null>(PRInquiryData ?? null);
   const [singleTableRow, setSingleTableRow] = useState<TableData | null>(null);
@@ -39,7 +41,17 @@ const PRInquiryForm = ({ PRInquiryData, dropdown }: Props) => {
   const [productNameDropdown, setProductNameDropdown] = useState<ProductNameDropdown[]>([]);
   const [index, setIndex] = useState<number>(-1);
   const [showTable, setShowTable] = useState(false);
+  const [plantDropdown,setPlantDropdown] = useState<{name:string,plant_name:string,description:string}[]>();
+  const [purchaseGroupDropdown,setPurchaseGroupDropdown] = useState<{name:string,purchase_group_code:string,purchase_group_name:string,description:string}[]>();
   const router = useRouter();
+
+  useEffect(()=>{
+    if(PRInquiryData?.company){
+      handleCompanyChange(PRInquiryData?.company);
+    }
+  },[])
+
+
   const handleSelectChange = (value: any, name: string, isTable: boolean) => {
     if (isTable) {
       setSingleTableRow((prev: any) => ({ ...prev, [name]: value }));
@@ -89,7 +101,6 @@ const PRInquiryForm = ({ PRInquiryData, dropdown }: Props) => {
       cart_product: tableData,
       user: user,
     };
-    console.log("Payload--->",payload);
     
     const response: AxiosResponse = await requestWrapper({ url: url, data: { data: payload }, method: "POST" });
     if (response?.status == 200) {
@@ -129,17 +140,27 @@ const PRInquiryForm = ({ PRInquiryData, dropdown }: Props) => {
   return `${year}-${month}-${day}`;
 };
 
-  const formatPriceRange = (priceRange: string) => {
-    if (!priceRange) return "";
+  // const formatPriceRange = (priceRange: string) => {
+  //   if (!priceRange) return "";
 
-    const parts = priceRange.split("-");
-    if (parts.length === 2) {
-      const formattedStart = `₹${Number(parts[0]).toLocaleString("en-IN")}`;
-      const formattedEnd = `₹${Number(parts[1]).toLocaleString("en-IN")}`;
-      return `${formattedStart} - ${formattedEnd}`;
+  //   const parts = priceRange.split("-");
+  //   if (parts.length === 2) {
+  //     const formattedStart = `₹${Number(parts[0]).toLocaleString("en-IN")}`;
+  //     const formattedEnd = `₹${Number(parts[1]).toLocaleString("en-IN")}`;
+  //     return `${formattedStart} - ${formattedEnd}`;
+  //   }
+  //   return `₹${Number(priceRange).toLocaleString("en-IN")}`;
+  // };
+
+
+  const handleCompanyChange = async(value:string)=>{
+    const url = `${API_END_POINTS?.InquiryDropdownsBasedOnCompany}?comp=${value}`
+    const response:AxiosResponse = await  requestWrapper({url:url,method:"GET"});
+    if(response?.status == 200){
+      setPlantDropdown(response?.data?.message?.plants);
+      setPurchaseGroupDropdown(response?.data?.message?.purchase_groups);
     }
-    return `₹${Number(priceRange).toLocaleString("en-IN")}`;
-  };
+  }
 
 
 
@@ -185,6 +206,74 @@ const PRInquiryForm = ({ PRInquiryData, dropdown }: Props) => {
               <SelectGroup>
                 {dropdown?.category_type?.map((item, index) => (
                   <SelectItem key={index} value={item?.name}>{item?.category_name}</SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
+            Company
+          </h1>
+          <Select value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value);}}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {companyDropdown?.map((item, index) => (
+                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
+            Purchase Type
+          </h1>
+          <Select value={formData?.purchase_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_type", false)}}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {purchaseTypeDropdown?.map((item, index) => (
+                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        {/* <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
+            Plant
+          </h1>
+          <Select value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant", false)}}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {plantDropdown?.map((item, index) => (
+                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div> */}
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
+            Purchase Group
+          </h1>
+          <Select value={formData?.purchase_group ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_group", false)}}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {purchaseGroupDropdown?.map((item, index) => (
+                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
@@ -244,7 +333,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown }: Props) => {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Product Price
           </h1>
-          <Input placeholder="" name='product_price' onChange={(e) => { handleFieldChange(true, e) }} value={formatPriceRange(singleTableRow?.product_price ?? "")} />
+          <Input placeholder="" name='product_price' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_price ?? ""} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">

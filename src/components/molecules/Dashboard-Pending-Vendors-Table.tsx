@@ -88,6 +88,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
       setRecordPerPage(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding?.length)
     }
   }
+  console.log(table,"this is table")
 
 
   return (

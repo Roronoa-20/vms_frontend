@@ -17,7 +17,10 @@ const Navbar = () => {
         {pathname == '/vendor-registration'?"Vendor Registration":
          pathname == "/dashboard"?"Dashboard":
          pathname == "/pr-request"?"Purchase Request":
-         pathname == "/pr-inquiry"?"Purchase Inquiry":""}
+         pathname == "/pr-inquiry"?"Purchase Inquiry":
+         pathname == "/view-pr-inquiry"?"View Purchase Inquiry":
+         pathname == "/dispatch"?"Dispatch":
+         ""}
       </h1>
       <div className='flex items-center gap-4'>
         {/* Notification Icon & Modal */}

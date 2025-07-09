@@ -30,6 +30,8 @@ export type TableData = {
       lead_time:string,
       product_quantity:string,
       user_specifications:string
+      final_price_by_purchase_team?:number,
+      name?:string
 }
 
 export type TPRInquiry = {
@@ -41,6 +43,10 @@ export type TPRInquiry = {
     cart_product:TableData[]
     hod:boolean,
     purchase_team:boolean
+    purchase_team_acknowledgement:boolean
+    purchase_type:string,
+    purchase_group:string,
+    plant:string,
 }
 
 const PrInquiryPage = async({refno}:Props) => {
@@ -63,9 +69,20 @@ if (refno) {
     } });
     PRInquiryData = PRInquiryDataResponse?.status == 200 ? PRInquiryDataResponse?.data?.message : "";
 }
-console.log(PRInquiryData, "this is data");
+
+  const companyDropdownUrl = `${API_END_POINTS?.InquirycompanyBasedOnUser}?usr=${user}`;
+    const companyDropdownResponse:AxiosResponse = await requestWrapper({url:companyDropdownUrl,method:"GET",headers:{
+        cookie:cookieHeaderString
+    }});
+    const companyDropdown = companyDropdownResponse?.status == 200? companyDropdownResponse?.data?.message?.data : ""
+
+    const purchaseTypeUrl = API_END_POINTS?.InquiryPurchaseTypeDropdown;
+    const purchaseTypeResponse:AxiosResponse = await requestWrapper({url:purchaseTypeUrl,method:"GET",headers:{
+        cookie:cookieHeaderString
+    }});
+    const purchaseTypeDropdown = purchaseTypeResponse?.status == 200? purchaseTypeResponse?.data?.message?.data : ""
 return (
-    <PrInquiryForm PRInquiryData={PRInquiryData} dropdown={dropdown} />
+    <PrInquiryForm companyDropdown={companyDropdown} PRInquiryData={PRInquiryData} dropdown={dropdown} purchaseTypeDropdown={purchaseTypeDropdown} />
 )
 }
 
