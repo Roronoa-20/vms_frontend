@@ -170,7 +170,8 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
                 <TableCell>{item?.purchase_h_approval}</TableCell>
                 <TableCell>{item?.accounts_t_approval}</TableCell>
                 <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                <TableCell className="text-right">{item?.qms_form}</TableCell>
+                {/* <TableCell className="text-right">{item?.qms_form}</TableCell> */}
+                <TableCell><div className={`${(item?.qms_form_filled || item?.sent_qms_form_link)?"":"hidden"}`}><Link href={`/qms-details?tabtype=vendor%20information&vendor_onboarding=${item?.name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
               </TableRow>
             ))
           ) : (

@@ -197,7 +197,9 @@ type VendorOnboarding = {
   purchase_team:string,
   purchase_head:string,
   accounts_team:string,
-  company:string
+  company:string,
+  sent_qms_form_link:boolean,
+  qms_form_filled:boolean
 };
 
 type MultipleCompanyData = {
