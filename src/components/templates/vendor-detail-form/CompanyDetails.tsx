@@ -98,7 +98,7 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
         </div>
         <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Type Of Business (Please select any one)
+            Type Of Business (Please select any one) <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Select required={true} onValueChange={(value)=>{updateField('type_of_business',value)}} value={data?.type_of_business ?? OnboardingDetail?.type_of_business}>
             <SelectTrigger>
@@ -140,7 +140,7 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Reg No.
+            Reg No. <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input placeholder="Enter Reg No." onChange={(e)=>{updateField("registered_office_number",e.target.value)}} value={data?.registered_office_number ?? OnboardingDetail?.registered_office_number ?? ""}/>
           {errors?.registered_office_number && !data?.registered_office_number && <span style={{ color: 'red' }}>{errors?.registered_office_number}</span>}
@@ -177,14 +177,14 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Corporate Identification No.(CIN No.)
+            Corporate Identification No.(CIN No.) <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input placeholder="" onChange={(e)=>{updateField("corporate_identification_number",e.target.value)}} value={data?.corporate_identification_number ?? OnboardingDetail?.corporate_identification_number ?? ""}/>
           {errors?.corporate_identification_number && !data?.corporate_identification_number && <span style={{ color: 'red' }}>{errors?.corporate_identification_number}</span>}
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Cin Date
+            Cin Date <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input type="date" placeholder="Enter Mobile Number" onChange={(e)=>{updateField("cin_date",e.target.value)}} value={data?.cin_date ?? OnboardingDetail?.cin_date ?? ""}/>
           {errors?.cin_date && !data?.cin_date && <span style={{ color: 'red' }}>{errors?.cin_date}</span>}

@@ -421,7 +421,8 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
           </Table>
         </div>
       
-      <div className={`flex justify-end pr-4 gap-4`}><Button className='bg-blue-400 hover:bg-blue-400' >Save As Draft</Button>
+      <div className={`flex justify-end pr-4 gap-4`}>
+        {/* <Button className='bg-blue-400 hover:bg-blue-400' >Save As Draft</Button> */}
       <Button className='bg-blue-400 hover:bg-blue-400' >Submit</Button></div>
     </div>
   )

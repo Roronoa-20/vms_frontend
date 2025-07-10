@@ -272,7 +272,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                               <SelectGroup>
                                 {
                                   reconciliationDropdown?.map((item,index)=>(
-                                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                                    <SelectItem key={index} value={item?.name}>{item?.reconcil_description}</SelectItem>
                                   ))
                                 }
                               </SelectGroup>

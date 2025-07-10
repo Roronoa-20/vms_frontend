@@ -195,7 +195,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
         <div className="grid grid-cols-3 gap-6 p-5 ">
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Company PAN Number
+              Company PAN Number <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
               placeholder="Enter Company Pan Number"
@@ -215,7 +215,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Name of Company on PAN Card
+              Name of Company on PAN Card <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
               placeholder="Enter Pan Card"
@@ -235,7 +235,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Upload PAN Document
+              Upload PAN Document <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <div className="flex gap-4">
 
@@ -275,7 +275,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           <div className="col-span-3 grid grid-cols-3 gap-6">
             <div className="flex flex-col">
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                GST Vendor Type
+                GST Vendor Type <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Select
                 onValueChange={(value) => {
@@ -310,7 +310,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           >
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                State
+                State <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               {/* <Input placeholder="Enter State" value={documentDetails?.gst_state ?? OnboardingDetail?.gst_table[0]?.gst_state} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,gst_state:e.target.value}))}}/> */}
               <Select
@@ -341,7 +341,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                GST Number
+                GST Number <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Input
                 placeholder="Enter GST Number"
@@ -361,7 +361,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                GST Registration Date
+                GST Registration Date <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Input
                 placeholder="Enter Registration Date"
@@ -382,7 +382,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                Upload GST Document
+                Upload GST Document <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <div className="flex gap-4">
               <Input
@@ -447,7 +447,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
             className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}
           >
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              MSME Enterprise Type
+              MSME Enterprise Type <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Select
               value={
@@ -476,7 +476,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           </div>
           <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Udyam Registration No.
+              Udyam Registration No. <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
               placeholder=" Enter Udyam Registration No"
@@ -496,7 +496,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           </div>
           <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Name of Company in Udyam Certificate
+              Name of Company in Udyam Certificate <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
               placeholder=""
@@ -516,7 +516,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           </div>
           <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Upload Udyam Certificate
+              Upload Udyam Certificate <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <div className="flex gap-4">
             <Input
@@ -556,7 +556,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
         <div className="grid grid-cols-3 pl-5 gap-6">
           <div className={``}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Enterprise Registration Number
+              Enterprise Registration Number <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
               placeholder="Enter Enterprise Registration Number"
@@ -576,7 +576,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           </div>
           <div className={``}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Upload Enterprise Registration Document
+              Upload Enterprise Registration Document <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <div className="flex gap-4 w-full">
 

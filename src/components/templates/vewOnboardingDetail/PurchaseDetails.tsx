@@ -95,7 +95,7 @@ const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,reconciliati
                       <SelectGroup>
                         {
                           reconciliationDropdown?.map((item,index)=>(
-                            <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                            <SelectItem key={index} value={item?.name}>{item?.reconcil_description}</SelectItem>
                           ))
                         }
                       </SelectGroup>
