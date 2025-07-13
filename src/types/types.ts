@@ -85,6 +85,7 @@ export type CompanyData = {
 };
 
 export type VendorRegistrationData = {
+  vendor_types:string[]
   vendor_title: string;
   vendor_name: string;
   office_email_primary: string;
@@ -831,7 +832,9 @@ export type TCompanyDetailForm = {
     approved_vendor_count: number;
     current_month_vendor: number;
     rejected_vendor_count:number;
-    purchase_order_count:number
+    purchase_order_count:number;
+    pr_count:number;
+    cart_count:number
   }
   
   export interface DashboardPOTableItem {
@@ -930,10 +933,21 @@ export type TCompanyDetailForm = {
   
   export interface DashboardPOTableData {
     message:{
+      total_po:DashboardPOTableItem[],
+      total_count:number,
+      page_no:number,
+      page_length:number,
+      message:string
+    } 
+  }
+
+  export interface VendorDashboardPOTableData {
+    message:{
       purchase_orders:DashboardPOTableItem[],
       total_count:number,
       page_no:number,
-      page_length:number
+      page_length:number,
+      message:string
     } 
   }
   

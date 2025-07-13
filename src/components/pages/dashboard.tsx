@@ -25,13 +25,13 @@ const Dashboard = async () => {
 
   //po table 
   const dashboardPOTableDataApi: AxiosResponse = await requestWrapper({
-    url: `${API_END_POINTS?.dashboardPOTableURL}`,
+    url: `${API_END_POINTS?.poTable}`,
     method: "GET",
     headers: {
       cookie: cookieHeaderString
     }
   });
-  const dashboardPOTableData: DashboardPOTableData =
+  const dashboardPOTableData: DashboardPOTableData["message"] =
     dashboardPOTableDataApi?.status == 200 ? dashboardPOTableDataApi?.data?.message : "";
 
   console.log(dashboardPOTableData, "dashboardPOTableData-------------------------")
@@ -79,24 +79,7 @@ const Dashboard = async () => {
   });
   const dashboardRejectedVendorTableData: DashboardTableType["rejected_vendor_onboarding"] =
   dashboardRejectedVendorTableDataApi?.status == 200 ? dashboardRejectedVendorTableDataApi?.data?.message?.rejected_vendor_onboarding : "";
-  // const dashboardTableDataApi: AxiosResponse = await requestWrapper({
-  //   url: `${API_END_POINTS?.dashboardTableURL}?usr=${user}`,
-  //   method: "GET",
-  //   headers: {
-  //     cookie: cookieHeaderString
-  //   }
-  // });
-  // const dashboardTableData: dashboardCardData["message"] =
-  //   dashboardTableDataApi?.status == 200 ? dashboardTableDataApi?.data?.message : "";
-  // console.log(dashboardTableData, "dashboardTableData")
 
-
-  // const companyDropdownUrl = API_END_POINTS?.companyDropdown
-  //             const companyDropdownResponse:AxiosResponse = await requestWrapper({url:companyDropdownUrl,method:"GET"});
-  //             const companyDropdown:{name:string}[] =  companyDropdownResponse?.status == 200?companyDropdownResponse?.data?.data : ""; 
-
-  console.log(dashboardRejectedVendorTableData,"-----------------========","=pending---","=-09876543333333333333333333333333")
-  console.log(CardData,"this is card Data")
   const dropdownUrl = API_END_POINTS?.vendorRegistrationDropdown;
   const dropDownApi: AxiosResponse = await requestWrapper({
     url: dropdownUrl,
@@ -130,7 +113,7 @@ const Dashboard = async () => {
       <DashboardCardCounter
         cardData={CardData}
         companyDropdown={companyDropdown}
-        // dashboardPOTableData={dashboardPOTableData}
+         dashboardPOTableData={dashboardPOTableData}
         // dashboardDispatchVendorTableData={dashboardTotalVendorTableData}
         dashboardTotalVendorTableData={dashboardTotalVendorTableData} 
         dashboardPendingVendorTableData={dashboardPendingVendorTableData}

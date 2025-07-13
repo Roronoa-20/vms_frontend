@@ -26,12 +26,10 @@ import requestWrapper from "@/src/services/apiCall";
 import { useMultipleVendorCodeStore } from "@/src/store/MultipleVendorCodeStore";
 import { useAuth } from "@/src/context/AuthContext";
 import API_END_POINTS from "@/src/services/apiEndPoints";
-import PopUp from "./PopUp";
-import { useOutsideClick } from "@/src/hooks/useOutsideClick";
 
 
 type Props = {
-  dashboardPOTableData?: DashboardPOTableData["message"];
+  dashboardPOTableData?: VendorDashboardPOTableData["message"];
   companyDropdown:TvendorRegistrationDropdown["message"]["data"]["company_master"]
 };
 
@@ -56,7 +54,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
   const [comments,setComments] = useState("");
   const [isDialog,setIsDialog] = useState(false);
   const [poNumber,setPONumber] = useState("");
-  const [tableData,setTableData] = useState<DashboardPOTableItem[]>(dashboardPOTableData?.total_po ?? []);
+  const [tableData,setTableData] = useState<DashboardPOTableItem[]>(dashboardPOTableData?.purchase_orders ?? []);
   const {MultipleVendorCode,addMultipleVendorCode,reset,selectedVendorCode} = useMultipleVendorCodeStore();
   const [search,setSearch] = useState<string>("");
   
@@ -65,37 +63,36 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
   const [currentPage, setCurrentPage] = useState<number>(1);
   
   const {designation} = useAuth();
-  const [isEmailDialog,setIsEmailDialog] = useState<boolean>(false);
+  
   const debouncedSearchName = useDebounce(search, 300);
 
-  
   useEffect(()=>{
     const fetchPoTable = async()=>{
-      const POUrl = `${API_END_POINTS?.poTable}?refno=${search}`
-      const dashboardPOTableDataApi: AxiosResponse = await requestWrapper({
-        url: POUrl,
-        method: "GET",
-      });
-      
-      if(dashboardPOTableDataApi?.status == 200) {
-        setTableData(dashboardPOTableDataApi?.data?.message?.total_po)
-      }
-    }
-    if(selectedVendorCode || debouncedSearchName || currentPage){
-      fetchPoTable();
-    }
+      const POUrl = `${API_END_POINTS?.vendorPOTable}?vendor_code=${selectedVendorCode}&po_no=${search}`
+          const dashboardPOTableDataApi: AxiosResponse = await requestWrapper({
+            url: POUrl,
+            method: "GET",
+          });
+
+              if(dashboardPOTableDataApi?.status == 200) {
+                setTableData(dashboardPOTableDataApi?.data?.message?.purchase_orders)
+              }
+            }
+            if(selectedVendorCode || debouncedSearchName || currentPage){
+              fetchPoTable();
+            }
   },[selectedVendorCode,debouncedSearchName,currentPage])
-  
-  
-  
-  
-  const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    console.log(value,"this is search name")
-    setSearch(value);
-  }
-  
-  
+
+
+    
+    
+    const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      console.log(value,"this is search name")
+      setSearch(value);
+    }
+
+
   const downloadPoDetails = async (name: string) => {
     try {
       const Data = await fetch(
@@ -124,7 +121,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
       console.log(error, "something went wrong");
     }
   };
-  
+
   const handleApproval = async (status: "approve" | "reject" | "") => {
     const url = {
       approve: `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.vendors_dashboards_api.po_approve_reject.po_approve`,
@@ -132,7 +129,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
     };
     let apiUrl = "";
     if(status){
-      apiUrl = url[status];
+       apiUrl = url[status];
     }
     const response: AxiosResponse = await requestWrapper({ url: apiUrl,data:{data:{po_name:poNumber,tentative_date:status == "approve"?date:"",reason_for_rejection:status == "reject"?comments:""}},method:"POST" });
     if(response?.status == 200){
@@ -143,19 +140,15 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
       }
     }
   };
-  
+
   const handleClose = ()=>{
     setIsDialog(false);
-    setIsEmailDialog(false);
     setDate("");
     setComments("");
   }
 
-  const handleSubmit = async ()=>{
-    // const sendPoEmailUrl = API_END_POINTS
-    // const response:AxiosResponse = await requestWrapper({url:sendPoEmailUrl,})
-  }
-  
+  console.log(companyDropdown,"this is company dropdown")
+
   return (
     <>
     <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
@@ -208,12 +201,12 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
             <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Early Delivery</TableHead>
             <TableHead className="text-center">View details</TableHead>
-            <TableHead className="text-center">Send Email</TableHead>
+            <TableHead className={`text-center ${designation == "Vendor"?"":"hidden"}`}>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="text-center">
-          {tableData  ? (
-            tableData?.map((item, index) => (
+          {tableData && tableData?.length > 0 ? (
+            tableData.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{item?.idx}</TableCell>
                 <TableCell>{item?.name}</TableCell>
@@ -245,7 +238,20 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
                     view
                   </Button>
                 </TableCell>
-                <TableCell><Button onClick={()=>{setIsEmailDialog(true)}} className="bg-blue-400 hover:bg-blue-300">Send</Button></TableCell>
+                <TableCell className={`flex gap-4 ${designation == "Vendor"?"":"hidden"}`}>
+                  <Button
+                    variant={"outline"}
+                    onClick={()=>{setStatus("approve"); setIsDialog((prev)=>!prev); setPONumber(item?.name)}}
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    variant={"outline"}
+                    onClick={()=>{setStatus("reject"); setIsDialog((prev)=>!prev); setPONumber(item?.name)}}
+                  >
+                    Reject
+                  </Button>
+                </TableCell>
               </TableRow>
             ))
           ) : (
@@ -263,23 +269,6 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
       <div className="absolute z-50 flex pt-10 items-center justify-center bg-black bg-opacity-50 inset-0">
       <PODialog Submitbutton={handleApproval} handleClose={handleClose} handleComment={setComments} handleDate={setDate} status={status}/>
       </div>
-    }
-    {
-      isEmailDialog && 
-      <PopUp handleClose={handleClose} headerText="Send Email" isSubmit={true} Submitbutton={handleSubmit}>
-        <div className="mb-3">
-                  <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                    To
-                  </h1>
-                  <Input/>
-                </div>
-                <div>
-                  <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                    CC
-                  </h1>
-                  <Input/>
-                </div>
-      </PopUp>
     }
     </>
   );

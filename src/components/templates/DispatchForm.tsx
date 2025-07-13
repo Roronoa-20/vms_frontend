@@ -256,6 +256,15 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
      }
   }
 
+  const handleSubmit = async()=>{
+    const url = API_END_POINTS?.SubmitDispatch;
+    const response:AxiosResponse = await requestWrapper({url:url,data:{data:{name:refno,submit:1}},method:"POST"});
+    if(response?.status == 200){
+      alert("Submitted Successfully");
+      router.push("/vendor-dashboard");
+    }
+  }
+
   console.log(formData, "this is form Data")
       
   return (
@@ -423,7 +432,7 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
       
       <div className={`flex justify-end pr-4 gap-4`}>
         {/* <Button className='bg-blue-400 hover:bg-blue-400' >Save As Draft</Button> */}
-      <Button className='bg-blue-400 hover:bg-blue-400' >Submit</Button></div>
+      <Button className='bg-blue-400 hover:bg-blue-400' onClick={()=>{handleSubmit()}} >Submit</Button></div>
     </div>
   )
 }

@@ -24,7 +24,7 @@ import { FileSearch } from "lucide-react";
 
 type Props = {
   cardData: dashboardCardData
-  dashboardPOTableData?: DashboardTableType
+  dashboardPOTableData: DashboardPOTableData["message"]
   dashboardTotalVendorTableData: DashboardTableType
   dashboardPendingVendorTableData: DashboardTableType
   dashboardApprovedVendorTableData: DashboardTableType
@@ -120,7 +120,7 @@ const DashboardCards = ({ ...Props }: Props) => {
     },
     {
       name: "Purchase & Ongoing Orders",
-      count: 0,
+      count: Props?.dashboardPOTableData?.total_count,
       icon: "/dashboard-assests/cards_icon/package.svg",
       text_color: "text-violet-800",
       bg_color: "bg-violet-100",
@@ -219,7 +219,7 @@ const DashboardCards = ({ ...Props }: Props) => {
               )}
               {/* {item.name === "Dispatch Details" && <DashboardDispatchVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
               {item.name === "Purchase & Ongoing Orders" && (
-                <PurchaseAndOngoingOrders dashboardPOTableData={Props.dashboardPOTableData} />
+                <PurchaseAndOngoingOrders dashboardPOTableData={Props.dashboardPOTableData} companyDropdown={Props?.companyDropdown} />
               )}
               {/* {item.name === "Payment Request" && <DashboardPaymentVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
               {/* {item.name === "Current Month Vendors" && <DashboardCurrentMonthsVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}

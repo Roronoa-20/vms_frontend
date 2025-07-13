@@ -90,9 +90,9 @@ const PRRequestForm = ({ Dropdown, PRData, cartId }: Props) => {
       const { name, value } = e.target;
 
       if (isTable) {
-        setSingleTableRow((prev) => ({ ...prev, [name]: value }));
+        setSingleTableRow((prev:any) => ({ ...prev, [name]: value }));
       } else {
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        setFormData((prev:any) => ({ ...prev, [name]: value }));
       }
 
       // Clear error for the field
@@ -110,10 +110,10 @@ const PRRequestForm = ({ Dropdown, PRData, cartId }: Props) => {
   const handleSelectChange = useCallback(
     (value: any, name: string, isTable: boolean) => {
       if (isTable) {
-        setSingleTableRow((prev) => ({ ...prev, [name]: value }));
+        setSingleTableRow((prev:any) => ({ ...prev, [name]: value }));
       } else {
-        setSingleTableRow((prev) => ({ ...prev, [name]: value }));
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        setSingleTableRow((prev:any) => ({ ...prev, [name]: value }));
+        setFormData((prev:any) => ({ ...prev, [name]: value }));
       }
 
       // Clear error for the field
@@ -129,12 +129,12 @@ const PRRequestForm = ({ Dropdown, PRData, cartId }: Props) => {
   );
 
   const handleTableAdd = () => {
-    setSingleTableRow(prev => ({
+    setSingleTableRow((prev:any) => ({
       ...prev,
       requisitioner: formData?.requisitioner || ''
     }))
     if (!singleTableRow) return;
-    const result = validateRequiredFields(singleTableRow, requiredField);
+    const result = validateRequiredFields(singleTableRow, requiredField ?? {});
     setErrors(result.errors);
     if (result.isValid) {
       setTableData(prev => {
@@ -194,7 +194,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId }: Props) => {
       alert("error");
     }
   }
-  const fetchRequiredData = async (company: string, pur_type: string, acct_cate: string) => {
+  const fetchRequiredData = async (company?: string, pur_type?: string, acct_cate?: string) => {
     console.log(company, pur_type, acct_cate)
     try {
       const Data = await fetch(

@@ -1,15 +1,9 @@
 'use client'
-import React, { FormEvent, useEffect, useState, useRef } from "react";
+import React from "react";
 import { Input } from "../../atoms/input";
 import { Button } from "../../atoms/button";
 import { Label } from "../../atoms/label";
-import API_END_POINTS from "@/src/services/apiEndPoints";
-import requestWrapper from "@/src/services/apiCall";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAuth } from "@/src/context/AuthContext";
-import { QMSFormTabs } from "@/src/constants/vendorDetailSidebarTab";
-import { QMSForm } from '@/src/types/qmstypes';
-import SignatureCanvas from 'react-signature-canvas';
 import { useQMSForm } from '@/src/hooks/useQMSForm';
 
 export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {

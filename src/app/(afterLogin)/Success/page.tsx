@@ -1,11 +1,8 @@
 import type React from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle2 } from "lucide-react"
-type Props = {
-  title?:string,
-  description?:string
-}
-const AcceptedSuccessPopup = ({title,description}:Props) => {
+
+const AcceptedSuccessPopup = async() => {
   
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-[#EBEBF6] z-50 text-black">
@@ -14,9 +11,9 @@ const AcceptedSuccessPopup = ({title,description}:Props) => {
                 <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
                   <CheckCircle2 className="h-8 w-8 text-green-600" />
                 </div>
-                <h2 className="text-2xl font-bold mb-2 text-black">{title?title:"Submission Successful!"}</h2>
+                <h2 className="text-2xl font-bold mb-2 text-black">{"Submission Successful!"}</h2>
                 <p className="text-gray-600 mb-6">
-                  {description?description:"Thank you for completing the form. Your response has been recorded successfully."}
+                  {"Thank you for completing the form. Your response has been recorded successfully."}
                 </p>
                 {/* <p className="text-sm text-gray-500">
                   You will receive a confirmation email shortly with all the event details.

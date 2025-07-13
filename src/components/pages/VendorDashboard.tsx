@@ -3,7 +3,7 @@ import VendorDashboardCardCounter from "../molecules/Vendor-Dashboard-Card-Count
 import { AxiosResponse } from 'axios';
 import requestWrapper from '@/src/services/apiCall';
 import API_END_POINTS from '@/src/services/apiEndPoints';
-import { dashboardCardData, DashboardPOTableData, DashboardTableType, TvendorRegistrationDropdown } from '@/src/types/types';
+import { dashboardCardData, DashboardPOTableData, DashboardTableType, TvendorRegistrationDropdown, VendorDashboardPOTableData } from '@/src/types/types';
 import { cookies } from 'next/headers';
 
 const VendorDashboard = async() => {
@@ -32,7 +32,7 @@ const VendorDashboard = async() => {
             }
           });
 
-           const dashboardPOTableData: DashboardPOTableData =
+           const dashboardPOTableData: VendorDashboardPOTableData["message"] =
               dashboardPOTableDataApi?.status == 200 ? dashboardPOTableDataApi?.data?.message : "";
           
 
@@ -49,6 +49,21 @@ const VendorDashboard = async() => {
                   const dropdownData: TvendorRegistrationDropdown["message"]["data"] =
                     dropDownApi?.status == 200 ? dropDownApi?.data?.message?.data : "";
                   const companyDropdown = dropdownData?.company_master
+
+                const dispatchTableUrl = API_END_POINTS?.dispatchTable;
+                const dispatchTableApi: AxiosResponse = await requestWrapper({
+                  url: dispatchTableUrl,
+                  method: "GET",
+                  headers:{
+                    cookie: cookieHeaderString
+                  }
+                });
+
+                  const dispatchTableData =
+                    dispatchTableApi?.status == 200 ? dispatchTableApi?.data?.message?.dispatches : "";
+                    const dispatchCardCount =
+                    dispatchTableApi?.status == 200 ? dispatchTableApi?.data?.message?.card_count : "";
+
           
   return (
     <div className="p-8">
@@ -57,6 +72,8 @@ const VendorDashboard = async() => {
       companyDropdown={companyDropdown}
         cardData={CardData}
         dashboardPOTableData={dashboardPOTableData}
+        dispatchTableData={dispatchTableData}
+        dispatchCardCount={dispatchCardCount}
         />
     </div>
   )
