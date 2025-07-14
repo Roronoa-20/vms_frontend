@@ -1,6 +1,6 @@
 
 // Purchase Requisition Type
-interface PurchaseRequisitionType {
+export interface PurchaseRequisitionType {
   name: string;
   purchase_requisition_type_code: string;
   purchase_requisition_type_name: string;
@@ -8,7 +8,7 @@ interface PurchaseRequisitionType {
 }
 
 // Plant
-interface Plant {
+export interface Plant {
   name: string;
   plant_code: string;
   plant_name: string | null;
@@ -16,7 +16,7 @@ interface Plant {
 }
 
 // Company Code Area
-interface CompanyCodeArea {
+export interface CompanyCodeArea {
   name: string;
   company_area_code: string;
   company_area_name: string;
@@ -24,7 +24,7 @@ interface CompanyCodeArea {
 }
 
 // Company
-interface Company {
+export interface Company {
   name: string;
   company_code: string;
   company_name: string;
@@ -32,7 +32,7 @@ interface Company {
 }
 
 // Item Category Master
-interface ItemCategoryMaster {
+export interface ItemCategoryMaster {
   name: string;
   item_code: string;
   item_name: string;
@@ -40,14 +40,14 @@ interface ItemCategoryMaster {
 }
 
 // Material Group Master
-interface MaterialGroupMaster {
+export interface MaterialGroupMaster {
   name: string;
   material_group_name: string;
   material_group_description: string;
 }
 
 // UOM Master
-interface UOMMaster {
+export interface UOMMaster {
   name: string;
   uom_code: string;
   uom: string;
@@ -55,7 +55,7 @@ interface UOMMaster {
 }
 
 // Cost Center
-interface CostCenter {
+export interface CostCenter {
   name: string;
   cost_center_code: string;
   cost_center_name: string;
@@ -63,7 +63,7 @@ interface CostCenter {
 }
 
 // Profit Center
-interface ProfitCenter {
+export interface ProfitCenter {
   name: string;
   profit_center_code: string;
   profit_center_name: string;
@@ -71,7 +71,7 @@ interface ProfitCenter {
 }
 
 // GL Account Number
-interface GLAccountNumber {
+export interface GLAccountNumber {
   name: string;
   gl_account_code: string;
   gl_account_name: string;
@@ -79,7 +79,7 @@ interface GLAccountNumber {
 }
 
 // Material Code
-interface MaterialCode {
+export interface MaterialCode {
   name: string;
   material_code: string;
   material_name: string;
@@ -87,7 +87,7 @@ interface MaterialCode {
 }
 
 // Account Assignment Category
-interface AccountAssignmentCategory {
+export interface AccountAssignmentCategory {
   name: string;
   account_assignment_category_code: string;
   account_assignment_category_name: string;
@@ -95,41 +95,70 @@ interface AccountAssignmentCategory {
 }
 
 // Purchase Group
-interface PurchaseGroup {
+export interface PurchaseGroup {
   name: string;
   purchase_group_code: string;
   purchase_group_name: string;
   description: string;
 }
 
+export interface PurchaseOrganisation {
+  name: string;
+  purchase_organisation_code: string;
+  purchase_organisation_name: string;
+  description: string;
+}
 // Account Category
-interface AccountCategory {
+export interface AccountCategory {
   name: string;
   account_category_code: string;
   account_category_name: string;
   description: string;
 }
 
-export type PurchaseRequestDropdown = {
-    message:{
-        purchase_requisition_type: PurchaseRequisitionType[];
-  plant: Plant[];
-  company_code_area: CompanyCodeArea[];
-  company: Company[];
-  item_category_master: ItemCategoryMaster[];
-  material_group_master: MaterialGroupMaster[];
-  uom_master: UOMMaster[];
-  cost_center: CostCenter[];
-  profit_center: ProfitCenter[];
-  gl_account_number: GLAccountNumber[];
-  material_code: MaterialCode[];
-  account_assignment_category: AccountAssignmentCategory[];
-  purchase_group: PurchaseGroup[];
-  account_category: AccountCategory[];
-    }
+export interface Currency {
+  name: string;
+  currency_code: string;
+  currency_name: string;
 }
 
-interface PurchaseRequisitionFormTable {
+export interface StoreLocation {
+  name: string;
+  store_name: string;
+  store_location_name: string;
+  description: string;
+}
+export interface ValuationArea {
+  name: string;
+  valuation_area_code: string;
+  valuation_area_name: string;
+  description: string;
+}
+
+export type PurchaseRequestDropdown = {
+  message: {
+    purchase_requisition_type: PurchaseRequisitionType[];
+    plant: Plant[];
+    company_code_area: CompanyCodeArea[];
+    company: Company[];
+    item_category_master: ItemCategoryMaster[];
+    material_group_master: MaterialGroupMaster[];
+    uom_master: UOMMaster[];
+    cost_center: CostCenter[];
+    profit_center: ProfitCenter[];
+    gl_account_number: GLAccountNumber[];
+    material_code: MaterialCode[];
+    account_assignment_category: AccountAssignmentCategory[];
+    purchase_group: PurchaseGroup[];
+    account_category: AccountCategory[];
+    purchase_organisation: PurchaseOrganisation[];
+    currency_master: Currency[];
+    store_location: StoreLocation[];
+    valuation_area: ValuationArea[];
+  }
+}
+
+export interface PurchaseRequisitionFormTable {
   name: string;
   owner: string;
   creation: string;
@@ -163,27 +192,28 @@ interface PurchaseRequisitionFormTable {
 }
 
 export type PurchaseRequestData = {
-  message:{
-    data:{
+  message: {
+    data: {
       name: string;
-  owner: string;
-  creation: string;
-  modified: string;
-  modified_by: string;
-  docstatus: number;
-  idx: number;
-  naming_series: string;
-  purchase_requisition_form_link: string;
-  purchase_requisition_type: string;
-  plant: string;
-  company_code_area: string;
-  company: string;
-  requisitioner: string;
-  doctype: string;
-  purchase_group:string
-  purchase_requisition_form_table: PurchaseRequisitionFormTable[];
-  hod:boolean,
-  purchase_head:boolean
+      owner: string;
+      creation: string;
+      modified: string;
+      modified_by: string;
+      docstatus: number;
+      idx: number;
+      naming_series: string;
+      purchase_requisition_form_link: string;
+      purchase_requisition_type: string;
+      plant: string;
+      company_code_area: string;
+      company: string;
+      requisitioner: string;
+      doctype: string;
+      purchase_group: string
+      purchase_requisition_form_table: PurchaseRequisitionFormTable[];
+      hod: boolean,
+      purchase_head: boolean
+      cart_id: string;
     }
   }
 }

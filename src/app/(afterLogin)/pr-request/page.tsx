@@ -8,7 +8,7 @@ import React from 'react'
 interface PageProps {
   searchParams: Promise<{ 
     pur_req?:string
-    cartId?:string
+    cart_id?:string
   }>
 }
 
@@ -16,10 +16,10 @@ interface PageProps {
 const page = async({ searchParams }:PageProps) => {
   const params = await searchParams;
   const pur_req =  params["pur_req"];
-  const cartId =  params["cartId"];
+  const cart_id =  params["cart_id"];
 
   return (
-    <PRRequest pur_req={pur_req} cartId={cartId}/>
+    <PRRequest pur_req={pur_req} cart_id={cart_id}/>
   )
 }
 
