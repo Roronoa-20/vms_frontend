@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import VendorRegistration from "@/src/components/pages/VendorRegistration";
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
