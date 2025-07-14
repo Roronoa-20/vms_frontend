@@ -3,26 +3,26 @@ import { create } from 'zustand';
 import { VendorRegistrationData } from '../types/types';
 
 // Default empty values for the form
-const defaultVendorData: VendorRegistrationData = {
-  vendor_title: '',
-  vendor_name: '',
-  office_email_primary: '',
-  search_term: '',
-  country: '',
-  mobile_number: '',
-  registered_date: '',
-  qa_required: '',
-  qms_required: 0,
-  multiple_company_data: [],
-  vendor_types: [],
-  purchase_organization: '',
-  account_group: '',
-  purchase_group: '',
-  terms_of_payment: '',
-  order_currency: '',
-  incoterms: '',
-  company_name:''
-};
+// const defaultVendorData: VendorRegistrationData = {
+//   vendor_title: '',
+//   vendor_name: '',
+//   office_email_primary: '',
+//   search_term: '',
+//   country: '',
+//   mobile_number: '',
+//   registered_date: '',
+//   qa_required: '',
+//   qms_required: 0,
+//   multiple_company_data: [],
+//   vendor_types: [],
+//   purchase_organization: '',
+//   account_group: '',
+//   purchase_group: '',
+//   terms_of_payment: '',
+//   order_currency: '',
+//   incoterms: '',
+//   company_name:''
+// };
 
 // Define the store type
 type VendorStore = {

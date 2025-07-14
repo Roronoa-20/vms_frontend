@@ -97,8 +97,8 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
           </div>
         </div>
         <div className="flex flex-col">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Type Of Business (Please select any one)
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Type Of Business (Please select any one) <span className="pl-2 text-red-400 text-xl">*</span>
           </h1>
           <Select required={true} onValueChange={(value)=>{updateField('type_of_business',value)}} value={data?.type_of_business ?? OnboardingDetail?.type_of_business}>
             <SelectTrigger>
@@ -139,8 +139,8 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
           <Input placeholder="" onChange={(e)=>{updateField("website",e.target.value)}} value={data?.website ?? OnboardingDetail?.website ?? ""}/>
         </div>
         <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Reg No.
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Reg No. <span className="pl-2 text-red-400 text-xl">*</span>
           </h1>
           <Input placeholder="Enter Reg No." onChange={(e)=>{updateField("registered_office_number",e.target.value)}} value={data?.registered_office_number ?? OnboardingDetail?.registered_office_number ?? ""}/>
           {errors?.registered_office_number && !data?.registered_office_number && <span style={{ color: 'red' }}>{errors?.registered_office_number}</span>}
@@ -176,15 +176,15 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
           <Input placeholder="" onChange={(e)=>{updateField("office_email_secondary",e.target.value)}} value={data?.office_email_secondary ?? OnboardingDetail?.office_email_secondary ?? ""}/>
         </div>
         <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Corporate Identification No.(CIN No.)
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Corporate Identification No.(CIN No.) <span className="pl-2 text-red-400 text-xl">*</span>
           </h1>
           <Input placeholder="" onChange={(e)=>{updateField("corporate_identification_number",e.target.value)}} value={data?.corporate_identification_number ?? OnboardingDetail?.corporate_identification_number ?? ""}/>
           {errors?.corporate_identification_number && !data?.corporate_identification_number && <span style={{ color: 'red' }}>{errors?.corporate_identification_number}</span>}
         </div>
         <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Cin Date
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Cin Date <span className="pl-2 text-red-400 text-xl">*</span>
           </h1>
           <Input type="date" placeholder="Enter Mobile Number" onChange={(e)=>{updateField("cin_date",e.target.value)}} value={data?.cin_date ?? OnboardingDetail?.cin_date ?? ""}/>
           {errors?.cin_date && !data?.cin_date && <span style={{ color: 'red' }}>{errors?.cin_date}</span>}

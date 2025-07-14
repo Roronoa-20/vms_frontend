@@ -28,6 +28,7 @@ export type TtableData = {
   order_currency:string,
   incoterms:string,
   reconciliation_account:string
+  vendor_types:{vendor_type:string}[]
 }
 
 const VendorRegistration = ({...Props}:Props) => {

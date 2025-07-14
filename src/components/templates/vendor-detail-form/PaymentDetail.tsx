@@ -131,7 +131,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
       <div className="grid grid-cols-3 gap-6 p-5">
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Bank Name
+            Bank Name <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Select value={paymentDetail?.bank_name ?? OnboardingDetail?.bank_name ?? ""} onValueChange={(value)=>{updatePaymentDetail("bank_name",value)}}>
             <SelectTrigger>
@@ -152,7 +152,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            IFSC Code
+            IFSC Code <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
                       {errors?.ifsc_code && !paymentDetail?.ifsc_code && <span style={{ color: 'red' }}>{errors?.ifsc_code}</span>}
@@ -160,14 +160,14 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Account Number
+            Account Number <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input placeholder="" value={paymentDetail?.account_number ?? OnboardingDetail?.account_number ?? ""} onChange={(e)=>{updatePaymentDetail("account_number",e.target.value)}}/>
           {errors?.account_number && !paymentDetail?.account_number && <span style={{ color: 'red' }}>{errors?.account_number}</span>}
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Name of Account Holder
+            Name of Account Holder <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input placeholder="" value={paymentDetail?.name_of_account_holder ?? OnboardingDetail?.name_of_account_holder ?? ""} onChange={(e)=>{updatePaymentDetail("name_of_account_holder",e.target.value)}}/>
           {errors?.name_of_account_holder && !paymentDetail?.name_of_account_holder && <span style={{ color: 'red' }}>{errors?.name_of_account_holder}</span>}
@@ -175,7 +175,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
 
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Type of Account
+            Type of Account <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Select value={paymentDetail?.type_of_account ?? OnboardingDetail?.type_of_account ?? ""} onValueChange={(value)=>{updatePaymentDetail("type_of_account",value)}}>
             <SelectTrigger>
@@ -191,8 +191,8 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
           {errors?.type_of_account && !paymentDetail?.type_of_account && <span style={{ color: 'red' }}>{errors?.type_of_account}</span>}
         </div>
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Currency
+          <h1 className="text-[12px] font-normal text-[#626973] pb-6">
+            Currency 
           </h1>
           <Select value={paymentDetail?.currency ?? OnboardingDetail?.currency ?? ""} onValueChange={(value)=>{updatePaymentDetail("currency",value)}}>
             <SelectTrigger>
@@ -211,7 +211,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Bank Proof (Upload Passbook Leaf/Cancelled Cheque)
+            Bank Proof (Upload Passbook Leaf/Cancelled Cheque) <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <div className="flex gap-4">
           <Input placeholder=""  type="file" onChange={(e)=>{setBankProofFile(e.target.files)}} />

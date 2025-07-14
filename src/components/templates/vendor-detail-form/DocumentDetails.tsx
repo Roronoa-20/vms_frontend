@@ -90,48 +90,48 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
     const [errors, setErrors] = useState<any>({});
   const validate = () => {
     const errors:any = {};
-    if (!documentDetails?.company_pan_number) {
+    if (!documentDetails?.company_pan_number && !OnboardingDetail?.company_pan_number) {
       errors.company_pan_number = "Please Enter Company Pan Number";
     }
-    if (!documentDetails?.name_on_company_pan) {
+    if (!documentDetails?.name_on_company_pan && !OnboardingDetail?.name_on_company_pan) {
       errors.name_on_company_pan = "Please Enter Name On Company Pan";
     }
 
-    if (documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_state) {
+    if ((documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_state) && (!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_state)) {
       errors.gst_state = "Please Select Gst State";
 
     } 
-    if (documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_number) {
+    if ((documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_number) && (!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_number)) {
       errors.gst_number = "Please Enter Gst Number";
 
     } 
-    if (documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_registration_date) {
+    if ((documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_registration_date) && ((!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_registration_date))) {
       errors.gst_registration_date = "Please Select Gst Registration Date";
 
     } 
-    if (documentDetails?.gst_ven_type == "Registered" && documentDetails?.gstDocument?.length && documentDetails?.gstDocument?.length == 0) {
+    if ((documentDetails?.gst_ven_type == "Registered" && documentDetails?.gstDocument?.length && documentDetails?.gstDocument?.length == 0) && (!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_document)) {
       errors.gst_state = "Please Upload Gst File";
 
     } 
 
-    if (documentDetails?.msme_registered == "Yes" && !documentDetails?.msme_enterprise_type) {
+    if ((documentDetails?.msme_registered == "Yes" && !documentDetails?.msme_enterprise_type) && (OnboardingDetail?.msme_registered == "yes" && !OnboardingDetail?.msme_enterprise_type)) {
       errors.msme_enterprise_type = "Please Select Enterprise Type";
     } 
 
-    if (documentDetails?.msme_registered == "Yes" && !documentDetails?.udyam_number) {
+    if ((documentDetails?.msme_registered == "Yes" && !documentDetails?.udyam_number) && (OnboardingDetail?.msme_registered == "Yes" && !OnboardingDetail?.udyam_number)) {
       errors.udyam_number = "Please Enter Udhyam Registration Number";
     } 
 
-    if (documentDetails?.msme_registered == "Yes" && !documentDetails?.name_on_udyam_certificate) {
+    if ((documentDetails?.msme_registered == "Yes" && !documentDetails?.name_on_udyam_certificate) && (OnboardingDetail?.msme_registered == "Yes" && !OnboardingDetail?.name_on_udyam_certificate)) {
       errors.name_on_udyam_certificate = "Please Enter Name Udhyam Certificate";
     } 
 
-    if (documentDetails?.msme_registered == "Yes" && documentDetails?.udyamCertificate?.length && documentDetails?.udyamCertificate?.length == 0) {
+    if ((documentDetails?.msme_registered == "Yes" && documentDetails?.udyamCertificate?.length && documentDetails?.udyamCertificate?.length == 0) && (OnboardingDetail?.msme_registered == "Yes" && !OnboardingDetail?.msme_proof)) {
       errors.udyamCertificate = "Please Upload Udhyam Certificate";
     } 
 
 
-    if (!documentDetails?.enterprise_registration_number) {
+    if (!documentDetails?.enterprise_registration_number && !OnboardingDetail?.enterprise_registration_number) {
       errors.enterprise_registration_number = "Please Enter Enterprice Registration Number";
     }
 
@@ -195,7 +195,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
         <div className="grid grid-cols-3 gap-6 p-5 ">
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Company PAN Number
+              Company PAN Number <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
               placeholder="Enter Company Pan Number"
@@ -215,7 +215,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Name of Company on PAN Card
+              Name of Company on PAN Card <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
               placeholder="Enter Pan Card"
@@ -235,7 +235,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Upload PAN Document
+              Upload PAN Document <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <div className="flex gap-4">
 
@@ -275,7 +275,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           <div className="col-span-3 grid grid-cols-3 gap-6">
             <div className="flex flex-col">
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                GST Vendor Type
+                GST Vendor Type <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Select
                 onValueChange={(value) => {
@@ -310,7 +310,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           >
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                State
+                State <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               {/* <Input placeholder="Enter State" value={documentDetails?.gst_state ?? OnboardingDetail?.gst_table[0]?.gst_state} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,gst_state:e.target.value}))}}/> */}
               <Select
@@ -341,7 +341,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                GST Number
+                GST Number <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Input
                 placeholder="Enter GST Number"
@@ -361,7 +361,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                GST Registration Date
+                GST Registration Date <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Input
                 placeholder="Enter Registration Date"
@@ -382,7 +382,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                Upload GST Document
+                Upload GST Document <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <div className="flex gap-4">
               <Input
@@ -447,7 +447,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
             className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}
           >
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              MSME Enterprise Type
+              MSME Enterprise Type <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Select
               value={
@@ -476,7 +476,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           </div>
           <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Udyam Registration No.
+              Udyam Registration No. <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
               placeholder=" Enter Udyam Registration No"
@@ -496,7 +496,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           </div>
           <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Name of Company in Udyam Certificate
+              Name of Company in Udyam Certificate <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
               placeholder=""
@@ -516,7 +516,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           </div>
           <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Upload Udyam Certificate
+              Upload Udyam Certificate <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <div className="flex gap-4">
             <Input
@@ -556,7 +556,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
         <div className="grid grid-cols-3 pl-5 gap-6">
           <div className={``}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Enterprise Registration Number
+              Enterprise Registration Number <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
               placeholder="Enter Enterprise Registration Number"
@@ -576,7 +576,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           </div>
           <div className={``}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Upload Enterprise Registration Document
+              Upload Enterprise Registration Document <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <div className="flex gap-4 w-full">
 

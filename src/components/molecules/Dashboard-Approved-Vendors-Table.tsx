@@ -27,6 +27,7 @@ type Props = {
 }
 
 const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
+  console.log(dashboardTableData,"this is table onboarded")
   return (
 
     <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
@@ -89,7 +90,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                 <TableCell className="font-medium">{index + 1}.</TableCell>
                 <TableCell className="text-nowrap">{item?.name}</TableCell>
                 <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
-                <TableCell className="text-nowrap">{item?.company}</TableCell>
+                <TableCell className="text-nowrap">{item?.company_name}</TableCell>
                 <TableCell>
                   <div
                     className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "Pending"

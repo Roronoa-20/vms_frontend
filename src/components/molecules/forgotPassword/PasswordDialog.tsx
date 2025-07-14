@@ -7,6 +7,7 @@ import requestWrapper from '@/src/services/apiCall'
 import { AxiosResponse } from 'axios'
 import { SetStateAction } from 'react'
 import { Dispatch } from 'react'
+import { useOutsideClick } from '@/src/hooks/useOutsideClick'
 
 
 interface Props {
@@ -23,7 +24,12 @@ const PasswordDialog = ({setIsPasswordDialog,email,authorization}:Props) => {
     const [password,setPassword] = useState<string | "">("")
     const [confirmPassword,setConfirmPassword] = useState<string | "">("")
     const [errors, setErrors] = useState<Error>();
-
+    const handleClose = ()=>{
+      setIsPasswordDialog(false);
+      setConfirmPassword("")
+      setPassword("")
+    }
+    const outsideClickRef = useOutsideClick<HTMLDivElement>(handleClose)
     const validateAtSubmit = ()=>{
         const errors: Error = {};
         if(!matchPassword()){
@@ -62,7 +68,7 @@ const PasswordDialog = ({setIsPasswordDialog,email,authorization}:Props) => {
 
   return (
     <div className="absolute z-50 flex inset-0 items-center justify-center bg-black bg-opacity-50 text-nowrap">
-      <div className="bg-white rounded-xl border px-8 py-4 md:max-w-[600px] md:max-h-[250px] h-full w-full gap-6 text-black md:text-md font-light flex flex-col justify-start items-center">
+      <div ref={outsideClickRef} className="bg-white rounded-xl border px-8 py-4 md:max-w-[600px] md:max-h-[250px] h-full w-full gap-6 text-black md:text-md font-light flex flex-col justify-start items-center">
         <h1 className="font-semibold text-center text-[#5291CD] text-[20px]">Change Password</h1>
         <div className='flex flex-col gap-4 w-full'>
             <div className='grid grid-cols-3 gap-4'>

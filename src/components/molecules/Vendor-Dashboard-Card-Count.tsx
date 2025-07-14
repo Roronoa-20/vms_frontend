@@ -1,19 +1,23 @@
 "use client"
 import Image from "next/image";
-import { dashboardCardData, DashboardPOTableData, DashboardPOTableItem, DashboardTableType, TvendorRegistrationDropdown } from "@/src/types/types";
+import { dashboardCardData, DashboardPOTableData, DashboardPOTableItem, DashboardTableType, TvendorRegistrationDropdown, VendorDashboardPOTableData } from "@/src/types/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import PurchaseAndOngoingOrders from "./Purchase-and-Ongoing-Orders";
+import PurchaseAndOngoingOrders from "./VendorPurchase-and-Ongoing-Orders";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../atoms/select";
 import { useMultipleVendorCodeStore } from "@/src/store/MultipleVendorCodeStore";
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
+import { dispatchTable } from "@/src/types/dispatchTableType";
+import DashboardDispatchVendorsTable from "./Dashboard-Dispatch-Vendors-Table";
 
 type Props = {
   cardData: dashboardCardData
-  dashboardPOTableData?: DashboardPOTableData["message"]
+  dashboardPOTableData?: VendorDashboardPOTableData["message"]
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
+  dispatchTableData:dispatchTable["dispatches"]
+  dispatchCardCount:string
 }
 
 const VendorDashboardCards = ({ ...Props }: Props) => {
@@ -52,7 +56,7 @@ const cardData =  [
       },
       {
         name: "Dispatch Details",
-        count: Props.cardData?.approved_vendor_count ?? 0,
+        count: Props?.dispatchCardCount ?? 0,
         icon: "/dashboard-assests/cards_icon/truck.svg",
         text_color: "text-emerald-800",
         bg_color: "bg-emerald-100",
@@ -116,7 +120,7 @@ const cardData =  [
               {item.name === "Purchase & Ongoing Orders" && <PurchaseAndOngoingOrders dashboardPOTableData={Props?.dashboardPOTableData} companyDropdown={Props?.companyDropdown}/>}
               {/* {item.name === "Quotation" && <DashboardTotalVendorsTable dashboardTableData={Props.dashboardTotalVendorTableData} companyDropdown={Props?.companyDropdown} />} */}
               {/* {item.name === "Dispatch Details" && <DashboardApprovedVendorsTable dashboardTableData={Props.dashboardApprovedVendorTableData} companyDropdown={Props?.companyDropdown}/>} */}
-              {/* {item.name === "Dispatch Details" && <DashboardDispatchVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
+              {item.name === "Dispatch Details" && <DashboardDispatchVendorsTable dashboardTableData={Props?.dispatchTableData} />}
               {/* {item.name === "Payment History" && <PurchaseAndOngoingOrders dashboardPOTableData={Props.dashboardPOTableData} />} */}
               {/* {item.name === "Payment Request" && <DashboardPaymentVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
               {/* {item.name === "Current Month Vendors" && <DashboardCurrentMonthsVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}

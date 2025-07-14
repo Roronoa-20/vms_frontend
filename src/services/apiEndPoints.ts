@@ -62,7 +62,22 @@ const API_END_POINTS = {
   prInquiryPurchaseApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.purchase_approval_check`,
   prTableData:`${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pr_w`,
   qmsformdetails:`${url}/api/method/vms.APIs.assessment_apis.qms_api.get_qms_details_without_label`,
+  poBasedOnVendorCode:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.list_purchase_order`,
+  PODetailsBasedOnPOCode:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.get_poitem_against_po`,
+  PurchaseEnquiryModify:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.modified_peq`,
+  PurchaseEnquiryAcknowledge:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.acknowledge_purchase_inquiry`,
+  saveDraftDispatch:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.update_dispatch_item`,
+  InquirycompanyBasedOnUser:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.get_company_for_pe_detailed`,
+  InquiryPurchaseTypeDropdown:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.get_purchase_type`,
+  InquiryDropdownsBasedOnCompany:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.get_plants_and_purchase_group`,
+  AddDispatch:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.update_dispatch_item`,
+  SubmitDispatch:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.submit_child_dispatch_item`,
+  dispatchDetails:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.full_data_dispatch_item`,
+  dispatchTableRowSubmit:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.submit_child_dispatch_item`,
+  // qmsformdetails:`${url}/api/method/vms.APIs.assessment_apis.qms_api.get_qms_details_without_label`,
   asaformDetails:`${url}/api/method/vms.APIs.assessment_apis.asa.get_asa_details_without_label`,
+  dispatchTable:`${url}/api/method/vms.APIs.dispatch_dashboard.dispatch_dashboard.dispatch_dashboard`,
+  poTable:`${url}/api/method/vms.APIs.dashboard_api.filter_card.filtering_po_details`
 };
 
 export default API_END_POINTS;

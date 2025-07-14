@@ -209,7 +209,7 @@ const CompanyAddress = ({
     setIsShippingSame(e);
     // setShippingData((prev)=>({...prev,address1:billingAddress?.address_line_1,address2:billingAddress?.address_line_2}))
     if (e) {
-      handleShippingPincodeChange(billingAddress?.pincode ?? "");
+      // handleShippingPincodeChange(billingAddress?.pincode ?? "");
       setShippingData((prev) => ({
         ...prev,
         address_line_1: billingAddress?.address_line_1,
@@ -299,7 +299,7 @@ const CompanyAddress = ({
       <div className="grid grid-cols-4 gap-6 p-5">
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Address 1
+            Address 1 <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -312,7 +312,7 @@ const CompanyAddress = ({
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Address 2
+            Address 2 <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -326,7 +326,7 @@ const CompanyAddress = ({
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Pincode/Zipcode
+            Pincode/Zipcode <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -339,7 +339,7 @@ const CompanyAddress = ({
           {errors?.pincode && !billingAddress?.pincode && <span style={{ color: 'red' }}>{errors?.pincode}</span>}
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-7">
             District
           </h1>
           <Input

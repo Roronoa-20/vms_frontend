@@ -21,9 +21,14 @@ export const sidebarMenu = [
   },
   // {
   //   logo: "/sidebar-assests/vendor-icon.svg",
-  //   name: "Inquiry",
-  //   href:"/pr-inquiry"
+  //   name: "PR",
+  //   href:"/pr-request"
   // },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "Inquiry",
+    href:"/pr-inquiry"
+  },
   // {
   //   logo: "/sidebar-assests/raise-rfq-logo.svg",
   //   name: "Raise RFQ",
@@ -72,6 +77,11 @@ export const VendorsidebarMenu = [
     logo: "/sidebar-assests/home-logo.svg",
     name: "Home",
     href:"/vendor-dashboard"
+  },
+  {
+    logo: "/sidebar-assests/dispatch-logo.svg",
+    name: "Dispatch",
+    href:"/dispatch"
   },
   // {
   //   logo: "/sidebar-assests/raise-rfq-logo.svg",

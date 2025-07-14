@@ -77,7 +77,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
 
   const fetchTable = async () => {
     const dashboardPendingVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.dashboardPendingVendorTableURL}?usr=${user}&company=${selectedCompany}&refno=${search}`,
+      url: `${API_END_POINTS?.dashboardPendingVendorTableURL}?usr=${user}&company=${selectedCompany}&refno=${search}&page_no=${currentPage}`,
       method: "GET",
     });
     if (dashboardPendingVendorTableDataApi?.status == 200) {
@@ -88,6 +88,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
       setRecordPerPage(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding?.length)
     }
   }
+  console.log(table,"this is table")
 
 
   return (
@@ -133,7 +134,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
           {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-              <TableHead className="w-[100px]">Sr No.</TableHead>
+              {/* <TableHead className="w-[100px]">Sr No.</TableHead> */}
               <TableHead>Ref No.</TableHead>
               <TableHead>Vendor Name</TableHead>
               <TableHead className="text-center">Company Name</TableHead>
@@ -149,7 +150,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
             {table ? (
               table.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell className="font-medium">{index + 1}.</TableCell>
+                  {/* <TableCell className="font-medium">{item?.idx}</TableCell> */}
                   <TableCell className="text-nowrap">{item?.ref_no}</TableCell>
                   <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
                   <TableCell className="text-nowrap">{item?.company_name}</TableCell>
@@ -169,7 +170,8 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
                 <TableCell>{item?.purchase_h_approval}</TableCell>
                 <TableCell>{item?.accounts_t_approval}</TableCell>
                 <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                <TableCell className="text-right">{item?.qms_form}</TableCell>
+                {/* <TableCell className="text-right">{item?.qms_form}</TableCell> */}
+                <TableCell><div className={`${(item?.qms_form_filled || item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000")?"":"hidden"}`}><Link href={`/qms-details?tabtype=vendor%20information&vendor_onboarding=${item?.name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
               </TableRow>
             ))
           ) : (
