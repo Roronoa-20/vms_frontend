@@ -191,7 +191,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
           {errors?.type_of_account && !paymentDetail?.type_of_account && <span style={{ color: 'red' }}>{errors?.type_of_account}</span>}
         </div>
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-6">
             Currency 
           </h1>
           <Select value={paymentDetail?.currency ?? OnboardingDetail?.currency ?? ""} onValueChange={(value)=>{updatePaymentDetail("currency",value)}}>

@@ -1,4 +1,4 @@
-import Logo from "../atoms/vms-logo";
+import Logo from "../atoms/VmsLoginLogo";
 import LoginForm from "../templates/login-form";
 import Slider from "../molecules/slider";
 import Image from "next/image";

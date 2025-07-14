@@ -284,12 +284,12 @@ const PRInquiryForm = ({ PRInquiryData, dropdown,companyDropdown, purchaseTypeDr
         Purchase Inquiry Items
       </h1>
       <div className="grid grid-cols-3 gap-6 p-5">
-        <div className="col-span-1">
+        {/* <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Assest Code
           </h1>
           <Input placeholder="" name='assest_code' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.assest_code ?? ""} />
-        </div>
+        </div> */}
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Product Name
@@ -386,7 +386,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown,companyDropdown, purchaseTypeDr
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
                 <TableHead className="w-[100px]">Sr No.</TableHead>
-                <TableHead className="text-center">Assest Code</TableHead>
+                {/* <TableHead className="text-center">Assest Code</TableHead> */}
                 <TableHead className="text-center">Product Name</TableHead>
                 <TableHead className="text-center">Product Price</TableHead>
                 <TableHead className="text-center">UOM</TableHead>
@@ -400,7 +400,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown,companyDropdown, purchaseTypeDr
               {tableData?.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
-                  <TableCell>{item?.assest_code}</TableCell>
+                  {/* <TableCell>{item?.assest_code}</TableCell> */}
                   <TableCell>{item?.product_name}</TableCell>
                   <TableCell>{item?.product_price}</TableCell>
                   <TableCell>{item?.uom}</TableCell>

@@ -339,7 +339,7 @@ const CompanyAddress = ({
           {errors?.pincode && !billingAddress?.pincode && <span style={{ color: 'red' }}>{errors?.pincode}</span>}
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-7">
             District
           </h1>
           <Input

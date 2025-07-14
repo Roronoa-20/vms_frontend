@@ -74,8 +74,11 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
       setReconciliationDropdown(reconciliationDropdown);
   }
 
-  const handleAdd = ()=>{
-    setTableData((prev:any)=>([...prev,singleTableData]))
+  const handleAdd = async()=>{
+    const multiVendorType = await Promise.all(multiVendor?.map((item:any)=>({
+      vendor_type:item
+    })))
+    setTableData((prev:any) => ([...prev, { ...singleTableData, vendor_types: [...multiVendorType] }]))
     setSingleTableData(null);
   }
 
