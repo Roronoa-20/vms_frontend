@@ -15,15 +15,8 @@ import { useQMSForm } from '@/src/hooks/useQMSForm';
 export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
     const params = useSearchParams();
     const currentTab = params.get("tabtype")?.toLowerCase() || "vendor information";
-    const {
-        formData,
-        sigCanvas,
-        signaturePreview,
-        handleTextareaChange,
-        handleSaveSignature,
-        handleClearSignature,
-        handleSubmit
-    } = useQMSForm(vendor_onboarding, currentTab);
+    const {formData, handleTextareaChange, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
+    
 
     return (
         <div>
