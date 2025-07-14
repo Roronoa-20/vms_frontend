@@ -101,8 +101,8 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
     })
   }
   
-  const deleteRow = async(row_id:string)=>{
-    const url = `${API_END_POINTS?.deleteCertificate}?row_id=${row_id}&ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`
+  const deleteRow = async(certificate_code:string)=>{
+    const url = `${API_END_POINTS?.deleteCertificate}?certificate_code=${certificate_code}&ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`
     const deleteResponse:AxiosResponse = await requestWrapper({url:url,method:"POST"});
     if(deleteResponse?.status == 200){
       setMultipleCertificateData([]);
@@ -184,7 +184,7 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
                           <TableCell className="text-center">{item?.certificate_code}</TableCell>
                           <TableCell className="text-center">{item?.valid_till}</TableCell>
                           <TableCell className="text-center">{item?.certificate_attach?.file_name}</TableCell>
-                          <TableCell className="flex justify-center items-center text-center"><Trash2 onClick={()=>{deleteRow(item?.name?item?.name:"")}} className=" text-red-400 cursor-pointer"/></TableCell>
+                          <TableCell className="flex justify-center items-center text-center"><Trash2 onClick={()=>{deleteRow(item?.certificate_code?item?.certificate_code:"")}} className=" text-red-400 cursor-pointer"/></TableCell>
                         </TableRow>
                       ))
                       

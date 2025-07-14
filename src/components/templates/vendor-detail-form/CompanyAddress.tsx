@@ -209,7 +209,7 @@ const CompanyAddress = ({
     setIsShippingSame(e);
     // setShippingData((prev)=>({...prev,address1:billingAddress?.address_line_1,address2:billingAddress?.address_line_2}))
     if (e) {
-      handleShippingPincodeChange(billingAddress?.pincode ?? "");
+      // handleShippingPincodeChange(billingAddress?.pincode ?? "");
       setShippingData((prev) => ({
         ...prev,
         address_line_1: billingAddress?.address_line_1,
