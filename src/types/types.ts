@@ -139,7 +139,17 @@ type VendorTypeGroup = {
   doctype: string;
 };
 
-type VendorOnboarding = {
+export type VendorOnboarding = {
+  registered_by:string
+  vendor_country:string
+  company_vendor_codes:{
+    company_code:string,
+    vendor_codes:{
+      state:string,
+      gst_no:string,
+      vendor_code:string
+    }[],
+  }[],
   name: string;
   owner: string;
   creation: string;
@@ -657,7 +667,8 @@ export type TCompanyDetailForm = {
     nature_of_company: string;
     nature_of_business: string;
     vendor_types: string[];
-    company_name_description:string
+    company_name_description:string;
+    vendor_type_list_from_master:string[]
   };
   
 
@@ -1190,6 +1201,7 @@ export type TCompanyDetailForm = {
   }
 
   export type TPRInquiryTable = {
+    asked_to_modify:boolean
   ack_mail_to_user: number;
   acknowledged_remarks: string | null;
   cart_date: string | null;

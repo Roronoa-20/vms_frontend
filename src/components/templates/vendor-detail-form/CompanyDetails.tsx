@@ -242,7 +242,7 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Vendor Type
           </h1>
-          <Input placeholder="" defaultValue={OnboardingDetail?.vendor_types?.map((item)=>(item))} disabled={true} />
+          <textarea className="col-span-2 w-full border rounded-lg p-2" placeholder="" defaultValue={OnboardingDetail?.vendor_type_list_from_master?.map((item)=>(item))} disabled={true} />
         </div>
       </div>
       <div className="flex justify-end pr-6">

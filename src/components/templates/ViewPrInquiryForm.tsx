@@ -146,15 +146,26 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchase
 
   const { designation } = useAuth()
 
-  const handleTableInput = (index: number, value: number) => {
+  const handleTableInput = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setTableData((prev) => {
       const updated = [...prev];
       if (updated[index]) {
-        updated[index] = { ...updated[index], final_price_by_purchase_team: value };
+        updated[index] = { ...updated[index],[name]: value };
       }
       return updated;
     });
   }
+
+  // const handleTableCheck = (index: number, checked:boolean) => {
+  //   setTableData((prev) => {
+  //     const updated = [...prev];
+  //     if (updated[index]) {
+  //       updated[index] = { ...updated[index],isAssestCode: checked };
+  //     }
+  //     return updated;
+  //   });
+  // }
 
   const handleCompanyChange = async(value:string)=>{
     const url = `${API_END_POINTS?.InquiryDropdownsBasedOnCompany}?comp=${value}`
@@ -310,8 +321,9 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchase
                 <TableCell>{item?.product_quantity}</TableCell>
                 <TableCell>{item?.user_specifications}</TableCell>
                 <TableCell className='flex justify-center'>
-                  <Input value={tableData[index]?.final_price_by_purchase_team ?? 0} onChange={(e)=>{handleTableInput(index,Number(e.target.value))}} className='text-center w-28' type='number'/>
+                  <Input value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e)=>{handleTableInput(index,e)}} className='text-center w-28' type='number'/>
                   </TableCell>
+                  {/* <TableCell className='flex justify-center'><Input className='text-center w-28' type='checked' onChange={(e)=>{handleTableCheck(index,e.target.checked)}}/></TableCell> */}
               </TableRow>
             ))}
           </TableBody>
