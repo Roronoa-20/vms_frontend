@@ -173,7 +173,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
                 <div className="flex gap-2">
                   <Link
                   target="blank"
-                  href={process.env.NEXT_PUBLIC_BACKEND_END +OnboardingDetail?.bank_proof?.url}
+                  href={OnboardingDetail?.bank_proof?.url}
                   className="underline text-blue-300 max-w-44 truncate"
                   >
                     <span>{OnboardingDetail?.bank_proof?.file_name}</span>
