@@ -139,7 +139,17 @@ type VendorTypeGroup = {
   doctype: string;
 };
 
-type VendorOnboarding = {
+export type VendorOnboarding = {
+  registered_by:string
+  vendor_country:string
+  company_vendor_codes:{
+    company_code:string,
+    vendor_codes:{
+      state:string,
+      gst_no:string,
+      vendor_code:string
+    }[],
+  }[],
   name: string;
   owner: string;
   creation: string;

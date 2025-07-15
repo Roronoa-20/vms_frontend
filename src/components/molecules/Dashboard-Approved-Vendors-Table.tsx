@@ -1,5 +1,5 @@
 "use client"
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -18,9 +18,10 @@ import {
 } from "@/src/components/atoms/select";
 import { tableData } from "@/src/constants/dashboardTableData";
 import { Input } from "../atoms/input";
-import { DashboardTableType, TvendorRegistrationDropdown } from "@/src/types/types";
+import { DashboardTableType, TvendorRegistrationDropdown, VendorOnboarding } from "@/src/types/types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import PopUp from "./PopUp";
 type Props = {
   dashboardTableData?: DashboardTableType
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
@@ -28,8 +29,20 @@ type Props = {
 
 const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
   console.log(dashboardTableData,"this is table onboarded")
-  return (
+  const handleClose = ()=>{
+    setIsVendorCodeDialog(false);
+    setSelectedVendorcodes([]);
+  }
+  const [isVendorCodeDialog,setIsVendorCodeDialog] = useState<boolean>();
+  const [selectedVendorCodes,setSelectedVendorcodes] = useState<VendorOnboarding["company_vendor_codes"]>([]);
 
+  const openVendorCodes = (data:any)=>{
+    setSelectedVendorcodes(data);
+    setIsVendorCodeDialog(true);
+  }
+
+  return (
+    <>
     <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
       <div className="flex w-full justify-between pb-4">
         <h1 className="text-[20px] text-[#03111F] font-semibold">
@@ -103,10 +116,10 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                     {item?.onboarding_form_status}
                   </div>
                 </TableCell>
-                <TableCell>{item?.vendor_code ? item?.vendor_code : "-"}</TableCell>
-                <TableCell>{item?.country}</TableCell>
-                <TableCell>{item?.register_by}</TableCell>
-                <TableCell><Link href={`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
+                <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={()=>{openVendorCodes(item?.company_vendor_codes)}}>View</Button></TableCell>
+                <TableCell>{item?.vendor_country}</TableCell>
+                <TableCell>{item?.registered_by}</TableCell>
+                <TableCell><Link href={`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-blue-400 hover:bg-blue-300">View</Button></Link></TableCell>
                 <TableCell><Link href={`/qms-details?tabtype=vendor%20information&vendor_onboarding=${item?.name}`}><Button variant={"outline"}>View</Button></Link></TableCell>
               </TableRow>
             ))
@@ -121,6 +134,40 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
 
       </Table>
     </div>
+    {
+      isVendorCodeDialog && 
+      <PopUp handleClose={handleClose}>
+         <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>State</TableHead>
+          <TableHead>GST No</TableHead>
+          <TableHead>Vendor Code</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {selectedVendorCodes?.map((company) => (
+          <React.Fragment key={company.company_code}>
+            <TableRow className="bg-gray-700 hover:bg-gray-700 text-white font-semibold">
+              <TableCell colSpan={3}>Company Code: {company.company_code}</TableCell>
+            </TableRow>
+            {company.vendor_codes.map((vendor, vIdx) => (
+              <TableRow
+                key={vIdx}
+                className={vIdx % 2 === 0 ? "bg-gray-100" : ""}
+              >
+                <TableCell>{vendor.state}</TableCell>
+                <TableCell>{vendor.gst_no}</TableCell>
+                <TableCell>{vendor.vendor_code || "-"}</TableCell>
+              </TableRow>
+            ))}
+          </React.Fragment>
+        ))}
+      </TableBody>
+    </Table>
+      </PopUp>
+    }
+    </>
   );
 };
 
