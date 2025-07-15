@@ -657,7 +657,8 @@ export type TCompanyDetailForm = {
     nature_of_company: string;
     nature_of_business: string;
     vendor_types: string[];
-    company_name_description:string
+    company_name_description:string;
+    vendor_type_list_from_master:string[]
   };
   
 
