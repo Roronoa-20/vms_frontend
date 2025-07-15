@@ -62,6 +62,7 @@ const API_END_POINTS = {
   prInquiryPurchaseApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.purchase_approval_check`,
   prTableData:`${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pr_w`,
   qmsformdetails:`${url}/api/method/vms.APIs.assessment_apis.qms_api.get_qms_details_without_label`,
+  qmsformapproval:`${url}/api/method/vms.APIs.assessment_apis.qms_api.approve_qms_form`,
   poBasedOnVendorCode:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.list_purchase_order`,
   PODetailsBasedOnPOCode:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.get_poitem_against_po`,
   PurchaseEnquiryModify:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.modified_peq`,

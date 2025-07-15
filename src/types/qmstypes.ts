@@ -11,10 +11,16 @@ export type QMSForm = {
   status?: string;
   vendor_signature?: string;
   qms_form_status?: string;
-  quality_control_system?: string | string[];
+  quality_control_system?: {
+    qms_quality_control?: string | string[];
+  };
   others_certificates?: string;
-  have_documentsprocedure?: string | string[];
-  if_yes_for_prior_notification?: string | string[];
+  have_documentsprocedure?: {
+    qms_procedure_doc ?: string | string[];
+  };
+  if_yes_for_prior_notification?: {
+    qms_prior_notification?: string | string[];
+  };
   regular_review_of_quality_system?: string;
   sites_inspected_by?: string;
   inspected_by_others?: string;
