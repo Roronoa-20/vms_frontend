@@ -1191,6 +1191,7 @@ export type TCompanyDetailForm = {
   }
 
   export type TPRInquiryTable = {
+    asked_to_modify:boolean
   ack_mail_to_user: number;
   acknowledged_remarks: string | null;
   cart_date: string | null;
