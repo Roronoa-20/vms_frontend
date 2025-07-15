@@ -21,13 +21,20 @@ import { Input } from "../atoms/input";
 import { DashboardTableType, TvendorRegistrationDropdown } from "@/src/types/types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useAuth } from "@/src/context/AuthContext";
+
+
 type Props = {
   dashboardTableData?: DashboardTableType
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
 }
 
 const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
-  console.log(dashboardTableData,"this is table onboarded")
+  console.log(dashboardTableData, "this is table onboarded")
+  const { designation } = useAuth();
+  const isAccountsUser = designation?.toLowerCase().includes("account");
+
+
   return (
 
     <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
@@ -80,7 +87,9 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
             <TableHead className="text-center">Country</TableHead>
             <TableHead className="text-center">Register By</TableHead>
             <TableHead className="text-center">View Details</TableHead>
-            <TableHead className="text-center">QMS Form</TableHead>
+            {!isAccountsUser && (
+              <TableHead className="text-center">QMS Form</TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody className="text-center">
@@ -107,7 +116,10 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                 <TableCell>{item?.country}</TableCell>
                 <TableCell>{item?.register_by}</TableCell>
                 <TableCell><Link href={`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                <TableCell><Link href={`/qms-details?tabtype=vendor%20information&vendor_onboarding=${item?.name}`}><Button variant={"outline"}>View</Button></Link></TableCell>
+                {/* <TableCell><Link href={`/qms-details?tabtype=vendor%20information&vendor_onboarding=${item?.name}`}><Button variant={"outline"}>View</Button></Link></TableCell> */}
+                 {!isAccountsUser && (
+                <TableCell><div className={`${(item?.qms_form_filled || item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-details?tabtype=vendor%20information&vendor_onboarding=${item?.name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
+                 )}
               </TableRow>
             ))
           ) : (

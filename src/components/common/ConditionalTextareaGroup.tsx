@@ -15,7 +15,7 @@ interface ConditionalTextareaGroupProps {
 const ConditionalTextareaGroup: React.FC<ConditionalTextareaGroupProps> = ({
   name, label, value, condition, placeholder, onChange
 }) => condition ? (
-  <div className="mt-2">
+  <div className="mt-1">
     <Label htmlFor={name} className="font-semibold text-[16px]">{label}</Label>
     <textarea
       name={name}

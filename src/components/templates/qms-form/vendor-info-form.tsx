@@ -9,8 +9,10 @@ import { useQMSForm } from '@/src/hooks/useQMSForm';
 export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
     const params = useSearchParams();
     const currentTab = params.get("tabtype")?.toLowerCase() || "vendor information";
-    const {formData, handleTextareaChange, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
-    
+    const { formData, handleTextareaChange, handleSubmit } = useQMSForm(vendor_onboarding, currentTab);
+
+    console.log("FormData:", formData);
+
 
     return (
         <div>
@@ -20,7 +22,7 @@ export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                 </h2>
                 <div className='grid grid-cols-2 gap-x-4 gap-y-2 p-2 border border-gray-300'>
                     <div className='grid grid-cols-1 relative'>
-                        <div className='col-span-1 space-y-[5px] absolute w-full'>
+                        <div className='col-span-1 space-y-[5px]'>
                             <Label className="text-[13px]" htmlFor="vendor_name1">Name</Label>
                             <Input
                                 type="text"
@@ -30,7 +32,8 @@ export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                                 onChange={(e) => handleTextareaChange(e, 'vendor_name1')}
                             />
                         </div>
-                        <div className='col-span-1 space-y-[5px] absolute top-20 w-full'>
+
+                        <div className='col-span-1 space-y-[5px] mt-4'>
                             <Label className="text-[13px]" htmlFor="date">Date</Label>
                             <Input
                                 type="date"
@@ -58,7 +61,9 @@ export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                     </div>
 
                     <div className='col-span-3 space-y-[5px]'>
-                        <Label htmlFor="name_of_parent_company" className="font-semibold text-[16px] leading-[19px] text-[#03111F]">If a division of a subsidiary, please provide name and address of parent company</Label>
+                        <Label htmlFor="name_of_parent_company" className="font-semibold text-[16px] leading-[19px] text-[#03111F]">
+                            If a division of a subsidiary, please provide name and address of parent company
+                        </Label>
                         <div className="border-b border-gray-300 mt-2">
                             <textarea
                                 className="w-full border border-gray-300 p-2"
@@ -71,10 +76,11 @@ export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                     </div>
                 </div>
             </div>
-
             <div className="flex justify-end gap-4">
                 <Button
-                    className="bg-blue-400 hover:bg-blue-400"
+                    variant="nextbtn"
+                    size="nextbtnsize"
+                    className="py-2.5"
                     onClick={handleSubmit}
                 >
                     Next

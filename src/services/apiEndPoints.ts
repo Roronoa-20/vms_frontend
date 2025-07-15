@@ -39,8 +39,8 @@ const API_END_POINTS = {
   getPoDetailURL:`${url}/api/method/vms.APIs.dashboard_api.po_data.get_po_details`,
   dashboardTotalVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.total_vendor_details`,
   dashboardPendingVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.pending_vendor_details`,
-  dashboardApprovedVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.approved_vendor_details`,
-  dashboardRejectedVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.filter_card.rejected_vendor_details`,
+  dashboardApprovedVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.approved_vendor_details`,
+  dashboardRejectedVendorTableURL:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.rejected_vendor_details`,
   certificateSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration.onboarding_form_submit`,
   logout:`${url}/api/method/logout`,
   companyDropdown:`${url}/api/resource/Company%20Master`,
@@ -74,7 +74,6 @@ const API_END_POINTS = {
   SubmitDispatch:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.submit_child_dispatch_item`,
   dispatchDetails:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.full_data_dispatch_item`,
   dispatchTableRowSubmit:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.submit_child_dispatch_item`,
-  // qmsformdetails:`${url}/api/method/vms.APIs.assessment_apis.qms_api.get_qms_details_without_label`,
   asaformDetails:`${url}/api/method/vms.APIs.assessment_apis.asa.get_asa_details_without_label`,
   dispatchTable:`${url}/api/method/vms.APIs.dispatch_dashboard.dispatch_dashboard.dispatch_dashboard`,
   poTable:`${url}/api/method/vms.APIs.dashboard_api.filter_card.filtering_po_details`

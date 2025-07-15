@@ -12,12 +12,7 @@ import YesNoNAOptions from "../../common/YesNoNAOptions";
 export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "production";
-  const {
-    formData,
-    handleCheckboxChange,
-    handleBack,
-    handleSubmit
-  } = useQMSForm(vendor_onboarding, currentTab);
+  const {formData, handleCheckboxChange, handleBack, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
 
   return (
     <div>
@@ -30,14 +25,18 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           name="manufactruing_process_validate"
           label="1. Are the manufacturing process validated?"
           value={formData.manufactruing_process_validate || ""}
-          onChange={(e) => handleCheckboxChange(e, 'manufactruing_process_validate')}
+          // onChange={(e) => handleCheckboxChange(e, 'manufactruing_process_validate')}
+          onChange={() => { }}
+
         />
 
         <YesNoNAGroup
           name="nonconforming_materials_removed"
           label="2. Are nonconforming materials removed from the production areas and prominently identified or destroyed to preclude further usage?"
           value={formData.nonconforming_materials_removed || ""}
-          onChange={(e) => handleCheckboxChange(e, 'nonconforming_materials_removed')}
+          // onChange={(e) => handleCheckboxChange(e, 'nonconforming_materials_removed')}
+          onChange={() => { }}
+
         />
 
         <div className="mb-3 border-b border-gray-300 pb-4">
@@ -91,21 +90,27 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           name="traceability"
           label="6. Is traceability of all raw materials sed, maintained throughout manfacturing?"
           value={formData.traceability || ""}
-          onChange={(e) => handleCheckboxChange(e, 'traceability')}
+          // onChange={(e) => handleCheckboxChange(e, 'traceability')}
+          onChange={() => { }}
+
         />
 
         <YesNoNAGroup
           name="prevent_cross_contamination"
           label="7. Is there a procedure in place to prevent cross-contamination?"
           value={formData.prevent_cross_contamination || ""}
-          onChange={(e) => handleCheckboxChange(e, 'prevent_cross_contamination')}
+          // onChange={(e) => handleCheckboxChange(e, 'prevent_cross_contamination')}
+          onChange={() => { }}
+
         />
 
         <YesNoNAGroup
           name="testing_or_inspection"
           label="8. Is testing or inspection performed between processes or manufacturing stages?"
           value={formData.testing_or_inspection || ""}
-          onChange={(e) => handleCheckboxChange(e, 'testing_or_inspection')}
+          // onChange={(e) => handleCheckboxChange(e, 'testing_or_inspection')}
+          onChange={() => { }}
+
         />
 
         <div className="mb-3 border-b border-gray-300 pb-4">
@@ -121,12 +126,14 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
               label="If yes, which of the following details are included in the batch records:"
               options={[
                 "Description, Lot Number & Quantities of Material used",
-                "Processing Conditions - Temperature, Time etc.",
+                "Processing Conditions - Temperature, Time, etc",
                 "The identification of the personnel who performed the particular step",
                 "Results of any In-process tests",
                 "Details of deviations from standard conditions",
               ]}
-              selected={Array.isArray(formData.details_of_batch_records) ? formData.details_of_batch_records : []}
+              // selected={Array.isArray(formData.details_of_batch_records) ? formData.details_of_batch_records : []}
+              selected={Array.isArray(formData.details_of_batch_records) ? formData.details_of_batch_records.map(item => item.qms_batch_record) : []}
+
               onChange={() => { }}
               columns={2}
             />

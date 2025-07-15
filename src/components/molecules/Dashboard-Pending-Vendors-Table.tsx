@@ -26,6 +26,7 @@ import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "./Pagination";
+import { useAuth } from "@/src/context/AuthContext";
 
 
 type Props = {
@@ -88,7 +89,9 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
       setRecordPerPage(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding?.length)
     }
   }
-  console.log(table,"this is table")
+  console.log(table,"this is table");
+   const { designation } = useAuth();
+    const isAccountsUser = designation?.toLowerCase().includes("account");
 
 
   return (
@@ -143,7 +146,9 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
               <TableHead className="text-center">Purchase Head</TableHead>
               <TableHead className="text-center">Account Team</TableHead>
               <TableHead className="text-center">View Details</TableHead>
-              <TableHead className="text-center">QMS Form</TableHead>
+              {!isAccountsUser && (
+                <TableHead className="text-center">QMS Form</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody className="text-center">
@@ -171,7 +176,9 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
                 <TableCell>{item?.accounts_t_approval}</TableCell>
                 <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
                 {/* <TableCell className="text-right">{item?.qms_form}</TableCell> */}
+                 {!isAccountsUser && (
                 <TableCell><div className={`${(item?.qms_form_filled || item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000")?"":"hidden"}`}><Link href={`/qms-details?tabtype=vendor%20information&vendor_onboarding=${item?.name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
+                 )}
               </TableRow>
             ))
           ) : (
