@@ -22,6 +22,7 @@ import { DashboardTableType, TvendorRegistrationDropdown, VendorOnboarding } fro
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import PopUp from "./PopUp";
+import { useAuth } from "@/src/context/AuthContext";
 type Props = {
   dashboardTableData?: DashboardTableType
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
@@ -29,6 +30,8 @@ type Props = {
 
 const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
   console.log(dashboardTableData,"this is table onboarded")
+  const {designation} = useAuth();
+  const isAccountsUser = designation?.toLowerCase().includes("account");
   const handleClose = ()=>{
     setIsVendorCodeDialog(false);
     setSelectedVendorcodes([]);
@@ -122,7 +125,10 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                 <TableCell>{item?.vendor_country}</TableCell>
                 <TableCell>{item?.registered_by}</TableCell>
                 <TableCell><Link href={`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-blue-400 hover:bg-blue-300">View</Button></Link></TableCell>
-                <TableCell><Link href={`/qms-details?tabtype=vendor%20information&vendor_onboarding=${item?.name}`}><Button variant={"outline"}>View</Button></Link></TableCell>
+                {/* <TableCell><Link href={`/qms-details?tabtype=vendor%20information&vendor_onboarding=${item?.name}`}><Button variant={"outline"}>View</Button></Link></TableCell> */}
+                 {!isAccountsUser && (
+                <TableCell><div className={`${(item?.qms_form_filled || item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-details?tabtype=vendor%20information&vendor_onboarding=${item?.name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
+                 )}
               </TableRow>
             ))
           ) : (
