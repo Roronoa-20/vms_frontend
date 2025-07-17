@@ -23,6 +23,7 @@ import Link from "next/link";
 import { dispatchTable } from "@/src/types/dispatchTableType";
 import PopUp from "./PopUp";
 import { Button } from "../atoms/button";
+import { useRouter } from "next/navigation";
 
 
 type Props = {
@@ -32,6 +33,7 @@ type Props = {
 const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
   const [isPrDialog,setIsPrDialog] = useState<boolean>(false);
   const [selectedPrTable,setSelectedPRTable] = useState<string[]>();
+  const router = useRouter();
   const handleClose = ()=>{
     setIsPrDialog(false);
   }
@@ -89,8 +91,9 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
             <TableHead className="text-center">Invoice Amount</TableHead>
             <TableHead className="text-center">Invoice Date</TableHead>
             <TableHead className="text-center">Invoice Number</TableHead>
-            <TableHead className="text-center">Purchase Number</TableHead>
             <TableHead className="text-center">status</TableHead>
+            <TableHead className="text-center">Purchase Number</TableHead>
+            <TableHead className="text-center">View</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="text-center">
@@ -101,8 +104,9 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
                 <TableCell>{item?.invoice_amount}</TableCell>
                 <TableCell>{item?.invoice_date}</TableCell>
                 <TableCell>{item?.invoice_number}</TableCell>
-                <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={()=>{handlePrClick(item?.purchase_numbers)}}>View Pr</Button></TableCell>
                 <TableCell>{item?.status}</TableCell>
+                <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={()=>{handlePrClick(item?.purchase_numbers)}}>View Pr</Button></TableCell>
+                <TableCell><Button onClick={()=>{router.push(`/dispatch?refno=${item?.name}`)}} className="bg-blue-400 hover:bg-blue-300" >View</Button></TableCell>
               </TableRow>
             ))
           ) : (
