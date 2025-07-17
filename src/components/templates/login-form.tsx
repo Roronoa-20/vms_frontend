@@ -32,6 +32,7 @@ const {MultipleVendorCode,addMultipleVendorCode,reset,resetVendorCode} = useMult
       headers:{"Content-Type":"application/json"},
       data: { data: form },
     });
+    console.log("Login Response:", response);
     if (response.status == 200) {
       const savedRole = Cookies.get("role");
       const savedName = Cookies.get("full_name");

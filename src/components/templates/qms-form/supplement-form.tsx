@@ -10,12 +10,7 @@ import { Button } from "../../atoms/button";
 export const SupplementForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "supplement";
-  const {
-    formData,
-    handleCheckboxChange,
-    handleBack,
-    handleSubmit
-  } = useQMSForm(vendor_onboarding, currentTab);
+  const {formData, handleBack, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
 
   return (
     <div>

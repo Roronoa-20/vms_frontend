@@ -45,7 +45,9 @@ export type QMSForm = {
   water_disposal?: string;
   approved_supplierlist?: string;
   control_and_inspection?: string;
-  inspection_reports?: string | string[];
+  inspection_reports?: {
+    qms_inspection_report?: string | string[];
+  }
   agreements?: string;
   defined_areas?: string;
   qc_independent_of_production?: string;

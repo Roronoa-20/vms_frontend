@@ -12,7 +12,7 @@ import YesNoNAOptions from "../../common/YesNoNAOptions";
 export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "production";
-  const {formData, handleCheckboxChange, handleBack, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
+  const {formData, handleBack, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
 
   return (
     <div>
