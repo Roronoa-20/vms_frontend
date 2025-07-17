@@ -77,7 +77,16 @@ const API_END_POINTS = {
   dispatchTableRowSubmit:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.submit_child_dispatch_item`,
   asaformDetails:`${url}/api/method/vms.APIs.assessment_apis.asa.get_asa_details_without_label`,
   dispatchTable:`${url}/api/method/vms.APIs.dispatch_dashboard.dispatch_dashboard.dispatch_dashboard`,
-  poTable:`${url}/api/method/vms.APIs.dashboard_api.filter_card.filtering_po_details`
+  poTable:`${url}/api/method/vms.APIs.dashboard_api.filter_card.filtering_po_details`,
+
+    //pr api atul
+  fetchDataCartId: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.get_cart_details`,
+  createPR: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.create_purchase_requisition`,
+  fetchPRTableData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.get_pur_req_table_data`,
+  PRTableHeadSubmitData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.update_pr_table_head_form`,
+  PRTableSubHeadSubmitData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.create_pr_table_subhead_form`,
+  PrSubHeadDeleteRow: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.delete_pr_table_row`,
+  SubmitPR: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.submit_pr_form`,
 };
 
 export default API_END_POINTS;

@@ -1,3 +1,4 @@
+
 "use client"
 import React, { useState, useEffect, useCallback } from 'react'
 import { Input } from '../atoms/input'
@@ -5,96 +6,80 @@ import { Button } from '../atoms/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../atoms/select'
 import { PurchaseRequestData, PurchaseRequestDropdown } from '@/src/types/PurchaseRequestType'
-import { EyeIcon } from 'lucide-react'
+import { Edit2, Edit2Icon, EyeIcon } from 'lucide-react'
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import Cookies from 'js-cookie'
 import { validateRequiredFields } from '@/src/app/utils/pr-validate'
-
+import { Badge } from "@/components/ui/badge"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { Plus, Trash2, ChevronDown, ChevronRight } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import SubItemModal from '../molecules/pr-dialogs/SubItemDialog'
+import EditSBItemModal from '../molecules/pr-dialogs/EditSBDialog'
+import EditNBItemModal from '../molecules/pr-dialogs/EditNBDilaog'
+import { PurchaseRequisitionDataItem, PurchaseRequisitionResponse } from '@/src/types/PurchaseRequisitionType'
+import SummaryBlock from '../molecules/pr-dialogs/SummaryBlock'
 interface Props {
   Dropdown: PurchaseRequestDropdown["message"]
   PRData: PurchaseRequestData["message"]["data"] | null
   cartId?: string
+  pur_req?: string
 }
 
-type TableData = {
-  item_number_of_purchase_requisition: string;
-  purchase_requisition_date: string; // Use Date if you plan to convert to Date object
-  delivery_date: string;             // Same here
-  store_location: string;
-  item_category: string;
-  material_group: string;
-  uom: string;
-  cost_center: string;
-  main_asset_no: string;
-  asset_subnumber: string;
-  profit_ctr: string;
-  short_text: string;
-  quantity: string; // or number, depending on how you use it
-  price_of_purchase_requisition: string; // or number
-  gl_account_number: string;
-  material_code: string;
-  account_assignment_category: string;
-  purchase_group: string;
-  name?: string | number
-}
+export const updateQueryParam = (key: string, value: string) => {
+  const url = new URL(window.location.href);
+  url.searchParams.set(key, value); // Add or update the query param
+  window.history.pushState({}, '', url.toString());
+};
 
-type formData = {
-  purchase_requisition_type: string,
-  company: string,
-  plant: string,
-  requisitioner: string,
-  company_code_area: string,
-  purchase_requisition_form_table: TableData[]
-  purchase_group: string
-}
-
-
-const PRRequestForm = ({ Dropdown, PRData, cartId }: Props) => {
+const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req }: Props) => {
   const user = Cookies.get("user_id");
-  const [formData, setFormData] = useState<formData | null>(PRData ? { ...PRData, requisitioner: PRData?.requisitioner ?? user } : null);
-  const [singleTableRow, setSingleTableRow] = useState<TableData | null>(null);
-  const [tableData, setTableData] = useState<TableData[]>(PRData ? PRData?.purchase_requisition_form_table : []);
-  const [filterDropdown, setFilterDropdown] = useState<TableData | null>(null);
+  const [formData, setFormData] = useState<PurchaseRequestData["message"]["data"] | null>(PRData ? { ...PRData, requisitioner: PRData?.requisitioner, cart_id: cartId ? cartId : "" } : null);
   const [requiredField, setRequiredField] = useState(null);
-  const [index, setIndex] = useState<number>(-1)
   const [errors, setErrors] = useState<Record<string, string>>({});
-  // const handleSelectChange = (value: any, name: string, isTable: boolean) => {
-  //   if (isTable) {
-  //     setSingleTableRow((prev: any) => ({ ...prev, [name]: value }));
-  //   } else {
-  //     setFormData((prev: any) => ({ ...prev, [name]: value }))
-  //   }
-  // };
+  const [expandedRowNames, setExpandedRowNames] = useState<string[]>([]);
+  const [editRow, setEditRow] = useState<PurchaseRequisitionDataItem>()
+  const [mainItems, setMainItems] = useState<PurchaseRequisitionResponse>()
+  const [isSubItemModalOpen, setIsSubItemModalOpen] = useState(false)
+  const [isEditModalOpen, setEditModalOpen] = useState(false)
+  const [isNBEditModalOpen, setNBEditModalOpen] = useState(false)
+  const [selectedMainItemId, setSelectedMainItemId] = useState<string>("")
+  const [purchase_request_no, setPurchaseReqNo] = useState<string>("")
+  const deleteSubItem = async (subItemId: string) => {
+    console.log(subItemId, "subItemId", pur_req, "pur_req")
+    const url = `${API_END_POINTS?.PrSubHeadDeleteRow}?name=${pur_req}&row_id=${subItemId}`;
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "POST" });
+    if (response?.status == 200) {
+      fetchTableData(pur_req ?? "")
+      alert("Deleted successfull");
+    } else {
+      alert("error");
+    }
+  }
 
-  // const handleFieldChange = (isTable: boolean, e: React.ChangeEvent<
-  //   HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-  // >) => {
-  //   const { name, value } = e.target;
-  //   if (isTable) {
-  //     setSingleTableRow((prev: any) => ({ ...prev, [name]: value }))
-  //   } else {
-  //     setFormData((prev: any) => ({ ...prev, [name]: value }));
-  //   }
-  // }
+  const toggleMainItemExpansion = (row_name: string) => {
+    setExpandedRowNames(prev =>
+      prev.includes(row_name)
+        ? prev.filter(name => name !== row_name) // collapse if already expanded
+        : [...prev, row_name] // expand otherwise
+    );
+  };
 
+  const openSubItemModal = (mainItemId: string) => {
+    setSelectedMainItemId(mainItemId)
+    setIsSubItemModalOpen(true)
+  }
 
   const handleFieldChange = useCallback(
     (
-      isTable: boolean,
       e: React.ChangeEvent<
         HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
       >
     ) => {
       const { name, value } = e.target;
-
-      if (isTable) {
-        setSingleTableRow((prev:any) => ({ ...prev, [name]: value }));
-      } else {
-        setFormData((prev:any) => ({ ...prev, [name]: value }));
-      }
-
+      setFormData((prev) => ({ ...prev, [name]: value }) as PurchaseRequestData["message"]["data"]);
       // Clear error for the field
       if (value.trim() !== "") {
         setErrors((prev) => {
@@ -108,14 +93,9 @@ const PRRequestForm = ({ Dropdown, PRData, cartId }: Props) => {
   );
 
   const handleSelectChange = useCallback(
-    (value: any, name: string, isTable: boolean) => {
-      if (isTable) {
-        setSingleTableRow((prev:any) => ({ ...prev, [name]: value }));
-      } else {
-        setSingleTableRow((prev:any) => ({ ...prev, [name]: value }));
-        setFormData((prev:any) => ({ ...prev, [name]: value }));
-      }
+    (value: any, name: string) => {
 
+      setFormData((prev) => ({ ...prev, [name]: value }) as PurchaseRequestData["message"]["data"]);
       // Clear error for the field
       if (value !== "") {
         setErrors((prev) => {
@@ -128,73 +108,70 @@ const PRRequestForm = ({ Dropdown, PRData, cartId }: Props) => {
     []
   );
 
-  const handleTableAdd = () => {
-    setSingleTableRow((prev:any) => ({
-      ...prev,
-      requisitioner: formData?.requisitioner || ''
-    }))
-    if (!singleTableRow) return;
-    const result = validateRequiredFields(singleTableRow, requiredField ?? {});
-    setErrors(result.errors);
-    if (result.isValid) {
-      setTableData(prev => {
-        const rows = [...prev];
-        if (index !== -1) {
-          // Editing existing row
-          rows[index] = { ...singleTableRow };
-        } else {
-          // Adding new row
-          rows.push({ ...singleTableRow });
-        }
-        return rows;
-      });
-      // Clear form
-      setSingleTableRow(null);
-      setIndex(-1);
-    }
-  };
+  // const handleCompanyChange = async (value: string) => {
+  //   try {
+  //     const Data = await fetch(
+  //       `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.purchase_api.handle_req_field_pr.filter_master_field?company=${value}`,
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         credentials: 'include',
+  //       }
+  //     );
+  //     if (Data.ok) {
+  //       const data = await Data.json();
+  //       setFilterDropdown(data?.message)
+  //       console.log(data, "datadatadatadatadatadata  response")
+  //     }
 
-
-  const handleEdit = (data: TableData, index: number) => {
-    setIndex(index);
-    setSingleTableRow({ ...data });
-    // handleTableAdd(index);
-  }
-  const handleCompanyChange = async (value: string) => {
-    console.log(value, "value in api")
-    try {
-      const Data = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.purchase_api.handle_req_field_pr.filter_master_field?company=${value}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: 'include',
-        }
-      );
-      if (Data.ok) {
-        const data = await Data.json();
-        setFilterDropdown(data?.message)
-        console.log(data, "datadatadatadatadatadata  response")
-      }
-
-    } catch (error) {
-      console.log(error, "something went wrong");
-    }
-  }
+  //   } catch (error) {
+  //     console.log(error, "something went wrong");
+  //   }
+  // }
 
   const handleSubmit = async () => {
-    const url = API_END_POINTS?.submitPR;
-    const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...formData, requisitioner: user, purchase_requisition_form_table: tableData, cart_details_id: cartId } }, method: "POST" });
+    if (!pur_req) {
+      alert("Not able to Submit , PR Request No. Required")
+    }
+    const url = `${API_END_POINTS?.SubmitPR}?name=${pur_req}`;
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "POST" });
     if (response?.status == 200) {
-      setFormData(null);
+      alert("Submit Successfull");
+    } else {
+      alert("error");
+    }
+  }
+
+  const fetchTableData = async (pur_req: string) => {
+    console.log(pur_req,"pur_req in table code")
+    const url = `${API_END_POINTS?.fetchPRTableData}?name=${pur_req}`
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+    if (response?.status == 200) {
+      console.log(response, "response of table data")
+      setMainItems(response.data.message)
+    } else {
+      alert("error");
+    }
+  }
+
+  const handleNext = async () => {
+    const url = API_END_POINTS?.createPR;
+    const response: AxiosResponse = await requestWrapper({ url: url, data: { ...formData }, method: "POST" });
+    if (response?.status == 200) {
+      console.log(response.data.message.name, "reposne dxcfgvbhjnkmjhgvfcdxcfvgbh")
+      updateQueryParam("pur_req", response.data.message.name)
+      fetchTableData(response.data.message.name)
       alert("submission successfull");
     } else {
       alert("error");
     }
   }
-  const fetchRequiredData = async (company?: string, pur_type?: string, acct_cate?: string) => {
+
+  const handleModel = (purchase_requisition_type: string) =>purchase_requisition_type === "SB" ? setEditModalOpen(true) : setNBEditModalOpen(true);
+
+  const fetchRequiredData = async (company: string, pur_type: string, acct_cate: string) => {
     console.log(company, pur_type, acct_cate)
     try {
       const Data = await fetch(
@@ -216,24 +193,29 @@ const PRRequestForm = ({ Dropdown, PRData, cartId }: Props) => {
       console.log(error, "something went wrong");
     }
   };
-  useEffect(() => {
-    fetchRequiredData(formData?.company, formData?.purchase_requisition_type, singleTableRow?.account_assignment_category);
-  }, [formData?.company, formData?.purchase_requisition_type, singleTableRow?.account_assignment_category])
+  // useEffect(() => {
+  //   fetchRequiredData(formData?.company, formData?.purchase_requisition_type, singleTableRow?.account_assignment_category);
+  // }, [formData?.company, formData?.purchase_requisition_type, singleTableRow?.account_assignment_category])
 
-  console.log(filterDropdown, requiredField, "filterDropdown , requiredField")
-  console.log(errors, "errors")
+  useEffect(() => {
+    if (pur_req) {
+      fetchTableData(pur_req);
+    }
+  }, [pur_req])
+
+  console.log(mainItems, "mainItems")
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
-        Purchase Request
-      </h1>
-      {/* <h1 className="pl-5">Contact Person</h1> */}
       <div className="grid grid-cols-3 gap-6 p-5">
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Purchase Request Type <span className="text-red-600 ml-1">*</span>
           </h1>
-          <Select onValueChange={(value) => { handleSelectChange(value, "purchase_requisition_type", false) }} value={formData?.purchase_requisition_type ?? ""}>
+          <Select
+            onValueChange={(value) => { handleSelectChange(value, "purchase_requisition_type") }}
+            value={formData?.purchase_requisition_type ?? ""}
+            disabled
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -252,7 +234,11 @@ const PRRequestForm = ({ Dropdown, PRData, cartId }: Props) => {
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Company Code Area <span className="text-red-600 ml-1">*</span>
           </h1>
-          <Select value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value) }}>
+          <Select
+            value={formData?.company ?? ""}
+            onValueChange={(value) => { handleSelectChange(value, "company") }}
+            disabled
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -271,7 +257,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId }: Props) => {
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Plant <span className="text-red-600 ml-1">*</span>
           </h1>
-          <Select value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant", false) }}>
+          <Select value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant") }} disabled>
             <SelectTrigger className={`${errors?.plant
               ? `border border-red-600`
               : ``
@@ -282,7 +268,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId }: Props) => {
               <SelectGroup>
                 {
                   Dropdown?.plant?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                    <SelectItem key={index} value={item?.name}>{item?.plant_name}</SelectItem>
                   ))
                 }
               </SelectGroup>
@@ -291,32 +277,13 @@ const PRRequestForm = ({ Dropdown, PRData, cartId }: Props) => {
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">Requisitioner <span className="text-red-600 ml-1">*</span></h1>
-          <Input placeholder="" name='requisitioner' onChange={(e) => { handleFieldChange(false, e) }} value={formData?.requisitioner ?? user ?? ""} disabled />
+          <Input placeholder="" name='requisitioner' onChange={(e) => { handleFieldChange(e) }} value={formData?.requisitioner ?? user ?? ""} disabled />
         </div>
-        {/* <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Company Code Area
-          </h1>
-          <Select value={formData?.company_code_area ?? ""} onValueChange={(value) => { handleSelectChange(value, "company_code_area", false) }}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  Dropdown?.company_code_area?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div> */}
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Purchase Group <span className="text-red-600 ml-1">*</span>
           </h1>
-          <Select onValueChange={(value) => { handleSelectChange(value, "purchase_group", false) }} value={formData?.purchase_group ?? ""}>
+          <Select onValueChange={(value) => { handleSelectChange(value, "purchase_group") }} value={formData?.purchase_group ?? ""} disabled>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -333,310 +300,279 @@ const PRRequestForm = ({ Dropdown, PRData, cartId }: Props) => {
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">Cart Id</h1>
-          <Input placeholder="" name='requisitioner' defaultValue={cartId ?? ""} disabled />
+          <Input placeholder="" name='requisitioner' value={formData?.cart_id ?? ""} disabled />
         </div>
       </div>
-      <h1 className="pl-5">Purchase Request Items</h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Item Number of Purchase Requisition
-          </h1>
-          <Input placeholder="" name='item_number_of_purchase_requisition' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.item_number_of_purchase_requisition ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Purchase Requisition Date
-          </h1>
-          <Input placeholder="" name='purchase_requisition_date' onChange={(e) => { handleFieldChange(true, e) }} type="date" value={singleTableRow?.purchase_requisition_date ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Account Assignment Category <span className="text-red-600 ml-1">*</span>
-          </h1>
-          <Select onValueChange={(value) => { handleSelectChange(value, "account_assignment_category", true) }} value={singleTableRow?.account_assignment_category ?? ""}>
-            <SelectTrigger className={`${errors?.account_assignment_category
-              ? `border border-red-600`
-              : ``
-              }`}>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger >
-            <SelectContent>
-              <SelectGroup>
-                {
-                  Dropdown?.account_assignment_category?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Store Location {errors?.store_location && <span className="text-red-600 ml-1">*</span>}
-          </h1>
-          <Input className={`${errors?.store_location ? "border-red-600" : "border-neutral-200"}`} placeholder="" name='store_location' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.store_location ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Delivery Date {errors?.delivery_date && <span className="text-red-600 ml-1">*</span>}
-          </h1>
-          <Input className={`${errors?.delivery_date ? "border-red-600" : "border-neutral-200"}`} placeholder="" type="date" name='delivery_date' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.delivery_date ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Item Category {errors?.item_category && <span className="text-red-600 ml-1">*</span>}
-          </h1>
-          <Select onValueChange={(value) => { handleSelectChange(value, "item_category", true) }} value={singleTableRow?.item_category ?? ""}>
-            <SelectTrigger className={`${errors?.item_category
-              ? `border border-red-600`
-              : ``
-              }`}>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  Dropdown?.item_category_master?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Material Group {errors?.material_group && <span className="text-red-600 ml-1">*</span>}
-          </h1>
-          <Select onValueChange={(value) => { handleSelectChange(value, "material_group", true) }} value={singleTableRow?.material_group ?? ""}>
-            <SelectTrigger className={`${errors?.material_group
-              ? `border border-red-600`
-              : ``
-              }`}>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  Dropdown?.material_group_master?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            UOM {errors?.uom && <span className="text-red-600 ml-1">*</span>}
-          </h1>
-          <Select onValueChange={(value) => { handleSelectChange(value, "uom", true) }} value={singleTableRow?.uom ?? ""}>
-            <SelectTrigger className={`${errors?.uom
-              ? `border border-red-600`
-              : ``
-              }`}>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  Dropdown?.uom_master?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Cost Center {errors?.cost_center && <span className="text-red-600 ml-1">*</span>}
-          </h1>
-          <Select onValueChange={(value) => { handleSelectChange(value, "cost_center", true) }} value={singleTableRow?.cost_center ?? ""}>
-            <SelectTrigger className={`${errors?.cost_center
-              ? `border border-red-600`
-              : ``
-              }`}>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  Dropdown?.cost_center?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Main Asset No {errors?.main_asset_no && <span className="text-red-600 ml-1">*</span>}
-          </h1>
-          <Input className={`${errors?.main_asset_no ? "border-red-600" : "border-neutral-200"}`} placeholder="" name='main_asset_no' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.main_asset_no ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Asset Subnumber {errors?.asset_subnumber && <span className="text-red-600 ml-1">*</span>}
-          </h1>
-          <Input className={`${errors?.asset_subnumber ? "border-red-600" : "border-neutral-200"}`} placeholder="" name='asset_subnumber' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.asset_subnumber ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Profit Center {errors?.profit_ctr && <span className="text-red-600 ml-1">*</span>}
-          </h1>
-          <Select onValueChange={(value) => { handleSelectChange(value, "profit_ctr", true) }} value={singleTableRow?.profit_ctr ?? ""}>
-            <SelectTrigger className={`${errors?.profit_ctr
-              ? `border border-red-600`
-              : ``
-              }`}>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  Dropdown?.profit_center?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Description {errors?.short_text && <span className="text-red-600 ml-1">*</span>}
-          </h1>
-          <Input className={`${errors?.short_text ? "border-red-600" : "border-neutral-200"}`}
-            placeholder="" name='short_text' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.short_text ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Quantity {errors?.quantity && <span className="text-red-600 ml-1">*</span>}
-          </h1>
-          <Input className={`${errors?.quantity ? "border-red-600" : "border-neutral-200"}`}
-            placeholder="" name='quantity' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.quantity ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Price Of Purchase Requisition {errors?.price_of_purchase_requisition && <span className="text-red-600 ml-1">*</span>}
-          </h1>
-          <Input className={`${errors?.price_of_purchase_requisition ? "border-red-600" : "border-neutral-200"}`} placeholder="" name='price_of_purchase_requisition' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.price_of_purchase_requisition ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            GL Account Number {errors?.gl_account_number && <span className="text-red-600 ml-1">*</span>}
-          </h1>
-          <Select onValueChange={(value) => { handleSelectChange(value, "gl_account_number", true) }} value={singleTableRow?.gl_account_number ?? ""}>
-            <SelectTrigger className={`${errors?.gl_account_number
-              ? `border border-red-600`
-              : ``
-              }`}>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  Dropdown?.gl_account_number?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Material Code {errors?.material_code && <span className="text-red-600 ml-1">*</span>}
-          </h1>
-          <Select onValueChange={(value) => { handleSelectChange(value, "material_code", true) }} value={singleTableRow?.material_code ?? ""}>
-            <SelectTrigger className={`${errors?.material_code
-              ? `border border-red-600`
-              : ``
-              }`}>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  Dropdown?.material_code?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
+      {!pur_req && <div className={`flex justify-end p-4`}><Button type='button' className='bg-blue-400 hover:bg-blue-400' onClick={() => handleNext()}>Next</Button></div>}
+      {mainItems && mainItems?.data?.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">Purchase Request Items</CardTitle>
+            <CardDescription>
+              Manage your main items and sub-items. Click the arrow to expand and see sub-items.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {mainItems && mainItems?.data.map((mainItem) => (
+                <div key={mainItem?.row_name} className="border rounded-lg shadow-sm">
+                  <Collapsible
+                    open={expandedRowNames.includes(mainItem.row_name)}
+                    onOpenChange={() => toggleMainItemExpansion(mainItem.row_name)}
+                  >
+                    {/* Main Item Header */}
+                    <div className="flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 transition-colors">
+                      <div className="flex items-center gap-4">
+                        <CollapsibleTrigger asChild>
+                          <Button variant="ghost" size="sm" className="p-1">
+                            {expandedRowNames.includes(mainItem.row_name) ? (
+                              <ChevronDown className="w-4 h-4" />
+                            ) : (
+                              <ChevronRight className="w-4 h-4" />
+                            )}
+                          </Button>
+                        </CollapsibleTrigger>
+                        <div>
+                          <div className="font-semibold text-lg">{mainItem?.product_name_head}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {/* Item No: {mainItem?.item_number_of_purchase_requisition_head} | Category: {mainItem?.category} */}
+                            Item No: {mainItem?.item_number_of_purchase_requisition_head}
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                            {mainItem?.subhead_fields.length} sub-items
+                          </Badge>
+                          <Badge variant="outline">
+                            {mainItem?.purchase_requisition_type}
+                          </Badge>
+                          {/* <Badge variant="outline">${mainItem?.estimatedPrice}</Badge> */}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {mainItem?.purchase_requisition_type == "SB" && <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => openSubItemModal(mainItem?.row_name)}
+                          className="flex items-center gap-2 bg-green-50 hover:bg-green-100 border-green-200"
+                        >
+                          <Plus className="w-4 h-4" />
+                          Add Sub Item
+                        </Button>}
+                        <Button
+                          // variant="destructive"
+                          size="sm"
+                          onClick={() => { handleModel(mainItem?.purchase_requisition_type ? mainItem?.purchase_requisition_type : "SB"); setEditRow(mainItem) }}
+                          className=""
+                        >
+                          <Edit2Icon className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
 
-      </div>
-      <div className={`flex justify-end pb-4`}>
-        <Button className="bg-blue-400 hover:bg-blue-400" onClick={() => handleTableAdd()}>Add</Button>
-      </div>
-      <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
-        <div className="flex w-full justify-between pb-4">
-          <h1 className="text-[20px] text-[#03111F] font-semibold">
+                    {/* Expanded Content - Main Item Details + Sub Items Table */}
+                    <CollapsibleContent>
+                      <div className="p-4 bg-white">
+                        {/* Main Item Full Details */}
+                        {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+                          <div>
+                            <strong>Item Number of Purchase Requisition:</strong> {mainItem?.item_number_of_purchase_requisition_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Purchase Requisition Date:</strong> {mainItem.purchase_requisition_date_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Delivery Date:</strong> {mainItem.delivery_date_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Store Location:</strong> {mainItem.store_location_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Item Category:</strong> {mainItem.item_category_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Material Group:</strong> {mainItem.material_group_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>UOM:</strong> {mainItem.uom_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Cost Center:</strong> {mainItem.cost_center_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Main Asset No:</strong> {mainItem.main_asset_no_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Asset Subnumber:</strong> {mainItem.asset_subnumber_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Profit Center:</strong> {mainItem.profit_ctr_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Short Text:</strong> {mainItem.short_text_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Quantity:</strong> {mainItem.quantity_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Price of Purchase Requisition:</strong> {mainItem.price_of_purchase_requisition_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>GL Account Number:</strong> {mainItem.gl_account_number_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Material Code:</strong> {mainItem.material_code_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Account Assignment Category:</strong> {mainItem.account_assignment_category_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Purchase Group:</strong> {mainItem.purchase_group_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Product Name:</strong> {mainItem.product_name_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Product Price:</strong> {mainItem.product_price_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Final Price (By Purchase Team):</strong> {mainItem.final_price_by_purchase_team_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Lead Time:</strong> {mainItem.lead_time_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Plant:</strong> {mainItem?.plant_head || "N/A"}
+                          </div>
+                          <div>
+                            <strong>Purchase Requisition Type:</strong> {mainItem.purchase_requisition_type || "N/A"}
+                          </div>
+                        </div> */}
+                        <SummaryBlock mainItem={mainItem}/>
 
-          </h1>
-        </div>
-        <Table className=" max-h-40 overflow-y-scroll">
-          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-          <TableHeader className="text-center">
-            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-              <TableHead className="w-[100px]">Sr No.</TableHead>
-              <TableHead className="text-center">Purchase Requisition Date</TableHead>
-              <TableHead className="text-center">Delivery Date</TableHead>
-              <TableHead className="text-center">Store Location</TableHead>
-              <TableHead className="text-center">Item Category</TableHead>
-              <TableHead className="text-center">Material Group</TableHead>
-              <TableHead className="text-center">UOM</TableHead>
-              <TableHead className="text-center">Cost Center</TableHead>
-              <TableHead className="text-center">Main Asset No</TableHead>
-              <TableHead className="text-center">Asset Subnumber</TableHead>
-              <TableHead className="text-center">Profit Center</TableHead>
-              <TableHead className="text-center">Description</TableHead>
-              <TableHead className="text-center">Quantity</TableHead>
-              <TableHead className="text-center">Price Of Purchase Requisition</TableHead>
-              <TableHead className="text-center">GL Account Number</TableHead>
-              <TableHead className="text-center">Material Code</TableHead>
-              <TableHead className="text-center">Account Assignment Category</TableHead>
-              <TableHead className="text-center">Purchase Group</TableHead>
-              <TableHead className="text-center">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody className="text-center">
-            {tableData?.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-medium">{index + 1}</TableCell>
-                <TableCell>{item?.purchase_requisition_date}</TableCell>
-                <TableCell>{item?.delivery_date}</TableCell>
-                <TableCell>{item?.store_location}</TableCell>
-                <TableCell>{item?.item_category}</TableCell>
-                <TableCell>{item?.material_group}</TableCell>
-                <TableCell>{item?.uom}</TableCell>
-                <TableCell>{item?.cost_center}</TableCell>
-                <TableCell>{item?.main_asset_no}</TableCell>
-                <TableCell>{item?.asset_subnumber}</TableCell>
-                <TableCell>{item?.profit_ctr}</TableCell>
-                <TableCell>{item?.short_text}</TableCell>
-                <TableCell>{item?.quantity}</TableCell>
-                <TableCell>{item?.price_of_purchase_requisition}</TableCell>
-                <TableCell>{item?.gl_account_number}</TableCell>
-                <TableCell>{item?.material_code}</TableCell>
-                <TableCell>{item?.account_assignment_category}</TableCell>
-                <TableCell>{item?.purchase_group}</TableCell>
-                <TableCell><div className='flex gap-4 justify-center items-center'>
-                  <EyeIcon className='cursor-pointer' onClick={() => { handleEdit(item, index) }} />
+                        {/* Sub Items Section */}
+                        {mainItem.purchase_requisition_type == "SB" && <div className="mt-4">
+                          <div className="flex items-center justify-between mb-4">
+                            <h4 className="font-semibold text-lg">Sub Items ({mainItem?.subhead_fields.length})</h4>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openSubItemModal(mainItem?.row_name)}
+                              className="flex items-center gap-2"
+                            >
+                              <Plus className="w-4 h-4" />
+                              Add Sub Item
+                            </Button>
+                          </div>
+
+                          {mainItem?.subhead_fields?.length > 0 ? (
+                            <div className="border rounded-lg overflow-hidden">
+                              <div className="overflow-x-auto relative">
+                                <Table>
+                                  <TableHeader>
+                                    <TableRow className="bg-gray-50">
+                                      <TableHead className="w-[100px]">Sr No.</TableHead>
+                                      <TableHead className="text-center">Item Number of Purchase Requisition</TableHead>
+                                      <TableHead className="text-center">Service Number</TableHead>
+                                      <TableHead className="text-center">Short Text</TableHead>
+                                      <TableHead className="text-center">Quantity</TableHead>
+                                      <TableHead className="text-center">UOM</TableHead>
+                                      <TableHead className="text-center">Gross Price</TableHead>
+                                      <TableHead className="text-center">Currency</TableHead>
+                                      <TableHead className="text-center">Service Type</TableHead>
+                                      <TableHead className="text-center">Net Value</TableHead>
+                                      <TableHead className="text-center">Cost Center</TableHead>
+                                      <TableHead className="text-center">GL Account Number</TableHead>
+                                      <TableHead className="text-center sticky right-0 bg-gray-50 z-30">
+                                        Actions
+                                      </TableHead>
+                                    </TableRow>
+                                  </TableHeader>
+
+                                  <TableBody>
+                                    {mainItem?.subhead_fields.map((subItem, index) => (
+                                      <TableRow key={subItem.row_name} className="hover:bg-gray-50">
+                                        <TableCell className="text-center font-medium">{index + 1}</TableCell>
+                                        <TableCell className="text-center">{subItem?.item_number_of_purchase_requisition_subhead || "N/A"}</TableCell>
+                                        <TableCell className="text-center">{subItem?.service_number_subhead || "N/A"}</TableCell>
+                                        <TableCell className="text-center">{subItem?.short_text_subhead || "N/A"}</TableCell>
+                                        <TableCell className="text-center">{subItem?.quantity_subhead || "N/A"}</TableCell>
+                                        <TableCell className="text-center">{subItem?.uom_subhead || "N/A"}</TableCell>
+                                        <TableCell className="text-center">{subItem?.gross_price_subhead || "N/A"}</TableCell>
+                                        <TableCell className="text-center">{subItem?.currency_subhead || "N/A"}</TableCell>
+                                        <TableCell className="text-center">{subItem?.service_type_subhead || "N/A"}</TableCell>
+                                        <TableCell className="text-center">{subItem?.net_value_subhead || "N/A"}</TableCell>
+                                        <TableCell className="text-center">{subItem?.cost_center_subhead || "N/A"}</TableCell>
+                                        <TableCell className="text-center">{subItem?.gl_account_number_subhead || "N/A"}</TableCell>
+                                        {/* Sticky Actions Cell */}
+                                        <TableCell className="text-center sticky right-0 bg-white z-20">
+                                          <Button
+                                            variant="destructive"
+                                            size="sm"
+                                            onClick={() => deleteSubItem(subItem.row_name)}
+                                          >
+                                            <Trash2 className="w-4 h-4" />
+                                          </Button>
+                                        </TableCell>
+                                      </TableRow>
+                                    ))}
+                                  </TableBody>
+                                </Table>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                              <p className="text-gray-500 mb-4">No sub-items added yet</p>
+                              <Button
+                                variant="outline"
+                                onClick={() => openSubItemModal(mainItem?.row_name)}
+                                className="flex items-center gap-2 mx-auto"
+                              >
+                                <Plus className="w-4 h-4" />
+                                Add First Sub Item
+                              </Button>
+                            </div>
+                          )}
+                        </div>}
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
                 </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-      <div className={`flex justify-end pr-4`}><Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { handleSubmit() }}>Submit</Button></div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      {isSubItemModalOpen &&
+        <SubItemModal
+          isOpen={isSubItemModalOpen}
+          onClose={() => setIsSubItemModalOpen(false)}
+          fetchTableData={fetchTableData}
+          Dropdown={Dropdown}
+          pur_req={pur_req ? pur_req : mainItems?.docname?mainItems?.docname:""}
+          selectedMainItemId={selectedMainItemId}
+        />}
+
+      {isEditModalOpen &&
+        <EditSBItemModal
+          isOpen={isEditModalOpen}
+          onClose={() => setEditModalOpen(false)}
+          fetchTableData={fetchTableData}
+          Dropdown={Dropdown} 
+          defaultData={editRow}
+          pur_req={pur_req ? pur_req : mainItems?.docname?mainItems?.docname:""}
+        />}
+
+      {isNBEditModalOpen && <EditNBItemModal
+        isOpen={isNBEditModalOpen}
+        onClose={() => setNBEditModalOpen(false)}
+        fetchTableData={fetchTableData}
+        Dropdown={Dropdown} 
+        pur_req={pur_req ? pur_req : mainItems?.docname?mainItems?.docname:""}
+        defaultData={editRow}
+      />}
+
+      {(mainItems?.['Form Status'] != "Submitted" && pur_req) && <div className={`flex justify-end py-6`}><Button type='button' className='bg-blue-400 hover:bg-blue-400 px-6 font-medium' onClick={() => { handleSubmit() }}>Submit</Button></div>}
     </div>
   )
 }

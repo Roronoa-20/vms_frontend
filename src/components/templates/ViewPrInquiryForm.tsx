@@ -106,7 +106,10 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchase
 
   const handleModify = async()=>{
     const url = API_END_POINTS?.PurchaseEnquiryModify;
-    const response:AxiosResponse = await requestWrapper({url:url,method:"POST",data:{data:{cart_id:refno,fields_to_modify:comment}}});
+    const updatedTable = tableData?.map((item, index) => {
+      return { ...item, row_id: item?.name };
+    });
+    const response:AxiosResponse = await requestWrapper({url:url,method:"POST",data:{data:{cart_id:refno,fields_to_modify:comment,cart_product:updatedTable}}});
     if(response?.status == 200){
       alert("Modify Notification Sent Successfully");
       setComment("");
@@ -175,6 +178,18 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchase
       setPurchaseGroupDropdown(response?.data?.message?.purchase_groups);
     }
   }
+
+const handleTableCheckChange = (index: number, check:boolean) => {
+    // const { name, value } = e.target;
+    setTableData((prev) => {
+      const updated = [...prev];
+      if (updated[index]) {
+        updated[index] = { ...updated[index],need_asset_code: check };
+      }
+      return updated;
+    });
+  }
+
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
@@ -299,6 +314,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchase
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
               <TableHead className="w-[100px]">Sr No.</TableHead>
+              <TableHead className="text-center">Is Assest Code ?</TableHead>
               <TableHead className="text-center">Assest Code</TableHead>
               <TableHead className="text-center">Product Name</TableHead>
               <TableHead className="text-center">Product Price</TableHead>
@@ -313,7 +329,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchase
             {tableData?.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{index + 1}</TableCell>
-                <TableCell>{item?.assest_code}</TableCell>
+                <TableCell className={`flex justify-center`}><Input type='checkbox' onChange={(e)=>{handleTableCheckChange(index,e.target.checked)}} disabled={(Boolean(PRInquiryData?.purchase_team) && item?.assest_code == null)?false:true} checked={item?.need_asset_code} className='w-5' /></TableCell>
+                <TableCell className='text-center'>{item?.assest_code}</TableCell>
                 <TableCell>{item?.product_name}</TableCell>
                 <TableCell>{item?.product_price}</TableCell>
                 <TableCell>{item?.uom}</TableCell>
@@ -321,7 +338,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchase
                 <TableCell>{item?.product_quantity}</TableCell>
                 <TableCell>{item?.user_specifications}</TableCell>
                 <TableCell className='flex justify-center'>
-                  <Input value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e)=>{handleTableInput(index,e)}} className='text-center w-28' type='number'/>
+                  <Input disabled={PRInquiryData?.purchase_team_approved == Boolean(0)?false:true} value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e)=>{handleTableInput(index,e)}} className={`text-center w-28 ${PRInquiryData?.purchase_team_acknowledgement?"":"hidden"}`} type='number'/>
                   </TableCell>
                   {/* <TableCell className='flex justify-center'><Input className='text-center w-28' type='checked' onChange={(e)=>{handleTableCheck(index,e.target.checked)}}/></TableCell> */}
               </TableRow>
@@ -329,15 +346,23 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchase
           </TableBody>
         </Table>
       </div>
-      <div className={`flex justify-end pr-4 gap-4 ${designation != "Enquirer" ? "" : "hidden"}`}>
-        <Button className='bg-blue-400 hover:bg-blue-400' onClick={() => {setIsModifyDialog(true) }}>Modify</Button>
+      {/* purchase team approval buttons */}
+      {
+        PRInquiryData?.purchase_team &&
+        <div className={`flex justify-end pr-4 gap-4 ${designation != "Enquirer" ? "" : "hidden"}`}>
+        <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.purchase_team_acknowledgement?"hidden":""}`} onClick={() => {setIsModifyDialog(true) }}>Modify</Button>
         {
-          PRInquiryData?.purchase_team_acknowledgement? 
-          <Button className='bg-blue-400 hover:bg-blue-400' onClick={() => {setIsApproved(true); setIsDialog(true) }}>Approve</Button>
+          PRInquiryData?.purchase_team_acknowledgement == Boolean(1) ? 
+          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.purchase_team_approved == Boolean(0)?"":"hidden"}`} onClick={() => {setIsApproved(true); setIsDialog(true) }}>Approve</Button>
           :
         <Button className='bg-blue-400 hover:bg-blue-400' onClick={() => {setIsAcknowledgeDialog(true) }}>Acknowledge</Button>
         }
-        <Button className={`bg-blue-400 hover:bg-blue-400 ${designation != "Enquirer" ? "" : "hidden"}`} onClick={() => {setIsReject(true); setIsDialog(true) }}>Reject</Button></div>
+        { 
+          <Button className={`bg-blue-400 hover:bg-blue-400 ${designation != "Enquirer" && PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => {setIsReject(true); setIsDialog(true) }}>Reject</Button>
+        }
+      </div>
+        }
+
       {isDialog &&
         <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
           <Comment_box handleClose={handleClose} Submitbutton={handleApproval} handleComment={handleComment} />
