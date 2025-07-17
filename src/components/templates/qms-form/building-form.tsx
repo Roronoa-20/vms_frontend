@@ -28,7 +28,9 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           label="1. What is the approximate area of your facility? (Sq. meter / Sq. feet)"
           value={formData.area_of_facility || ""}
           rows={1}
-          onChange={(e) => handleTextareaChange(e, 'area_of_facility')}
+          // onChange={(e) => handleTextareaChange(e, 'area_of_facility')}
+          onChange={() => { }}
+
         />
 
         <TextareaWithLabel
@@ -36,7 +38,9 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           label="2. Please provide the approximate number of employees in your organization"
           value={formData.no_of_employees || ""}
           rows={1}
-          onChange={(e) => handleTextareaChange(e, 'no_of_employees')}
+          // onChange={(e) => handleTextareaChange(e, 'no_of_employees')}
+          onChange={() => { }}
+
         />
 
         <TextareaWithLabel
@@ -44,56 +48,72 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           label="3. Does the Organization have valid license / registrations available? (e.g., Factory license, PCB consents, etc.)"
           value={formData.valid_license || ""}
           rows={1}
-          onChange={(e) => handleTextareaChange(e, 'valid_license')}
+          // onChange={(e) => handleTextareaChange(e, 'valid_license')}
+          onChange={() => { }}
+
         />
 
         <YesNoNAGroup
           name="air_handling_unit"
           label="4. Do you have an Air Handling Unit?"
           value={formData.air_handling_unit || ""}
-          onChange={(e) => handleCheckboxChange(e, 'air_handling_unit')}
+          // onChange={(e) => handleCheckboxChange(e, 'air_handling_unit')}
+          onChange={() => { }}
+
         />
 
         <YesNoNAGroup
           name="humidity"
           label="5. Do you control and monitor temperature and relative humidity?"
           value={formData.humidity || ""}
-          onChange={(e) => handleCheckboxChange(e, 'humidity')}
+          // onChange={(e) => handleCheckboxChange(e, 'humidity')}
+          onChange={() => { }}
+
         />
 
         <YesNoNAGroup
           name="pest_control"
           label="6. Do you have procedure for pest control?"
           value={formData.pest_control || ""}
-          onChange={(e) => handleCheckboxChange(e, 'pest_control')}
+          // onChange={(e) => handleCheckboxChange(e, 'pest_control')}
+          onChange={() => { }}
+
         />
 
         <YesNoNAGroup
           name="adequate_sizes"
           label="7. Are your working areas of adequate size, well illuminated, air-conditioned and designed to avoid (cross) contamination?"
           value={formData.adequate_sizes || ""}
-          onChange={(e) => handleCheckboxChange(e, 'adequate_sizes')}
+          // onChange={(e) => handleCheckboxChange(e, 'adequate_sizes')}
+          onChange={() => { }}
+
         />
 
         <YesNoNAGroup
           name="clean_rooms"
           label="8. Do you have clean rooms?"
           value={formData.clean_rooms || ""}
-          onChange={(e) => handleCheckboxChange(e, 'clean_rooms')}
+          // onChange={(e) => handleCheckboxChange(e, 'clean_rooms')}
+          onChange={() => { }}
+
         />
 
         <YesNoNAGroup
           name="water_disposal"
           label="9. Do you have procedure for waste disposal?"
           value={formData.water_disposal || ""}
-          onChange={(e) => handleCheckboxChange(e, 'water_disposal')}
+          // onChange={(e) => handleCheckboxChange(e, 'water_disposal')}
+          onChange={() => { }}
+
         />
 
         <YesNoNAGroup
           name="safety_committee"
           label="10. Does the factory have a safety committee?"
           value={formData.safety_committee || ""}
-          onChange={(e) => handleCheckboxChange(e, 'safety_committee')}
+          // onChange={(e) => handleCheckboxChange(e, 'safety_committee')}
+          onChange={() => { }}
+
         />
       </div>
       <div className="flex justify-end space-x-5 items-center">

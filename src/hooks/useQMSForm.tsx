@@ -55,7 +55,6 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
     };
 
-
     const handleSingleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof QMSForm) => {
         const { value, checked } = e.target;
         setFormData((prev) => ({ ...prev, [field]: checked ? value : '' }));

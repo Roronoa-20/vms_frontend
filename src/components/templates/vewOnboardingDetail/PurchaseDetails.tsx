@@ -95,7 +95,7 @@ const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,reconciliati
                       <SelectGroup>
                         {
                           reconciliationDropdown?.map((item,index)=>(
-                            <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                            <SelectItem key={index} value={item?.name}>{item?.reconcil_description}</SelectItem>
                           ))
                         }
                       </SelectGroup>
@@ -103,18 +103,18 @@ const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,reconciliati
                   </Select>
       </div>
     </div>
-    <div className="flex justify-end pr-6">
+    <div className={`flex justify-end pr-6`}>
     {/* <Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`}>Next</Button> */}
     {
-      designation == "Purchase Team" && validation_check?.purchase_team_undertaking == 0 && 
+      designation == "Purchase Team" && validation_check?.purchase_team_undertaking == 0 && validation_check?.form_fully_submitted_by_vendor == 1 && 
     <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount}/>
     }
     {
-      designation == "Purchase Head" && validation_check?.purchase_head_undertaking == 0 && 
+      designation == "Purchase Head" && validation_check?.purchase_head_undertaking == 0 && validation_check?.purchase_team_undertaking == 1 && 
     <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount}/>
     }
     {
-      designation == "Accounts Team" && validation_check?.accounts_team_undertaking == 0 && 
+      designation == "Accounts Team" && validation_check?.accounts_team_undertaking == 0 && validation_check?.purchase_head_undertaking == 1 && 
     <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount}/>
     }
     </div>

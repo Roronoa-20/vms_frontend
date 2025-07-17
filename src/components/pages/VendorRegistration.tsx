@@ -26,8 +26,9 @@ export type TtableData = {
   purchase_group:string,
   terms_of_payment:string,
   order_currency:string,
-  inco_terms:string,
-  reconcilition_account:string
+  incoterms:string,
+  reconciliation_account:string
+  vendor_types:{vendor_type:string}[]
 }
 
 const VendorRegistration = ({...Props}:Props) => {
@@ -62,7 +63,8 @@ const [tableData,setTableData] = useState<TtableData[]>([]);
     if(tableData?.length > 1){
       updateFormData = {...formData,
         purchase_details:tableData,
-        inco_terms:tableData?.[0]?.inco_terms,
+        // reconciliation_account:tableData?.[0]?.reconciliation_account,
+        // incoterms:tableData?.[0]?.incoterms,
         for_multiple_company:1
       }
     }else{
@@ -73,8 +75,8 @@ const [tableData,setTableData] = useState<TtableData[]>([]);
         terms_of_payment:tableData?.[0]?.terms_of_payment,
         purchase_group:tableData?.[0]?.purchase_group,
         order_currency:tableData?.[0]?.order_currency,
-        reconciliation_account:tableData?.[0]?.reconcilition_account,
-        incoterms:tableData?.[0]?.inco_terms,
+        reconciliation_account:tableData?.[0]?.reconciliation_account,
+        incoterms:tableData?.[0]?.incoterms,
         for_multiple_company:0
        }
     }

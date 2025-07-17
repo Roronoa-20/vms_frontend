@@ -209,7 +209,7 @@ const CompanyAddress = ({
     setIsShippingSame(e);
     // setShippingData((prev)=>({...prev,address1:billingAddress?.address_line_1,address2:billingAddress?.address_line_2}))
     if (e) {
-      handleShippingPincodeChange(billingAddress?.pincode ?? "");
+      // handleShippingPincodeChange(billingAddress?.pincode ?? "");
       setShippingData((prev) => ({
         ...prev,
         address_line_1: billingAddress?.address_line_1,
@@ -223,7 +223,34 @@ const CompanyAddress = ({
     }
   };
   console.log(isShippingSame, "is shipping same");
+
+  const [errors, setErrors] = useState<any>({});
+  const validate = () => {
+    const errors:any = {};
+    if (!billingAddress?.address_line_1) {
+      errors.address_line_1 = "Please Enter Address 1";
+    }
+    if (!billingAddress?.address_line_2) {
+      errors.address_line_2 = "Please Enter Address Line 2 ";
+    }
+
+    if (!billingAddress?.pincode) {
+      errors.pincode = "Please Enter Pincode ";
+
+    } 
+
+    return errors;
+  };
+
   const handleSubmit = async () => {
+
+    const validationErrors = validate();
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
     const submitUrl = API_END_POINTS?.companyAddressSubmit;
     const Data = {
       ref_no: ref_no,
@@ -249,7 +276,7 @@ const CompanyAddress = ({
       })),
     };
     // const updatedData = {data:Data}
-
+    
     const formData = new FormData();
     formData.append("data",JSON.stringify(Data));
     if(file){
@@ -258,6 +285,9 @@ const CompanyAddress = ({
     const submitResponse:AxiosResponse = await requestWrapper({url:submitUrl,method:"POST",data:formData});
     if(submitResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Document%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   };
+
+
+
   
 
   return (
@@ -269,7 +299,7 @@ const CompanyAddress = ({
       <div className="grid grid-cols-4 gap-6 p-5">
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Address 1
+            Address 1 <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -278,10 +308,11 @@ const CompanyAddress = ({
             }}
             value={billingAddress?.address_line_1 as string ??   OnboardingDetail?.billing_address?.address_line_1 ?? ""}
           />
+          {errors?.address_line_1 && !billingAddress?.address_line_1 && <span style={{ color: 'red' }}>{errors?.address_line_1}</span>}
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Address 2
+            Address 2 <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -291,10 +322,11 @@ const CompanyAddress = ({
             value={billingAddress?.address_line_2?? OnboardingDetail?.billing_address?.address_line_2 ?? ""}
             // defaultValue={}
           />
+          {errors?.address_line_2 && !billingAddress?.address_line_2 && <span style={{ color: 'red' }}>{errors?.address_line_2}</span>}
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Pincode/Zipcode
+            Pincode/Zipcode <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -304,9 +336,10 @@ const CompanyAddress = ({
             value={billingAddress?.pincode?? OnboardingDetail?.billing_address?.pincode ?? ""}
             // defaultValue={}
           />
+          {errors?.pincode && !billingAddress?.pincode && <span style={{ color: 'red' }}>{errors?.pincode}</span>}
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-7">
             District
           </h1>
           <Input

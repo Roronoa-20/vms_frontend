@@ -163,7 +163,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                     size="nextbtnsize"
                     // onClick={}
                 >
-                    Continue
+                    Approve
                 </Button>
             </div>
         </div>

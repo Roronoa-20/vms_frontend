@@ -24,11 +24,11 @@ import { FileSearch } from "lucide-react";
 
 type Props = {
   cardData: dashboardCardData
-  dashboardPOTableData?: DashboardTableType
+  dashboardPOTableData: DashboardPOTableData["message"]
   dashboardTotalVendorTableData: DashboardTableType
-  dashboardPendingVendorTableData?: DashboardTableType
-  dashboardApprovedVendorTableData?: DashboardTableType
-  dashboardRejectedVendorTableData?: DashboardTableType
+  dashboardPendingVendorTableData: DashboardTableType
+  dashboardApprovedVendorTableData: DashboardTableType
+  dashboardRejectedVendorTableData: DashboardTableType["rejected_vendor_onboarding"]
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
   prInquiryData: TPRInquiryTable[]
   prData: PurchaseRequisition[]
@@ -118,14 +118,14 @@ const DashboardCards = ({ ...Props }: Props) => {
       bg_color: "bg-green-200",
       hover: "hover:border-rose-400",
     },
-    // {
-    //   name: "Purchase & Ongoing Orders",
-    //   count: 0,
-    //   icon: "/dashboard-assests/cards_icon/package.svg",
-    //   text_color: "text-violet-800",
-    //   bg_color: "bg-violet-100",
-    //   hover: "hover:border-violet-400",
-    // },
+    {
+      name: "Purchase & Ongoing Orders",
+      count: Props?.dashboardPOTableData?.total_count,
+      icon: "/dashboard-assests/cards_icon/package.svg",
+      text_color: "text-violet-800",
+      bg_color: "bg-violet-100",
+      hover: "hover:border-violet-400",
+    },
   ];
 
   let cardData = user === "Enquirer"
@@ -219,13 +219,13 @@ const DashboardCards = ({ ...Props }: Props) => {
               )}
               {/* {item.name === "Dispatch Details" && <DashboardDispatchVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
               {item.name === "Purchase & Ongoing Orders" && (
-                <PurchaseAndOngoingOrders dashboardPOTableData={Props.dashboardPOTableData} />
+                <PurchaseAndOngoingOrders dashboardPOTableData={Props.dashboardPOTableData} companyDropdown={Props?.companyDropdown} />
               )}
               {/* {item.name === "Payment Request" && <DashboardPaymentVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
               {/* {item.name === "Current Month Vendors" && <DashboardCurrentMonthsVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
               {item.name === "Rejcted Vendors" && (
                 <DashboardRejectedVendorsTable
-                  dashboardTableData={Props.dashboardRejectedVendorTableData}
+                  dashboardTableData={Props?.dashboardRejectedVendorTableData}
                   companyDropdown={Props?.companyDropdown}
                 />
               )}

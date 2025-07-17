@@ -10,12 +10,7 @@ import { useQMSForm } from '@/src/hooks/useQMSForm';
 export const QASForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "qas";
-  const {
-    formData,
-    handleSingleCheckboxChange,
-    handleBack,
-    handleSubmit
-  } = useQMSForm(vendor_onboarding, currentTab);
+  const {formData, handleBack, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
 
   return (
     <div>
@@ -28,9 +23,9 @@ export const QASForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) =
         <MultiCheckboxGroup
           name="quality_control_system"
           label="1. The Quality Control System is derived to comply with the following(s):"
-          options={["ISO 9001", "ISO 13485", "GMP", "ISO/IEC 17025:2005", "ISO 14001", "ISO 45001", "Others:",
+          options={["ISO 9001", "ISO 13485", "GMP", "ISO/IEC 17025:2005", "ISO 14001", "ISO 45001", "Others",
           ]}
-          selected={Array.isArray(formData.quality_control_system) ? formData.quality_control_system : formData.quality_control_system ? [formData.quality_control_system] : []}
+          selected={Array.isArray(formData.quality_control_system) ? formData.quality_control_system.map(item => item.qms_quality_control) : []}
           onChange={() => { }}
           columns={3}
         />
@@ -38,8 +33,8 @@ export const QASForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) =
           name="others_certificates"
           label=""
           value={formData.others_certificates || ""}
-          condition={(Array.isArray(formData.quality_control_system) ? formData.quality_control_system : [formData.quality_control_system || ""]).includes("Others:")} placeholder="Enter for other Certifications"
-          onChange={() => { }}
+          condition={Array.isArray(formData.quality_control_system) ? formData.quality_control_system.map(item => item.qms_quality_control).includes("Others") : false
+          } onChange={() => { }}
         />
 
         <MultiCheckboxGroup
@@ -62,9 +57,8 @@ export const QASForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) =
         <MultiCheckboxGroup
           name="have_documentsprocedure"
           label="3. Do you have the following documents/procedures in place:"
-          options={["Quality Management Manual", "Internal Quality Audit", "Change Control", "Corrective and Preventive Action", "Environmental Monitoring", "Risk Management", "Calibration", "Emergency Mitigation Plan",
-          ]}
-          selected={Array.isArray(formData.have_documentsprocedure) ? formData.have_documentsprocedure : []}
+          options={["Quality Management Manual", "Internal Quality Audit", "Change Control", "Corrective and Preventive Action", "Environmental Monitoring", "Risk Management", "Calibration", "Emergency Mitigation Plan",]}
+          selected={Array.isArray(formData.have_documentsprocedure) ? formData.have_documentsprocedure.map(item => item.qms_procedure_doc) : []}
           onChange={() => { }}
           columns={3}
         />
@@ -87,7 +81,7 @@ export const QASForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) =
               "Change in the registration / licensing status of the site",
               "Change in the Raw Material specification",
             ]}
-            selected={Array.isArray(formData.if_yes_for_prior_notification) ? formData.if_yes_for_prior_notification : []}
+            selected={Array.isArray(formData.if_yes_for_prior_notification) ? formData.if_yes_for_prior_notification.map(item => item.qms_prior_notification) : []}
             onChange={() => { }}
             columns={2}
           />
@@ -97,14 +91,15 @@ export const QASForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) =
           name="calibrations_performed"
           label="5. Are calibrations performed as per the procedure and is the calibration schedule in place?"
           value={formData.calibrations_performed || ""}
-          onChange={(e) => handleSingleCheckboxChange(e, 'calibrations_performed')}
+          onChange={() => { }}
+        // disabled={true}
         />
 
         <MultiCheckboxGroup
           name="regular_review_of_quality_system"
           label="6. Do you undertake regular review of the Quality System?"
           options={["Yes", "No", "N/A"]}
-          selected={formData.regular_review_of_quality_system? [formData.regular_review_of_quality_system]: []}
+          selected={formData.regular_review_of_quality_system ? [formData.regular_review_of_quality_system] : []}
           onChange={() => { }}
           columns={3}
         />

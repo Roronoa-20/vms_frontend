@@ -4,6 +4,7 @@ import { Label } from "../../atoms/label";
 import { useSearchParams } from "next/navigation";
 import TextareaWithLabel from '@/src/components/common/TextareaWithLabel';
 import { useQMSForm } from '@/src/hooks/useQMSForm';
+import { Button } from "../../atoms/button";
 
 
 export const SupplementForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
@@ -44,6 +45,24 @@ export const SupplementForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           </a>
         </div>
       )}
+      <div className="flex justify-end space-x-5 items-center">
+        <Button
+          variant="backbtn"
+          size="backbtnsize"
+          className="py-2"
+          onClick={handleBack}
+        >
+          Back
+        </Button>
+        <Button
+          variant="nextbtn"
+          size="nextbtnsize"
+          className="py-2.5"
+          onClick={handleSubmit}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 };

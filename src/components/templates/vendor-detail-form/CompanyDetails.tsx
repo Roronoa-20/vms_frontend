@@ -28,13 +28,43 @@ interface Props {
 }
 
 const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,OnboardingDetail,multipleCompany,ismulticompany}:Props) => {
-  console.log(OnboardingDetail,"this is data")
-  const {data,updateField,resetForm} = useCompanyDetailFormStore(); 
   const router = useRouter();
+  
+
+  const [errors, setErrors] = useState<any>({});
+
+  const {data,updateField,resetForm} = useCompanyDetailFormStore(); 
+  const validate = () => {
+    const errors:any = {};
+    if (!data?.type_of_business) {
+      errors.type_of_business = "Please Select Type Of Business ";
+    }
+    if (!data?.registered_office_number) {
+      errors.registered_office_number = "Please Select Reg No. ";
+    }
+
+    if (!data?.corporate_identification_number) {
+      errors.corporate_identification_number = "Please Select Corporate Identification Number ";
+
+    } if (!data?.cin_date) {
+      errors.cin_date = "Please Select Cin Date"
+    } 
+
+    return errors;
+  };
+
+
 
   console.log(OnboardingDetail,"this is onboarding detail")
   const handleSubmit = async(e:FormEvent)=>{
     e.preventDefault();
+    const validationErrors = validate();
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    
     const companyDetailSubmitUrl = API_END_POINTS?.companyDetailSubmit
     const updatedData:TCompanyDetailForm | {} = {...data,vendor_onboarding:onboarding_refno as string,ref_no:refno as string}
     try {
@@ -67,8 +97,8 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
           </div>
         </div>
         <div className="flex flex-col">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Type Of Business (Please select any one)
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Type Of Business (Please select any one) <span className="pl-2 text-red-400 text-xl">*</span>
           </h1>
           <Select required={true} onValueChange={(value)=>{updateField('type_of_business',value)}} value={data?.type_of_business ?? OnboardingDetail?.type_of_business}>
             <SelectTrigger>
@@ -84,6 +114,7 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
               </SelectGroup>
             </SelectContent>
           </Select>
+          {errors?.type_of_business && !data?.type_of_business && <span style={{ color: 'red' }}>{errors?.type_of_business}</span>}
         </div>
         <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -108,10 +139,11 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
           <Input placeholder="" onChange={(e)=>{updateField("website",e.target.value)}} value={data?.website ?? OnboardingDetail?.website ?? ""}/>
         </div>
         <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Reg No.
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Reg No. <span className="pl-2 text-red-400 text-xl">*</span>
           </h1>
-          <Input required placeholder="Enter Reg No." onChange={(e)=>{updateField("registered_office_number",e.target.value)}} value={data?.registered_office_number ?? OnboardingDetail?.registered_office_number ?? ""}/>
+          <Input placeholder="Enter Reg No." onChange={(e)=>{updateField("registered_office_number",e.target.value)}} value={data?.registered_office_number ?? OnboardingDetail?.registered_office_number ?? ""}/>
+          {errors?.registered_office_number && !data?.registered_office_number && <span style={{ color: 'red' }}>{errors?.registered_office_number}</span>}
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -144,16 +176,18 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
           <Input placeholder="" onChange={(e)=>{updateField("office_email_secondary",e.target.value)}} value={data?.office_email_secondary ?? OnboardingDetail?.office_email_secondary ?? ""}/>
         </div>
         <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Corporate Identification No.(CIN No.)
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Corporate Identification No.(CIN No.) <span className="pl-2 text-red-400 text-xl">*</span>
           </h1>
           <Input placeholder="" onChange={(e)=>{updateField("corporate_identification_number",e.target.value)}} value={data?.corporate_identification_number ?? OnboardingDetail?.corporate_identification_number ?? ""}/>
+          {errors?.corporate_identification_number && !data?.corporate_identification_number && <span style={{ color: 'red' }}>{errors?.corporate_identification_number}</span>}
         </div>
         <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Cin Date
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Cin Date <span className="pl-2 text-red-400 text-xl">*</span>
           </h1>
           <Input type="date" placeholder="Enter Mobile Number" onChange={(e)=>{updateField("cin_date",e.target.value)}} value={data?.cin_date ?? OnboardingDetail?.cin_date ?? ""}/>
+          {errors?.cin_date && !data?.cin_date && <span style={{ color: 'red' }}>{errors?.cin_date}</span>}
         </div>
         <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -208,7 +242,7 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Vendor Type
           </h1>
-          <Input placeholder="" defaultValue={OnboardingDetail?.vendor_types?.map((item)=>(item))} disabled={true} />
+          <textarea className="col-span-2 w-full border rounded-lg p-2" placeholder="" defaultValue={OnboardingDetail?.vendor_type_list_from_master?.map((item)=>(item))} disabled={true} />
         </div>
       </div>
       <div className="flex justify-end pr-6">

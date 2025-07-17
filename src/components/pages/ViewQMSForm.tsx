@@ -43,8 +43,7 @@ const ViewQMSForm = async ({ vendor_onboarding, tabtype }: Props) => {
     return (
         <div>
             <ViewQMSFormDetails vendor_onboarding={vendor_onboarding} />
-            <div className="p-6">
-                {/* <h1 className="text-2xl font-bold mb-4">QMS Form Viewer</h1> */}
+            <div className="pt-14 p-2">
                 {SelectedForm ? (
                     <SelectedForm vendor_onboarding={vendor_onboarding} />
                 ) : (

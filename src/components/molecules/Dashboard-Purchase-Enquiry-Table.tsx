@@ -30,7 +30,14 @@ type Props = {
 
 const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData,companyDropdown }: Props) => {
 
-  console.log("DashboardTableData--->",dashboardTableData);
+  console.log("DashboardTableData PPRRRPRR--->",dashboardTableData);
+
+  const formatDate = (date: Date): string => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
   
   const user = Cookies?.get("user_id");
   return (
@@ -61,13 +68,6 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData,companyDropdo
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              {/* <SelectGroup>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
-              </SelectGroup> */}
             </SelectContent>
           </Select>
         </div>
@@ -90,17 +90,20 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData,companyDropdo
         </TableHeader>
         <TableBody className="text-center">
           {dashboardTableData ? (
-            dashboardTableData?.map((item, index) => (
+            dashboardTableData?.map((item, index) => 
+            {
+              const url = item?.asked_to_modify?`/pr-inquiry?refno=${item?.name}`:`/view-pr-inquiry?refno=${item?.name}`;
+              return (
               <TableRow key={index}>
                 <TableCell className="font-medium text-center">{index + 1}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
-                <TableCell className="text-nowrap text-center">{item?.cart_date}</TableCell>
+                <TableCell className="text-nowrap text-center">{item?.cart_date ? formatDate(new Date(item.cart_date)) : "-"}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.user}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.transfer_status}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.category_type}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.purchase_team_approval_status}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.hod_approval_status}</TableCell>
-                <TableCell className="text-nowrap text-center"><Link href={`/view-pr-inquiry?refno=${item?.name}`}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
+                <TableCell className="text-nowrap text-center"><Link href={url}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
                 <TableCell className={`text-nowrap text-center ${item?.hod_approved && item?.purchase_team_approved && item?.user == user ? "" : "hidden" }`}><Link href={`/pr-request?cartId=${item?.name}`}><Button className="bg-blue-400 hover:bg-blue-400">PR</Button></Link></TableCell>
                 {/* <TableCell>
                   <div
@@ -120,7 +123,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData,companyDropdo
                 <TableCell><Link href={`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
                 <TableCell className="text-right">{item?.qms_form}</TableCell> */}
               </TableRow>
-            ))
+            )})
           ) : (
             <TableRow>
               <TableCell colSpan={9} className="text-center text-gray-500 py-4">

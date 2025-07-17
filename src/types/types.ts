@@ -85,6 +85,7 @@ export type CompanyData = {
 };
 
 export type VendorRegistrationData = {
+  vendor_types:string[]
   vendor_title: string;
   vendor_name: string;
   office_email_primary: string;
@@ -92,8 +93,8 @@ export type VendorRegistrationData = {
   country: string;
   mobile_number: string;
   registered_date: string;
-  qa_required: string;
-  qms_required: number;
+  // qa_required: string;
+  qms_required: string;
 
   multiple_company_data: CompanyData[];
   vendor_type: VendorType[];
@@ -138,7 +139,17 @@ type VendorTypeGroup = {
   doctype: string;
 };
 
-type VendorOnboarding = {
+export type VendorOnboarding = {
+  registered_by:string
+  vendor_country:string
+  company_vendor_codes:{
+    company_code:string,
+    vendor_codes:{
+      state:string,
+      gst_no:string,
+      vendor_code:string
+    }[],
+  }[],
   name: string;
   owner: string;
   creation: string;
@@ -197,7 +208,9 @@ type VendorOnboarding = {
   purchase_team:string,
   purchase_head:string,
   accounts_team:string,
-  company:string
+  company:string,
+  sent_qms_form_link:boolean,
+  qms_form_filled:boolean
 };
 
 type MultipleCompanyData = {
@@ -557,6 +570,7 @@ export type TCompanyDetailForm = {
     certificate_code: string;
     valid_till: string; // format: YYYY-MM-DD
     certificate_attach: CertificateAttachment;
+    fileDetail?:CertificateAttachment
   };
 
 
@@ -653,7 +667,8 @@ export type TCompanyDetailForm = {
     nature_of_company: string;
     nature_of_business: string;
     vendor_types: string[];
-    company_name_description:string
+    company_name_description:string;
+    vendor_type_list_from_master:string[]
   };
   
 
@@ -675,6 +690,12 @@ export type TCompanyDetailForm = {
     pan_proof: FileAttachment;
     entity_proof: FileAttachment;
     msme_proof: FileAttachment;
+    iec:string,
+    iec_proof:FileAttachment,
+    trc_certificate_no:string,
+    trc_certificate:FileAttachment,
+    form_10f_proof:FileAttachment,
+    pe_certificate:FileAttachment,
     gst_table: any[]; // Adjust if GST structure is known
   };
   
@@ -690,28 +711,34 @@ export type TCompanyDetailForm = {
     ift:number;
     bank_proof: FileAttachment;
     bank_proof_by_purchase_team:FileAttachment
-    beneficiary_name:string,
-  beneficiary_bank_name:string,
-  beneficiary_account_no:string,
-  beneficiary_iban_no:string,
-  beneficiary_address:string,
-  beneficiary_bank_swift_code:string,
-  beneficiary_aba_no:string,
-  beneficiary_ach_no:string,
-  beneficiary_routing_no:string,
-  beneficiary_currency:string,
-  intermidiate_name:string,
-  intermidiate_bank_name:string,
-  intermidiate_account_no:string,
-  intermidiate_iban_no:string,
-  intermidiate_bank_address:string,
-  intermidiate_bank_swift_code:string,
-  intermidiate_aba_no:string,
-  intermidiate_ach_no:string,
-  intermidiate_routing_no:string,
-  intermidiate_currency:string
-  bank_proof_for_beneficiary_bank:FileAttachment,
-  bank_proof_for_intermediate_bank:FileAttachment
+    international_bank_details:{
+      name:string
+      beneficiary_name:string,
+      beneficiary_bank_name:string,
+      beneficiary_account_no:string,
+      beneficiary_iban_no:string,
+      beneficiary_bank_address:string,
+      beneficiary_swift_code:string,
+      beneficiary_aba_no:string,
+      beneficiary_ach_no:string,
+      beneficiary_routing_no:string,
+      beneficiary_currency:string,
+      bank_proof_for_beneficiary_bank:FileAttachment,
+    }[]
+    intermediate_bank_details:{
+      name:string
+      intermediate_name:string,
+      intermediate_bank_name:string,
+      intermediate_account_no:string,
+      intermediate_iban_no:string,
+      intermediate_bank_address:string,
+      intermediate_swift_code:string,
+      intermediate_aba_no:string,
+      intermediate_ach_no:string,
+      intermediate_routing_no:string,
+      intermediate_currency:string
+      bank_proof_for_intermediate_bank:FileAttachment
+    }[]
   address:{country:string}
   };
   
@@ -816,7 +843,9 @@ export type TCompanyDetailForm = {
     approved_vendor_count: number;
     current_month_vendor: number;
     rejected_vendor_count:number;
-    purchase_order_count:number
+    purchase_order_count:number;
+    pr_count:number;
+    cart_count:number
   }
   
   export interface DashboardPOTableItem {
@@ -915,10 +944,21 @@ export type TCompanyDetailForm = {
   
   export interface DashboardPOTableData {
     message:{
+      total_po:DashboardPOTableItem[],
+      total_count:number,
+      page_no:number,
+      page_length:number,
+      message:string
+    } 
+  }
+
+  export interface VendorDashboardPOTableData {
+    message:{
       purchase_orders:DashboardPOTableItem[],
       total_count:number,
       page_no:number,
-      page_length:number
+      page_length:number,
+      message:string
     } 
   }
   
@@ -1161,6 +1201,7 @@ export type TCompanyDetailForm = {
   }
 
   export type TPRInquiryTable = {
+    asked_to_modify:boolean
   ack_mail_to_user: number;
   acknowledged_remarks: string | null;
   cart_date: string | null;

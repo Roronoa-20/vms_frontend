@@ -25,13 +25,13 @@ const Dashboard = async () => {
 
   //po table 
   const dashboardPOTableDataApi: AxiosResponse = await requestWrapper({
-    url: `${API_END_POINTS?.dashboardPOTableURL}`,
+    url: `${API_END_POINTS?.poTable}`,
     method: "GET",
     headers: {
       cookie: cookieHeaderString
     }
   });
-  const dashboardPOTableData: DashboardPOTableData =
+  const dashboardPOTableData: DashboardPOTableData["message"] =
     dashboardPOTableDataApi?.status == 200 ? dashboardPOTableDataApi?.data?.message : "";
 
   console.log(dashboardPOTableData, "dashboardPOTableData-------------------------")
@@ -77,26 +77,9 @@ const Dashboard = async () => {
       cookie: cookieHeaderString
     }
   });
-  const dashboardRejectedVendorTableData: DashboardTableType =
-  dashboardRejectedVendorTableDataApi?.status == 200 ? dashboardRejectedVendorTableDataApi?.data?.message : "";
-  // const dashboardTableDataApi: AxiosResponse = await requestWrapper({
-  //   url: `${API_END_POINTS?.dashboardTableURL}?usr=${user}`,
-  //   method: "GET",
-  //   headers: {
-  //     cookie: cookieHeaderString
-  //   }
-  // });
-  // const dashboardTableData: dashboardCardData["message"] =
-  //   dashboardTableDataApi?.status == 200 ? dashboardTableDataApi?.data?.message : "";
-  // console.log(dashboardTableData, "dashboardTableData")
+  const dashboardRejectedVendorTableData: DashboardTableType["rejected_vendor_onboarding"] =
+  dashboardRejectedVendorTableDataApi?.status == 200 ? dashboardRejectedVendorTableDataApi?.data?.message?.rejected_vendor_onboarding : "";
 
-
-  // const companyDropdownUrl = API_END_POINTS?.companyDropdown
-  //             const companyDropdownResponse:AxiosResponse = await requestWrapper({url:companyDropdownUrl,method:"GET"});
-  //             const companyDropdown:{name:string}[] =  companyDropdownResponse?.status == 200?companyDropdownResponse?.data?.data : ""; 
-
-  console.log(dashboardPOTableData,"-----------------========","=pending---","=-09876543333333333333333333333333")
-  console.log(CardData,"this is card Data")
   const dropdownUrl = API_END_POINTS?.vendorRegistrationDropdown;
   const dropDownApi: AxiosResponse = await requestWrapper({
     url: dropdownUrl,
@@ -111,6 +94,9 @@ const Dashboard = async () => {
   const prInquiryApi: AxiosResponse = await requestWrapper({
     url: prInquiryDashboardUrl,
     method: "GET",
+    headers:{
+      cookie:cookieHeaderString
+    }
   });
   const prInquiryData:TPRInquiryTable[]  =
     prInquiryApi?.status == 200 ? prInquiryApi?.data?.message : "";
@@ -119,7 +105,7 @@ const Dashboard = async () => {
     const prApi:AxiosResponse = await requestWrapper({url:prDashboardUrl,method:"GET"});
     const prData:PurchaseRequisition[] = prApi?.status == 200 ? prApi?.data?.message : "";
 
-    console.log(prData,"this is pr data");
+    console.log(prInquiryData,"this is pr data");
 
   return (
     <div className="p-8">
@@ -127,7 +113,7 @@ const Dashboard = async () => {
       <DashboardCardCounter
         cardData={CardData}
         companyDropdown={companyDropdown}
-        // dashboardPOTableData={dashboardPOTableData}
+         dashboardPOTableData={dashboardPOTableData}
         // dashboardDispatchVendorTableData={dashboardTotalVendorTableData}
         dashboardTotalVendorTableData={dashboardTotalVendorTableData} 
         dashboardPendingVendorTableData={dashboardPendingVendorTableData}
