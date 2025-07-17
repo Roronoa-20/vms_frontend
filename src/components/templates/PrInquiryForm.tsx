@@ -35,6 +35,7 @@ const currentDate = new Date();
 
 const PRInquiryForm = ({ PRInquiryData, dropdown,companyDropdown, purchaseTypeDropdown }: Props) => {
   const user = Cookies.get("user_id");
+  console.log(PRInquiryData,"__________-")
   const [formData, setFormData] = useState<TPRInquiry | null>(PRInquiryData ?? null);
   const [singleTableRow, setSingleTableRow] = useState<TableData | null>(null);
   const [tableData, setTableData] = useState<TableData[]>(PRInquiryData?.cart_product ?? []);
@@ -48,6 +49,10 @@ const PRInquiryForm = ({ PRInquiryData, dropdown,companyDropdown, purchaseTypeDr
   useEffect(()=>{
     if(PRInquiryData?.company){
       handleCompanyChange(PRInquiryData?.company);
+    }
+
+    if(PRInquiryData?.category_type){
+      fetchProductName(PRInquiryData?.category_type);
     }
   },[])
 
@@ -162,7 +167,16 @@ const PRInquiryForm = ({ PRInquiryData, dropdown,companyDropdown, purchaseTypeDr
     }
   }
 
-
+const handleTableAssestCodeChange = (index:number,data:string)=>{
+  // const { name, value } = e.target;
+    setTableData((prev) => {
+      const updated = [...prev];
+      if (updated[index]) {
+        updated[index] = { ...updated[index],assest_code: data };
+      }
+      return updated;
+    });
+}
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
@@ -295,25 +309,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown,companyDropdown, purchaseTypeDr
             Product Name
           </h1>
           <Select
-            onValueChange={(value) => {
-              handleSelectChange(value, "product_name", true);
-
-              const selectedProduct = productNameDropdown.find((item) => item.name === value);
-
-              if (selectedProduct) {
-                setSingleTableRow(prev => ({
-                  ...prev,
-                  product_name: selectedProduct.name ?? "",
-                  product_price: selectedProduct.product_price ?? "",
-                  lead_time: selectedProduct.lead_time ?? "",
-                  assest_code: prev?.assest_code ?? "",
-                  uom: prev?.uom ?? "",
-                  product_quantity: prev?.product_quantity ?? "",
-                  user_specifications: prev?.user_specifications ?? ""
-                }));
-              }
-            }}
-            value={singleTableRow?.product_name ?? ""}
+            onValueChange={(value) => { handleSelectChange(value, "product_name",true) }} value={singleTableRow?.product_name ?? ""}
+            // value={singleTableRow?.product_name ?? ""}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select" />
@@ -386,8 +383,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown,companyDropdown, purchaseTypeDr
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
                 <TableHead className="w-[100px]">Sr No.</TableHead>
-                {/* <TableHead className="text-center">Assest Code</TableHead> */}
                 <TableHead className="text-center">Product Name</TableHead>
+                <TableHead className="text-center">Assest Code</TableHead>
                 <TableHead className="text-center">Product Price</TableHead>
                 <TableHead className="text-center">UOM</TableHead>
                 <TableHead className="text-center">Lead Time</TableHead>
@@ -400,8 +397,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown,companyDropdown, purchaseTypeDr
               {tableData?.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
-                  {/* <TableCell>{item?.assest_code}</TableCell> */}
                   <TableCell>{item?.product_name}</TableCell>
+                  <TableCell className='flex justify-center'><Input disabled={item?.need_asset_code && PRInquiryData?.asked_to_modify?false:true} className={`text-center w-28`} value={item?.assest_code ?? ""} onChange={(e)=>{handleTableAssestCodeChange(index,e.target.value)}} /></TableCell>
                   <TableCell>{item?.product_price}</TableCell>
                   <TableCell>{item?.uom}</TableCell>
                   <TableCell>{item?.lead_time}</TableCell>

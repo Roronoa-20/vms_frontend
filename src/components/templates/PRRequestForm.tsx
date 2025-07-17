@@ -549,7 +549,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req }: Props) => {
           onClose={() => setIsSubItemModalOpen(false)}
           fetchTableData={fetchTableData}
           Dropdown={Dropdown}
-          pur_req={pur_req ? pur_req : ""}
+          pur_req={pur_req ? pur_req : mainItems?.docname?mainItems?.docname:""}
           selectedMainItemId={selectedMainItemId}
         />}
 
