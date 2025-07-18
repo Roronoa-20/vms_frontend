@@ -44,6 +44,13 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
     setContact({});
   }
 
+  const handleRowDelete = (index: number) => {
+    // Remove the contact at the given index from the contactDetail store
+    const updatedContacts = contactDetail.filter((_, itemIndex) => itemIndex !== index);
+    resetContactDetail();
+    updatedContacts.forEach(item => addContactDetail(item));
+  }
+
   const handleSubmit = async()=>{
     // if(contactDetail?.length < 1){
     //   alert("Please Enter At Least 1 Contact Details")
@@ -116,6 +123,7 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
                   <TableHead className="text-center">Email</TableHead>
                   <TableHead className="text-center">Contact Number</TableHead>
                   <TableHead className="text-center">Department Name</TableHead>
+                  <TableHead className="text-center">Delete</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
@@ -130,6 +138,7 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
                     </TableCell>
                     <TableCell>{item?.contact_number}</TableCell>
                     <TableCell>{item?.department_name}</TableCell>
+                    <TableCell><Button onClick={()=>{handleRowDelete(index)}}>Delete</Button></TableCell>
                   </TableRow>
                 ))}
               </TableBody>

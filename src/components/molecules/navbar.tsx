@@ -11,6 +11,11 @@ const Navbar = () => {
   const logoLetter = name?.charAt(0).toUpperCase();
   const pathname = usePathname();
   console.log(pathname)
+
+  const handleClose = ()=>{
+    setIsDialog(false);
+  }
+
   return (
     <div className="bg-white w-full shadow-sm flex justify-between p-3 items-center sticky top-0 z-50">
       <h1 className="text-[24px] text-[#03111F] font-semibold">
@@ -33,7 +38,7 @@ const Navbar = () => {
           {logoLetter ? logoLetter : ''}
           {
             isDialog && 
-            <NavbarMenu/>
+            <NavbarMenu handleClose={handleClose} />
           }
         </div>
       </div>

@@ -213,7 +213,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
             Bank Proof (By Purchase Team)
           </h1>
           <div className="flex gap-4">
-          <Input placeholder="" type="file" onChange={(e)=>{setBankProof(e.target.files)}} />
+          <Input className={`${designation == "Purchase Team"?"":"hidden"}`} placeholder="" type="file" onChange={(e)=>{setBankProof(e.target.files)}} />
           {/* file preview */}
           {isPurchaseBankFilePreview &&
               !bank_proof &&
