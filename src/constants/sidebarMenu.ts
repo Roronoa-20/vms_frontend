@@ -9,11 +9,11 @@ export const sidebarMenu = [
     name: "Vendor",
     href:"/vendor-registration"
   },
-  {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "PR",
-    href:"/pr-request"
-  },
+  // {
+  //   logo: "/sidebar-assests/vendor-icon.svg",
+  //   name: "PR",
+  //   href:"/pr-request"
+  // },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "ASA",
@@ -26,7 +26,7 @@ export const sidebarMenu = [
   // },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
-    name: "Inquiry",
+    name: "Product Enquiry",
     href:"/pr-inquiry"
   },
   // {
@@ -34,21 +34,21 @@ export const sidebarMenu = [
   //   name: "Raise RFQ",
   //   href:""
   // },
-  // {
-  //   logo: "/sidebar-assests/view-pr.svg",
-  //   name: "View PR",
-  //   href:""
-  // },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "View PR",
+    href:"/view-pr"
+  },
   // {
   //   logo: "/sidebar-assests/po-details.svg",
   //   name: "View PO",
   //   href:""
   // },
-  // {
-  //   logo: "/sidebar-assests/view-grn.svg",
-  //   name: "View GRN",
-  //   href:""
-  // },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "View GRN",
+    href:"/view-grn"
+  },
   // {
   //   logo: "/sidebar-assests/dispatch-logo.svg",
   //   name: "View Dispatch",

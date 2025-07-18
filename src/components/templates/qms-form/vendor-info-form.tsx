@@ -28,8 +28,9 @@ export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                                 type="text"
                                 placeholder="Enter the name here"
                                 name="vendor_name1"
-                                value={formData.vendor_name1}
-                                onChange={(e) => handleTextareaChange(e, 'vendor_name1')}
+                                value={formData.vendor_name1 || ""}
+                                // onChange={(e) => handleTextareaChange(e, 'vendor_name1')}
+                                onChange={() => {}}
                             />
                         </div>
 
@@ -38,8 +39,10 @@ export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                             <Input
                                 type="date"
                                 name="date"
-                                value={formData.date1}
-                                onChange={(e) => handleTextareaChange(e, 'date1')}
+                                value={formData.date1 || ""}
+                                // onChange={(e) => handleTextareaChange(e, 'date1')}
+                                onChange={() => {}}
+
                             />
                         </div>
                     </div>
@@ -49,7 +52,7 @@ export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                             {formData.vendor_signature ? (
                                 <div className="w-[400px] h-[150px] relative flex items-center mt-2">
                                     <img
-                                        src={formData.vendor_signature}
+                                        src={formData.vendor_signature || ""}
                                         alt="Vendor Signature"
                                         className="w-400 h-200 object-contain border border-gray-300"
                                     />
@@ -70,7 +73,9 @@ export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                                 rows={4}
                                 placeholder='Enter the details'
                                 value={formData.name_of_parent_company}
-                                onChange={(e) => handleTextareaChange(e, 'name_of_parent_company')}
+                                // onChange={(e) => handleTextareaChange(e, 'name_of_parent_company')}
+                                onChange={() => {}}
+
                             />
                         </div>
                     </div>

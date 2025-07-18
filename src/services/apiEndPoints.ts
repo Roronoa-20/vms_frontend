@@ -1,4 +1,5 @@
 import { verify } from "crypto";
+import { User } from "lucide-react";
 
 const url = process.env.NEXT_PUBLIC_BACKEND_END;
 const API_END_POINTS = {
@@ -87,6 +88,10 @@ const API_END_POINTS = {
   PRTableSubHeadSubmitData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.create_pr_table_subhead_form`,
   PrSubHeadDeleteRow: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.delete_pr_table_row`,
   SubmitPR: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.submit_pr_form`,
+
+  AllGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_all_grn_details`,
+  SingleGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_grn_details_of_grn_number`,
+  UserDetails: `${url}/api/method/vms.APIs.authentication_api.get_user_details.get_user_details`,
 };
 
 export default API_END_POINTS;
