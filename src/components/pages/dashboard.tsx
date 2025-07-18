@@ -98,8 +98,8 @@ const Dashboard = async () => {
       cookie:cookieHeaderString
     }
   });
-  const prInquiryData:TPRInquiryTable[]  =
-    prInquiryApi?.status == 200 ? prInquiryApi?.data?.message : "";
+  const prInquiryData:TPRInquiryTable["cart_details"]  =
+    prInquiryApi?.status == 200 ? prInquiryApi?.data?.message?.cart_details : "";
 
     const prDashboardUrl = API_END_POINTS?.prTableData;
     const prApi:AxiosResponse = await requestWrapper({url:prDashboardUrl,method:"GET"});
