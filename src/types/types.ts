@@ -440,6 +440,8 @@ export type TCompanyDetailForm = {
       qa_team_remarks:string,
       reconciliation_account:string,
       terms_of_payment:string
+      account_team_remarks:string
+
     }
 
 

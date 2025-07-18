@@ -49,6 +49,13 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
     updateTestingDetail(multipleTestingDetail);
     setMultipleTestingDetail({});
   }
+
+  const handleRowDelete = (index: number) => {
+    // Remove the testing facility at the given index from the testingDetail store
+    const updatedTestingDetails = testingDetail.filter((_, itemIndex) => itemIndex !== index);
+    reset();
+    updatedTestingDetails.forEach(item => updateTestingDetail(item));
+  }
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
@@ -80,7 +87,7 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
           <Input placeholder="" value={multipleTestingDetail?.remarks ?? ""} onChange={(e)=>{setMultipleTestingDetail((prev:any)=>({...prev,remarks:e.target.value}))}}/>
         </div>
         <div className="col-span-1 flex items-end">
-          <Button className={`bg-blue-400 hover:bg-blue-300 ${designation?"hidden":""}`} onClick={()=>{handleAdd()}}>Add</Button>
+          <Button className={`bg-blue-400 hover:bg-blue-300`} onClick={()=>{handleAdd()}}>Add</Button>
         </div>
       </div>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
@@ -98,6 +105,7 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
                   <TableHead className="text-center">Equipment Qty.</TableHead>
                   <TableHead className="text-center">Capacity</TableHead>
                   <TableHead className="text-center">Remarks</TableHead>
+                  <TableHead className="text-center">Delete</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
@@ -110,12 +118,15 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
                     <TableCell>
                       {item?.remarks}
                     </TableCell>
+                    <TableCell>
+                      <Button onClick={()=>{handleRowDelete(index)}}>Delete</Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
-      <div className={`flex justify-end pr-4 ${designation?"hidden":""}`} onClick={()=>{handleSubmit()}}><Button>Next</Button></div>
+      <div className={`flex justify-end pr-4`} onClick={()=>{handleSubmit()}}><Button>Next</Button></div>
     </div>
   );
 };

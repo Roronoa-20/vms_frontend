@@ -54,6 +54,12 @@ const handleAdd = ()=>{
   setReputedPartners({});
 }
 
+const handleRowDelete = (index: number) => {
+    // Remove the partner at the given index from the reputedPartnersDetails state
+    const updatedPartners = reputedPartnersDetails.filter((_, itemIndex) => itemIndex !== index);
+    setReputedPartnersDetails(updatedPartners);
+  }
+
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
@@ -80,7 +86,7 @@ const handleAdd = ()=>{
           <Input placeholder="" value={reputedPartners?.remark ?? ""} onChange={(e)=>{setReputedPartners((prev)=>({...prev,remark:e.target.value}))}}/>
         </div>
         <div className="col-span-1 flex items-end">
-          <Button className={`bg-blue-400 hover:bg-blue-300 ${designation?"hidden":""}`} onClick={()=>{handleAdd()}}>Add</Button>
+          <Button className={`bg-blue-400 hover:bg-blue-300 `} onClick={()=>{handleAdd()}}>Add</Button>
         </div>
       </div>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
@@ -97,6 +103,7 @@ const handleAdd = ()=>{
                   <TableHead className="text-center">Company Name</TableHead>
                   <TableHead className="text-center">Supplied Quantity</TableHead>
                   <TableHead className="text-center">Remarks</TableHead>
+                  <TableHead className="text-center">Delete</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
@@ -106,12 +113,13 @@ const handleAdd = ()=>{
                     <TableCell>{item?.company_name}</TableCell>
                     <TableCell>{item?.supplied_qtyyear}</TableCell>
                     <TableCell>{item?.remark}</TableCell>
+                    <TableCell><Button onClick={()=>{handleRowDelete(index)}} >Delete</Button></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
-          <div className={`flex justify-end pr-4 ${designation?"hidden":""}`}><Button onClick={()=>{handleSubmit()}}>Next</Button></div>
+          <div className={`flex justify-end pr-4`}><Button onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };

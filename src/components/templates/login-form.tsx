@@ -26,23 +26,39 @@ const {MultipleVendorCode,addMultipleVendorCode,reset,resetVendorCode} = useMult
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const url = API_END_POINTS?.login;
-    const response: AxiosResponse = await requestWrapper({
-      url: url,
+    // const response: AxiosResponse = await requestWrapper({
+    //   url: url,
+    //   method: "POST",
+    //   headers:{"Content-Type":"application/json"},
+    //   data: { data: form },
+    // });
+
+    const response = await fetch(url, {
       method: "POST",
-      headers:{"Content-Type":"application/json"},
-      data: { data: form },
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ data: form }),
+      credentials:"include"
     });
+
+    if(response.status == 401){
+      alert("username or password is incorrect");
+      return;
+    }
+    
     if (response.status == 200) {
+      const data = await response.json();
       const savedRole = Cookies.get("role");
       const savedName = Cookies.get("full_name");
       const savedid = Cookies.get("user_id");
       // const designation = response?.data?.message?.employee?.designation;
-      const designation = await response?.data?.message?.employee?.designation as string;
-      const designationVendor = await response?.data?.message?.designation as string;
+      const designation =  data?.message?.employee?.designation as string;
+      const designationVendor = data?.message?.designation as string;
       if(designationVendor){
         reset();
         resetVendorCode();
-        response?.data?.message?.vendor_codes?.map((item:TMultipleVendorCode)=>(
+        data?.message?.vendor_codes?.map((item:TMultipleVendorCode)=>(
           addMultipleVendorCode(item)
         ))
       }

@@ -43,6 +43,14 @@ const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
     setMultipleMachineDetail(null);
   }
 
+
+  const handleRowDelete = (index: number) => {
+    // Remove the machine at the given index from the machineDetail store
+    const updatedMachines = machineDetail.filter((_, itemIndex) => itemIndex !== index);
+    resetMachineDetail();
+    updatedMachines.forEach(item => updateMachineDetail(item));
+  }
+
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
@@ -92,6 +100,7 @@ const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
                   <TableHead className="text-center">Equipment Qty</TableHead>
                   <TableHead className="text-center">Capacity</TableHead>
                   <TableHead className="text-center">Remarks</TableHead>
+                  <TableHead className="text-center">Delete</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
@@ -103,6 +112,9 @@ const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
                     <TableCell>{item?.capacity}</TableCell>
                     <TableCell>
                       {item?.remarks}
+                    </TableCell>
+                    <TableCell>
+                      <Button onClick={()=>{handleRowDelete(index)}}>Delete</Button>
                     </TableCell>
                   </TableRow>
                 ))}

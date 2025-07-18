@@ -76,11 +76,17 @@ const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,reconciliati
         </h1>
         <Input placeholder="" disabled defaultValue={OnboardingDetail?.purchase_team_remarks}/>
       </div>
-      <div>
+      {/* <div>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           QA Team Remarks
         </h1>
         <Input placeholder="" disabled defaultValue={OnboardingDetail?.qa_team_remarks} />
+      </div> */}
+      <div>
+        <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          Accounts Team Remarks
+        </h1>
+        <Input placeholder="" disabled defaultValue={OnboardingDetail?.account_team_remarks} />
       </div>
       <div className={`${designation == "Purchase Head"?"hidden":""}`}>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
