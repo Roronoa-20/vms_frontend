@@ -28,6 +28,7 @@ const formComponents: { [key: string]: React.FC<{ vendor_onboarding: string; }> 
     production: ProductionForm,
     complaint: ComplaintForm,
     supplement: SupplementForm,
+    QualityAgreement: QualityForm,
     conclusion: ConclusionForm
 };
 

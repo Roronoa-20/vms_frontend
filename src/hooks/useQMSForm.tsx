@@ -34,6 +34,50 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         fetchFormData();
     }, [vendor_onboarding]);
 
+    const handleApproval = async () => {
+        try {
+            const {
+                name,
+                conclusion_by_meril,
+                assessment_outcome,
+                performer_name,
+                performer_title,
+                performent_date,
+                vendor_signature
+            } = formData;
+
+            const payload = {
+                name,
+                conclusion_by_meril,
+                assessment_outcome,
+                performer_name,
+                performer_title,
+                performent_date,
+                performer_esignature: vendor_signature,
+                qms_form_status: "Approved"
+            };
+            console.log("QMS Form Approval Payload:", payload);
+            const response = await requestWrapper({
+                url: API_END_POINTS.qmsformapproval,
+                method: 'POST',
+                data: {
+                    data: payload
+                }
+            });
+            // console.log("QMS Form Approval Response:", response);
+            if (response?.data?.message?.status === "success") {
+                alert("QMS Form Approved Successfully!");
+            } else {
+                alert("Approval failed. Please try again.");
+            }
+
+            console.log("QMS Form Approval Response:", response?.data);
+        } catch (error) {
+            console.error("Error during QMS form approval:", error);
+            alert("Something went wrong while approving.");
+        }
+    };
+
     const handleSaveSignature = () => {
         if (sigCanvas.current?.isEmpty()) {
             alert("Please provide a signature before saving.");
@@ -50,7 +94,7 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         setFormData((prev) => ({ ...prev, vendor_signature: "" }));
     };
 
-    const handleTextareaChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,field: keyof QMSForm) => {
+    const handleTextareaChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: keyof QMSForm) => {
         const { value } = e.target;
         setFormData((prev) => ({ ...prev, [field]: value }));
     };
@@ -102,17 +146,17 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
     };
 
     const handleSignatureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+        const file = e.target.files?.[0];
+        if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setSignaturePreview(base64String);
-        setFormData((prev) => ({ ...prev, vendor_signature: base64String }));
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const base64String = reader.result as string;
+            setSignaturePreview(base64String);
+            setFormData((prev) => ({ ...prev, vendor_signature: base64String }));
+        };
+        reader.readAsDataURL(file); // base64 conversion
     };
-    reader.readAsDataURL(file); // base64 conversion
-};
 
 
     return {
@@ -129,6 +173,7 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         handleClearSignature,
         handleSignatureUpload,
         signaturePreview,
-        sigCanvas
+        sigCanvas,
+        handleApproval
     };
 };
