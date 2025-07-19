@@ -259,7 +259,7 @@ const handleTableAssestCodeChange = (index:number,data:string)=>{
             </SelectContent>
           </Select>
         </div>
-        {/* <div className="col-span-1">
+        <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Plant
           </h1>
@@ -275,7 +275,7 @@ const handleTableAssestCodeChange = (index:number,data:string)=>{
               </SelectGroup>
             </SelectContent>
           </Select>
-        </div> */}
+        </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Purchase Group
