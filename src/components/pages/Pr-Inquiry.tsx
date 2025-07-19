@@ -23,6 +23,7 @@ interface Props {
 }
 
 export type TableData = {
+    need_asset_code:boolean
       assest_code:string,
       product_name:string,
       product_price:string,
@@ -47,6 +48,8 @@ export type TPRInquiry = {
     purchase_type:string,
     purchase_group:string,
     plant:string,
+    asked_to_modify:boolean,
+    purchase_team_approved:boolean
 }
 
 const PrInquiryPage = async ({ refno }: Props) => {

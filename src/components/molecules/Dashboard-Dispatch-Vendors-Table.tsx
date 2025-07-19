@@ -31,6 +31,7 @@ type Props = {
 }
 
 const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
+  console.log(dashboardTableData,"this is table data")
   const [isPrDialog,setIsPrDialog] = useState<boolean>(false);
   const [selectedPrTable,setSelectedPRTable] = useState<string[]>();
   const router = useRouter();

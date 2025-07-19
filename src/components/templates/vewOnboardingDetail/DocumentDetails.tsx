@@ -101,10 +101,10 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
       errors.gst_state = "Please Select Gst State";
 
     } 
-    // if ((documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_number) && (!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_number)) {
-    //   errors.gst_number = "Please Enter Gst Number";
+    if ((documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_number) && (!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_number)) {
+      errors.gst_number = "Please Enter Gst Number";
 
-    // } 
+    } 
     if ((documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_registration_date) && ((!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_registration_date))) {
       errors.gst_registration_date = "Please Select Gst Registration Date";
 
@@ -139,38 +139,6 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
   };
 
 
-  const checkGST = (str:string)=>{
-    let regex = new RegExp(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/);
-    if (str == null) {
-        return false;
-    }
-
-    // Return true if the GST_CODE
-    // matched the ReGex
-    if (regex.test(str) == true) {
-        return true;
-    }
-    else {
-        return false;
-    }
-  }
-
-  const checkPAN = (str:string)=>{
-    const regex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
-    if (str == null) {
-        return false;
-    }
-
-    // Return true if the PAN matches the regex
-    if (regex.test(str) == true) {
-        return true;
-    }
-    else {
-        return false;
-    }
-  }
-
-
   const handleSubmit = async () => {
     const validationErrors = validate();
 
@@ -179,14 +147,6 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
       return;
     }
     const url = API_END_POINTS?.documentDetailSubmit;
-    if(!checkPAN(documentDetails?.company_pan_number as string)){
-      alert("please enter correct PAN Number")
-      return;
-    }
-    if(!checkGST(documentDetails?.gst_number as string)){
-      alert("please enter correct gst number")
-      return;
-    }
     const updatedData = {
       ...documentDetails,
       msme_registered: isMSME,
@@ -238,6 +198,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
               Company PAN Number <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
+            disabled
               placeholder="Enter Company Pan Number"
               value={
                 documentDetails?.company_pan_number ??
@@ -258,6 +219,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
               Name of Company on PAN Card <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
+            disabled
               placeholder="Enter Pan Card"
               value={
                 documentDetails?.name_on_company_pan ??
@@ -279,7 +241,8 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
             </h1>
             <div className="flex gap-4">
 
-            <Input
+            {/* <Input
+            disabled
               placeholder=""
               type="file"
               onChange={(e) => {
@@ -288,7 +251,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                   panDocument: e.target.files,
                 }));
               }}
-              />
+              /> */}
             {/* file preview */}
             {isPanFilePreview &&
               !documentDetails?.panDocument &&
@@ -318,6 +281,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                 GST Vendor Type <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Select
+              disabled
                 onValueChange={(value) => {
                   setBusinessType(value);
                   setDocumentDetail((prev) => ({
@@ -354,6 +318,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
               </h1>
               {/* <Input placeholder="Enter State" value={documentDetails?.gst_state ?? OnboardingDetail?.gst_table[0]?.gst_state} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,gst_state:e.target.value}))}}/> */}
               <Select
+              disabled
                 onValueChange={(value) => {
                   setDocumentDetail((prev) => ({ ...prev, gst_state: value }));
                 }}
@@ -384,6 +349,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                 GST Number <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Input
+              disabled
                 placeholder="Enter GST Number"
                 value={
                   documentDetails?.gst_number ??
@@ -397,13 +363,14 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                   }));
                 }}
               />
-              {/* {errors?.gst_number && !documentDetails?.gst_number && <span style={{ color: 'red' }}>{errors?.gst_number}</span>} */}
+              {errors?.gst_number && !documentDetails?.gst_number && <span style={{ color: 'red' }}>{errors?.gst_number}</span>}
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 GST Registration Date <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Input
+              disabled
                 placeholder="Enter Registration Date"
                 value={
                   documentDetails?.gst_registration_date ??
@@ -425,7 +392,8 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                 Upload GST Document <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <div className="flex gap-4">
-              <Input
+              {/* <Input
+              disabled
                 type="file"
                 onChange={(e) => {
                   setDocumentDetail((prev: any) => ({
@@ -433,7 +401,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                     gstDocument: e.target.files,
                   }));
                 }}
-                />
+                /> */}
                 {errors?.gstDocument && !documentDetails?.gstDocument && <span style={{ color: 'red' }}>{errors?.gstDocument}</span>}
               {/* file preview */}
             {isGstFilePreview &&
@@ -447,12 +415,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                     >
                     <span>{OnboardingDetail?.gst_table[0]?.gst_document?.file_name}</span>
                   </Link>
-                  <X
-                    className="cursor-pointer"
-                    onClick={() => {
-                      setIsGstFilePreview((prev) => !prev);
-                    }}
-                    />
+                  
                 </div>
               )}
               </div>
@@ -463,6 +426,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
               MSME Registered?
             </h1>
             <Select
+            disabled
               onValueChange={(value) => {
                 setIsMSME(value);
                 setDocumentDetail((prev) => ({
@@ -490,6 +454,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
               MSME Enterprise Type <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Select
+            disabled
               value={
                 documentDetails?.msme_enterprise_type ??
                 OnboardingDetail?.msme_enterprise_type
@@ -519,6 +484,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
               Udyam Registration No. <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
+            disabled
               placeholder=" Enter Udyam Registration No"
               value={
                 documentDetails?.udyam_number ??
@@ -539,6 +505,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
               Name of Company in Udyam Certificate <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
+            disabled
               placeholder=""
               value={
                 documentDetails?.name_on_udyam_certificate ??
@@ -559,7 +526,8 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
               Upload Udyam Certificate <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <div className="flex gap-4">
-            <Input
+            {/* <Input
+            disabled
               placeholder=""
               type="file"
               onChange={(e) => {
@@ -568,7 +536,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                   udyamCertificate: e.target.files,
                 }));
               }}
-              />
+              /> */}
               {errors?.udyamCertificate && !documentDetails?.udyamCertificate && <span style={{ color: 'red' }}>{errors?.udyamCertificate}</span>}
             {/* file preview */}
             {isMsmeFilePreview &&
@@ -582,12 +550,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                   >
                     <span>{OnboardingDetail?.msme_proof?.file_name}</span>
                   </Link>
-                  <X
-                    className="cursor-pointer"
-                    onClick={() => {
-                      setIsMsmeFilePreview((prev) => !prev);
-                    }}
-                    />
+                  
                 </div>
               )}
               </div>
@@ -599,6 +562,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
               Enterprise Registration Number <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
+            disabled
               placeholder="Enter Enterprise Registration Number"
               value={
                 documentDetails?.enterprise_registration_number ??
@@ -620,7 +584,8 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
             </h1>
             <div className="flex gap-4 w-full">
 
-            <Input
+            {/* <Input
+            disabled
               placeholder=""
               type="file"
               onChange={(e) => {
@@ -629,7 +594,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                   registrationDocument: e.target.files,
                 }));
               }}
-              />
+              /> */}
               {errors?.registrationDocument && !documentDetails?.registrationDocument && <span style={{ color: 'red' }}>{errors?.registrationDocument}</span>}
             {/* file preview */}
             {isRegistrationFilePreview &&
@@ -643,18 +608,18 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                     >
                     <span>{OnboardingDetail?.entity_proof?.file_name}</span>
                   </Link>
-                  <X
+                  {/* <X
                     className="cursor-pointer"
                     onClick={() => {
                       setIsRegistrationFilePreview((prev) => !prev);
                     }}
-                    />
+                    /> */}
                 </div>
               )}
               </div>
           </div>
         </div>
-        <div className="flex justify-end pr-6">
+        {/* <div className="flex justify-end pr-6">
           <Button
             className={`bg-blue-400 hover:bg-blue-400`}
             onClick={() => {
@@ -663,7 +628,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
           >
             Next
           </Button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
