@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import Cookies from "js-cookie";
 import { log } from "console";
 type Props = {
-  dashboardTableData?: TPRInquiryTable[]
+  dashboardTableData?: TPRInquiryTable["cart_details"]
   companyDropdown: {name:string}[]
 }
 
