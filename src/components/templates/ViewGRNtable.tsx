@@ -16,11 +16,16 @@ type Props = {
     GRNData?: GRNForm[];
     user?: string;
     grn_ref?: string;
-    // userDetails: any;
-
 };
 
 const ViewGRNEntry = ({ GRNData }: Props) => {
+    
+    const formatDate = (dateStr: string | undefined) => {
+        if (!dateStr) return '-';
+        const [year, month, day] = dateStr.split('-');
+        return `${day}-${month}-${year}`;
+    };
+
     return (
         <div className="bg-gray-300 min-h-screen p-6">
             <div className="shadow bg-[#f6f6f7] p-4 rounded-2xl">
@@ -45,7 +50,7 @@ const ViewGRNEntry = ({ GRNData }: Props) => {
                                     <TableRow key={index}>
                                         <TableCell className="text-center">{index + 1}</TableCell>
                                         <TableCell className="text-center">{item?.grn_no}</TableCell>
-                                        <TableCell className="text-center">{item?.grn_date}</TableCell>
+                                        <TableCell className="text-center">{formatDate(item?.grn_date)}</TableCell>
                                         <TableCell className="text-center">
                                             <Link href={`/view-grn-details?grn_ref=${item?.grn_no}`}>
                                                 <Button className="bg-blue-400 text-white hover:bg-white hover:text-black">

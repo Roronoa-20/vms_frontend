@@ -12,26 +12,8 @@ const ViewGRNPage = async () => {
   const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join('; ');
 
   let GRNData: GRNForm[] = [];
-  let userDetails: any = null;
 
-  // First fetch user details
-  const UserDetailsUrl = `${API_END_POINTS?.UserDetails}?email=${user}`;
-  const UserDetailsResponse: AxiosResponse = await requestWrapper({
-    url: UserDetailsUrl,
-    method: 'GET',
-    headers: {
-      cookie: cookieHeaderString,
-    },
-  });
-
-  if (UserDetailsResponse?.status === 200) {
-    userDetails = UserDetailsResponse?.data?.message;
-  }
-
-  const team = userDetails?.team || '';
-
-  // Then use team in GRN fetch
-  const GRNDataUrl = `${API_END_POINTS?.AllGRNdetails}?team=${encodeURIComponent(team)}`;
+  const GRNDataUrl = API_END_POINTS?.AllGRNdetails;
   const GRNDataResponse: AxiosResponse = await requestWrapper({
     url: GRNDataUrl,
     method: 'GET',
@@ -48,7 +30,6 @@ const ViewGRNPage = async () => {
     <ViewGRNForm
       GRNData={GRNData}
       user={user}
-      // userDetails={userDetails}
     />
   );
 };
