@@ -101,10 +101,10 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
       errors.gst_state = "Please Select Gst State";
 
     } 
-    if ((documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_number) && (!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_number)) {
-      errors.gst_number = "Please Enter Gst Number";
+    // if ((documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_number) && (!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_number)) {
+    //   errors.gst_number = "Please Enter Gst Number";
 
-    } 
+    // } 
     if ((documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_registration_date) && ((!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_registration_date))) {
       errors.gst_registration_date = "Please Select Gst Registration Date";
 
@@ -139,6 +139,38 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
   };
 
 
+  const checkGST = (str:string)=>{
+    let regex = new RegExp(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/);
+    if (str == null) {
+        return false;
+    }
+
+    // Return true if the GST_CODE
+    // matched the ReGex
+    if (regex.test(str) == true) {
+        return true;
+    }
+    else {
+        return false;
+    }
+  }
+
+  const checkPAN = (str:string)=>{
+    const regex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+    if (str == null) {
+        return false;
+    }
+
+    // Return true if the PAN matches the regex
+    if (regex.test(str) == true) {
+        return true;
+    }
+    else {
+        return false;
+    }
+  }
+
+
   const handleSubmit = async () => {
     const validationErrors = validate();
 
@@ -147,6 +179,14 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
       return;
     }
     const url = API_END_POINTS?.documentDetailSubmit;
+    if(!checkPAN(documentDetails?.company_pan_number as string)){
+      alert("please enter correct PAN Number")
+      return;
+    }
+    if(!checkGST(documentDetails?.gst_number as string)){
+      alert("please enter correct gst number")
+      return;
+    }
     const updatedData = {
       ...documentDetails,
       msme_registered: isMSME,
@@ -357,7 +397,7 @@ console.log(OnboardingDetail?.gst_table[0],"this is gst document")
                   }));
                 }}
               />
-              {errors?.gst_number && !documentDetails?.gst_number && <span style={{ color: 'red' }}>{errors?.gst_number}</span>}
+              {/* {errors?.gst_number && !documentDetails?.gst_number && <span style={{ color: 'red' }}>{errors?.gst_number}</span>} */}
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
