@@ -1285,5 +1285,9 @@ export interface PurchaseRequisition {
   purchase_group: string | null;
 }
 
+export interface RFQTable {
+  
+}
+
 
   

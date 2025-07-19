@@ -87,6 +87,16 @@ const API_END_POINTS = {
   PRTableSubHeadSubmitData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.create_pr_table_subhead_form`,
   PrSubHeadDeleteRow: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.delete_pr_table_row`,
   SubmitPR: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.submit_pr_form`,
+
+
+  //rfq apis
+  fetchVendorListBasedOnRFQType: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.vendor_list`,
+  CreateImportRFQ:`${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.create_import_logistic_rfq`,
+  CreateExportRFQ:`${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.create_export_logistic_rfq`,
+  rfqTableData:`${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.rfq_logistic_dashboard`,
+  fetchPRDropdown:`${url}/api/method/vms.APIs.req_for_quotation.rfq_for_material.pr_number_list`,
+  fetchPRItems:`${url}/api/method/vms.APIs.req_for_quotation.rfq_for_material.add_pr_number`,
+  CreateMaterialRFQ:`${url}/api/method/vms.APIs.req_for_quotation.rfq_for_material.create_rfq_material`,
 };
 
 export default API_END_POINTS;

@@ -449,7 +449,6 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req }: Props) => {
                           </div>
                         </div> */}
                         <SummaryBlock mainItem={mainItem}/>
-
                         {/* Sub Items Section */}
                         {mainItem.purchase_requisition_type == "SB" && <div className="mt-4">
                           <div className="flex items-center justify-between mb-4">
@@ -549,7 +548,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req }: Props) => {
           onClose={() => setIsSubItemModalOpen(false)}
           fetchTableData={fetchTableData}
           Dropdown={Dropdown}
-          pur_req={pur_req ? pur_req : ""}
+          pur_req={pur_req ? pur_req : mainItems?.docname?mainItems?.docname:""}
           selectedMainItemId={selectedMainItemId}
         />}
 

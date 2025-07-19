@@ -14,6 +14,11 @@ export const sidebarMenu = [
     name: "PR",
     href:"/pr-request"
   },
+    {
+    logo: "/sidebar-assests/rfq_icon.svg",
+    name: "Raise RFQ",
+    href:"/create-rfq"
+  },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "ASA",
