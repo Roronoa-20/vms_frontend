@@ -847,7 +847,8 @@ export type TCompanyDetailForm = {
     rejected_vendor_count:number;
     purchase_order_count:number;
     pr_count:number;
-    cart_count:number
+    cart_count:number,
+    rfq_count:number
   }
   
   export interface DashboardPOTableItem {
@@ -1290,7 +1291,13 @@ export interface PurchaseRequisition {
 }
 
 export interface RFQTable {
-  
+  data:{
+    name:string,
+    company_name:string,
+    rfq_type:string,
+    rfq_date:string,
+    status:string,
+  }[]
 }
 
 

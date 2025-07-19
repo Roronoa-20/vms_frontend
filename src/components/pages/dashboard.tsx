@@ -77,7 +77,7 @@ const Dashboard = async () => {
       cookie: cookieHeaderString
     }
   });
-  const dashboardRejectedVendorTableData: DashboardTableType =
+  const dashboardRejectedVendorTableData: DashboardTableType["rejected_vendor_onboarding"] =
     dashboardRejectedVendorTableDataApi?.status == 200 ? dashboardRejectedVendorTableDataApi?.data?.message : "";
   // const dashboardTableDataApi: AxiosResponse = await requestWrapper({
   //   url: `${API_END_POINTS?.dashboardTableURL}?usr=${user}`,
@@ -116,13 +116,13 @@ const Dashboard = async () => {
     prInquiryApi?.status == 200 ? prInquiryApi?.data?.message?.cart_details : "";
 
   const prDashboardUrl = API_END_POINTS?.prTableData;
-  const prApi: AxiosResponse = await requestWrapper({ url: prDashboardUrl, method: "GET" });
+  const prApi: AxiosResponse = await requestWrapper({ url: prDashboardUrl, method: "GET", headers:{cookie:cookieHeaderString} });
   const prData: PurchaseRequisition[] = prApi?.status == 200 ? prApi?.data?.message : "";
 
 
   const rfqDashboardUrl = API_END_POINTS?.rfqTableData;
-  const rfqApi: AxiosResponse = await requestWrapper({ url: rfqDashboardUrl, method: "GET" });
-  const rfqData: RFQTable[] = rfqApi?.status == 200 ? rfqApi?.data?.message : "";
+  const rfqApi: AxiosResponse = await requestWrapper({ url: rfqDashboardUrl, method: "GET",headers:{cookie:cookieHeaderString} });
+  const rfqData: RFQTable = rfqApi?.status == 200 ? rfqApi?.data?.message : "";
   console.log(rfqData, "this is rfqData");
 
   return (

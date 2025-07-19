@@ -33,7 +33,7 @@ type Props = {
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
   prInquiryData: TPRInquiryTable["cart_details"]
   prData: PurchaseRequisition[]
-  rfqData:RFQTable[]
+  rfqData:RFQTable
 }
 
 const DashboardCards = ({ ...Props }: Props) => {
@@ -254,7 +254,7 @@ const DashboardCards = ({ ...Props }: Props) => {
 
               {item.name === "RFQ Comparision" && (
                 <DashboardRFQTable
-                  dashboardTableData={Props.rfqData.data}
+                  dashboardTableData={Props?.rfqData?.data}
                   companyDropdown={Props?.companyDropdown}
                 />
               )}
