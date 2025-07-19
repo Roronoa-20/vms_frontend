@@ -72,7 +72,7 @@ const API_END_POINTS = {
   InquiryPurchaseTypeDropdown:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.get_purchase_type`,
   InquiryDropdownsBasedOnCompany:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.get_plants_and_purchase_group`,
   AddDispatch:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.update_dispatch_item`,
-  SubmitDispatch:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.submit_child_dispatch_item`,
+  SubmitDispatch:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.submit_dispatch_item`,
   dispatchDetails:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.full_data_dispatch_item`,
   dispatchTableRowSubmit:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.submit_child_dispatch_item`,
   asaformDetails:`${url}/api/method/vms.APIs.assessment_apis.asa.get_asa_details_without_label`,
