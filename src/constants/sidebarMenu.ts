@@ -44,11 +44,11 @@ export const sidebarMenu = [
   //   name: "Raise RFQ",
   //   href:""
   // },
-  // {
-  //   logo: "/sidebar-assests/view-pr.svg",
-  //   name: "View PR",
-  //   href:""
-  // },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "View PR",
+    href:"/view-purchase-requisition"
+  },
   // {
   //   logo: "/sidebar-assests/po-details.svg",
   //   name: "View PO",

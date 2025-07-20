@@ -97,6 +97,10 @@ const API_END_POINTS = {
   fetchPRDropdown:`${url}/api/method/vms.APIs.req_for_quotation.rfq_for_material.pr_number_list`,
   fetchPRItems:`${url}/api/method/vms.APIs.req_for_quotation.rfq_for_material.add_pr_number`,
   CreateMaterialRFQ:`${url}/api/method/vms.APIs.req_for_quotation.rfq_for_material.create_rfq_material`,
+   AllGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_all_grn_details`,
+  SingleGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_grn_details_of_grn_number`,
+  UserDetails: `${url}/api/method/vms.APIs.authentication_api.get_user_details.get_user_details`,
+  AllPRDetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.filtering_pr_details`,
 };
 
 export default API_END_POINTS;

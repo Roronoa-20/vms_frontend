@@ -18,6 +18,7 @@ export interface CompanyInfo {
 
 
 export interface PurchaseRequisitionDataItem {
+  name: string;
   row_name: string;
   head_unique_id: string;
   purchase_requisition_item_head: string | null;
@@ -45,6 +46,7 @@ export interface PurchaseRequisitionDataItem {
   lead_time_head: string | null;
   plant: string | null;
   purchase_requisition_type: string | null;
+  purchase_requisition_date: string | null;
   plant_head: string | null;
   subhead_fields: SubheadField[];
   requisitioner: string;
