@@ -49,3 +49,4 @@ export const QMSFormTabs = [
   { label: "Supplemental Information", key: "Supplement" },
   { label: "Quality Agreement", key: "quality_agreement" }
 ];
+

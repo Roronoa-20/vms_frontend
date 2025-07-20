@@ -210,12 +210,16 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         const currentIndex = QMSFormTabs.findIndex(tab => tab.key.toLowerCase() === currentTab.toLowerCase());
         const backTab = QMSFormTabs[currentIndex - 1]?.key;
 
+        const currentIndex = QMSFormTabs.findIndex(tab => tab.key.toLowerCase() === currentTab.toLowerCase());
+        const backTab = QMSFormTabs[currentIndex - 1]?.key;
+
         if (backTab) {
             router.push(`/qms-form?vendor_onboarding=${vendor_onboarding}&ref_no=${ref_no}&tabtype=${encodeURIComponent(backTab)}`);
         } else {
             alert('You’re at the first tab.');
         }
     };
+
 
 
     const handleSignatureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
