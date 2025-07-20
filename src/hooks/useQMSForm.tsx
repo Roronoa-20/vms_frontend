@@ -1,18 +1,30 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSearchParams } from "next/navigation";
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
-import { QMSForm } from '@/src/types/qmstypes';
+import { VendorQMSForm } from '@/src/types/qmstypes';
 import { QMSFormTabs } from "@/src/constants/vendorDetailSidebarTab";
 import SignatureCanvas from 'react-signature-canvas';
 
 
 export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
-    const [formData, setFormData] = useState<QMSForm>({} as QMSForm);
+    const [formData, setFormData] = useState<VendorQMSForm>({} as VendorQMSForm);
     const sigCanvas = useRef<SignatureCanvas | null>(null);
     const [signaturePreview, setSignaturePreview] = useState<string | null>(null);
     const router = useRouter();
+    const params = useSearchParams();
+    const ref_no = params.get("ref_no") || "";
+
+    const childTableMappings: Partial<Record<keyof VendorQMSForm, string>> = {
+        have_documentsprocedure: "procedure_doc_name",
+        quality_control_system: "quality_control_system",
+        if_yes_for_prior_notification: "qms_prior_notification",
+        inspection_reports: "qms_inspection_report",
+        details_of_batch_records: "qms_batch_record"
+    };
+
 
     useEffect(() => {
         const fetchFormData = async () => {
@@ -24,8 +36,15 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
                 });
 
                 const data = response?.data?.message?.qms_details || {};
-                console.log('Fetched QMS Form Data:', data);
-                setFormData(data);
+                const hydratedForm: any = { ...data };
+
+                for (const [fieldKey, childField] of Object.entries(childTableMappings)) {
+                    if (Array.isArray(hydratedForm[fieldKey])) {
+                        hydratedForm[fieldKey] = hydratedForm[fieldKey].map(item => item[childField] || "");
+                    }
+                }
+                console.log('Fetched QMS Form Data:', hydratedForm);
+                setFormData(hydratedForm);
             } catch (error) {
                 console.error('Error fetching QMS form data:', error);
             }
@@ -94,17 +113,17 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         setFormData((prev) => ({ ...prev, vendor_signature: "" }));
     };
 
-    const handleTextareaChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: keyof QMSForm) => {
+    const handleTextareaChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: keyof VendorQMSForm) => {
         const { value } = e.target;
         setFormData((prev) => ({ ...prev, [field]: value }));
     };
 
-    const handleSingleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof QMSForm) => {
+    const handleSingleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof VendorQMSForm) => {
         const { value, checked } = e.target;
         setFormData((prev) => ({ ...prev, [field]: checked ? value : '' }));
     };
 
-    const handleMultipleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof QMSForm) => {
+    const handleMultipleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof VendorQMSForm) => {
         const { value, checked } = e.target;
         setFormData((prev) => {
             const existing = Array.isArray(prev[field]) ? [...(prev[field] as string[])] : [];
@@ -117,6 +136,13 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         });
     };
 
+    function handleNewMultipleCheckboxChange(values: string[], field: string) {
+        setFormData((prev) => ({
+            ...prev,
+            [field]: values[0] || "", // Store as a single string
+        }));
+    }
+
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof typeof formData) => {
         const { value, checked } = e.target;
         setFormData((prev) => ({
@@ -125,23 +151,67 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         }));
     };
 
-    const handleSubmit = () => {
-        const currentIndex = QMSFormTabs.findIndex(tab => tab.key.toLowerCase() === currentTab.toLowerCase());
-        const nextTab = QMSFormTabs[currentIndex + 1]?.key;
+    const handleSubmit = async () => {
+        try {
+            const transformedFormData = { ...formData };
 
-        if (nextTab) {
-            router.push(`/qms-details?vendor_onboarding=${vendor_onboarding}&tabtype=${encodeURIComponent(nextTab)}`);
-        } else {
-            alert('You’ve reached the last tab.');
+            for (const [fieldKey, childField] of Object.entries(childTableMappings)) {
+                const value = (formData as any)[fieldKey];
+                if (Array.isArray(value)) {
+                    (transformedFormData as any)[fieldKey] = value.map((v: string) => ({
+                        [childField]: v,
+                    }));
+                }
+            }
+
+
+            const payload = {
+                vendor_onboarding,
+                ref_no,
+                data: transformedFormData,
+            };
+
+            console.log("🚀 Final Payload to Submit:", payload);
+
+            const res = await fetch(API_END_POINTS?.qmsformsubmit, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const result = await res.json();
+            console.log("📥 API Response:", result);
+
+            if (result?.message?.status === "success") {
+                const currentIndex = QMSFormTabs.findIndex((tab) =>
+                    tab.key.toLowerCase() === currentTab.toLowerCase()
+                );
+                const nextTab = QMSFormTabs[currentIndex + 1]?.key;
+
+                if (nextTab) {
+                    router.push(
+                        `/qms-form?vendor_onboarding=${vendor_onboarding}&ref_no=${ref_no}&tabtype=${encodeURIComponent(nextTab)}`
+                    );
+                } else {
+                    alert("All forms completed! 🏁");
+                }
+            } else {
+                console.error("🛑 API Failure:", result);
+            }
+        } catch (error) {
+            console.error("❌ Submission Error:", error);
         }
     };
+
 
     const handleBack = () => {
         const currentIndex = QMSFormTabs.findIndex(tab => tab.key.toLowerCase() === currentTab.toLowerCase());
         const backTab = QMSFormTabs[currentIndex - 1]?.key;
 
         if (backTab) {
-            router.push(`/qms-details?vendor_onboarding=${vendor_onboarding}&tabtype=${encodeURIComponent(backTab)}`);
+            router.push(`/qms-form?vendor_onboarding=${vendor_onboarding}&ref_no=${ref_no}&tabtype=${encodeURIComponent(backTab)}`);
         } else {
             alert('You’re at the first tab.');
         }
@@ -158,7 +228,7 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
             setSignaturePreview(base64String);
             setFormData((prev) => ({ ...prev, vendor_signature: base64String }));
         };
-        reader.readAsDataURL(file); // base64 conversion
+        reader.readAsDataURL(file);
     };
 
 
@@ -177,6 +247,7 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         handleSignatureUpload,
         signaturePreview,
         sigCanvas,
-        handleApproval
+        handleApproval,
+        handleNewMultipleCheckboxChange
     };
 };

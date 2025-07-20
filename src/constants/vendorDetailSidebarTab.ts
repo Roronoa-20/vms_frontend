@@ -38,7 +38,7 @@ export const OnboardingTabs = [
 
 
 export const QMSFormTabs = [
-  { label: "Vendor Information", key: "Vendor Information" },
+  { label: "Vendor Information", key: "vendor_information" },
   { label: "Quality Assurance System & Procedures", key: "QAS" },
   { label: "Organizational Structure & Training", key: "Organizational" },
   { label: "Building & Facility", key: "Building" },
@@ -47,5 +47,5 @@ export const QMSFormTabs = [
   { label: "Production & Process Control", key: "Production" },
   { label: "Complaint and Recalls", key: "Complaint" },
   { label: "Supplemental Information", key: "Supplement" },
-  { label: "Quality Agreement", key: "Quality Agreement" }
+  { label: "Quality Agreement", key: "quality_agreement" }
 ];

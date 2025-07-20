@@ -6,10 +6,10 @@ import { Label } from "../../atoms/label";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQMSForm } from '@/src/hooks/useQMSForm';
 
-export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: string; ref_no: string;}) => {
+export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
     const params = useSearchParams();
     const currentTab = params.get("tabtype")?.toLowerCase() || "vendor information";
-    const {formData, handleTextareaChange, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
+    const { formData, handleTextareaChange, handleSubmit } = useQMSForm(vendor_onboarding, currentTab);
 
     console.log("FormData:", formData);
 
@@ -29,7 +29,8 @@ export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                                 placeholder="Enter the name here"
                                 name="vendor_name1"
                                 value={formData.vendor_name1 || ""}
-                                onChange={(e) => handleTextareaChange(e, 'vendor_name1')}
+                                // onChange={(e) => handleTextareaChange(e, 'vendor_name1')}
+                                onChange={() => {}}
                             />
                         </div>
 
@@ -39,7 +40,9 @@ export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                                 type="date"
                                 name="date"
                                 value={formData.date1 || ""}
-                                onChange={(e) => handleTextareaChange(e, 'date1')}
+                                // onChange={(e) => handleTextareaChange(e, 'date1')}
+                                onChange={() => {}}
+
                             />
                         </div>
                     </div>
@@ -69,8 +72,9 @@ export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                                 className="w-full border border-gray-300 p-2"
                                 rows={4}
                                 placeholder='Enter the details'
-                                value={formData.name_of_parent_company || ""}
-                                onChange={(e) => handleTextareaChange(e, 'name_of_parent_company')}
+                                value={formData.name_of_parent_company}
+                                // onChange={(e) => handleTextareaChange(e, 'name_of_parent_company')}
+                                onChange={() => {}}
 
                             />
                         </div>

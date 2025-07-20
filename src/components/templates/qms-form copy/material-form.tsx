@@ -29,7 +29,8 @@ export const MaterialForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           name="approved_supplierlist"
           label="1. Do you have an approved supplier list?"
           value={formData.approved_supplierlist || ""}
-          onChange={(e) => handleCheckboxChange(e, 'approved_supplierlist')}
+          // onChange={(e) => handleCheckboxChange(e, 'approved_supplierlist')}
+          onChange={() => { }}
 
         />
 
@@ -37,7 +38,8 @@ export const MaterialForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           name="agreements"
           label="2. Do you have agreements in place with all critical raw materail suppliers that are required to notify you regarding any change in raw material or the manufacturing process of the material supplied?"
           value={formData.agreements || ""}
-          onChange={(e) => handleCheckboxChange(e, 'agreements')}
+          // onChange={(e) => handleCheckboxChange(e, 'agreements')}
+          onChange={() => { }}
 
         />
 
@@ -45,7 +47,8 @@ export const MaterialForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           name="control_and_inspection"
           label="3. Do you have procedure for incoming raw material control and inspection?"
           value={formData.control_and_inspection || ""}
-          onChange={(e) => handleCheckboxChange(e, 'control_and_inspection')}
+          // onChange={(e) => handleCheckboxChange(e, 'control_and_inspection')}
+          onChange={() => { }}
 
         />
 
@@ -53,7 +56,8 @@ export const MaterialForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           name="defined_areas"
           label="4. Do you have defined areas for Receipt, identification, Sampling and Quarantine of incoming materials?"
           value={formData.defined_areas || ""}
-          onChange={(e) => handleCheckboxChange(e, 'defined_areas')}
+          // onChange={(e) => handleCheckboxChange(e, 'defined_areas')}
+          onChange={() => { }}
 
         />
 
@@ -69,8 +73,11 @@ export const MaterialForm = ({ vendor_onboarding }: { vendor_onboarding: string;
             'Shelf life Test Results',
             'Details whether the lot is Accepted / Rejected',
           ]}
-          selected={Array.isArray(formData.inspection_reports) ? formData.inspection_reports : formData.inspection_reports ? [formData.inspection_reports] : []}
-          onChange={(e) => handleMultipleCheckboxChange(e, 'inspection_reports')}
+          // selected={Array.isArray(formData.inspection_reports) ? formData.inspection_reports : formData.inspection_reports ? [formData.inspection_reports] : []}
+          // onChange={(e) => handleMultipleCheckboxChange(e, 'inspection_reports')}
+            selected={Array.isArray(formData.inspection_reports) ? formData.inspection_reports.map(item => item.qms_inspection_report) : []}
+
+          onChange={() => { }}
 
         />
       </div>

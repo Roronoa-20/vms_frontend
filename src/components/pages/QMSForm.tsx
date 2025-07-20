@@ -16,59 +16,63 @@ import { SupplementForm } from '@/src/components/templates/qms-form/supplement-f
 // import { QualityAgreementForm } from '@/src/components/templates/qms-form/quality-agreement-form';
 
 export default function QMSForm() {
-  const params = useSearchParams();
-  const tabType = (params.get('tabtype') || 'vendor information').toLowerCase();
-  const vendor_onboarding = params.get('vendor_onboarding') || '';
+    const params = useSearchParams();
+    const tabType = (params.get('tabtype') || 'vendor information').toLowerCase();
+    const vendor_onboarding = params.get('vendor_onboarding') || '';
+    const ref_no = params.get('ref_no') || '';
 
-  const renderFormComponent = () => {
-    switch (tabType) {
-      case 'vendor information':
-        return <VendorInfoForm vendor_onboarding={vendor_onboarding} />;
-      case 'qas':
-        return <QASForm vendor_onboarding={vendor_onboarding} />;
-      case 'organizational':
-        return <OrganizationalForm vendor_onboarding={vendor_onboarding} />;
-      case 'building':
-        return <BuildingForm vendor_onboarding={vendor_onboarding} />;
-      case 'material':
-        return <MaterialForm vendor_onboarding={vendor_onboarding} />;
-      case 'quality':
-        return <QualityForm vendor_onboarding={vendor_onboarding} />;
-      case 'production':
-        return <ProductionForm vendor_onboarding={vendor_onboarding} />;
-      case 'complaint':
-        return <ComplaintForm vendor_onboarding={vendor_onboarding} />;
-      case 'supplement':
-        return <SupplementForm vendor_onboarding={vendor_onboarding} />;
-      // case 'quality agreement':
-      //   return <QualityAgreementForm vendor_onboarding={vendor_onboarding} />;
-      default:
-        return (
-          <div className="text-red-600 font-semibold">
-            Invalid tab selected: <span className="uppercase">{tabType}</span>
-          </div>
-        );
-    }
-  };
+    const renderFormComponent = () => {
+        switch (tabType) {
+            case 'vendor_information':
+                return <VendorInfoForm vendor_onboarding={vendor_onboarding} ref_no = {ref_no} />;
+            case 'qas':
+                return <QASForm vendor_onboarding={vendor_onboarding} ref_no = {ref_no} />;
+            case 'organizational':
+                return <OrganizationalForm vendor_onboarding={vendor_onboarding} />;
+            case 'building':
+                return <BuildingForm vendor_onboarding={vendor_onboarding} />;
+            case 'material':
+                return <MaterialForm vendor_onboarding={vendor_onboarding} />;
+            case 'quality':
+                return <QualityForm vendor_onboarding={vendor_onboarding} />;
+            case 'production':
+                return <ProductionForm vendor_onboarding={vendor_onboarding} />;
+            case 'complaint':
+                return <ComplaintForm vendor_onboarding={vendor_onboarding} />;
+            case 'supplement':
+                return <SupplementForm vendor_onboarding={vendor_onboarding} />;
+            // case 'quality_agreement':
+            //   return <QualityAgreementForm vendor_onboarding={vendor_onboarding} ref_no={ref_no}/>;
+            default:
+                return (
+                    <div className="text-red-600 font-semibold">
+                        Invalid tab selected: <span className="uppercase">{tabType}</span>
+                    </div>
+                );
+        }
+    };
 
-  return (
-    <div className="h-screen flex flex-col bg-gray-100">
-      <div className="bg-white py-4 px-10 flex items-center gap-4 sticky top-0 z-10 shadow-sm">
-        <div className="w-6">
-          <VMSLogo />
+    return (
+        <div className="flex flex-col bg-gray-100">
+            <div className="bg-white py-4 px-10 flex items-center gap-4 sticky top-0 z-10 shadow-sm">
+                <div className="w-6">
+                    <VMSLogo />
+                </div>
+                <h1 className="text-[24px] font-semibold text-gray-800">QMS Questionnaire</h1>
+            </div>
+
+            <div className="flex px-10 gap-6 py-6">
+                <div className="w-1/4 border-r pr-4">
+                    <div className="sticky top-[100px] max-h-[80vh] overflow-y-auto no-scrollbar">
+                        <QMSFormTab />
+                    </div>
+                </div>
+
+
+                <div className="w-3/4">
+                    {renderFormComponent()}
+                </div>
+            </div>
         </div>
-        <h1 className="text-[24px] font-semibold text-gray-800">QMS Questionnaire</h1>
-      </div>
-
-      <div className="flex px-10 gap-6 py-6">
-        <div className="w-1/4 border-r pr-4">
-          <QMSFormTab />
-        </div>
-
-        <div className="w-3/4">
-          {renderFormComponent()}
-        </div>
-      </div>
-    </div>
-  );
+    );
 }
