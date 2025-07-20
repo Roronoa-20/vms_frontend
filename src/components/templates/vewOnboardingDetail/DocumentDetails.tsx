@@ -95,6 +95,23 @@ const DocumentDetails = ({
   const [GSTTable,setGSTTable] = useState<gstRow[]>(OnboardingDetail?.gst_table);
   const [isDisabled,setIsDisabled] = useState<boolean>(true);
   const {designation} = useAuth();
+
+
+  const [gstStateDropdown,setGstStateDropdown] = useState<{state_name:string,name:string}[]>();
+  useEffect(()=>{
+    if(ref_no && onboarding_ref_no){
+      getState();
+    }
+  },[])
+
+  const getState = async()=>{
+    const url = `${API_END_POINTS?.gstVendorStateDropdown}?vendor_onboarding=${onboarding_ref_no}`;
+    const response:AxiosResponse = await requestWrapper({url:url,method:"GET"});
+    if(response?.status == 200){
+       setGstStateDropdown(response?.data?.message?.data)
+    }
+  }
+
     const [errors, setErrors] = useState<any>({});
 
     const fileInput = useRef<HTMLInputElement>(null);
@@ -428,7 +445,7 @@ const DocumentDetails = ({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {documentDetailDropdown?.state_master?.map(
+                    {gstStateDropdown?.map(
                       (item, index) => (
                         <SelectItem key={index} value={item?.name}>
                           {item?.state_name}

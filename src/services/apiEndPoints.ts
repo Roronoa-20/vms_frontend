@@ -102,7 +102,8 @@ const API_END_POINTS = {
   UserDetails: `${url}/api/method/vms.APIs.authentication_api.get_user_details.get_user_details`,
   AllPRDetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.filtering_pr_details`,
   addGSTTAbleData:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.update_vendor_onboarding_gst_details`,
-  deleteGSTRow:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.delete_vendor_onboarding_gst_row`
+  deleteGSTRow:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.delete_vendor_onboarding_gst_row`,
+  gstVendorStateDropdown:`${url}/api/method/vms.APIs.master_apis.state_filter.get_states_for_gst`
 };
 
 export default API_END_POINTS;

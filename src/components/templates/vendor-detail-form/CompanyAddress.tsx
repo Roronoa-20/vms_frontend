@@ -227,14 +227,14 @@ const CompanyAddress = ({
   const [errors, setErrors] = useState<any>({});
   const validate = () => {
     const errors:any = {};
-    if (!billingAddress?.address_line_1) {
+    if ((!billingAddress?.address_line_1 && !OnboardingDetail?.billing_address?.address_line_1)) {
       errors.address_line_1 = "Please Enter Address 1";
     }
-    if (!billingAddress?.address_line_2) {
+    if (!billingAddress?.address_line_2 && !OnboardingDetail?.billing_address?.address_line_2) {
       errors.address_line_2 = "Please Enter Address Line 2 ";
     }
 
-    if (!billingAddress?.pincode) {
+    if (!billingAddress?.pincode && !OnboardingDetail?.billing_address?.pincode) {
       errors.pincode = "Please Enter Pincode ";
 
     } 

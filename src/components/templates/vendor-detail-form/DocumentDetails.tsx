@@ -93,6 +93,21 @@ const DocumentDetails = ({
   const [isPanFilePreview, setIsPanFilePreview] = useState<boolean>(true);
   const [singlerow,setSingleRow] = useState<gstRow | null>();
   const [GSTTable,setGSTTable] = useState<gstRow[]>(OnboardingDetail?.gst_table);
+  const [gstStateDropdown,setGstStateDropdown] = useState<{state_name:string,name:string}[]>();
+  useEffect(()=>{
+    if(ref_no && onboarding_ref_no){
+      getState();
+    }
+  },[])
+
+  const getState = async()=>{
+    const url = `${API_END_POINTS?.gstVendorStateDropdown}?vendor_onboarding=${onboarding_ref_no}`;
+    const response:AxiosResponse = await requestWrapper({url:url,method:"GET"});
+    if(response?.status == 200){
+       setGstStateDropdown(response?.data?.message?.data)
+    }
+  }
+
     const [errors, setErrors] = useState<any>({});
 
     const fileInput = useRef<HTMLInputElement>(null);
@@ -188,8 +203,13 @@ const DocumentDetails = ({
       return;
     }
     const url = API_END_POINTS?.documentDetailSubmit;
-    if(!checkPAN(documentDetails?.company_pan_number as string)){
+    if(!checkPAN(documentDetails?.company_pan_number as string) && !checkPAN(OnboardingDetail?.company_pan_number)){
       alert("please enter correct PAN Number")
+      return;
+    }
+
+    if(GSTTable?.length == 0){
+      alert("please add at least 1 gst document details");
       return;
     }
     // if(!checkGST(documentDetails?.gst_number as string)){
@@ -231,6 +251,36 @@ const DocumentDetails = ({
 
   const handleGSTTableAdd = async()=>{
     // console.log(singlerow,"this is single row after add");
+    
+    if(!singlerow?.gst_ven_type){
+      setErrors((prev:any)=>({...prev,gst_ven_type:"please select gst vendor type"}))
+      return;
+    }
+    if(!singlerow?.gst_state){
+      setErrors((prev:any)=>({...prev,gst_state:"please select gst state"}))
+      return;
+    }
+    
+    if(!singlerow?.pincode){
+      setErrors((prev:any)=>({...prev,pincode:"please enter gst pincode"}))
+      return;
+    }
+    
+    if(singlerow?.gst_ven_type == "Registered" &&!singlerow?.gst_document_upload){
+      setErrors((prev:any)=>({...prev,gst_document_upload:"please upload gst document"}))
+      return;
+    }
+    
+    if(singlerow?.gst_ven_type == "Registered" &&!singlerow?.gst_number){
+      setErrors((prev:any)=>({...prev,gst_number:"please enter gst number"}))
+      return;
+    }
+    
+    if(singlerow?.gst_ven_type == "Registered" &&!singlerow?.gst_registration_date){
+      setErrors((prev:any)=>({...prev,gst_registration_date:"please enter gst registration date"}))
+      return;
+    }
+    
     if(singlerow?.gst_ven_type != "Not-Registered" && !checkGST(singlerow?.gst_number as string)){
       alert("please enter correct gst number")
       return;
@@ -251,6 +301,7 @@ const DocumentDetails = ({
       if(fileInput?.current){
       fileInput.current.value =''
     }
+    setErrors({});
     }
   }
 
@@ -392,7 +443,7 @@ const DocumentDetails = ({
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              {errors?.gst_ven_type && !documentDetails?.gst_ven_type && <span style={{ color: 'red' }}>{errors?.gst_ven_type}</span>}
+              {errors?.gst_ven_type && !singlerow?.gst_ven_type && <span style={{ color: 'red' }}>{errors?.gst_ven_type}</span>}
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -415,7 +466,7 @@ const DocumentDetails = ({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {documentDetailDropdown?.state_master?.map(
+                    {gstStateDropdown?.map(
                       (item, index) => (
                         <SelectItem key={index} value={item?.name}>
                           {item?.state_name}
@@ -425,7 +476,7 @@ const DocumentDetails = ({
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              {errors?.gst_state && !documentDetails?.gst_state && <span style={{ color: 'red' }}>{errors?.gst_state}</span>}
+              {errors?.gst_state && !singlerow?.gst_state && <span style={{ color: 'red' }}>{errors?.gst_state}</span>}
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -451,7 +502,7 @@ const DocumentDetails = ({
                   }));
                 }}
               />
-              {/* {errors?.gst_number && !documentDetails?.gst_number && <span style={{ color: 'red' }}>{errors?.gst_number}</span>} */}
+              {errors?.pincode && !singlerow?.pincode && <span style={{ color: 'red' }}>{errors?.pincode}</span>}
             </div>
           </div>
           <div
@@ -480,7 +531,7 @@ const DocumentDetails = ({
                   }));
                 }}
               />
-              {/* {errors?.gst_number && !documentDetails?.gst_number && <span style={{ color: 'red' }}>{errors?.gst_number}</span>} */}
+              {errors?.gst_number && !singlerow?.gst_number && <span style={{ color: 'red' }}>{errors?.gst_number}</span>}
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -506,7 +557,7 @@ const DocumentDetails = ({
                   }));
                 }}
               />
-              {errors?.gst_registration_date && !documentDetails?.gst_registration_date && <span style={{ color: 'red' }}>{errors?.gst_registration_date}</span>}
+              {errors?.gst_registration_date && !singlerow?.gst_registration_date && <span style={{ color: 'red' }}>{errors?.gst_registration_date}</span>}
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -529,7 +580,7 @@ const DocumentDetails = ({
                   }));
                 }}
                 />
-                {/* {errors?.gstDocument && !documentDetails?.gstDocument && <span style={{ color: 'red' }}>{errors?.gstDocument}</span>} */}
+                {errors?.gstDocument && !singlerow?.gst_document_upload && <span style={{ color: 'red' }}>{errors?.gstDocument}</span>}
               {/* file preview */}
             {/* {isGstFilePreview &&
               !documentDetails?.gstDocument &&

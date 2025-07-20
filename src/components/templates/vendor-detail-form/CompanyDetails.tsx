@@ -36,17 +36,17 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
   const {data,updateField,resetForm} = useCompanyDetailFormStore(); 
   const validate = () => {
     const errors:any = {};
-    if (!data?.type_of_business) {
+    if (!data?.type_of_business && !OnboardingDetail?.type_of_business) {
       errors.type_of_business = "Please Select Type Of Business ";
     }
     // if (!data?.registered_office_number) {
     //   errors.registered_office_number = "Please Select Reg No. ";
     // }
 
-    if (!data?.corporate_identification_number) {
+    if (!data?.corporate_identification_number && !OnboardingDetail?.corporate_identification_number) {
       errors.corporate_identification_number = "Please Select Corporate Identification Number ";
 
-    } if (!data?.cin_date) {
+    } if (!data?.cin_date && !OnboardingDetail?.cin_date) {
       errors.cin_date = "Please Select Cin Date"
     } 
 
