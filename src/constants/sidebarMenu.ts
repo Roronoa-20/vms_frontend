@@ -37,7 +37,7 @@ export const sidebarMenu = [
   {
     logo: "/sidebar-assests/view-pr.svg",
     name: "View PR",
-    href:"/view-pr"
+    href:"/view-purchase-requisition"
   },
   // {
   //   logo: "/sidebar-assests/po-details.svg",

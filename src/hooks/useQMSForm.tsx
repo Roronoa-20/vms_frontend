@@ -126,8 +126,9 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
     };
 
     const handleSubmit = () => {
-        const currentIndex = QMSFormTabs.findIndex((tab) => tab.toLowerCase() === currentTab);
-        const nextTab = QMSFormTabs[currentIndex + 1];
+        const currentIndex = QMSFormTabs.findIndex(tab => tab.key.toLowerCase() === currentTab.toLowerCase());
+        const nextTab = QMSFormTabs[currentIndex + 1]?.key;
+
         if (nextTab) {
             router.push(`/qms-details?vendor_onboarding=${vendor_onboarding}&tabtype=${encodeURIComponent(nextTab)}`);
         } else {
@@ -136,14 +137,16 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
     };
 
     const handleBack = () => {
-        const currentIndex = QMSFormTabs.findIndex((tab) => tab.toLowerCase() === currentTab);
-        const backTab = QMSFormTabs[currentIndex - 1];
+        const currentIndex = QMSFormTabs.findIndex(tab => tab.key.toLowerCase() === currentTab.toLowerCase());
+        const backTab = QMSFormTabs[currentIndex - 1]?.key;
+
         if (backTab) {
             router.push(`/qms-details?vendor_onboarding=${vendor_onboarding}&tabtype=${encodeURIComponent(backTab)}`);
         } else {
             alert('You’re at the first tab.');
         }
     };
+
 
     const handleSignatureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];

@@ -13,7 +13,8 @@ export interface purchaseInquiryDropdown {
         }[],
         uom_master: {
             name: string,
-            uom: string
+            uom: string,
+            description: string
         }[]
     }
 }

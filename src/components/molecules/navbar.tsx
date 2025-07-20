@@ -28,7 +28,7 @@ const Navbar = () => {
          pathname == "/view-grn"?"Good Receipts Note":
          pathname == "/view-grn-details"?"Good Receipts Note":
          pathname == "/qms-details"?"QMS Form":
-         pathname == "/view-pr"?"Purchase Requisition":
+         pathname == "/view-purchase-requisition"?"Purchase Requisition":
          pathname == "/qms-details"?"QMS Form":
          ""}
       </h1>

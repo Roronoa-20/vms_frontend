@@ -47,7 +47,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchase
   const [comment, setComment] = useState<string>("")
   const [date, setDate] = useState<string>("")
   const [isModifyDialog,setIsModifyDialog] = useState<boolean>(false);
-   const [plantDropdown,setPlantDropdown] = useState<{name:string,plant_name:string,description:string}[]>();
+  const [plantDropdown,setPlantDropdown] = useState<{name:string,plant_name:string,description:string}[]>();
   const [purchaseGroupDropdown,setPurchaseGroupDropdown] = useState<{name:string,purchase_group_code:string,purchase_group_name:string,description:string}[]>();
   const router = useRouter();
 
