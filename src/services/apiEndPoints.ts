@@ -105,8 +105,7 @@ const API_END_POINTS = {
   addGSTTAbleData:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.update_vendor_onboarding_gst_details`,
   deleteGSTRow:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.delete_vendor_onboarding_gst_row`,
   gstVendorStateDropdown:`${url}/api/method/vms.APIs.master_apis.state_filter.get_states_for_gst`,
-
-  
+  getPrintFormatData:`${url}/api/method/vms.APIs.dashboard_api.po_data.get_po_details`
 };
 
 export default API_END_POINTS;

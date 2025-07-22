@@ -21,8 +21,8 @@ export const sidebarMenu = [
   },
     {
     logo: "/sidebar-assests/rfq_icon.svg",
-    name: "Raise RFQ",
-    href:"/create-rfq"
+    name: "View PO",
+    href:"/view-po"
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
