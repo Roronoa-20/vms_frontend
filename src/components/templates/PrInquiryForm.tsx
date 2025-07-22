@@ -110,8 +110,10 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     const response: AxiosResponse = await requestWrapper({ url: url, data: { data: payload }, method: "POST" });
     if (response?.status == 200) {
       setFormData(null);
-      router.push("/dashboard");
+      // router.push("/dashboard");
       alert("submission successfull");
+      const refno = response?.data?.message?.name;
+      router.push(`pr-inquiry?refno=${refno}`)
     } else {
       alert("error");
     }
@@ -354,7 +356,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Product Price Range
           </h1>
-          <Input placeholder="" name='product_price' onChange={(e) => { handleFieldChange(true, e) }} value={formatINRCurrencyRange(singleTableRow?.product_price ?? "")}
+          <Input placeholder="" name='product_price' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_price ?? ""}
  />
         </div>
         <div className="col-span-1">
@@ -394,7 +396,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
           <Input placeholder="" name='user_specifications' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.user_specifications ?? ""} />
         </div>
         <div className="col-span-1 mt-8">
-          <Button className="bg-blue-400 hover:bg-blue-400" onClick={() => handleTableAdd()}>Add</Button>
+          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.asked_to_modify?"":"hidden"}`} onClick={() => handleTableAdd()}>Add</Button>
+          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?"hidden":""}`} onClick={() => handleTableAdd()}>Add</Button>
         </div>
       </div>
       {showTable && (

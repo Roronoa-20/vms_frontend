@@ -50,7 +50,8 @@ export type TPRInquiry = {
     purchase_group:string,
     plant:string,
     asked_to_modify:boolean,
-    purchase_team_approved:boolean
+    purchase_team_approved:boolean,
+    acknowledged_date:string
 }
 
 const PrInquiryPage = async ({ refno }: Props) => {
