@@ -105,6 +105,7 @@ const DocumentDetails = ({
     const response:AxiosResponse = await requestWrapper({url:url,method:"GET"});
     if(response?.status == 200){
        setGstStateDropdown(response?.data?.message?.data)
+       console.log(response?.data?.message?.data,"this is state dropdown")
     }
   }
 
@@ -468,7 +469,7 @@ const DocumentDetails = ({
                   <SelectGroup>
                     {gstStateDropdown?.map(
                       (item, index) => (
-                        <SelectItem key={index} value={item?.name}>
+                        <SelectItem key={index} value={item?.state_name}>
                           {item?.state_name}
                         </SelectItem>
                       )
