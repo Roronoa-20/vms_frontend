@@ -54,6 +54,12 @@ export interface UOMMaster {
   description: string | null;
 }
 
+export interface ProductCategory {
+  name: string;
+  product_category_code: string;
+  product_category_name: string;
+  description: string | null;
+}
 // Cost Center
 export interface CostCenter {
   name: string;
@@ -134,7 +140,58 @@ export interface ValuationArea {
   valuation_area_name: string;
   description: string;
 }
-
+export interface UOMMaster {
+  name: string;
+  uom_code: string;
+  uom: string;
+  description: string | null;
+}
+export interface ModeOfShipment {
+  name: string;
+  mode_of_shipment: string;
+  description: string | null;
+}
+export interface DestinationPort {
+  name: string;
+  destination_port_code: string;
+  destination_port_name: string;
+  description: string | null;
+}
+export interface Country {
+  name: string;
+  country_code: string;
+  country_name: string;
+  description: string | null;
+}
+export interface PortCode {
+  name: string;
+  port_code: string;
+  port_name: string;
+  description: string | null;
+}
+export interface PortOfLoading {
+  name: string;
+  port_of_loading_code: string;
+  port_of_loading_name: string;
+  description: string | null;
+}
+export interface IncoTerms {
+  name: string;
+  incoterm_code: string;
+  incoterm_name: string;
+  description: string | null;
+}
+export interface PackageType {
+  name: string;
+  package_code: string;
+  package_name: string;
+  description: string | null;
+}
+export interface RFQType {
+  name: string;
+  vendor_type_code: string;
+  vendor_type_name: string;
+}
 export type PurchaseRequestDropdown = {
   message: {
     purchase_requisition_type: PurchaseRequisitionType[];
@@ -155,6 +212,15 @@ export type PurchaseRequestDropdown = {
     currency_master: Currency[];
     store_location: StoreLocation[];
     valuation_area: ValuationArea[];
+    product_category:ProductCategory[];
+    mode_of_shipment:ModeOfShipment[];
+    destination_port:DestinationPort[];
+    country_master:Country[];
+    port_master:PortCode[];
+    port_of_loading:PortOfLoading[];
+    incoterm_master:IncoTerms[];
+    package_type:PackageType[];
+    rfq_type:RFQType[];
   }
 }
 
