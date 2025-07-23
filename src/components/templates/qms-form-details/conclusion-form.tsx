@@ -17,7 +17,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
     const {
         formData,
         handleCheckboxChange,
-        sigCanvas,
+        sigRefs,
         signaturePreview,
         handleTextareaChange,
         handleSaveSignature,
@@ -119,7 +119,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                         {showSignatureCanvas ? (
                             <div className="border border-gray-300 rounded w-[300px] h-[120px] overflow-hidden">
                                 <SignatureCanvas
-                                    ref={sigCanvas}
+                                    ref={sigRefs.performer_esignature}
                                     penColor="black"
                                     canvasProps={{ className: "w-full h-full" }}
                                 />
@@ -134,7 +134,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                             )
                         )}
 
-                        <div className="mt-2 space-x-2">
+                        {/* <div className="mt-2 space-x-2">
                             <Button
                                 variant="nextbtn"
                                 size="nextbtnsize"
@@ -156,7 +156,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                             >
                                 Clear
                             </Button>
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className="flex flex-col">
