@@ -22,10 +22,10 @@ const ViewQMSFormDetails = ({ vendor_onboarding }: Props) => {
           {QMSFormTabs?.map((item, index) => (
             <div
               key={index}
-              className={`cursor-pointer p-2 rounded-lg whitespace-nowrap ${item === tabType ? "bg-[#0C72F5] text-white" : "text-[#0C72F5]"}`}
-              onClick={() => router.push(`/qms-details?vendor_onboarding=${encodeURIComponent(vendor_onboarding)}&tabtype=${encodeURIComponent(item)}`)}
+              className={`cursor-pointer p-2 rounded-lg whitespace-nowrap ${item.key === tabType ? "bg-[#0C72F5] text-white" : "text-[#0C72F5]"}`}
+              onClick={() => router.push(`/qms-details?vendor_onboarding=${encodeURIComponent(vendor_onboarding)}&tabtype=${encodeURIComponent(item.key)}`)}
             >
-              {item}
+              {item.label}
             </div>
           ))}
         </div>
