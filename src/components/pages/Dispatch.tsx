@@ -55,11 +55,14 @@ const Dispatch = async({refno}:Props) => {
   const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
 
   let DispatchDetails:TDisptachDetails | null = null;
+  console.log(refno,"this is refno")
   if(refno){
     const url = `${API_END_POINTS?.dispatchDetails}?name=${refno}`;
     const response:AxiosResponse = await requestWrapper({url:url,method:"GET"});
     DispatchDetails = response?.status == 200? response?.data?.message?.data : null
   }
+
+  console.log(DispatchDetails,"this is dispatch details")
 
   return (
     <DispatchForm DispatchDetails={DispatchDetails} refno={refno}/>

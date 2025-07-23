@@ -1,4 +1,5 @@
 import { verify } from "crypto";
+import { User } from "lucide-react";
 
 const url = process.env.NEXT_PUBLIC_BACKEND_END;
 const API_END_POINTS = {
@@ -72,12 +73,39 @@ const API_END_POINTS = {
   InquiryPurchaseTypeDropdown:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.get_purchase_type`,
   InquiryDropdownsBasedOnCompany:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.get_plants_and_purchase_group`,
   AddDispatch:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.update_dispatch_item`,
-  SubmitDispatch:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.submit_child_dispatch_item`,
+  SubmitDispatch:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.submit_dispatch_item`,
   dispatchDetails:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.full_data_dispatch_item`,
   dispatchTableRowSubmit:`${url}/api/method/vms.APIs.purchase_api.dispatch_item.submit_child_dispatch_item`,
   asaformDetails:`${url}/api/method/vms.APIs.assessment_apis.asa.get_asa_details_without_label`,
   dispatchTable:`${url}/api/method/vms.APIs.dispatch_dashboard.dispatch_dashboard.dispatch_dashboard`,
-  poTable:`${url}/api/method/vms.APIs.dashboard_api.filter_card.filtering_po_details`
+  poTable:`${url}/api/method/vms.APIs.dashboard_api.filter_card.filtering_po_details`,
+
+    //pr api atul
+  fetchDataCartId: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.get_cart_details`,
+  createPR: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.create_purchase_requisition`,
+  fetchPRTableData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.get_pur_req_table_data`,
+  PRTableHeadSubmitData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.update_pr_table_head_form`,
+  PRTableSubHeadSubmitData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.create_pr_table_subhead_form`,
+  PrSubHeadDeleteRow: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.delete_pr_table_row`,
+  SubmitPR: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.submit_pr_form`,
+
+
+  //rfq apis
+  fetchVendorListBasedOnRFQType: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.vendor_list`,
+  CreateImportRFQ:`${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.create_import_logistic_rfq`,
+  CreateExportRFQ:`${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.create_export_logistic_rfq`,
+  rfqTableData:`${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.rfq_logistic_dashboard`,
+  fetchPRDropdown:`${url}/api/method/vms.APIs.req_for_quotation.rfq_for_material.pr_number_list`,
+  fetchPRItems:`${url}/api/method/vms.APIs.req_for_quotation.rfq_for_material.add_pr_number`,
+  CreateMaterialRFQ:`${url}/api/method/vms.APIs.req_for_quotation.rfq_for_material.create_rfq_material`,
+   AllGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_all_grn_details`,
+  SingleGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_grn_details_of_grn_number`,
+  UserDetails: `${url}/api/method/vms.APIs.authentication_api.get_user_details.get_user_details`,
+  AllPRDetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.filtering_pr_details`,
+  addGSTTAbleData:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.update_vendor_onboarding_gst_details`,
+  deleteGSTRow:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.delete_vendor_onboarding_gst_row`,
+  gstVendorStateDropdown:`${url}/api/method/vms.APIs.master_apis.state_filter.get_states_for_gst`,
+  getPrintFormatData:`${url}/api/method/vms.APIs.dashboard_api.po_data.get_po_details`
 };
 
 export default API_END_POINTS;

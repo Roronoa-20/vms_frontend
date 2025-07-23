@@ -73,8 +73,10 @@ export const MaterialForm = ({ vendor_onboarding }: { vendor_onboarding: string;
             'Shelf life Test Results',
             'Details whether the lot is Accepted / Rejected',
           ]}
-          selected={Array.isArray(formData.inspection_reports) ? formData.inspection_reports : formData.inspection_reports ? [formData.inspection_reports] : []}
+          // selected={Array.isArray(formData.inspection_reports) ? formData.inspection_reports : formData.inspection_reports ? [formData.inspection_reports] : []}
           // onChange={(e) => handleMultipleCheckboxChange(e, 'inspection_reports')}
+            selected={Array.isArray(formData.inspection_reports) ? formData.inspection_reports.map(item => item.qms_inspection_report) : []}
+
           onChange={() => { }}
 
         />

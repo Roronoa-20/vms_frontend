@@ -675,7 +675,7 @@ export type TCompanyDetailForm = {
   
 
   
-  type FileAttachment = {
+  export type FileAttachment = {
     url: string;
     name: string;
     file_name?: string;
@@ -847,7 +847,8 @@ export type TCompanyDetailForm = {
     rejected_vendor_count:number;
     purchase_order_count:number;
     pr_count:number;
-    cart_count:number
+    cart_count:number,
+    rfq_count:number
   }
   
   export interface DashboardPOTableItem {
@@ -1204,7 +1205,6 @@ export type TCompanyDetailForm = {
 
   export type TPRInquiryTable = {
     cart_details:{
-
       asked_to_modify:boolean
       ack_mail_to_user: number;
       acknowledged_remarks: string | null;
@@ -1288,6 +1288,16 @@ export interface PurchaseRequisition {
   mail_sent_to_purchase_head: number;
   ack_mail_to_user: number;
   purchase_group: string | null;
+}
+
+export interface RFQTable {
+  data:{
+    name:string,
+    company_name:string,
+    rfq_type:string,
+    rfq_date:string,
+    status:string,
+  }[]
 }
 
 

@@ -8,18 +8,19 @@ import React from 'react'
 interface PageProps {
   searchParams: Promise<{ 
     pur_req?:string
-    cartId?:string
+    cart_Id?:string
   }>
 }
 
 
 const page = async({ searchParams }:PageProps) => {
   const params = await searchParams;
+  console.log(params,"params in servr")
   const pur_req =  params["pur_req"];
-  const cartId =  params["cartId"];
-
+  const cart_id =  params["cart_Id"];
+console.log(cart_id,"cart_id in server page")
   return (
-    <PRRequest pur_req={pur_req} cartId={cartId}/>
+    <PRRequest pur_req={pur_req} cart_id={cart_id}/>
   )
 }
 

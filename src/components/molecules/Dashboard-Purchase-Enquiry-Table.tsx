@@ -104,7 +104,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData,companyDropdo
                 <TableCell className="text-nowrap text-center">{item?.purchase_team_approval_status}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.hod_approval_status}</TableCell>
                 <TableCell className="text-nowrap text-center"><Link href={url}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
-                <TableCell className={`text-nowrap text-center ${item?.hod_approved && item?.purchase_team_approved && item?.user == user ? "" : "hidden" }`}><Link href={`/pr-request?cartId=${item?.name}`}><Button className="bg-blue-400 hover:bg-blue-400">PR</Button></Link></TableCell>
+                <TableCell className={`text-nowrap text-center ${item?.hod_approved && item?.purchase_team_approved && item?.user == user ? "" : "hidden" }`}><Link href={`/pr-request?cart_Id=${item?.name}`}><Button className="bg-blue-400 hover:bg-blue-400">PR</Button></Link></TableCell>
                 {/* <TableCell>
                   <div
                     className={`px-2 py-3 rounded-xl ${item?.status === "pending"

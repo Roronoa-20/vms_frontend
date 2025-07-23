@@ -1,32 +1,36 @@
 'use client'
 import React from "react";
+import { useState, useRef } from "react";
 import { Label } from "../../atoms/label";
 import { Button } from "../../atoms/button";
 import { Input } from "../../atoms/input";
 import { useSearchParams } from "next/navigation";
 import TextareaWithLabel from '@/src/components/common/TextareaWithLabel';
 import { useQMSForm } from '@/src/hooks/useQMSForm';
+import SignatureCanvas from 'react-signature-canvas';
 
 
 export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
     const params = useSearchParams();
     const currentTab = params.get("tabtype")?.toLowerCase() || "conclusion";
+    const [showSignatureCanvas, setShowSignatureCanvas] = useState(true);
     const {
         formData,
         handleCheckboxChange,
         sigCanvas,
         signaturePreview,
         handleTextareaChange,
+        handleSaveSignature,
         handleSignatureUpload,
         handleClearSignature,
         handleBack,
-        handleSubmit
+        handleApproval
     } = useQMSForm(vendor_onboarding, currentTab);
 
 
     return (
         <div>
-            <div className="border-b border-gray-300 pb-3">
+            <div className="pb-3">
                 <h2 className="border-b border-slate-500 text-[20px] font-semibold text-[#03111F]">
                     SECTION – X: Outcome of Supplier Assessment
                 </h2>
@@ -45,7 +49,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
             </div>
 
             {/* Section 2 */}
-            <div className="inline-flex items-center space-x-16 border-b border-gray-300 pb-3">
+            <div className="inline-flex items-center space-x-16 pb-3">
                 <Label htmlFor="assessment_outcome" className="font-semibold text-[16px] text-[#03111F]">
                     Assessment outcome
                 </Label>
@@ -110,28 +114,48 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
 
                 <div className="grid grid-cols-2 gap-8 mt-4">
                     <div className="flex flex-col mt-5">
-                        <div className="flex flex-col items-start">
-                            <Input
-                                type="file"
-                                id="signatureUpload"
-                                name="performer_signature"
-                                className="hidden"
-                                onChange={handleSignatureUpload}
-                            />
-                            {!signaturePreview && (
-                                <Label htmlFor="signatureUpload" className="cursor-pointer w-3/4 border-0 border-b-2 border-black focus:ring-0 focus:outline-none">
-                                    Upload Signature
-                                </Label>
-                            )}
-                            {signaturePreview && (
-                                <div className="flex items-center mt-2 w-3/4">
-                                    <img src={signaturePreview} alt="Signature Preview" className="w-40 h-20 object-contain" />
-                                    <Button className="ml-2 text-red-500" onClick={handleClearSignature}>
-                                        &#x2715;
-                                    </Button>
-                                </div>
-                            )}
-                            <span className="text-[14px] mt-2">Signature</span>
+                        <Label className="text-[14px] mb-2">Signature</Label>
+
+                        {showSignatureCanvas ? (
+                            <div className="border border-gray-300 rounded w-[300px] h-[120px] overflow-hidden">
+                                <SignatureCanvas
+                                    ref={sigCanvas}
+                                    penColor="black"
+                                    canvasProps={{ className: "w-full h-full" }}
+                                />
+                            </div>
+                        ) : (
+                            signaturePreview && (
+                                <img
+                                    src={signaturePreview}
+                                    alt="Signature Preview"
+                                    className="w-60 h-30 object-contain border border-gray-300"
+                                />
+                            )
+                        )}
+
+                        <div className="mt-2 space-x-2">
+                            <Button
+                                variant="nextbtn"
+                                size="nextbtnsize"
+                                onClick={() => {
+                                    handleSaveSignature();
+                                    setShowSignatureCanvas(false);
+                                }}
+                            >
+                                Save Signature
+                            </Button>
+
+                            <Button
+                                variant="backbtn"
+                                size="backbtnsize"
+                                onClick={() => {
+                                    handleClearSignature();
+                                    setShowSignatureCanvas(true);
+                                }}
+                            >
+                                Clear
+                            </Button>
                         </div>
                     </div>
 
@@ -161,7 +185,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                 <Button
                     variant="nextbtn"
                     size="nextbtnsize"
-                    // onClick={}
+                    onClick={handleApproval}
                 >
                     Approve
                 </Button>

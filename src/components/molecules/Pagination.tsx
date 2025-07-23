@@ -23,7 +23,6 @@ export default function Pagination({...Props}:props){
     Props.setCurrentPage(Props.currentPage + 1);
     // createQueryString("page", (currentPage+1).toString());
   };
-
   return (
     <div className="flex items-center justify-between">
         <div>
