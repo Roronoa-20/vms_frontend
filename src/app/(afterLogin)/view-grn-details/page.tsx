@@ -1,42 +1,44 @@
-import { cookies } from 'next/headers'
-import ViewGRNDetails from '@/src/components/templates/ViewGRNDetails'
-import requestWrapper from '@/src/services/apiCall'
-import API_END_POINTS from '@/src/services/apiEndPoints'
-import { AxiosResponse } from 'axios'
-import { GRNForm } from '@/src/types/grntypes'
+'use client';
 
-type GRNDetailsPageProps = {
-  searchParams?: { [key: string]: string | string[] }
-}
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import ViewGRNDetails from '@/src/components/templates/ViewGRNDetails';
+import requestWrapper from '@/src/services/apiCall';
+import API_END_POINTS from '@/src/services/apiEndPoints';
+import { GRNForm } from '@/src/types/grntypes';
 
-const ViewGRNDetailPage = async ({ searchParams }: GRNDetailsPageProps) => {
-  // const grn_ref = typeof searchParams?.grn_ref === 'string' ? searchParams.grn_ref : ''
-  const resolvedSearchParams = searchParams instanceof Promise
-    ? await searchParams
-    : searchParams
+const ViewGRNDetailPage = () => {
+  const searchParams = useSearchParams();
+  const grn_ref = searchParams.get('grn_ref') || '';
 
-  const grn_ref = typeof resolvedSearchParams?.grn_ref === 'string'
-    ? resolvedSearchParams.grn_ref
-    : ''
+  const [data, setData] = useState<GRNForm | null>(null);
 
-  const cookieStore = await cookies()
-  const cookieHeaderString = cookieStore
-    .getAll()
-    .map(({ name, value }) => `${name}=${value}`)
-    .join('; ')
+  useEffect(() => {
+    if (!grn_ref) return;
 
-  const response: AxiosResponse = await requestWrapper({
-    url: `${API_END_POINTS.SingleGRNdetails}?grn_number=${grn_ref}`,
-    method: 'GET',
-    headers: {
-      cookie: cookieHeaderString,
-    },
-  })
+    const fetchData = async () => {
+      try {
+        const response = await requestWrapper({
+          url: `${API_END_POINTS.SingleGRNdetails}?grn_number=${grn_ref}`,
+          method: 'GET',
+        });
 
-  const data: GRNForm = response?.data?.message
-  console.log('GRN Data:', data)
+        const result: GRNForm = response?.data?.message;
+        console.log('GRN Data:', result);
+        setData(result);
+      } catch (err) {
+        console.error('Failed to fetch GRN details:', err);
+      }
+    };
 
-  return <ViewGRNDetails grn={data} />
-}
+    fetchData();
+  }, [grn_ref]);
 
-export default ViewGRNDetailPage
+  return data ? (
+    <ViewGRNDetails grn={data} />
+  ) : (
+    <div className="p-4 text-center">Loading GRN Details...</div>
+  );
+};
+
+export default ViewGRNDetailPage;
