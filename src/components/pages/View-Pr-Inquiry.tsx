@@ -13,8 +13,9 @@ export interface purchaseInquiryDropdown {
         }[],
         uom_master:{
             name:string,
-            uom:string
-        }[]
+            uom:string,
+            description: string;
+        }[],
     }
 }
 
@@ -30,6 +31,7 @@ export type TableData = {
       lead_time:string,
       product_quantity:string,
       user_specifications:string
+      need_asset_code:boolean
 }
 
 export type TPRInquiry = {
@@ -44,7 +46,10 @@ export type TPRInquiry = {
     purchase_group:string,
     plant:string,
     purchase_type:string,
-    purchase_team_acknowledgement:boolean
+    purchase_team_acknowledgement:boolean,
+    asked_to_modify:boolean,
+    purchase_team_approved:boolean,
+    acknowledged_date:string
 }
 
 const PrInquiryPage = async({refno}:Props) => {

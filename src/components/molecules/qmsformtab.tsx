@@ -20,14 +20,21 @@ const ViewQMSFormDetails = ({ vendor_onboarding }: Props) => {
     <div className="fixed top-16 z-30 bg-[#DDE8FE] shadow-md w-[calc(100%-7rem)]">
         <div className="flex overflow-x-auto gap-3 text-md">
           {QMSFormTabs?.map((item, index) => (
-            <div
-              key={index}
-              className={`cursor-pointer p-2 rounded-lg whitespace-nowrap ${item === tabType ? "bg-[#0C72F5] text-white" : "text-[#0C72F5]"}`}
-              onClick={() => router.push(`/qms-details?vendor_onboarding=${encodeURIComponent(vendor_onboarding)}&tabtype=${encodeURIComponent(item)}`)}
-            >
-              {item}
-            </div>
-          ))}
+  <div
+    key={index}
+    className={`cursor-pointer p-2 rounded-lg whitespace-nowrap ${item.key === tabType ? "bg-[#0C72F5] text-white" : "text-[#0C72F5]"}`}
+    onClick={() =>
+      router.push(
+        `/qms-details?vendor_onboarding=${encodeURIComponent(
+          vendor_onboarding
+        )}&tabtype=${encodeURIComponent(item.key)}`
+      )
+    }
+  >
+    {item.label}
+  </div>
+))}
+
         </div>
     </div>
   );

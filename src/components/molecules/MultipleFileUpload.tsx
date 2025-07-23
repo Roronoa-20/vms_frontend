@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { X, FileText } from "lucide-react"
-// import AttachmentSVG from "@/app/svgs/attachmentSVG"
-// import UploadFileIcon from "@/app/svgs/uploadFileIcon"
+import AttachmentSVG from "@/public/app/svgs/attachment.svg"
+import UploadFileIcon from "@/public/app/svgs/uploadFileIcon.svg"
 
 interface SimpleFileUploadProps {
   onNext?: () => void

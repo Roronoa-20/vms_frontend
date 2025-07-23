@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AccountAssignmentCategory, Company, CostCenter, Country, Currency, DestinationPort, GLAccountNumber, IncoTerms, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ModeOfShipment, PackageType, PortCode, PortOfLoading, ProductCategory, ProfitCenter, PurchaseGroup, PurchaseOrganisation, RFQType, StoreLocation, UOMMaster, ValuationArea } from '@/src/types/PurchaseRequestType';
+import { AccountAssignmentCategory, Company, CostCenter, Country, Currency, DestinationPort, GLAccountNumber, IncoTerms, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ModeOfShipment, PackageType, plantCode, PortCode, PortOfLoading, ProductCategory, ProfitCenter, PurchaseGroup, PurchaseOrganisation, quantityUnit, RFQType, serviceCategory, serviceCode, StoreLocation, UOMMaster, ValuationArea } from '@/src/types/PurchaseRequestType';
 import VendorTable from '../../molecules/rfq/VendorTable';
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
@@ -45,6 +45,10 @@ interface DropdownData {
   rfq_type: RFQType[];
   purchase_organisation: PurchaseOrganisation[];
   currency_master: Currency[];
+  service_code:serviceCode[];
+  service_category:serviceCategory[]
+  plant_code:plantCode[];
+  quantity_unit:quantityUnit[]
 }
 type Props = {
   Dropdown: DropdownData;
@@ -267,14 +271,14 @@ const ServiceRFQ = ({ Dropdown }: Props) => {
           'Service Code',
           Dropdown?.service_code,
           (item) => item.name,
-          (item) => `${item.currency_name}`
+          (item) => `${item.service_name}`
         )}
         {renderSelect(
           'service_category',
           'Service Category',
           Dropdown?.service_category,
           (item) => item.name,
-          (item) => `${item.currency_name}`
+          (item) => `${item.service_category_name}`
         )}
         {renderSelect(
           'material_code',
@@ -288,7 +292,7 @@ const ServiceRFQ = ({ Dropdown }: Props) => {
           'Plant Code',
           Dropdown?.plant_code,
           (item) => item.name,
-          (item) => `${item.material_name}`
+          (item) => `${item.plant_name}`
         )}
         {renderSelect(
           'store_location',
@@ -317,7 +321,7 @@ const ServiceRFQ = ({ Dropdown }: Props) => {
           'Quantity Unit',
           Dropdown?.quantity_unit,
           (item) => item.name,
-          (item) => `${item.store_location_name}`
+          (item) => `${item.quantity_unit_name}`
         )}
 
         {renderInput('delivery_date', 'Delivery Date', 'date')}

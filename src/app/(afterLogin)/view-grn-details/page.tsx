@@ -7,11 +7,11 @@ import { AxiosResponse } from 'axios';
 import { GRNForm } from '@/src/types/grntypes';
 
 type PageProps = {
-  searchParams?: { grn_ref?: string };
+  searchParams?: Promise<{ grn_ref?: string }>;
 };
 
 const ViewGRNDetailPage = async ({ searchParams }: PageProps) => {
-  const grn_ref = searchParams?.grn_ref || '';
+  const grn_ref = (await searchParams)?.grn_ref || '';
 
   const cookieStore = await cookies();
   const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join('; ');

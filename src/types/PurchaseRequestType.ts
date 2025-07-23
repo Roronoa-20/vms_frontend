@@ -92,6 +92,27 @@ export interface MaterialCode {
   description: string;
 }
 
+export interface serviceCode {
+  name:string,
+  service_code:string,
+  service_name:string
+}
+
+export interface serviceCategory { 
+  name:string,
+  service_category_name:string
+}
+
+export interface plantCode {
+  name:string,
+  plant_name:string
+}
+
+export interface quantityUnit {
+  name:string,
+  quantity_unit_name:string
+} 
+
 // Account Assignment Category
 export interface AccountAssignmentCategory {
   name: string;
@@ -221,6 +242,10 @@ export type PurchaseRequestDropdown = {
     incoterm_master:IncoTerms[];
     package_type:PackageType[];
     rfq_type:RFQType[];
+    service_code:serviceCode[];
+  service_category:serviceCategory[]
+  plant_code:plantCode[];
+  quantity_unit:quantityUnit[]
   }
 }
 
