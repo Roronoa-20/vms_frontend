@@ -114,6 +114,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchase
       alert("Modify Notification Sent Successfully");
       setComment("");
       setIsModifyDialog(false);
+      router.refresh();
     }
   }
 
@@ -126,6 +127,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchase
       setComment("");
       setIsAcknowledgeDialog(false);
       setDate("");
+      router.refresh();
     }
   }
 
@@ -307,6 +309,10 @@ const handleTableCheckChange = (index: number, check:boolean) => {
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="col-span-1">
+          <h1 className={`text-[12px] font-normal text-[#626973] pb-3 ${PRInquiryData?.acknowledged_date?"":"hidden"}`}>Acknowledged Date</h1>
+          <Input placeholder="" value={PRInquiryData?.acknowledged_date ?? ""} disabled />
+        </div>
       </div>
       <h1 className="pl-5">Purchase Inquiry Items</h1>
       <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
