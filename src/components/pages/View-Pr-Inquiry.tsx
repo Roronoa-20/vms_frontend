@@ -13,7 +13,8 @@ export interface purchaseInquiryDropdown {
         }[],
         uom_master:{
             name:string,
-            uom:string
+            uom:string,
+            description:string,
         }[]
     }
 }
@@ -23,29 +24,36 @@ interface Props {
 }
 
 export type TableData = {
+      need_asset_code: boolean,
       assest_code:string,
       product_name:string,
       product_price:string,
       uom:string,
       lead_time:string,
       product_quantity:string,
-      user_specifications:string
+      user_specifications:string,
+      final_price_by_purchase_team?:number,
+      name?:string
 }
 
 export type TPRInquiry = {
-    user:string,
-    company:string,
-    cart_date:string,
-    cart_use:string,
-    category_type:string,
-    cart_product:TableData[]
-    hod:boolean,
-    purchase_team:boolean
-    purchase_group:string,
-    plant:string,
-    purchase_type:string,
-    purchase_team_acknowledgement:boolean
+    user: string,
+    company: string,
+    cart_date: string,
+    cart_use: string,
+    category_type: string,
+    cart_product: TableData[],
+    hod: boolean,
+    purchase_team: boolean,
+    purchase_group: string,
+    plant: string,
+    purchase_type: string,
+    purchase_team_acknowledgement: boolean,
+    asked_to_modify: boolean,
+    purchase_team_approved: boolean,
+    acknowledged_date: string
 }
+
 
 const PrInquiryPage = async({refno}:Props) => {
 
@@ -58,7 +66,16 @@ const PrInquiryPage = async({refno}:Props) => {
     const dropdownResponse:AxiosResponse = await requestWrapper({url:categoryDropdownUrl,method:"GET",headers:{
         cookie:cookieHeaderString
     }});
-    const dropdown:purchaseInquiryDropdown["message"] = dropdownResponse?.status == 200? dropdownResponse?.data?.message : ""
+    const rawDropdown = dropdownResponse?.status == 200 ? dropdownResponse?.data?.message : "";
+    const dropdown: purchaseInquiryDropdown["message"] = rawDropdown
+        ? {
+            ...rawDropdown,
+            uom_master: rawDropdown.uom_master?.map((uom: any) => ({
+                ...uom,
+                description: uom.description ?? ""
+            })) ?? []
+        }
+        : { category_type: [], uom_master: [] };
   
 let PRInquiryData: TPRInquiry | null   = null;
 console.log(refno,"this is refno")
