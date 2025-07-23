@@ -6,15 +6,18 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import { GRNForm } from '@/src/types/grntypes'
 
-const ViewGRNDetailPage = async ({
-  searchParams,
-}: {
-  searchParams?: Record<string, string | string[] | undefined>
-}) => {
+interface PageProps {
+  searchParams?: { [key: string]: string | string[] | undefined }
+}
+
+const ViewGRNDetailPage = async ({ searchParams }: PageProps) => {
   const grn_ref = typeof searchParams?.grn_ref === 'string' ? searchParams.grn_ref : ''
 
   const cookieStore = await cookies()
-  const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join('; ')
+  const cookieHeaderString = cookieStore
+    .getAll()
+    .map(({ name, value }: { name: string; value: string }) => `${name}=${value}`)
+    .join('; ')
 
   const response: AxiosResponse = await requestWrapper({
     url: `${API_END_POINTS.SingleGRNdetails}?grn_number=${grn_ref}`,
