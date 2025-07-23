@@ -108,12 +108,14 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     };
 
     const response: AxiosResponse = await requestWrapper({ url: url, data: { data: payload }, method: "POST" });
+    console.log("Enquiry---->",response);
     if (response?.status == 200) {
       setFormData(null);
       // router.push("/dashboard");
       alert("submission successfull");
       const refno = response?.data?.message?.name;
       router.push(`pr-inquiry?refno=${refno}`)
+      // router.push(`/dashboard`)
     } else {
       alert("error");
     }

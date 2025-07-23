@@ -1304,7 +1304,8 @@ export default function PRMaterialsManager({
                       <CommandEmpty>No PR numbers found.</CommandEmpty>
                       <CommandGroup>
                         {prNumbers?.map((pr) => (
-                          <CommandItem key={pr.sap_pr_code} value={pr.sap_pr_code} onSelect={() => handlePRToggle(pr)}>
+                          <CommandItem key={pr.sap_pr_code} value={pr.sap_pr_code} onSelect={() => { handlePRToggle(pr) 
+                            setOpen(false)}}>
                             <Check
                               className={cn(
                                 "mr-2 h-4 w-4",
