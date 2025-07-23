@@ -36,17 +36,17 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
   const {data,updateField,resetForm} = useCompanyDetailFormStore(); 
   const validate = () => {
     const errors:any = {};
-    if (!data?.type_of_business) {
+    if (!data?.type_of_business && !OnboardingDetail?.type_of_business) {
       errors.type_of_business = "Please Select Type Of Business ";
     }
-    if (!data?.registered_office_number) {
-      errors.registered_office_number = "Please Select Reg No. ";
-    }
+    // if (!data?.registered_office_number) {
+    //   errors.registered_office_number = "Please Select Reg No. ";
+    // }
 
-    if (!data?.corporate_identification_number) {
+    if (!data?.corporate_identification_number && !OnboardingDetail?.corporate_identification_number) {
       errors.corporate_identification_number = "Please Select Corporate Identification Number ";
 
-    } if (!data?.cin_date) {
+    } if (!data?.cin_date && !OnboardingDetail?.cin_date) {
       errors.cin_date = "Please Select Cin Date"
     } 
 
@@ -86,7 +86,7 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Vendor Title
               </h1>
-              <Input className="col-span-2" placeholder="Enter Company Name" defaultValue={OnboardingDetail?.vendor_title ?? ""} disabled={true} />
+              <Input className="col-span-2" placeholder="Enter Company Name" defaultValue={OnboardingDetail?.vendor_title ?? ""} disabled />
             </div>
             <div className="col-span-3">
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -140,7 +140,8 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] flex">
-            Reg No. <span className="pl-2 text-red-400 text-xl">*</span>
+            Reg No. 
+            {/* <span className="pl-2 text-red-400 text-xl">*</span> */}
           </h1>
           <Input placeholder="Enter Reg No." onChange={(e)=>{updateField("registered_office_number",e.target.value)}} value={data?.registered_office_number ?? OnboardingDetail?.registered_office_number ?? ""}/>
           {errors?.registered_office_number && !data?.registered_office_number && <span style={{ color: 'red' }}>{errors?.registered_office_number}</span>}
@@ -242,7 +243,7 @@ const CompanyDetailForm = ({companyDetailDropdown,onboarding_refno,refno,Onboard
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Vendor Type
           </h1>
-          <Input placeholder="" defaultValue={OnboardingDetail?.vendor_types?.map((item)=>(item))} disabled={true} />
+          <textarea className="col-span-2 w-full border rounded-lg p-2" placeholder="" defaultValue={OnboardingDetail?.vendor_type_list_from_master?.map((item)=>(item))} disabled={true} />
         </div>
       </div>
       <div className="flex justify-end pr-6">

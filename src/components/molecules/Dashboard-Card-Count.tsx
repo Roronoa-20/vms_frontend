@@ -1,6 +1,6 @@
 "use client"
 import Image from "next/image";
-import { dashboardCardData, DashboardPOTableData, DashboardPOTableItem, DashboardTableType, PurchaseRequisition, TPRInquiryTable, TvendorRegistrationDropdown } from "@/src/types/types";
+import { dashboardCardData, DashboardPOTableData, DashboardPOTableItem, DashboardTableType, PurchaseRequisition, RFQTable, TPRInquiryTable, TvendorRegistrationDropdown } from "@/src/types/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import PurchaseAndOngoingOrders from "./Purchase-and-Ongoing-Orders";
 import DashboardTotalVendorsTable from "./Dashboard-Total-Vendors-Table";
@@ -21,6 +21,7 @@ import { useAuth } from "@/src/context/AuthContext";
 import DashboardPurchaseEnquiryTable from "./Dashboard-Purchase-Enquiry-Table";
 import DashboardPurchaseRequisitionTable from "./Dashboard-Purchase-Requisition-Table";
 import { FileSearch } from "lucide-react";
+import DashboardRFQTable from "./DashboardRFQTable";
 
 type Props = {
   cardData: dashboardCardData
@@ -30,8 +31,9 @@ type Props = {
   dashboardApprovedVendorTableData: DashboardTableType
   dashboardRejectedVendorTableData: DashboardTableType["rejected_vendor_onboarding"]
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
-  prInquiryData: TPRInquiryTable[]
+  prInquiryData: TPRInquiryTable["cart_details"]
   prData: PurchaseRequisition[]
+  rfqData:RFQTable
 }
 
 const DashboardCards = ({ ...Props }: Props) => {
@@ -120,12 +122,21 @@ const DashboardCards = ({ ...Props }: Props) => {
     },
     {
       name: "Purchase & Ongoing Orders",
-      count: Props?.dashboardPOTableData?.total_count,
+      count: Props.cardData?.po_count ?? 0,
       icon: "/dashboard-assests/cards_icon/package.svg",
       text_color: "text-violet-800",
       bg_color: "bg-violet-100",
       hover: "hover:border-violet-400",
     },
+    {
+      name: "RFQ Comparision",
+      count: Props.cardData?.rfq_count ?? 0,
+      icon: "/dashboard-assests/cards_icon/file-search.svg",
+      text_color: "text-violet-800",
+      bg_color: "bg-violet-100",
+      hover: "hover:border-violet-400",
+    },
+    
   ];
 
   let cardData = user === "Enquirer"
@@ -229,15 +240,22 @@ const DashboardCards = ({ ...Props }: Props) => {
                   companyDropdown={Props?.companyDropdown}
                 />
               )}
-              {item.name === "Purchase Inquiry" && (user === "Enquirer" || user === "Purchase Team") && (
+              {item.name === "Purchase Inquiry" &&(
                 <DashboardPurchaseEnquiryTable
-                  dashboardTableData={Props.prInquiryData}
+                  dashboardTableData={Props?.prInquiryData}
                   companyDropdown={Props?.companyDropdown}
                 />
               )}
               {item.name === "Purchase Requisition" && (user === "Enquirer" || user === "Purchase Team") && (
                 <DashboardPurchaseRequisitionTable
                   dashboardTableData={Props.prData}
+                  companyDropdown={Props?.companyDropdown}
+                />
+              )}
+
+              {item.name === "RFQ Comparision" && (
+                <DashboardRFQTable
+                  dashboardTableData={Props?.rfqData?.data}
                   companyDropdown={Props?.companyDropdown}
                 />
               )}

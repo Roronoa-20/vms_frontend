@@ -5,8 +5,14 @@ import { useRouter } from "next/navigation";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
+import { useOutsideClick } from "@/src/hooks/useOutsideClick";
 
-const NavbarMenu = () => {
+
+interface Props {
+  handleClose:()=>void
+}
+
+const NavbarMenu = ({...Props}:Props) => {
   const router = useRouter();
 
   const handleLogOut = async () => {
@@ -25,8 +31,11 @@ const NavbarMenu = () => {
       router.push("/");
     }
   };
+
+  const outsideClickRef = useOutsideClick<HTMLDivElement>(Props?.handleClose)
+
   return (
-    <div className="absolute z-40 -left-20 -bottom-20 bg-white text-black border border-black rounded-lg ease-in-out transition-all flex flex-col p-4 gap-5">
+    <div ref={outsideClickRef} className="absolute z-40 -left-20 -bottom-20 bg-white text-black border border-black rounded-lg ease-in-out transition-all flex flex-col p-4 gap-5">
       {/* <div className="flex w-full text-[15px] items-center gap-3 cursor-pointer border-b-2 border-blue-400 hover:bg-slate-100">
         <svg
           width="19"

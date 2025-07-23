@@ -2,7 +2,7 @@ import React from 'react'
 import OnboardingTab from '../molecules/OnboardingTab'
 import CompanyDetailForm from '../templates/vewOnboardingDetail/CompanyDetails'
 import CompanyAddress from '../templates/vewOnboardingDetail/CompanyAddress'
-import DocumentDetails from '../templates/vendor-detail-form/DocumentDetails'
+import DocumentDetails from '../templates/vewOnboardingDetail/DocumentDetails'
 import PaymentDetail from '../templates/vewOnboardingDetail/PaymentDetail'
 import ContactDetail from '../templates/vewOnboardingDetail/ContactDetail'
 import ManufacturingDetail from '../templates/vewOnboardingDetail/ManufacturingDetail'
@@ -82,11 +82,19 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
         <div className="flex px-10 justify-center gap-5 max-h-[70vh] w-full">
         {/* form */}
         {tabType == "Company Detail" ? (
+          // <CompanyDetailForm
+          //   companyDetailDropdown={companyDetailDropdown}
+          //   onboarding_refno={vendorOnboardingRefno}
+          //   refno={refno}
+          //   OnboardingDetail={OnboardingDetail?.company_details_tab}
+          // />
           <CompanyDetailForm
-            companyDetailDropdown={companyDetailDropdown}
-            onboarding_refno={vendorOnboardingRefno}
-            refno={refno}
-            OnboardingDetail={OnboardingDetail?.company_details_tab}
+          companyDetailDropdown={companyDetailDropdown}
+          onboarding_refno={vendorOnboardingRefno}
+          refno={refno}
+          OnboardingDetail={OnboardingDetail?.company_details_tab}
+          multipleCompany={OnboardingDetail?.multi_company_data}
+          ismulticompany={OnboardingDetail?.is_multi_company}
           />
         ) : tabType == "Company Address" ? (
           <CompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>

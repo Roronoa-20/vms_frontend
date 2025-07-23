@@ -41,6 +41,13 @@ const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
     setEmployeeDetail(null)
   }
 
+  const handleRowDelete = (index: number) => {
+    // Remove the employee at the given index from the employeeDetail store
+    const updatedEmployees = employeeDetail.filter((_, itemIndex) => itemIndex !== index);
+    resetEmployeeDetail();
+    updatedEmployees.forEach(item => updateEmployeeDetail(item));
+  }
+
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
@@ -109,6 +116,7 @@ const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
                   <TableHead className="text-center">Employees in R&D</TableHead>
                   <TableHead className="text-center">Employees in HSE</TableHead>
                   <TableHead className="text-center">Employees in Other Department</TableHead>
+                  <TableHead className="text-center">Delete</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
@@ -129,6 +137,9 @@ const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
                     </TableCell>
                     <TableCell>
                       {item?.other}
+                    </TableCell>
+                    <TableCell>
+                      <Button onClick={()=>{handleRowDelete(index)}}>Delete</Button>
                     </TableCell>
                   </TableRow>
                 ))}

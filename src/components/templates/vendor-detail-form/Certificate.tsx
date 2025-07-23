@@ -34,12 +34,14 @@ type certificateData = {
   fileDetail?:CertificateAttachment,
   name?:string
   certificate_attach?:CertificateAttachment
+  others?:string
 }
 
 const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   console.log(OnboardingDetail)
   const [certificateData,setCertificateData] = useState<Partial<certificateData>>({});
   const [multipleCertificateData,setMultipleCertificateData] = useState<certificateData[]>(OnboardingDetail);
+  const [otherField,setOtherField] = useState<string>()
   const router = useRouter();
   
   const [isOtherField,setIsOtherField] = useState<boolean>(false);
@@ -149,12 +151,12 @@ const Certificate = ({certificateCodeDropdown,ref_no,onboarding_ref_no,Onboardin
           </h1>
           <Input ref={fileInput} placeholder="" type="file" onChange={(e)=>{setCertificateData((prev:any)=>({...prev,file:e?.target?.files,fileDetail:{file_name:e?.target?.files != null? e.target.files[0].name:""}}))}}/>
         </div>
-        { certificateData?.certificate_code == "others" &&
+        { certificateData?.certificate_code == "Others" &&
           <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Others
           </h1>
-          <Input />
+          <Input value={certificateData?.others ?? ""} onChange={(e)=>{setCertificateData((prev:any)=>({...prev,others:e.target.value}))}} />
         </div>
         }
       </div>

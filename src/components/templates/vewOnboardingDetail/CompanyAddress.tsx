@@ -85,6 +85,7 @@ const CompanyAddress = ({
   const [MultipleAddress, setMultipleAddress] = useState<multipleAddress>();
   const [file,setFile] = useState<FileList | null>(null);
   const [isFilePreview,setIsFilePreview] = useState<boolean>(true);
+    const [isDisabled,setIsDisabled] = useState<boolean>(true);
 
   const [isMultipleLocation, setIsMultipleLocation] = useState<boolean>(OnboardingDetail?.multiple_locations ? true : false);
   useEffect(()=>{
@@ -103,10 +104,7 @@ const CompanyAddress = ({
   },[])
 
 
-  const { designation } = useAuth();
-  // if(!designation){
-  //   return <div className="flex justify-center items-center h-screen">Loading...</div>
-  // }
+
   console.log(OnboardingDetail,"htis is onboarding data")
 
 
@@ -212,7 +210,7 @@ const CompanyAddress = ({
     setIsShippingSame(e);
     // setShippingData((prev)=>({...prev,address1:billingAddress?.address_line_1,address2:billingAddress?.address_line_2}))
     if (e) {
-      handleShippingPincodeChange(billingAddress?.pincode ?? "");
+      // handleShippingPincodeChange(billingAddress?.pincode ?? "");
       setShippingData((prev) => ({
         ...prev,
         address_line_1: billingAddress?.address_line_1,
@@ -226,7 +224,35 @@ const CompanyAddress = ({
     }
   };
   console.log(isShippingSame, "is shipping same");
+
+  const [errors, setErrors] = useState<any>({});
+  const validate = () => {
+    const errors:any = {};
+    // if (!billingAddress?.address_line_1) {
+    //   errors.address_line_1 = "Please Enter Address 1";
+    // }
+    // if (!billingAddress?.address_line_2) {
+    //   errors.address_line_2 = "Please Enter Address Line 2 ";
+    // }
+
+    // if (!billingAddress?.pincode) {
+    //   errors.pincode = "Please Enter Pincode ";
+
+    // } 
+
+    return errors;
+  };
+  const {designation} = useAuth();
+
   const handleSubmit = async () => {
+
+    const validationErrors = validate();
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
     const submitUrl = API_END_POINTS?.companyAddressSubmit;
     const Data = {
       ref_no: ref_no,
@@ -252,43 +278,50 @@ const CompanyAddress = ({
       })),
     };
     // const updatedData = {data:Data}
-
+    
     const formData = new FormData();
     formData.append("data",JSON.stringify(Data));
     if(file){
       formData.append("file",file[0])
     }
     const submitResponse:AxiosResponse = await requestWrapper({url:submitUrl,method:"POST",data:formData});
-    if(submitResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Document%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    if(submitResponse?.status == 200) router.push(`${ designation == "Purchase Team" || designation == "Purchase Head" ? `/view-onboarding-details?tabtype=Contact%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`:`/view-onboarding-details?tabtype=Document%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`);
   };
+
+
+
   
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg z-50">
-        Company Address
-      </h1>
+      <div className="flex justify-between">
+            <h1 className="border-b-2 pb-2">Company Address</h1>
+            <Button onClick={()=>{setIsDisabled(prev=>!prev)}} className="mb-2">{isDisabled?"Enable Edit":"Disable Edit"}</Button>
+            </div>
       <h1 className="pl-2 ">Office Address</h1>
       <div className="grid grid-cols-4 gap-6 p-5">
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Address 1
+            Address 1 <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
-          disabled
+          disabled={isDisabled}
+          className="disabled:opacity-100"
             placeholder=""
             onChange={(e) => {
               updatebillingAddress("address_line_1", e.target.value);
             }}
             value={billingAddress?.address_line_1 as string ??   OnboardingDetail?.billing_address?.address_line_1 ?? ""}
           />
+          {errors?.address_line_1 && !billingAddress?.address_line_1 && <span style={{ color: 'red' }}>{errors?.address_line_1}</span>}
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Address 2
+            Address 2 <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
-          disabled
+          className="disabled:opacity-100"
+          disabled={isDisabled}
             placeholder=""
             onChange={(e) => {
               updatebillingAddress("address_line_2", e.target.value);
@@ -296,13 +329,15 @@ const CompanyAddress = ({
             value={billingAddress?.address_line_2?? OnboardingDetail?.billing_address?.address_line_2 ?? ""}
             // defaultValue={}
           />
+          {errors?.address_line_2 && !billingAddress?.address_line_2 && <span style={{ color: 'red' }}>{errors?.address_line_2}</span>}
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Pincode/Zipcode
+            Pincode/Zipcode <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
-          disabled
+          disabled={isDisabled}
+          className="disabled:opacity-100"
             placeholder=""
             onChange={(e) => {
               handlePincodeChange(e.target.value);
@@ -310,13 +345,15 @@ const CompanyAddress = ({
             value={billingAddress?.pincode?? OnboardingDetail?.billing_address?.pincode ?? ""}
             // defaultValue={}
           />
+          {errors?.pincode && !billingAddress?.pincode && <span style={{ color: 'red' }}>{errors?.pincode}</span>}
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-7">
             District
           </h1>
           <Input
-          disabled
+          disabled={isDisabled}
+          className="disabled:opacity-100"
             placeholder=""
             value={billingAddress?.district?.district_name ?? OnboardingDetail?.billing_address?.district_details?.district_name ?? ""}
             // defaultValue={}
@@ -329,7 +366,8 @@ const CompanyAddress = ({
               City
             </h1>
             <Input
-            disabled
+            className="disabled:opacity-100"
+            disabled={isDisabled}
               placeholder=""
               value={billingAddress?.city?.city_name?? OnboardingDetail?.billing_address?.city_details?.city_name ?? ""}
               // defaultValue={}
@@ -341,7 +379,8 @@ const CompanyAddress = ({
               State
             </h1>
             <Input
-            disabled
+            className="disabled:opacity-100"
+            disabled={isDisabled}
               placeholder=""
               value={billingAddress?.state?.state_name ?? OnboardingDetail?.billing_address?.state_details?.state_name ?? ""}
               // defaultValue={}
@@ -353,7 +392,8 @@ const CompanyAddress = ({
               Country
             </h1>
             <Input
-            disabled
+            disabled={isDisabled}
+            className="disabled:opacity-100"
               placeholder=""
               value={billingAddress?.country?.country_name ?? OnboardingDetail?.billing_address?.country_details?.country_name ?? ""}
               
@@ -366,9 +406,9 @@ const CompanyAddress = ({
         <h1 className="pl-2 ">Manufacturing Address</h1>
         <div className="flex items-center gap-1">
           <Input
-          disabled
             type="checkbox"
-            className="w-4"
+            disabled={isDisabled}
+            className="w-4 disabled:opacity-100"
             onChange={(e) => {
               handleShippingCheck(e.target.checked);
             }}
@@ -468,9 +508,9 @@ const CompanyAddress = ({
       </div>
       <div className="pl-4 flex gap-4 items-center">
         <Input
-        disabled
+        disabled={isDisabled}
           type="checkbox"
-          className="w-4"
+          className="w-4 disabled:opacity-100"
           onChange={(e) => {
             setIsMultipleLocation(e.target.checked);
           }}
@@ -486,13 +526,14 @@ const CompanyAddress = ({
                 Address 1
               </h1>
               <Input
-              disabled
+              disabled={isDisabled}
                 onChange={(e) => {
                   setMultipleAddress((prev) => ({
                     ...prev,
                     address1: e.target.value,
                   }));
                 }}
+                className="disabled:opacity-100"
                 value={MultipleAddress?.address1 ?? ""}
               />
             </div>
@@ -501,13 +542,14 @@ const CompanyAddress = ({
                 Address 2
               </h1>
               <Input
-              disabled
+              className="disabled:opacity-100"
                 onChange={(e) => {
                   setMultipleAddress((prev) => ({
                     ...prev,
                     address2: e.target.value,
                   }));
                 }}
+                disabled={isDisabled}
                 value={MultipleAddress?.address2 ?? ""}
               />
             </div>
@@ -516,10 +558,10 @@ const CompanyAddress = ({
                 Pincode/Zipcode
               </h1>
               <Input
-              disabled
                 onChange={(e) => {
                   handleMultiplePincodeChange(e.target.value);
                 }}
+                disabled={isDisabled}
                 value={MultipleAddress?.pincode ? MultipleAddress?.pincode : ""}
               />
             </div>
@@ -528,7 +570,8 @@ const CompanyAddress = ({
                 District
               </h1>
               <Input
-              disabled
+              disabled={isDisabled}
+              className="disabled:opacity-100"
                 value={MultipleAddress?.district?.district_name ?? ""}
                 readOnly
               />
@@ -539,7 +582,8 @@ const CompanyAddress = ({
                   City
                 </h1>
                 <Input
-                disabled
+                className="disabled:opacity-100"
+                disabled={isDisabled}
                   value={MultipleAddress?.city?.city_name ?? ""}
                   readOnly
                 />
@@ -549,9 +593,10 @@ const CompanyAddress = ({
                   State
                 </h1>
                 <Input
-                disabled
+                disabled={isDisabled}
                   value={MultipleAddress?.state?.state_name ?? ""}
                   readOnly
+                  className="disabled:opacity-100"
                 />
               </div>
               <div>
@@ -559,14 +604,16 @@ const CompanyAddress = ({
                   Country
                 </h1>
                 <Input
-                disabled
+                className="disabled:opacity-100"
+                disabled={isDisabled}
                   value={MultipleAddress?.country?.country_name ?? ""}
                   readOnly
                 />
               </div>
-              <div className={`${designation?"hidden":""}`}>
+              <div className={``}>
                 <Button
-                  className="bg-blue-400 hover:bg-blue-400 rounded-3xl"
+                disabled={isDisabled}
+                  className="bg-blue-400 hover:bg-blue-400 rounded-3xl disabled:opacity-100"
                   onClick={() => {
                     handleMultipleAdd();
                   }}
@@ -625,28 +672,29 @@ const CompanyAddress = ({
         <h1 className="text-[12px] font-normal text-[#626973]">
           Upload Address Proof (Light Bill, Telephone Bill, etc.)
         </h1>
-        {/* <Input type="file" className="w-fit" onChange={(e)=>{setFile(e.target.files)}} /> */}
+        <Input disabled={isDisabled} type="file" className="w-fit disabled:opacity-100" onChange={(e)=>{setFile(e.target.files)}} />
       {/* file preview */}
       {
        isFilePreview && !file && OnboardingDetail?.address_proofattachment?.url &&
         <div className="flex gap-2">
-      <Link target="blank" href={process.env.NEXT_PUBLIC_BACKEND_END + OnboardingDetail?.address_proofattachment?.url} className="underline text-blue-300 max-w-44 truncate">
+      <Link target="blank" href={OnboardingDetail?.address_proofattachment?.url} className="underline text-blue-300 max-w-44 truncate">
       <span>{OnboardingDetail?.address_proofattachment?.file_name}</span>
       </Link>
-      {/* <X className="cursor-pointer" onClick={()=>{setIsFilePreview((prev)=>!prev)}}/> */}
+      <X className={`cursor-pointer disabled:opacity-100 ${isDisabled?"hidden":""}`}  onClick={()=>{setIsFilePreview((prev)=>!prev)}}/>
       </div>
       }
       </div>
-      {/* <div className={`flex justify-end gap-4 ${designation?"hidden":""}`}>
+      <div className={`flex justify-end gap-4`}>
         <Button
-        className={`bg-blue-400 hover:bg-blue-400`}
+        // disabled={isDisabled}
+        className={`bg-blue-400 hover:bg-blue-400 disabled:opacity-100 ${isDisabled?"hidden":""}`}
           onClick={() => {
             handleSubmit();
           }}
         >
           Next
         </Button>
-      </div> */}
+      </div>
     </div>
   );
 };

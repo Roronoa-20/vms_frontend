@@ -1,10 +1,12 @@
-export const dynamic = "force-dynamic";
+
 import VendorRegistration from "@/src/components/pages/VendorRegistration";
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { TvendorRegistrationDropdown } from "@/src/types/types";
 import { AxiosResponse } from "axios";
 import React from "react";
+
+export const dynamic = 'force-dynamic'; 
 
 const page = async() => {
 

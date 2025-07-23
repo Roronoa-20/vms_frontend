@@ -4,9 +4,10 @@ import { Label } from '@/src/components/atoms/label';
 
 interface YesNoNAGroupProps {
   name: string;
-  label: string;
+  label?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>, field: string) => void;
+  // disabled?: boolean
 }
 
 const YesNoNAGroup: React.FC<YesNoNAGroupProps> = ({ name, label, value, onChange }) => {
@@ -27,6 +28,7 @@ const YesNoNAGroup: React.FC<YesNoNAGroupProps> = ({ name, label, value, onChang
               value={val}
               checked={value === val}
               onChange={(e) => onChange(e, name)}
+              // disabled={disabled}
             />
             <span className="text-[14px]">{val}</span>
           </Label>

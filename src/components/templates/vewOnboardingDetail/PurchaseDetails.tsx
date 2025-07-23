@@ -76,11 +76,17 @@ const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,reconciliati
         </h1>
         <Input placeholder="" disabled defaultValue={OnboardingDetail?.purchase_team_remarks}/>
       </div>
-      <div>
+      {/* <div>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           QA Team Remarks
         </h1>
         <Input placeholder="" disabled defaultValue={OnboardingDetail?.qa_team_remarks} />
+      </div> */}
+      <div>
+        <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          Accounts Team Remarks
+        </h1>
+        <Input placeholder="" disabled defaultValue={OnboardingDetail?.account_team_remarks} />
       </div>
       <div className={`${designation == "Purchase Head"?"hidden":""}`}>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -103,18 +109,18 @@ const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,reconciliati
                   </Select>
       </div>
     </div>
-    <div className="flex justify-end pr-6">
+    <div className={`flex justify-end pr-6`}>
     {/* <Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`}>Next</Button> */}
     {
-      designation == "Purchase Team" && validation_check?.purchase_team_undertaking == 0 && 
+      designation == "Purchase Team" && validation_check?.purchase_team_undertaking == 0 && validation_check?.form_fully_submitted_by_vendor == 1 && 
     <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount}/>
     }
     {
-      designation == "Purchase Head" && validation_check?.purchase_head_undertaking == 0 && 
+      designation == "Purchase Head" && validation_check?.purchase_head_undertaking == 0 && validation_check?.purchase_team_undertaking == 1 && 
     <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount}/>
     }
     {
-      designation == "Accounts Team" && validation_check?.accounts_team_undertaking == 0 && 
+      designation == "Accounts Team" && validation_check?.accounts_team_undertaking == 0 && validation_check?.purchase_head_undertaking == 1 && 
     <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount}/>
     }
     </div>
