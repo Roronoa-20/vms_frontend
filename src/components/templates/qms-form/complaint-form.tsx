@@ -8,15 +8,10 @@ import { useQMSForm } from '@/src/hooks/useQMSForm';
 export const ComplaintForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "complaint";
-  const {
-    formData,
-    handleCheckboxChange,
-    handleBack,
-    handleSubmit
-  } = useQMSForm(vendor_onboarding, currentTab);
+  const {formData,handleCheckboxChange,handleBack,handleNext, saveFormDataLocally, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
 
   return (
-    <div>
+    <div className="bg-white">
       <h2 className="text-lg font-bold bg-gray-200 border border-gray-300 p-3">
         SECTION – VIII: COMPLAINT AND RECALLS
       </h2>
@@ -25,40 +20,35 @@ export const ComplaintForm = ({ vendor_onboarding }: { vendor_onboarding: string
           name="customer_complaints"
           label="1. Do you have procedure for handling and investigation of customer complaints?"
           value={formData.customer_complaints || ""}
-          // onChange={(e) => handleCheckboxChange(e, 'customer_complaints')}
-          onChange={() => { }}
+          onChange={(e) => handleCheckboxChange(e, 'customer_complaints')}
 
         />
         <YesNoNAGroup
           name="retain_complaints_records"
           label="2. Do you retain customer complaints records?"
           value={formData.retain_complaints_records || ""}
-          // onChange={(e) => handleCheckboxChange(e, 'retain_complaints_records')}
-          onChange={() => { }}
+          onChange={(e) => handleCheckboxChange(e, 'retain_complaints_records')}
 
         />
         <YesNoNAGroup
           name="reviews_customer_complaints"
           label="3. Does management reviews customer complaints?"
           value={formData.reviews_customer_complaints || ""}
-          // onChange={(e) => handleCheckboxChange(e, 'reviews_customer_complaints')}
-          onChange={() => { }}
+          onChange={(e) => handleCheckboxChange(e, 'reviews_customer_complaints')}
 
         />
         <YesNoNAGroup
           name="any_recalls"
           label="4. Have there been any recalls in the last two years?"
           value={formData.any_recalls || ""}
-          // onChange={(e) => handleCheckboxChange(e, 'any_recalls')}
-          onChange={() => { }}
+          onChange={(e) => handleCheckboxChange(e, 'any_recalls')}
 
         />
         <YesNoNAGroup
           name="reporting_environmental_accident"
           label="5. Any reporting accident including environmental accident occured in the last 2 years?<br />If yes, investigated and CAPA taken?"
           value={formData.reporting_environmental_accident || ""}
-          // onChange={(e) => handleCheckboxChange(e, 'reporting_environmental_accident')}
-          onChange={() => { }}
+          onChange={(e) => handleCheckboxChange(e, 'reporting_environmental_accident')}
 
         />
       </div>
@@ -75,8 +65,12 @@ export const ComplaintForm = ({ vendor_onboarding }: { vendor_onboarding: string
           variant="nextbtn"
           size="nextbtnsize"
           className="py-2.5"
-          onClick={handleSubmit}
-        >
+          // onClick={() => {
+          //   console.log('Saving form data locally for Building tab:', currentTab, 'formData:', formData);
+          //   saveFormDataLocally(currentTab, formData);
+          //   handleNext();
+          // }}
+          onClick={handleSubmit}>
           Next
         </Button>
       </div>

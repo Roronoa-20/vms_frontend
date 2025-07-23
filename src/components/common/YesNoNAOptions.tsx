@@ -22,7 +22,7 @@ const YesNoNAOptions: React.FC<YesNoNAOptionsProps> = ({
             {options.map((option) => (
                 <Label key={option} className="inline-flex items-center space-x-2">
                     <Input
-                        type="checkbox"
+                        type="radio"
                         name={name}
                         value={option}
                         disabled={disabled}

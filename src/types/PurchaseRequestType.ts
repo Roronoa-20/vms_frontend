@@ -213,6 +213,24 @@ export interface RFQType {
   vendor_type_code: string;
   vendor_type_name: string;
 }
+
+export interface ServiceCode {
+  name: string;
+  service_code: string;
+  service_code_name: string;
+}
+
+export interface ServiceCategory {
+  name: string;
+  service_category: string;
+  service_category_name: string;
+}
+
+export interface PlantCode {
+  name: string;
+  plant_code: string;
+  plant_name: string;
+}
 export type PurchaseRequestDropdown = {
   message: {
     purchase_requisition_type: PurchaseRequisitionType[];

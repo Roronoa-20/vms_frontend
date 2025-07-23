@@ -836,6 +836,7 @@ export type TCompanyDetailForm = {
 
 
   export type dashboardCardData = {
+    po_count: number;
     status: string;
     message: string;
     role: string[];

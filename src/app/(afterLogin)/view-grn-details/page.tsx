@@ -1,9 +1,10 @@
-import React from 'react';
-import { cookies } from 'next/headers';
+'use client';
+
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import ViewGRNDetails from '@/src/components/templates/ViewGRNDetails';
 import requestWrapper from '@/src/services/apiCall';
 import API_END_POINTS from '@/src/services/apiEndPoints';
-import { AxiosResponse } from 'axios';
 import { GRNForm } from '@/src/types/grntypes';
 
 type PageProps = {
@@ -13,21 +14,34 @@ type PageProps = {
 const ViewGRNDetailPage = async ({ searchParams }: PageProps) => {
   const grn_ref = (await searchParams)?.grn_ref || '';
 
-  const cookieStore = await cookies();
-  const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join('; ');
+  const [data, setData] = useState<GRNForm | null>(null);
 
-  const response: AxiosResponse = await requestWrapper({
-    url: `${API_END_POINTS.SingleGRNdetails}?grn_number=${grn_ref}`,
-    method: 'GET',
-    headers: {
-      cookie: cookieHeaderString,
-    },
-  });
+  useEffect(() => {
+    if (!grn_ref) return;
 
-  const data: GRNForm = response?.data?.message;
-  console.log('GRN Data:', data);
+    const fetchData = async () => {
+      try {
+        const response = await requestWrapper({
+          url: `${API_END_POINTS.SingleGRNdetails}?grn_number=${grn_ref}`,
+          method: 'GET',
+        });
 
-  return <ViewGRNDetails grn={data} />;
+        const result: GRNForm = response?.data?.message;
+        console.log('GRN Data:', result);
+        setData(result);
+      } catch (err) {
+        console.error('Failed to fetch GRN details:', err);
+      }
+    };
+
+    fetchData();
+  }, [grn_ref]);
+
+  return data ? (
+    <ViewGRNDetails grn={data} />
+  ) : (
+    <div className="p-4 text-center">Loading GRN Details...</div>
+  );
 };
 
 export default ViewGRNDetailPage;

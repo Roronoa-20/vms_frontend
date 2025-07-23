@@ -1,14 +1,18 @@
 'use client';
 import React, { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { GRNForm } from '@/src/types/grntypes';
 import { Button } from '@/components/ui/button';
-import {Dialog,DialogContent,DialogHeader,DialogTitle} from '@/components/ui/dialog';
-import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow} from '@/src/components/atoms/table';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/src/components/atoms/table';
 
 const ViewGRNDetails = ({ grn }: { grn: GRNForm }) => {
+    const params = useSearchParams();
+    const grn_no = params.get("grn_ref") || "";
     const [selectedItem, setSelectedItem] = useState<any>(null);
     const [open, setOpen] = useState(false);
-
+    const router = useRouter();
     const openDialog = (item: any) => {
         setSelectedItem(item);
         setOpen(true);
@@ -79,10 +83,12 @@ const ViewGRNDetails = ({ grn }: { grn: GRNForm }) => {
                                     >
                                         View
                                     </Button>
-                                </TableCell><TableCell>
+                                </TableCell>
+                                <TableCell>
                                     <Button
                                         variant="outline"
                                         className="text-blue-600 border-blue-400"
+                                        onClick={() => router.push(`/view-po-conf?po_number=${item.po_no}&grn_ref=${grn_no}`)}
                                     >
                                         View
                                     </Button>

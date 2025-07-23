@@ -19,7 +19,7 @@ const ConditionalTextareaGroup: React.FC<ConditionalTextareaGroupProps> = ({
     <Label htmlFor={name} className="font-semibold text-[16px]">{label}</Label>
     <textarea
       name={name}
-      className="w-full border border-gray-300 p-2 mt-2"
+      className="w-full border border-gray-300 p-2"
       placeholder={placeholder}
       value={value}
       onChange={onChange}

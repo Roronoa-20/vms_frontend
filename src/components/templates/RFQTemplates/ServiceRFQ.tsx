@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useEffect } from 'react'
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,7 +17,8 @@ import requestWrapper from '@/src/services/apiCall'
 import useDebounce from '@/src/hooks/useDebounce';
 import { SAPPRData, VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
 import Pagination from '../../molecules/Pagination';
-import PRMaterialsManager, { SelectedMaterial } from './PRMaterialsManager';
+import PRServiceManager, { SelectedMaterial } from './PRServiceManager';
+
 interface DropdownData {
   account_assignment_category: AccountAssignmentCategory[];
   item_category_master: ItemCategoryMaster[];
@@ -52,10 +50,12 @@ interface DropdownData {
 }
 type Props = {
   Dropdown: DropdownData;
-}
+  pr_codes?: string | null;
+  pr_type?: string | null;
+};
 
-const ServiceRFQ = ({ Dropdown }: Props) => {
-  const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Material Vendor" });
+const ServiceRFQ = ({ Dropdown, pr_codes, pr_type  }: Props) => {
+  const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Service Vendor" });
   const [vendorSearchName, setVendorSearchName] = useState('')
   const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
   const [VendorList, setVendorList] = useState<VendorApiResponse>();
@@ -73,7 +73,7 @@ const ServiceRFQ = ({ Dropdown }: Props) => {
   const [files, setFiles] = useState<Record<string, File | null>>({});
   useEffect(() => {
     const fetchVendorTableData = async (rfq_type: string) => {
-      console.log(rfq_type, "rfq_type in table code")
+      console.log(rfq_type, "rfq_type in Service table code")
       const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}`
       const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
       if (response?.status == 200) {
@@ -214,14 +214,14 @@ const ServiceRFQ = ({ Dropdown }: Props) => {
   console.log(selectedMaterials, "materials")
   return (
     <div className='bg-white h-full w-full pb-6'>
-      <h1 className='font-bold text-[24px] p-5'>RFQ Data for Material</h1>
+      <h1 className='font-bold text-[24px] p-5'>RFQ Data for Service</h1>
 
       <div className="w-full mx-auto space-y-6 p-5">
         {/* PR Materials Manager Component */}
-        <PRMaterialsManager
+        <PRServiceManager
           prNumbers={availablePRs}
           onSelectionChange={setItems}
-          title="Select Materials for Processing"
+          title="Select Services for Processing"
         />
       </div>
       <div className="grid grid-cols-3 gap-6 p-5">

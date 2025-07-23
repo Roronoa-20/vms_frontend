@@ -30,6 +30,7 @@ const Navbar = () => {
          pathname == "/qms-details"?"QMS Form":
          pathname == "/view-purchase-requisition"?"Purchase Requisition":
          pathname == "/qms-details"?"QMS Form":
+         pathname == "/view-po-conf"?"User Confirmation":
          ""}
       </h1>
       <div className='flex items-center gap-4'>

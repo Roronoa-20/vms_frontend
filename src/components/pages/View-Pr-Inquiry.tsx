@@ -24,6 +24,7 @@ interface Props {
 }
 
 export type TableData = {
+      need_asset_code: boolean,
       assest_code:string,
       product_name:string,
       product_price:string,
@@ -31,7 +32,6 @@ export type TableData = {
       lead_time:string,
       product_quantity:string,
       user_specifications:string
-      need_asset_code:boolean
 }
 
 export type TPRInquiry = {
@@ -52,6 +52,7 @@ export type TPRInquiry = {
     acknowledged_date:string
 }
 
+
 const PrInquiryPage = async({refno}:Props) => {
 
   const cookieStore = await cookies();
@@ -63,7 +64,16 @@ const PrInquiryPage = async({refno}:Props) => {
     const dropdownResponse:AxiosResponse = await requestWrapper({url:categoryDropdownUrl,method:"GET",headers:{
         cookie:cookieHeaderString
     }});
-    const dropdown:purchaseInquiryDropdown["message"] = dropdownResponse?.status == 200? dropdownResponse?.data?.message : ""
+    const rawDropdown = dropdownResponse?.status == 200 ? dropdownResponse?.data?.message : "";
+    const dropdown: purchaseInquiryDropdown["message"] = rawDropdown
+        ? {
+            ...rawDropdown,
+            uom_master: rawDropdown.uom_master?.map((uom: any) => ({
+                ...uom,
+                description: uom.description ?? ""
+            })) ?? []
+        }
+        : { category_type: [], uom_master: [] };
   
 let PRInquiryData: TPRInquiry | null   = null;
 console.log(refno,"this is refno")

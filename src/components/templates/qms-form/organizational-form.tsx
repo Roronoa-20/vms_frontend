@@ -9,15 +9,10 @@ import { useQMSForm } from '@/src/hooks/useQMSForm';
 export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "organizational";
-  const {
-    formData,
-    handleCheckboxChange,
-    handleBack,
-    handleSubmit
-  } = useQMSForm(vendor_onboarding, currentTab);
+  const {formData,handleCheckboxChange,handleBack,handleNext,saveFormDataLocally, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
 
   return (
-    <div>
+    <div className="bg-white">
       <h2 className="text-lg font-bold bg-gray-200 border border-gray-300 p-3">
         SECTION – III: ORGANIZATIONAL STRUCTURE & TRAINING
       </h2>
@@ -27,8 +22,7 @@ export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: s
           name="organizational_chart"
           label="1. Do you have an organizational chart?"
           value={formData.organizational_chart || ""}
-          // onChange={(e) => handleCheckboxChange(e, 'organizational_chart')}
-          onChange={() => { }}
+          onChange={(e) => handleCheckboxChange(e, 'organizational_chart')}
           
         />
 
@@ -36,8 +30,7 @@ export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: s
           name="procedure_for_training"
           label="2. Do you have prodecure for training?"
           value={formData.procedure_for_training || ""}
-          // onChange={(e) => handleCheckboxChange(e, 'procedure_for_training')}
-          onChange={() => { }}
+          onChange={(e) => handleCheckboxChange(e, 'procedure_for_training')}
 
         />
 
@@ -45,8 +38,7 @@ export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: s
           name="maintain_training_records"
           label=" 3. Do you maintain training records?"
           value={formData.maintain_training_records || ""}
-          // onChange={(e) => handleCheckboxChange(e, 'maintain_training_records')}
-          onChange={() => { }}
+          onChange={(e) => handleCheckboxChange(e, 'maintain_training_records')}
 
         />
 
@@ -54,8 +46,7 @@ export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: s
           name="effectiveness_of_training"
           label="4. Do you check the effectiveness of training?"
           value={formData.effectiveness_of_training || ""}
-          // onChange={(e) => handleCheckboxChange(e, 'effectiveness_of_training')}
-          onChange={() => { }}
+          onChange={(e) => handleCheckboxChange(e, 'effectiveness_of_training')}
 
         />
 
@@ -63,8 +54,7 @@ export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: s
           name="written_authority"
           label="5. Do you have written job descriptions / responsibility and authority for all personnel?"
           value={formData.written_authority || ""}
-          // onChange={(e) => handleCheckboxChange(e, 'written_authority')}
-          onChange={() => { }}
+          onChange={(e) => handleCheckboxChange(e, 'written_authority')}
 
         />
       </div>
@@ -82,8 +72,13 @@ export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: s
           variant="nextbtn"
           size="nextbtnsize"
           className="py-2.5"
+          // onClick={() => {
+          //   console.log('Saving form data locally for Organizational tab:', currentTab, 'formData:', formData);
+          //   saveFormDataLocally(currentTab, formData);
+          //   handleNext();
+          // }}
           onClick={handleSubmit}
-        >
+          >
           Next
         </Button>
       </div>
