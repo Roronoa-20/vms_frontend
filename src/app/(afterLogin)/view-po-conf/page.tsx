@@ -1,10 +1,12 @@
-import ViewPOforUSerConfirmation from '@/src/components/pages/ViewPOforUSerConfirmation'
-import React from 'react'
+import React, { Suspense } from "react";
+import ViewPOforUSerConfirmation from "@/src/components/pages/ViewPOforUSerConfirmation";
 
 const page = () => {
   return (
-    <ViewPOforUSerConfirmation/>
-  )
-}
+    <Suspense fallback={<div>Loading PO Details...</div>}>
+      <ViewPOforUSerConfirmation />
+    </Suspense>
+  );
+};
 
-export default page
+export default page;
