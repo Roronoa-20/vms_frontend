@@ -9,12 +9,7 @@ import { useQMSForm } from '@/src/hooks/useQMSForm';
 export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "organizational";
-  const {
-    formData,
-    handleCheckboxChange,
-    handleBack,
-    handleSubmit
-  } = useQMSForm(vendor_onboarding, currentTab);
+  const {formData,handleCheckboxChange,handleBack,handleNext,saveFormDataLocally, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
 
   return (
     <div className="bg-white">
@@ -77,8 +72,13 @@ export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: s
           variant="nextbtn"
           size="nextbtnsize"
           className="py-2.5"
+          // onClick={() => {
+          //   console.log('Saving form data locally for Organizational tab:', currentTab, 'formData:', formData);
+          //   saveFormDataLocally(currentTab, formData);
+          //   handleNext();
+          // }}
           onClick={handleSubmit}
-        >
+          >
           Next
         </Button>
       </div>

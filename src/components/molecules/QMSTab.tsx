@@ -10,10 +10,11 @@ export default function QMSFormTab() {
 
     const vendor_onboarding = params.get('vendor_onboarding') || '';
     const ref_no = params.get('ref_no') || '';
+    const company_code = params.get('company_code') || '';
     const currentTab = (params.get('tabtype') || 'vendor_information').toLowerCase();
 
     const handleTabClick = (key: string) => {
-        router.push(`/qms-form?tabtype=${encodeURIComponent(key)}&vendor_onboarding=${vendor_onboarding}&ref_no=${ref_no}`);
+        router.push(`/qms-form?tabtype=${encodeURIComponent(key)}&vendor_onboarding=${vendor_onboarding}&ref_no=${ref_no}&company_code=${company_code}`);
     };
 
     return (

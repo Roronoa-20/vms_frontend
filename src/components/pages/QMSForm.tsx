@@ -13,20 +13,25 @@ import { QualityForm } from '@/src/components/templates/qms-form/quality-form';
 import { ProductionForm } from '@/src/components/templates/qms-form/production-form';
 import { ComplaintForm } from '@/src/components/templates/qms-form/complaint-form';
 import { SupplementForm } from '@/src/components/templates/qms-form/supplement-form';
-// import { QualityAgreementForm } from '@/src/components/templates/qms-form/quality-agreement-form';
+import { MLSPLQualityAgreementForm } from '@/src/components/templates/qms-form/mlspl-quality-agreement-form';
+import { MDPLQualityAgreementForm } from '@/src/components/templates/qms-form/mdpl-quality-agreement-form';
 
 export default function QMSForm() {
     const params = useSearchParams();
     const tabType = (params.get('tabtype') || 'vendor information').toLowerCase();
     const vendor_onboarding = params.get('vendor_onboarding') || '';
     const ref_no = params.get('ref_no') || '';
+    const company_code = params.get('company_code') || '';
+    const companyCodes = company_code.split(',').map((code) => code.trim());
+    const is2000 = companyCodes.includes('2000');
+    const is7000 = companyCodes.includes('7000');
 
     const renderFormComponent = () => {
         switch (tabType) {
             case 'vendor_information':
-                return <VendorInfoForm vendor_onboarding={vendor_onboarding} ref_no = {ref_no} />;
+                return <VendorInfoForm vendor_onboarding={vendor_onboarding} ref_no={ref_no} company_code={company_code} />;
             case 'qas':
-                return <QASForm vendor_onboarding={vendor_onboarding} ref_no = {ref_no} />;
+                return <QASForm vendor_onboarding={vendor_onboarding} ref_no={ref_no} />;
             case 'organizational':
                 return <OrganizationalForm vendor_onboarding={vendor_onboarding} />;
             case 'building':
@@ -40,9 +45,18 @@ export default function QMSForm() {
             case 'complaint':
                 return <ComplaintForm vendor_onboarding={vendor_onboarding} />;
             case 'supplement':
-                return <SupplementForm vendor_onboarding={vendor_onboarding} />;
-            // case 'quality_agreement':
-            //   return <QualityAgreementForm vendor_onboarding={vendor_onboarding} ref_no={ref_no}/>;
+                return <SupplementForm vendor_onboarding={vendor_onboarding} ref_no={ref_no} company_code={company_code} />;
+            case 'quality_agreement':
+                return (
+                    <>
+                        {is2000 && (
+                            <MLSPLQualityAgreementForm vendor_onboarding={vendor_onboarding} ref_no={ref_no} company_code={company_code}/>
+                        )}
+                        {is7000 && (
+                            <MDPLQualityAgreementForm vendor_onboarding={vendor_onboarding} ref_no={ref_no} company_code={company_code}/>
+                        )}
+                    </>
+                );
             default:
                 return (
                     <div className="text-red-600 font-semibold">
@@ -67,8 +81,6 @@ export default function QMSForm() {
                         <QMSFormTab />
                     </div>
                 </div>
-
-
                 <div className="w-3/4">
                     {renderFormComponent()}
                 </div>

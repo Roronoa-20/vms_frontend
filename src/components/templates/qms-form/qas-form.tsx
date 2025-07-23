@@ -1,5 +1,5 @@
 'use client'
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../../atoms/button";
 import { useSearchParams } from "next/navigation";
 import YesNoNAGroup from '@/src/components/common/YesNoNAGroup';
@@ -7,13 +7,14 @@ import ConditionalTextareaGroup from '@/src/components/common/ConditionalTextare
 import MultiCheckboxGroup from '@/src/components/common/MultiCheckboxGroup';
 import { useQMSForm } from '@/src/hooks/useQMSForm';
 import SingleCheckboxGroup from '@/src/components/common/SingleCheckboxGroup';
+import { useMultiSelectOptions } from "@/src/hooks/useMultiSelectOptions";
+
 
 export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: string; ref_no: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "qas";
-  const { formData, handleBack, handleSubmit, handleMultipleCheckboxChange, handleTextareaChange, handleSingleCheckboxChange } = useQMSForm(vendor_onboarding, currentTab);
-  console.log("FormData at QAS:::", formData);
-
+  const { formData, handleBack, handleNext, saveFormDataLocally, handleMultipleCheckboxChange, handleTextareaChange, handleSingleCheckboxChange, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
+  const multiSelectOptions = useMultiSelectOptions(vendor_onboarding);
 
   return (
     <div className="bg-white">
@@ -26,14 +27,20 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
         <MultiCheckboxGroup
           name="quality_control_system"
           label="1. The Quality Control System is derived to comply with the following(s):"
-          options={["ISO 9001", "ISO 13485", "GMP", "ISO/IEC 17025:2005", "ISO 14001", "ISO 45001", "Others",
-          ]}
+          options={multiSelectOptions.quality_control_system}
+          // selected={
+          //   Array.isArray(formData.quality_control_system)
+          //     ? formData.quality_control_system
+          //     : formData.quality_control_system
+          //       ? [formData.quality_control_system]
+          //       : []
+          // }
           selected={
             Array.isArray(formData.quality_control_system)
-              ? formData.quality_control_system
-              : formData.quality_control_system
-                ? [formData.quality_control_system]
-                : []
+              ? formData.quality_control_system.map((item: any) =>
+                typeof item === "object" ? item.qms_quality_control : item
+              )
+              : []
           }
           onChange={(e) => { handleMultipleCheckboxChange(e, "quality_control_system") }}
           columns={3}
@@ -44,8 +51,12 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           value={formData.others_certificates || ""}
           condition={
             Array.isArray(formData.quality_control_system)
-              ? formData.quality_control_system.includes("Others")
-              : formData.quality_control_system === "Others"
+              ? formData.quality_control_system.some((item: any) =>
+                typeof item === "object"
+                  ? item.qms_quality_control === "Others"
+                  : item === "Others"
+              )
+              : false
           }
           placeholder="Enter the Other Certificates details here"
           onChange={(e) => { handleTextareaChange(e, "others_certificates") }}
@@ -56,7 +67,7 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           label="2. Is your site inspected by:"
           options={["Local health authorities", "Others"]}
           value={formData.sites_inspected_by || ""}
-          onChange={(e)=>{handleSingleCheckboxChange(e,"sites_inspected_by")}}
+          onChange={(e) => { handleSingleCheckboxChange(e, "sites_inspected_by") }}
         />
 
         <ConditionalTextareaGroup
@@ -75,13 +86,20 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
         <MultiCheckboxGroup
           name="have_documentsprocedure"
           label="3. Do you have the following documents/procedures in place:"
-          options={["Quality Management Manual", "Internal Quality Audit", "Change Control", "Corrective and Preventive Action", "Environmental Monitoring", "Risk Management", "Calibration", "Emergency Mitigation Plan",]}
+          options={multiSelectOptions.have_documentsprocedure}
+          // selected={
+          //   Array.isArray(formData.have_documentsprocedure)
+          //     ? formData.have_documentsprocedure
+          //     : formData.have_documentsprocedure
+          //       ? [formData.have_documentsprocedure]
+          //       : []
+          // }
           selected={
             Array.isArray(formData.have_documentsprocedure)
-              ? formData.have_documentsprocedure
-              : formData.have_documentsprocedure
-                ? [formData.have_documentsprocedure]
-                : []
+              ? formData.have_documentsprocedure.map((item: any) =>
+                typeof item === "object" ? item.qms_procedure_doc : item
+              )
+              : []
           }
           onChange={(e) => { handleMultipleCheckboxChange(e, "have_documentsprocedure") }}
           columns={3}
@@ -97,18 +115,20 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           <MultiCheckboxGroup
             name="if_yes_for_prior_notification"
             label="If Yes, tick the particulars in which you agree to provide prior notification:"
-            options={[
-              "Change in the method of manufacturing",
-              "Change in the manufacturing site",
-              "Change in the registration / licensing status of the site",
-              "Change in the Raw Material specification",
-            ]}
+            options={multiSelectOptions.if_yes_for_prior_notification}
+            // selected={
+            //   Array.isArray(formData.if_yes_for_prior_notification)
+            //     ? formData.if_yes_for_prior_notification
+            //     : formData.if_yes_for_prior_notification
+            //       ? [formData.if_yes_for_prior_notification]
+            //       : []
+            // }
             selected={
               Array.isArray(formData.if_yes_for_prior_notification)
-                ? formData.if_yes_for_prior_notification
-                : formData.if_yes_for_prior_notification
-                  ? [formData.if_yes_for_prior_notification]
-                  : []
+                ? formData.if_yes_for_prior_notification.map((item: any) =>
+                  typeof item === "object" ? item.qms_prior_notification : item
+                )
+                : []
             }
             onChange={(e) => { handleMultipleCheckboxChange(e, "if_yes_for_prior_notification") }}
             columns={2}
@@ -150,8 +170,13 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           variant="nextbtn"
           size="nextbtnsize"
           className="py-2.5"
+          // onClick={() => {
+          //   console.log('Saving form data locally for qas tab:', currentTab, 'formData:', formData);
+          //   saveFormDataLocally(currentTab, formData);
+          //   handleNext();
+          // }}
           onClick={handleSubmit}
-        >
+          >
           Next
         </Button>
       </div>

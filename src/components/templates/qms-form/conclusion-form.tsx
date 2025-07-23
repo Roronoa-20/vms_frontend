@@ -5,31 +5,20 @@ import { Label } from "../../atoms/label";
 import { Button } from "../../atoms/button";
 import { Input } from "../../atoms/input";
 import { useSearchParams } from "next/navigation";
-import TextareaWithLabel from '@/src/components/common/TextareaWithLabel';
 import { useQMSForm } from '@/src/hooks/useQMSForm';
 import SignatureCanvas from 'react-signature-canvas';
 
 
-export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
+export const ConclusionForm = ({ vendor_onboarding, ref_no, company_code }: { vendor_onboarding: string; ref_no:string; company_code:string }) => {
     const params = useSearchParams();
     const currentTab = params.get("tabtype")?.toLowerCase() || "conclusion";
     const [showSignatureCanvas, setShowSignatureCanvas] = useState(true);
-    const {
-        formData,
-        handleCheckboxChange,
-        sigCanvas,
-        signaturePreview,
-        handleTextareaChange,
-        handleSaveSignature,
-        handleSignatureUpload,
-        handleClearSignature,
-        handleBack,
-        handleApproval
+    const { formData, handleCheckboxChange, sigRefs, signaturePreview, handleTextareaChange, handleSaveSignature, handleSignatureUpload, handleClearSignature, handleBack, handleApproval
     } = useQMSForm(vendor_onboarding, currentTab);
 
 
     return (
-        <div>
+        <div className="bg-whtie">
             <div className="pb-3">
                 <h2 className="border-b border-slate-500 text-[20px] font-semibold text-[#03111F]">
                     SECTION – X: Outcome of Supplier Assessment
@@ -119,7 +108,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                         {showSignatureCanvas ? (
                             <div className="border border-gray-300 rounded w-[300px] h-[120px] overflow-hidden">
                                 <SignatureCanvas
-                                    ref={sigCanvas}
+                                    ref={sigRefs.performer_esignature}
                                     penColor="black"
                                     canvasProps={{ className: "w-full h-full" }}
                                 />
@@ -139,7 +128,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                                 variant="nextbtn"
                                 size="nextbtnsize"
                                 onClick={() => {
-                                    handleSaveSignature();
+                                    handleSaveSignature("performer_esignature");
                                     setShowSignatureCanvas(false);
                                 }}
                             >
@@ -150,7 +139,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                                 variant="backbtn"
                                 size="backbtnsize"
                                 onClick={() => {
-                                    handleClearSignature();
+                                    handleClearSignature("performer_esignature");
                                     setShowSignatureCanvas(true);
                                 }}
                             >

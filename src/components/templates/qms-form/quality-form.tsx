@@ -8,16 +8,11 @@ import { useQMSForm } from '@/src/hooks/useQMSForm';
 export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "quality";
-  const {
-    formData,
-    handleCheckboxChange,
-    handleBack,
-    handleSubmit
-  } = useQMSForm(vendor_onboarding, currentTab);
+  const {formData,handleCheckboxChange,handleBack,handleNext, saveFormDataLocally, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
 
 
   return (
-    <div>
+    <div className="bg-white">
       <h2 className="text-lg font-bold bg-gray-200 border border-gray-300 p-3">
         SECTION – VI: QUALITY CONTROL
       </h2>
@@ -68,8 +63,13 @@ export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; 
           variant="nextbtn"
           size="nextbtnsize"
           className="py-2.5"
+          // onClick={() => {
+          //   console.log('Saving form data locally for Quality tab:', currentTab, 'formData:', formData);
+          //   saveFormDataLocally(currentTab, formData);
+          //   handleNext();
+          // }}
           onClick={handleSubmit}
-        >
+          >
           Next
         </Button>
       </div>

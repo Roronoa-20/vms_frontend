@@ -16,7 +16,7 @@ export type QMSForm = {
   };
   others_certificates?: string;
   have_documentsprocedure?: {
-    qms_procedure_doc ?: string | string[];
+    qms_procedure_doc?: string | string[];
   };
   if_yes_for_prior_notification?: {
     qms_prior_notification?: string | string[];
@@ -121,6 +121,8 @@ export type VendorQMSForm = {
   owner: string;
   ref_no: string;
   vendor_name1?: string;
+  vendor_name?: string;
+  vendor_title?: string;
   date1?: string;
   name_of_parent_company?: string;
   name_of_manufacturer_of_supplied_material?: string;
@@ -131,7 +133,7 @@ export type VendorQMSForm = {
   quality_control_system?: string | string[];
   others_certificates?: string;
   have_documentsprocedure?: string | string[];
-  if_yes_for_prior_notification?:string | string[];
+  if_yes_for_prior_notification?: string | string[];
   regular_review_of_quality_system?: string;
   sites_inspected_by?: string;
   inspected_by_others?: string;
@@ -157,7 +159,17 @@ export type VendorQMSForm = {
   approved_supplierlist?: string;
   control_and_inspection?: string;
   inspection_reports?: string | string[];
+  products_in_qa?: string | string[];
+  materials_supplied?: string | string[];
+  contact_person_1?: string | string[];
+  contact_person_2?: string | string[];
   agreements?: string;
+  attachments?: {
+    performer_signature?: string;
+  };
+  signatures?: {
+        [key: string]: { signature_data?: string; content?: string } | string;
+    };
   defined_areas?: string;
   qc_independent_of_production?: string;
   testing_laboratories?: string;
@@ -183,13 +195,14 @@ export type VendorQMSForm = {
   retain_complaints_records?: string;
   any_recalls?: string;
   additional_or_supplement_information?: string;
-  quality_manual?: string;
+  quality_manual?: string | File;
   name1?: string;
   title?: string;
   date?: string;
   ssignature?: string;
   signature?: string;
   mdpl_qa_date?: string;
+  mlspl_qa_list?: string | string[];
   supplier_company_name?: string;
   mdpl_qa_vendor_name?: string;
   name_of_person?: string;

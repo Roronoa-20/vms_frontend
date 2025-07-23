@@ -9,16 +9,10 @@ import { useQMSForm } from '@/src/hooks/useQMSForm';
 export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "building";
-  const {
-    formData,
-    handleTextareaChange,
-    handleCheckboxChange,
-    handleBack,
-    handleSubmit
-  } = useQMSForm(vendor_onboarding, currentTab);
+  const { formData, handleTextareaChange, handleCheckboxChange, handleBack, handleNext, saveFormDataLocally, handleSubmit } = useQMSForm(vendor_onboarding, currentTab);
 
   return (
-    <div>
+    <div className="bg-white">
       <h2 className="text-lg font-bold bg-gray-200 border border-gray-300 p-3">
         SECTION – IV: BUILDING & FACILITY
       </h2>
@@ -119,8 +113,13 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           variant="nextbtn"
           size="nextbtnsize"
           className="py-2.5"
+          // onClick={() => {
+          //   console.log('Saving form data locally for Building tab:', currentTab, 'formData:', formData);
+          //   saveFormDataLocally(currentTab, formData);
+          //   handleNext();
+          // }}
           onClick={handleSubmit}
-        >
+          >
           Next
         </Button>
       </div>

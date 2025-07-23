@@ -47,6 +47,6 @@ export const QMSFormTabs = [
   { label: "Production & Process Control", key: "Production" },
   { label: "Complaint and Recalls", key: "Complaint" },
   { label: "Supplemental Information", key: "Supplement" },
-  { label: "Quality Agreement", key: "quality_agreement" }
+  { label: "Quality Agreement", key: "quality_agreement" },
+  // { label: "Quality Agreement", key: "mdpl_quality_agreement" }
 ];
-

@@ -46,9 +46,12 @@ interface DropdownData {
 }
 type Props = {
   Dropdown: DropdownData;
-}
+  pr_codes?: string | null;
+  pr_type?: string | null;
+};
 
-const MaterialRFQ = ({ Dropdown }: Props) => {
+
+const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
   const [formData, setFormData] = useState<Record<string, string | null>>({ rfq_type: "Material Vendor" });
   const [vendorSearchName, setVendorSearchName] = useState('')
   const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
@@ -65,6 +68,7 @@ const MaterialRFQ = ({ Dropdown }: Props) => {
   const [selectedMaterials, setSelectedMaterials] = useState<SelectedMaterial[]>([])
   const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
   const [files, setFiles] = useState<Record<string, File | null>>({});
+
   useEffect(() => {
     const fetchVendorTableData = async (rfq_type: string) => {
       console.log(rfq_type, "rfq_type in table code")
@@ -94,6 +98,17 @@ const MaterialRFQ = ({ Dropdown }: Props) => {
     }
     fetchPRDropdown(formData?.rfq_type ? formData?.rfq_type : "Material Vendor");
   }, []);
+
+  useEffect(() => {
+    if (pr_codes) {
+      console.log("Auto-filling PR number with:", pr_codes);
+      setFormData((prev) => ({
+        ...prev,
+        pr_number: pr_codes
+      }));
+    }
+  }, [pr_codes ?? null]);
+
 
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -179,7 +194,7 @@ const MaterialRFQ = ({ Dropdown }: Props) => {
     </div>
   );
   const handleSubmit = async () => {
-    console.log(selectedMaterials,"selectedMaterials")
+    console.log(selectedMaterials, "selectedMaterials")
     console.log({ ...formData, vendors: selectedRows.vendors, pr_items: selectedMaterials }, "submit data")
     const formdata = new FormData();
     const fullData = {
@@ -199,9 +214,9 @@ const MaterialRFQ = ({ Dropdown }: Props) => {
       formdata.append('file', files['file']);
     }
     const url = `${API_END_POINTS?.CreateMaterialRFQ}`;
-    const response: AxiosResponse = await requestWrapper({ url: url, data:formdata, method: "POST" });
+    const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" });
     if (response?.status == 200) {
-      console.log(response,"response")
+      console.log(response, "response")
       alert("Submit Successfull");
     } else {
       alert("error");
