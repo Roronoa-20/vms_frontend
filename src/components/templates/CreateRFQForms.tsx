@@ -89,7 +89,7 @@ const CreateRFQForms = ({ Dropdown }: Props) => {
           </TabsContent>
 
           <TabsContent value="RfqForService" className="mt-8">
-            <ServiceRFQ Dropdown={Dropdown} />
+            <ServiceRFQ Dropdown={Dropdown} pr_codes={prCodeParam} pr_type={prTypeParam}/>
           </TabsContent>
         </Tabs>
       </div>

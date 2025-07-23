@@ -108,7 +108,10 @@ const API_END_POINTS = {
   addGSTTAbleData: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.update_vendor_onboarding_gst_details`,
   deleteGSTRow: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.delete_vendor_onboarding_gst_row`,
   gstVendorStateDropdown: `${url}/api/method/vms.APIs.master_apis.state_filter.get_states_for_gst`,
-  getPODatainUserConfirmation: `${url}/api/method/vms.APIs.dashboard_api.po_data.get_po_details`
+  getPODatainUserConfirmation: `${url}/api/method/vms.APIs.dashboard_api.po_data.get_po_details`,
+  senduserconfirmationemail: `${url}/api/method/vms.APIs.user_confirmation.user_confirmation.send_po_user_confirmation`,
+  sendaccountsteamemailuserconf: `${url}/api/method/vms.APIs.user_confirmation.user_confirmation.send_payment_release_notification_api`,
+  sendvendoremailonuser: `${url}/api/method/vms.APIs.user_confirmation.user_confirmation.send_vendor_delivery_issue_email`,
 
 };
 
