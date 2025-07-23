@@ -1,4 +1,3 @@
-import React from 'react'
 import { cookies } from 'next/headers'
 import ViewGRNDetails from '@/src/components/templates/ViewGRNDetails'
 import requestWrapper from '@/src/services/apiCall'
@@ -7,16 +6,23 @@ import { AxiosResponse } from 'axios'
 import { GRNForm } from '@/src/types/grntypes'
 
 type GRNDetailsPageProps = {
-  searchParams?: Record<string, string | string[] | undefined>
+  searchParams?: { [key: string]: string | string[] }
 }
 
 const ViewGRNDetailPage = async ({ searchParams }: GRNDetailsPageProps) => {
-  const grn_ref = typeof searchParams?.grn_ref === 'string' ? searchParams.grn_ref : ''
+  // const grn_ref = typeof searchParams?.grn_ref === 'string' ? searchParams.grn_ref : ''
+  const resolvedSearchParams = searchParams instanceof Promise
+    ? await searchParams
+    : searchParams
+
+  const grn_ref = typeof resolvedSearchParams?.grn_ref === 'string'
+    ? resolvedSearchParams.grn_ref
+    : ''
 
   const cookieStore = await cookies()
   const cookieHeaderString = cookieStore
     .getAll()
-    .map(({ name, value }: { name: string; value: string }) => `${name}=${value}`)
+    .map(({ name, value }) => `${name}=${value}`)
     .join('; ')
 
   const response: AxiosResponse = await requestWrapper({
