@@ -6,11 +6,11 @@ import API_END_POINTS from '@/src/services/apiEndPoints';
 import { AxiosResponse } from 'axios';
 import { GRNForm } from '@/src/types/grntypes';
 
-type PageProps = {
-  searchParams?: { grn_ref?: string };
-};
+interface SearchParams {
+  searchParams?: { grn_ref?: string }
+}
 
-const ViewGRNDetailPage = async ({ searchParams }: PageProps) => {
+const ViewGRNDetailPage = async ({ searchParams }: SearchParams) => {
   const grn_ref = searchParams?.grn_ref || '';
 
   const cookieStore = await cookies();
