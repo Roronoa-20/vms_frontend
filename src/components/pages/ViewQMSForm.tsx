@@ -18,7 +18,7 @@ interface Props {
     tabtype: string;
 }
 
-const formComponents: { [key: string]: React.FC<{ vendor_onboarding: string; }> } = {
+const formComponents: { [key: string]: React.ComponentType<any> } = {
     "vendor information": VendorInfoForm,
     qas: QASForm,
     building: BuildingForm,
@@ -31,6 +31,7 @@ const formComponents: { [key: string]: React.FC<{ vendor_onboarding: string; }> 
     QualityAgreement: QualityForm,
     conclusion: ConclusionForm
 };
+
 
 const ViewQMSForm = async ({ vendor_onboarding, tabtype }: Props) => {
     const cookie = await cookies()
