@@ -108,14 +108,15 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     };
 
     const response: AxiosResponse = await requestWrapper({ url: url, data: { data: payload }, method: "POST" });
-    console.log("Enquiry---->",response);
+    console.log("Enquiry---->", response);
     if (response?.status == 200) {
       setFormData(null);
-      // router.push("/dashboard");
       alert("submission successfull");
       const refno = response?.data?.message?.name;
-      router.push(`pr-inquiry?refno=${refno}`)
+      // router.push(`pr-inquiry?refno=${refno}`)
       // router.push(`/dashboard`)
+      const redirectUrl = `/pr-inquiry?refno=${refno}`;
+      window.location.href = redirectUrl;
     } else {
       alert("error");
     }
@@ -194,13 +195,13 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     }
   };
   const formatINRCurrencyRange = (value: string | null): string => {
-  if (!value) return "";
+    if (!value) return "";
 
-  return value
-    .split("-")
-    .map((v) => `₹${v.trim()}`)
-    .join(" - ");
-};
+    return value
+      .split("-")
+      .map((v) => `₹${v.trim()}`)
+      .join(" - ");
+  };
 
 
 
@@ -359,7 +360,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
             Product Price Range
           </h1>
           <Input placeholder="" name='product_price' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_price ?? ""}
- />
+          />
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
@@ -398,8 +399,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
           <Input placeholder="" name='user_specifications' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.user_specifications ?? ""} />
         </div>
         <div className="col-span-1 mt-8">
-          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.asked_to_modify?"":"hidden"}`} onClick={() => handleTableAdd()}>Add</Button>
-          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?"hidden":""}`} onClick={() => handleTableAdd()}>Add</Button>
+          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.asked_to_modify ? "" : "hidden"}`} onClick={() => handleTableAdd()}>Add</Button>
+          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData ? "hidden" : ""}`} onClick={() => handleTableAdd()}>Add</Button>
         </div>
       </div>
       {showTable && (
