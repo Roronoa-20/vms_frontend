@@ -11,8 +11,6 @@ export const MaterialForm = ({ vendor_onboarding }: { vendor_onboarding: string;
   const currentTab = params.get("tabtype")?.toLowerCase() || "material";
   const {
     formData,
-    handleMultipleCheckboxChange,
-    handleCheckboxChange,
     handleBack,
     handleSubmit
   } = useQMSForm(vendor_onboarding, currentTab);
@@ -73,12 +71,14 @@ export const MaterialForm = ({ vendor_onboarding }: { vendor_onboarding: string;
             'Shelf life Test Results',
             'Details whether the lot is Accepted / Rejected',
           ]}
-          // selected={Array.isArray(formData.inspection_reports) ? formData.inspection_reports : formData.inspection_reports ? [formData.inspection_reports] : []}
-          // onChange={(e) => handleMultipleCheckboxChange(e, 'inspection_reports')}
-            selected={Array.isArray(formData.inspection_reports) ? formData.inspection_reports.map(item => item.qms_inspection_report) : []}
-
+          selected={
+            Array.isArray(formData.inspection_reports)
+              ? formData.inspection_reports.map((item: any) => item.qms_inspection_report)
+              : typeof formData.inspection_reports === "string"
+                ? [formData.inspection_reports]
+                : []
+          }
           onChange={() => { }}
-
         />
       </div>
       <div className="flex justify-end space-x-5 items-center">
