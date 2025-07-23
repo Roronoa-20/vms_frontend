@@ -10,7 +10,14 @@ type GRNDetailsPageProps = {
 }
 
 const ViewGRNDetailPage = async ({ searchParams }: GRNDetailsPageProps) => {
-  const grn_ref = typeof searchParams?.grn_ref === 'string' ? searchParams.grn_ref : ''
+  // const grn_ref = typeof searchParams?.grn_ref === 'string' ? searchParams.grn_ref : ''
+  const resolvedSearchParams = searchParams instanceof Promise
+    ? await searchParams
+    : searchParams
+
+  const grn_ref = typeof resolvedSearchParams?.grn_ref === 'string'
+    ? resolvedSearchParams.grn_ref
+    : ''
 
   const cookieStore = await cookies()
   const cookieHeaderString = cookieStore
