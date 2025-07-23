@@ -66,6 +66,7 @@ export interface PurchaseRequisitionDataItem {
   mpn_number_head:string;
   company_code_area_head:string;
   requisitioner_name_head:string;
+  sap_pr_code:string;
 }
 
 

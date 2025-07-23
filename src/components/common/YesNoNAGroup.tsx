@@ -4,7 +4,7 @@ import { Label } from '@/src/components/atoms/label';
 
 interface YesNoNAGroupProps {
   name: string;
-  label: string;
+  label?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>, field: string) => void;
   // disabled?: boolean
