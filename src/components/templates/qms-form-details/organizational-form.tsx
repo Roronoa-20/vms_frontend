@@ -12,8 +12,8 @@ export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: s
   const {
     formData,
     handleCheckboxChange,
-    handleBack,
-    handleSubmit
+    handleBacktab,
+    handleNextTab
   } = useQMSForm(vendor_onboarding, currentTab);
 
   return (
@@ -74,7 +74,7 @@ export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: s
           variant="backbtn"
           size="backbtnsize"
           className="py-2"
-          onClick={handleBack}
+          onClick={handleBacktab}
         >
           Back
         </Button>
@@ -82,7 +82,7 @@ export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: s
           variant="nextbtn"
           size="nextbtnsize"
           className="py-2.5"
-          onClick={handleSubmit}
+          onClick={handleNextTab}
         >
           Next
         </Button>

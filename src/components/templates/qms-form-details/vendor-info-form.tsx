@@ -8,8 +8,9 @@ import { useQMSForm } from '@/src/hooks/useQMSForm';
 
 export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
     const params = useSearchParams();
-    const currentTab = params.get("tabtype")?.toLowerCase() || "vendor information";
-    const { formData, handleTextareaChange, handleSubmit } = useQMSForm(vendor_onboarding, currentTab);
+    const currentTab = params.get("tabtype")?.toLowerCase() || "vendor_information";
+    const { formData, handleTextareaChange,
+    handleNextTab } = useQMSForm(vendor_onboarding, currentTab);
 
     console.log("FormData:", formData);
 
@@ -86,7 +87,7 @@ export const VendorInfoForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                     variant="nextbtn"
                     size="nextbtnsize"
                     className="py-2.5"
-                    onClick={handleSubmit}
+                    onClick={handleNextTab}
                 >
                     Next
                 </Button>
