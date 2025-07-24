@@ -1,6 +1,7 @@
 'use client';
 
 import React from "react";
+import { useSearchParams } from "next/navigation";
 import { VendorInfoForm } from "../templates/qms-form-details/vendor-info-form";
 import { QASForm } from "../templates/qms-form-details/qas-form";
 import { BuildingForm } from "../templates/qms-form-details/building-form";
@@ -35,12 +36,16 @@ const formComponents: { [key: string]: React.ComponentType<any> } = {
   conclusion: ConclusionForm,
 };
 
-const ViewQMSFormClient = ({ vendor_onboarding, tabtype, company_code }: Props) => {
+const ViewQMSFormClient = ({ }) => {
+  const params = useSearchParams();
+  const vendor_onboarding = params.get('vendor_onboarding') || '';
+  const tabtype = params.get('tabtype') || '';
+  const company_code = params.get("company_code") || '';
   const safeTabtype = (tabtype || "vendorinfo").toLowerCase();
   const SelectedForm = formComponents[safeTabtype];
   if (safeTabtype === "quality_agreement") {
     const codes = company_code.split(",").map(code => code.trim());
-     return (
+    return (
       <div>
         <ViewQMSFormDetails vendor_onboarding={vendor_onboarding} />
         <div className="pt-14 p-2">
