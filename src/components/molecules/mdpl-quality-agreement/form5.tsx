@@ -36,7 +36,7 @@ export const Form5 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
         <div className="mt-2 space-x-2">
           <Button
             type="button"
-            onClick={() => handleSaveSignature(field as keyof typeof sigRefs)}
+            onClick={(e) => handleSaveSignature(e,field as keyof typeof sigRefs)}
             className="py-2"
             variant="esignbtn"
             size="esignsize"
@@ -45,7 +45,7 @@ export const Form5 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
           </Button>
           <Button
             type="button"
-            onClick={() => {
+            onClick={(e) => {
               handleClearSignature(field as keyof typeof sigRefs);
               setSignaturePreviews(prev => {
                 const updated = { ...prev };
