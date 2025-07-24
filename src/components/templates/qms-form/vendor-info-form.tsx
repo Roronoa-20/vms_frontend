@@ -89,7 +89,7 @@ export const VendorInfoForm = ({ vendor_onboarding, ref_no, company_code }: { ve
                                             }}
                                         />
                                         <div className="flex gap-2">
-                                            <Button variant="nextbtn" size="nextbtnsize" onClick={() => handleSaveSignature("vendor_signature")}>
+                                            <Button variant="nextbtn" size="nextbtnsize" onClick={(e) => handleSaveSignature(e,("vendor_signature"))}>
                                                 Save
                                             </Button>
                                             <Button variant="backbtn" size="backbtnsize" onClick={() => handleClearSignature("vendor_signature")}>
