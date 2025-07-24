@@ -127,8 +127,8 @@ export const ConclusionForm = ({ vendor_onboarding, ref_no, company_code }: { ve
                             <Button
                                 variant="nextbtn"
                                 size="nextbtnsize"
-                                onClick={() => {
-                                    handleSaveSignature("performer_esignature");
+                                onClick={(e) => {
+                                    handleSaveSignature(e,("performer_esignature"));
                                     setShowSignatureCanvas(false);
                                 }}
                             >

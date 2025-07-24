@@ -6,6 +6,7 @@ import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { VendorQMSForm } from '@/src/types/qmstypes';
 import { QMSFormTabs } from "@/src/constants/vendorDetailSidebarTab";
+import { ViewQMSFormTabs } from "@/src/constants/vendorDetailSidebarTab";
 import SignatureCanvas from 'react-signature-canvas';
 
 
@@ -212,8 +213,7 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
 
 
     const handleSaveSignature = (
-        field: "performer_signature" | "performer_esignature" | "vendor_signature" | "person_signature" | "ssignature" | "meril_signature"
-    ) => {
+e: unknown, field: "performer_signature" | "performer_esignature" | "vendor_signature" | "person_signature" | "ssignature" | "meril_signature"    ) => {
         const canvasRef = sigRefs[field];
         if (canvasRef.current) {
             const trimmedCanvas = canvasRef.current.getTrimmedCanvas();
@@ -549,6 +549,28 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         }
     };
 
+    const handleNextTab = () => {
+        saveFormDataLocally(currentTab, formData);
+        const currentIndex = ViewQMSFormTabs.findIndex((tab) => tab.key.toLowerCase() === currentTab.toLowerCase());
+        const nextTab = ViewQMSFormTabs[currentIndex + 1]?.key;
+
+        if (nextTab) {
+            router.push(`/qms-form-details?tabtype=${encodeURIComponent(nextTab)}&vendor_onboarding=${vendor_onboarding}&company_code=${company_code}`);
+        }
+    };
+
+     const handleBacktab = () => {
+        saveFormDataLocally(currentTab, formData);
+        const currentIndex = ViewQMSFormTabs.findIndex(tab => tab.key.toLowerCase() === currentTab.toLowerCase());
+        const backTab = ViewQMSFormTabs[currentIndex - 1]?.key;
+
+        if (backTab) {
+            router.push(`/qms-form-details?tabtype=${encodeURIComponent(backTab)}&vendor_onboarding=${vendor_onboarding}&company_code=${company_code}`);
+        } else {
+            alert('You’re at the first tab.');
+        }
+    };
+
     const handleSignatureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -579,6 +601,6 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
     };
 
     return {
-        formData, setFormData, handleTextareaChange, handleSingleCheckboxChange, handleMultipleCheckboxChange, handleRadioboxChange: handleSingleCheckboxChange, handleSubmit, handleBack, handleCheckboxChange, handleSaveSignature, handleClearSignature, handleSignatureUpload, signaturePreview, sigRefs, handleApproval, handleNewMultipleCheckboxChange, setSignaturePreview, documentTypes, selectedDocumentType, setSelectedDocumentType, handleDocumentTypeChange, handleAdd, clearFileSelection, handleFileUpload, handleDelete, tableData, fileSelected, fileName, handleRemoveFile, signaturePreviews, setSignaturePreviews, handleNext, savedFormsData, setSavedFormsData, saveFormDataLocally, handleDateChange,sigCanvas
+        formData, setFormData, handleTextareaChange, handleSingleCheckboxChange, handleMultipleCheckboxChange, handleRadioboxChange: handleSingleCheckboxChange, handleSubmit, handleBack, handleCheckboxChange, handleSaveSignature, handleClearSignature, handleSignatureUpload, signaturePreview, sigRefs, handleApproval, handleNewMultipleCheckboxChange, setSignaturePreview, documentTypes, selectedDocumentType, setSelectedDocumentType, handleDocumentTypeChange, handleAdd, clearFileSelection, handleFileUpload, handleDelete, tableData, fileSelected, fileName, handleRemoveFile, signaturePreviews, setSignaturePreviews, handleNext, savedFormsData, setSavedFormsData, saveFormDataLocally, handleDateChange,sigCanvas, handleNextTab, handleBacktab
     };
 };

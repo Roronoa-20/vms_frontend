@@ -17,13 +17,13 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
     const {
         formData,
         handleCheckboxChange,
-        sigCanvas,
+        sigRefs,
         signaturePreview,
         handleTextareaChange,
         handleSaveSignature,
         handleSignatureUpload,
         handleClearSignature,
-        handleBack,
+        handleBacktab,
         handleApproval
     } = useQMSForm(vendor_onboarding, currentTab);
 
@@ -119,7 +119,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                         {showSignatureCanvas ? (
                             <div className="border border-gray-300 rounded w-[300px] h-[120px] overflow-hidden">
                                 <SignatureCanvas
-                                    ref={sigCanvas}
+                                    ref={sigRefs.performer_esignature}
                                     penColor="black"
                                     canvasProps={{ className: "w-full h-full" }}
                                 />
@@ -138,8 +138,8 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                             <Button
                                 variant="nextbtn"
                                 size="nextbtnsize"
-                                onClick={() => {
-                                    handleSaveSignature();
+                                onClick={(e) => {
+                                    handleSaveSignature(e, ("performer_esignature"));
                                     setShowSignatureCanvas(false);
                                 }}
                             >
@@ -150,7 +150,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                                 variant="backbtn"
                                 size="backbtnsize"
                                 onClick={() => {
-                                    handleClearSignature();
+                                    handleClearSignature("performer_esignature");
                                     setShowSignatureCanvas(true);
                                 }}
                             >
@@ -178,7 +178,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                     variant="backbtn"
                     size="backbtnsize"
                     className=""
-                    onClick={handleBack}
+                    onClick={handleBacktab}
                 >
                     Back
                 </Button>

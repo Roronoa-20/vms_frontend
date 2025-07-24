@@ -10,7 +10,8 @@ import { Button } from "../../atoms/button";
 export const SupplementForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "supplement";
-  const {formData, handleBack, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
+  const {formData, handleBacktab,
+    handleNextTab} = useQMSForm(vendor_onboarding, currentTab);
 
   return (
     <div>
@@ -45,7 +46,7 @@ export const SupplementForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           variant="backbtn"
           size="backbtnsize"
           className="py-2"
-          onClick={handleBack}
+          onClick={handleBacktab}
         >
           Back
         </Button>
@@ -53,7 +54,7 @@ export const SupplementForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           variant="nextbtn"
           size="nextbtnsize"
           className="py-2.5"
-          onClick={handleSubmit}
+          onClick={handleNextTab}
         >
           Next
         </Button>
