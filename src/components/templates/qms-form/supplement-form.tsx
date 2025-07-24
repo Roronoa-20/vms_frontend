@@ -140,7 +140,7 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
 
                 {!signaturePreviews["ssignature"] && (
                   <div className="mt-2 space-x-2">
-                    <Button variant="esignbtn" size="esignsize" onClick={() => handleSaveSignature("ssignature")} className="py-2">
+                    <Button variant="esignbtn" size="esignsize" onClick={(e) => handleSaveSignature(e,("ssignature"))} className="py-2">
                       Save Signature
                     </Button>
                     <Button variant="clearesignbtn" size="clearesignsize"
