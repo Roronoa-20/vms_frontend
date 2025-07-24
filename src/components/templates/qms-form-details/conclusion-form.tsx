@@ -23,7 +23,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
         handleSaveSignature,
         handleSignatureUpload,
         handleClearSignature,
-        handleBack,
+        handleBacktab,
         handleApproval
     } = useQMSForm(vendor_onboarding, currentTab);
 
@@ -134,12 +134,12 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                             )
                         )}
 
-                        {/* <div className="mt-2 space-x-2">
+                        <div className="mt-2 space-x-2">
                             <Button
                                 variant="nextbtn"
                                 size="nextbtnsize"
-                                onClick={() => {
-                                    handleSaveSignature();
+                                onClick={(e) => {
+                                    handleSaveSignature(e, ("performer_esignature"));
                                     setShowSignatureCanvas(false);
                                 }}
                             >
@@ -150,13 +150,13 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                                 variant="backbtn"
                                 size="backbtnsize"
                                 onClick={() => {
-                                    handleClearSignature();
+                                    handleClearSignature("performer_esignature");
                                     setShowSignatureCanvas(true);
                                 }}
                             >
                                 Clear
                             </Button>
-                        </div> */}
+                        </div>
                     </div>
 
                     <div className="flex flex-col">
@@ -178,7 +178,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                     variant="backbtn"
                     size="backbtnsize"
                     className=""
-                    onClick={handleBack}
+                    onClick={handleBacktab}
                 >
                     Back
                 </Button>

@@ -115,6 +115,13 @@ export type TqmsformDetail = {
   };
 };
 
+interface MLSPLQAItem {
+  document_type: string;
+  qa_attachment: string;
+  name: string;
+  [key: string]: any;
+}
+
 export type VendorQMSForm = {
   name: string;
   creation: string;
@@ -202,7 +209,8 @@ export type VendorQMSForm = {
   ssignature?: string;
   signature?: string;
   mdpl_qa_date?: string;
-  mlspl_qa_list?: string | string[];
+  // mlspl_qa_list?: string | string[];
+  mlspl_qa_list?: MLSPLQAItem[];
   supplier_company_name?: string;
   mdpl_qa_vendor_name?: string;
   name_of_person?: string;
