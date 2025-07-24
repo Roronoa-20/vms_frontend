@@ -200,7 +200,7 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
           // }}
           onClick={handleSubmit}
           >
-          Next
+          {is7000 ? 'Submit' : 'Next'}
         </Button>
       </div>
     </div>

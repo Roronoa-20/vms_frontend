@@ -8,7 +8,7 @@ import { useQMSForm } from '@/src/hooks/useQMSForm';
 export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "quality";
-  const {formData,handleCheckboxChange,handleBack,handleNext, saveFormDataLocally, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
+  const {formData,handleCheckboxChange,handleBack, handleNext, saveFormDataLocally, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
 
 
   return (
