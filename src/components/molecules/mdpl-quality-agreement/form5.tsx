@@ -10,83 +10,11 @@ import { useSearchParams } from 'next/navigation';
 export const Form5 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "vendor_information";
-  const { formData, setFormData, handleSaveSignature, handleClearSignature, sigRefs, signaturePreviews, setSignaturePreviews, handleTextareaChange, handleDateChange } = useQMSForm(vendor_onboarding, currentTab);
+  const { formData, setFormData, handleSaveSignature, handleClearSignature, sigRefs, signaturePreviews, handleTextareaChange, handleDateChange } = useQMSForm(vendor_onboarding, currentTab);
   const [signedDate, setSignedDate] = useState(formData?.signed_date || '');
   const [merilSignedDate, setMerilSignedDate] = useState(formData?.meril_signed_date || '');
 
-  const leftSigField = "person_signature";
-  const rightSigField = "meril_signature";
-
   const vendorNameInputValue = formData.mdpl_qa_vendor_name || formData.vendor_name1 || '';
-
-  const renderSignature = (field: string) => {
-    const isSigned = signaturePreviews[field];
-
-    return !isSigned ? (
-      <>
-        <SignatureCanvas
-          ref={sigRefs[field as keyof typeof sigRefs]}
-          penColor="black"
-          canvasProps={{
-            width: 400,
-            height: 150,
-            className: 'border border-gray-300 rounded-[8px]'
-          }}
-        />
-        <div className="mt-2 space-x-2">
-          <Button
-            type="button"
-            onClick={(e) => handleSaveSignature(e,field as keyof typeof sigRefs)}
-            className="py-2"
-            variant="esignbtn"
-            size="esignsize"
-          >
-            Save Signature
-          </Button>
-          <Button
-            type="button"
-            onClick={(e) => {
-              handleClearSignature(field as keyof typeof sigRefs);
-              setSignaturePreviews(prev => {
-                const updated = { ...prev };
-                delete updated[field];
-                return updated;
-              });
-            }}
-            className="py-2"
-            variant="clearesignbtn"
-            size="clearesignsize"
-          >
-            Clear Signature
-          </Button>
-        </div>
-      </>
-    ) : (
-      <div className="flex flex-col mt-2 items-start">
-        <img
-          src={signaturePreviews[field]}
-          alt="Signature Preview"
-          className="w-[400px] h-[150px] object-contain border border-gray-300 rounded-[8px]"
-        />
-        <div className="mt-2">
-          <Button
-            type="button"
-            onClick={() => {
-              handleClearSignature(field as keyof typeof sigRefs);
-              setSignaturePreviews(prev => {
-                const updated = { ...prev };
-                delete updated[field];
-                return updated;
-              });
-            }}
-            className="text-red bg-white hover:bg-white border border-gray-300 rounded px-2 py-1"
-          >
-            ❌ Clear
-          </Button>
-        </div>
-      </div>
-    );
-  };
 
   useEffect(() => {
     setFormData((prev) => ({
@@ -179,12 +107,79 @@ export const Form5 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
 
                 {/* Signatures */}
                 <div className="border-b-[1px] border-black p-1 flex flex-col">
-                  <Label className='p-1 text-[14px]'>Signature:</Label>
-                  {renderSignature(leftSigField)}
+                  <Label className='p-1 text-[14px]'>Vendor Signature:</Label>
+                  <div className="flex flex-col mt-4">
+                    {!signaturePreviews["person_signature"] && (
+                      <SignatureCanvas
+                        ref={sigRefs.person_signature}
+                        penColor="black"
+                        canvasProps={{ width: 400, height: 150, className: 'border border-gray-300' }}
+                      />
+                    )}
+
+                    {!signaturePreviews["person_signature"] && (
+                      <div className="mt-2 space-x-2">
+                        <Button variant="esignbtn" size="esignsize" onClick={(e) => handleSaveSignature(e, ("person_signature"))} className="py-2">
+                          Save Signature
+                        </Button>
+                        <Button variant="clearesignbtn" size="clearesignsize"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleClearSignature("person_signature");
+                          }}
+                          className="py-2">
+                          Clear Signature
+                        </Button>
+                      </div>
+                    )}
+
+                    {signaturePreviews["person_signature"] && (
+                      <div className="flex items-center mt-2">
+                        <img src={signaturePreviews["person_signature"]} alt="Signature Preview" className="w-40 h-20 object-contain" />
+                        <Button onClick={() => handleClearSignature("person_signature")} className="ml-2 text-red-500 cursor-pointer">
+                          &#x2715;
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
+
                 <div className="border-b-[1px] border-l-[1px] border-black p-1 flex flex-col">
                   <Label className='p-1 text-[14px]'>Signature:</Label>
-                  {renderSignature(rightSigField)}
+                  <div className="flex flex-col mt-4">
+                    {!signaturePreviews["meril_signature"] && (
+                      <SignatureCanvas
+                        ref={sigRefs.meril_signature}
+                        penColor="black"
+                        canvasProps={{ width: 400, height: 150, className: 'border border-gray-300' }}
+                      />
+                    )}
+
+                    {!signaturePreviews["meril_signature"] && (
+                      <div className="mt-2 space-x-2">
+                        <Button variant="esignbtn" size="esignsize" onClick={(e) => handleSaveSignature(e, ("meril_signature"))} className="py-2">
+                          Save Signature
+                        </Button>
+                        <Button variant="clearesignbtn" size="clearesignsize"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleClearSignature("meril_signature");
+                          }}
+                          className="py-2">
+                          Clear Signature
+                        </Button>
+                      </div>
+                    )}
+
+                    {signaturePreviews["meril_signature"] && (
+                      <div className="flex items-center mt-2">
+                        <img src={signaturePreviews["meril_signature"]} alt="Signature Preview" className="w-40 h-20 object-contain" />
+                        <Button onClick={() => handleClearSignature("meril_signature")} className="ml-2 text-red-500 cursor-pointer">
+                          &#x2715;
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Dates */}
@@ -211,6 +206,16 @@ export const Form5 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
               </div>
             </div>
           </section>
+          <Button
+            onClick={() => {
+              console.log("🔥 Form 5 Data Preview:", formData);
+              alert("Check the console! 🔍");
+            }}
+            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Preview Form 5 Data
+          </Button>
+
           <section className="items-center">
             <div className="text-center text-lg font-semibold mt-[400px]">Page 5 of 7</div>
           </section>

@@ -83,8 +83,30 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
     }, [vendor_onboarding]);
 
     useEffect(() => {
-        if (Array.isArray(formData?.mlspl_qa_list) && formData.mlspl_qa_list.length) {
-            setTableData(formData.mlspl_qa_list);
+        if (savedFormsData[currentTab]) {
+            setFormData(savedFormsData[currentTab]);
+            console.log(`Hydrated form data from savedFormsData for tab: ${currentTab}`);
+        }
+    }, [currentTab]);
+
+
+    // useEffect(() => {
+    //     const qaList = formData?.mlspl_qa_list;
+    //     if (Array.isArray(qaList) && qaList.length > 0) {
+    //         setTableData(qaList);
+    //     } else {
+    //         setTableData([]);
+    //     }
+    // }, [formData]);
+
+    useEffect(() => {
+        if (Array.isArray(formData?.mlspl_qa_list)) {
+            const normalized = formData.mlspl_qa_list.map((item) => ({
+                document_type: item.document_type || item.option || "",
+                fileURL: item.qa_attachment || item.document_template || "",
+                fileName: (item.qa_attachment || item.document_template || "").split("/").pop(),
+            }));
+            setTableData(normalized);
         } else {
             setTableData([]);
         }
@@ -136,7 +158,7 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         setTableData([
             ...tableData,
             {
-                option: selectedDocumentType,
+                document_type: selectedDocumentType,
                 fileName,
                 fileURL,
             },
@@ -188,32 +210,8 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         }
     };
 
-    // const handleSaveSignature = (field: keyof typeof sigRefs) => {
-    //     const canvasRef = sigRefs[field];
-    //     if (canvasRef.current) {
-    //         const trimmedCanvas = canvasRef.current.getTrimmedCanvas();
-    //         const signatureData = trimmedCanvas.toDataURL('image/png');
-
-    //         setFormData((prev) => ({
-    //             ...prev,
-    //             signatures: {
-    //                 ...(prev.signatures || {}),
-    //                 [field]: {
-    //                     signature_data: signatureData,
-    //                 },
-    //             },
-    //         }));
-
-    //         setSignaturePreviews((prev) => ({
-    //             ...prev,
-    //             [field]: signatureData,
-    //         }));
-    //     }
-    // };
-
-
     const handleSaveSignature = (
-e: unknown, field: "performer_signature" | "performer_esignature" | "vendor_signature" | "person_signature" | "ssignature" | "meril_signature"    ) => {
+        e: unknown, field: "performer_signature" | "performer_esignature" | "vendor_signature" | "person_signature" | "ssignature" | "meril_signature") => {
         const canvasRef = sigRefs[field];
         if (canvasRef.current) {
             const trimmedCanvas = canvasRef.current.getTrimmedCanvas();
@@ -252,7 +250,6 @@ e: unknown, field: "performer_signature" | "performer_esignature" | "vendor_sign
                         },
                     };
                 }
-                // saveFormDataLocally(currentTab, newFormData);
                 formDataRef.current = newFormData
                 return newFormData;
             });
@@ -275,10 +272,6 @@ e: unknown, field: "performer_signature" | "performer_esignature" | "vendor_sign
         }
     };
 
-    // const handleTextareaChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: keyof VendorQMSForm) => {
-    //     const { value } = e.target;
-    //     setFormData((prev) => ({ ...prev, [field]: value }));
-    // };
 
     const handleTextareaChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -290,6 +283,13 @@ e: unknown, field: "performer_signature" | "performer_esignature" | "vendor_sign
             formDataRef.current = updated;
             return updated;
         });
+    };
+
+    const handleChange = (field: string, value: string) => {
+        setFormData((prev: any) => ({
+            ...prev,
+            [field]: value,
+        }));
     };
 
 
@@ -335,7 +335,6 @@ e: unknown, field: "performer_signature" | "performer_esignature" | "vendor_sign
         });
 
     const handleSubmit = async () => {
-        // return
         try {
             let qualityManualPayload = null;
             let qualityManualFile: File | null = null;
@@ -384,10 +383,27 @@ e: unknown, field: "performer_signature" | "performer_esignature" | "vendor_sign
                 companyPayload.for_company_7000 = "1";
             }
 
-            const isLastTab = QMSFormTabs[QMSFormTabs.length - 1].key.toLowerCase() === currentTab.toLowerCase();
+            let effectiveLastTabKey = QMSFormTabs[QMSFormTabs.length - 1].key.toLowerCase();
+
+            if (company_code === "7000") {
+                const supplementTab = QMSFormTabs.find(tab => tab.key.toLowerCase() === "supplement");
+                if (supplementTab) {
+                    effectiveLastTabKey = supplementTab.key.toLowerCase();
+                }
+            }
+
+            const isLastTab = effectiveLastTabKey === currentTab.toLowerCase();
+
             if (isLastTab) {
                 companyPayload.form_fully_submitted = "1";
             }
+            console.log("Formdata--->", formData);
+            console.log("Formdata--->", companyPayload);
+            console.log("Formdata--->", formData.date);
+            console.log("Formdata--->", qaList);
+            console.log("Formdata--->", qualityManualFile);
+            console.log("Formdata--->", formData.products_in_qa);
+
 
             const payload = {
                 vendor_onboarding,
@@ -398,8 +414,11 @@ e: unknown, field: "performer_signature" | "performer_esignature" | "vendor_sign
                     // ...formDataRef.current,
                     mdpl_qa_date: formData.date,
                     quality_manual: qualityManualFile?.name || "",
+                    contact_person_1: formData.contact_person_1,
+                    contact_person_2: formData.contact_person_2,
                     mlspl_qa_list: qaList,
-                    products_in_qa: formData.materials_supplied || [],
+                    products_in_qa: formData.products_in_qa || [],
+
                 },
                 // signatures: formData.signatures || {},
                 signatures: Object.entries(formData.signatures || {}).reduce((acc, [key, value]) => {
@@ -430,9 +449,12 @@ e: unknown, field: "performer_signature" | "performer_esignature" | "vendor_sign
             if (result?.message?.status === "success") {
                 if (isLastTab) {
                     alert("This is the last tab and your QMS Form is fully submitted.");
+                    window.location.href = "/qms-form/success";
+                } else {
+                    handleNext();
                 }
-                handleNext();
-            } else {
+            }
+            else {
                 alert("Something went wrong.");
             }
         } catch (error) {
@@ -440,92 +462,6 @@ e: unknown, field: "performer_signature" | "performer_esignature" | "vendor_sign
             alert("Unexpected error occurred.");
         }
     };
-
-    // const handleSubmit = async () => {
-    //     console.log("All Saved Forms Data:", savedFormsData);
-    //     // saveFormDataLocally(currentTab, formData);
-    //     try {
-    //         const updatedFormsData = {
-    //             ...savedFormsData,
-    //             [currentTab]: formData,
-    //         };
-    //         const mergedData = Object.values(updatedFormsData).reduce(
-    //             (acc, tabData) => {
-    //                 const { signatures, ...rest } = tabData;
-    //                 return {
-    //                     ...acc,
-    //                     ...rest,
-    //                     signatures: {
-    //                         ...acc.signatures,
-    //                         ...signatures,
-    //                     },
-    //                 };
-    //             },
-    //             { signatures: {} }
-    //         );
-    //         console.log("Merged Signatures", Object.keys(mergedData.signatures || {}));
-    //         const companyCodes = company_code.split(",").map(code => code.trim());
-    //         const companyPayload: Record<string, string> = {};
-
-    //         if (companyCodes.includes("2000")) companyPayload.for_company_2000 = "1";
-    //         if (companyCodes.includes("7000")) companyPayload.for_company_7000 = "1";
-
-    //         const isLastTab = QMSFormTabs[QMSFormTabs.length - 1].key.toLowerCase() === currentTab.toLowerCase();
-    //         if (isLastTab) companyPayload.form_fully_submitted = "1";
-    //         const qaList = await Promise.all(
-    //             tableData.map(async (item) => {
-    //                 const response = await fetch(item.fileURL);
-    //                 const blob = await response.blob();
-    //                 const base64 = await convertToBase64(blob);
-
-    //                 return {
-    //                     document_type: item.option,
-    //                     file: {
-    //                         // content: base64.split(",")[1],
-    //                         filename: item.fileName,
-    //                         // content_type: blob.type,
-    //                     },
-    //                 };
-    //             })
-    //         );
-
-    //         const finalPayload = {
-    //             vendor_onboarding,
-    //             ref_no,
-    //             data: {
-    //                 ...mergedData,
-    //                 ...companyPayload,
-    //                 mlspl_qa_list: qaList,
-    //                 signatures: mergedData.signatures || {},
-    //             },
-    //         };
-    //         console.log("Signatures in final payload:", finalPayload.data.signatures || mergedData.signatures);
-    //         console.log("Final Payload before API", finalPayload);
-    //         // return
-    //         const res = await fetch(API_END_POINTS.qmsformsubmit, {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //             },
-    //             body: JSON.stringify(finalPayload),
-    //         });
-
-    //         const result = await res.json();
-    //         console.log("Result of API-->", result)
-
-    //         if (result?.message?.status === "success") {
-    //             console.log("QMS Form submitted successfully");
-    //             alert("QMS Form submitted successfully");
-    //             handleNext();
-
-    //         } else {
-    //             console.error("Error submitting form:", res.statusText);
-    //         }
-
-    //     } catch (error) {
-    //         console.error("Submission Error:", error);
-    //     }
-    // };
 
     const handleNext = () => {
         saveFormDataLocally(currentTab, formData);
@@ -559,7 +495,7 @@ e: unknown, field: "performer_signature" | "performer_esignature" | "vendor_sign
         }
     };
 
-     const handleBacktab = () => {
+    const handleBacktab = () => {
         saveFormDataLocally(currentTab, formData);
         const currentIndex = ViewQMSFormTabs.findIndex(tab => tab.key.toLowerCase() === currentTab.toLowerCase());
         const backTab = ViewQMSFormTabs[currentIndex - 1]?.key;
@@ -601,6 +537,6 @@ e: unknown, field: "performer_signature" | "performer_esignature" | "vendor_sign
     };
 
     return {
-        formData, setFormData, handleTextareaChange, handleSingleCheckboxChange, handleMultipleCheckboxChange, handleRadioboxChange: handleSingleCheckboxChange, handleSubmit, handleBack, handleCheckboxChange, handleSaveSignature, handleClearSignature, handleSignatureUpload, signaturePreview, sigRefs, handleApproval, handleNewMultipleCheckboxChange, setSignaturePreview, documentTypes, selectedDocumentType, setSelectedDocumentType, handleDocumentTypeChange, handleAdd, clearFileSelection, handleFileUpload, handleDelete, tableData, fileSelected, fileName, handleRemoveFile, signaturePreviews, setSignaturePreviews, handleNext, savedFormsData, setSavedFormsData, saveFormDataLocally, handleDateChange,sigCanvas, handleNextTab, handleBacktab
+        formData, setFormData, handleTextareaChange, handleSingleCheckboxChange, handleMultipleCheckboxChange, handleRadioboxChange: handleSingleCheckboxChange, handleSubmit, handleBack, handleCheckboxChange, handleSaveSignature, handleClearSignature, handleSignatureUpload, signaturePreview, sigRefs, handleApproval, handleNewMultipleCheckboxChange, setSignaturePreview, documentTypes, selectedDocumentType, setSelectedDocumentType, handleDocumentTypeChange, handleAdd, clearFileSelection, handleFileUpload, handleDelete, tableData, fileSelected, fileName, handleRemoveFile, signaturePreviews, setSignaturePreviews, handleNext, savedFormsData, setSavedFormsData, saveFormDataLocally, handleDateChange, sigCanvas, handleNextTab, handleBacktab, handleChange
     };
 };

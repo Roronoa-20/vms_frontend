@@ -3,6 +3,7 @@ import Header from "@/src/components/molecules/mdpl-quality-agreement/header";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useQMSForm } from "@/src/hooks/useQMSForm";
 import { useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export const Form6 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
   const params = useSearchParams();
@@ -103,6 +104,15 @@ export const Form6 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
               </div>
             </div>
           </section>
+          <Button
+            onClick={() => {
+              console.log("🔥 Form 5 Data Preview:", formData);
+              alert("Check the console! 🔍");
+            }}
+            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Preview Form 5 Data
+          </Button>
           <section className="items-center">
             <div className="text-center text-lg font-semibold mt-[400px]">
               Page 6 of 7

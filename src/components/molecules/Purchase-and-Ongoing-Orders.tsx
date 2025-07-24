@@ -86,7 +86,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
     }
   },[selectedVendorCode,debouncedSearchName,currentPage])
   
-  
+  console.log("PO Table Data--->", tableData)
   
   
   const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -185,7 +185,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="apple">Apple</SelectItem>
+                <SelectItem value="">Release</SelectItem>
                 <SelectItem value="banana">Banana</SelectItem>
                 <SelectItem value="blueberry">Blueberry</SelectItem>
                 <SelectItem value="grapes">Grapes</SelectItem>
