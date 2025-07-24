@@ -93,25 +93,25 @@ export interface MaterialCode {
 }
 
 export interface serviceCode {
-  name:string,
-  service_code:string,
-  service_name:string
+  name: string,
+  service_code: string,
+  service_name: string
 }
 
-export interface serviceCategory { 
-  name:string,
-  service_category_name:string
+export interface serviceCategory {
+  name: string,
+  service_category_name: string
 }
 
 export interface plantCode {
-  name:string,
-  plant_name:string
+  name: string,
+  plant_name: string
 }
 
 export interface quantityUnit {
-  name:string,
-  quantity_unit_name:string
-} 
+  name: string,
+  quantity_unit_name: string
+}
 
 // Account Assignment Category
 export interface AccountAssignmentCategory {
@@ -127,6 +127,8 @@ export interface PurchaseGroup {
   purchase_group_code: string;
   purchase_group_name: string;
   description: string;
+  company:string;
+  purchase_group:string
 }
 
 export interface PurchaseOrganisation {
@@ -155,12 +157,30 @@ export interface StoreLocation {
   store_location_name: string;
   description: string;
 }
+
+export interface StorageLocation {
+  name: string;
+  storage_name: string;
+  storage_location_name: string;
+  storage_location: string;
+  description: string;
+  company: string;
+}
+
 export interface ValuationArea {
   name: string;
   valuation_area_code: string;
   valuation_area_name: string;
   description: string;
 }
+
+export interface ValuationClass {
+  name: string;
+  valuation_class_code: string;
+  valuation_class_name: string;
+  description: string;
+}
+
 export interface UOMMaster {
   name: string;
   uom_code: string;
@@ -250,20 +270,21 @@ export type PurchaseRequestDropdown = {
     purchase_organisation: PurchaseOrganisation[];
     currency_master: Currency[];
     store_location: StoreLocation[];
+    storage_location: StorageLocation[];
     valuation_area: ValuationArea[];
-    product_category:ProductCategory[];
-    mode_of_shipment:ModeOfShipment[];
-    destination_port:DestinationPort[];
-    country_master:Country[];
-    port_master:PortCode[];
-    port_of_loading:PortOfLoading[];
-    incoterm_master:IncoTerms[];
-    package_type:PackageType[];
-    rfq_type:RFQType[];
-    service_code:serviceCode[];
-  service_category:serviceCategory[]
-  plant_code:plantCode[];
-  quantity_unit:quantityUnit[]
+    product_category: ProductCategory[];
+    mode_of_shipment: ModeOfShipment[];
+    destination_port: DestinationPort[];
+    country_master: Country[];
+    port_master: PortCode[];
+    port_of_loading: PortOfLoading[];
+    incoterm_master: IncoTerms[];
+    package_type: PackageType[];
+    rfq_type: RFQType[];
+    service_code: serviceCode[];
+    service_category: serviceCategory[]
+    plant_code: plantCode[];
+    quantity_unit: quantityUnit[]
   }
 }
 

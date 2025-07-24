@@ -22,7 +22,7 @@ import {
 import API_END_POINTS from '@/src/services/apiEndPoints';
 import { AxiosResponse } from 'axios';
 import requestWrapper from '@/src/services/apiCall';
-import { AccountAssignmentCategory, ItemCategoryMaster, MaterialGroupMaster, PurchaseGroup, PurchaseOrganisation, StoreLocation, UOMMaster, ValuationArea } from '@/src/types/PurchaseRequestType';
+import { AccountAssignmentCategory, ItemCategoryMaster, MaterialGroupMaster, PurchaseGroup, PurchaseOrganisation, StorageLocation, StoreLocation, UOMMaster, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType';
 
 interface DropdownData {
   purchase_organisation: PurchaseOrganisation[];
@@ -33,6 +33,8 @@ interface DropdownData {
   purchase_group: PurchaseGroup[];
   store_location: StoreLocation[];
   valuation_area: ValuationArea[];
+  // valuation_class: ValuationClass[];
+
 }
 
 interface EditItemModalProps {
@@ -42,6 +44,11 @@ interface EditItemModalProps {
   Dropdown: DropdownData;
   defaultData: Record<string, any> | undefined;
   pur_req: string;
+  PurchaseGroupDropdown: PurchaseGroup[]
+  StorageLocationDropdown: StorageLocation[]
+  ValuationClassDropdown: ValuationClass[]
+  PurchaseOrgDropdown: PurchaseOrganisation[]
+  MaterialGroupDropdown: MaterialGroupMaster[]
 }
 
 const EditSBItemModal: React.FC<EditItemModalProps> = ({
@@ -50,7 +57,12 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
   fetchTableData,
   Dropdown,
   defaultData,
-  pur_req
+  pur_req,
+  PurchaseGroupDropdown,
+  StorageLocationDropdown,
+  ValuationClassDropdown,
+  PurchaseOrgDropdown,
+  MaterialGroupDropdown
 }) => {
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, boolean>>({});
@@ -139,8 +151,8 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
 
   // ✅ Typed input and select field arrays with `as const`
   const inputFields = [
-    ["status_head", "Status"],
-    ["item_number_of_purchase_requisition_head", "Item Number of Purchase Requisition"],
+    // ["status_head", "Status"],
+    // ["item_number_of_purchase_requisition_head", "Item Number of Purchase Requisition"],
     ["purchase_requisition_date_head", "Purchase Requisition Date", "date"],
     ["short_text_head", "Short Text"],
     ["quantity_head", "Quantity", "number"],
@@ -158,23 +170,23 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     [
       "purchase_group_head",
       "Purchase Group",
-      Dropdown?.purchase_group,
+      PurchaseGroupDropdown,
       (item: PurchaseGroup) => item.purchase_group_code,
       (item: PurchaseGroup) => `${item.purchase_group_code} - ${item.purchase_group_name}`
     ],
     [
       "store_location_head",
       "Store Location",
-      Dropdown?.store_location,
-      (item: StoreLocation) => item.name,
-      (item: StoreLocation) => `${item.store_name} - ${item.store_location_name}`
+      StorageLocationDropdown,
+      (item: StorageLocation) => item.name,
+      (item: StorageLocation) => `${item.storage_name} - ${item.storage_location_name}`
     ],
     [
       "valuation_area_head",
       "Valuation Area",
-      Dropdown?.valuation_area,
-      (item: ValuationArea) => item.name,
-      (item: ValuationArea) => `${item.valuation_area_code} - ${item.valuation_area_name}`
+      ValuationClassDropdown,
+      (item: ValuationClass) => item.name,
+      (item: ValuationClass) => `${item.valuation_class_code} - ${item.valuation_class_name}`
     ],
     [
       "account_assignment_category_head",
@@ -200,18 +212,20 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     [
       "material_group_head",
       "Material Group",
-      Dropdown?.material_group_master,
+      MaterialGroupDropdown,
       (item: MaterialGroupMaster) => item.material_group_name,
       (item: MaterialGroupMaster) => `${item.material_group_name} - ${item.material_group_description}`
     ],
     [
       "purchase_organisation_head",
       "Purchase Organisation",
-      Dropdown?.purchase_organisation,
+      PurchaseOrgDropdown,
       (item: PurchaseOrganisation) => item.purchase_organisation_code,
       (item: PurchaseOrganisation) => `${item.purchase_organisation_code} - ${item.purchase_organisation_name}`
     ],
   ] as const;
+  const disabledFields = ["item_number_of_purchase_requisition_head", "Item Number of Purchase Requisition"];
+
 
 
   return (
@@ -223,7 +237,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
         </DialogHeader>
 
         <div className="grid grid-cols-3 gap-6 p-5">
-          {inputFields.map(([name, label, type = "text"]) => (
+          {inputFields.map(([name, label, type = "text",]) => (
             <div className="col-span-1" key={name}>
               {renderLabel(label, name)}
               <Input
@@ -232,6 +246,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
                 className={getInputClass(name)}
                 value={formData[name] || ""}
                 onChange={handleFieldChange}
+                disabled={disabledFields.includes(name)}
               />
             </div>
           ))}
