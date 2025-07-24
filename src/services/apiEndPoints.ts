@@ -113,7 +113,7 @@ const API_END_POINTS = {
   senduserconfirmationemail: `${url}/api/method/vms.APIs.user_confirmation.user_confirmation.send_po_user_confirmation`,
   sendaccountsteamemailuserconf: `${url}/api/method/vms.APIs.user_confirmation.user_confirmation.send_payment_release_notification_api`,
   sendvendoremailonuser: `${url}/api/method/vms.APIs.user_confirmation.user_confirmation.send_vendor_delivery_issue_email`,
-
+  POItemsTable:`${url}/api/method/vms.APIs.purchase_api.purchase_order.get_purchase_order_items_by_name`
 };
 
 export default API_END_POINTS;
