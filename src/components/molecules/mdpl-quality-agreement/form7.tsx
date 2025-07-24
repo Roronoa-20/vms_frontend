@@ -2,18 +2,14 @@ import React from 'react';
 import Header from "@/src/components/molecules/mdpl-quality-agreement/header";
 import { useQMSForm } from "@/src/hooks/useQMSForm";
 import { useSearchParams } from "next/navigation";
+import { Button } from '@/components/ui/button';
 
 const Form7 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "vendor_information";
-  const { formData, setFormData } = useQMSForm(vendor_onboarding, currentTab);
+  const { formData, handleChange } = useQMSForm(vendor_onboarding, currentTab);
 
-  const handleChange = (field: string, value: string) => {
-    setFormData((prev: any) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  
 
   return (
     <div className="space-y-[32px] flex flex-col justify-between min-h-[80vh]">
@@ -48,6 +44,15 @@ const Form7 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
               </div>
             </div>
           </section>
+          <Button
+            onClick={() => {
+              console.log("🔥 Form 5 Data Preview:", formData);
+              alert("Check the console! 🔍");
+            }}
+            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Preview Form 5 Data
+          </Button>
           <section className="items-center">
             <div className="text-center text-lg font-semibold mt-[400px]">Page 7 of 7</div>
           </section>

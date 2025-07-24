@@ -12,6 +12,14 @@ export default function QMSFormTab() {
     const ref_no = params.get('ref_no') || '';
     const company_code = params.get('company_code') || '';
     const currentTab = (params.get('tabtype') || 'vendor_information').toLowerCase();
+    const companyCodes = company_code.split(',').map(code => code.trim());
+    const is7000 = companyCodes.includes('7000');
+
+    // Filter the tabs before rendering
+    const visibleTabs = QMSFormTabs.filter(tab => {
+        if (is7000 && tab.key.toLowerCase() === 'quality_agreement') return false;
+        return true;
+    });
 
     const handleTabClick = (key: string) => {
         router.push(`/qms-form?tabtype=${encodeURIComponent(key)}&vendor_onboarding=${vendor_onboarding}&ref_no=${ref_no}&company_code=${company_code}`);
@@ -19,7 +27,7 @@ export default function QMSFormTab() {
 
     return (
         <div className="p-3 flex flex-col bg-white rounded-xl gap-3">
-            {QMSFormTabs.map(({ label, key }, index) => {
+            {visibleTabs.map(({ label, key }, index) => {
                 const isActive = currentTab === key.toLowerCase();
                 return (
                     <div

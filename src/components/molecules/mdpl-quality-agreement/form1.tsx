@@ -2,8 +2,9 @@ import React, { useEffect } from 'react';
 import Header from "@/src/components/molecules/mdpl-quality-agreement/header";
 import { useQMSForm } from '@/src/hooks/useQMSForm';
 import { useSearchParams } from "next/navigation";
+import { Button } from '@/components/ui/button';
 
-const form1 = ({ vendor_onboarding }:  { vendor_onboarding: string; }) => {
+const form1 = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   console.log("Vendor Master Data--->", vendor_onboarding);
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "vendor information";
@@ -92,7 +93,15 @@ const form1 = ({ vendor_onboarding }:  { vendor_onboarding: string; }) => {
               </div>
             </div>
           </section>
-
+          <Button
+            onClick={() => {
+              console.log("🔥 Form 5 Data Preview:", formData);
+              alert("Check the console! 🔍");
+            }}
+            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Preview Form 5 Data
+          </Button>
           <section className="mt-6 px-8 items-center text-center">
             <h2 className="text-lg font-bold">1 of 7</h2>
 

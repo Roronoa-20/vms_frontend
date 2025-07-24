@@ -122,7 +122,7 @@ const DashboardCards = ({ ...Props }: Props) => {
     },
     {
       name: "Purchase & Ongoing Orders",
-      count: Props.cardData?.po_count ?? 0,
+      count: Props.cardData?.purchase_order_count ?? 0,
       icon: "/dashboard-assests/cards_icon/package.svg",
       text_color: "text-violet-800",
       bg_color: "bg-violet-100",

@@ -23,6 +23,8 @@ export const MLSPLQualityAgreementForm = ({ vendor_onboarding, ref_no, company_c
     const is2000 = companyCodes.includes('2000');
     const is7000 = companyCodes.includes('7000');
 
+    console.log(tableData,"--------tabledata")
+
 
     return (
         <div className="bg-white p-2 rounded-[8px]">
@@ -101,7 +103,7 @@ export const MLSPLQualityAgreementForm = ({ vendor_onboarding, ref_no, company_c
                             {tableData.map((row, index) => (
                                 <TableRow key={index}>
                                     <TableCell>{index + 1}</TableCell>
-                                    <TableCell>{row.option}</TableCell>
+                                    <TableCell>{row.document_type}</TableCell>
                                     <TableCell>
                                         <a
                                             href={row.fileURL}
