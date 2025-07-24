@@ -22,55 +22,55 @@ import { X } from "lucide-react";
 import { UsePurchaseTeamApprovalStore } from "@/src/store/PurchaseTeamApprovalStore";
 
 interface Props {
-  ref_no:string,
-  onboarding_ref_no:string,
-  OnboardingDetail:VendorOnboardingResponse["message"]["payment_details_tab"],
-  company_name?:string
+  ref_no: string,
+  onboarding_ref_no: string,
+  OnboardingDetail: VendorOnboardingResponse["message"]["payment_details_tab"],
+  company_name?: string
 }
 
 
-const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:Props) => {
-  const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
-  const [bankProofFile,setBankProofFile] = useState<FileList | null>(null);
+const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_name }: Props) => {
+  const { paymentDetail, updatePaymentDetail } = usePaymentDetailStore()
+  const [bankProofFile, setBankProofFile] = useState<FileList | null>(null);
   const [isBankFilePreview, setIsBankFilePreview] = useState<boolean>(true);
   const [isPurchaseBankFilePreview, setPurchaseIsBankFilePreview] = useState<boolean>(true);
-  const [bankNameDropown,setBankNameDropown] = useState<TbankNameDropdown["message"]["data"]>([])
-  const [currencyDropdown,setCurrencyDropdown] = useState<TCurrencyDropdown["message"]["data"]>([])
-  const {designation} = useAuth();
-  const {setBankProof,bank_proof} = UsePurchaseTeamApprovalStore();
+  const [bankNameDropown, setBankNameDropown] = useState<TbankNameDropdown["message"]["data"]>([])
+  const [currencyDropdown, setCurrencyDropdown] = useState<TCurrencyDropdown["message"]["data"]>([])
+  const { designation } = useAuth();
+  const { setBankProof, bank_proof } = UsePurchaseTeamApprovalStore();
   // if(!designation){
   //   return(
   //     <div>Loading...</div>
   //   )
   // }
   const router = useRouter()
-  console.log(OnboardingDetail,"this is country");
-  useEffect(()=>{
-    const fetchBank = async ()=>{
+  console.log(OnboardingDetail, "this is country");
+  useEffect(() => {
+    const fetchBank = async () => {
 
       const bankNameDropdownUrl = `${API_END_POINTS?.bankNameDropdown}`;
-      const bankNameResponse:AxiosResponse = await requestWrapper({url:bankNameDropdownUrl,method:"GET"});
-      if(bankNameResponse?.status == 200){
+      const bankNameResponse: AxiosResponse = await requestWrapper({ url: bankNameDropdownUrl, method: "GET" });
+      if (bankNameResponse?.status == 200) {
         setBankNameDropown(bankNameResponse?.data?.message?.data)
       }
     }
-    console.log(OnboardingDetail,"payment details data")
-    const fetchCurrency = async ()=>{
+    console.log(OnboardingDetail, "payment details data")
+    const fetchCurrency = async () => {
 
       const currencyUrl = `${API_END_POINTS?.currencyDropdown}`;
-      const currencyResponse:AxiosResponse = await requestWrapper({url:currencyUrl,method:"GET"});
-      if(currencyResponse?.status == 200){
+      const currencyResponse: AxiosResponse = await requestWrapper({ url: currencyUrl, method: "GET" });
+      if (currencyResponse?.status == 200) {
         setCurrencyDropdown(currencyResponse?.data?.message?.data)
       }
     }
 
     fetchBank();
     fetchCurrency();
-  },[])
+  }, [])
 
   const [errors, setErrors] = useState<any>({});
   const validate = () => {
-    const errors:any = {};
+    const errors: any = {};
     if (!paymentDetail?.bank_name) {
       errors.bank_name = "Please Enter Bank Name";
     }
@@ -81,27 +81,27 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
     if (!paymentDetail?.account_number) {
       errors.account_number = "Please Enter Account Number ";
 
-    } 
+    }
 
     if (!paymentDetail?.name_of_account_holder) {
       errors.name_of_account_holder = "Please Enter Account Holder ";
 
-    } 
+    }
 
     if (!paymentDetail?.type_of_account) {
       errors.type_of_account = "Please Enter Type Of Account";
 
-    } 
+    }
 
     if (!bankProofFile) {
       errors.bank_proof = "Please Upload Bank Proof";
 
-    } 
+    }
 
     return errors;
   };
 
-  const handleSubmit = async()=>{
+  const handleSubmit = async () => {
     const validationErrors = validate();
 
     if (Object.keys(validationErrors).length > 0) {
@@ -110,18 +110,23 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
     }
 
     const submitUrl = API_END_POINTS?.bankSubmit;
-    const updatedData = {...paymentDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}
+    const updatedData = { ...paymentDetail, ref_no: ref_no, vendor_onboarding: onboarding_ref_no }
     const formData = new FormData()
-    formData.append("data",JSON.stringify(updatedData));
-    if(bankProofFile){
-      formData.append("bank_proof",bankProofFile[0])
+    formData.append("data", JSON.stringify(updatedData));
+    if (bankProofFile) {
+      formData.append("bank_proof", bankProofFile[0])
     }
-    const response:AxiosResponse = await requestWrapper({url:submitUrl,method:"POST",data:formData})
-    
-      if(response?.status == 200) router.push(`/vendor-details-form?tabtype=Contact%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
-    
-  }
-  console.log(OnboardingDetail?.bank_proof?.file_name,"thiskjdvb")
+    const response: AxiosResponse = await requestWrapper({ url: submitUrl, method: "POST", data: formData })
+
+    if (response?.status == 200) router.push(`/vendor-details-form?tabtype=Contact%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+  };
+
+  const handleBack = () => {
+    router.push(`/vendor-details-form?tabtype=Document%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+  };
+
+  console.log(OnboardingDetail?.bank_proof?.file_name, "thiskjdvb");
+
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
@@ -133,43 +138,43 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Bank Name <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
-          <Select value={paymentDetail?.bank_name ?? OnboardingDetail?.bank_name ?? ""} onValueChange={(value)=>{updatePaymentDetail("bank_name",value)}}>
+          <Select value={paymentDetail?.bank_name ?? OnboardingDetail?.bank_name ?? ""} onValueChange={(value) => { updatePaymentDetail("bank_name", value) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 {
-                  bankNameDropown?.map((item,index)=>(
+                  bankNameDropown?.map((item, index) => (
                     <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
                   ))
                 }
               </SelectGroup>
             </SelectContent>
           </Select>
-                      {errors?.bank_name && !paymentDetail?.bank_name && <span style={{ color: 'red' }}>{errors?.bank_name}</span>}
+          {errors?.bank_name && !paymentDetail?.bank_name && <span style={{ color: 'red' }}>{errors?.bank_name}</span>}
 
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             IFSC Code <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
-          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
-                      {errors?.ifsc_code && !paymentDetail?.ifsc_code && <span style={{ color: 'red' }}>{errors?.ifsc_code}</span>}
+          <Input placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e) => { updatePaymentDetail("ifsc_code", e.target.value) }} />
+          {errors?.ifsc_code && !paymentDetail?.ifsc_code && <span style={{ color: 'red' }}>{errors?.ifsc_code}</span>}
 
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Account Number <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
-          <Input placeholder="" value={paymentDetail?.account_number ?? OnboardingDetail?.account_number ?? ""} onChange={(e)=>{updatePaymentDetail("account_number",e.target.value)}}/>
+          <Input placeholder="" value={paymentDetail?.account_number ?? OnboardingDetail?.account_number ?? ""} onChange={(e) => { updatePaymentDetail("account_number", e.target.value) }} />
           {errors?.account_number && !paymentDetail?.account_number && <span style={{ color: 'red' }}>{errors?.account_number}</span>}
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Name of Account Holder <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
-          <Input placeholder="" value={paymentDetail?.name_of_account_holder ?? OnboardingDetail?.name_of_account_holder ?? ""} onChange={(e)=>{updatePaymentDetail("name_of_account_holder",e.target.value)}}/>
+          <Input placeholder="" value={paymentDetail?.name_of_account_holder ?? OnboardingDetail?.name_of_account_holder ?? ""} onChange={(e) => { updatePaymentDetail("name_of_account_holder", e.target.value) }} />
           {errors?.name_of_account_holder && !paymentDetail?.name_of_account_holder && <span style={{ color: 'red' }}>{errors?.name_of_account_holder}</span>}
         </div>
 
@@ -177,7 +182,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Type of Account <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
-          <Select value={paymentDetail?.type_of_account ?? OnboardingDetail?.type_of_account ?? ""} onValueChange={(value)=>{updatePaymentDetail("type_of_account",value)}}>
+          <Select value={paymentDetail?.type_of_account ?? OnboardingDetail?.type_of_account ?? ""} onValueChange={(value) => { updatePaymentDetail("type_of_account", value) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -192,16 +197,16 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
         </div>
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-6">
-            Currency 
+            Currency
           </h1>
-          <Select value={paymentDetail?.currency ?? OnboardingDetail?.currency ?? ""} onValueChange={(value)=>{updatePaymentDetail("currency",value)}}>
+          <Select value={paymentDetail?.currency ?? OnboardingDetail?.currency ?? ""} onValueChange={(value) => { updatePaymentDetail("currency", value) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 {
-                  currencyDropdown?.map((item,index)=>(
+                  currencyDropdown?.map((item, index) => (
                     <SelectItem value={item?.name} key={index}>{item?.name}</SelectItem>
                   ))
                 }
@@ -214,16 +219,16 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
             Bank Proof (Upload Passbook Leaf/Cancelled Cheque) <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <div className="flex gap-4">
-          <Input placeholder=""  type="file" onChange={(e)=>{setBankProofFile(e.target.files)}} />
-          {/* file preview */}
-          {isBankFilePreview &&
+            <Input placeholder="" type="file" onChange={(e) => { setBankProofFile(e.target.files) }} />
+            {/* file preview */}
+            {isBankFilePreview &&
               !bankProofFile &&
               OnboardingDetail?.bank_proof?.url && (
                 <div className="flex gap-2">
                   <Link
-                  target="blank"
-                  href={OnboardingDetail?.bank_proof?.url}
-                  className="underline text-blue-300 max-w-44 truncate"
+                    target="blank"
+                    href={OnboardingDetail?.bank_proof?.url}
+                    className="underline text-blue-300 max-w-44 truncate"
                   >
                     <span>{OnboardingDetail?.bank_proof?.file_name}</span>
                   </Link>
@@ -232,11 +237,11 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
                     onClick={() => {
                       setIsBankFilePreview((prev) => !prev);
                     }}
-                    />
-                    {errors?.bank_proof && !bankProofFile && <span style={{ color: 'red' }}>{errors?.bank_proof}</span>}
+                  />
+                  {errors?.bank_proof && !bankProofFile && <span style={{ color: 'red' }}>{errors?.bank_proof}</span>}
                 </div>
               )}
-              </div>
+          </div>
         </div>
         {/* <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -259,7 +264,23 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
         </div> */}
         <div></div>
       </div>
-      <div className={`flex justify-end pr-4 ${designation?"hidden":""} `}><Button className="bg-blue-400 hover:to-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
+      <div className="flex justify-end items-center space-x-3 mt-3">
+        <Button
+          onClick={handleBack}
+          variant="backbtn"
+          size="backbtnsize"
+        >
+          Back
+        </Button>
+
+        <Button
+          onClick={handleSubmit}
+          variant="nextbtn"
+          size="nextbtnsize"
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 };

@@ -54,14 +54,14 @@ interface Props {
 }
 
 interface gstRow {
-  name?:string,
-  gst_document_upload:FileList,
-  gst_state:string,
-  gst_ven_type:string,
-  gst_registration_date:string,
-  gst_number:string,
-  gst_document:FileAttachment,
-  pincode:string
+  name?: string,
+  gst_document_upload: FileList,
+  gst_state: string,
+  gst_ven_type: string,
+  gst_registration_date: string,
+  gst_number: string,
+  gst_document: FileAttachment,
+  pincode: string
 }
 
 const DocumentDetails = ({
@@ -80,41 +80,43 @@ const DocumentDetails = ({
   const [documentDetails, setDocumentDetail] =
     useState<Partial<documentDetail>>();
 
-  useEffect(()=>{
-    setDocumentDetail((prev)=>(
-      {...prev
+  useEffect(() => {
+    setDocumentDetail((prev) => (
+      {
+        ...prev
       }
     ))
-  },[])
+  }, [])
 
   const [isRegistrationFilePreview, setIsRegistrationFilePreview] = useState<boolean>(true);
   const [isMsmeFilePreview, setIsMsmeFilePreview] = useState<boolean>(true);
   const [isGstFilePreview, setIsGstFilePreview] = useState<boolean>(true);
   const [isPanFilePreview, setIsPanFilePreview] = useState<boolean>(true);
-  const [singlerow,setSingleRow] = useState<gstRow | null>();
-  const [GSTTable,setGSTTable] = useState<gstRow[]>(OnboardingDetail?.gst_table);
-  const [gstStateDropdown,setGstStateDropdown] = useState<{state_name:string,name:string}[]>();
-  useEffect(()=>{
-    if(ref_no && onboarding_ref_no){
+  const [singlerow, setSingleRow] = useState<gstRow | null>();
+  const [GSTTable, setGSTTable] = useState<gstRow[]>(OnboardingDetail?.gst_table);
+  const [showGSTTable, setShowGSTTable] = useState(false);
+  const [gstStateDropdown, setGstStateDropdown] = useState<{ state_name: string, name: string }[]>();
+  useEffect(() => {
+    if (ref_no && onboarding_ref_no) {
       getState();
     }
-  },[])
+  }, [])
 
-  const getState = async()=>{
+  const getState = async () => {
     const url = `${API_END_POINTS?.gstVendorStateDropdown}?vendor_onboarding=${onboarding_ref_no}`;
-    const response:AxiosResponse = await requestWrapper({url:url,method:"GET"});
-    if(response?.status == 200){
-       setGstStateDropdown(response?.data?.message?.data)
-       console.log(response?.data?.message?.data,"this is state dropdown")
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+    if (response?.status == 200) {
+      setGstStateDropdown(response?.data?.message?.data)
+      console.log(response?.data?.message?.data, "this is state dropdown")
     }
   }
 
-    const [errors, setErrors] = useState<any>({});
+  const [errors, setErrors] = useState<any>({});
 
-    const fileInput = useRef<HTMLInputElement>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
 
   const validate = () => {
-    const errors:any = {};
+    const errors: any = {};
     if (!documentDetails?.company_pan_number && !OnboardingDetail?.company_pan_number) {
       errors.company_pan_number = "Please Enter Company Pan Number";
     }
@@ -141,19 +143,19 @@ const DocumentDetails = ({
 
     if ((documentDetails?.msme_registered == "Yes" && !documentDetails?.msme_enterprise_type) && (OnboardingDetail?.msme_registered == "yes" && !OnboardingDetail?.msme_enterprise_type)) {
       errors.msme_enterprise_type = "Please Select Enterprise Type";
-    } 
+    }
 
     if ((documentDetails?.msme_registered == "Yes" && !documentDetails?.udyam_number) && (OnboardingDetail?.msme_registered == "Yes" && !OnboardingDetail?.udyam_number)) {
       errors.udyam_number = "Please Enter Udhyam Registration Number";
-    } 
+    }
 
     if ((documentDetails?.msme_registered == "Yes" && !documentDetails?.name_on_udyam_certificate) && (OnboardingDetail?.msme_registered == "Yes" && !OnboardingDetail?.name_on_udyam_certificate)) {
       errors.name_on_udyam_certificate = "Please Enter Name Udhyam Certificate";
-    } 
+    }
 
     if ((documentDetails?.msme_registered == "Yes" && documentDetails?.udyamCertificate?.length && documentDetails?.udyamCertificate?.length == 0) && (OnboardingDetail?.msme_registered == "Yes" && !OnboardingDetail?.msme_proof)) {
       errors.udyamCertificate = "Please Upload Udhyam Certificate";
-    } 
+    }
 
 
     if (!documentDetails?.enterprise_registration_number && !OnboardingDetail?.enterprise_registration_number) {
@@ -164,34 +166,34 @@ const DocumentDetails = ({
   };
 
 
-  const checkGST = (str:string)=>{
+  const checkGST = (str: string) => {
     let regex = new RegExp(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/);
     if (str == null) {
-        return false;
+      return false;
     }
 
     // Return true if the GST_CODE
     // matched the ReGex
     if (regex.test(str) == true) {
-        return true;
+      return true;
     }
     else {
-        return false;
+      return false;
     }
   }
 
-  const checkPAN = (str:string)=>{
+  const checkPAN = (str: string) => {
     const regex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
     if (str == null) {
-        return false;
+      return false;
     }
 
     // Return true if the PAN matches the regex
     if (regex.test(str) == true) {
-        return true;
+      return true;
     }
     else {
-        return false;
+      return false;
     }
   }
 
@@ -204,12 +206,12 @@ const DocumentDetails = ({
       return;
     }
     const url = API_END_POINTS?.documentDetailSubmit;
-    if(!checkPAN(documentDetails?.company_pan_number as string) && !checkPAN(OnboardingDetail?.company_pan_number)){
+    if (!checkPAN(documentDetails?.company_pan_number as string) && !checkPAN(OnboardingDetail?.company_pan_number)) {
       alert("please enter correct PAN Number")
       return;
     }
 
-    if(GSTTable?.length == 0){
+    if (GSTTable?.length == 0) {
       alert("please add at least 1 gst document details");
       return;
     }
@@ -244,82 +246,87 @@ const DocumentDetails = ({
     });
     if (Response?.status == 200)
       setDocumentDetail({})
-      router.push(
-        `/vendor-details-form?tabtype=Payment Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
-      );
+    router.push(
+      `/vendor-details-form?tabtype=Payment Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
+    );
+  };
+
+  const handleBack = () => {
+    router.push(`/vendor-details-form?tabtype=Company%20Address&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   };
 
 
-  const handleGSTTableAdd = async()=>{
+  const handleGSTTableAdd = async () => {
     // console.log(singlerow,"this is single row after add");
-    
-    if(!singlerow?.gst_ven_type){
-      setErrors((prev:any)=>({...prev,gst_ven_type:"please select gst vendor type"}))
+
+    if (!singlerow?.gst_ven_type) {
+      setErrors((prev: any) => ({ ...prev, gst_ven_type: "please select gst vendor type" }))
       return;
     }
-    if(!singlerow?.gst_state){
-      setErrors((prev:any)=>({...prev,gst_state:"please select gst state"}))
+    if (!singlerow?.gst_state) {
+      setErrors((prev: any) => ({ ...prev, gst_state: "please select gst state" }))
       return;
     }
-    
-    if(!singlerow?.pincode){
-      setErrors((prev:any)=>({...prev,pincode:"please enter gst pincode"}))
+
+    if (!singlerow?.pincode) {
+      setErrors((prev: any) => ({ ...prev, pincode: "please enter gst pincode" }))
       return;
     }
-    
-    if(singlerow?.gst_ven_type == "Registered" &&!singlerow?.gst_document_upload){
-      setErrors((prev:any)=>({...prev,gst_document_upload:"please upload gst document"}))
+
+    if (singlerow?.gst_ven_type == "Registered" && !singlerow?.gst_document_upload) {
+      setErrors((prev: any) => ({ ...prev, gst_document_upload: "please upload gst document" }))
       return;
     }
-    
-    if(singlerow?.gst_ven_type == "Registered" &&!singlerow?.gst_number){
-      setErrors((prev:any)=>({...prev,gst_number:"please enter gst number"}))
+
+    if (singlerow?.gst_ven_type == "Registered" && !singlerow?.gst_number) {
+      setErrors((prev: any) => ({ ...prev, gst_number: "please enter gst number" }))
       return;
     }
-    
-    if(singlerow?.gst_ven_type == "Registered" &&!singlerow?.gst_registration_date){
-      setErrors((prev:any)=>({...prev,gst_registration_date:"please enter gst registration date"}))
+
+    if (singlerow?.gst_ven_type == "Registered" && !singlerow?.gst_registration_date) {
+      setErrors((prev: any) => ({ ...prev, gst_registration_date: "please enter gst registration date" }))
       return;
     }
-    
-    if(singlerow?.gst_ven_type != "Not-Registered" && !checkGST(singlerow?.gst_number as string)){
+
+    if (singlerow?.gst_ven_type != "Not-Registered" && !checkGST(singlerow?.gst_number as string)) {
       alert("please enter correct gst number")
       return;
     }
     const url = API_END_POINTS?.addGSTTAbleData;
-    const table = [{...singlerow}]
-    const data = {ref_no:ref_no,vendor_onboarding:onboarding_ref_no,gst_table:table};
+    const table = [{ ...singlerow }]
+    const data = { ref_no: ref_no, vendor_onboarding: onboarding_ref_no, gst_table: table };
     const formdata = new FormData()
-    formdata.append("data",JSON.stringify(data));
-    if(singlerow?.gst_document_upload){
-      formdata.append("gst_document",singlerow?.gst_document_upload[0]);
+    formdata.append("data", JSON.stringify(data));
+    if (singlerow?.gst_document_upload) {
+      formdata.append("gst_document", singlerow?.gst_document_upload[0]);
     }
-    const response:AxiosResponse = await requestWrapper({url:url,data:formdata,method:"POST"}) 
-    if(response?.status == 200){
+    const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" })
+    if (response?.status == 200) {
       alert("submittes successfully");
       fetchGstTable();
       setSingleRow(null);
-      if(fileInput?.current){
-      fileInput.current.value =''
-    }
-    setErrors({});
+      setShowGSTTable(true);
+      if (fileInput?.current) {
+        fileInput.current.value = ''
+      }
+      setErrors({});
     }
   }
 
-  const handleGSTDelete = async(row_name:string)=>{
+  const handleGSTDelete = async (row_name: string) => {
     const deleteUrl = `${API_END_POINTS?.deleteGSTRow}?row_name=${row_name}&ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
-    const response:AxiosResponse = await requestWrapper({url:deleteUrl,method:"GET"});
-    if(response?.status == 200){
+    const response: AxiosResponse = await requestWrapper({ url: deleteUrl, method: "GET" });
+    if (response?.status == 200) {
       alert("Sccessfully Deleted");
       fetchGstTable();
     }
   }
 
-  const fetchGstTable = async()=>{
+  const fetchGstTable = async () => {
     const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
-      const fetchOnboardingDetailResponse:AxiosResponse = await requestWrapper({url:fetchOnboardingDetailUrl,method:"GET"});
-      const OnboardingDetail:VendorOnboardingResponse["message"]["document_details_tab"]["gst_table"] = fetchOnboardingDetailResponse?.status == 200 ?fetchOnboardingDetailResponse?.data?.message?.document_details_tab?.gst_table : "";
-      setGSTTable(OnboardingDetail);
+    const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: fetchOnboardingDetailUrl, method: "GET" });
+    const OnboardingDetail: VendorOnboardingResponse["message"]["document_details_tab"]["gst_table"] = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message?.document_details_tab?.gst_table : "";
+    setGSTTable(OnboardingDetail);
   }
 
   console.log(singlerow)
@@ -375,38 +382,38 @@ const DocumentDetails = ({
             </h1>
             <div className="flex gap-4">
 
-            <Input
-              placeholder=""
-              type="file"
-              onChange={(e) => {
-                setDocumentDetail((prev: any) => ({
-                  ...prev,
-                  panDocument: e.target.files,
-                }));
-              }}
+              <Input
+                placeholder=""
+                type="file"
+                onChange={(e) => {
+                  setDocumentDetail((prev: any) => ({
+                    ...prev,
+                    panDocument: e.target.files,
+                  }));
+                }}
               />
-            {/* file preview */}
-            {isPanFilePreview &&
-              !documentDetails?.panDocument &&
-              OnboardingDetail?.pan_proof?.url && (
-                <div className="flex gap-2">
-                  <Link
-                  target="blank"
-                    href={OnboardingDetail?.pan_proof?.url}
-                    className="underline text-blue-300 max-w-44 truncate"
+              {/* file preview */}
+              {isPanFilePreview &&
+                !documentDetails?.panDocument &&
+                OnboardingDetail?.pan_proof?.url && (
+                  <div className="flex gap-2">
+                    <Link
+                      target="blank"
+                      href={OnboardingDetail?.pan_proof?.url}
+                      className="underline text-blue-300 max-w-44 truncate"
                     >
-                    <span>{OnboardingDetail?.pan_proof?.file_name}</span>
-                  </Link>
-                  <X
-                    className="cursor-pointer"
-                    onClick={() => {
-                      setIsPanFilePreview((prev) => !prev);
-                    }}
+                      <span>{OnboardingDetail?.pan_proof?.file_name}</span>
+                    </Link>
+                    <X
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setIsPanFilePreview((prev) => !prev);
+                      }}
                     />
-                </div>
-              )}
+                  </div>
+                )}
               {errors?.panDocument && !documentDetails?.panDocument && <span style={{ color: 'red' }}>{errors?.panDocument}</span>}
-              </div>
+            </div>
           </div>
           <div className="col-span-3 grid grid-cols-3 gap-6">
             <div className="flex flex-col">
@@ -422,7 +429,7 @@ const DocumentDetails = ({
                 //   }));
                 // }}
                 onValueChange={(value) => {
-                  setSingleRow((prev:any) => ({
+                  setSingleRow((prev: any) => ({
                     ...prev,
                     gst_ven_type: value,
                   }));
@@ -456,7 +463,7 @@ const DocumentDetails = ({
                 //   setDocumentDetail((prev) => ({ ...prev, gst_state: value }));
                 // }}
                 onValueChange={(value) => {
-                  setSingleRow((prev:any) => ({ ...prev, gst_state: value }));
+                  setSingleRow((prev: any) => ({ ...prev, gst_state: value }));
                 }}
                 value={
                   singlerow?.gst_state ?? ""
@@ -484,7 +491,7 @@ const DocumentDetails = ({
                 Pincode <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Input
-              className="disabled:opacity-100"
+                className="disabled:opacity-100"
                 placeholder="Enter GST Number"
                 value={
                   singlerow?.pincode ??
@@ -497,7 +504,7 @@ const DocumentDetails = ({
                 //   }));
                 // }}
                 onChange={(e) => {
-                  setSingleRow((prev:any) => ({
+                  setSingleRow((prev: any) => ({
                     ...prev,
                     pincode: e.target.value,
                   }));
@@ -526,7 +533,7 @@ const DocumentDetails = ({
                 //   }));
                 // }}
                 onChange={(e) => {
-                  setSingleRow((prev:any) => ({
+                  setSingleRow((prev: any) => ({
                     ...prev,
                     gst_number: e.target.value,
                   }));
@@ -552,7 +559,7 @@ const DocumentDetails = ({
                 //   }));
                 // }}
                 onChange={(e) => {
-                  setSingleRow((prev:any) => ({
+                  setSingleRow((prev: any) => ({
                     ...prev,
                     gst_registration_date: e.target.value,
                   }));
@@ -565,25 +572,25 @@ const DocumentDetails = ({
                 Upload GST Document <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <div className="flex gap-4">
-              <Input
-              ref={fileInput}
-                type="file"
-                // onChange={(e) => {
-                //   setDocumentDetail((prev: any) => ({
-                //     ...prev,
-                //     gstDocument: e.target.files,
-                //   }));
-                // }}
-                onChange={(e) => {
-                  setSingleRow((prev: any) => ({
-                    ...prev,
-                    gst_document_upload: e.target.files,
-                  }));
-                }}
+                <Input
+                  ref={fileInput}
+                  type="file"
+                  // onChange={(e) => {
+                  //   setDocumentDetail((prev: any) => ({
+                  //     ...prev,
+                  //     gstDocument: e.target.files,
+                  //   }));
+                  // }}
+                  onChange={(e) => {
+                    setSingleRow((prev: any) => ({
+                      ...prev,
+                      gst_document_upload: e.target.files,
+                    }));
+                  }}
                 />
                 {errors?.gstDocument && !singlerow?.gst_document_upload && <span style={{ color: 'red' }}>{errors?.gstDocument}</span>}
-              {/* file preview */}
-            {/* {isGstFilePreview &&
+                {/* file preview */}
+                {/* {isGstFilePreview &&
               !documentDetails?.gstDocument &&
               OnboardingDetail?.gst_table[0]?.gst_document?.url && (
                 <div className="flex gap-2">
@@ -606,7 +613,7 @@ const DocumentDetails = ({
             </div>
           </div>
 
-          
+
         </div>
         <div className={`flex justify-end pr-6 mb-4`}>
           <Button
@@ -618,44 +625,46 @@ const DocumentDetails = ({
             Add
           </Button>
         </div>
+        {showGSTTable && (
         <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
-                  <div className="flex w-full justify-between pb-4">
-                    <h1 className="text-[20px] text-[#03111F] font-semibold">
-                      Multiple GST Certificates
-                    </h1>
-                  </div>
-                  <Table className=" max-h-40 overflow-y-scroll">
-                    {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-                    <TableHeader className="text-center">
-                      <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                        <TableHead className="text-center">GST Type</TableHead>
-                        <TableHead className="text-center">GST State</TableHead>
-                        <TableHead className="text-center">GST Pincode</TableHead>
-                        <TableHead className="text-center">GST Number</TableHead>
-                        <TableHead className="text-center">GST Date</TableHead>
-                        <TableHead className="text-center">File</TableHead>
-                        <TableHead className="text-center">Action</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                    {GSTTable?.map((item, index) => (  
-                       
-                        <TableRow key={item?.name?item?.name:""}>
-                          <TableCell className="text-center">{item?.gst_ven_type}</TableCell>
-                          <TableCell className="text-center">{item?.gst_state}</TableCell>
-                          <TableCell className="text-center">{item?.pincode}</TableCell>
-                          <TableCell className="text-center">{item?.gst_number}</TableCell>
-                          <TableCell className="text-center">{item?.gst_registration_date}</TableCell>
-                          <TableCell className="text-center"><Link href={item?.gst_document?.url} target="blank">{item?.gst_document?.file_name}</Link></TableCell>
-                          <TableCell className="flex justify-center items-center text-center"><Trash2 onClick={()=>{handleGSTDelete(item?.name?item?.name:"")}} className=" text-red-400 cursor-pointer"/></TableCell>
-                        </TableRow>
-                      ))
-                      
-                    }
-                    </TableBody>
-                  </Table>
-                </div>
-        <div className="grid grid-cols-3 pl-5 gap-6">
+          <div className="flex w-full justify-between pb-4">
+            <h1 className="text-[20px] text-[#03111F] font-semibold">
+              Multiple GST Certificates
+            </h1>
+          </div>
+          <Table className=" max-h-40 overflow-y-scroll">
+            {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+            <TableHeader className="text-center">
+              <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
+                <TableHead className="text-center">GST Type</TableHead>
+                <TableHead className="text-center">GST State</TableHead>
+                <TableHead className="text-center">GST Pincode</TableHead>
+                <TableHead className="text-center">GST Number</TableHead>
+                <TableHead className="text-center">GST Date</TableHead>
+                <TableHead className="text-center">File</TableHead>
+                <TableHead className="text-center">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {GSTTable?.map((item, index) => (
+
+                <TableRow key={item?.name ? item?.name : ""}>
+                  <TableCell className="text-center">{item?.gst_ven_type}</TableCell>
+                  <TableCell className="text-center">{item?.gst_state}</TableCell>
+                  <TableCell className="text-center">{item?.pincode}</TableCell>
+                  <TableCell className="text-center">{item?.gst_number}</TableCell>
+                  <TableCell className="text-center">{item?.gst_registration_date}</TableCell>
+                  <TableCell className="text-center"><Link href={item?.gst_document?.url} target="blank">{item?.gst_document?.file_name}</Link></TableCell>
+                  <TableCell className="flex justify-center items-center text-center"><Trash2 onClick={() => { handleGSTDelete(item?.name ? item?.name : "") }} className=" text-red-400 cursor-pointer" /></TableCell>
+                </TableRow>
+              ))
+
+              }
+            </TableBody>
+          </Table>
+        </div>
+        )}
+        <div className="grid grid-cols-3 p-5 gap-6">
           <div className="flex flex-col col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               MSME Registered?
@@ -681,9 +690,7 @@ const DocumentDetails = ({
               </SelectContent>
             </Select>
           </div>
-          <div
-            className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}
-          >
+          <div className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               MSME Enterprise Type <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
@@ -712,7 +719,7 @@ const DocumentDetails = ({
             </Select>
             {errors?.msme_enterprise_type && !documentDetails?.msme_enterprise_type && <span style={{ color: 'red' }}>{errors?.msme_enterprise_type}</span>}
           </div>
-          <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
+          <div className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Udyam Registration No. <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
@@ -732,7 +739,7 @@ const DocumentDetails = ({
             />
             {errors?.udyam_number && !documentDetails?.udyam_number && <span style={{ color: 'red' }}>{errors?.udyam_number}</span>}
           </div>
-          <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
+          <div className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Name of Company in Udyam Certificate <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
@@ -752,45 +759,45 @@ const DocumentDetails = ({
             />
             {errors?.name_on_udyam_certificate && !documentDetails?.name_on_udyam_certificate && <span style={{ color: 'red' }}>{errors?.name_on_udyam_certificate}</span>}
           </div>
-          <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
+          <div className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Upload Udyam Certificate <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <div className="flex gap-4">
-            <Input
-              placeholder=""
-              type="file"
-              onChange={(e) => {
-                setDocumentDetail((prev: any) => ({
-                  ...prev,
-                  udyamCertificate: e.target.files,
-                }));
-              }}
+              <Input
+                placeholder=""
+                type="file"
+                onChange={(e) => {
+                  setDocumentDetail((prev: any) => ({
+                    ...prev,
+                    udyamCertificate: e.target.files,
+                  }));
+                }}
               />
               {errors?.udyamCertificate && !documentDetails?.udyamCertificate && <span style={{ color: 'red' }}>{errors?.udyamCertificate}</span>}
-            {/* file preview */}
-            {isMsmeFilePreview &&
-              !documentDetails?.udyamCertificate &&
-              OnboardingDetail?.msme_proof?.url && (
-                <div className="flex gap-2">
-                  <Link
-                  target="blank"
-                  href={OnboardingDetail?.msme_proof?.url}
-                  className="underline text-blue-300 max-w-44 truncate"
-                  >
-                    <span>{OnboardingDetail?.msme_proof?.file_name}</span>
-                  </Link>
-                  <X
-                    className="cursor-pointer"
-                    onClick={() => {
-                      setIsMsmeFilePreview((prev) => !prev);
-                    }}
+              {/* file preview */}
+              {isMsmeFilePreview &&
+                !documentDetails?.udyamCertificate &&
+                OnboardingDetail?.msme_proof?.url && (
+                  <div className="flex gap-2">
+                    <Link
+                      target="blank"
+                      href={OnboardingDetail?.msme_proof?.url}
+                      className="underline text-blue-300 max-w-44 truncate"
+                    >
+                      <span>{OnboardingDetail?.msme_proof?.file_name}</span>
+                    </Link>
+                    <X
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setIsMsmeFilePreview((prev) => !prev);
+                      }}
                     />
-                </div>
-              )}
-              </div>
+                  </div>
+                )}
+            </div>
           </div>
-          <div className={``}>
+          <div className={`flex flex-col col-span-1`}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Enterprise Registration Number <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
@@ -810,52 +817,59 @@ const DocumentDetails = ({
             />
             {errors?.enterprise_registration_number && !documentDetails?.enterprise_registration_number && <span style={{ color: 'red' }}>{errors?.enterprise_registration_number}</span>}
           </div>
-          <div className={``}>
+          <div className={`flex flex-col col-span-1`}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Upload Enterprise Registration Document <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <div className="flex gap-4 w-full">
 
-            <Input
-              placeholder=""
-              type="file"
-              onChange={(e) => {
-                setDocumentDetail((prev: any) => ({
-                  ...prev,
-                  registrationDocument: e.target.files,
-                }));
-              }}
+              <Input
+                placeholder=""
+                type="file"
+                onChange={(e) => {
+                  setDocumentDetail((prev: any) => ({
+                    ...prev,
+                    registrationDocument: e.target.files,
+                  }));
+                }}
               />
               {errors?.registrationDocument && !documentDetails?.registrationDocument && <span style={{ color: 'red' }}>{errors?.registrationDocument}</span>}
-            {/* file preview */}
-            {isRegistrationFilePreview &&
-              !documentDetails?.registrationDocument &&
-              OnboardingDetail?.entity_proof?.url && (
-                <div className="flex gap-2">
-                  <Link
-                  target="blank"
-                    href={OnboardingDetail?.entity_proof?.url}
-                    className="underline text-blue-300 max-w-44 truncate"
+              {/* file preview */}
+              {isRegistrationFilePreview &&
+                !documentDetails?.registrationDocument &&
+                OnboardingDetail?.entity_proof?.url && (
+                  <div className="flex gap-2">
+                    <Link
+                      target="blank"
+                      href={OnboardingDetail?.entity_proof?.url}
+                      className="underline text-blue-300 max-w-44 truncate"
                     >
-                    <span>{OnboardingDetail?.entity_proof?.file_name}</span>
-                  </Link>
-                  <X
-                    className="cursor-pointer"
-                    onClick={() => {
-                      setIsRegistrationFilePreview((prev) => !prev);
-                    }}
+                      <span>{OnboardingDetail?.entity_proof?.file_name}</span>
+                    </Link>
+                    <X
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setIsRegistrationFilePreview((prev) => !prev);
+                      }}
                     />
-                </div>
-              )}
-              </div>
+                  </div>
+                )}
+            </div>
           </div>
         </div>
-        <div className="flex justify-end pr-6">
+        <div className="flex justify-end items-center space-x-3 mt-3">
           <Button
-            className={`bg-blue-400 hover:bg-blue-400`}
-            onClick={() => {
-              handleSubmit();
-            }}
+            onClick={handleBack}
+            variant="backbtn"
+            size="backbtnsize"
+          >
+            Back
+          </Button>
+
+          <Button
+            onClick={handleSubmit}
+            variant="nextbtn"
+            size="nextbtnsize"
           >
             Next
           </Button>

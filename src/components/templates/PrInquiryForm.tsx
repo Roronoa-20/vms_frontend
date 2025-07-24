@@ -114,9 +114,9 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
       alert("submission successfull");
       const refno = response?.data?.message?.name;
       // router.push(`pr-inquiry?refno=${refno}`)
-      // router.push(`/dashboard`)
-      const redirectUrl = `/pr-inquiry?refno=${refno}`;
-      window.location.href = redirectUrl;
+      router.push(`/dashboard`)
+      // const redirectUrl = `/pr-inquiry?refno=${refno}`;
+      // window.location.href = redirectUrl;
     } else {
       alert("error");
     }

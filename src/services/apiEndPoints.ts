@@ -115,7 +115,18 @@ const API_END_POINTS = {
   sendvendoremailonuser: `${url}/api/method/vms.APIs.user_confirmation.user_confirmation.send_vendor_delivery_issue_email`,
   POItemsTable:`${url}/api/method/vms.APIs.purchase_api.purchase_order.get_purchase_order_items_by_name`,
   submitPOItems:`${url}/api/method/vms.APIs.purchase_api.purchase_order.update_purchase_team_remarks`,
-  POItemsApproval:`${url}/api/method/vms.APIs.purchase_api.purchase_order.update_vendor_approval_status`
+  POItemsApproval:`${url}/api/method/vms.APIs.purchase_api.purchase_order.update_vendor_approval_status`,
+
+  // Company Filter API for Purchase Enquiry and Purchase Requisition
+  filterpurchasegroup: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.filter_purchase_group`,
+  filterstoragelocation: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_store_location`,
+  filtercostcenter: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_cost_center`,
+  filterglaccount: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_gl_account`,
+  filtermaterialgroup: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_material_group_master`,
+  filterprofitcenter: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_profit_center`,
+  filtervaluationclass: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_valuation_class_master`,
+  filterMaterialCode: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_material_master`,
+  filterpurchaseorg: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_purchase_organisation`
 };
 
 export default API_END_POINTS;

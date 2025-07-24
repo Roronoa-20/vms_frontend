@@ -1248,7 +1248,8 @@ export type TCompanyDetailForm = {
       _liked_by: string | null;
       _user_tags: string | null;
       hod:string,
-      purchase_team:string
+      purchase_team:string,
+      purchase_type: string,
     }[]
 }
 

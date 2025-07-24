@@ -12,40 +12,44 @@ import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
 
 interface Props {
-  ref_no:string,
-  onboarding_ref_no:string
-  OnboardingDetail:VendorOnboardingResponse["message"]["testing_details_tab"]
+  ref_no: string,
+  onboarding_ref_no: string
+  OnboardingDetail: VendorOnboardingResponse["message"]["testing_details_tab"]
 }
 
-const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
-  const [multipleTestingDetail,setMultipleTestingDetail] = useState<Partial<TTestingFacility>>();
-  const {designation} = useAuth();
-  const {testingDetail,updateTestingDetail,reset} = useTestingStore();
-  
-  useEffect(()=>{
+const TestingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) => {
+  const [multipleTestingDetail, setMultipleTestingDetail] = useState<Partial<TTestingFacility>>();
+  const { designation } = useAuth();
+  const { testingDetail, updateTestingDetail, reset } = useTestingStore();
+
+  useEffect(() => {
     reset();
-    OnboardingDetail?.map((item,index)=>{
+    OnboardingDetail?.map((item, index) => {
       updateTestingDetail(item)
     })
-  },[])
-  
-  
+  }, [])
+
+
   // if(!designation){
   //   return(
   //     <div>Loading...</div>
   //   )
   // }
-  
+
   const router = useRouter()
-  const handleSubmit = async()=>{
+  const handleSubmit = async () => {
     const submitUrl = API_END_POINTS?.testingDetailSubmit;
-    const updatedData = {testing_detail:testingDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}
-    const machineDetailResponse:AxiosResponse = await requestWrapper({url:submitUrl,data:{data:updatedData},method:"POST"});
+    const updatedData = { testing_detail: testingDetail, ref_no: ref_no, vendor_onboarding: onboarding_ref_no }
+    const machineDetailResponse: AxiosResponse = await requestWrapper({ url: submitUrl, data: { data: updatedData }, method: "POST" });
 
-    if(machineDetailResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
-  }
+    if (machineDetailResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+  };
 
-  const handleAdd = async()=>{
+  const handleBack = () => {
+    router.push(`/vendor-details-form?tabtype=Machinery%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+  };
+
+  const handleAdd = async () => {
     updateTestingDetail(multipleTestingDetail);
     setMultipleTestingDetail({});
   }
@@ -66,67 +70,84 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Equipment Name
           </h1>
-          <Input placeholder="" value={multipleTestingDetail?.equipment_name ?? ""} onChange={(e)=>{setMultipleTestingDetail((prev:any)=>({...prev,equipment_name:e.target.value}))}} />
+          <Input placeholder="" value={multipleTestingDetail?.equipment_name ?? ""} onChange={(e) => { setMultipleTestingDetail((prev: any) => ({ ...prev, equipment_name: e.target.value })) }} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Equipment Qty.
           </h1>
-          <Input placeholder="" value={multipleTestingDetail?.equipment_qty ?? ""} onChange={(e)=>{setMultipleTestingDetail((prev:any)=>({...prev,equipment_qty:e.target.value}))}}/>
+          <Input placeholder="" value={multipleTestingDetail?.equipment_qty ?? ""} onChange={(e) => { setMultipleTestingDetail((prev: any) => ({ ...prev, equipment_qty: e.target.value })) }} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Capacity
           </h1>
-          <Input placeholder="" value={multipleTestingDetail?.capacity ?? ""} onChange={(e)=>{setMultipleTestingDetail((prev:any)=>({...prev,capacity:e.target.value}))}} />
+          <Input placeholder="" value={multipleTestingDetail?.capacity ?? ""} onChange={(e) => { setMultipleTestingDetail((prev: any) => ({ ...prev, capacity: e.target.value })) }} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Remarks
           </h1>
-          <Input placeholder="" value={multipleTestingDetail?.remarks ?? ""} onChange={(e)=>{setMultipleTestingDetail((prev:any)=>({...prev,remarks:e.target.value}))}}/>
+          <Input placeholder="" value={multipleTestingDetail?.remarks ?? ""} onChange={(e) => { setMultipleTestingDetail((prev: any) => ({ ...prev, remarks: e.target.value })) }} />
         </div>
         <div className="col-span-1 flex items-end">
-          <Button className={`bg-blue-400 hover:bg-blue-300`} onClick={()=>{handleAdd()}}>Add</Button>
+          <Button className={`bg-blue-400 hover:bg-blue-300`} onClick={() => { handleAdd() }}>Add</Button>
         </div>
       </div>
-      <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
-            <div className="flex w-full justify-between pb-4">
-              <h1 className="text-[20px] text-[#03111F] font-semibold">
-                Multiple Testing Facility
-              </h1>
-            </div>
-            <Table className=" max-h-40 overflow-y-scroll">
-              {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-              <TableHeader className="text-center">
-                <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                  <TableHead className="w-[100px]">Sr No.</TableHead>
-                  <TableHead className="text-center">Equipment Name</TableHead>
-                  <TableHead className="text-center">Equipment Qty.</TableHead>
-                  <TableHead className="text-center">Capacity</TableHead>
-                  <TableHead className="text-center">Remarks</TableHead>
-                  <TableHead className="text-center">Delete</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody className="text-center">
-                {testingDetail?.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">{index + 1}</TableCell>
-                    <TableCell>{item?.equipment_name}</TableCell>
-                    <TableCell>{item?.equipment_qty}</TableCell>
-                    <TableCell>{item?.capacity}</TableCell>
-                    <TableCell>
-                      {item?.remarks}
-                    </TableCell>
-                    <TableCell>
-                      <Button onClick={()=>{handleRowDelete(index)}}>Delete</Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+      {testingDetail.length > 0 && (
+        <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
+          <div className="flex w-full justify-between pb-4">
+            <h1 className="text-[20px] text-[#03111F] font-semibold">
+              Multiple Testing Facility
+            </h1>
           </div>
-      <div className={`flex justify-end pr-4`} onClick={()=>{handleSubmit()}}><Button>Next</Button></div>
+          <Table className=" max-h-40 overflow-y-scroll">
+            <TableHeader className="text-center">
+              <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
+                <TableHead className="w-[100px]">Sr No.</TableHead>
+                <TableHead className="text-center">Equipment Name</TableHead>
+                <TableHead className="text-center">Equipment Qty.</TableHead>
+                <TableHead className="text-center">Capacity</TableHead>
+                <TableHead className="text-center">Remarks</TableHead>
+                <TableHead className="text-center">Delete</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="text-center">
+              {testingDetail?.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium">{index + 1}</TableCell>
+                  <TableCell>{item?.equipment_name}</TableCell>
+                  <TableCell>{item?.equipment_qty}</TableCell>
+                  <TableCell>{item?.capacity}</TableCell>
+                  <TableCell>
+                    {item?.remarks}
+                  </TableCell>
+                  <TableCell>
+                    <Button onClick={() => { handleRowDelete(index) }}>Delete</Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+      <div className="flex justify-end items-center space-x-3 mt-3">
+        <Button
+          onClick={handleBack}
+          variant="backbtn"
+          size="backbtnsize"
+        >
+          Back
+        </Button>
+
+        <Button
+          onClick={handleSubmit}
+          variant="nextbtn"
+          size="nextbtnsize"
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 };

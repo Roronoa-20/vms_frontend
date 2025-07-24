@@ -22,8 +22,8 @@ interface Props {
   dropdown: purchaseInquiryDropdown["message"]
   PRInquiryData: TPRInquiry | null
   refno?: string
-  companyDropdown:{name:string,description:string}[]
-  purchaseTypeDropdown:{name:string,purchase_requisition_type_name:string,description:string}[]
+  companyDropdown: { name: string, description: string }[]
+  purchaseTypeDropdown: { name: string, purchase_requisition_type_name: string, description: string }[]
 }
 
 
@@ -33,7 +33,7 @@ type ProductNameDropdown = {
 }
 const currentDate = new Date();
 
-const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchaseTypeDropdown }: Props) => {
+const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purchaseTypeDropdown }: Props) => {
   const user = Cookies.get("user_id");
   const [formData, setFormData] = useState<TPRInquiry | null>(PRInquiryData ?? null);
   const [singleTableRow, setSingleTableRow] = useState<TableData | null>(null);
@@ -46,16 +46,16 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchase
   const [isAcknowledgeDialog, setIsAcknowledgeDialog] = useState(false);
   const [comment, setComment] = useState<string>("")
   const [date, setDate] = useState<string>("")
-  const [isModifyDialog,setIsModifyDialog] = useState<boolean>(false);
-  const [plantDropdown,setPlantDropdown] = useState<{name:string,plant_name:string,description:string}[]>();
-  const [purchaseGroupDropdown,setPurchaseGroupDropdown] = useState<{name:string,purchase_group_code:string,purchase_group_name:string,description:string}[]>();
+  const [isModifyDialog, setIsModifyDialog] = useState<boolean>(false);
+  const [plantDropdown, setPlantDropdown] = useState<{ name: string, plant_name: string, description: string }[]>();
+  const [purchaseGroupDropdown, setPurchaseGroupDropdown] = useState<{ name: string, purchase_group_code: string, purchase_group_name: string, description: string }[]>();
   const router = useRouter();
 
-  useEffect(()=>{
-    if(PRInquiryData?.company){
+  useEffect(() => {
+    if (PRInquiryData?.company) {
       handleCompanyChange(PRInquiryData?.company);
     }
-  },[])
+  }, [])
 
   const handleSelectChange = (value: any, name: string, isTable: boolean) => {
     if (isTable) {
@@ -84,7 +84,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchase
   }
 
   const handleApproval = async () => {
-    const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { cart_id: refno, approve: isApproved, reject: isReject, user: user, comments: comment, cart_product:tableData } }, method: "POST" });
+    const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { cart_id: refno, approve: isApproved, reject: isReject, user: user, comments: comment, cart_product: tableData } }, method: "POST" });
     if (response?.status == 200) {
       setComment("");
       setIsApproved(false);
@@ -104,13 +104,13 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchase
   };
 
 
-  const handleModify = async()=>{
+  const handleModify = async () => {
     const url = API_END_POINTS?.PurchaseEnquiryModify;
     const updatedTable = tableData?.map((item, index) => {
       return { ...item, row_id: item?.name };
     });
-    const response:AxiosResponse = await requestWrapper({url:url,method:"POST",data:{data:{cart_id:refno,fields_to_modify:comment,cart_product:updatedTable}}});
-    if(response?.status == 200){
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "POST", data: { data: { cart_id: refno, fields_to_modify: comment, cart_product: updatedTable } } });
+    if (response?.status == 200) {
       alert("Modify Notification Sent Successfully");
       setComment("");
       setIsModifyDialog(false);
@@ -119,10 +119,10 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchase
   }
 
 
-  const handleAcknowledge = async()=>{
+  const handleAcknowledge = async () => {
     const url = API_END_POINTS?.PurchaseEnquiryAcknowledge;
-    const response:AxiosResponse = await requestWrapper({url:url,method:"POST",data:{data:{cart_id:refno,acknowledged_remarks:comment,acknowledged_date:date}}});
-    if(response?.status == 200){
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "POST", data: { data: { cart_id: refno, acknowledged_remarks: comment, acknowledged_date: date } } });
+    if (response?.status == 200) {
       alert("Acknowledge Sent Successfully");
       setComment("");
       setIsAcknowledgeDialog(false);
@@ -156,7 +156,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchase
     setTableData((prev) => {
       const updated = [...prev];
       if (updated[index]) {
-        updated[index] = { ...updated[index],[name]: value };
+        updated[index] = { ...updated[index], [name]: value };
       }
       return updated;
     });
@@ -172,26 +172,26 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno,companyDropdown,purchase
   //   });
   // }
 
-  const handleCompanyChange = async(value:string)=>{
+  const handleCompanyChange = async (value: string) => {
     const url = `${API_END_POINTS?.InquiryDropdownsBasedOnCompany}?comp=${value}`
-    const response:AxiosResponse = await  requestWrapper({url:url,method:"GET"});
-    if(response?.status == 200){
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+    if (response?.status == 200) {
       setPlantDropdown(response?.data?.message?.plants);
       setPurchaseGroupDropdown(response?.data?.message?.purchase_groups);
     }
   }
 
-const handleTableCheckChange = (index: number, check:boolean) => {
+  const handleTableCheckChange = (index: number, check: boolean) => {
     // const { name, value } = e.target;
     setTableData((prev) => {
       const updated = [...prev];
       if (updated[index]) {
-        updated[index] = { ...updated[index],need_asset_code: check };
+        updated[index] = { ...updated[index], need_asset_code: check };
       }
       return updated;
     });
   }
-
+  console.log("FormData in VIEW ENQUIRy Form---->",formData);
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
@@ -201,13 +201,13 @@ const handleTableCheckChange = (index: number, check:boolean) => {
       <div className="grid grid-cols-3 gap-6 p-5">
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">User</h1>
-          <Input placeholder="" name='user' onChange={(e) => {handleFieldChange(false, e) }} value={formData?.user ?? user ?? ""} disabled />
+          <Input placeholder="" name='user' onChange={(e) => { handleFieldChange(false, e) }} value={formData?.user ?? user ?? ""} disabled />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Cart Use
           </h1>
-          <Select disabled value={formData?.cart_use ?? ""} onValueChange={(value) => {handleSelectChange(value, "cart_use", false) }}>
+          <Select disabled value={formData?.cart_use ?? ""} onValueChange={(value) => { handleSelectChange(value, "cart_use", false) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -221,13 +221,13 @@ const handleTableCheckChange = (index: number, check:boolean) => {
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">Cart Date</h1>
-          <Input placeholder="" name='cart_date' onChange={(e) => {handleFieldChange(false, e) }} value={formData?.cart_date ?? currentDate?.toLocaleDateString() ?? ""} disabled />
+          <Input placeholder="" name='cart_date' onChange={(e) => { handleFieldChange(false, e) }} value={formData?.cart_date ?? currentDate?.toLocaleDateString() ?? ""} disabled />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Category Type
           </h1>
-          <Select disabled value={formData?.category_type ?? ""} onValueChange={(value) => {handleSelectChange(value, "category_type", false); fetchProductName(value) }}>
+          <Select disabled value={formData?.category_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "category_type", false); fetchProductName(value) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -242,77 +242,79 @@ const handleTableCheckChange = (index: number, check:boolean) => {
           </Select>
         </div>
         <div className="col-span-1">
-                  <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-                    Company
-                  </h1>
-                  <Select disabled value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value);}}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {companyDropdown?.map((item, index) => (
-                          <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="col-span-1">
-                  <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-                    Purchase Type
-                  </h1>
-                  <Select disabled value={formData?.purchase_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_type", false)}}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {purchaseTypeDropdown?.map((item, index) => (
-                          <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="col-span-1">
-                  <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-                    Plant
-                  </h1>
-                  <Select disabled value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant", false)}}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {plantDropdown?.map((item, index) => (
-                          <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="col-span-1">
-                  <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-                    Purchase Group
-                  </h1>
-                  <Select disabled value={formData?.purchase_group ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_group", false)}}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {purchaseGroupDropdown?.map((item, index) => (
-                          <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="col-span-1">
-          <h1 className={`text-[12px] font-normal text-[#626973] pb-3 ${PRInquiryData?.acknowledged_date?"":"hidden"}`}>Acknowledged Date</h1>
-          <Input placeholder="" value={PRInquiryData?.acknowledged_date ?? ""} disabled />
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
+            Company
+          </h1>
+          <Select disabled value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value); }}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {companyDropdown?.map((item, index) => (
+                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
+            Purchase Type
+          </h1>
+          <Select disabled value={formData?.purchase_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_type", false) }}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {purchaseTypeDropdown?.map((item, index) => (
+                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
+            Plant
+          </h1>
+          <Select disabled value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant", false) }}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {plantDropdown?.map((item, index) => (
+                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
+            Purchase Group
+          </h1>
+          <Select disabled value={formData?.purchase_group ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_group", false) }}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {purchaseGroupDropdown?.map((item, index) => (
+                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        {PRInquiryData?.acknowledged_date && (
+          <div className="col-span-1">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">Acknowledged Date</h1>
+            <Input placeholder="" value={PRInquiryData?.acknowledged_date} disabled />
+          </div>
+        )}
       </div>
       <h1 className="pl-5">Purchase Inquiry Items</h1>
       <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
@@ -335,7 +337,7 @@ const handleTableCheckChange = (index: number, check:boolean) => {
             {tableData?.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{index + 1}</TableCell>
-                <TableCell className={`flex justify-center`}><Input type='checkbox' onChange={(e)=>{handleTableCheckChange(index,e.target.checked)}} disabled={(Boolean(PRInquiryData?.purchase_team) && item?.assest_code == null)?false:true} checked={item?.need_asset_code} className='w-5' /></TableCell>
+                <TableCell className={`flex justify-center`}><Input type='checkbox' onChange={(e) => { handleTableCheckChange(index, e.target.checked) }} disabled={(Boolean(PRInquiryData?.purchase_team) && item?.assest_code == null) ? false : true} checked={item?.need_asset_code} className='w-5' /></TableCell>
                 <TableCell className='text-center'>{item?.assest_code}</TableCell>
                 <TableCell>{item?.product_name}</TableCell>
                 <TableCell>{item?.product_price}</TableCell>
@@ -344,9 +346,9 @@ const handleTableCheckChange = (index: number, check:boolean) => {
                 <TableCell>{item?.product_quantity}</TableCell>
                 <TableCell>{item?.user_specifications}</TableCell>
                 <TableCell className='flex justify-center'>
-                  <Input disabled={PRInquiryData?.purchase_team_approved == Boolean(0)?false:true} value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e)=>{handleTableInput(index,e)}} className={`text-center w-28 ${PRInquiryData?.purchase_team_acknowledgement?"":"hidden"}`} type='number'/>
-                  </TableCell>
-                  {/* <TableCell className='flex justify-center'><Input className='text-center w-28' type='checked' onChange={(e)=>{handleTableCheck(index,e.target.checked)}}/></TableCell> */}
+                  <Input disabled={PRInquiryData?.purchase_team_approved == Boolean(0) ? false : true} value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e) => { handleTableInput(index, e) }} className={`text-center w-28 ${PRInquiryData?.purchase_team_acknowledgement ? "" : "hidden"}`} type='number' />
+                </TableCell>
+                {/* <TableCell className='flex justify-center'><Input className='text-center w-28' type='checked' onChange={(e)=>{handleTableCheck(index,e.target.checked)}}/></TableCell> */}
               </TableRow>
             ))}
           </TableBody>
@@ -356,18 +358,18 @@ const handleTableCheckChange = (index: number, check:boolean) => {
       {
         PRInquiryData?.purchase_team &&
         <div className={`flex justify-end pr-4 gap-4 ${designation != "Enquirer" ? "" : "hidden"}`}>
-        <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.purchase_team_acknowledgement?"hidden":""}`} onClick={() => {setIsModifyDialog(true) }}>Modify</Button>
-        {
-          PRInquiryData?.purchase_team_acknowledgement == Boolean(1) ? 
-          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.purchase_team_approved == Boolean(0)?"":"hidden"}`} onClick={() => {setIsApproved(true); setIsDialog(true) }}>Approve</Button>
-          :
-        <Button className='bg-blue-400 hover:bg-blue-400' onClick={() => {setIsAcknowledgeDialog(true) }}>Acknowledge</Button>
-        }
-        { 
-          <Button className={`bg-blue-400 hover:bg-blue-400 ${designation != "Enquirer" && PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => {setIsReject(true); setIsDialog(true) }}>Reject</Button>
-        }
-      </div>
-        }
+          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.purchase_team_acknowledgement ? "hidden" : ""}`} onClick={() => { setIsModifyDialog(true) }}>Modify</Button>
+          {
+            PRInquiryData?.purchase_team_acknowledgement == Boolean(1) ?
+              <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsApproved(true); setIsDialog(true) }}>Approve</Button>
+              :
+              <Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { setIsAcknowledgeDialog(true) }}>Acknowledge</Button>
+          }
+          {
+            <Button className={`bg-blue-400 hover:bg-blue-400 ${designation != "Enquirer" && PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsReject(true); setIsDialog(true) }}>Reject</Button>
+          }
+        </div>
+      }
 
       {isDialog &&
         <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
@@ -382,8 +384,8 @@ const handleTableCheckChange = (index: number, check:boolean) => {
       {isAcknowledgeDialog &&
         <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
           <Comment_box className='' handleClose={handleClose} Submitbutton={handleAcknowledge} handleComment={handleComment}>
-            <Input className='w-44' type='Date' onChange={(e)=>{setDate(e.target.value)}}/>
-            </Comment_box>
+            <Input className='w-44' type='Date' onChange={(e) => { setDate(e.target.value) }} />
+          </Comment_box>
         </div>
       }
     </div>

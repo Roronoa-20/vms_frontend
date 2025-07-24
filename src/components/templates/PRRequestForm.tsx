@@ -5,7 +5,7 @@ import { Input } from '../atoms/input'
 import { Button } from '../atoms/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../atoms/select'
-import { PurchaseRequestData, PurchaseRequestDropdown } from '@/src/types/PurchaseRequestType'
+import { CostCenter, GLAccountNumber, MaterialCode, MaterialGroupMaster, ProfitCenter, PurchaseGroup, PurchaseOrganisation, PurchaseRequestData, PurchaseRequestDropdown, StorageLocation, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType'
 import { Edit2, Edit2Icon, EyeIcon } from 'lucide-react'
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
@@ -26,6 +26,15 @@ interface Props {
   PRData: PurchaseRequestData["message"]["data"] | null
   cartId?: string
   pur_req?: string
+  PurchaseGroupDropdown: PurchaseGroup[]
+  StorageLocationDropdown: StorageLocation[]
+  ValuationClassDropdown: ValuationClass[]
+  ProfitCenterDropdown: ProfitCenter[]
+  MaterialGroupDropdown: MaterialGroupMaster[]
+  GLAccountDropdwon: GLAccountNumber[]
+  CostCenterDropdown: CostCenter[]
+  MaterialCodeDropdown: MaterialCode[]
+  PurchaseOrgDropdown: PurchaseOrganisation[]
 }
 
 export const updateQueryParam = (key: string, value: string) => {
@@ -34,7 +43,7 @@ export const updateQueryParam = (key: string, value: string) => {
   window.history.pushState({}, '', url.toString());
 };
 
-const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req }: Props) => {
+const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, StorageLocationDropdown, ValuationClassDropdown, ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, MaterialCodeDropdown, PurchaseOrgDropdown }: Props) => {
   const user = Cookies.get("user_id");
   const [formData, setFormData] = useState<PurchaseRequestData["message"]["data"] | null>(PRData ? { ...PRData, requisitioner: PRData?.requisitioner, cart_id: cartId ? cartId : "" } : null);
   const [requiredField, setRequiredField] = useState(null);
@@ -145,7 +154,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req }: Props) => {
   }
 
   const fetchTableData = async (pur_req: string) => {
-    console.log(pur_req,"pur_req in table code")
+    console.log(pur_req, "pur_req in table code")
     const url = `${API_END_POINTS?.fetchPRTableData}?name=${pur_req}`
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
@@ -169,7 +178,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req }: Props) => {
     }
   }
 
-  const handleModel = (purchase_requisition_type: string) =>purchase_requisition_type === "SB" ? setEditModalOpen(true) : setNBEditModalOpen(true);
+  const handleModel = (purchase_requisition_type: string) => purchase_requisition_type === "SB" ? setEditModalOpen(true) : setNBEditModalOpen(true);
 
   const fetchRequiredData = async (company: string, pur_type: string, acct_cate: string) => {
     console.log(company, pur_type, acct_cate)
@@ -448,7 +457,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req }: Props) => {
                             <strong>Purchase Requisition Type:</strong> {mainItem.purchase_requisition_type || "N/A"}
                           </div>
                         </div> */}
-                        <SummaryBlock mainItem={mainItem}/>
+                        <SummaryBlock mainItem={mainItem} />
                         {/* Sub Items Section */}
                         {mainItem.purchase_requisition_type == "SB" && <div className="mt-4">
                           <div className="flex items-center justify-between mb-4">
@@ -548,7 +557,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req }: Props) => {
           onClose={() => setIsSubItemModalOpen(false)}
           fetchTableData={fetchTableData}
           Dropdown={Dropdown}
-          pur_req={pur_req ? pur_req : mainItems?.docname?mainItems?.docname:""}
+          pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
           selectedMainItemId={selectedMainItemId}
         />}
 
@@ -557,17 +566,31 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req }: Props) => {
           isOpen={isEditModalOpen}
           onClose={() => setEditModalOpen(false)}
           fetchTableData={fetchTableData}
-          Dropdown={Dropdown} 
+          Dropdown={Dropdown}
           defaultData={editRow}
-          pur_req={pur_req ? pur_req : mainItems?.docname?mainItems?.docname:""}
+          PurchaseGroupDropdown={PurchaseGroupDropdown}
+          StorageLocationDropdown={StorageLocationDropdown}
+          ValuationClassDropdown={ValuationClassDropdown}
+          PurchaseOrgDropdown={PurchaseOrgDropdown}
+          MaterialGroupDropdown={MaterialGroupDropdown}
+
+          pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
         />}
 
       {isNBEditModalOpen && <EditNBItemModal
         isOpen={isNBEditModalOpen}
         onClose={() => setNBEditModalOpen(false)}
         fetchTableData={fetchTableData}
-        Dropdown={Dropdown} 
-        pur_req={pur_req ? pur_req : mainItems?.docname?mainItems?.docname:""}
+        Dropdown={Dropdown}
+        PurchaseGroupDropdown={PurchaseGroupDropdown}
+        StorageLocationDropdown={StorageLocationDropdown}
+        ValuationClassDropdown={ValuationClassDropdown}
+        ProfitCenterDropdown={ProfitCenterDropdown}
+        MaterialGroupDropdown={MaterialGroupDropdown}
+        GLAccountDropdwon={GLAccountDropdwon}
+        CostCenterDropdown={CostCenterDropdown}
+        MaterialCodeDropdown={MaterialCodeDropdown}
+        pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
         defaultData={editRow}
       />}
 
