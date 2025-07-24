@@ -8,6 +8,7 @@ import PopUp from "../molecules/PopUp";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../atoms/table";
 import { Input } from "../atoms/input";
 import { Button } from "../atoms/button";
+import { useRouter } from "next/navigation";
 
 
 interface POItemsTable {
@@ -19,11 +20,15 @@ interface POItemsTable {
   quantity:string,
   early_delivery_date:string
   purchase_team_remarks:string,
-  requested_for_earlydelivery:boolean
+  requested_for_earlydelivery:boolean,
+  vendor_remarks:string,
+  rejected_by_vendor:boolean,
+  approved_by_vendor:boolean
 }
 
 
 const ViewPO = () => {
+  const router = useRouter();
     const [prDetails,setPRDetails] = useState();
     const [PRNumber,setPRNumber] = useState<string>("");
     const [POItemsTable,setPOItemsTable] = useState<POItemsTable[]>([]);
@@ -57,7 +62,7 @@ const ViewPO = () => {
     }
 
 
-    const handleTableChange = (index: number, name:string,value:string) => {
+    const handleTableChange = (index: number, name:string,value:string | boolean) => {
     // const { name, value } = e.target;
     setPOItemsTable((prev) => {
       const updated = [...prev];
@@ -70,7 +75,7 @@ const ViewPO = () => {
 
 
   const handlePoItemsSubmit = async()=>{
-    const url = API_END_POINTS?.submitPOItems;
+    const url = API_END_POINTS?.POItemsApproval;
     const updatedData = {items:POItemsTable,po_name:PRNumber};
     const response:AxiosResponse = await requestWrapper({url:url,method:"POST",data:{data:updatedData}});
     if(response?.status == 200){
@@ -91,18 +96,18 @@ const ViewPO = () => {
           <button onClick={()=>{getPODetails()}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
             View PO Details
           </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+          <button onClick={()=>{router.push(`/view-po-changes?po_name=${PRNumber}`)}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
             View All Changed PO Details
           </button>
         </div>
       </div>
 
       {/* Early Delivery Button */}
-      <div className="text-left">
+      {/* <div className="text-left">
         <button onClick={()=>{handleOpen()}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
           Early Delivery
         </button>
-      </div>
+      </div> */}
 
       {/* PO Main Section */}
       <POPrintFormat prDetails={prDetails}  />
@@ -123,6 +128,9 @@ const ViewPO = () => {
               <TableHead className="text-center">Quantity</TableHead>
               <TableHead className="text-center">Early Delivery Date</TableHead>
               <TableHead className="text-center">Remarks</TableHead>
+              <TableHead className="text-center">Approved</TableHead>
+              <TableHead className="text-center">Rejected</TableHead>
+              <TableHead className="text-center">Vendor Remarks</TableHead>
               
             </TableRow>
           </TableHeader>
@@ -134,8 +142,45 @@ const ViewPO = () => {
                 <TableCell>{item?.plant}</TableCell>
                 <TableCell>{item?.schedule_date}</TableCell>  
                 <TableCell>{item?.quantity}</TableCell>  
-                <TableCell className={`flex justify-center`}><Input disabled={item?.requested_for_earlydelivery?true:false} type="date" name="early_delivery_date" onChange={(e)=>{handleTableChange(index,e.target.name,e.target.value)}} value={item?.early_delivery_date ?? ""}  className='w-36 disabled:opacity-100' /></TableCell>
-                <TableCell><div className={`flex justify-center`}> <Input disabled={item?.requested_for_earlydelivery?true:false} name="purchase_team_remarks" onChange={(e)=>{handleTableChange(index,e.target.name,e.target.value)}} value={item?.purchase_team_remarks ?? ""}  className='disabled:opacity-100' /></div></TableCell>
+                <TableCell className={`flex justify-center`}>{item?.early_delivery_date}</TableCell>
+                <TableCell>{item?.purchase_team_remarks}</TableCell>
+                {/* <TableCell>
+                  <div className={`flex justify-center gap-2`}>
+                    <div className="flex flex-col gap-2 w-3">
+                  <Input  type="radio" name="early_delivery_date" onChange={(e)=>{handleTableChange(index,e.target.name,e.target.value)}} value={item?.early_delivery_date ?? ""}  className=' disabled:opacity-100' />
+                  <h1>approved</h1>
+                    </div>
+                    <div className="flex flex-col gap-2 w-3">
+                  <Input  type="radio" name="early_delivery_date" onChange={(e)=>{handleTableChange(index,e.target.name,e.target.value)}} value={item?.early_delivery_date ?? ""}  className=' disabled:opacity-100' />
+                  <h1>rejected</h1>
+                    </div>
+                  </div>
+                  </TableCell> */}
+                  <TableCell>
+                    <input
+                    className="w-4"
+                      type="radio"
+                      name={`vendor_response_${index}`}
+                      checked={item.approved_by_vendor}
+                      onChange={() => {
+                        handleTableChange(index, "approved_by_vendor", true);
+                        handleTableChange(index, "rejected_by_vendor", false);
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <input
+                    className="w-4"
+                      type="radio"
+                      name={`vendor_response_${index}`}
+                      checked={item.rejected_by_vendor}
+                      onChange={() => {
+                        handleTableChange(index, "approved_by_vendor", false);
+                        handleTableChange(index, "rejected_by_vendor", true);
+                      }}
+                    />
+                  </TableCell>
+                <TableCell><div className={`flex justify-center`}> <Input name="vendor_remarks" onChange={(e)=>{handleTableChange(index,e.target.name,e.target.value)}} value={item?.vendor_remarks ?? ""}  className=' w-36 disabled:opacity-100' /></div></TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -98,11 +98,11 @@ export const VendorsidebarMenu = [
   //   name: "Raise RFQ",
   //   href:""
   // },
-  // {
-  //   logo: "/sidebar-assests/view-pr.svg",
-  //   name: "View PR",
-  //   href:""
-  // },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "View PO",
+    href:"/view-vendor-po"
+  },
   // {
   //   logo: "/sidebar-assests/po-details.svg",
   //   name: "View PO",
