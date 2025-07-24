@@ -359,14 +359,14 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Product Price Range
           </h1>
-          <Input placeholder="" name='product_price' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_price ?? ""}
+          <Input placeholder="" disabled name='product_price' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_price ?? ""}
           />
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Lead Time
           </h1>
-          <Input placeholder="" name='lead_time' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.lead_time ?? ""} />
+          <Input placeholder="" disabled name='lead_time' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.lead_time ?? ""} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
