@@ -95,7 +95,7 @@ const DocumentDetails = ({
   const [singlerow, setSingleRow] = useState<gstRow | null>();
   const [GSTTable, setGSTTable] = useState<gstRow[]>(OnboardingDetail?.gst_table);
   const [showGSTTable, setShowGSTTable] = useState(OnboardingDetail?.gst_table?.length > 0?true:false);
-  const [gstStateDropdown, setGstStateDropdown] = useState<{ state_name: string, name: string }[]>();
+  const [gstStateDropdown, setGstStateDropdown] = useState<{ state_name: string, name: string,pincode:string }[]>();
   useEffect(() => {
     if (ref_no && onboarding_ref_no) {
       getState();
@@ -107,7 +107,7 @@ const DocumentDetails = ({
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
       setGstStateDropdown(response?.data?.message?.data)
-      console.log(response?.data?.message?.data, "this is state dropdown")
+      console.log(response?.data?.message, "this is state dropdown")
     }
   }
 
@@ -473,7 +473,7 @@ const DocumentDetails = ({
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Pincode <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
-              <Input
+              {/* <Input
                 className="disabled:opacity-100"
                 placeholder="Enter Pincode"
                 value={
@@ -489,7 +489,34 @@ const DocumentDetails = ({
                 onChange={(e) => {
                   handlePincodeChange(e.target.value);
                 }}
-              />
+              /> */}
+              <Select
+                // onValueChange={(value) => {
+                //   setDocumentDetail((prev) => ({ ...prev, gst_state: value }));
+                // }}
+                onValueChange={(value) => {
+                  // setSingleRow((prev: any) => ({ ...prev, gst_state: value }));
+                  handlePincodeChange(value);
+                }}
+                value={
+                  singlerow?.pincode ?? ""
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Pincode" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {gstStateDropdown?.map(
+                      (item, index) => (
+                        <SelectItem key={index} value={item?.pincode}>
+                          {item?.pincode}
+                        </SelectItem>
+                      )
+                    )}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
               {errors?.pincode && !singlerow?.pincode && <span style={{ color: 'red' }}>{errors?.pincode}</span>}
             </div>
             <div>
