@@ -2,12 +2,14 @@ import React from "react";
 
 
 interface Props {
-    prDetails:any
+    prDetails:any,
+    contentRef:React.RefObject<HTMLDivElement | null>
+    Heading?:string
 }
 
 
 
-const POPrintFormat = ({prDetails}:Props) => {
+const POPrintFormat = ({prDetails,contentRef,Heading}:Props) => {
 
 
      const VendorInfoList = [
@@ -65,12 +67,13 @@ const POPrintFormat = ({prDetails}:Props) => {
 
     const companyLogo = {
         "Meril Diagnostics Private Limited":"/printFormatLogo/Meril-Diagnostics.svg",
-        "Meril Endo Surgery Private LImited":"/printFormatLogo/Meril-Endo-surgery.svg",
+        "Meril Endo Surgery Private Limited":"/printFormatLogo/Meril-Endo-surgery.svg",
         "Meril Health Care Private Limited":"/printFormatLogo/Meril-Healthcare-Logo.svg",
         "Meril Life Scinces Private Limited":"/printFormatLogo/Meril-life-sciences-logo.svg"
     }
   return (
-    <div className="bg-white border border-gray-300 rounded-md p-4 space-y-6 overflow-x-auto">
+    <div ref={contentRef} className="bg-white border border-gray-300 rounded-md px-16 py-10 space-y-6 overflow-x-auto">
+        <h1 className="text-center font-medium">{prDetails?.purchase_order_format && Heading}</h1>
       {/* Grid with 2 Columns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 border border-black ">
         {/* Left Column */}
