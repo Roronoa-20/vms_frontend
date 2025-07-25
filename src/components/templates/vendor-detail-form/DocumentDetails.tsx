@@ -470,7 +470,7 @@ const DocumentDetails = ({
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Vendor Type" />
+                  <SelectValue placeholder="Select Vendor State" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
@@ -492,7 +492,7 @@ const DocumentDetails = ({
               </h1>
               <Input
                 className="disabled:opacity-100"
-                placeholder="Enter GST Number"
+                placeholder="Enter Pincode"
                 value={
                   singlerow?.pincode ??
                   ""
@@ -514,7 +514,7 @@ const DocumentDetails = ({
             </div>
           </div>
           <div
-            className={`col-span-3 grid grid-cols-3 gap-6`}
+            className={`col-span-3 grid grid-cols-3 gap-6 ${singlerow?.gst_ven_type == "Not-Registered"?"hidden":""}`}
           >
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -666,7 +666,7 @@ const DocumentDetails = ({
         )}
         <div className="grid grid-cols-3 p-5 gap-6">
           <div className="flex flex-col col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-[26px]">
               MSME Registered?
             </h1>
             <Select
