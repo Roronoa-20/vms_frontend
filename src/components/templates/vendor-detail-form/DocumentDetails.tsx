@@ -94,7 +94,7 @@ const DocumentDetails = ({
   const [isPanFilePreview, setIsPanFilePreview] = useState<boolean>(true);
   const [singlerow, setSingleRow] = useState<gstRow | null>();
   const [GSTTable, setGSTTable] = useState<gstRow[]>(OnboardingDetail?.gst_table);
-  const [showGSTTable, setShowGSTTable] = useState(false);
+  const [showGSTTable, setShowGSTTable] = useState(OnboardingDetail?.gst_table?.length > 0?true:false);
   const [gstStateDropdown, setGstStateDropdown] = useState<{ state_name: string, name: string }[]>();
   useEffect(() => {
     if (ref_no && onboarding_ref_no) {
@@ -329,7 +329,23 @@ const DocumentDetails = ({
     setGSTTable(OnboardingDetail);
   }
 
+  const handlePincodeChange = async(pincode:string)=>{
+    setSingleRow((prev: any) => ({
+                    ...prev,
+                    pincode: pincode,
+                  }));
+                  if(pincode.length < 6){
+                    return;
+                  } 
+    const url = `${API_END_POINTS?.getStateBasedOnPincode}?pincode=${pincode}`;
+    const response:AxiosResponse = await requestWrapper({url:url,method:"GET"});
+    if(response?.status == 200){
+      setSingleRow((prev:any)=>({...prev,gst_state:response?.data?.message?.data?.state?.name}))
+    }
+  }
+
   console.log(singlerow)
+  console.log(gstStateDropdown,"this is dropown")
 
   return (
     <div className="flex flex-col bg-white rounded-lg p-4 w-full max-h-[80vh]">
@@ -455,6 +471,29 @@ const DocumentDetails = ({
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                Pincode <span className="pl-2 text-red-400 text-2xl">*</span>
+              </h1>
+              <Input
+                className="disabled:opacity-100"
+                placeholder="Enter Pincode"
+                value={
+                  singlerow?.pincode ??
+                  ""
+                }
+                // onChange={(e) => {
+                //   setDocumentDetail((prev) => ({
+                //     ...prev,
+                //     gst_number: e.target.value,
+                //   }));
+                // }}
+                onChange={(e) => {
+                  handlePincodeChange(e.target.value);
+                }}
+              />
+              {errors?.pincode && !singlerow?.pincode && <span style={{ color: 'red' }}>{errors?.pincode}</span>}
+            </div>
+            <div>
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 State <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               {/* <Input placeholder="Enter State" value={documentDetails?.gst_state ?? OnboardingDetail?.gst_table[0]?.gst_state} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,gst_state:e.target.value}))}}/> */}
@@ -476,7 +515,7 @@ const DocumentDetails = ({
                   <SelectGroup>
                     {gstStateDropdown?.map(
                       (item, index) => (
-                        <SelectItem key={index} value={item?.state_name}>
+                        <SelectItem key={index} value={item?.name}>
                           {item?.state_name}
                         </SelectItem>
                       )
@@ -486,32 +525,7 @@ const DocumentDetails = ({
               </Select>
               {errors?.gst_state && !singlerow?.gst_state && <span style={{ color: 'red' }}>{errors?.gst_state}</span>}
             </div>
-            <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                Pincode <span className="pl-2 text-red-400 text-2xl">*</span>
-              </h1>
-              <Input
-                className="disabled:opacity-100"
-                placeholder="Enter Pincode"
-                value={
-                  singlerow?.pincode ??
-                  ""
-                }
-                // onChange={(e) => {
-                //   setDocumentDetail((prev) => ({
-                //     ...prev,
-                //     gst_number: e.target.value,
-                //   }));
-                // }}
-                onChange={(e) => {
-                  setSingleRow((prev: any) => ({
-                    ...prev,
-                    pincode: e.target.value,
-                  }));
-                }}
-              />
-              {errors?.pincode && !singlerow?.pincode && <span style={{ color: 'red' }}>{errors?.pincode}</span>}
-            </div>
+            
           </div>
           <div
             className={`col-span-3 grid grid-cols-3 gap-6 ${singlerow?.gst_ven_type == "Not-Registered"?"hidden":""}`}

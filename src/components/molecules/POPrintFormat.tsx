@@ -1,18 +1,14 @@
+import Image from "next/image";
 import React from "react";
 
-
 interface Props {
-    prDetails:any,
-    contentRef:React.RefObject<HTMLDivElement | null>
-    Heading?:string
+  prDetails: any;
+  contentRef: React.RefObject<HTMLDivElement | null>;
+  Heading?: string;
 }
 
-
-
-const POPrintFormat = ({prDetails,contentRef,Heading}:Props) => {
-
-
-     const VendorInfoList = [
+const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
+  const VendorInfoList = [
     ["VENDOR GSTIN NO:", prDetails?.vendor_gst_no],
     ["Contact Person :", prDetails?.contact_person],
     ["Phone/Mobile No :", prDetails?.phone_no],
@@ -23,26 +19,33 @@ const POPrintFormat = ({prDetails,contentRef,Heading}:Props) => {
     ["Supplier Quote Ref :", prDetails?.supplier_quote_ref],
   ];
 
-
-   const rightColumnAddressConst1 = [
+  const rightColumnAddressConst1 = [
     ["P.O. No.", prDetails?.name, "Date", prDetails?.po_date],
     ["Amd. Ver No.", "0", "Date", ""],
     ["Purchase Grp.", prDetails?.purchase_group, "", ""],
-    ["Ref. PR No", prDetails?.ref_pr_no, "Ref. PR Date", prDetails?.ref_pr_date],
+    [
+      "Ref. PR No",
+      prDetails?.ref_pr_no,
+      "Ref. PR Date",
+      prDetails?.ref_pr_date,
+    ],
     ["Ref. PR Person", prDetails?.ref_pr_person, "", ""],
-    ["Contact Person", prDetails?.contact_person, "Phone No.", prDetails?.phonemobile_no],
+    [
+      "Contact Person",
+      prDetails?.contact_person,
+      "Phone No.",
+      prDetails?.phonemobile_no,
+    ],
   ];
 
-
- const rightColumnAddressConst2 = [
+  const rightColumnAddressConst2 = [
     ["E-mail", prDetails?.email2],
     ["D/L No", prDetails?.dl_no],
     ["GSTIN No.", prDetails?.gstin_no],
     ["SSI Regn No.", ""],
   ];
 
-
- const Header = [
+  const Header = [
     "Sr No.",
     "Material Code",
     "Description",
@@ -55,25 +58,35 @@ const POPrintFormat = ({prDetails,contentRef,Heading}:Props) => {
     "Sche. Qty",
   ];
 
-
- const amountLabel = [
+  const amountLabel = [
     ["Total Gross Amount", prDetails?.total_gross_amount],
     ["Total Discount on Gross Amount", ""],
     ["Total INPUT CGST", prDetails?.total_input_cgst],
     ["Total INPUT SGST", prDetails?.total_input_sgst],
-    ["Total Value of Purchase Order / Service Order", prDetails?.total_value_of_po__so],
+    [
+      "Total Value of Purchase Order / Service Order",
+      prDetails?.total_value_of_po__so,
+    ],
   ];
 
-
-    const companyLogo = {
-        "Meril Diagnostics Private Limited":"/printFormatLogo/Meril-Diagnostics.svg",
-        "Meril Endo Surgery Private Limited":"/printFormatLogo/Meril-Endo-surgery.svg",
-        "Meril Health Care Private Limited":"/printFormatLogo/Meril-Healthcare-Logo.svg",
-        "Meril Life Scinces Private Limited":"/printFormatLogo/Meril-life-sciences-logo.svg"
-    }
+  const companyLogo = {
+    "Meril Diagnostics Private Limited":
+      "/printFormatLogo/Meril-Diagnostics.svg",
+    "Meril Endo Surgery Private Limited":
+      "/printFormatLogo/Meril-Endo-surgery.svg",
+    "Meril Health Care Private Limited":
+      "/printFormatLogo/Meril-Healthcare-Logo.svg",
+    "Meril Life Scinces Private Limited":
+      "/printFormatLogo/Meril-life-sciences-logo.svg",
+  };
   return (
-    <div ref={contentRef} className="bg-white border border-gray-300 rounded-md px-16 py-10 space-y-6 overflow-x-auto">
-        <h1 className="text-center font-medium">{prDetails?.purchase_order_format && Heading}</h1>
+    <div
+      ref={contentRef}
+      className="bg-white border border-gray-300 rounded-md px-16 py-10 space-y-6 overflow-x-auto"
+    >
+      <h1 className="text-center font-medium">
+        {prDetails?.purchase_order_format && Heading}
+      </h1>
       {/* Grid with 2 Columns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 border border-black ">
         {/* Left Column */}
@@ -95,7 +108,8 @@ const POPrintFormat = ({prDetails,contentRef,Heading}:Props) => {
               Supplier
             </div>
             <div className="col-span-2 p-2">
-              <span className="font-semibold">Code :</span> {prDetails?.supplier_name}
+              <span className="font-semibold">Code :</span>{" "}
+              {prDetails?.supplier_name}
             </div>
           </div>
           <div className="border-b border-black p-2 leading-4 text-sm">
@@ -175,20 +189,36 @@ const POPrintFormat = ({prDetails,contentRef,Heading}:Props) => {
             </tr>
           </thead>
           <tbody>
-            {prDetails?.po_items?.map((item:any, index:any) => (
-  <tr key={index} className={index % 2 ? "bg-gray-50" : ""}>
-    <td className="border border-black px-2 py-1 text-center">{index + 1}</td>
-    <td className="border border-black px-2 py-1">{item?.material_code}</td>
-    <td className="border border-black px-2 py-1">{item?.description}</td>
-    <td className="border border-black px-2 py-1">{item?.hsnsac}</td>
-    <td className="border border-black px-2 py-1">{item?.uom}</td>
-    <td className="border border-black px-2 py-1">{item?.quantity}</td>
-    <td className="border border-black px-2 py-1">{item?.rate}</td>
-    <td className="border border-black px-2 py-1">{item?.base_amount}</td>
-    <td className="border border-black px-2 py-1">{item?.schedule_date}</td>
-    <td className="border border-black px-2 py-1">{item?.quantity}</td>
-  </tr>
-))}
+            {prDetails?.po_items?.map((item: any, index: any) => (
+              <tr key={index} className={index % 2 ? "bg-gray-50" : ""}>
+                <td className="border border-black px-2 py-1 text-center">
+                  {index + 1}
+                </td>
+                <td className="border border-black px-2 py-1">
+                  {item?.material_code}
+                </td>
+                <td className="border border-black px-2 py-1">
+                  {item?.description}
+                </td>
+                <td className="border border-black px-2 py-1">
+                  {item?.hsnsac}
+                </td>
+                <td className="border border-black px-2 py-1">{item?.uom}</td>
+                <td className="border border-black px-2 py-1">
+                  {item?.quantity}
+                </td>
+                <td className="border border-black px-2 py-1">{item?.rate}</td>
+                <td className="border border-black px-2 py-1">
+                  {item?.base_amount}
+                </td>
+                <td className="border border-black px-2 py-1">
+                  {item?.schedule_date}
+                </td>
+                <td className="border border-black px-2 py-1">
+                  {item?.quantity}
+                </td>
+              </tr>
+            ))}
 
             {amountLabel?.map(([label, value], idx) => (
               <tr key={idx} className={idx % 2 ? "bg-gray-50" : ""}>
@@ -209,15 +239,20 @@ const POPrintFormat = ({prDetails,contentRef,Heading}:Props) => {
         </table>
       </div>
       <div className="border border-black bg-white text-left text-xs font-semibold p-2">
-        Totals Value in Words : <span className="font-normal">{prDetails?.total_value_in_words}</span>
+        Totals Value in Words :{" "}
+        <span className="font-normal">{prDetails?.total_value_in_words}</span>
       </div>
 
       {/* Terms and Footer */}
       <div className="border border-black p-4 text-sm space-y-2">
         <p className="font-semibold underline">Terms & Conditions</p>
-        <p className="font-semibold">Terms of Payment:{prDetails?.terms_of_payment}</p>
+        <p className="font-semibold">
+          Terms of Payment:{prDetails?.terms_of_payment}
+        </p>
         <p>100% within 30 Days from the Date of Invoice</p>
-        <p className="font-semibold">Delivery Schedule:{prDetails?.delivery_schedule}</p>
+        <p className="font-semibold">
+          Delivery Schedule:{prDetails?.delivery_schedule}
+        </p>
         <p className="font-semibold py-2">Shipping Instructions:</p>
         <p className="font-semibold">Pre Shipment Documentation:</p>
         <p className="">The following is required defore of material.</p>
@@ -250,8 +285,15 @@ const POPrintFormat = ({prDetails,contentRef,Heading}:Props) => {
             For Meril Endo Surgery Private Limited
           </div>
           <div className="grid grid-cols-3 text-center border-b border-black">
-            <div className="border-r border-black h-20 flex items-center justify-center">
-              Sign 1
+            <div className="border-r border-black h-20 flex items-center justify-center relative">
+
+              <img
+                src={prDetails && prDetails?.sign_url1?.url}
+                alt="Signature"
+                //  crossOrigin="anonymous"
+                style={{ width: "50%", height: "auto", objectFit: "contain" }}
+                // content="contain"
+                />
             </div>
             <div className="border-r border-black h-20 flex items-center justify-center">
               Sign 2

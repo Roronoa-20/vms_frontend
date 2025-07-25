@@ -46,55 +46,70 @@ const ViewPO = () => {
     }
     const contentRef = useRef<HTMLDivElement | null>(null);
 
-    const handleGeneratePdf = async () => {
-  const input = contentRef.current;
-  if (!input) return;
+const waitForImageLoad = async (img: HTMLImageElement): Promise<void> => {
+  while (!img.complete || img.naturalHeight === 0) {
+    await delay(50); // small delay to wait for image to load
+  }
+};
 
-  // ✅ 1. Wait for all images inside the container to load using async/await
-  const images = input.querySelectorAll("img");
-  for (const img of images) {
-    if (!img.complete) {
+const delay = async (ms: number): Promise<void> => {
+  // Only delay, doesn't use new Promise manually
+  let t = performance.now();
+  while (performance.now() - t < ms) {
+    // Do nothing, just wait
+  }
+};
+
+const handleGeneratePdf = async () => {
+  try {
+    const input = contentRef.current;
+    if (!input) throw new Error("PDF container not found.");
+
+    // ✅ Wait for all images to load
+    const images = input.querySelectorAll("img");
+    for (const img of images) {
       try {
-        await new Promise<void>((resolve) => {
-          img.onload = () => resolve();
-          img.onerror = () => resolve(); // still resolve on error to continue
-        });
-      } catch (err) {
-        console.warn("Image failed to load", img.src);
+        await waitForImageLoad(img);
+      } catch {
+        console.warn("Image failed:", img.src);
       }
     }
-  }
 
-  // ✅ 2. Capture canvas
-  const canvas = await html2canvas(input, {
-    useCORS: true,
-    allowTaint: true,
-    backgroundColor: '#ffffff',
-    scrollY: -window.scrollY,
-  });
+    // ✅ Convert DOM to Canvas
+    const canvas = await html2canvas(input, {
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      scrollY: -window.scrollY,
+    });
 
-  const imgData = canvas.toDataURL('image/png');
+    const imgData = canvas.toDataURL('image/png');
 
-  // ✅ 3. Create PDF
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  const imgWidth = 210; // A4 width
-  const pageHeight = 297; // A4 height
-  const imgHeight = (canvas.height * imgWidth) / canvas.width;
-  let heightLeft = imgHeight;
-  let position = 0;
+    // ✅ Generate PDF
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const imgWidth = 210;
+    const pageHeight = 297;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    let heightLeft = imgHeight;
+    let position = 0;
 
-  pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-  heightLeft -= pageHeight;
-
-  while (heightLeft > 0) {
-    position = heightLeft - imgHeight;
-    pdf.addPage();
     pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
     heightLeft -= pageHeight;
-  }
 
-  pdf.save('document.pdf');
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    pdf.save('document.pdf');
+  } catch (err) {
+    console.error("Error generating PDF:", err);
+    alert("PDF generation failed.");
+  }
 };
+
 
 
 
