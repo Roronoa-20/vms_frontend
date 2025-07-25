@@ -498,6 +498,7 @@ const DocumentDetails = ({
               </h1>
               {/* <Input placeholder="Enter State" value={documentDetails?.gst_state ?? OnboardingDetail?.gst_table[0]?.gst_state} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,gst_state:e.target.value}))}}/> */}
               <Select
+              disabled
                 // onValueChange={(value) => {
                 //   setDocumentDetail((prev) => ({ ...prev, gst_state: value }));
                 // }}
