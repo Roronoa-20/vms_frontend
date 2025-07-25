@@ -22,9 +22,15 @@ const Navbar = () => {
         {pathname == '/vendor-registration'?"Vendor Registration":
          pathname == "/dashboard"?"Dashboard":
          pathname == "/pr-request"?"Purchase Request":
-         pathname == "/pr-inquiry"?"Purchase Inquiry":
-         pathname == "/view-pr-inquiry"?"View Purchase Inquiry":
+         pathname == "/pr-inquiry"?"Purchase Enquiry":
+         pathname == "/view-pr-inquiry"?"View Purchase Enquiry":
          pathname == "/dispatch"?"Dispatch":
+         pathname == "/view-grn"?"Good Receipts Note":
+         pathname == "/view-grn-details"?"Good Receipts Note":
+         pathname == "/qms-details"?"QMS Form":
+         pathname == "/view-purchase-requisition"?"Purchase Requisition":
+         pathname == "/qms-details"?"QMS Form":
+         pathname == "/view-po-conf"?"User Confirmation":
          ""}
       </h1>
       <div className='flex items-center gap-4'>

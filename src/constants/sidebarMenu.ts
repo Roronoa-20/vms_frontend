@@ -19,10 +19,10 @@ export const sidebarMenu = [
     name: "Raise RFQ",
     href:"/create-rfq"
   },
-    {
+  {
     logo: "/sidebar-assests/rfq_icon.svg",
-    name: "Raise RFQ",
-    href:"/create-rfq"
+    name: "View PO",
+    href:"/view-po"
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
@@ -36,7 +36,7 @@ export const sidebarMenu = [
   // },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
-    name: "Inquiry",
+    name: "Product Enquiry",
     href:"/pr-inquiry"
   },
   // {
@@ -44,21 +44,21 @@ export const sidebarMenu = [
   //   name: "Raise RFQ",
   //   href:""
   // },
-  // {
-  //   logo: "/sidebar-assests/view-pr.svg",
-  //   name: "View PR",
-  //   href:""
-  // },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "View PR",
+    href:"/view-purchase-requisition"
+  },
   // {
   //   logo: "/sidebar-assests/po-details.svg",
   //   name: "View PO",
   //   href:""
   // },
-  // {
-  //   logo: "/sidebar-assests/view-grn.svg",
-  //   name: "View GRN",
-  //   href:""
-  // },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "View GRN",
+    href:"/view-grn"
+  },
   // {
   //   logo: "/sidebar-assests/dispatch-logo.svg",
   //   name: "View Dispatch",
@@ -98,11 +98,11 @@ export const VendorsidebarMenu = [
   //   name: "Raise RFQ",
   //   href:""
   // },
-  // {
-  //   logo: "/sidebar-assests/view-pr.svg",
-  //   name: "View PR",
-  //   href:""
-  // },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "View PO",
+    href:"/view-vendor-po"
+  },
   // {
   //   logo: "/sidebar-assests/po-details.svg",
   //   name: "View PO",

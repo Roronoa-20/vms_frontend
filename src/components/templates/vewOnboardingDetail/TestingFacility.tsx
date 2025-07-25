@@ -19,6 +19,7 @@ interface Props {
 
 const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   const [multipleTestingDetail,setMultipleTestingDetail] = useState<Partial<TTestingFacility>>();
+  const [isDisabled,setIsDisabled] = useState<boolean>(true);
   const {designation} = useAuth();
   const {testingDetail,updateTestingDetail,reset} = useTestingStore();
   
@@ -42,18 +43,55 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
     const updatedData = {testing_detail:testingDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}
     const machineDetailResponse:AxiosResponse = await requestWrapper({url:submitUrl,data:{data:updatedData},method:"POST"});
 
-    if(machineDetailResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    if(machineDetailResponse?.status == 200) router.push(`${designation == "Purchase Team" || designation == "Purchase Head"?`/view-onboarding-details?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`:`/view-onboarding-details?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`);
   }
 
   const handleAdd = async()=>{
     updateTestingDetail(multipleTestingDetail);
     setMultipleTestingDetail({});
   }
+
+  const handleRowDelete = (index: number) => {
+    // Remove the testing facility at the given index from the testingDetail store
+    const updatedTestingDetails = testingDetail.filter((_, itemIndex) => itemIndex !== index);
+    reset();
+    updatedTestingDetails.forEach(item => updateTestingDetail(item));
+  }
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
-        Details of Testing Facility
-      </h1>
+     <div className="flex justify-between">
+      <h1 className="border-b-2 pb-2">Testing Facility</h1>
+      <Button onClick={()=>{setIsDisabled(prev=>!prev)}} className="mb-2">{isDisabled?"Enable Edit":"Disable Edit"}</Button>
+      </div>
+      <div className="grid grid-cols-3 gap-6 p-5">
+        <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Equipment Name
+          </h1>
+          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={multipleTestingDetail?.equipment_name ?? ""} onChange={(e)=>{setMultipleTestingDetail((prev:any)=>({...prev,equipment_name:e.target.value}))}} />
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Equipment Qty.
+          </h1>
+          <Input placeholder="" disabled={isDisabled} className="disabled:opacity-100" value={multipleTestingDetail?.equipment_qty ?? ""} onChange={(e)=>{setMultipleTestingDetail((prev:any)=>({...prev,equipment_qty:e.target.value}))}}/>
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Capacity
+          </h1>
+          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={multipleTestingDetail?.capacity ?? ""} onChange={(e)=>{setMultipleTestingDetail((prev:any)=>({...prev,capacity:e.target.value}))}} />
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Remarks
+          </h1>
+          <Input placeholder="" disabled={isDisabled} className="disabled:opacity-100" value={multipleTestingDetail?.remarks ?? ""} onChange={(e)=>{setMultipleTestingDetail((prev:any)=>({...prev,remarks:e.target.value}))}}/>
+        </div>
+        <div className="col-span-1 flex items-end">
+          <Button className={`bg-blue-400 hover:bg-blue-300 ${isDisabled?"hidden":""}`} onClick={()=>{handleAdd()}}>Add</Button>
+        </div>
+      </div>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
             <div className="flex w-full justify-between pb-4">
               <h1 className="text-[20px] text-[#03111F] font-semibold">
@@ -69,6 +107,7 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
                   <TableHead className="text-center">Equipment Qty.</TableHead>
                   <TableHead className="text-center">Capacity</TableHead>
                   <TableHead className="text-center">Remarks</TableHead>
+                  <TableHead className="text-center">Delete</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
@@ -81,12 +120,15 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
                     <TableCell>
                       {item?.remarks}
                     </TableCell>
+                    <TableCell>
+                      <Button className={`${isDisabled?"hidden":""}`} onClick={()=>{handleRowDelete(index)}}>Delete</Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
-      {/* <div className={`flex justify-end pr-4 ${designation?"hidden":""}`} onClick={()=>{handleSubmit()}}><Button>Next</Button></div> */}
+      <div className={`flex justify-end pr-4 ${isDisabled?"hidden":""}`} onClick={()=>{handleSubmit()}}><Button>Next</Button></div>
     </div>
   );
 };

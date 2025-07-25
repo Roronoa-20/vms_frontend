@@ -13,7 +13,8 @@ export interface purchaseInquiryDropdown {
         }[],
         uom_master: {
             name: string,
-            uom: string
+            uom: string,
+            description: string
         }[]
     }
 }
@@ -49,7 +50,8 @@ export type TPRInquiry = {
     purchase_group:string,
     plant:string,
     asked_to_modify:boolean,
-    purchase_team_approved:boolean
+    purchase_team_approved:boolean,
+    acknowledged_date:string
 }
 
 const PrInquiryPage = async ({ refno }: Props) => {

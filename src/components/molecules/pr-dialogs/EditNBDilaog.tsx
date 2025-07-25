@@ -22,7 +22,7 @@ import {
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
-import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ProfitCenter, PurchaseGroup, StoreLocation, UOMMaster, ValuationArea } from '@/src/types/PurchaseRequestType';
+import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ProfitCenter, PurchaseGroup, StorageLocation, StoreLocation, UOMMaster, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType';
 interface DropdownData {
   account_assignment_category: AccountAssignmentCategory[];
   item_category_master: ItemCategoryMaster[];
@@ -35,6 +35,8 @@ interface DropdownData {
   purchase_group: PurchaseGroup[];
   store_location: StoreLocation[];
   valuation_area: ValuationArea[];
+  // valuation_class: ValuationClass[];
+  storage_location: StorageLocation[];
 }
 
 interface EditNBModalProps {
@@ -44,6 +46,14 @@ interface EditNBModalProps {
   Dropdown: DropdownData;
   defaultData: Record<string, any> | undefined;
   pur_req: string;
+  PurchaseGroupDropdown: PurchaseGroup[]
+  StorageLocationDropdown: StorageLocation[]
+  ValuationClassDropdown: ValuationClass[]
+  ProfitCenterDropdown: ProfitCenter[]
+  MaterialGroupDropdown: MaterialGroupMaster[]
+  GLAccountDropdwon: GLAccountNumber[]
+  CostCenterDropdown: CostCenter[]
+  MaterialCodeDropdown: MaterialCode[]
 }
 
 const EditNBModal: React.FC<EditNBModalProps> = ({
@@ -53,6 +63,10 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   Dropdown,
   defaultData,
   pur_req,
+  PurchaseGroupDropdown,
+  StorageLocationDropdown,
+  ValuationClassDropdown,
+  ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, MaterialCodeDropdown
 }) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, boolean>>({});
@@ -64,7 +78,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       setErrors({});
     }
   }, [isOpen, defaultData]);
-  console.log(pur_req,defaultData, "pur_req----------------")
+  console.log(pur_req, defaultData, "pur_req----------------")
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -121,7 +135,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...updateformdata } }, method: "POST" });
     if (response?.status == 200) {
       console.log(response.data, "reposne edit NB head and upadte")
-      console.log(pur_req,"pur_reqpur_reqpur_reqpur_req before submit")
+      console.log(pur_req, "pur_reqpur_reqpur_reqpur_req before submit")
       fetchTableData(pur_req);
       onClose();
     } else {
@@ -129,7 +143,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     }
   };
 
-  const renderInput = (name: string, label: string, type = 'text') => (
+  const renderInput = (name: string, label: string, type = 'text', inputProps: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
     <div className="col-span-1">
       <h1 className="text-[12px] font-normal text-[#626973] pb-3">
         {label} {errors[name] && <span className="text-red-600 ml-1">*</span>}
@@ -140,9 +154,44 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
         className={errors[name] ? 'border-red-600' : 'border-neutral-200'}
         value={formData[name] || ''}
         onChange={handleFieldChange}
+        {...inputProps}
       />
     </div>
   );
+
+  // const renderSelect = <T,>(
+  //   name: string,
+  //   label: string,
+  //   options: T[],
+  //   getValue: (item: T) => string,
+  //   getLabel: (item: T) => string
+  // ) => (
+  //   <div className="col-span-1">
+  //     <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+  //       {label}
+  //       {errors[name as keyof typeof errors] && (
+  //         <span className="text-red-600 ml-1">*</span>
+  //       )}
+  //     </h1>
+  //     <Select
+  //       value={formData[name] ?? ""}
+  //       onValueChange={(value) => handleSelectChange(value, name)}
+  //     >
+  //       <SelectTrigger className={errors[name as keyof typeof errors] ? 'border border-red-600' : ''}>
+  //         <SelectValue placeholder="Select" />
+  //       </SelectTrigger>
+  //       <SelectContent>
+  //         <SelectGroup>
+  //           {options.map((item, idx) => (
+  //             <SelectItem key={idx} value={getValue(item)}>
+  //               {getLabel(item)}
+  //             </SelectItem>
+  //           ))}
+  //         </SelectGroup>
+  //       </SelectContent>
+  //     </Select>
+  //   </div>
+  // );
 
   const renderSelect = <T,>(
     name: string,
@@ -150,34 +199,46 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     options: T[],
     getValue: (item: T) => string,
     getLabel: (item: T) => string
-  ) => (
-    <div className="col-span-1">
-      <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-        {label}
-        {errors[name as keyof typeof errors] && (
-          <span className="text-red-600 ml-1">*</span>
-        )}
-      </h1>
-      <Select
-        value={formData[name] ?? ""}
-        onValueChange={(value) => handleSelectChange(value, name)}
-      >
-        <SelectTrigger className={errors[name as keyof typeof errors] ? 'border border-red-600' : ''}>
-          <SelectValue placeholder="Select" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            {options.map((item, idx) => (
-              <SelectItem key={idx} value={getValue(item)}>
-                {getLabel(item)}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-    </div>
-  );
+  ) => {
+    const selectedValue = formData[name] ?? "";
 
+    // Debug: See what's going wrong
+    // console.log(`Selected value for "${name}":`, selectedValue);
+    // console.log("Available option values:", options.map(getValue));
+
+    return (
+      <div className="col-span-1">
+        <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          {label}
+          {errors[name as keyof typeof errors] && (
+            <span className="text-red-600 ml-1">*</span>
+          )}
+        </h1>
+
+        <Select
+          value={selectedValue}
+          onValueChange={(value) => handleSelectChange(value, name)}
+        >
+          <SelectTrigger className={errors[name as keyof typeof errors] ? 'border border-red-600' : ''}>
+            <SelectValue placeholder="Select" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {options.map((item, idx) => (
+                <SelectItem key={idx} value={getValue(item)}>
+                  {getLabel(item)}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+    );
+  };
+
+
+
+  console.log("UOM MaterialForm", Dropdown.uom_master)
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -186,12 +247,12 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           <DialogTitle className="text-xl">Purchase Request Items</DialogTitle>
         </DialogHeader>
         <div className="grid grid-cols-3 gap-6 p-5">
-          {renderInput('item_number_of_purchase_requisition_head', 'Item Number of Purchase Requisition')}
+          {renderInput('item_number_of_purchase_requisition_head', 'Item Number of Purchase Requisition', 'text', { disabled: true })}
           {renderInput('purchase_requisition_date_head', 'Purchase Requisition Date', 'date')}
           {renderSelect(
             'purchase_group_head',
             'Purchase Group',
-            Dropdown.purchase_group,
+            PurchaseGroupDropdown,
             (item) => item.name,
             (item) => `${item.purchase_group_code} - ${item.purchase_group_name}`
           )}
@@ -206,12 +267,20 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
 
           {/* {renderInput('store_location_head', 'Store Location')} */}
 
-          {renderSelect(
+          {/* {renderSelect(
             'store_location_head',
             'Store Location',
             Dropdown.store_location,
             (item) => item.name,
             (item) => `${item.store_name} - ${item.store_location_name}`
+          )} */}
+
+          {renderSelect(
+            'store_location_head',
+            'Store Location',
+            StorageLocationDropdown,
+            (item) => item.name,
+            (item) => `${item.storage_name}`
           )}
 
           {renderInput('delivery_date_head', 'Delivery Date', 'date')}
@@ -227,7 +296,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           {renderSelect(
             'material_group_head',
             'Material Group',
-            Dropdown.material_group_master,
+            MaterialGroupDropdown,
             (item) => item.name,
             (item) => `${item.material_group_name} - ${item.material_group_description}`
           )}
@@ -243,7 +312,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           {renderSelect(
             'cost_center_head',
             'Cost Center',
-            Dropdown.cost_center,
+            CostCenterDropdown,
             (item) => item.name,
             (item) => `${item.cost_center_code} - ${item.cost_center_name}`
           )}
@@ -253,7 +322,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           {renderSelect(
             'profit_ctr_head',
             'Profit Center',
-            Dropdown.profit_center,
+            ProfitCenterDropdown,
             (item) => item.name,
             (item) => `${item.profit_center_code} - ${item.profit_center_name}`
           )}
@@ -263,9 +332,9 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           {renderSelect(
             'valuation_area_head',
             'Valuation Area',
-            Dropdown.valuation_area,
+            ValuationClassDropdown,
             (item) => item.name,
-            (item) => `${item.valuation_area_code} - ${item.valuation_area_name}`
+            (item) => `${item.valuation_class_code} - ${item.valuation_class_name}`
           )}
           {renderInput('quantity_head', 'Quantity')}
           {renderInput('price_of_purchase_requisition_head', 'Price Of Purchase Requisition')}
@@ -273,7 +342,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           {renderSelect(
             'gl_account_number_head',
             'GL Account Number',
-            Dropdown.gl_account_number,
+           GLAccountDropdwon,
             (item) => item.name,
             (item) => `${item.gl_account_code} - ${item.gl_account_name}`
           )}
@@ -281,7 +350,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           {renderSelect(
             'material_code_head',
             'Material Code',
-            Dropdown.material_code,
+            MaterialCodeDropdown,
             (item) => item.name,
             (item) => `${item.material_code} - ${item.material_name}`
           )}

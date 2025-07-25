@@ -277,7 +277,7 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Vendor Code
           </h1>
-          <Select value={formData?.vendor_code ?? DispatchDetails?.vendor_code ??  ""} onValueChange={(value)=>{handleVendorCodeChange(value)}}>
+          <Select disabled={DispatchDetails?.dispatch_form_submitted?true:false} value={formData?.vendor_code ?? DispatchDetails?.vendor_code ??  ""} onValueChange={(value)=>{handleVendorCodeChange(value)}}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -296,43 +296,43 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             PO No
           </h1>
-          <MultiSelect value={selectedPOMultiple ?? []} onChange={(value)=>{handlePOChange(value)}} instanceId="multiselect" options={PODropdown} isMulti required={true}/>
+          <MultiSelect isDisabled={DispatchDetails?.dispatch_form_submitted?true:false} value={selectedPOMultiple ?? []} onChange={(value)=>{handlePOChange(value)}} instanceId="multiselect" options={PODropdown} isMulti required={true}/>
         </div>
         <div className="col-span-1">
           <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Docket No</h1>
-          <Input placeholder="" name='user' value={formData?.docket_number ?? DispatchDetails?.docket_number ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,docket_number:e.target.value}))}} />
+          <Input placeholder="" disabled={DispatchDetails?.dispatch_form_submitted?true:false} name='user' value={formData?.docket_number ?? DispatchDetails?.docket_number ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,docket_number:e.target.value}))}} />
         </div>
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Courier No</h1>
-          <Input type="text" name="cart_date" value={formData?.courier_number ?? DispatchDetails?.courier_number ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,courier_number:e.target.value}))}} />
+          <Input type="text" disabled={DispatchDetails?.dispatch_form_submitted?true:false} name="cart_date" value={formData?.courier_number ?? DispatchDetails?.courier_number ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,courier_number:e.target.value}))}} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Courier Name</h1>
-          <Input placeholder="" name='user' value={formData?.courier_name ?? DispatchDetails?.courier_name ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,courier_name:e.target.value}))}} />
+          <Input placeholder="" disabled={DispatchDetails?.dispatch_form_submitted?true:false} name='user' value={formData?.courier_name ?? DispatchDetails?.courier_name ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,courier_name:e.target.value}))}} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Dispatch Date</h1>
-          <Input placeholder="" type='date' name='user' value={formData?.dispatch_date ?? DispatchDetails?.dispatch_date ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,dispatch_date:e.target.value}))}} />
+          <Input placeholder="" disabled={DispatchDetails?.dispatch_form_submitted?true:false} type='date' name='user' value={formData?.dispatch_date ?? DispatchDetails?.dispatch_date ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,dispatch_date:e.target.value}))}} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Invoice No</h1>
-          <Input placeholder="" name='user' value={formData?.invoice_number ?? DispatchDetails?.invoice_number ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,invoice_number:e.target.value}))}} />
+          <Input placeholder="" disabled={DispatchDetails?.dispatch_form_submitted?true:false} name='user' value={formData?.invoice_number ?? DispatchDetails?.invoice_number ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,invoice_number:e.target.value}))}} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Invoice Date</h1>
-          <Input placeholder="" type='date' name='user' value={formData?.invoice_date ?? DispatchDetails?.invoice_date ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,invoice_date:e.target.value}))}} />
+          <Input placeholder=""  disabled={DispatchDetails?.dispatch_form_submitted?true:false} type='date' name='user' value={formData?.invoice_date ?? DispatchDetails?.invoice_date ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,invoice_date:e.target.value}))}} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Invoice Amount</h1>
-          <Input placeholder="" name='user' value={formData?.invoice_amount ?? DispatchDetails?.invoice_amount ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,invoice_amount:e.target.value}))}} />
+          <Input placeholder="" name='user' disabled={DispatchDetails?.dispatch_form_submitted?true:false} value={formData?.invoice_amount ?? DispatchDetails?.invoice_amount ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,invoice_amount:e.target.value}))}} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload Invoice</h1>
           {
             uploadedFiles?.invoice_attachment?
-            <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.invoice_attachment?.url}`}><h1>{uploadedFiles?.invoice_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,invoice_attachment:null}))}} className='cursor-pointer text-red-500'/></div>
+            <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.invoice_attachment?.url}`}><h1>{uploadedFiles?.invoice_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,invoice_attachment:null}))}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>
             :
           <Input type='file' placeholder="" name='user' onChange={(e)=>{setFormData((prev:any)=>({...prev,invoice_attachment:e.target.files?.[0]}))}} />
           }
@@ -341,7 +341,7 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload packing list document</h1>
           {
             uploadedFiles?.packing_list_attachment?
-            <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.packing_list_attachment?.url}`}><h1>{uploadedFiles?.packing_list_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,packing_list_attachment:null}))}} className='cursor-pointer text-red-500'/></div>
+            <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.packing_list_attachment?.url}`}><h1>{uploadedFiles?.packing_list_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,packing_list_attachment:null}))}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>
             :
             <Input placeholder="" type='file' name='user' onChange={(e)=>{setFormData((prev:any)=>({...prev,packing_list_attachment:e.target.files?.[0]}))}} />
           }
@@ -350,7 +350,7 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload commercial invoice</h1>
           {
             uploadedFiles?.commercial_attachment?
-            <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.commercial_attachment?.url}`}><h1>{uploadedFiles?.commercial_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,commercial_attachment:null}))}} className='cursor-pointer text-red-500'/></div>
+            <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.commercial_attachment?.url}`}><h1>{uploadedFiles?.commercial_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,commercial_attachment:null}))}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>
             :
             <Input placeholder="" type='file' name='user' onChange={(e)=>{setFormData((prev:any)=>({...prev,commercial_attachment:e.target.files?.[0]}))}} />
           }
@@ -359,7 +359,7 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload e-way bill</h1>
           {
             uploadedFiles?.e_way_bill_attachment?
-            <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.e_way_bill_attachment?.url}`}><h1>{uploadedFiles?.e_way_bill_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,e_way_bill_attachment:null}))}} className='cursor-pointer text-red-500'/></div>
+            <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.e_way_bill_attachment?.url}`}><h1>{uploadedFiles?.e_way_bill_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,e_way_bill_attachment:null}))}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>
             :
             <Input placeholder="" type='file' name='user' onChange={(e)=>{setFormData((prev:any)=>({...prev,e_way_bill_attachment:e.target.files?.[0]}))}} />
           }
@@ -368,13 +368,13 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload test certificates</h1>
           {
             uploadedFiles?.test_certificates_attachment?
-            <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.test_certificates_attachment?.url}`}><h1>{uploadedFiles?.test_certificates_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,test_certificates_attachment:null}))}} className='cursor-pointer text-red-500'/></div>
+            <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.test_certificates_attachment?.url}`}><h1>{uploadedFiles?.test_certificates_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,test_certificates_attachment:null}))}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>
             :
           <Input placeholder="" type='file' name='user' onChange={(e)=>{setFormData((prev:any)=>({...prev,test_certificates_attachment:e.target.files?.[0]}))}} />
           }
         </div>
         <div className='col-span-1 flex items-end'>
-        <Button className='bg-blue-400 hover:bg-blue-400' onClick={()=>{handleAdd()}} >Add</Button>
+        <Button className={`bg-blue-400 hover:bg-blue-400 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{handleAdd()}} >Add</Button>
         </div>
       </div>
       
@@ -402,28 +402,28 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
                 <TableRow key={index}>
                   <TableCell>{item?.product_name}</TableCell>
                   <TableCell>{item?.quantity}</TableCell>
-                  <TableCell className='flex justify-center'><Input value={table[index]?.dispatch_qty ?? 0} onChange={(e)=>{handleTableInput(index,Number(e.target.value),Number(item?.quantity))}} min={0}  className='w-24' type='number'/></TableCell>
+                  <TableCell className='flex justify-center'><Input disabled={DispatchDetails?.dispatch_form_submitted?true:false} value={table[index]?.dispatch_qty ?? 0} onChange={(e)=>{handleTableInput(index,Number(e.target.value),Number(item?.quantity))}} min={0}  className='w-24' type='number'/></TableCell>
                   <TableCell>{item?.pending_qty}</TableCell>
                   <TableCell>{item?.uom}</TableCell>
                   <TableCell className='flex justify-center'>
                     {
                       item?.coa_document_upload?
-                      <div className='flex gap-4 justify-center'><h1>{item?.coa_document_upload?.name}</h1><Trash2 onClick={()=>{handleTableFileDelete(index,"coa_document_upload")}} className='cursor-pointer text-red-500'/></div> :
+                      <div className='flex gap-4 justify-center'><h1>{item?.coa_document_upload?.name}</h1><Trash2 onClick={()=>{handleTableFileDelete(index,"coa_document_upload")}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div> :
                       item?.coa_document?
-                      <div className='flex gap-4 justify-center'><h1>{item?.coa_document?.file_name}</h1><Trash2 onClick={()=>{handleTableFileDelete(index,"coa_document")}} className='cursor-pointer text-red-500'/></div>:
+                      <div className='flex gap-4 justify-center'><h1>{item?.coa_document?.file_name}</h1><Trash2 onClick={()=>{handleTableFileDelete(index,"coa_document")}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>:
                     <input onChange={(e)=>{handleTableFile(index,e)}} name='coa_document_upload' type='file' className='w-24'/>
                     }
                     </TableCell>
                   <TableCell>
                     {
                       item?.msds_document_upload ?
-                     <div className='flex gap-4 justify-center'><h1>{item?.msds_document_upload?.name}</h1><Trash2 onClick={()=>{handleTableFileDelete(index,"msds_document_upload")}} className='cursor-pointer text-red-500'/></div> :
+                     <div className='flex gap-4 justify-center'><h1>{item?.msds_document_upload?.name}</h1><Trash2 onClick={()=>{handleTableFileDelete(index,"msds_document_upload")}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div> :
                       item?.msds_document ?
-                     <div className='flex gap-4 justify-center'><h1>{ item?.msds_document?.file_name}</h1><Trash2 onClick={()=>{handleTableFileDelete(index,"msds_document")}} className='cursor-pointer text-red-500'/></div> :
+                     <div className='flex gap-4 justify-center'><h1>{ item?.msds_document?.file_name}</h1><Trash2 onClick={()=>{handleTableFileDelete(index,"msds_document")}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div> :
                     <input type='file' name='msds_document_upload' onChange={(e)=>{handleTableFile(index,e)}} className='w-24'/>
                     }
                     </TableCell>
-                    <TableCell><Button className='bg-blue-400 hover:bg-blue-300' onClick={()=>{handleTableRowUpdate(item)}}>Update</Button></TableCell>
+                    <TableCell><Button className={`bg-blue-400 hover:bg-blue-300 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{handleTableRowUpdate(item)}}>Update</Button></TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -432,7 +432,7 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
       
       <div className={`flex justify-end pr-4 gap-4`}>
         {/* <Button className='bg-blue-400 hover:bg-blue-400' >Save As Draft</Button> */}
-      <Button className='bg-blue-400 hover:bg-blue-400' onClick={()=>{handleSubmit()}} >Submit</Button></div>
+      <Button className={`bg-blue-400 hover:bg-blue-400 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{handleSubmit()}} >Submit</Button></div>
     </div>
   )
 }

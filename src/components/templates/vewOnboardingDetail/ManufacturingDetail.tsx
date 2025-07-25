@@ -28,6 +28,7 @@ type Props = {
 
 
 const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
+  const [isDisabled,setIsDisabled] = useState<boolean>(true);
   const {ManufacturingDetail,updateManufacturingDetail} = useManufacturingDetailStore()
   const [manufacturedFile,setManufacturedFile] = useState<FileList | null>(null)
   const [brochure_proof,setBrochure_proof] = useState<FileList | null>(null)
@@ -35,6 +36,8 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
   const [isManufacturedFilePreview,setIsManufacturedFilePreview] = useState<boolean>(true);
   const [isBrochureFilePreview,setIsBrochureFilePreview] = useState<boolean>(true);
   const [isStructureFilePreview,setIsStructureFilePreview] = useState<boolean>(true);
+
+  const {designation} = useAuth();
 
   const router = useRouter();
   const handleSubmit = async()=>{
@@ -52,31 +55,32 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
       formData.append("organisation_structure_document",organisation_structure_document[0]);
     }
     const manufacturingDetailResponse:AxiosResponse = await requestWrapper({url:manufacturingUrl,data:formData,method:"POST"});
-    if(manufacturingDetailResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Employee%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    if(manufacturingDetailResponse?.status == 200) router.push(`${designation == "Purchase Head" || designation == "Purchase Team"?`/view-onboarding-details?tabtype=Employee%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`:`/view-onboarding-details?tabtype=Employee%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`);
   }
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
-        Manufacturing Detail
-      </h1>
+      <div className="flex justify-between">
+      <h1 className="border-b-2 pb-2">Manufacturing Detail</h1>
+      <Button onClick={()=>{setIsDisabled(prev=>!prev)}} className="mb-2">{isDisabled?"Enable Edit":"Disable Edit"}</Button>
+      </div>
       <div className="grid grid-cols-3 gap-6 p-5">
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Total Godown Area (Sq. ft.)
           </h1>
-          <Input disabled placeholder="" value={ManufacturingDetail?.total_godown ?? OnboardingDetail?.total_godown ?? ""} onChange={(e)=>{updateManufacturingDetail("total_godown",e.target.value)}} />
+          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={ManufacturingDetail?.total_godown ?? OnboardingDetail?.total_godown ?? ""} onChange={(e)=>{updateManufacturingDetail("total_godown",e.target.value)}} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Storage Capacity, (Sq. ft.)
           </h1>
-          <Input disabled placeholder="" value={ManufacturingDetail?.storage_capacity ?? OnboardingDetail?.storage_capacity ?? ""} onChange={(e)=>{updateManufacturingDetail("storage_capacity",e.target.value)}} />
+          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={ManufacturingDetail?.storage_capacity ?? OnboardingDetail?.storage_capacity ?? ""} onChange={(e)=>{updateManufacturingDetail("storage_capacity",e.target.value)}} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Spare Capacity(Sq. ft.)
           </h1>
-          <Input disabled placeholder="" value={ManufacturingDetail?.spare_capacity ?? OnboardingDetail?.spare_capacity ?? ""} onChange={(e)=>{updateManufacturingDetail("spare_capacity",e.target.value)}}/>
+          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={ManufacturingDetail?.spare_capacity ?? OnboardingDetail?.spare_capacity ?? ""} onChange={(e)=>{updateManufacturingDetail("spare_capacity",e.target.value)}}/>
         </div>
         {/* <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -88,8 +92,8 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
                   <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                     Type Of Premises
                   </h1>
-                  <Select disabled onValueChange={(value)=>{updateManufacturingDetail("type_of_premises",value)}} value={ManufacturingDetail?.type_of_premises ?? OnboardingDetail?.type_of_premises ?? ""}>
-                    <SelectTrigger>
+                  <Select disabled={isDisabled} onValueChange={(value)=>{updateManufacturingDetail("type_of_premises",value)}} value={ManufacturingDetail?.type_of_premises ?? OnboardingDetail?.type_of_premises ?? ""}>
+                    <SelectTrigger className="disabled:opacity-100">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent>
@@ -105,35 +109,35 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Working Hours
           </h1>
-          <Input disabled placeholder=""  value={ManufacturingDetail?.working_hours ?? OnboardingDetail?.working_hours ?? ""} onChange={(e)=>{updateManufacturingDetail("working_hours",e.target.value)}}/>
+          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder=""  value={ManufacturingDetail?.working_hours ?? OnboardingDetail?.working_hours ?? ""} onChange={(e)=>{updateManufacturingDetail("working_hours",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Weekly Holidays
           </h1>
-          <Input disabled placeholder="" value={ManufacturingDetail?.weekly_holidays ?? OnboardingDetail?.weekly_holidays ?? ""} onChange={(e)=>{updateManufacturingDetail("weekly_holidays",e.target.value)}}/>
+          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={ManufacturingDetail?.weekly_holidays ?? OnboardingDetail?.weekly_holidays ?? ""} onChange={(e)=>{updateManufacturingDetail("weekly_holidays",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             No. of Manpower/Strength
           </h1>
-          <Input disabled placeholder="" value={ManufacturingDetail?.number_of_manpower ?? OnboardingDetail?.number_of_manpower ?? ""} onChange={(e)=>{updateManufacturingDetail("number_of_manpower",e.target.value)}}/>
+          <Input className="disabled:opacity-100" disabled={isDisabled} placeholder="" value={ManufacturingDetail?.number_of_manpower ?? OnboardingDetail?.number_of_manpower ?? ""} onChange={(e)=>{updateManufacturingDetail("number_of_manpower",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Annual Revenue
           </h1>
-          <Input disabled placeholder="" value={ManufacturingDetail?.annual_revenue ?? OnboardingDetail?.annual_revenue ?? ""} onChange={(e)=>{updateManufacturingDetail("annual_revenue",e.target.value)}}/>
+          <Input className="disabled:opacity-100" disabled={isDisabled} placeholder="" value={ManufacturingDetail?.annual_revenue ?? OnboardingDetail?.annual_revenue ?? ""} onChange={(e)=>{updateManufacturingDetail("annual_revenue",e.target.value)}}/>
         </div>
         <div className="col-span-1 flex justify-start items-end gap-4">
           <h1 className="text-[16px] font-medium text-[#626973] pb-2">
             Cold Storage
           </h1>
           <Input
-          disabled
+          disabled={isDisabled}
             type="checkbox"
             placeholder=""
-            className="w-4 py-0 items-end"
+            className={`w-4 py-0 items-end ${isDisabled?"hidden":""}`}
             onChange={(e)=>{updateManufacturingDetail("cold_storage",e.target.checked)}}
             checked={(ManufacturingDetail?.cold_storage ?? OnboardingDetail?.cold_storage) == 1}
           />
@@ -147,19 +151,19 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Product Manufactured
           </h1>
-          <Input disabled placeholder="" value={ManufacturingDetail?.material_description ?? OnboardingDetail?.materials_supplied[0]?.material_description ?? ""} onChange={(e)=>{updateManufacturingDetail("material_description",e.target.value)}}/>
+          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={ManufacturingDetail?.material_description ?? OnboardingDetail?.materials_supplied[0]?.material_description ?? ""} onChange={(e)=>{updateManufacturingDetail("material_description",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             HSN/SAC Code
           </h1>
-          <Input disabled placeholder="" value={ManufacturingDetail?.hsnsac_code ?? OnboardingDetail?.materials_supplied[0]?.hsnsac_code ?? ""} onChange={(e)=>{updateManufacturingDetail("hsnsac_code",e.target.value)}}/>
+          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={ManufacturingDetail?.hsnsac_code ?? OnboardingDetail?.materials_supplied[0]?.hsnsac_code ?? ""} onChange={(e)=>{updateManufacturingDetail("hsnsac_code",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Annual Capacity
           </h1>
-          <Input disabled placeholder="" value={ManufacturingDetail?.annual_capacity ?? OnboardingDetail?.materials_supplied[0]?.annual_capacity ?? ""} onChange={(e)=>{updateManufacturingDetail("annual_capacity",e.target.value)}}/>
+          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={ManufacturingDetail?.annual_capacity ?? OnboardingDetail?.materials_supplied[0]?.annual_capacity ?? ""} onChange={(e)=>{updateManufacturingDetail("annual_capacity",e.target.value)}}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -167,7 +171,7 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
           </h1>
           <div className="flex gap-4">
 
-          {/* <Input placeholder="" type="file" onChange={(e)=>{setManufacturedFile(e.target.files)}}/> */}
+          <Input className="disabled:opacity-100" disabled={isDisabled} placeholder="" type="file" onChange={(e)=>{setManufacturedFile(e.target.files)}}/>
           {/* file preview */}
           {isManufacturedFilePreview &&
               !manufacturedFile &&
@@ -180,12 +184,12 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
                   >
                     <span>{OnboardingDetail?.materials_supplied?.[0]?.material_images?.file_name}</span>
                   </Link>
-                  {/* <X
-                    className="cursor-pointer"
+                  <X
+                    className={`cursor-pointer ${isDisabled?"hidden":""}`}
                     onClick={() => {
                       setIsManufacturedFilePreview((prev) => !prev);
                     }}
-                    /> */}
+                    />
                 </div>
               )}
               </div>
@@ -197,7 +201,7 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
             Upload your Material Brochure (PDF)
           </h1>
           <div className="flex gap-4">
-          {/* <Input placeholder="" type="file" onChange={(e)=>{setBrochure_proof(e.target.files)}}/> */}
+          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" type="file" onChange={(e)=>{setBrochure_proof(e.target.files)}}/>
           {/* file preview */}
           {isBrochureFilePreview &&
               !brochure_proof &&
@@ -210,12 +214,12 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
                   >
                     <span>{OnboardingDetail?.brochure_proof?.file_name}</span>
                   </Link>
-                  {/* <X
-                    className="cursor-pointer"
+                  <X
+                    className={`cursor-pointer ${isDisabled?"hidden":""}`}
                     onClick={() => {
                       setIsBrochureFilePreview((prev) => !prev);
                     }}
-                    /> */}
+                    />
                 </div>
               )}
               </div>
@@ -227,7 +231,7 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
             Organization Structure Document
           </h1>
           <div className="flex gap-4">
-          {/* <Input placeholder="" type="file" onChange={(e)=>{setOrganisation_structure_document(e.target.files)}} /> */}
+          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" type="file" onChange={(e)=>{setOrganisation_structure_document(e.target.files)}} />
           {/* file preview */}
           {isStructureFilePreview &&
               !organisation_structure_document &&
@@ -240,18 +244,18 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
                   >
                     <span>{OnboardingDetail?.organisation_structure_document?.file_name}</span>
                   </Link>
-                  {/* <X
-                    className="cursor-pointer"
+                  <X
+                    className={`cursor-pointer ${isDisabled?"hidden":""}`}
                     onClick={() => {
                       setIsStructureFilePreview((prev) => !prev);
                     }}
-                    /> */}
+                    />
                 </div>
               )}
               </div>
         </div>
       </div>
-      {/* <div className={`flex justify-end pr-4`}><Button className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div> */}
+      <div className={`flex justify-end pr-4`}><Button className={`bg-blue-400 hover:bg-blue-400 disabled:opacity-100 ${isDisabled?"hidden":""}`} onClick={()=>{handleSubmit()}}>Next</Button></div>
     </div>
   );
 };

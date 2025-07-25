@@ -33,7 +33,7 @@ type Props = {
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
   prInquiryData: TPRInquiryTable["cart_details"]
   prData: PurchaseRequisition[]
-  rfqData:RFQTable[]
+  rfqData:RFQTable
 }
 
 const DashboardCards = ({ ...Props }: Props) => {
@@ -121,6 +121,14 @@ const DashboardCards = ({ ...Props }: Props) => {
       hover: "hover:border-rose-400",
     },
     {
+      name: "Purchase & Ongoing Orders",
+      count: Props.cardData?.purchase_order_count ?? 0,
+      icon: "/dashboard-assests/cards_icon/package.svg",
+      text_color: "text-violet-800",
+      bg_color: "bg-violet-100",
+      hover: "hover:border-violet-400",
+    },
+    {
       name: "RFQ Comparision",
       count: Props.cardData?.rfq_count ?? 0,
       icon: "/dashboard-assests/cards_icon/file-search.svg",
@@ -128,14 +136,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       bg_color: "bg-violet-100",
       hover: "hover:border-violet-400",
     },
-    // {
-    //   name: "Purchase & Ongoing Orders",
-    //   count: 0,
-    //   icon: "/dashboard-assests/cards_icon/package.svg",
-    //   text_color: "text-violet-800",
-    //   bg_color: "bg-violet-100",
-    //   hover: "hover:border-violet-400",
-    // },
+    
   ];
 
   let cardData = user === "Enquirer"
@@ -254,7 +255,7 @@ const DashboardCards = ({ ...Props }: Props) => {
 
               {item.name === "RFQ Comparision" && (
                 <DashboardRFQTable
-                  dashboardTableData={Props.rfqData.data}
+                  dashboardTableData={Props?.rfqData?.data}
                   companyDropdown={Props?.companyDropdown}
                 />
               )}

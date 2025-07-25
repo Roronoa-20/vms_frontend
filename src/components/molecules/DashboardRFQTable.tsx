@@ -18,12 +18,12 @@ import {
 } from "@/src/components/atoms/select";
 import { tableData } from "@/src/constants/dashboardTableData";
 import { Input } from "../atoms/input";
-import { DashboardTableType, PurchaseRequisition, TPRInquiryTable } from "@/src/types/types";
+import { DashboardTableType, PurchaseRequisition, RFQTable, TPRInquiryTable } from "@/src/types/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Cookies from "js-cookie";
 type Props = {
-  dashboardTableData?: PurchaseRequisition[]
+  dashboardTableData?: RFQTable["data"]
   companyDropdown: {name:string}[]
 }
 
@@ -90,9 +90,9 @@ const DashboardRFQTable = ({ dashboardTableData,companyDropdown }: Props) => {
               <TableRow key={index}>
                 <TableCell className="font-medium text-center">{index + 1}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
-                <TableCell className="text-nowrap text-center">{item?.company_name_logistic}</TableCell>
+                <TableCell className="text-nowrap text-center">{item?.company_name}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.rfq_type}</TableCell>
-                <TableCell className="text-nowrap text-center">{item?.rfq_date_logistic}</TableCell>
+                <TableCell className="text-nowrap text-center">{item?.rfq_date}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.status}</TableCell>
                 <TableCell className="text-nowrap text-center"><Link href={`/view-rfq?pur_req=${item?.name}`}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
                 {/* <TableCell>

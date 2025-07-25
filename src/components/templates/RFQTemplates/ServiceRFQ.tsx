@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useEffect } from 'react'
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AccountAssignmentCategory, Company, CostCenter, Country, Currency, DestinationPort, GLAccountNumber, IncoTerms, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ModeOfShipment, PackageType, PortCode, PortOfLoading, ProductCategory, ProfitCenter, PurchaseGroup, PurchaseOrganisation, RFQType, StoreLocation, UOMMaster, ValuationArea } from '@/src/types/PurchaseRequestType';
+import { AccountAssignmentCategory, Company, CostCenter, Country, Currency, DestinationPort, GLAccountNumber, IncoTerms, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ModeOfShipment, PackageType, plantCode, PortCode, PortOfLoading, ProductCategory, ProfitCenter, PurchaseGroup, PurchaseOrganisation, quantityUnit, RFQType, serviceCategory, serviceCode, StoreLocation, UOMMaster, ValuationArea } from '@/src/types/PurchaseRequestType';
 import VendorTable from '../../molecules/rfq/VendorTable';
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
@@ -20,7 +17,8 @@ import requestWrapper from '@/src/services/apiCall'
 import useDebounce from '@/src/hooks/useDebounce';
 import { SAPPRData, VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
 import Pagination from '../../molecules/Pagination';
-import PRMaterialsManager, { SelectedMaterial } from './PRMaterialsManager';
+import PRServiceManager, { SelectedMaterial } from './PRServiceManager';
+
 interface DropdownData {
   account_assignment_category: AccountAssignmentCategory[];
   item_category_master: ItemCategoryMaster[];
@@ -45,13 +43,19 @@ interface DropdownData {
   rfq_type: RFQType[];
   purchase_organisation: PurchaseOrganisation[];
   currency_master: Currency[];
+  service_code:serviceCode[];
+  service_category:serviceCategory[]
+  plant_code:plantCode[];
+  quantity_unit:quantityUnit[]
 }
 type Props = {
   Dropdown: DropdownData;
-}
+  pr_codes?: string | null;
+  pr_type?: string | null;
+};
 
-const ServiceRFQ = ({ Dropdown }: Props) => {
-  const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Material Vendor" });
+const ServiceRFQ = ({ Dropdown, pr_codes, pr_type  }: Props) => {
+  const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Service Vendor" });
   const [vendorSearchName, setVendorSearchName] = useState('')
   const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
   const [VendorList, setVendorList] = useState<VendorApiResponse>();
@@ -69,7 +73,7 @@ const ServiceRFQ = ({ Dropdown }: Props) => {
   const [files, setFiles] = useState<Record<string, File | null>>({});
   useEffect(() => {
     const fetchVendorTableData = async (rfq_type: string) => {
-      console.log(rfq_type, "rfq_type in table code")
+      console.log(rfq_type, "rfq_type in Service table code")
       const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}`
       const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
       if (response?.status == 200) {
@@ -210,14 +214,14 @@ const ServiceRFQ = ({ Dropdown }: Props) => {
   console.log(selectedMaterials, "materials")
   return (
     <div className='bg-white h-full w-full pb-6'>
-      <h1 className='font-bold text-[24px] p-5'>RFQ Data for Material</h1>
+      <h1 className='font-bold text-[24px] p-5'>RFQ Data for Service</h1>
 
       <div className="w-full mx-auto space-y-6 p-5">
         {/* PR Materials Manager Component */}
-        <PRMaterialsManager
+        <PRServiceManager
           prNumbers={availablePRs}
           onSelectionChange={setItems}
-          title="Select Materials for Processing"
+          title="Select Services for Processing"
         />
       </div>
       <div className="grid grid-cols-3 gap-6 p-5">
@@ -267,14 +271,14 @@ const ServiceRFQ = ({ Dropdown }: Props) => {
           'Service Code',
           Dropdown?.service_code,
           (item) => item.name,
-          (item) => `${item.currency_name}`
+          (item) => `${item.service_name}`
         )}
         {renderSelect(
           'service_category',
           'Service Category',
           Dropdown?.service_category,
           (item) => item.name,
-          (item) => `${item.currency_name}`
+          (item) => `${item.service_category_name}`
         )}
         {renderSelect(
           'material_code',
@@ -288,7 +292,7 @@ const ServiceRFQ = ({ Dropdown }: Props) => {
           'Plant Code',
           Dropdown?.plant_code,
           (item) => item.name,
-          (item) => `${item.material_name}`
+          (item) => `${item.plant_name}`
         )}
         {renderSelect(
           'store_location',
@@ -317,7 +321,7 @@ const ServiceRFQ = ({ Dropdown }: Props) => {
           'Quantity Unit',
           Dropdown?.quantity_unit,
           (item) => item.name,
-          (item) => `${item.store_location_name}`
+          (item) => `${item.quantity_unit_name}`
         )}
 
         {renderInput('delivery_date', 'Delivery Date', 'date')}

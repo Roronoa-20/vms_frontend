@@ -20,8 +20,8 @@ interface Props {
   PRData?: PurchaseRequestData["message"]["data"]
   dropdown: purchaseInquiryDropdown["message"]
   PRInquiryData: TPRInquiry | null
-  companyDropdown:{name:string,description:string}[]
-  purchaseTypeDropdown:{name:string,purchase_requisition_type_name:string,description:string}[]
+  companyDropdown: { name: string, description: string }[]
+  purchaseTypeDropdown: { name: string, purchase_requisition_type_name: string, description: string }[]
 }
 
 
@@ -33,28 +33,28 @@ type ProductNameDropdown = {
 }
 const currentDate = new Date();
 
-const PRInquiryForm = ({ PRInquiryData, dropdown,companyDropdown, purchaseTypeDropdown }: Props) => {
+const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeDropdown }: Props) => {
   const user = Cookies.get("user_id");
-  console.log(PRInquiryData,"__________-")
+  console.log(PRInquiryData, "__________-")
   const [formData, setFormData] = useState<TPRInquiry | null>(PRInquiryData ?? null);
   const [singleTableRow, setSingleTableRow] = useState<TableData | null>(null);
   const [tableData, setTableData] = useState<TableData[]>(PRInquiryData?.cart_product ?? []);
   const [productNameDropdown, setProductNameDropdown] = useState<ProductNameDropdown[]>([]);
   const [index, setIndex] = useState<number>(-1);
-  const [showTable, setShowTable] = useState(PRInquiryData?.cart_product.length && PRInquiryData?.cart_product.length > 0?true:false);
-  const [plantDropdown,setPlantDropdown] = useState<{name:string,plant_name:string,description:string}[]>();
-  const [purchaseGroupDropdown,setPurchaseGroupDropdown] = useState<{name:string,purchase_group_code:string,purchase_group_name:string,description:string}[]>();
+  const [showTable, setShowTable] = useState(PRInquiryData?.cart_product.length && PRInquiryData?.cart_product.length > 0 ? true : false);
+  const [plantDropdown, setPlantDropdown] = useState<{ name: string, plant_name: string, description: string }[]>();
+  const [purchaseGroupDropdown, setPurchaseGroupDropdown] = useState<{ name: string, purchase_group_code: string, purchase_group_name: string, description: string }[]>();
   const router = useRouter();
 
-  useEffect(()=>{
-    if(PRInquiryData?.company){
+  useEffect(() => {
+    if (PRInquiryData?.company) {
       handleCompanyChange(PRInquiryData?.company);
     }
 
-    if(PRInquiryData?.category_type){
+    if (PRInquiryData?.category_type) {
       fetchProductName(PRInquiryData?.category_type);
     }
-  },[])
+  }, [])
 
 
   const handleSelectChange = (value: any, name: string, isTable: boolean) => {
@@ -106,12 +106,17 @@ const PRInquiryForm = ({ PRInquiryData, dropdown,companyDropdown, purchaseTypeDr
       cart_product: tableData,
       user: user,
     };
-    
+
     const response: AxiosResponse = await requestWrapper({ url: url, data: { data: payload }, method: "POST" });
+    console.log("Enquiry---->", response);
     if (response?.status == 200) {
       setFormData(null);
-      router.push("/dashboard");
       alert("submission successfull");
+      const refno = response?.data?.message?.name;
+      // router.push(`pr-inquiry?refno=${refno}`)
+      router.push(`/dashboard`)
+      // const redirectUrl = `/pr-inquiry?refno=${refno}`;
+      // window.location.href = redirectUrl;
     } else {
       alert("error");
     }
@@ -124,6 +129,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown,companyDropdown, purchaseTypeDr
       setProductNameDropdown(response?.data?.message?.data);
     }
   };
+  console.log(productNameDropdown, "productNameDropdown");
 
   const formatDate = (date: Date): string => {
     const day = String(date.getDate()).padStart(2, '0');
@@ -139,11 +145,11 @@ const PRInquiryForm = ({ PRInquiryData, dropdown,companyDropdown, purchaseTypeDr
   };
 
   const formatDateISO = (date: Date): string => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   // const formatPriceRange = (priceRange: string) => {
   //   if (!priceRange) return "";
@@ -158,25 +164,46 @@ const PRInquiryForm = ({ PRInquiryData, dropdown,companyDropdown, purchaseTypeDr
   // };
 
 
-  const handleCompanyChange = async(value:string)=>{
+  const handleCompanyChange = async (value: string) => {
     const url = `${API_END_POINTS?.InquiryDropdownsBasedOnCompany}?comp=${value}`
-    const response:AxiosResponse = await  requestWrapper({url:url,method:"GET"});
-    if(response?.status == 200){
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+    if (response?.status == 200) {
       setPlantDropdown(response?.data?.message?.plants);
       setPurchaseGroupDropdown(response?.data?.message?.purchase_groups);
     }
   }
 
-const handleTableAssestCodeChange = (index:number,data:string)=>{
-  // const { name, value } = e.target;
+  const handleTableAssestCodeChange = (index: number, data: string) => {
+    // const { name, value } = e.target;
     setTableData((prev) => {
       const updated = [...prev];
       if (updated[index]) {
-        updated[index] = { ...updated[index],assest_code: data };
+        updated[index] = { ...updated[index], assest_code: data };
       }
       return updated;
     });
-}
+  };
+
+  const handleProductNameSelect = (value: string) => {
+    const selectedProduct = productNameDropdown?.find((item) => item.name === value);
+
+    handleSelectChange(value, "product_name", true);
+
+    if (selectedProduct) {
+      handleSelectChange(selectedProduct.product_price?.toString() || "", "product_price", true);
+      handleSelectChange(selectedProduct.lead_time?.toString() || "", "lead_time", true);
+    }
+  };
+  const formatINRCurrencyRange = (value: string | null): string => {
+    if (!value) return "";
+
+    return value
+      .split("-")
+      .map((v) => `₹${v.trim()}`)
+      .join(" - ");
+  };
+
+
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
@@ -229,7 +256,7 @@ const handleTableAssestCodeChange = (index:number,data:string)=>{
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Company
           </h1>
-          <Select value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value);}}>
+          <Select value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value); }}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -246,7 +273,7 @@ const handleTableAssestCodeChange = (index:number,data:string)=>{
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Purchase Type
           </h1>
-          <Select value={formData?.purchase_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_type", false)}}>
+          <Select value={formData?.purchase_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_type", false) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -263,7 +290,7 @@ const handleTableAssestCodeChange = (index:number,data:string)=>{
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Plant
           </h1>
-          <Select value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant", false)}}>
+          <Select value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant", false) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -280,7 +307,7 @@ const handleTableAssestCodeChange = (index:number,data:string)=>{
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Purchase Group
           </h1>
-          <Select value={formData?.purchase_group ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_group", false)}}>
+          <Select value={formData?.purchase_group ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_group", false) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -309,8 +336,10 @@ const handleTableAssestCodeChange = (index:number,data:string)=>{
             Product Name
           </h1>
           <Select
-            onValueChange={(value) => { handleSelectChange(value, "product_name",true) }} value={singleTableRow?.product_name ?? ""}
+            // onValueChange={(value) => { handleSelectChange(value, "product_name",true) }} value={singleTableRow?.product_name ?? ""}
             // value={singleTableRow?.product_name ?? ""}
+            onValueChange={handleProductNameSelect}
+            value={singleTableRow?.product_name ?? ""}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select" />
@@ -328,15 +357,16 @@ const handleTableAssestCodeChange = (index:number,data:string)=>{
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-            Product Price
+            Product Price Range
           </h1>
-          <Input placeholder="" name='product_price' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_price ?? ""} />
+          <Input placeholder="" disabled name='product_price' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_price ?? ""}
+          />
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Lead Time
           </h1>
-          <Input placeholder="" name='lead_time' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.lead_time ?? ""} />
+          <Input placeholder="" disabled name='lead_time' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.lead_time ?? ""} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
@@ -349,7 +379,7 @@ const handleTableAssestCodeChange = (index:number,data:string)=>{
             <SelectContent>
               <SelectGroup>
                 {dropdown?.uom_master?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                  <SelectItem key={index} value={item?.name}>{item?.name} - {item?.description}</SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
@@ -369,7 +399,8 @@ const handleTableAssestCodeChange = (index:number,data:string)=>{
           <Input placeholder="" name='user_specifications' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.user_specifications ?? ""} />
         </div>
         <div className="col-span-1 mt-8">
-          <Button className="bg-blue-400 hover:bg-blue-400" onClick={() => handleTableAdd()}>Add</Button>
+          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.asked_to_modify ? "" : "hidden"}`} onClick={() => handleTableAdd()}>Add</Button>
+          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData ? "hidden" : ""}`} onClick={() => handleTableAdd()}>Add</Button>
         </div>
       </div>
       {showTable && (
@@ -398,7 +429,7 @@ const handleTableAssestCodeChange = (index:number,data:string)=>{
                 <TableRow key={index}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
                   <TableCell>{item?.product_name}</TableCell>
-                  <TableCell className='flex justify-center'><Input disabled={item?.need_asset_code && PRInquiryData?.asked_to_modify?false:true} className={`text-center w-28`} value={item?.assest_code ?? ""} onChange={(e)=>{handleTableAssestCodeChange(index,e.target.value)}} /></TableCell>
+                  <TableCell className='flex justify-center'><Input disabled={item?.need_asset_code && PRInquiryData?.asked_to_modify ? false : true} className={`text-center w-28`} value={item?.assest_code ?? ""} onChange={(e) => { handleTableAssestCodeChange(index, e.target.value) }} /></TableCell>
                   <TableCell>{item?.product_price}</TableCell>
                   <TableCell>{item?.uom}</TableCell>
                   <TableCell>{item?.lead_time}</TableCell>

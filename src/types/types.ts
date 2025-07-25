@@ -675,7 +675,7 @@ export type TCompanyDetailForm = {
   
 
   
-  type FileAttachment = {
+  export type FileAttachment = {
     url: string;
     name: string;
     file_name?: string;
@@ -836,6 +836,7 @@ export type TCompanyDetailForm = {
 
 
   export type dashboardCardData = {
+    po_count: number;
     status: string;
     message: string;
     role: string[];
@@ -847,7 +848,8 @@ export type TCompanyDetailForm = {
     rejected_vendor_count:number;
     purchase_order_count:number;
     pr_count:number;
-    cart_count:number
+    cart_count:number,
+    rfq_count:number
   }
   
   export interface DashboardPOTableItem {
@@ -1246,7 +1248,8 @@ export type TCompanyDetailForm = {
       _liked_by: string | null;
       _user_tags: string | null;
       hod:string,
-      purchase_team:string
+      purchase_team:string,
+      purchase_type: string,
     }[]
 }
 
@@ -1290,7 +1293,13 @@ export interface PurchaseRequisition {
 }
 
 export interface RFQTable {
-  
+  data:{
+    name:string,
+    company_name:string,
+    rfq_type:string,
+    rfq_date:string,
+    status:string,
+  }[]
 }
 
 
