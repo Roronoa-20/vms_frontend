@@ -224,214 +224,26 @@ const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
       alert("error");
     }
   }
-  console.log(availablePRs, "availablePRs availablePRs availablePRs availablePRs----------------------")
-  // const handleSelectionChange = (materials: string[]) => {
-  //   setSelectedMaterials(materials)
-  //   fetchPRItems(materials)
-  // }
-
   const setPRItems = async (materials: SelectedMaterial[]) => {
     setSelectedMaterials(materials)
-    // const url = `${API_END_POINTS?.fetchPRItems}`
-    // const response: AxiosResponse = await requestWrapper({ url: url, data:{data:{ pr_numbers: materials }}, method: "POST" });
-    // if (response?.status == 200) {
-    //   // setAvailablePRs(response.data.message.pr_numbers)
-    //   console.log(response, "items data-----------------")
-    // } else {
-    //   alert("error");
-    // }
   }
-
-  // const handleSubmit = async () => {
-  //   setIsSubmitting(true)
-  //   setSubmitResult(null)
-
-  //   try {
-  //     // Simulate API call
-  //     await new Promise((resolve) => setTimeout(resolve, 2000))
-
-  //     // Here you would send selectedMaterials to your API
-  //     console.log("Submitting materials:", selectedMaterials)
-
-  //     setSubmitResult("success")
-  //   } catch (error) {
-  //     setSubmitResult("error")
-  //   } finally {
-  //     setIsSubmitting(false)
-  //   }
-  // }
-
-  console.log(selectedMaterials, "materials")
   return (
     <div className='bg-white h-full w-full pb-6'>
       <h1 className='font-bold text-[24px] p-5'>RFQ Data for Material</h1>
 
       <div className="w-full mx-auto space-y-6 p-5">
-        {/* <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Purchase Request Management</h1>
-          <div className="flex items-center gap-4">
-            <div className="text-sm text-muted-foreground">
-              {selectedMaterials.length} items selected
-              {updatedCount > 0 && <span className="ml-2 text-orange-600">({updatedCount} updated)</span>}
-            </div>
-            <Button
-              onClick={handleSubmit}
-              disabled={selectedMaterials.length === 0 || isSubmitting}
-              className="min-w-[120px]"
-            >
-              {isSubmitting ? "Submitting..." : "Submit"}
-            </Button>
-          </div>
-        </div> */}
+       
 
         {/* PR Materials Manager Component */}
         <PRMaterialsManager
           prNumbers={availablePRs}
           // materials={mockMaterials}
           onSelectionChange={setPRItems}
-          title="Select Materials for Processing"
+          title="Select Purchase Request Numbers"
         />
 
-        {/* Selected Materials Summary */}
-        {/* {selectedMaterials.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                Selected Materials Summary
-                <Badge variant="secondary">{selectedMaterials.length} items</Badge>
-                {updatedCount > 0 && (
-                  <Badge variant="outline" className="text-orange-600 border-orange-600">
-                    {updatedCount} updated
-                  </Badge>
-                )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600">{selectedMaterials.length}</div>
-                    <div className="text-sm text-muted-foreground">Total Selected</div>
-                  </div>
-                  <div className="bg-green-50 dark:bg-green-950/20 p-4 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600">{originalCount}</div>
-                    <div className="text-sm text-muted-foreground">Original Items</div>
-                  </div>
-                  <div className="bg-orange-50 dark:bg-orange-950/20 p-4 rounded-lg">
-                    <div className="text-2xl font-bold text-orange-600">{updatedCount}</div>
-                    <div className="text-sm text-muted-foreground">Updated Items</div>
-                  </div>
-                </div>
-                <div className="border rounded-lg overflow-hidden">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="bg-muted/50">
-                        <TableHead>Status</TableHead>
-                        <TableHead>PR Number</TableHead>
-                        <TableHead>Item Code</TableHead>
-                        <TableHead>Description</TableHead>
-                        <TableHead>Quantity</TableHead>
-                        <TableHead>Delivery Date</TableHead>
-                        <TableHead>Plant</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {selectedMaterials.map((material) => (
-                        <TableRow key={material.id}>
-                          <TableCell>
-                            {material.isUpdated ? (
-                              <Badge variant="outline" className="text-orange-600 border-orange-600">
-                                <AlertCircle className="w-3 h-3 mr-1" />
-                                Updated
-                              </Badge>
-                            ) : (
-                              <Badge variant="outline" className="text-green-600 border-green-600">
-                                <CheckCircle className="w-3 h-3 mr-1" />
-                                Original
-                              </Badge>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="secondary">{material.prNumber}</Badge>
-                          </TableCell>
-                          <TableCell className="font-mono text-sm">{material.itemCode}</TableCell>
-                          <TableCell>{material.itemDescription}</TableCell>
-                          <TableCell>
-                            <div className="flex flex-col">
-                              <span
-                                className={
-                                  material.quantity !== material.originalQuantity ? "text-orange-600 font-semibold" : ""
-                                }
-                              >
-                                {material.quantity} {material.uom}
-                              </span>
-                              {material.quantity !== material.originalQuantity && (
-                                <span className="text-xs text-muted-foreground">(was: {material.originalQuantity})</span>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col">
-                              <span
-                                className={
-                                  material.deliveryDate !== material.originalDeliveryDate
-                                    ? "text-orange-600 font-semibold"
-                                    : ""
-                                }
-                              >
-                                {material.deliveryDate}
-                              </span>
-                              {material.deliveryDate !== material.originalDeliveryDate && (
-                                <span className="text-xs text-muted-foreground">
-                                  (was: {material.originalDeliveryDate})
-                                </span>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline">{material.plant}</Badge>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )} */}
-
-        {/* Submit Result */}
-        {/* {submitResult && (
-          <Card
-            className={
-              submitResult === "success"
-                ? "border-green-200 bg-green-50 dark:bg-green-950/20"
-                : "border-red-200 bg-red-50 dark:bg-red-950/20"
-            }
-          >
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-2">
-                {submitResult === "success" ? (
-                  <>
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    <span className="text-green-600 font-semibold">
-                      Successfully submitted {selectedMaterials.length} materials!
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <AlertCircle className="w-5 h-5 text-red-600" />
-                    <span className="text-red-600 font-semibold">Failed to submit materials. Please try again.</span>
-                  </>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        )} */}
       </div>
       <div className="grid grid-cols-3 gap-6 p-5">
-        {/* {renderInput('rfq_type', 'RFQ Type')} */}
         {renderSelect(
           'rfq_type',
           'RFQ Type',
@@ -447,6 +259,7 @@ const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
           Dropdown?.company,
           (item) => item.name,
           (item) => `${item.company_name}`
+          
         )}
         {renderSelect(
           'purchase_organisation',
