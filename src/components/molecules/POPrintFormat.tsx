@@ -3,7 +3,7 @@ import React from "react";
 
 interface Props {
   prDetails: any;
-  contentRef: React.RefObject<HTMLDivElement | null>;
+  contentRef?: React.RefObject<HTMLDivElement | null>;
   Heading?: string;
 }
 
