@@ -91,6 +91,7 @@ const API_END_POINTS = {
   PRTableSubHeadSubmitData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.create_pr_table_subhead_form`,
   PrSubHeadDeleteRow: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.delete_pr_table_row`,
   SubmitPR: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.submit_pr_form`,
+  getPRItemsTable: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_pr_details_simple`,
 
   //rfq apis
   fetchVendorListBasedOnRFQType: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.vendor_list`,
@@ -105,7 +106,8 @@ const API_END_POINTS = {
   SingleGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_grn_details_of_grn_number`,
   UserDetails: `${url}/api/method/vms.APIs.authentication_api.get_user_details.get_user_details`,
   AllPRDetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.filtering_pr_details`,
-  getPrintFormatData:`${url}/api/method/vms.APIs.dashboard_api.po_data.get_po_details`,
+  // getPrintFormatData:`${url}/api/method/vms.APIs.dashboard_api.po_data.get_po_details`,
+  getPrintFormatData:`${url}/api/method/vms.APIs.dashboard_api.po_data.get_po_details_withformat`,
   addGSTTAbleData: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.update_vendor_onboarding_gst_details`,
   deleteGSTRow: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.delete_vendor_onboarding_gst_row`,
   gstVendorStateDropdown: `${url}/api/method/vms.APIs.master_apis.state_filter.get_states_for_gst`,
@@ -126,7 +128,9 @@ const API_END_POINTS = {
   filterprofitcenter: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_profit_center`,
   filtervaluationclass: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_valuation_class_master`,
   filterMaterialCode: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_material_master`,
-  filterpurchaseorg: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_purchase_organisation`
+  filterpurchaseorg: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_purchase_organisation`,
+  getPrintFormatDropdown:`${url}/api/method/vms.APIs.master_apis.po_print.get_po_printformat`,
+  getStateBasedOnPincode:`${url}/api/method/vms.APIs.master_apis.address_custom.address_filter`
 };
 
 export default API_END_POINTS;

@@ -5,7 +5,6 @@ import { Label } from "../../atoms/label";
 import { Button } from "../../atoms/button";
 import { Input } from "../../atoms/input";
 import { useSearchParams } from "next/navigation";
-import TextareaWithLabel from '@/src/components/common/TextareaWithLabel';
 import { useQMSForm } from '@/src/hooks/useQMSForm';
 import SignatureCanvas from 'react-signature-canvas';
 
@@ -14,18 +13,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
     const params = useSearchParams();
     const currentTab = params.get("tabtype")?.toLowerCase() || "conclusion";
     const [showSignatureCanvas, setShowSignatureCanvas] = useState(true);
-    const {
-        formData,
-        handleCheckboxChange,
-        sigRefs,
-        signaturePreview,
-        handleTextareaChange,
-        handleSaveSignature,
-        handleSignatureUpload,
-        handleClearSignature,
-        handleBacktab,
-        handleApproval
-    } = useQMSForm(vendor_onboarding, currentTab);
+    const { formData, handleCheckboxChange, sigRefs, signaturePreview, handleTextareaChange, handleSaveSignature, handleSignatureUpload, handleClearSignature, handleBacktab, handleApproval } = useQMSForm(vendor_onboarding, currentTab);
 
 
     return (

@@ -101,6 +101,7 @@ export const VendorInfoForm = ({ vendor_onboarding, ref_no, company_code }: { ve
                             </div>
                         </>
                     )}
+                    
                     {(is2000 || is7000) && (
                         <div className="col-span-3 space-y-[5px]">
                             <Label htmlFor="name_of_parent_company" className="font-semibold text-[16px] text-[#03111F]">

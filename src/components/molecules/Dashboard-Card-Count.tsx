@@ -33,7 +33,7 @@ type Props = {
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
   prInquiryData: TPRInquiryTable["cart_details"]
   prData: PurchaseRequisition[]
-  rfqData:RFQTable
+  rfqData: RFQTable
 }
 
 const DashboardCards = ({ ...Props }: Props) => {
@@ -86,7 +86,7 @@ const DashboardCards = ({ ...Props }: Props) => {
     //   bg_color: "bg-blue-100",
     //   hover: "hover:border-blue-400",
     // },
-    
+
     // {
     //   name: "Payment Request",
     //   count: 0,
@@ -103,7 +103,7 @@ const DashboardCards = ({ ...Props }: Props) => {
     //   bg_color: "bg-gray-100",
     //   hover: "hover:border-gray-400",
     // },
-    
+
     {
       name: "Purchase Inquiry",
       count: Props.cardData?.cart_count ?? 0,
@@ -128,19 +128,19 @@ const DashboardCards = ({ ...Props }: Props) => {
       bg_color: "bg-violet-100",
       hover: "hover:border-violet-400",
     },
-    {
-      name: "RFQ Comparision",
-      count: Props.cardData?.rfq_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/file-search.svg",
-      text_color: "text-violet-800",
-      bg_color: "bg-violet-100",
-      hover: "hover:border-violet-400",
-    },
-    
+    // {
+    //   name: "RFQ Comparision",
+    //   count: Props.cardData?.rfq_count ?? 0,
+    //   icon: "/dashboard-assests/cards_icon/file-search.svg",
+    //   text_color: "text-violet-800",
+    //   bg_color: "bg-violet-100",
+    //   hover: "hover:border-violet-400",
+    // },
+
   ];
 
   let cardData = user === "Enquirer"
-  ? allCardData.filter(item => item.name === "Purchase Inquiry" || item.name === "Purchase Requisition") : allCardData;
+    ? allCardData.filter(item => item.name === "Purchase Inquiry" || item.name === "Purchase Requisition") : allCardData;
 
   useEffect(() => {
     if (user) {
@@ -161,8 +161,7 @@ const DashboardCards = ({ ...Props }: Props) => {
 
   return (
     <div className="">
-      {
-        user == "Vendor" &&
+      {user === "Vendor" &&
         <div className="flex justify-start pb-4 gap-6">
           <Select>
             <SelectTrigger className="w-[180px]">
@@ -172,7 +171,7 @@ const DashboardCards = ({ ...Props }: Props) => {
               <SelectGroup className="w-full">
                 {
                   MultipleVendorCode?.map((item, index) => (
-                    <SelectItem key={index} value={item?.vendor_code}>{item?.company_name}</SelectItem>
+                    <SelectItem key={index} value={item?.vendor_code as string}>{item?.company_name}</SelectItem>
                   ))
                 }
               </SelectGroup>
@@ -240,7 +239,7 @@ const DashboardCards = ({ ...Props }: Props) => {
                   companyDropdown={Props?.companyDropdown}
                 />
               )}
-              {item.name === "Purchase Inquiry" &&(
+              {item.name === "Purchase Inquiry" && (
                 <DashboardPurchaseEnquiryTable
                   dashboardTableData={Props?.prInquiryData}
                   companyDropdown={Props?.companyDropdown}
