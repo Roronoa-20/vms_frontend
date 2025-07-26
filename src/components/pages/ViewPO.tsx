@@ -61,6 +61,7 @@ const delay = async (ms: number): Promise<void> => {
 };
 
 const handleGeneratePdf = async () => {
+  console.log("PDF FUNction hit---->")
   try {
     const input = contentRef.current;
     if (!input) throw new Error("PDF container not found.");
