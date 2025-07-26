@@ -57,6 +57,10 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
     if (PRInquiryData?.company) {
       handleCompanyChange(PRInquiryData?.company);
     }
+
+    if(PRInquiryData?.category_type){
+      fetchProductName(PRInquiryData?.category_type);
+    }
   }, [])
 
   const handleSelectChange = (value: any, name: string, isTable: boolean) => {
