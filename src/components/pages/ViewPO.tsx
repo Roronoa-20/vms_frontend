@@ -46,69 +46,87 @@ const ViewPO = () => {
     }
     const contentRef = useRef<HTMLDivElement | null>(null);
 
-const waitForImageLoad = async (img: HTMLImageElement): Promise<void> => {
-  while (!img.complete || img.naturalHeight === 0) {
-    await delay(50); // small delay to wait for image to load
-  }
-};
-
-const delay = async (ms: number): Promise<void> => {
-  // Only delay, doesn't use new Promise manually
-  let t = performance.now();
-  while (performance.now() - t < ms) {
-    // Do nothing, just wait
-  }
-};
-
-const handleGeneratePdf = async () => {
+const handleGeneratePdf = async (): Promise<void> => {
   try {
     const input = contentRef.current;
-    if (!input) throw new Error("PDF container not found.");
+    if (!input) {
+      alert("PDF container not found.");
+      return;
+    }
 
-    // ✅ Wait for all images to load
-    const images = input.querySelectorAll("img");
+    const delay = (ms: number): Promise<void> =>
+      new Promise((res) => setTimeout(res, ms));
+
+    const waitForImageLoad = async (img: HTMLImageElement): Promise<void> => {
+      while (!img.complete || img.naturalHeight === 0) {
+        await delay(50);
+      }
+    };
+
+    const convertImageToBase64 = async (imgEl: HTMLImageElement): Promise<void> => {
+      const tempImg = document.createElement("img");
+      tempImg.crossOrigin = "anonymous";
+      tempImg.src = imgEl.src;
+
+      await waitForImageLoad(tempImg);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = tempImg.width;
+      canvas.height = tempImg.height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Failed to get canvas context.");
+      ctx.drawImage(tempImg, 0, 0);
+
+      imgEl.src = canvas.toDataURL("image/png");
+    };
+
+    const images = input.querySelectorAll("img") as NodeListOf<HTMLImageElement>;
     for (const img of images) {
       try {
+        await convertImageToBase64(img);
         await waitForImageLoad(img);
       } catch {
-        console.warn("Image failed:", img.src);
+        console.warn("Skipping image (failed to convert):", img.src);
       }
     }
 
-    // ✅ Convert DOM to Canvas
     const canvas = await html2canvas(input, {
       useCORS: true,
       allowTaint: true,
-      backgroundColor: '#ffffff',
+      backgroundColor: "#ffffff",
       scrollY: -window.scrollY,
     });
 
-    const imgData = canvas.toDataURL('image/png');
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
 
-    // ✅ Generate PDF
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = 210;
-    const pageHeight = 297;
+    const imgWidth = 210; // A4 width in mm
+    const pageHeight = 297; // A4 height in mm
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
     let heightLeft = imgHeight;
     let position = 0;
 
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
     heightLeft -= pageHeight;
 
     while (heightLeft > 0) {
       position = heightLeft - imgHeight;
       pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
     }
 
-    pdf.save('document.pdf');
-  } catch (err) {
-    console.error("Error generating PDF:", err);
+    pdf.save("document.pdf");
+  } catch (error) {
+    console.error("PDF generation failed:", error);
     alert("PDF generation failed.");
   }
 };
+
+
+
+
 
 
 

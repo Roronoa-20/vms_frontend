@@ -194,6 +194,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
     });
   }
   console.log(PRInquiryData)
+  console.log(productNameDropdown,"this is dropdown");
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">

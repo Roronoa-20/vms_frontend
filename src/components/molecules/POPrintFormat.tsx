@@ -3,7 +3,7 @@ import React from "react";
 
 interface Props {
   prDetails: any;
-  contentRef: React.RefObject<HTMLDivElement | null>;
+  contentRef?: React.RefObject<HTMLDivElement | null>;
   Heading?: string;
 }
 
@@ -296,9 +296,23 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
                 />
             </div>
             <div className="border-r border-black h-20 flex items-center justify-center">
-              Sign 2
+              <img
+                src={prDetails && prDetails?.sign_url2?.url}
+                alt="Signature"
+                //  crossOrigin="anonymous"
+                style={{ width: "50%", height: "auto", objectFit: "contain" }}
+                // content="contain"
+                />
             </div>
-            <div className="h-20 flex items-center justify-center">Sign 3</div>
+            <div className="h-20 flex items-center justify-center">
+              <img
+                src={prDetails && prDetails?.sign_url3?.url}
+                alt="Signature"
+                //  crossOrigin="anonymous"
+                style={{ width: "50%", height: "auto", objectFit: "contain" }}
+                // content="contain"
+                />
+            </div>
           </div>
           <div className="grid grid-cols-3 text-center text-[11px]">
             <div className="border-r border-black p-1">Purchase Team</div>
