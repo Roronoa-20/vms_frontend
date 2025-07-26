@@ -96,7 +96,7 @@ const ViewPO = () => {
           <button onClick={()=>{getPODetails()}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
             View PO Details
           </button>
-          <button onClick={()=>{router.push(`/view-po-changes?po_name=${PRNumber}`)}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+          <button onClick={()=>{router.push(`/view-po-line-items?po_name=${PRNumber}`)}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
             View All Changed PO Details
           </button>
         </div>

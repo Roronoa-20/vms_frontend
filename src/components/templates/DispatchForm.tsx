@@ -15,6 +15,7 @@ import { tableData } from '@/src/constants/dashboardTableData'
 import { useRouter } from 'next/navigation'
 import { TDisptachDetails } from '../pages/Dispatch'
 import Link from 'next/link'
+import { updateQueryParam } from './PRRequestForm'
 
 interface TPoDropdown{
     name:string
@@ -233,7 +234,10 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
     const respose:AxiosResponse = await requestWrapper({url:url,method:"POST",data:formdata});
     if(respose?.status == 200){
       alert("Added Successfully");
-      router.push(`/dispatch?refno=${respose?.data?.message?.dis_name}`)
+      // router.push(`/dispatch?refno=${respose?.data?.message?.dis_name}`)
+      updateQueryParam("refno",respose?.data?.message?.dis_name);
+      // router.replace(`/dispatch?refno=${respose?.data?.message?.dis_name}`);
+      location.reload();
     }
   }
 
@@ -331,7 +335,7 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload Invoice</h1>
           {
-            uploadedFiles?.invoice_attachment?
+            uploadedFiles?.invoice_attachment?.url?
             <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.invoice_attachment?.url}`}><h1>{uploadedFiles?.invoice_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,invoice_attachment:null}))}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>
             :
           <Input type='file' placeholder="" name='user' onChange={(e)=>{setFormData((prev:any)=>({...prev,invoice_attachment:e.target.files?.[0]}))}} />
@@ -340,7 +344,7 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload packing list document</h1>
           {
-            uploadedFiles?.packing_list_attachment?
+            uploadedFiles?.packing_list_attachment?.url?
             <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.packing_list_attachment?.url}`}><h1>{uploadedFiles?.packing_list_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,packing_list_attachment:null}))}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>
             :
             <Input placeholder="" type='file' name='user' onChange={(e)=>{setFormData((prev:any)=>({...prev,packing_list_attachment:e.target.files?.[0]}))}} />
@@ -349,7 +353,7 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload commercial invoice</h1>
           {
-            uploadedFiles?.commercial_attachment?
+            uploadedFiles?.commercial_attachment?.url?
             <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.commercial_attachment?.url}`}><h1>{uploadedFiles?.commercial_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,commercial_attachment:null}))}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>
             :
             <Input placeholder="" type='file' name='user' onChange={(e)=>{setFormData((prev:any)=>({...prev,commercial_attachment:e.target.files?.[0]}))}} />
@@ -358,7 +362,7 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload e-way bill</h1>
           {
-            uploadedFiles?.e_way_bill_attachment?
+            uploadedFiles?.e_way_bill_attachment?.url?
             <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.e_way_bill_attachment?.url}`}><h1>{uploadedFiles?.e_way_bill_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,e_way_bill_attachment:null}))}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>
             :
             <Input placeholder="" type='file' name='user' onChange={(e)=>{setFormData((prev:any)=>({...prev,e_way_bill_attachment:e.target.files?.[0]}))}} />
@@ -367,7 +371,7 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload test certificates</h1>
           {
-            uploadedFiles?.test_certificates_attachment?
+            uploadedFiles?.test_certificates_attachment?.url?
             <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.test_certificates_attachment?.url}`}><h1>{uploadedFiles?.test_certificates_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,test_certificates_attachment:null}))}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>
             :
           <Input placeholder="" type='file' name='user' onChange={(e)=>{setFormData((prev:any)=>({...prev,test_certificates_attachment:e.target.files?.[0]}))}} />
@@ -409,7 +413,7 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
                     {
                       item?.coa_document_upload?
                       <div className='flex gap-4 justify-center'><h1>{item?.coa_document_upload?.name}</h1><Trash2 onClick={()=>{handleTableFileDelete(index,"coa_document_upload")}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div> :
-                      item?.coa_document?
+                      item?.coa_document?.url?
                       <div className='flex gap-4 justify-center'><h1>{item?.coa_document?.file_name}</h1><Trash2 onClick={()=>{handleTableFileDelete(index,"coa_document")}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>:
                     <input onChange={(e)=>{handleTableFile(index,e)}} name='coa_document_upload' type='file' className='w-24'/>
                     }
@@ -418,7 +422,7 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
                     {
                       item?.msds_document_upload ?
                      <div className='flex gap-4 justify-center'><h1>{item?.msds_document_upload?.name}</h1><Trash2 onClick={()=>{handleTableFileDelete(index,"msds_document_upload")}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div> :
-                      item?.msds_document ?
+                      item?.msds_document?.url ?
                      <div className='flex gap-4 justify-center'><h1>{ item?.msds_document?.file_name}</h1><Trash2 onClick={()=>{handleTableFileDelete(index,"msds_document")}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div> :
                     <input type='file' name='msds_document_upload' onChange={(e)=>{handleTableFile(index,e)}} className='w-24'/>
                     }
