@@ -1067,7 +1067,6 @@ export default function PRMaterialsManager({
 
     setLoading(true)
     try {
-      console.log(prCodes, "prCodes before API call")
       const url = `${API_END_POINTS?.fetchPRItems}`
       const response: AxiosResponse = await requestWrapper({
         url: url,
@@ -1249,7 +1248,7 @@ export default function PRMaterialsManager({
   const getPRName = (sapCode: string) => {
     return prNumbers.find((pr) => pr.sap_pr_code === sapCode)?.name || sapCode
   }
-
+console.log(selectedRows,"selectedRows")
   return (
     <div className={cn("space-y-6", className)}>
       <Card>
@@ -1259,7 +1258,7 @@ export default function PRMaterialsManager({
         <CardContent className="space-y-4">
           {/* PR Multiselect */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Select Purchase Request Numbers</Label>
+            {/* <Label className="text-sm font-medium">Select Purchase Request Numbers</Label> */}
 
             {/* Selected PRs Display */}
             {selectedPRs.length > 0 && (

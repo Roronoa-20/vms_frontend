@@ -18,7 +18,7 @@ const page = async({ searchParams }:PageProps) => {
   console.log(params,"params in servr")
   const pur_req =  params["pur_req"];
   const cart_id =  params["cart_Id"];
-console.log(cart_id,"cart_id in server page")
+console.log(cart_id,"cart_id in server page",pur_req)
   return (
     <PRRequest pur_req={pur_req} cart_id={cart_id}/>
   )

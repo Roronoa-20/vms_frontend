@@ -18,6 +18,7 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
   const cookieStore = await cookies();
   const user = cookieStore.get("user_id")?.value
   const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
+  console.log(cart_id, "cart_id in server api")
   if (cart_id) {
     PRDataUrl = `${API_END_POINTS?.fetchDataCartId}?cart_id=${cart_id}`;
     const PRDataResponse: AxiosResponse = await requestWrapper({
@@ -27,7 +28,7 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
     })
     PRData = PRDataResponse?.status == 200 ? PRDataResponse?.data?.message?.data : "";
   }
-
+  console.log(PRData, "PRDataPRDataPRDataPRDataPRDataPRData")
   const dropdownApiUrl = API_END_POINTS?.vendorPurchaseRequestDropdown;
   const resposne: AxiosResponse = await requestWrapper({
     url: dropdownApiUrl, method: "GET", headers: {
@@ -35,9 +36,9 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
     }
   });
   const Dropdown = resposne?.status == 200 ? resposne?.data.message : "";
-
+console.log(Dropdown,"DropdownDropdownDropdownDropdownDropdownDropdown")
   const company = PRData?.company || "";
-
+  console.log(company,"companycompanycompany")
   const purchaseGroupURL = `${API_END_POINTS?.filterpurchasegroup}?company=${company}`;
   const PurGroupresposne: AxiosResponse = await requestWrapper({
     url: purchaseGroupURL,
@@ -46,9 +47,9 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
       cookie: cookieHeaderString
     }
   });
-
+  console.log(PurGroupresposne, "PurGroupresposne")
   const PurchaseGroupDropdown = PurGroupresposne?.status == 200 ? PurGroupresposne?.data.message?.pur_grp : "";
-  console.log("PurchaseGroupDropdown---->", PurchaseGroupDropdown)
+  console.log("PurchaseGroupDropdown--------------------------->", PurGroupresposne)
 
   const StoragelocationURL = `${API_END_POINTS?.filterstoragelocation}?company=${company}`;
   const Storelocationresponse: AxiosResponse = await requestWrapper({
@@ -61,7 +62,7 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
   const StorageLocationDropdown = Storelocationresponse?.status == 200 ? Storelocationresponse?.data.message?.storage : "";
   console.log("StorageLocationDropdown---->", StorageLocationDropdown)
 
-  // 
+
   const CostCenterURL = `${API_END_POINTS?.filtercostcenter}?company=${company}`;
   const CostCenterResponse: AxiosResponse = await requestWrapper({
     url: CostCenterURL,
@@ -73,7 +74,6 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
   const CostCenterDropdown = CostCenterResponse?.status == 200 ? CostCenterResponse?.data.message?.cost_center : "";
   console.log("CostCenterDropdown---->", CostCenterDropdown);
 
-  // 
   const GLAccountURL = `${API_END_POINTS?.filterglaccount}?company=${company}`;
   const GLAccountResponse: AxiosResponse = await requestWrapper({
     url: GLAccountURL,
@@ -107,7 +107,7 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
   const ProfitCenterDropdown = PorfitCenterResponse?.status == 200 ? PorfitCenterResponse?.data.message?.profit_center : "";
   console.log("ProfitCenterDropdown---->", ProfitCenterDropdown);
   // 
-const ValuationClassURL = `${API_END_POINTS?.filtervaluationclass}?company=${company}`;
+  const ValuationClassURL = `${API_END_POINTS?.filtervaluationclass}?company=${company}`;
   const ValuationClassResponse: AxiosResponse = await requestWrapper({
     url: ValuationClassURL,
     method: "GET",
@@ -138,12 +138,12 @@ const ValuationClassURL = `${API_END_POINTS?.filtervaluationclass}?company=${com
     }
   });
   const PurchaseOrgDropdown = PurchaseOrgResponse?.status == 200 ? PurchaseOrgResponse?.data.message?.purchase_org : "";
-  console.log("PurchaseOrgDropdown---->", PurchaseOrgDropdown);
+  console.log("PRData---->", PRData);
 
 
   return (
     <PRRequestForm Dropdown={Dropdown} PRData={PRData} cartId={cart_id} pur_req={pur_req} PurchaseGroupDropdown={PurchaseGroupDropdown} StorageLocationDropdown={StorageLocationDropdown} ValuationClassDropdown={ValuationClassDropdown}
-    ProfitCenterDropdown={ProfitCenterDropdown} MaterialGroupDropdown={MaterialGroupDropdown} GLAccountDropdwon={GLAccountDropdwon} CostCenterDropdown={CostCenterDropdown} MaterialCodeDropdown={MaterialCodeDropdown} PurchaseOrgDropdown={PurchaseOrgDropdown} />
+      ProfitCenterDropdown={ProfitCenterDropdown} MaterialGroupDropdown={MaterialGroupDropdown} GLAccountDropdwon={GLAccountDropdwon} CostCenterDropdown={CostCenterDropdown} MaterialCodeDropdown={MaterialCodeDropdown} PurchaseOrgDropdown={PurchaseOrgDropdown} />
 
   )
 }
