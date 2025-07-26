@@ -47,7 +47,7 @@ const ViewQMSFormClient = ({ }) => {
     const codes = company_code.split(",").map(code => code.trim());
     return (
       <div>
-        <ViewQMSFormDetails vendor_onboarding={vendor_onboarding} />
+        <ViewQMSFormDetails vendor_onboarding={vendor_onboarding} company_code={company_code}/>
         <div className="pt-14 p-2">
           {codes.includes("2000") && (
             <div className="mb-6">
@@ -55,12 +55,12 @@ const ViewQMSFormClient = ({ }) => {
               <MLSPLQualityAgreementForm vendor_onboarding={vendor_onboarding} company_code={company_code} />
             </div>
           )}
-          {codes.includes("7000") && (
+          {/* {codes.includes("7000") && (
             <div>
               <h2 className="text-lg font-semibold mb-2">MDPL Quality Agreement</h2>
               <MDPLQualityAgreementForm vendor_onboarding={vendor_onboarding} company_code={company_code} />
             </div>
-          )}
+          )} */}
           {!codes.includes("2000") && !codes.includes("7000") && (
             <div className="text-red-500">No valid company code for Quality Agreement.</div>
           )}
@@ -71,10 +71,10 @@ const ViewQMSFormClient = ({ }) => {
 
   return (
     <div>
-      <ViewQMSFormDetails vendor_onboarding={vendor_onboarding} />
+      <ViewQMSFormDetails vendor_onboarding={vendor_onboarding} company_code={company_code} />
       <div className="pt-14 p-2">
         {SelectedForm ? (
-          <SelectedForm vendor_onboarding={vendor_onboarding} />
+          <SelectedForm vendor_onboarding={vendor_onboarding} company_code={company_code} />
         ) : (
           <div className="text-red-500">Invalid tab type: {tabtype}</div>
         )}

@@ -50,7 +50,7 @@ export const QASForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) =
         <MultiCheckboxGroup
           name="sites_inspected_by"
           label="2. Is your site inspected by:"
-          options={["Local health authorities", "Others:"]}
+          options={["Local health authorities", "Others"]}
           selected={formData.sites_inspected_by ? [formData.sites_inspected_by] : []}
           onChange={() => { }}
           columns={2}
@@ -59,7 +59,7 @@ export const QASForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) =
           name="inspected_by_others"
           label=""
           value={formData.inspected_by_others || ""}
-          condition={formData.sites_inspected_by === "Others:"}
+          condition={formData.sites_inspected_by === "Others"}
           placeholder="Enter the details here"
           onChange={() => { }}
         />
@@ -67,7 +67,7 @@ export const QASForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) =
         <MultiCheckboxGroup
           name="have_documentsprocedure"
           label="3. Do you have the following documents/procedures in place:"
-          options={["Quality Management Manual", "Internal Quality Audit", "Change Control", "Corrective and Preventive Action", "Environmental Monitoring", "Risk Management", "Calibration", "Emergency Mitigation Plan",]}
+          options={["Quality Management Manual", "Internal Quality Audit", "Change Control", "Corrective and Preventive Action", "Environmental Monitoring", "Risk Management", "Calibration", "Emergency Mitigation plan",]}
           selected={
             Array.isArray(formData.have_documentsprocedure)
               ? formData.have_documentsprocedure.map((item: any) => item.qms_procedure_doc)

@@ -135,27 +135,27 @@ const handleGeneratePdf = async (): Promise<void> => {
         setIsEarlyDeliveryDialog(false);
     }
 
-    const handleOpen = ()=>{
-      fetchPOItems();
-      setIsEarlyDeliveryDialog(true);
+  const handleOpen = () => {
+    fetchPOItems();
+    setIsEarlyDeliveryDialog(true);
+  }
+
+
+  const fetchPOItems = async () => {
+    const url = `${API_END_POINTS?.POItemsTable}?po_name=${PRNumber}`;
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+    if (response?.status == 200) {
+      setPOItemsTable(response?.data?.message?.items)
     }
+  }
 
 
-    const fetchPOItems = async ()=>{
-      const url = `${API_END_POINTS?.POItemsTable}?po_name=${PRNumber}`;
-      const response:AxiosResponse = await requestWrapper({url:url,method:"GET"});
-      if(response?.status == 200){
-        setPOItemsTable(response?.data?.message?.items)
-      }
-    }
-
-
-    const handleTableChange = (index: number, name:string,value:string) => {
+  const handleTableChange = (index: number, name: string, value: string) => {
     // const { name, value } = e.target;
     setPOItemsTable((prev) => {
       const updated = [...prev];
       if (updated[index]) {
-        updated[index] = { ...updated[index],[name]:value};
+        updated[index] = { ...updated[index], [name]: value };
       }
       return updated;
     });
@@ -174,11 +174,11 @@ const handleGeneratePdf = async (): Promise<void> => {
     }
   }
 
-  const handlePoItemsSubmit = async()=>{
+  const handlePoItemsSubmit = async () => {
     const url = API_END_POINTS?.submitPOItems;
-    const updatedData = {items:POItemsTable,po_name:PRNumber};
-    const response:AxiosResponse = await requestWrapper({url:url,method:"POST",data:{data:updatedData}});
-    if(response?.status == 200){
+    const updatedData = { items: POItemsTable, po_name: PRNumber };
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "POST", data: { data: updatedData } });
+    if (response?.status == 200) {
       alert("submitted successfully");
     }
   }
@@ -188,7 +188,7 @@ const handleGeneratePdf = async (): Promise<void> => {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-md border border-gray-300">
         <input
-        onChange={(e)=>{setPRNumber(e.target.value)}}
+          onChange={(e) => { setPRNumber(e.target.value) }}
           type="text"
           className="w-full md:w-1/2 border border-gray-300 rounded px-4 py-2 focus:outline-none hover:border-blue-700 transition"
         />
@@ -218,7 +218,7 @@ const handleGeneratePdf = async (): Promise<void> => {
 
       {/* Early Delivery Button */}
       <div className="text-left">
-        <button onClick={()=>{handleOpen()}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+        <button onClick={() => { handleOpen() }} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
           Early Delivery
         </button>
       </div>
@@ -230,40 +230,40 @@ const handleGeneratePdf = async (): Promise<void> => {
       {/* End of Print Format */}
 
       {
-          isEarlyDeliveryDialog &&
-          <PopUp classname="w-full md:max-w-[60vw] md:max-h-[60vh] h-full overflow-y-scroll" handleClose={handleClose}>
-            <h1 className="pl-5">Purchase Inquiry Items</h1>
-      <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
-        <Table className=" max-h-40 overflow-y-scroll overflow-x-scroll">
-          <TableHeader className="text-center">
-            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-              <TableHead className="text-center">Product Name</TableHead>
-              <TableHead className="text-center">Material Code</TableHead>
-              <TableHead className="text-center">Plant</TableHead>
-              <TableHead className="text-center">Schedule Date</TableHead>
-              <TableHead className="text-center">Quantity</TableHead>
-              <TableHead className="text-center">Early Delivery Date</TableHead>
-              <TableHead className="text-center">Remarks</TableHead>
-              
-            </TableRow>
-          </TableHeader>
-          <TableBody className="text-center">
-            {POItemsTable?.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell>{item?.product_name}</TableCell>
-                <TableCell className='text-center'>{item?.material_code}</TableCell>
-                <TableCell>{item?.plant}</TableCell>
-                <TableCell>{item?.schedule_date}</TableCell>  
-                <TableCell>{item?.quantity}</TableCell>  
-                <TableCell className={`flex justify-center`}><Input disabled={item?.requested_for_earlydelivery?true:false} type="date" name="early_delivery_date" onChange={(e)=>{handleTableChange(index,e.target.name,e.target.value)}} value={item?.early_delivery_date ?? ""}  className='w-36 disabled:opacity-100' /></TableCell>
-                <TableCell><div className={`flex justify-center`}> <Input disabled={item?.requested_for_earlydelivery?true:false} name="purchase_team_remarks" onChange={(e)=>{handleTableChange(index,e.target.name,e.target.value)}} value={item?.purchase_team_remarks ?? ""}  className='disabled:opacity-100' /></div></TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-        <Button onClick={()=>{handlePoItemsSubmit()}}>Submit</Button>
-          </PopUp> 
+        isEarlyDeliveryDialog &&
+        <PopUp classname="w-full md:max-w-[60vw] md:max-h-[60vh] h-full overflow-y-scroll" handleClose={handleClose}>
+          <h1 className="pl-5">Purchase Inquiry Items</h1>
+          <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
+            <Table className=" max-h-40 overflow-y-scroll overflow-x-scroll">
+              <TableHeader className="text-center">
+                <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
+                  <TableHead className="text-center">Product Name</TableHead>
+                  <TableHead className="text-center">Material Code</TableHead>
+                  <TableHead className="text-center">Plant</TableHead>
+                  <TableHead className="text-center">Schedule Date</TableHead>
+                  <TableHead className="text-center">Quantity</TableHead>
+                  <TableHead className="text-center">Early Delivery Date</TableHead>
+                  <TableHead className="text-center">Remarks</TableHead>
+
+                </TableRow>
+              </TableHeader>
+              <TableBody className="text-center">
+                {POItemsTable?.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{item?.product_name}</TableCell>
+                    <TableCell className='text-center'>{item?.material_code}</TableCell>
+                    <TableCell>{item?.plant}</TableCell>
+                    <TableCell>{item?.schedule_date}</TableCell>
+                    <TableCell>{item?.quantity}</TableCell>
+                    <TableCell className={`flex justify-center`}><Input disabled={item?.requested_for_earlydelivery ? true : false} type="date" name="early_delivery_date" onChange={(e) => { handleTableChange(index, e.target.name, e.target.value) }} value={item?.early_delivery_date ?? ""} className='w-36 disabled:opacity-100' /></TableCell>
+                    <TableCell><div className={`flex justify-center`}> <Input disabled={item?.requested_for_earlydelivery ? true : false} name="purchase_team_remarks" onChange={(e) => { handleTableChange(index, e.target.name, e.target.value) }} value={item?.purchase_team_remarks ?? ""} className='disabled:opacity-100' /></div></TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          <Button onClick={() => { handlePoItemsSubmit() }}>Submit</Button>
+        </PopUp>
       }
     </div>
   );

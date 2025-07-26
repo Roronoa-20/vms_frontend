@@ -39,6 +39,15 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
     const [tableData, setTableData] = useState<any[]>([]);
     const [savedFormsData, setSavedFormsData] = useState<Record<string, any>>({});
     const formDataRef = useRef<VendorQMSForm>({} as VendorQMSForm);
+    const companyCodes = company_code.split(',').map((code) => code.trim());
+
+    const is2000 = companyCodes.includes('2000');
+    const is7000 = companyCodes.includes('7000');
+      const visibleTabs = ViewQMSFormTabs.filter(tab => {
+        if (is7000 && tab.key.toLowerCase() === 'quality_agreement') return false;
+        return true;
+      });
+
     useEffect(() => {
         formDataRef.current = formData;
     }, [formData]);
@@ -352,6 +361,8 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
                     content: base64.split(",")[1],
                     filename: qualityManualFile.name,
                     content_type: qualityManualFile.type,
+                    attached_to_doctype: "Supplier QMS Assessment Form",
+                    attached_to_name: formData.name,
                 };
             }
 
@@ -362,7 +373,7 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
                     const base64 = await convertToBase64(blob);
 
                     return {
-                        document_type: item.option,
+                        document_type: item.document_type,
                         qa_attachment: {
                             content: base64.split(",")[1],
                             filename: item.fileName,
@@ -401,7 +412,7 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
             console.log("Formdata--->", companyPayload);
             console.log("Formdata--->", formData.date);
             console.log("Formdata--->", qaList);
-            console.log("Formdata--->", qualityManualFile);
+            console.log("Formdata Quaity Manual--->", qualityManualFile);
             console.log("Formdata--->", formData.products_in_qa);
 
 
@@ -413,12 +424,15 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
                     ...companyPayload,
                     // ...formDataRef.current,
                     mdpl_qa_date: formData.date,
-                    quality_manual: qualityManualFile?.name || "",
+                    // quality_manual: qualityManualFile,
                     contact_person_1: formData.contact_person_1,
                     contact_person_2: formData.contact_person_2,
                     mlspl_qa_list: qaList,
                     products_in_qa: formData.products_in_qa || [],
 
+                },
+                attachments: {
+                    ...(qualityManualPayload ? { quality_manual: qualityManualPayload } : {}),
                 },
                 // signatures: formData.signatures || {},
                 signatures: Object.entries(formData.signatures || {}).reduce((acc, [key, value]) => {
@@ -449,7 +463,7 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
             if (result?.message?.status === "success") {
                 if (isLastTab) {
                     alert("This is the last tab and your QMS Form is fully submitted.");
-                    window.location.href = "/qms-form/success";
+                    // window.location.href = "/qms-form/success";
                 } else {
                     handleNext();
                 }
@@ -487,8 +501,8 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
 
     const handleNextTab = () => {
         saveFormDataLocally(currentTab, formData);
-        const currentIndex = ViewQMSFormTabs.findIndex((tab) => tab.key.toLowerCase() === currentTab.toLowerCase());
-        const nextTab = ViewQMSFormTabs[currentIndex + 1]?.key;
+        const currentIndex = visibleTabs.findIndex((tab) => tab.key.toLowerCase() === currentTab.toLowerCase());
+        const nextTab = visibleTabs[currentIndex + 1]?.key;
 
         if (nextTab) {
             router.push(`/qms-form-details?tabtype=${encodeURIComponent(nextTab)}&vendor_onboarding=${vendor_onboarding}&company_code=${company_code}`);
@@ -497,8 +511,8 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
 
     const handleBacktab = () => {
         saveFormDataLocally(currentTab, formData);
-        const currentIndex = ViewQMSFormTabs.findIndex(tab => tab.key.toLowerCase() === currentTab.toLowerCase());
-        const backTab = ViewQMSFormTabs[currentIndex - 1]?.key;
+        const currentIndex = visibleTabs.findIndex(tab => tab.key.toLowerCase() === currentTab.toLowerCase());
+        const backTab = visibleTabs[currentIndex - 1]?.key;
 
         if (backTab) {
             router.push(`/qms-form-details?tabtype=${encodeURIComponent(backTab)}&vendor_onboarding=${vendor_onboarding}&company_code=${company_code}`);
