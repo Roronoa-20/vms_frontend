@@ -106,9 +106,26 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
       cart_product: tableData,
       user: user,
     };
+    
+    let assetCodeLine = 0;
+
+if (PRInquiryData?.asked_to_modify == Boolean(1)) {
+  for (let i = 0; i < tableData.length; i++) {
+    const item = tableData[i];
+    if (item?.need_asset_code == Boolean(1) && !item?.assest_code) {
+      assetCodeLine = i + 1; // Line number is usually 1-based
+      break;
+    }
+  }
+}
+
+if (assetCodeLine !== 0) {
+  alert(`Please enter Asset Code for line ${assetCodeLine}`);
+  return;
+}
+
 
     const response: AxiosResponse = await requestWrapper({ url: url, data: { data: payload }, method: "POST" });
-    console.log("Enquiry---->", response);
     if (response?.status == 200) {
       setFormData(null);
       alert("submission successfull");
