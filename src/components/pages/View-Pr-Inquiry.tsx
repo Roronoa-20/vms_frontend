@@ -97,6 +97,7 @@ const purchaseTypeResponse:AxiosResponse = await requestWrapper({url:purchaseTyp
 }});
 const purchaseTypeDropdown = purchaseTypeResponse?.status == 200? purchaseTypeResponse?.data?.message?.data : ""
 console.log(PRInquiryData, "this is data PRInquiryData");
+console.log(companyDropdown, "this is company dropdown");
 return (
     <ViewPrInquiryForm PRInquiryData={PRInquiryData} companyDropdown={companyDropdown} purchaseTypeDropdown={purchaseTypeDropdown} dropdown={dropdown} refno={refno} />
 )
