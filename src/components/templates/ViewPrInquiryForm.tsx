@@ -344,7 +344,26 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
                 <TableCell className="font-medium">{index + 1}</TableCell>
                 <TableCell className={`flex justify-center`}><Input type='checkbox' onChange={(e) => { handleTableCheckChange(index, e.target.checked) }} disabled={(Boolean(PRInquiryData?.purchase_team) && item?.assest_code == null) ? false : true} checked={item?.need_asset_code} className='w-5' /></TableCell>
                 <TableCell className='text-center'>{item?.assest_code}</TableCell>
-                <TableCell>{item?.product_name}</TableCell>
+                <TableCell>
+                  {/* {item?.product_name} */}
+                  <Select
+                                      disabled
+                              value={item?.product_name ?? ""}
+                            >
+                              <SelectTrigger className='disabled:opacity-100'>
+                                <SelectValue placeholder="Select" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  {productNameDropdown?.map((item, index) => (
+                                    <SelectItem key={index} value={item?.name}>
+                                      {item?.product_name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                  </TableCell>
                 <TableCell>{item?.product_price}</TableCell>
                 <TableCell>{item?.uom}</TableCell>
                 <TableCell>{item?.lead_time}</TableCell>
