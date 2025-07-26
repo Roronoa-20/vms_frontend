@@ -185,11 +185,16 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="">Release</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
+                <SelectItem value="Release">Release</SelectItem>
+                <SelectItem value="Revoked">Revoked</SelectItem>
+                <SelectItem value="Approved by Vendor">Approved by Vendor</SelectItem>
+                <SelectItem value="Rejected by Vendor">Rejected by Vendor</SelectItem>
+                <SelectItem value="Confrimation Pending From User">Pineapple</SelectItem>
+                <SelectItem value="Confirmed By User">Confirmed By User</SelectItem>
+                <SelectItem value="Goods Not Received">Goods Not Received</SelectItem>
+                <SelectItem value="Send to Accounts Team For Payment Release">With Accounts Team</SelectItem>
+                <SelectItem value="GRN Generated">GRN Generated</SelectItem>
+                <SelectItem value="Dispatched">Dispatched</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -215,7 +220,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
           {tableData  ? (
             tableData?.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="font-medium">{item?.idx}</TableCell>
+                <TableCell className="font-medium">{index+ 1}</TableCell>
                 <TableCell>{item?.name}</TableCell>
                 <TableCell>
                   {item?.supplier_name ? item.supplier_name : "-"}
@@ -226,9 +231,9 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
                 <TableCell>
                   <div
                     className={`px-2 py-3 rounded-xl ${
-                      item?.status === "Pending"
+                      item?.status === "Pending by Vendor"
                         ? "bg-yellow-100 text-yellow-800"
-                        : item?.status === "Approved"
+                        : item?.status === "Approved by Vendor"
                           ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-800"
                     }`}

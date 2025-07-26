@@ -91,6 +91,7 @@ const API_END_POINTS = {
   PRTableSubHeadSubmitData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.create_pr_table_subhead_form`,
   PrSubHeadDeleteRow: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.delete_pr_table_row`,
   SubmitPR: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.submit_pr_form`,
+  getPRItemsTable: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_pr_details_simple`,
 
   //rfq apis
   fetchVendorListBasedOnRFQType: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.vendor_list`,

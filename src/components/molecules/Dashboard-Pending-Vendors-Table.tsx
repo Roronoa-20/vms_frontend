@@ -61,7 +61,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const user = Cookies?.get("user_id");
-  console.log(user, "this is user")
+  console.log(user, "this is user");
 
   const debouncedSearchName = useDebounce(search, 300);
 
@@ -88,7 +88,8 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
       settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count)
       setRecordPerPage(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding?.length)
     }
-  }
+  };
+  
   console.log(table,"this is table");
    const { designation } = useAuth();
     const isAccountsUser = designation?.toLowerCase().includes("account");
