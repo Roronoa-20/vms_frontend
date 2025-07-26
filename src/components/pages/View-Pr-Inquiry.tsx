@@ -4,6 +4,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios';
 import requestWrapper from '@/src/services/apiCall';
 import { cookies } from 'next/headers';
+import { TvendorRegistrationDropdown } from '@/src/types/types';
 
 export interface purchaseInquiryDropdown {
     message:{
@@ -96,10 +97,15 @@ const purchaseTypeResponse:AxiosResponse = await requestWrapper({url:purchaseTyp
    cookie:cookieHeaderString
 }});
 const purchaseTypeDropdown = purchaseTypeResponse?.status == 200? purchaseTypeResponse?.data?.message?.data : ""
-console.log(PRInquiryData, "this is data PRInquiryData");
-console.log(companyDropdown, "this is company dropdown");
+  const dropdownUrl = API_END_POINTS?.vendorRegistrationDropdown;
+  const dropDownApi: AxiosResponse = await requestWrapper({
+    url: dropdownUrl,
+    method: "GET",
+  });
+  const AllcompanyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"] =
+    dropDownApi?.status == 200 ? dropDownApi?.data?.message?.data?.company_master : "";
 return (
-    <ViewPrInquiryForm PRInquiryData={PRInquiryData} companyDropdown={companyDropdown} purchaseTypeDropdown={purchaseTypeDropdown} dropdown={dropdown} refno={refno} />
+    <ViewPrInquiryForm PRInquiryData={PRInquiryData} companyDropdown={companyDropdown} AllcompanyDropdown={AllcompanyDropdown} purchaseTypeDropdown={purchaseTypeDropdown} dropdown={dropdown} refno={refno} />
 )
 }
 

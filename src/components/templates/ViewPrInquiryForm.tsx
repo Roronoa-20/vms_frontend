@@ -15,6 +15,7 @@ import Comment_box from '../molecules/CommentBox'
 import { Value } from '@radix-ui/react-select'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/src/context/AuthContext'
+import { TvendorRegistrationDropdown } from '@/src/types/types'
 
 interface Props {
   Dropdown?: PurchaseRequestDropdown["message"]
@@ -24,6 +25,7 @@ interface Props {
   refno?: string
   companyDropdown: { name: string, description: string }[]
   purchaseTypeDropdown: { name: string, purchase_requisition_type_name: string, description: string }[]
+  AllcompanyDropdown:TvendorRegistrationDropdown["message"]["data"]["company_master"]
 }
 
 
@@ -33,7 +35,7 @@ type ProductNameDropdown = {
 }
 const currentDate = new Date();
 
-const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purchaseTypeDropdown }: Props) => {
+const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purchaseTypeDropdown,AllcompanyDropdown }: Props) => {
   const user = Cookies.get("user_id");
   const [formData, setFormData] = useState<TPRInquiry | null>(PRInquiryData ?? null);
   const [singleTableRow, setSingleTableRow] = useState<TableData | null>(null);
@@ -245,19 +247,21 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Company
           </h1>
-          {/* <Select disabled value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value); }}>
+          <Select disabled value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value); }}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {companyDropdown?.map((item, index) => (
+                {designation == "Purchase Team"?AllcompanyDropdown?.map((item, index) => (
+                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                )):companyDropdown?.map((item,index)=>(
                   <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
-          </Select> */}
-          <Input value={formData?.company ?? ""} disabled/>
+          </Select>
+          {/* <Input value={formData?.company ?? ""} disabled/> */}
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
