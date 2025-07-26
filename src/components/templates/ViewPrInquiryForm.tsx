@@ -116,7 +116,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
       alert("Modify Notification Sent Successfully");
       setComment("");
       setIsModifyDialog(false);
-      router.refresh();
+      location.reload();
     }
   }
 
@@ -129,7 +129,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
       setComment("");
       setIsAcknowledgeDialog(false);
       setDate("");
-      router.refresh();
+      location.reload();
     }
   }
 
@@ -193,7 +193,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
       return updated;
     });
   }
-  console.log("FormData in VIEW ENQUIRy Form---->",formData);
+  console.log(PRInquiryData)
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
@@ -351,7 +351,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
                 <TableCell>{item?.product_quantity}</TableCell>
                 <TableCell>{item?.user_specifications}</TableCell>
                 <TableCell className='flex justify-center'>
-                  <Input disabled={PRInquiryData?.purchase_team_approved == Boolean(0) ? false : true} value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e) => { handleTableInput(index, e) }} className={`text-center w-28 ${PRInquiryData?.purchase_team_acknowledgement ? "" : "hidden"}`} type='number' />
+                  <Input disabled={PRInquiryData?.purchase_team_approved == Boolean(0) || Boolean(PRInquiryData?.purchase_team) ? false : true} value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e) => { handleTableInput(index, e) }} className={`text-center w-28 ${PRInquiryData?.purchase_team_acknowledgement ? "" : "hidden"}`} type='number' />
                 </TableCell>
                 {/* <TableCell className='flex justify-center'><Input className='text-center w-28' type='checked' onChange={(e)=>{handleTableCheck(index,e.target.checked)}}/></TableCell> */}
               </TableRow>
@@ -361,7 +361,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
       </div>
       {/* purchase team approval buttons */}
       {
-        PRInquiryData?.purchase_team &&
+        (PRInquiryData?.purchase_team == Boolean(0) || PRInquiryData?.asked_to_modify == Boolean(0)) &&
         <div className={`flex justify-end pr-4 gap-4 ${designation != "Enquirer" ? "" : "hidden"}`}>
           <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.purchase_team_acknowledgement ? "hidden" : ""}`} onClick={() => { setIsModifyDialog(true) }}>Modify</Button>
           {
