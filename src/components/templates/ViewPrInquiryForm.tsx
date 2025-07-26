@@ -245,7 +245,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Company
           </h1>
-          <Select disabled value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value); }}>
+          {/* <Select disabled value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value); }}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -256,7 +256,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
                 ))}
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
+          <Input value={formData?.company ?? ""} disabled/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
