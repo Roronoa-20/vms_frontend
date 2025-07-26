@@ -11,6 +11,7 @@ import { Button } from "../atoms/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../atoms/select";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { useRouter } from "next/navigation";
 
 interface POItemsTable {
   name:string,
@@ -36,6 +37,7 @@ const ViewPO = () => {
     const [isEarlyDeliveryDialog,setIsEarlyDeliveryDialog] = useState<boolean>(false);
     const [printFormatDropdown,setPrintFormatDropdown] = useState<dropdown[]>([])
     const [selectedPODropdown,setSelectedPODropdown] = useState<string>("");
+    const router = useRouter();
     const getPODetails = async()=>{
         const url = `${API_END_POINTS?.getPrintFormatData}?po_name=${PRNumber}&po_format_name=${selectedPODropdown}`;
         const response:AxiosResponse = await requestWrapper({url:url,method:"GET"})
@@ -210,7 +212,7 @@ const handleGeneratePdf = async (): Promise<void> => {
           <button onClick={()=>{getPODetails()}} className="bg-blue-500 text-white px-2 rounded hover:bg-blue-700 transition text-nowrap">
             View PO Details
           </button>
-          <button className="bg-blue-500 text-white px-2 rounded hover:bg-blue-700 transition text-nowrap">
+          <button onClick={()=>{router.push(`/view-all-po-changes`)}} className="bg-blue-500 text-white px-2 rounded hover:bg-blue-700 transition text-nowrap">
             View All Changed PO Details
           </button>
         </div>
