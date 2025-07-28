@@ -9,7 +9,7 @@ type props = {
 
 export default function Pagination({...Props}:props){
     // const [perPage, setPerPage] = useState<number>(Props?.record_per_page);
-    const total_pages = Math.ceil((Props?.total_event_list / 10))
+    const total_pages = Math.ceil((Props?.total_event_list / Props?.record_per_page))
     // const [totalPages, setTotalPages] = useState<number>(Math.ceil((Props?.total_event_list / 10)));
 
   const handlePrev = async () => {
@@ -26,7 +26,7 @@ export default function Pagination({...Props}:props){
   return (
     <div className="flex items-center justify-between">
         <div>
-          <p className="text-gray-500 text-xs font-normal">Showing {(Props.currentPage - 1) * 10 + 1} to {(Props.currentPage -1 ) *(10) + Props?.record_per_page} of {Props.total_event_list} entries</p>
+          <p className="text-gray-500 text-xs font-normal">Showing {(Props.currentPage - 1) * Props?.record_per_page + 1} to {(Props.currentPage -1 ) *(Props?.record_per_page) + Props?.record_per_page} of {Props.total_event_list} entries</p>
         </div>
         <div className="flex items-center space-x-2 pt-4">
           <button onClick={handlePrev} className={`bg-white border border-[#e5e7eb] rounded-md py-2 px-4 hover:bg-gray-50 disabled:bg-gray-100 ${Props.currentPage == 1 ? 'cursor-not-allowed disabled bg-opacity-50' : ''}`} disabled={Props.currentPage == 1 ? true : false}>
