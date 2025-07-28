@@ -31,7 +31,7 @@ type Props = {
   dashboardApprovedVendorTableData: DashboardTableType
   dashboardRejectedVendorTableData: DashboardTableType["rejected_vendor_onboarding"]
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
-  prInquiryData: TPRInquiryTable["cart_details"]
+  prInquiryData: TPRInquiryTable
   prData: PurchaseRequisition[]
   rfqData: RFQTable
 }
@@ -241,7 +241,7 @@ const DashboardCards = ({ ...Props }: Props) => {
               )}
               {item.name === "Purchase Inquiry" && (
                 <DashboardPurchaseEnquiryTable
-                  dashboardTableData={Props?.prInquiryData}
+                  dashboardTableData={Props?.prInquiryData?.cart_details}
                   // dashboardTableDatawithpagination={Props?.prInquiryDatawithpagination}
                   companyDropdown={Props?.companyDropdown}
                   // fetchDashboardDataWithPage={fetchDashboardDataWithPage}
