@@ -242,7 +242,9 @@ const DashboardCards = ({ ...Props }: Props) => {
               {item.name === "Purchase Inquiry" && (
                 <DashboardPurchaseEnquiryTable
                   dashboardTableData={Props?.prInquiryData}
+                  // dashboardTableDatawithpagination={Props?.prInquiryDatawithpagination}
                   companyDropdown={Props?.companyDropdown}
+                  // fetchDashboardDataWithPage={fetchDashboardDataWithPage}
                 />
               )}
               {item.name === "Purchase Requisition" && (user === "Enquirer" || user === "Purchase Team") && (

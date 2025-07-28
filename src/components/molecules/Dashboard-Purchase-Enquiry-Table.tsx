@@ -1,5 +1,5 @@
 "use client"
-import React from "react";
+import React, {useState} from "react";
 import {
   Table,
   TableBody,
@@ -16,23 +16,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/atoms/select";
-import { tableData } from "@/src/constants/dashboardTableData";
 import { Input } from "../atoms/input";
 import { DashboardTableType, TPRInquiryTable } from "@/src/types/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Cookies from "js-cookie";
-import { log } from "console";
 import { useAuth } from "@/src/context/AuthContext";
+import Pagination from "./Pagination";
+
 
 type Props = {
   dashboardTableData?: TPRInquiryTable["cart_details"]
   companyDropdown: { name: string }[]
+  dashboardTableDatawithpagination?: TPRInquiryTable[]
 }
 
-const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
+const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, dashboardTableDatawithpagination, companyDropdown }: Props) => {
 
-  console.log("DashboardTableData PPRRRPRR--->", dashboardTableData);
+  console.log("DashboardTableData PPRRRPRR--->", dashboardTableDatawithpagination);
   const { designation } = useAuth();
 
   const formatDate = (date: Date): string => {
@@ -41,6 +42,13 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   };
+  const [selectedCompany, setSelectedCompany] = useState<string>("")
+  const [search, setSearch] = useState<string>("");
+
+  const [total_event_list, settotalEventList] = useState(0);
+  const [record_per_page, setRecordPerPage] = useState<number>(5);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
 
   const user = Cookies?.get("user_id");
   return (

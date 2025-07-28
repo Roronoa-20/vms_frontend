@@ -7,13 +7,14 @@ import { Input } from "../../atoms/input";
 import { useSearchParams } from "next/navigation";
 import { useQMSForm } from '@/src/hooks/useQMSForm';
 import SignatureCanvas from 'react-signature-canvas';
+import { X } from "lucide-react";
 
 
 export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
     const params = useSearchParams();
     const currentTab = params.get("tabtype")?.toLowerCase() || "conclusion";
     const [showSignatureCanvas, setShowSignatureCanvas] = useState(true);
-    const { formData, handleCheckboxChange, sigRefs, signaturePreview, handleTextareaChange, handleSaveSignature, handleSignatureUpload, handleClearSignature, handleBacktab, handleApproval } = useQMSForm(vendor_onboarding, currentTab);
+    const { formData, handleCheckboxChange, sigRefs, signaturePreviews, handleTextareaChange, handleSaveSignature, handleSignatureUpload, handleClearSignature, handleBacktab, handleApproval } = useQMSForm(vendor_onboarding, currentTab);
 
 
     return (
@@ -105,7 +106,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                         <Label className="text-[14px] mb-2">Signature</Label>
 
                         {showSignatureCanvas ? (
-                            <div className="border border-gray-300 rounded w-[300px] h-[120px] overflow-hidden">
+                            <div className="border border-gray-300 rounded w-[400px] h-[200px] overflow-hidden relative">
                                 <SignatureCanvas
                                     ref={sigRefs.performer_esignature}
                                     penColor="black"
@@ -113,38 +114,52 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                                 />
                             </div>
                         ) : (
-                            signaturePreview && (
-                                <img
-                                    src={signaturePreview}
-                                    alt="Signature Preview"
-                                    className="w-60 h-30 object-contain border border-gray-300"
-                                />
+                            signaturePreviews["performer_esignature"] && (
+                                <div className="relative w-fit">
+                                    <img
+                                        src={signaturePreviews["performer_esignature"]}
+                                        alt="Signature Preview"
+                                        className="w-[400px] h-[200px] object-contain border border-gray-300"
+                                    />
+                                    <Button
+                                        onClick={() => {
+                                            setShowSignatureCanvas(true);
+                                            handleClearSignature("performer_esignature");
+                                        }}
+                                        className="absolute top-1 right-1 bg-white rounded-full p-1 shadow"
+                                        title="Edit Signature"
+                                    >
+                                        <X size={18} className="text-red-500" />
+                                    </Button>
+                                </div>
                             )
                         )}
 
-                        <div className="mt-2 space-x-2">
-                            <Button
-                                variant="nextbtn"
-                                size="nextbtnsize"
-                                onClick={(e) => {
-                                    handleSaveSignature(e, ("performer_esignature"));
-                                    setShowSignatureCanvas(false);
-                                }}
-                            >
-                                Save Signature
-                            </Button>
+                        {showSignatureCanvas && (
+                            <div className="mt-2 space-x-2">
+                                <Button
+                                    variant="nextbtn"
+                                    size="nextbtnsize"
+                                    onClick={(e) => {
+                                        handleSignatureUpload(e,"performer_esignature");
+                                        setShowSignatureCanvas(false);
+                                    }}
+                                >
+                                    Save Signature
+                                </Button>
 
-                            <Button
-                                variant="backbtn"
-                                size="backbtnsize"
-                                onClick={() => {
-                                    handleClearSignature("performer_esignature");
-                                    setShowSignatureCanvas(true);
-                                }}
-                            >
-                                Clear
-                            </Button>
-                        </div>
+                                <Button
+                                    variant="backbtn"
+                                    size="backbtnsize"
+                                    onClick={() => {
+                                        handleClearSignature("performer_esignature");
+                                        setShowSignatureCanvas(true);
+                                    }}
+                                >
+                                    Clear
+                                </Button>
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex flex-col">

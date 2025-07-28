@@ -8,7 +8,7 @@ import { VendorQMSForm } from '@/src/types/qmstypes';
 import { QMSFormTabs } from "@/src/constants/vendorDetailSidebarTab";
 import { ViewQMSFormTabs } from "@/src/constants/vendorDetailSidebarTab";
 import SignatureCanvas from 'react-signature-canvas';
-
+import { useAuth } from '../context/AuthContext';
 
 export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
     const formRef = useRef<HTMLInputElement | null>(null);
@@ -28,6 +28,8 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
     }>({});
 
     const router = useRouter();
+    const { designation } = useAuth();
+    console.log(designation, "this is user from useQMSForm");
     const params = useSearchParams();
     const ref_no = params.get("ref_no") || "";
     const company_code = params.get("company_code") || "";
@@ -43,10 +45,10 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
 
     const is2000 = companyCodes.includes('2000');
     const is7000 = companyCodes.includes('7000');
-      const visibleTabs = ViewQMSFormTabs.filter(tab => {
+    const visibleTabs = ViewQMSFormTabs.filter(tab => {
         if (is7000 && tab.key.toLowerCase() === 'quality_agreement') return false;
         return true;
-      });
+    });
 
     useEffect(() => {
         formDataRef.current = formData;
@@ -196,8 +198,25 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         try {
             const { name, conclusion_by_meril, assessment_outcome, performer_name, performer_title, performent_date, performer_esignature } = formData;
 
-            const payload = { name, conclusion_by_meril, assessment_outcome, performer_name, performer_title, performent_date, performer_esignature: performer_esignature, qms_form_status: "Approved" };
+            const basepayload = { name, conclusion_by_meril, assessment_outcome, performer_name, performer_title, performent_date, performer_esignature: performer_esignature, qms_form_status: "Approved" };
+            console.log("QMS Form Approval Payload:", basepayload);
+
+            let approvalFlag: Record<string, number> = {};
+
+            if (designation === "Purchase Team") {
+                approvalFlag = { purchase_team_approved: 1 };
+            } else if (designation === "QA Team") {
+                approvalFlag = { qa_team_approved: 1 };
+            } else if (designation === "QA Head") {
+                approvalFlag = { qa_head_approved: 1 };
+            }
+
+            const payload = {
+                ...basepayload,
+                ...approvalFlag,
+            };
             console.log("QMS Form Approval Payload:", payload);
+
             const response = await requestWrapper({
                 url: API_END_POINTS.qmsformapproval,
                 method: 'POST',
@@ -463,7 +482,7 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
             if (result?.message?.status === "success") {
                 if (isLastTab) {
                     alert("This is the last tab and your QMS Form is fully submitted.");
-                    // window.location.href = "/qms-form/success";
+                    window.location.href = "/qms-form/success";
                 } else {
                     handleNext();
                 }
@@ -521,18 +540,40 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         }
     };
 
-    const handleSignatureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+    // const handleSignatureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const file = e.target.files?.[0];
+    //     if (!file) return;
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            const base64String = reader.result as string;
-            setSignaturePreview(base64String);
-            setFormData((prev) => ({ ...prev, vendor_signature: base64String }));
-        };
-        reader.readAsDataURL(file);
+    //     const reader = new FileReader();
+    //     reader.onloadend = () => {
+    //         const base64String = reader.result as string;
+    //         setSignaturePreview(base64String);
+    //         setFormData((prev) => ({ ...prev, vendor_signature: base64String }));
+    //     };
+    //     reader.readAsDataURL(file);
+    // };
+
+    const handleSignatureUpload = (e: React.MouseEvent<HTMLButtonElement>, fieldName: string
+    ) => {
+        e.preventDefault();
+
+        const canvasRef = sigRefs[fieldName as keyof typeof sigRefs];
+
+        if (!canvasRef?.current || canvasRef.current.isEmpty()) return;
+
+        const base64String = canvasRef.current.getTrimmedCanvas().toDataURL("image/png");
+
+        setSignaturePreviews((prev) => ({
+            ...prev,
+            [fieldName]: base64String,
+        }));
+
+        setFormData((prev) => ({
+            ...prev,
+            [fieldName]: base64String,
+        }));
     };
+
 
     const handleDocumentTypeChange = (value: string) => {
         setSelectedDocumentType(value);

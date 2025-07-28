@@ -1,5 +1,5 @@
 
-  // const safeData = data.filter(pr => pr.sap_pr_code !== null && pr.sap_pr_code !== undefined); DO NOT DELETE
+// const safeData = data.filter(pr => pr.sap_pr_code !== null && pr.sap_pr_code !== undefined); DO NOT DELETE
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
@@ -150,101 +150,103 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-4 text-gray-500">No PR records found.</TableCell>
               </TableRow>
-            ) : (
-              filteredData.map((pr, index) => (
-                <React.Fragment key={pr.sap_pr_code ?? `row-${index}`}>
-                  <TableRow>
-                    <TableCell className="text-center">
-                      <input
-                        type="checkbox"
-                        checked={!!selectedRows[pr.sap_pr_code]}
-                        disabled={!!selectedType && selectedType !== pr.purchase_requisition_type}
-                        onChange={() => handleCheckboxChange(pr.sap_pr_code, pr.purchase_requisition_type)}
-                        className="cursor-pointer w-4 h-4"
-                      />
-                    </TableCell>
-                    <TableCell className="text-center">{(pageNo - 1) * pageLength + index + 1}</TableCell>
-                    <TableCell className="text-center">{pr.purchase_requisition_type}</TableCell>
-                    <TableCell className="text-center">{pr.sap_pr_code}</TableCell>
-                    <TableCell className="text-center">{pr.purchase_requisition_date}</TableCell>
-                    <TableCell className="text-center">{pr.requisitioner}</TableCell>
-                    <TableCell className="text-center">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={async () => {
-                          await fetchPRItems(pr.name);
-                          setSelectedPRDetails(pr);
+            ) : (filteredData.map((pr, index) => (
+              <React.Fragment key={pr.sap_pr_code ?? `row-${index}`}>
+                <TableRow>
+                  <TableCell className="text-center">
+                    <input
+                      type="checkbox"
+                      checked={!!selectedRows[pr.sap_pr_code]}
+                      disabled={!!selectedType && selectedType !== pr.purchase_requisition_type}
+                      onChange={() => handleCheckboxChange(pr.sap_pr_code, pr.purchase_requisition_type)}
+                      className="cursor-pointer w-4 h-4"
+                    />
+                  </TableCell>
+                  <TableCell className="text-center">{(pageNo - 1) * pageLength + index + 1}</TableCell>
+                  <TableCell className="text-center">{pr.purchase_requisition_type}</TableCell>
+                  <TableCell className="text-center">{pr.sap_pr_code}</TableCell>
+                  <TableCell className="text-center">{pr.purchase_requisition_date}</TableCell>
+                  <TableCell className="text-center">{pr.requisitioner}</TableCell>
+                  <TableCell className="text-center">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={async () => {
+                        await fetchPRItems(pr.name);
+                        setSelectedPRDetails(pr);
+                        setShowPRPopup(true);
+                        if (pr.purchase_requisition_type === "SB") {
                           setShowPRPopup(true);
-                        }}
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                  </TableRow>
+                        }
+                      }}
+                    >
+                      View
+                    </Button>
+                  </TableCell>
+                </TableRow>
 
-                  {pr.purchase_requisition_type === "SB" && selectedPRDetails?.name === pr.name && (
-                    prItems.map((item) => {
-                      const key = `${pr.name}-${item.item_number_of_purchase_requisition_head}`;
-                      const isSubExpanded = expandedSubheadRows[key];
+                {pr.purchase_requisition_type === "SB" && selectedPRDetails?.name === pr.name && !showPRPopup && (
+                  prItems.map((item) => {
+                    const key = `${pr.name}-${item.item_number_of_purchase_requisition_head}`;
+                    const isSubExpanded = expandedSubheadRows[key];
 
-                      return (
-                        <React.Fragment key={key}>
-                          <TableRow className="bg-[#f9f9f9] font-semibold">
-                            <TableCell colSpan={7}>
-                              <div className="flex justify-between items-center px-4 py-2 text-sm">
-                                <span>{item.item_number_of_purchase_requisition_head}</span>
-                                <span>{item.short_text_head}</span>
-                                <span>{item.quantity_head}</span>
-                                <span>{item.uom_head}</span>
-                                <button
-                                  onClick={() => toggleItemExpanded(pr.name, item.item_number_of_purchase_requisition_head)}
-                                  className="text-blue-500"
-                                >
-                                  {isSubExpanded ? "▲" : "▼"}
-                                </button>
-                              </div>
+                    return (
+                      <React.Fragment key={key}>
+                        <TableRow className="bg-[#f9f9f9] font-semibold">
+                          <TableCell colSpan={7}>
+                            <div className="flex justify-between items-center px-4 py-2 text-sm">
+                              <span>{item.item_number_of_purchase_requisition_head}</span>
+                              <span>{item.short_text_head}</span>
+                              <span>{item.quantity_head}</span>
+                              <span>{item.uom_head}</span>
+                              <button
+                                onClick={() => toggleItemExpanded(pr.name, item.item_number_of_purchase_requisition_head)}
+                                className="text-blue-500"
+                              >
+                                {isSubExpanded ? "▲" : "▼"}
+                              </button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+
+                        {isSubExpanded && (
+                          <TableRow>
+                            <TableCell colSpan={7} className="bg-[#eef2f9]">
+                              <Table className="text-sm">
+                                <TableHeader>
+                                  <TableRow className="bg-[#dde8fe] text-[#2568EF]">
+                                    <TableHead>Item No (Sub)</TableHead>
+                                    <TableHead>Short Text</TableHead>
+                                    <TableHead>Quantity</TableHead>
+                                    <TableHead>UOM</TableHead>
+                                    <TableHead>GL Account</TableHead>
+                                    <TableHead>Cost Center</TableHead>
+                                  </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                  {prItems
+                                    .filter((sub) => sub.item_number_of_purchase_requisition_head === item.item_number_of_purchase_requisition_head)
+                                    .map((sub, i) => (
+                                      <TableRow key={i}>
+                                        <TableCell>{sub.item_number_of_purchase_requisition_subhead}</TableCell>
+                                        <TableCell>{sub.short_text_subhead}</TableCell>
+                                        <TableCell>{sub.quantity_subhead}</TableCell>
+                                        <TableCell>{sub.uom_subhead}</TableCell>
+                                        <TableCell>{sub.gl_account_number_subhead}</TableCell>
+                                        <TableCell>{sub.cost_center_subhead}</TableCell>
+                                      </TableRow>
+                                    ))}
+                                </TableBody>
+                              </Table>
                             </TableCell>
                           </TableRow>
-
-                          {isSubExpanded && (
-                            <TableRow>
-                              <TableCell colSpan={7} className="bg-[#eef2f9]">
-                                <Table className="text-sm">
-                                  <TableHeader>
-                                    <TableRow className="bg-[#dde8fe] text-[#2568EF]">
-                                      <TableHead>Item No (Sub)</TableHead>
-                                      <TableHead>Short Text</TableHead>
-                                      <TableHead>Quantity</TableHead>
-                                      <TableHead>UOM</TableHead>
-                                      <TableHead>GL Account</TableHead>
-                                      <TableHead>Cost Center</TableHead>
-                                    </TableRow>
-                                  </TableHeader>
-                                  <TableBody>
-                                    {prItems
-                                      .filter((sub) => sub.item_number_of_purchase_requisition_head === item.item_number_of_purchase_requisition_head)
-                                      .map((sub, i) => (
-                                        <TableRow key={i}>
-                                          <TableCell>{sub.item_number_of_purchase_requisition_subhead}</TableCell>
-                                          <TableCell>{sub.short_text_subhead}</TableCell>
-                                          <TableCell>{sub.quantity_subhead}</TableCell>
-                                          <TableCell>{sub.uom_subhead}</TableCell>
-                                          <TableCell>{sub.gl_account_number_subhead}</TableCell>
-                                          <TableCell>{sub.cost_center_subhead}</TableCell>
-                                        </TableRow>
-                                      ))}
-                                  </TableBody>
-                                </Table>
-                              </TableCell>
-                            </TableRow>
-                          )}
-                        </React.Fragment>
-                      );
-                    })
-                  )}
-                </React.Fragment>
-              ))
+                        )}
+                      </React.Fragment>
+                    );
+                  })
+                )}
+              </React.Fragment>
+            ))
             )}
           </TableBody>
         </Table>
@@ -302,4 +304,3 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
 };
 
 export default ViewPRTable;
-
