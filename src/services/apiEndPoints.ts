@@ -96,7 +96,7 @@ const API_END_POINTS = {
   fetchVendorListBasedOnRFQType: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.vendor_list`,
   CreateImportRFQ: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.create_import_logistic_rfq`,
   CreateExportRFQ: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.create_export_logistic_rfq`,
-  rfqTableData: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.rfq_logistic_dashboard`,
+  rfqTableData: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.rfq_dashboard`,
   fetchPRDropdown: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_material.pr_number_list`,
   fetchPRItems: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_material.add_pr_number`,
   CreateMaterialRFQ: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_material.create_rfq_material`,
