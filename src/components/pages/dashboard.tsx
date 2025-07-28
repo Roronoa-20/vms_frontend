@@ -113,7 +113,7 @@ const Dashboard = async () => {
     }
   });
   const prInquiryData:TPRInquiryTable["cart_details"]  =
-    prInquiryApi?.status == 200 ? prInquiryApi?.data?.message?.cart_details : "";
+    prInquiryApi?.status == 200 ? prInquiryApi?.data?.message : "";
 
   const prDashboardUrl = API_END_POINTS?.prTableData;
   const prApi: AxiosResponse = await requestWrapper({ url: prDashboardUrl, method: "GET", headers:{cookie:cookieHeaderString} });

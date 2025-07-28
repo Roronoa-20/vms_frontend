@@ -10,10 +10,10 @@ export default function QMSFormSuccessPage() {
     return (
         <div className="min-h-screen flex flex-col justify-center items-center bg-white px-4 text-center">
             <Image
-                src="/success.gif" // Place this file in `public/success.gif`
+                src="/success-tick.gif"
                 alt="Success Tick"
-                width={150}
-                height={150}
+                width={75}
+                height={75}
             />
             <h1 className="text-3xl font-bold mt-4 text-green-700">
                 QMS Questionnaire Form Submitted Successfully!

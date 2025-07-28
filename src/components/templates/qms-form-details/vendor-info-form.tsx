@@ -38,6 +38,7 @@ export const VendorInfoForm = ({ vendor_onboarding, company_code }: { vendor_onb
                                         value={formData.vendor_name1 || ""}
                                         // onChange={(e) => handleTextareaChange(e, 'vendor_name1')}
                                         onChange={() => { }}
+                                        readOnly
                                     />
                                 </div>
 
@@ -49,6 +50,7 @@ export const VendorInfoForm = ({ vendor_onboarding, company_code }: { vendor_onb
                                         value={formData.date1 || ""}
                                         // onChange={(e) => handleTextareaChange(e, 'date1')}
                                         onChange={() => { }}
+                                        readOnly
 
                                     />
                                 </div>
@@ -84,6 +86,7 @@ export const VendorInfoForm = ({ vendor_onboarding, company_code }: { vendor_onb
                                     value={formData.name_of_parent_company}
                                     // onChange={(e) => handleTextareaChange(e, 'name_of_parent_company')}
                                     onChange={() => { }}
+                                    readOnly
                                 />
                             </div>
                         </div>
@@ -102,7 +105,8 @@ export const VendorInfoForm = ({ vendor_onboarding, company_code }: { vendor_onb
                                     rows={4}
                                     placeholder="Enter the details"
                                     value={formData.name_of_manufacturer_of_supplied_material || ''}
-                                    onChange={(e) => handleTextareaChange(e, 'name_of_manufacturer_of_supplied_material')}
+                                    // onChange={() => ()}
+                                    readOnly
                                 />
                             </div>
                         </div>
