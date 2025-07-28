@@ -11,6 +11,7 @@ import PopUp from "../molecules/PopUp";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
+import SubItemViewComponent from "../molecules/view-pr/SubItemViewComponent";
 
 interface PRItemsType {
   name: string,
@@ -86,6 +87,8 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
   const [selectedPRDetails, setSelectedPRDetails] = useState<PurchaseRequisitionDataItem | null>(null);
   const [showPRPopup, setShowPRPopup] = useState(false);
   const [expandedSubheadRows, setExpandedSubheadRows] = useState<Record<string, boolean>>({});
+  const [showSubItemComponent, setShowSubItemComponent] = useState(false);
+
 
   const fetchPRItems = async (prCode: string) => {
     const url = `${API_END_POINTS?.getPRItemsTable}?pr_name=${prCode}`;
@@ -99,6 +102,40 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
     const key = `${prName}-${itemNo}`;
     setExpandedSubheadRows((prev) => ({ ...prev, [key]: !prev[key] }));
   };
+
+  const transformToMaterials = (prItems: PRItemsType[]): any[] => {
+    const grouped: Record<string, any> = {};
+
+    prItems.forEach((item) => {
+      const key = item.item_number_of_purchase_requisition_head;
+
+      if (!grouped[key]) {
+        grouped[key] = {
+          head_unique_field: `${item.name}-${item.item_number_of_purchase_requisition_head}`,
+          requisition_no: item.name,
+          material_name_head: item.product_name_head,
+          material_code_head: item.material_code_head,
+          price_head: 0,
+          quantity_head: Number(item.quantity_head),
+          uom_head: item.uom_head,
+          delivery_date_head: "N/A",
+          subhead_fields: []
+        };
+      }
+
+      grouped[key].subhead_fields.push({
+        subhead_unique_field: `${item.name}-${item.item_number_of_purchase_requisition_subhead}`,
+        material_name_subhead: item.short_text_subhead || item.product_name_head,
+        quantity_subhead: Number(item.quantity_subhead),
+        uom_subhead: item.uom_subhead,
+        price_subhead: 0,
+        delivery_date_subhead: "N/A"
+      });
+    });
+
+    return Object.values(grouped);
+  };
+
 
   if (loading) return <p className="text-center text-gray-500">Loading PR data...</p>;
 
@@ -174,9 +211,13 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
                       onClick={async () => {
                         await fetchPRItems(pr.name);
                         setSelectedPRDetails(pr);
-                        setShowPRPopup(true);
+
                         if (pr.purchase_requisition_type === "SB") {
+                          setShowSubItemComponent(true);
+                          setShowPRPopup(false);
+                        } else {
                           setShowPRPopup(true);
+                          setShowSubItemComponent(false);
                         }
                       }}
                     >
@@ -184,109 +225,57 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
                     </Button>
                   </TableCell>
                 </TableRow>
-
-                {pr.purchase_requisition_type === "SB" && selectedPRDetails?.name === pr.name && !showPRPopup && (
-                  prItems.map((item) => {
-                    const key = `${pr.name}-${item.item_number_of_purchase_requisition_head}`;
-                    const isSubExpanded = expandedSubheadRows[key];
-
-                    return (
-                      <React.Fragment key={key}>
-                        <TableRow className="bg-[#f9f9f9] font-semibold">
-                          <TableCell colSpan={7}>
-                            <div className="flex justify-between items-center px-4 py-2 text-sm">
-                              <span>{item.item_number_of_purchase_requisition_head}</span>
-                              <span>{item.short_text_head}</span>
-                              <span>{item.quantity_head}</span>
-                              <span>{item.uom_head}</span>
-                              <button
-                                onClick={() => toggleItemExpanded(pr.name, item.item_number_of_purchase_requisition_head)}
-                                className="text-blue-500"
-                              >
-                                {isSubExpanded ? "▲" : "▼"}
-                              </button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-
-                        {isSubExpanded && (
-                          <TableRow>
-                            <TableCell colSpan={7} className="bg-[#eef2f9]">
-                              <Table className="text-sm">
-                                <TableHeader>
-                                  <TableRow className="bg-[#dde8fe] text-[#2568EF]">
-                                    <TableHead>Item No (Sub)</TableHead>
-                                    <TableHead>Short Text</TableHead>
-                                    <TableHead>Quantity</TableHead>
-                                    <TableHead>UOM</TableHead>
-                                    <TableHead>GL Account</TableHead>
-                                    <TableHead>Cost Center</TableHead>
-                                  </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                  {prItems
-                                    .filter((sub) => sub.item_number_of_purchase_requisition_head === item.item_number_of_purchase_requisition_head)
-                                    .map((sub, i) => (
-                                      <TableRow key={i}>
-                                        <TableCell>{sub.item_number_of_purchase_requisition_subhead}</TableCell>
-                                        <TableCell>{sub.short_text_subhead}</TableCell>
-                                        <TableCell>{sub.quantity_subhead}</TableCell>
-                                        <TableCell>{sub.uom_subhead}</TableCell>
-                                        <TableCell>{sub.gl_account_number_subhead}</TableCell>
-                                        <TableCell>{sub.cost_center_subhead}</TableCell>
-                                      </TableRow>
-                                    ))}
-                                </TableBody>
-                              </Table>
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </React.Fragment>
-                    );
-                  })
-                )}
               </React.Fragment>
             ))
             )}
           </TableBody>
         </Table>
       </div>
-
-      {showPRPopup && selectedPRDetails && (
-        <PopUp classname="w-full md:max-w-[70vw] md:max-h-[60vh] h-full overflow-y-scroll" handleClose={() => setShowPRPopup(false)}>
-          <h1 className="pl-5">Purchase Requisition Items</h1>
-          <div className="shadow bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
-            <Table className="max-h-40 overflow-y-scroll overflow-x-scroll">
-              <TableHeader className="text-center">
-                <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                  <TableHead>Sr. No.</TableHead>
-                  <TableHead>Plant</TableHead>
-                  <TableHead>Item Name</TableHead>
-                  <TableHead>Material Code</TableHead>
-                  <TableHead>Quantity</TableHead>
-                  <TableHead>UOM</TableHead>
-                  <TableHead>GL Account Number</TableHead>
-                  <TableHead>Cost Center</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {prItems.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{item.plant_head}</TableCell>
-                    <TableCell>{item.product_name_head}</TableCell>
-                    <TableCell>{item.material_code_head}</TableCell>
-                    <TableCell>{item.quantity_head}</TableCell>
-                    <TableCell>{item.uom_head}</TableCell>
-                    <TableCell>{item.cost_center_head}</TableCell>
-                    <TableCell>{item.gl_account_number_head}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </PopUp>
+      {selectedPRDetails && (
+        <>
+          {showPRPopup && selectedPRDetails.purchase_requisition_type !== "SB" && (
+            <PopUp classname="w-full md:max-w-[70vw] md:max-h-[60vh] h-full overflow-y-scroll" handleClose={() => setShowPRPopup(false)}>
+              <h1 className="pl-5">Purchase Requisition Items</h1>
+              <div className="shadow bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
+                <Table className="max-h-40 overflow-y-scroll overflow-x-scroll">
+                  <TableHeader className="text-center">
+                    <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
+                      <TableHead>Sr. No.</TableHead>
+                      <TableHead>Plant</TableHead>
+                      <TableHead>Item Name</TableHead>
+                      <TableHead>Material Code</TableHead>
+                      <TableHead>Quantity</TableHead>
+                      <TableHead>UOM</TableHead>
+                      <TableHead>GL Account Number</TableHead>
+                      <TableHead>Cost Center</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {prItems.map((item, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>{item.plant_head}</TableCell>
+                        <TableCell>{item.product_name_head}</TableCell>
+                        <TableCell>{item.material_code_head}</TableCell>
+                        <TableCell>{item.quantity_head}</TableCell>
+                        <TableCell>{item.uom_head}</TableCell>
+                        <TableCell>{item.cost_center_head}</TableCell>
+                        <TableCell>{item.gl_account_number_head}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </PopUp>
+          )}
+          {showSubItemComponent && selectedPRDetails?.purchase_requisition_type === "SB" && (
+            <PopUp classname="w-full md:max-w-[80vw] md:max-h-[80vh] h-full overflow-y-scroll" handleClose={() => setShowSubItemComponent(false)}>
+              <SubItemViewComponent materials={transformToMaterials(prItems)} />
+            </PopUp>
+          )}
+        </>
       )}
+
 
       {totalPages > 1 && (
         <div className="flex justify-start items-center gap-2 mt-4">

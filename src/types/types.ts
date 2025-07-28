@@ -1206,10 +1206,6 @@ export type TReconsiliationDropdown = {
 }
 
 export type TPRInquiryTable = {
-  total_count: number,
-  page_no: number,
-  page_length: number,
-  total_pages: number,
   cart_details: {
     asked_to_modify: boolean
     ack_mail_to_user: number;

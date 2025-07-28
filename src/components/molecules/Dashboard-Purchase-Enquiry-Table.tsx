@@ -28,12 +28,12 @@ import Pagination from "./Pagination";
 type Props = {
   dashboardTableData?: TPRInquiryTable["cart_details"]
   companyDropdown: { name: string }[]
-  dashboardTableDatawithpagination?: TPRInquiryTable[]
+  // dashboardTableDatawithpagination?: TPRInquiryTable[]
 }
 
-const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, dashboardTableDatawithpagination, companyDropdown }: Props) => {
+const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
 
-  console.log("DashboardTableData PPRRRPRR--->", dashboardTableDatawithpagination);
+  console.log("DashboardTableData PPRRRPRR--->", dashboardTableData);
   const { designation } = useAuth();
 
   const formatDate = (date: Date): string => {
@@ -42,14 +42,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, dashboardTab
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   };
-  const [selectedCompany, setSelectedCompany] = useState<string>("")
-  const [search, setSearch] = useState<string>("");
-
-  const [total_event_list, settotalEventList] = useState(0);
-  const [record_per_page, setRecordPerPage] = useState<number>(5);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-
-
+  
   const user = Cookies?.get("user_id");
   return (
 

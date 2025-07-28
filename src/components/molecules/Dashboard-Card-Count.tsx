@@ -31,7 +31,7 @@ type Props = {
   dashboardApprovedVendorTableData: DashboardTableType
   dashboardRejectedVendorTableData: DashboardTableType["rejected_vendor_onboarding"]
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
-  prInquiryData: TPRInquiryTable["cart_details"]
+  prInquiryData: TPRInquiryTable
   prData: PurchaseRequisition[]
   rfqData: RFQTable
 }
@@ -157,7 +157,7 @@ const DashboardCards = ({ ...Props }: Props) => {
     return <div>Loading...</div>
   }
 
-  console.log(Props?.dashboardPOTableData, "this is po table")
+  console.log(Props?.prInquiryData, "this is PR table")
 
   return (
     <div className="">
@@ -241,10 +241,8 @@ const DashboardCards = ({ ...Props }: Props) => {
               )}
               {item.name === "Purchase Inquiry" && (
                 <DashboardPurchaseEnquiryTable
-                  dashboardTableData={Props?.prInquiryData}
-                  // dashboardTableDatawithpagination={Props?.prInquiryDatawithpagination}
+                  dashboardTableData={Props?.prInquiryData?.cart_details}
                   companyDropdown={Props?.companyDropdown}
-                  // fetchDashboardDataWithPage={fetchDashboardDataWithPage}
                 />
               )}
               {item.name === "Purchase Requisition" && (user === "Enquirer" || user === "Purchase Team") && (

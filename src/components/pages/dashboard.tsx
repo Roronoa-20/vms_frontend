@@ -112,7 +112,7 @@ const Dashboard = async () => {
       cookie:cookieHeaderString
     }
   });
-  const prInquiryData:TPRInquiryTable["cart_details"]  =
+  const prInquiryData:TPRInquiryTable  =
     prInquiryApi?.status == 200 ? prInquiryApi?.data?.message : "";
 
   const prDashboardUrl = API_END_POINTS?.prTableData;
