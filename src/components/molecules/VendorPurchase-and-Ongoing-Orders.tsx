@@ -68,6 +68,8 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
   
   const debouncedSearchName = useDebounce(search, 300);
 
+  console.log(tableData,"this is table")
+
   useEffect(()=>{
     const fetchPoTable = async()=>{
       const POUrl = `${API_END_POINTS?.vendorPOTable}?vendor_code=${selectedVendorCode}&po_no=${search}`
@@ -223,7 +225,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
                     className={`px-2 py-3 rounded-xl ${
                       item?.status === "Pending"
                         ? "bg-yellow-100 text-yellow-800"
-                        : item?.status === "Approved"
+                        : item?.status.includes("Approved")
                           ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-800"
                     }`}
@@ -241,7 +243,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
                     view
                   </Button>
                 </TableCell>
-                <TableCell className={`flex gap-4 ${designation == "Vendor"?"":"hidden"}`}>
+                <TableCell className={`flex gap-4 ${designation == "Vendor"?"":"hidden"}  ${item?.approved_from_vendor?"hidden":""} `}>
                   <Button
                     variant={"outline"}
                     onClick={()=>{setStatus("approve"); setIsDialog((prev)=>!prev); setPONumber(item?.name)}}

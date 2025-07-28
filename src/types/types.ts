@@ -853,6 +853,7 @@ export type dashboardCardData = {
 }
 
 export interface DashboardPOTableItem {
+  approved_from_vendor:boolean
   name: string;
   creation: string;
   modified: string;
