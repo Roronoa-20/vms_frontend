@@ -40,23 +40,63 @@ const ViewPO = () => {
     
     const contentRef = useRef<HTMLDivElement | null>(null);
 
+    const convertToProxyUrl = (url: string): string => {
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_END;
+        
+        if (backendUrl && url.includes(backendUrl)) {
+            return url.replace(backendUrl, '/proxy');
+        }
+        
+        return url;
+    };
+
+    const convertImageToProxyUrl = (imageSrc: string): string => {
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_END;
+        
+        if (backendUrl && imageSrc.includes(backendUrl)) {
+            return imageSrc.replace(backendUrl, '');
+        }
+        
+        if (imageSrc.startsWith('/files/') || imageSrc.startsWith('/private/')) {
+            return imageSrc;
+        }
+        
+        if (imageSrc.includes('127.0.0.1:8013') || imageSrc.includes('localhost:8013')) {
+            const url = new URL(imageSrc);
+            return url.pathname;
+        }
+        
+        return imageSrc;
+    };
+
     const getPODetails = async()=>{
-        const url = `${API_END_POINTS?.getPrintFormatData}?po_name=${PRNumber}&po_format_name=${selectedPODropdown}`;
-        const response:AxiosResponse = await requestWrapper({url:url,method:"GET"})
+        const originalUrl = `${API_END_POINTS?.getPrintFormatData}?po_name=${PRNumber}&po_format_name=${selectedPODropdown}`;
+        const proxyUrl = convertToProxyUrl(originalUrl);
+        
+        console.log("Original URL:", originalUrl);
+        console.log("Proxy URL:", proxyUrl);
+        
+        const response:AxiosResponse = await requestWrapper({url: proxyUrl, method:"GET"})
         if(response?.status == 200){
-            // console.log(response?.data?.message,"this is response")
             setPRDetails(response?.data?.message?.data);
         }
     }
 
-    // ✅ Fixed: Use Promise-based delay instead of busy-wait
     const delay = (ms: number): Promise<void> => {
         return new Promise(resolve => setTimeout(resolve, ms));
     };
 
-    // ✅ Fixed: Better image loading wait function
     const waitForImageLoad = (img: HTMLImageElement): Promise<void> => {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
+            const originalSrc = img.src;
+            const proxySrc = convertImageToProxyUrl(originalSrc);
+            
+            if (originalSrc !== proxySrc) {
+                console.log("Converting image URL:", originalSrc, "->", proxySrc);
+                img.src = proxySrc;
+                img.crossOrigin = 'anonymous';
+            }
+
             if (img.complete && img.naturalHeight !== 0) {
                 resolve();
                 return;
@@ -65,18 +105,19 @@ const ViewPO = () => {
             const timeout = setTimeout(() => {
                 cleanup();
                 console.warn("Image load timeout:", img.src);
-                resolve(); // Don't reject, just continue
-            }, 10000); // 10 second timeout
+                resolve();
+            }, 15000);
 
             const onLoad = () => {
                 cleanup();
+                console.log("Image loaded successfully:", img.src);
                 resolve();
             };
 
             const onError = () => {
                 cleanup();
                 console.warn("Image failed to load:", img.src);
-                resolve(); // Don't reject, just continue
+                resolve();
             };
 
             const cleanup = () => {
@@ -90,7 +131,6 @@ const ViewPO = () => {
         });
     };
 
-    // ✅ Fixed: Improved PDF generation with better error handling
     const handleGeneratePdf = async () => {
         if (isGeneratingPDF) {
             console.log("PDF generation already in progress");
@@ -107,46 +147,84 @@ const ViewPO = () => {
 
             console.log("Starting PDF generation...");
 
-            // ✅ Wait for all images to load with timeout
             const images = input.querySelectorAll("img");
-            console.log(`Found ${images.length} images, waiting for them to load...`);
+            console.log(`Found ${images.length} images, converting to proxy URLs...`);
             
-            const imagePromises = Array.from(images).map(img => waitForImageLoad(img));
-            await Promise.all(imagePromises);
-            
-            console.log("All images loaded, generating canvas...");
+            images.forEach((img, index) => {
+                const originalSrc = img.src;
+                const proxySrc = convertImageToProxyUrl(originalSrc);
+                
+                if (originalSrc !== proxySrc) {
+                    console.log(`Image ${index + 1}: ${originalSrc} -> ${proxySrc}`);
+                    img.src = proxySrc;
+                }
+                
+                img.crossOrigin = 'anonymous';
+                img.setAttribute('crossorigin', 'anonymous');
+            });
 
-            // ✅ Generate canvas with better options
+            await delay(500);
+            
+            console.log("Waiting for all images to load...");
+            const imagePromises = Array.from(images).map((img, index) => {
+                console.log(`Waiting for image ${index + 1}: ${img.src}`);
+                return waitForImageLoad(img);
+            });
+            
+            await Promise.all(imagePromises);
+            console.log("All images processed, generating canvas...");
+
+            await delay(1000);
+
             const canvas = await html2canvas(input, {
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: '#ffffff',
                 scrollY: -window.scrollY,
                 scrollX: 0,
-                scale: 2, // Higher quality
-                logging: false, // Disable console logs
+                scale: 2,
+                logging: true,
                 width: input.scrollWidth,
                 height: input.scrollHeight,
+                foreignObjectRendering: false,
+                imageTimeout: 30000,
                 onclone: (clonedDoc) => {
-                    // Fix any styling issues in the cloned document
+                    console.log("Processing cloned document...");
+                    
                     const clonedElement = clonedDoc.querySelector('[data-pdf-content]');
                     if (clonedElement) {
                         clonedElement.style.transform = 'none';
                         clonedElement.style.position = 'relative';
                     }
+                    
+                    const clonedImages = clonedDoc.querySelectorAll('img');
+                    clonedImages.forEach((img, index) => {
+                        const originalSrc = img.src;
+                        const proxySrc = convertImageToProxyUrl(originalSrc);
+                        
+                        if (originalSrc !== proxySrc) {
+                            console.log(`Cloned image ${index + 1}: ${originalSrc} -> ${proxySrc}`);
+                            img.src = proxySrc;
+                        }
+                        
+                        img.crossOrigin = 'anonymous';
+                        img.setAttribute('crossorigin', 'anonymous');
+                        
+                        img.style.maxWidth = '100%';
+                        img.style.height = 'auto';
+                        img.style.display = 'block';
+                    });
                 }
             });
 
-            console.log("Canvas generated, creating PDF...");
+            console.log("Canvas generated successfully, creating PDF...");
 
-            // ✅ Generate PDF with proper sizing
-            const imgData = canvas.toDataURL('image/png', 0.95); // Slight compression
+            const imgData = canvas.toDataURL('image/png', 0.95);
             const pdf = new jsPDF('p', 'mm', 'a4');
             
-            // Calculate proper dimensions
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = pdf.internal.pageSize.getHeight();
-            const margin = 10; // 10mm margin
+            const margin = 10;
             const availableWidth = pdfWidth - (2 * margin);
             const availableHeight = pdfHeight - (2 * margin);
             
@@ -155,27 +233,22 @@ const ViewPO = () => {
             
             let imgWidth, imgHeight;
             if (imgAspectRatio > pdfAspectRatio) {
-                // Image is wider than PDF page
                 imgWidth = availableWidth;
                 imgHeight = availableWidth / imgAspectRatio;
             } else {
-                // Image is taller than PDF page
                 imgHeight = availableHeight;
                 imgWidth = availableHeight * imgAspectRatio;
             }
 
-            // Center the image
             const xOffset = margin + (availableWidth - imgWidth) / 2;
             const yOffset = margin;
 
             let heightLeft = imgHeight;
             let position = 0;
 
-            // First page
             pdf.addImage(imgData, 'PNG', xOffset, yOffset + position, imgWidth, imgHeight);
             heightLeft -= availableHeight;
 
-            // Additional pages if needed
             while (heightLeft > 0) {
                 position = heightLeft - imgHeight;
                 pdf.addPage();
@@ -183,7 +256,6 @@ const ViewPO = () => {
                 heightLeft -= availableHeight;
             }
 
-            // Save with dynamic filename
             const filename = `PO_${PRNumber || 'Document'}_${new Date().toISOString().split('T')[0]}.pdf`;
             pdf.save(filename);
             
@@ -208,11 +280,13 @@ const ViewPO = () => {
     }
 
     const fetchPOItems = async ()=>{
-      const url = `${API_END_POINTS?.POItemsTable}?po_name=${PRNumber}`;
-      const response:AxiosResponse = await requestWrapper({url:url,method:"GET"});
-      if(response?.status == 200){
-        setPOItemsTable(response?.data?.message?.items)
-      }
+        const originalUrl = `${API_END_POINTS?.POItemsTable}?po_name=${PRNumber}`;
+        const proxyUrl = convertToProxyUrl(originalUrl);
+        
+        const response:AxiosResponse = await requestWrapper({url: proxyUrl, method:"GET"});
+        if(response?.status == 200){
+            setPOItemsTable(response?.data?.message?.items)
+        }
     }
 
     const handleTableChange = (index: number, name:string,value:string) => {
@@ -230,17 +304,21 @@ const ViewPO = () => {
     },[])
     
     const getDropdown = async()=>{
-        const url = API_END_POINTS?.getPrintFormatDropdown;
-        const response:AxiosResponse = await requestWrapper({url:url,method:'GET'});
+        const originalUrl = API_END_POINTS?.getPrintFormatDropdown;
+        const proxyUrl = convertToProxyUrl(originalUrl);
+        
+        const response:AxiosResponse = await requestWrapper({url: proxyUrl, method:'GET'});
         if(response?.status == 200){
             setPrintFormatDropdown(response?.data?.message?.data);
         }
     }
 
     const handlePoItemsSubmit = async()=>{
-        const url = API_END_POINTS?.submitPOItems;
+        const originalUrl = API_END_POINTS?.submitPOItems;
+        const proxyUrl = convertToProxyUrl(originalUrl);
+        
         const updatedData = {items:POItemsTable,po_name:PRNumber};
-        const response:AxiosResponse = await requestWrapper({url:url,method:"POST",data:{data:updatedData}});
+        const response:AxiosResponse = await requestWrapper({url: proxyUrl, method:"POST", data:{data:updatedData}});
         if(response?.status == 200){
             alert("submitted successfully");
         }
@@ -248,7 +326,6 @@ const ViewPO = () => {
 
     return (
         <div className="min-h-screen bg-[#f8fafc] p-6 space-y-6 text-sm text-black font-sans m-5">
-            {/* Header Section */}
             <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-md border border-gray-300">
                 <input
                     onChange={(e)=>{setPRNumber(e.target.value)}}
@@ -282,14 +359,12 @@ const ViewPO = () => {
                 </div>
             </div>
 
-            {/* Early Delivery Button */}
             <div className="text-left">
                 <button onClick={()=>{handleOpen()}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
                     Early Delivery
                 </button>
             </div>
 
-            {/* ✅ Fixed: Better download button with loading state */}
             <div className="flex gap-4">
                 <Button 
                     onClick={handleGeneratePdf}
@@ -313,7 +388,6 @@ const ViewPO = () => {
                 )}
             </div>
 
-            {/* ✅ PO Main Section with data attribute for PDF generation */}
             {prDetails && (
                 <POPrintFormat 
                     contentRef={contentRef} 
@@ -322,7 +396,6 @@ const ViewPO = () => {
                 />
             )}
 
-            {/* Early Delivery Dialog */}
             {isEarlyDeliveryDialog && (
                 <PopUp classname="w-full md:max-w-[60vw] md:max-h-[60vh] h-full overflow-y-scroll" handleClose={handleClose}>
                     <h1 className="pl-5">Purchase Inquiry Items</h1>
