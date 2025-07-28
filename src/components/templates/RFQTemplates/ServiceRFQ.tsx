@@ -18,6 +18,7 @@ import useDebounce from '@/src/hooks/useDebounce';
 import { SAPPRData, VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
 import Pagination from '../../molecules/Pagination';
 import PRServiceManager, { SelectedMaterial } from './PRServiceManager';
+import MultipleFileUpload from '../../molecules/MultipleFileUpload';
 
 interface DropdownData {
   account_assignment_category: AccountAssignmentCategory[];
@@ -43,10 +44,10 @@ interface DropdownData {
   rfq_type: RFQType[];
   purchase_organisation: PurchaseOrganisation[];
   currency_master: Currency[];
-  service_code:serviceCode[];
-  service_category:serviceCategory[]
-  plant_code:plantCode[];
-  quantity_unit:quantityUnit[]
+  service_code: serviceCode[];
+  service_category: serviceCategory[]
+  plant_code: plantCode[];
+  quantity_unit: quantityUnit[]
 }
 type Props = {
   Dropdown: DropdownData;
@@ -54,7 +55,7 @@ type Props = {
   pr_type?: string | null;
 };
 
-const ServiceRFQ = ({ Dropdown, pr_codes, pr_type  }: Props) => {
+const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
   const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Service Vendor" });
   const [vendorSearchName, setVendorSearchName] = useState('')
   const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
@@ -66,11 +67,10 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type  }: Props) => {
     }
   );
   const [availablePRs, setAvailablePRs] = useState<SAPPRData[]>([])
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitResult, setSubmitResult] = useState<string | null>(null)
   const [selectedMaterials, setSelectedMaterials] = useState<SelectedMaterial[]>([])
   const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
-  const [files, setFiles] = useState<Record<string, File | null>>({});
+  // const [files, setFiles] = useState<Record<string, File | null>>({});
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
   useEffect(() => {
     const fetchVendorTableData = async (rfq_type: string) => {
       console.log(rfq_type, "rfq_type in Service table code")
@@ -83,7 +83,7 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type  }: Props) => {
         alert("error");
       }
     }
-    fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Material Vendor");
+    fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Service Vendor");
   }, [currentVendorPage, debouncedDoctorSearchName]);
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type  }: Props) => {
         alert("error");
       }
     }
-    fetchPRDropdown(formData?.rfq_type ? formData?.rfq_type : "Material Vendor");
+    fetchPRDropdown(formData?.rfq_type ? formData?.rfq_type : "Service Vendor");
   }, []);
 
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -130,22 +130,22 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type  }: Props) => {
     </div>
   );
 
-  const renderFileInput = (name: string, label: string) => (
-    <div className="col-span-1">
-      <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-        {label}
-      </h1>
-      <Input
-        name={name}
-        type="file"
-        className="border-neutral-200"
-        onChange={(e) => {
-          const file = e.target.files?.[0] || null;
-          setFiles((prev) => ({ ...prev, [name]: file }));
-        }}
-      />
-    </div>
-  );
+  // const renderFileInput = (name: string, label: string) => (
+  //   <div className="col-span-1">
+  //     <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+  //       {label}
+  //     </h1>
+  //     <Input
+  //       name={name}
+  //       type="file"
+  //       className="border-neutral-200"
+  //       onChange={(e) => {
+  //         const file = e.target.files?.[0] || null;
+  //         setFiles((prev) => ({ ...prev, [name]: file }));
+  //       }}
+  //     />
+  //   </div>
+  // );
   const renderSelect = <T,>(
     name: string,
     label: string,
@@ -198,20 +198,39 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type  }: Props) => {
     </div>
   );
   const handleSubmit = async () => {
-    console.log({ ...formData, vendors: selectedRows.vendors, rfq_items: selectedMaterials }, "submit data")
-    // const url = `${API_END_POINTS?.CreateExportRFQ}`;
-    // const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...formData, vendors: selectedRows.vendors } }, method: "POST" });
-    // if (response?.status == 200) {
-    //   alert("Submit Successfull");
-    // } else {
-    //   alert("error");
-    // }
+    console.log(selectedMaterials,"selectedMaterials")
+    const formdata = new FormData();
+    const fullData = {
+      ...formData,
+      vendors: selectedRows.vendors,
+      pr_items: selectedMaterials,
+      // non_onboarded_vendors: nonOnboardedVendors, 
+    };
+    // Append JSON data as a string under key 'data'
+    console.log(fullData,"fullData")
+    formdata.append('data', JSON.stringify(fullData));
+
+    // Append file only if exists
+    if (uploadedFiles) {
+      uploadedFiles?.forEach((file) => {
+        formdata.append("file", file);
+      });
+    }
+
+    const url = `${API_END_POINTS?.CreateServiceRFQ}`;
+    const response: AxiosResponse = await requestWrapper({ url: url,  data: formdata, method: "POST" });
+    if (response?.status == 200) {
+      console.log(response,"response")
+      alert("Submit Successfull");
+    } else {
+      alert("error");
+    }
+
   }
-  console.log(availablePRs, "availablePRs availablePRs availablePRs availablePRs----------------------")
   const setItems = async (materials: SelectedMaterial[]) => {
     setSelectedMaterials(materials)
   }
-  console.log(selectedMaterials, "materials")
+
   return (
     <div className='bg-white h-full w-full pb-6'>
       <h1 className='font-bold text-[24px] p-5'>RFQ Data for Service</h1>
@@ -221,7 +240,7 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type  }: Props) => {
         <PRServiceManager
           prNumbers={availablePRs}
           onSelectionChange={setItems}
-          title="Select Services for Processing"
+          title="Select Purchase Request Numbers"
         />
       </div>
       <div className="grid grid-cols-3 gap-6 p-5">
@@ -310,7 +329,7 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type  }: Props) => {
         {renderInput('collection_no', 'Collection No.')}
         {renderInput('quotation_deadline', 'Quotation Deadline', 'date')}
         {renderInput('bidding_person', 'Bidding Person')}
-        {renderFileInput('file', 'Upload Document')}
+        {/* {renderFileInput('file', 'Upload Document')} */}
       </div>
       <h1 className='text-[24px] font-normal pt-5 px-5'>Quantity & Date</h1>
       <div className="grid grid-cols-3 gap-6 p-5">
@@ -323,10 +342,22 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type  }: Props) => {
           (item) => item.name,
           (item) => `${item.quantity_unit_name}`
         )}
-
         {renderInput('delivery_date', 'Delivery Date', 'date')}
         {renderInput('estimated_price', 'Enter estimated Price', 'number')}
-        {renderInput('file', 'Upload Document', 'file')}
+        {/* {renderInput('file', 'Upload Document', 'file')} */}
+        <div>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Uplaod Documents
+          </h1>
+          <MultipleFileUpload
+            files={uploadedFiles}
+            setFiles={setUploadedFiles}
+            onNext={(files) => {
+              console.log("Final selected files:", files)
+            }}
+            buttonText="Attach Files"
+          />
+        </div>
       </div>
 
       <h1 className='text-[24px] font-normal pt-5 px-5'>Deadline Monitoring</h1>
