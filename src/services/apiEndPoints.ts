@@ -133,7 +133,8 @@ const API_END_POINTS = {
   filterpurchaseorg: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_purchase_organisation`,
   getPrintFormatDropdown:`${url}/api/method/vms.APIs.master_apis.po_print.get_po_printformat`,
   getStateBasedOnPincode:`${url}/api/method/vms.APIs.master_apis.address_custom.address_filter`,
-  getAllPOChangesTable:`${url}/api/method/vms.APIs.purchase_api.po_early_deliver_get.filtering_po_earlydel_details`
+  getAllPOChangesTable:`${url}/api/method/vms.APIs.purchase_api.po_early_deliver_get.filtering_po_earlydel_details`,
+  getPONumberDropdown:`${url}/api/method/vms.APIs.purchase_api.po_early_deliver_get.filtering_po_details`
 };
 
 export default API_END_POINTS;
