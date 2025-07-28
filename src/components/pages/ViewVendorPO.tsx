@@ -50,7 +50,7 @@ const ViewPO = ({po_name}:Props) => {
         const response:AxiosResponse = await requestWrapper({url:url,method:"GET"})
         if(response?.status == 200){
             // console.log(response?.data?.message,"this is response")
-            setPRDetails(response?.data?.message);
+            setPRDetails(response?.data?.message?.data);
         }
     }
 
@@ -108,6 +108,7 @@ const ViewPO = ({po_name}:Props) => {
       console.log(response?.data?.message?.total_po);
     }
   }
+  console.log(prDetails,"this is pr details")
 
   return (
     <div className="min-h-screen bg-[#f8fafc] p-6 space-y-6 text-sm text-black font-sans m-5">
