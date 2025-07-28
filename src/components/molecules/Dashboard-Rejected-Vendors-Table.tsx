@@ -52,10 +52,8 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
   console.log(dashboardTableData, 'this is rejected vendor list')
   console.log(Array.isArray(dashboardTableData), dashboardTableData)
   const [table, setTable] = useState<DashboardTableType["rejected_vendor_onboarding"]>(dashboardTableData);
-
   const [selectedCompany, setSelectedCompany] = useState<string>("")
   const [search, setSearch] = useState<string>("");
-
   const [total_event_list, settotalEventList] = useState(0);
   const [record_per_page, setRecordPerPage] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -81,12 +79,13 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
       url: `${API_END_POINTS?.dashboardRejectedVendorTableURL}?usr=${user}&company=${selectedCompany}&refno=${search}&page_no=${currentPage}`,
       method: "GET",
     });
-    console.log("dashboardRejectedVendorTableDataApi---->",dashboardRejectedVendorTableDataApi)
+    console.log("dashboardRejectedVendorTableDataApi---->", dashboardRejectedVendorTableDataApi)
     if (dashboardRejectedVendorTableDataApi?.status == 200) {
       setTable(dashboardRejectedVendorTableDataApi?.data?.message?.rejected_vendor_onboarding);
       settotalEventList(dashboardRejectedVendorTableDataApi?.data?.message?.total_count);
       settotalEventList(dashboardRejectedVendorTableDataApi?.data?.message?.total_count);
-      setRecordPerPage(dashboardRejectedVendorTableDataApi?.data?.message?.rejected_vendor_onboarding?.length);
+      // setRecordPerPage(dashboardRejectedVendorTableDataApi?.data?.message?.rejected_vendor_onboarding?.length);
+      setRecordPerPage(5)
     }
   };
 
@@ -151,7 +150,7 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
             {Array.isArray(table) && table.length > 0 ? (
               table.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell className="text-nowrap">{index + 1}</TableCell>
+                  <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                   <TableCell className="text-nowrap">{item?.name}</TableCell>
                   <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
                   <TableCell className="text-nowrap">{item?.company_name}</TableCell>

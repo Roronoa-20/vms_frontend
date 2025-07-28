@@ -117,7 +117,7 @@ const Dashboard = async () => {
 
   const prDashboardUrl = API_END_POINTS?.prTableData;
   const prApi: AxiosResponse = await requestWrapper({ url: prDashboardUrl, method: "GET", headers:{cookie:cookieHeaderString} });
-  const prData: PurchaseRequisition[] = prApi?.status == 200 ? prApi?.data?.message : "";
+  const prData: PurchaseRequisition[] = prApi?.status == 200 ? prApi?.data?.message?.data : "";
 
 
   const rfqDashboardUrl = API_END_POINTS?.rfqTableData;

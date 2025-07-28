@@ -86,13 +86,14 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
       );
       settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count);
       settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count)
-      setRecordPerPage(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding?.length)
+      // setRecordPerPage(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding?.length)
+      setRecordPerPage(5);
     }
   };
-  
-  console.log(table,"this is table");
-   const { designation } = useAuth();
-    const isAccountsUser = designation?.toLowerCase().includes("account");
+
+  console.log(table, "this is table");
+  const { designation } = useAuth();
+  const isAccountsUser = designation?.toLowerCase().includes("account");
 
 
   return (
@@ -156,7 +157,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
             {table ? (
               table.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell className="font-medium">{index + 1}</TableCell>
+                  <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                   <TableCell className="text-nowrap">{item?.ref_no}</TableCell>
                   <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
                   <TableCell className="text-nowrap">{item?.company_name}</TableCell>
@@ -167,29 +168,29 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
                         : item?.onboarding_form_status === "Approved"
                           ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-800"
-                      }`}
-                  >
-                    {item?.onboarding_form_status}
-                  </div>
+                        }`}
+                    >
+                      {item?.onboarding_form_status}
+                    </div>
+                  </TableCell>
+                  <TableCell>{item?.purchase_t_approval}</TableCell>
+                  <TableCell>{item?.purchase_h_approval}</TableCell>
+                  <TableCell>{item?.accounts_t_approval}</TableCell>
+                  <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
+                  {/* <TableCell className="text-right">{item?.qms_form}</TableCell> */}
+                  {!isAccountsUser && (
+                    <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
+                  )}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={9} className="text-center text-gray-500 py-4">
+                  No results found
                 </TableCell>
-                <TableCell>{item?.purchase_t_approval}</TableCell>
-                <TableCell>{item?.purchase_h_approval}</TableCell>
-                <TableCell>{item?.accounts_t_approval}</TableCell>
-                <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                {/* <TableCell className="text-right">{item?.qms_form}</TableCell> */}
-                 {!isAccountsUser && (
-                <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000")?"":"hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
-                 )}
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={9} className="text-center text-gray-500 py-4">
-                No results found
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
+            )}
+          </TableBody>
 
         </Table>
       </div>

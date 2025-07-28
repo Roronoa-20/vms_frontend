@@ -158,6 +158,7 @@ const DashboardCards = ({ ...Props }: Props) => {
   }
 
   console.log(Props?.prInquiryData, "this is PR table")
+  console.log(Props?.dashboardApprovedVendorTableData, "this is RFQ table");
 
   return (
     <div className="">
@@ -223,7 +224,7 @@ const DashboardCards = ({ ...Props }: Props) => {
               )}
               {item.name === "Onboarded Vendors" && (
                 <DashboardApprovedVendorsTable
-                  dashboardTableData={Props.dashboardApprovedVendorTableData}
+                  dashboardTableData={Props.dashboardApprovedVendorTableData.approved_vendor_onboarding}
                   companyDropdown={Props?.companyDropdown}
                 />
               )}
@@ -247,7 +248,7 @@ const DashboardCards = ({ ...Props }: Props) => {
               )}
               {item.name === "Purchase Requisition" && (user === "Enquirer" || user === "Purchase Team") && (
                 <DashboardPurchaseRequisitionTable
-                  dashboardTableData={Props.prData}
+                  dashboardTableData={Props?.prData}
                   companyDropdown={Props?.companyDropdown}
                 />
               )}
