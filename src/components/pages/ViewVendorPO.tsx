@@ -35,9 +35,10 @@ interface PODropdown {
 
 interface Props {
   po_name?:string
+  dropdown:any
 }
 
-const ViewPO = ({po_name}:Props) => {
+const ViewPO = ({po_name,dropdown}:Props) => {
   const router = useRouter();
     const [prDetails,setPRDetails] = useState();
     const [PRNumber,setPRNumber] = useState<string | undefined>(po_name);
@@ -59,9 +60,9 @@ const ViewPO = ({po_name}:Props) => {
         setIsEarlyDeliveryDialog(false);
     }
 
-    useEffect(()=>{
-      getPODropdown();
-    },[])
+    // useEffect(()=>{
+    //   getPODropdown();
+    // },[])
 
     const handleOpen = ()=>{
       fetchPOItems();
@@ -99,15 +100,15 @@ const ViewPO = ({po_name}:Props) => {
     }
   }
 
-  const getPODropdown = async()=>{
-    const url = API_END_POINTS?.getPONumberDropdown;
-    const response:AxiosResponse = await requestWrapper({url:url,method:'GET'});
-    if(response?.status == 200){
-      // console.log(response?.data?.message?.data,"this is dropdown");
-      setPONumberDropdown(response?.data?.message?.total_po);
-      console.log(response?.data?.message?.total_po);
-    }
-  }
+  // const getPODropdown = async()=>{
+  //   const url = API_END_POINTS?.getPONumberDropdown;
+  //   const response:AxiosResponse = await requestWrapper({url:url,method:'GET'});
+  //   if(response?.status == 200){
+  //     // console.log(response?.data?.message?.data,"this is dropdown");
+  //     setPONumberDropdown(response?.data?.message?.total_po);
+  //     console.log(response?.data?.message?.total_po);
+  //   }
+  // }
   console.log(prDetails,"this is pr details")
 
   return (
@@ -126,7 +127,7 @@ const ViewPO = ({po_name}:Props) => {
               <SelectContent>
                 <SelectGroup>
                   {
-                    PONumberDropdown?.map((item,index)=>(
+                    dropdown?.map((item:any,index:any)=>(
                       <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
                     ))
                   }
