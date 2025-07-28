@@ -15,6 +15,7 @@ import Comment_box from '../molecules/CommentBox'
 import { Value } from '@radix-ui/react-select'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/src/context/AuthContext'
+import { TvendorRegistrationDropdown } from '@/src/types/types'
 
 interface Props {
   Dropdown?: PurchaseRequestDropdown["message"]
@@ -24,6 +25,7 @@ interface Props {
   refno?: string
   companyDropdown: { name: string, description: string }[]
   purchaseTypeDropdown: { name: string, purchase_requisition_type_name: string, description: string }[]
+  AllcompanyDropdown:TvendorRegistrationDropdown["message"]["data"]["company_master"]
 }
 
 
@@ -33,7 +35,7 @@ type ProductNameDropdown = {
 }
 const currentDate = new Date();
 
-const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purchaseTypeDropdown }: Props) => {
+const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purchaseTypeDropdown,AllcompanyDropdown }: Props) => {
   const user = Cookies.get("user_id");
   const [formData, setFormData] = useState<TPRInquiry | null>(PRInquiryData ?? null);
   const [singleTableRow, setSingleTableRow] = useState<TableData | null>(null);
@@ -54,6 +56,10 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
   useEffect(() => {
     if (PRInquiryData?.company) {
       handleCompanyChange(PRInquiryData?.company);
+    }
+
+    if(PRInquiryData?.category_type){
+      fetchProductName(PRInquiryData?.category_type);
     }
   }, [])
 
@@ -114,7 +120,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
       alert("Modify Notification Sent Successfully");
       setComment("");
       setIsModifyDialog(false);
-      router.refresh();
+      location.reload();
     }
   }
 
@@ -127,7 +133,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
       setComment("");
       setIsAcknowledgeDialog(false);
       setDate("");
-      router.refresh();
+      location.reload();
     }
   }
 
@@ -191,7 +197,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
       return updated;
     });
   }
-  console.log("FormData in VIEW ENQUIRy Form---->",formData);
+  console.log(PRInquiryData)
+  console.log(productNameDropdown,"this is dropdown");
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
@@ -251,12 +258,15 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {companyDropdown?.map((item, index) => (
+                {designation == "Purchase Team"?AllcompanyDropdown?.map((item, index) => (
+                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                )):companyDropdown?.map((item,index)=>(
                   <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
           </Select>
+          {/* <Input value={formData?.company ?? ""} disabled/> */}
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
@@ -339,14 +349,33 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
                 <TableCell className="font-medium">{index + 1}</TableCell>
                 <TableCell className={`flex justify-center`}><Input type='checkbox' onChange={(e) => { handleTableCheckChange(index, e.target.checked) }} disabled={(Boolean(PRInquiryData?.purchase_team) && item?.assest_code == null) ? false : true} checked={item?.need_asset_code} className='w-5' /></TableCell>
                 <TableCell className='text-center'>{item?.assest_code}</TableCell>
-                <TableCell>{item?.product_name}</TableCell>
+                <TableCell>
+                  {/* {item?.product_name} */}
+                  <Select
+                                      disabled
+                              value={item?.product_name ?? ""}
+                            >
+                              <SelectTrigger className='disabled:opacity-100'>
+                                <SelectValue placeholder="Select" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  {productNameDropdown?.map((item, index) => (
+                                    <SelectItem key={index} value={item?.name}>
+                                      {item?.product_name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                  </TableCell>
                 <TableCell>{item?.product_price}</TableCell>
                 <TableCell>{item?.uom}</TableCell>
                 <TableCell>{item?.lead_time}</TableCell>
                 <TableCell>{item?.product_quantity}</TableCell>
                 <TableCell>{item?.user_specifications}</TableCell>
                 <TableCell className='flex justify-center'>
-                  <Input disabled={PRInquiryData?.purchase_team_approved == Boolean(0) ? false : true} value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e) => { handleTableInput(index, e) }} className={`text-center w-28 ${PRInquiryData?.purchase_team_acknowledgement ? "" : "hidden"}`} type='number' />
+                  <Input disabled={PRInquiryData?.purchase_team_approved == Boolean(0) && PRInquiryData?.purchase_team == Boolean(1)  ? false : true} value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e) => { handleTableInput(index, e) }} className={`text-center w-28 ${PRInquiryData?.purchase_team_acknowledgement ? "" : "hidden"}`} type='number' />
                 </TableCell>
                 {/* <TableCell className='flex justify-center'><Input className='text-center w-28' type='checked' onChange={(e)=>{handleTableCheck(index,e.target.checked)}}/></TableCell> */}
               </TableRow>
@@ -356,7 +385,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
       </div>
       {/* purchase team approval buttons */}
       {
-        PRInquiryData?.purchase_team &&
+        (PRInquiryData?.purchase_team == Boolean(0) || PRInquiryData?.asked_to_modify == Boolean(0)) &&
         <div className={`flex justify-end pr-4 gap-4 ${designation != "Enquirer" ? "" : "hidden"}`}>
           <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.purchase_team_acknowledgement ? "hidden" : ""}`} onClick={() => { setIsModifyDialog(true) }}>Modify</Button>
           {

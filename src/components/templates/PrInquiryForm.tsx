@@ -107,8 +107,25 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
       user: user,
     };
 
+    let assetCodeLine = 0;
+
+if (PRInquiryData?.asked_to_modify == Boolean(1)) {
+  for (let i = 0; i < tableData.length; i++) {
+    const item = tableData[i];
+    if (item?.need_asset_code == Boolean(1) && !item?.assest_code) {
+      assetCodeLine = i + 1; // Line number is usually 1-based
+      break;
+    }
+  }
+}
+
+if (assetCodeLine !== 0) {
+  alert(`Please enter Asset Code for line ${assetCodeLine}`);
+  return;
+}
+
+
     const response: AxiosResponse = await requestWrapper({ url: url, data: { data: payload }, method: "POST" });
-    console.log("Enquiry---->", response);
     if (response?.status == 200) {
       setFormData(null);
       alert("submission successfull");
@@ -428,7 +445,26 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
               {tableData?.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
-                  <TableCell>{item?.product_name}</TableCell>
+                  <TableCell>
+                    {/* {item?.product_name} */}
+                    <Select
+                    disabled
+            value={item?.product_name ?? ""}
+          >
+            <SelectTrigger className='disabled:opacity-100'>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {productNameDropdown?.map((item, index) => (
+                  <SelectItem key={index} value={item?.name}>
+                    {item?.product_name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+                    </TableCell>
                   <TableCell className='flex justify-center'><Input disabled={item?.need_asset_code && PRInquiryData?.asked_to_modify ? false : true} className={`text-center w-28`} value={item?.assest_code ?? ""} onChange={(e) => { handleTableAssestCodeChange(index, e.target.value) }} /></TableCell>
                   <TableCell>{item?.product_price}</TableCell>
                   <TableCell>{item?.uom}</TableCell>

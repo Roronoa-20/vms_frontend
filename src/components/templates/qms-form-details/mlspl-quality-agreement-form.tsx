@@ -26,64 +26,6 @@ export const MLSPLQualityAgreementForm = ({ vendor_onboarding, company_code }: {
                 QUALITY AGREEMENT
             </h2>
             <div className="border border-gray-300">
-                {/* <div className="grid grid-cols-2 gap-x-4 gap-y-2 p-2">
-                    <div className="flex flex-col">
-                        <Label className="text-[13px] mb-1" >Select Document Type</Label>
-                        <Select value={selectedDocumentType} onValueChange={handleDocumentTypeChange}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select an option">
-                                    {selectedDocumentType || "Select an option"}
-                                </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="-Select-">-Select-</SelectItem>
-                                {documentTypes.map((doc) => (
-                                    <SelectItem key={doc.name} value={doc.name}>{doc.name}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-
-                    </div>
-
-                    {selectedDocumentType && (
-                        <div className="flex flex-col">
-                            <Label className="text-[13px] mb-1">Upload File</Label>
-                            <div className="items-center flex">
-                                {fileSelected ? (
-                                    <>
-                                        <Label className="font-bold cursor-pointer text-green-500">
-                                            {fileName}
-                                        </Label>
-                                        <span
-                                            className="cursor-pointer text-red-500 ml-2"
-                                            onClick={clearFileSelection}
-                                        >
-                                            &#x2715;
-                                        </span>
-                                    </>
-                                ) : (
-                                    <Input
-                                        type="file"
-                                        ref={formRef}
-                                        onChange={handleFileUpload}
-                                        className="text-blue-600 underline cursor-pointer placeholder:pl-1 pt-2"
-                                    />
-                                )}
-                            </div>
-                        </div>
-                    )}
-                </div>
-                <div className="flex justify-start ml-1 mt-4 mb-1">
-                    <Button
-                        type="button"
-                        variant="nextbtn"
-                        size="nextbtnsize"
-                        onClick={handleAdd}
-                    >
-                        Add
-                    </Button>
-                </div> */}
-
                 {qaList?.length ? (
                     <Table className="mt-6">
                         {/* table headers */}
