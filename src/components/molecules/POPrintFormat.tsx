@@ -69,7 +69,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
     ],
   ];
 
-  const companyLogo = {
+  const companyLogo:Record<string,string> = {
     "Meril Diagnostics Private Limited":
       "/printFormatLogo/Meril-Diagnostics.svg",
     "Meril Endo Surgery Private Limited":
@@ -94,11 +94,10 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
           <div className="flex justify-center border-b border-black py-4">
             <div className="text-center">
               <img
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNeWQPPw3D0A-4GbBqyuGJa6KHFOa6cO3giQ&s"
-                alt="Meril Logo"
+                src={`${companyLogo[prDetails?.bill_to_company]}`}
+                alt="No Logo"
                 className="h-25 w-25 mx-auto mb-1"
               />
-              <div className="text-gray-700 text-sm">More to Life</div>
             </div>
           </div>
 
