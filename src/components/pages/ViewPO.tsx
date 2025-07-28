@@ -37,6 +37,7 @@ const ViewPO = () => {
     const [isEarlyDeliveryDialog,setIsEarlyDeliveryDialog] = useState<boolean>(false);
     const [printFormatDropdown,setPrintFormatDropdown] = useState<dropdown[]>([])
     const [selectedPODropdown,setSelectedPODropdown] = useState<string>("");
+    // const [sign,setSign] = useState();
     const router = useRouter();
     const getPODetails = async()=>{
         const url = `${API_END_POINTS?.getPrintFormatData}?po_name=${PRNumber}&po_format_name=${selectedPODropdown}`;
@@ -44,91 +45,117 @@ const ViewPO = () => {
         if(response?.status == 200){
             // console.log(response?.data?.message,"this is response")
             setPRDetails(response?.data?.message?.data);
+            // const sign1 = await toBase64(response?.data?.message?.data?.sign_url1?.url);
+            // const sign2 = await toBase64(response?.data?.message?.data?.sign_url2?.url);
+            // const sign3 = await toBase64(response?.data?.message?.data?.sign_url3?.url);
+            // setSign((prev:any)=>({...prev,sign1:sign1,sign2:sign2,sign3:sign3}))
         }
     }
-    const contentRef = useRef<HTMLDivElement | null>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
 
-const handleGeneratePdf = async (): Promise<void> => {
-  try {
-    const input = contentRef.current;
-    if (!input) {
-      alert("PDF container not found.");
-      return;
-    }
+// const handleGeneratePdf = async (): Promise<void> => {
+//   try {
+//     const input = contentRef.current;
+//     if (!input) {
+//       alert("PDF container not found.");
+//       return;
+//     }
 
-    const delay = (ms: number): Promise<void> =>
-      new Promise((res) => setTimeout(res, ms));
+//     const delay = (ms: number): Promise<void> =>
+//       new Promise((res) => setTimeout(res, ms));
 
-    const waitForImageLoad = async (img: HTMLImageElement): Promise<void> => {
-      while (!img.complete || img.naturalHeight === 0) {
-        await delay(50);
-      }
-    };
+//     const waitForImageLoad = async (img: HTMLImageElement): Promise<void> => {
+//       while (!img.complete || img.naturalHeight === 0) {
+//         await delay(50);
+//       }
+//     };
 
-    const convertImageToBase64 = async (imgEl: HTMLImageElement): Promise<void> => {
-      const tempImg = document.createElement("img");
-      tempImg.crossOrigin = "anonymous";
-      tempImg.src = imgEl.src;
+//     const convertImageToBase64 = async (imgEl: HTMLImageElement): Promise<void> => {
+//       const tempImg = document.createElement("img");
+//       tempImg.crossOrigin = "anonymous";
+//       tempImg.src = imgEl.src;
 
-      await waitForImageLoad(tempImg);
+//       await waitForImageLoad(tempImg);
 
-      const canvas = document.createElement("canvas");
-      canvas.width = tempImg.width;
-      canvas.height = tempImg.height;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("Failed to get canvas context.");
-      ctx.drawImage(tempImg, 0, 0);
+//       const canvas = document.createElement("canvas");
+//       canvas.width = tempImg.width;
+//       canvas.height = tempImg.height;
+//       const ctx = canvas.getContext("2d");
+//       if (!ctx) throw new Error("Failed to get canvas context.");
+//       ctx.drawImage(tempImg, 0, 0);
 
-      imgEl.src = canvas.toDataURL("image/png");
-    };
+//       imgEl.src = canvas.toDataURL("image/png");
+//     };
 
-    const images = input.querySelectorAll("img") as NodeListOf<HTMLImageElement>;
-    for (const img of images) {
-      try {
-        await convertImageToBase64(img);
-        await waitForImageLoad(img);
-      } catch {
-        console.warn("Skipping image (failed to convert):", img.src);
-      }
-    }
+//     const images = input.querySelectorAll("img") as NodeListOf<HTMLImageElement>;
+//     for (const img of images) {
+//       try {
+//         await convertImageToBase64(img);
+//         await waitForImageLoad(img);
+//       } catch {
+//         console.warn("Skipping image (failed to convert):", img.src);
+//       }
+//     }
 
-    const canvas = await html2canvas(input, {
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: "#ffffff",
-      scrollY: -window.scrollY,
+//     const canvas = await html2canvas(input, {
+//       useCORS: true,
+//       allowTaint: true,
+//       backgroundColor: "#ffffff",
+//       scrollY: -window.scrollY,
+//     });
+
+//     const imgData = canvas.toDataURL("image/png");
+//     const pdf = new jsPDF("p", "mm", "a4");
+
+//     const imgWidth = 210; // A4 width in mm
+//     const pageHeight = 297; // A4 height in mm
+//     const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+//     let heightLeft = imgHeight;
+//     let position = 0;
+
+//     pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+//     heightLeft -= pageHeight;
+
+//     while (heightLeft > 0) {
+//       position = heightLeft - imgHeight;
+//       pdf.addPage();
+//       pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+//       heightLeft -= pageHeight;
+//     }
+
+//     pdf.save("document.pdf");
+//   } catch (error) {
+//     console.error("PDF generation failed:", error);
+//     alert("PDF generation failed.");
+//   }
+// };
+
+
+  const handleDownloadPDF = async () => {
+    // if (!imageLoaded || !pdfRef.current) {
+    //   alert("Image not loaded yet.");
+    //   return;
+    // }
+
+    if(!contentRef || contentRef.current == null) return;
+
+    const canvas = await html2canvas(contentRef.current, {
+      useCORS: false,
+      scale: 2,
     });
 
     const imgData = canvas.toDataURL("image/png");
     const pdf = new jsPDF("p", "mm", "a4");
+    const width = pdf.internal.pageSize.getWidth();
+    const height = pdf.internal.pageSize.getHeight();
 
-    const imgWidth = 210; // A4 width in mm
-    const pageHeight = 297; // A4 height in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    let heightLeft = imgHeight;
-    let position = 0;
-
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-    }
-
-    pdf.save("document.pdf");
-  } catch (error) {
-    console.error("PDF generation failed:", error);
-    alert("PDF generation failed.");
-  }
-};
+    pdf.addImage(imgData, "PNG", 0, 0, width, height);
+    pdf.save("report.pdf");
+  };
 
 
-
-
+// const base64Image = await toBase64("/images/coronary_balloon_catheters.png");
 
 
 
@@ -225,10 +252,10 @@ const handleGeneratePdf = async (): Promise<void> => {
         </button>
       </div>
 
-      <Button onClick={()=>{handleGeneratePdf()}}>Download</Button>
+      <Button onClick={()=>{handleDownloadPDF()}}>Download</Button>
 
       {/* PO Main Section */}
-      <POPrintFormat contentRef={contentRef} prDetails={prDetails} Heading={selectedPODropdown} />
+      <POPrintFormat contentRef={contentRef} prDetails={prDetails} Heading={selectedPODropdown}/>
       {/* End of Print Format */}
 
       {

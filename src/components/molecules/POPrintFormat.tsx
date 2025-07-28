@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 
 interface Props {
   prDetails: any;
@@ -286,32 +286,40 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
           </div>
           <div className="grid grid-cols-3 text-center border-b border-black">
             <div className="border-r border-black h-20 flex items-center justify-center relative">
-
+            {
+               prDetails?.sign_url1?.base64 &&
               <img
-                src={prDetails && prDetails?.sign_url1?.url}
-                alt="Signature"
-                //  crossOrigin="anonymous"
-                style={{ width: "50%", height: "auto", objectFit: "contain" }}
-                // content="contain"
-                />
+              src={`data:image/png;base64,${prDetails && prDetails?.sign_url1?prDetails?.sign_url1?.base64:""}`}
+              alt="Signature"
+              //  crossOrigin="anonymous"
+              style={{ width: "50%", height: "auto", objectFit: "contain" }}
+              // content="contain"
+              />
+            }
             </div>
             <div className="border-r border-black h-20 flex items-center justify-center">
-              <img
-                src={prDetails && prDetails?.sign_url2?.url}
+              {
+                 prDetails?.sign_url2?.base64 &&
+                <img
+                src={`data:image/png;base64,${prDetails && prDetails?.sign_url2?prDetails?.sign_url2?.base64:""}`}
                 alt="Signature"
                 //  crossOrigin="anonymous"
                 style={{ width: "50%", height: "auto", objectFit: "contain" }}
                 // content="contain"
                 />
+              }
             </div>
             <div className="h-20 flex items-center justify-center">
-              <img
-                src={prDetails && prDetails?.sign_url3?.url}
+              {
+                prDetails?.sign_url3?.base64 &&
+                <img
+                src={`data:image/png;base64,${prDetails && prDetails?.sign_url3?prDetails?.sign_url3?.base64:""}`}
                 alt="Signature"
                 //  crossOrigin="anonymous"
                 style={{ width: "50%", height: "auto", objectFit: "contain" }}
                 // content="contain"
                 />
+              }
             </div>
           </div>
           <div className="grid grid-cols-3 text-center text-[11px]">
