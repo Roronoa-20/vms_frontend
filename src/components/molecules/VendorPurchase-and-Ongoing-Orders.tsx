@@ -139,6 +139,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
     if(response?.status == 200){
       if(status == "approve"){
         alert("approved successfully");
+        location.reload();
       }else{
         alert("rejected successfully")
       }
