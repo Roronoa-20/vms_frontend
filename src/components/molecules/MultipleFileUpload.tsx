@@ -6,12 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { X, FileText } from "lucide-react"
-import AttachmentSVG from "@/public/app/svgs/attachment.svg"
-import UploadFileIcon from "@/public/app/svgs/uploadFileIcon.svg"
+import AttachmentSVG from "@/src/app/svgs/AttachmentMultipleUploadSVG"
+import UploadFileIcon from "@/src/app/svgs/UplaodIcon"
+import Image from "next/image"
 
-interface SimpleFileUploadProps {
-  onNext?: () => void
-  setUploadedFiles: React.Dispatch<React.SetStateAction<FileList | null>>
+interface MultipleFileUploadProps {
+  onNext?: (files: File[]) => void
   files: File[]
   setFiles: React.Dispatch<React.SetStateAction<File[]>>
   buttonText?: string
@@ -19,80 +19,44 @@ interface SimpleFileUploadProps {
   className?: string
 }
 
-export default function SimpleFileUpload({
+export default function MultipleFileUpload({
   onNext,
   buttonText,
   files,
-  setUploadedFiles,
   setFiles,
   ref,
   className,
-}: SimpleFileUploadProps) {
+}: MultipleFileUploadProps) {
   const [isOpen, setIsOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Handle file change (from file input)
-  const handleFileChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const selectedFiles = e.target.files
-      if (selectedFiles) {
-        const newFileArray = Array.from(selectedFiles)
-        setUploadedFiles((prevUploadedFiles) => {
-          const prevFilesArray = prevUploadedFiles ? Array.from(prevUploadedFiles) : []
-          const mergedFilesArray = [...prevFilesArray, ...newFileArray]
-          const dataTransfer = new DataTransfer()
-          mergedFilesArray.forEach((file) => dataTransfer.items.add(file))
-          return dataTransfer.files
-        })
-        setFiles((prevFiles) => [...prevFiles, ...newFileArray])
-      }
-    },
-    [setUploadedFiles, setFiles],
-  )
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = e.target.files
+    if (selectedFiles) {
+      const newFiles = Array.from(selectedFiles)
+      setFiles((prev) => [...prev, ...newFiles])
+    }
+  }, [setFiles])
 
-  // Handle file drop event
-  const handleDrop = useCallback(
-    (e: React.DragEvent<HTMLDivElement>) => {
-      e.preventDefault()
-      const droppedFiles = e.dataTransfer.files
-      if (droppedFiles) {
-        const newFileArray = Array.from(droppedFiles)
-        setUploadedFiles((prevUploadedFiles) => {
-          const prevFilesArray = prevUploadedFiles ? Array.from(prevUploadedFiles) : []
-          const mergedFilesArray = [...prevFilesArray, ...newFileArray]
-          const dataTransfer = new DataTransfer()
-          mergedFilesArray.forEach((file) => dataTransfer.items.add(file))
-          return dataTransfer.files
-        })
-        setFiles((prevFiles) => [...prevFiles, ...newFileArray])
-      }
-    },
-    [setUploadedFiles, setFiles],
-  )
+  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    const droppedFiles = Array.from(e.dataTransfer.files)
+    setFiles((prev) => [...prev, ...droppedFiles])
+  }, [setFiles])
 
-  // Handle file drag over event (required for drop to work)
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
     e.stopPropagation()
   }
 
   const handleNext = useCallback(() => {
-    onNext?.()
+    onNext?.(files)
     setIsOpen(false)
   }, [files, onNext])
 
-  const removeFile = useCallback(
-    (fileToRemove: File) => {
-      setFiles((prevFiles) => prevFiles.filter((file) => file !== fileToRemove))
-      setUploadedFiles((prevFiles) => {
-        if (!prevFiles) return prevFiles
-        const filesArray = Array.from(prevFiles)
-        const updatedFiles = filesArray.filter((file) => file !== fileToRemove)
-        return updatedFiles as unknown as FileList
-      })
-    },
-    [setFiles, setUploadedFiles],
-  )
+  const removeFile = useCallback((fileToRemove: File) => {
+    setFiles((prev) => prev.filter((file) => file !== fileToRemove))
+  }, [setFiles])
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -101,25 +65,30 @@ export default function SimpleFileUpload({
           ref={ref}
           className={`${className} flex items-center gap-2 px-2 py-1 bg-blue-50 rounded-md shadow-sm cursor-pointer border-[1px] border-blue-400/20 hover:bg-blue-100 transition-colors`}
         >
-          <AttachmentSVG />
+          {/* <AttachmentSVG /> */}
+          {/* <img src={AttachmentSVG} alt="attachment" /> */}
+          <Image src={"/attachemntsvg.svg"} alt="attchment-icon" width={20} height={21}/>
           <span className="font-medium text-blue-600">
-            {files?.length > 0 ? `${files?.length} file${files?.length > 1 ? "s" : ""} ` : buttonText}
+            {files.length > 0 ? `${files.length} file${files.length > 1 ? "s" : ""}` : buttonText}
           </span>
         </button>
       </DialogTrigger>
+
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-center text-[30px] font-normal font-['Poppins'] text-black">
             Upload Document
           </DialogTitle>
         </DialogHeader>
+
         <div className="grid gap-4">
           <div
             className="flex-col cursor-pointer px-4 py-2 rounded-md transition-colors text-black flex items-center gap-2 border-2 border-dashed border-blue-400/30"
             onDrop={handleDrop}
             onDragOver={handleDragOver}
           >
-            <UploadFileIcon />
+            {/* <UploadFileIcon /> */}
+            <Image src={"/uploadfilesvg.svg"} alt="upload-icon" width={100} height={100}/>
             <span>Drag & Drop Files or</span>
             <label htmlFor="file-upload" className="cursor-pointer text-blue-600 underline">
               Choose Files
@@ -133,7 +102,8 @@ export default function SimpleFileUpload({
               multiple
             />
           </div>
-          {files?.length > 0 && (
+
+          {files.length > 0 && (
             <ScrollArea className="max-h-[200px] w-full text-black rounded-md border p-4">
               {files.map((file, index) => (
                 <div key={index} className="flex items-center justify-between bg-gray-100 p-2 mb-2 rounded">
@@ -152,12 +122,13 @@ export default function SimpleFileUpload({
             </ScrollArea>
           )}
         </div>
+
         <Button
           className="border border-blue-600 text-[#FFF] px-6 bg-blue-600 hover:bg-blue-700 text-[16px]"
-          disabled={files?.length === 0}
+          disabled={files.length === 0}
           onClick={handleNext}
         >
-          Upload {files?.length} file{files?.length !== 1 ? "s" : ""}
+          Upload {files.length} file{files.length !== 1 ? "s" : ""}
         </Button>
       </DialogContent>
     </Dialog>

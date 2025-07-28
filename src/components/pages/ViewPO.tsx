@@ -11,6 +11,7 @@ import { Button } from "../atoms/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../atoms/select";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { useRouter } from "next/navigation";
 
 interface POItemsTable {
   name:string,
@@ -29,13 +30,26 @@ interface dropdown {
   print_format_name:string
 }
 
-const ViewPO = () => {
+interface PODropdown {
+  name:string,
+  po_no:string,
+  company_code:string,
+}
+
+interface Props {
+  po_name?:string
+}
+const ViewPO = ({po_name}:Props) => {
     const [prDetails,setPRDetails] = useState();
-    const [PRNumber,setPRNumber] = useState<string>("");
+    const [PRNumber,setPRNumber] = useState<string | undefined>(po_name);
     const [POItemsTable,setPOItemsTable] = useState<POItemsTable[]>([]);
     const [isEarlyDeliveryDialog,setIsEarlyDeliveryDialog] = useState<boolean>(false);
     const [printFormatDropdown,setPrintFormatDropdown] = useState<dropdown[]>([])
     const [selectedPODropdown,setSelectedPODropdown] = useState<string>("");
+    const [PONumberDropdown,setPONumberDropdown] = useState<PODropdown[]>([]);
+    const [isPrintFormat,setIPrintFormat] = useState<boolean>(false);
+    // const [sign,setSign] = useState();
+    const router = useRouter();
     const getPODetails = async()=>{
         const url = `${API_END_POINTS?.getPrintFormatData}?po_name=${PRNumber}&po_format_name=${selectedPODropdown}`;
         const response:AxiosResponse = await requestWrapper({url:url,method:"GET"})
@@ -44,79 +58,40 @@ const ViewPO = () => {
             setPRDetails(response?.data?.message?.data);
         }
     }
-    const contentRef = useRef<HTMLDivElement | null>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
 
-const waitForImageLoad = async (img: HTMLImageElement): Promise<void> => {
-  while (!img.complete || img.naturalHeight === 0) {
-    await delay(50); // small delay to wait for image to load
-  }
-};
 
-const delay = async (ms: number): Promise<void> => {
-  // Only delay, doesn't use new Promise manually
-  let t = performance.now();
-  while (performance.now() - t < ms) {
-    // Do nothing, just wait
-  }
-};
+  const handleDownloadPDF = async () => {
+    // if (!imageLoaded || !pdfRef.current) {
+    //   alert("Image not loaded yet.");
+    //   return;
+    // }
 
-const handleGeneratePdf = async () => {
-  console.log("PDF FUNction hit---->")
-  try {
-    const input = contentRef.current;
-    if (!input) throw new Error("PDF container not found.");
+    if(!contentRef || contentRef.current == null) return;
 
-    // ✅ Wait for all images to load
-    const images = input.querySelectorAll("img");
-    for (const img of images) {
-      try {
-        await waitForImageLoad(img);
-      } catch {
-        console.warn("Image failed:", img.src);
-      }
-    }
-
-    // ✅ Convert DOM to Canvas
-    const canvas = await html2canvas(input, {
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: '#ffffff',
-      scrollY: -window.scrollY,
+    const canvas = await html2canvas(contentRef.current, {
+      useCORS: false,
+      scale: 2,
     });
 
-    const imgData = canvas.toDataURL('image/png');
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+    const width = pdf.internal.pageSize.getWidth();
+    const height = pdf.internal.pageSize.getHeight();
 
-    // ✅ Generate PDF
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = 210;
-    const pageHeight = 297;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    let heightLeft = imgHeight;
-    let position = 0;
+    pdf.addImage(imgData, "PNG", 0, 0, width, height);
+    pdf.save("report.pdf");
+  };
 
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
 
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+// const base64Image = await toBase64("/images/coronary_balloon_catheters.png");
+
+
+
+
+    const handleClose = ()=>{
+        setIsEarlyDeliveryDialog(false);
     }
-
-    pdf.save('document.pdf');
-  } catch (err) {
-    console.error("Error generating PDF:", err);
-    alert("PDF generation failed.");
-  }
-};
-
-
-
-
-  const handleClose = () => {
-    setIsEarlyDeliveryDialog(false);
-  }
 
   const handleOpen = () => {
     fetchPOItems();
@@ -146,7 +121,17 @@ const handleGeneratePdf = async () => {
 
   useEffect(()=>{
     getDropdown();
+    getPODropdown();
   },[])
+
+  const getPODropdown = async()=>{
+    const url = API_END_POINTS?.getPONumberDropdown;
+    const response:AxiosResponse = await requestWrapper({url:url,method:'GET'});
+    if(response?.status == 200){
+      // console.log(response?.data?.message?.data,"this is dropdown");
+      setPONumberDropdown(response?.data?.message?.total_po);
+    }
+  }
   
   const getDropdown = async()=>{
     const url = API_END_POINTS?.getPrintFormatDropdown;
@@ -170,15 +155,29 @@ const handleGeneratePdf = async () => {
     <div className="min-h-screen bg-[#f8fafc] p-6 space-y-6 text-sm text-black font-sans m-5">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-md border border-gray-300">
-        <input
+        {/* <input
           onChange={(e) => { setPRNumber(e.target.value) }}
           type="text"
           className="w-full md:w-1/2 border border-gray-300 rounded px-4 py-2 focus:outline-none hover:border-blue-700 transition"
-        />
+        /> */}
+        <Select onValueChange={(value)=>{setPRNumber(value)}} value={PRNumber ?? ""}>
+              <SelectTrigger className="w-60">
+                <SelectValue placeholder="Select PO Number" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {
+                    PONumberDropdown?.map((item,index)=>(
+                      <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                    ))
+                  }
+                </SelectGroup>
+              </SelectContent>
+            </Select>
         <div className="flex justify-end gap-5 w-full">
           <Select onValueChange={(value)=>{setSelectedPODropdown(value)}}>
               <SelectTrigger className="w-60">
-                <SelectValue placeholder="Select" />
+                <SelectValue placeholder="Select Print Type" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
@@ -190,10 +189,10 @@ const handleGeneratePdf = async () => {
                 </SelectGroup>
               </SelectContent>
             </Select>
-          <button onClick={()=>{getPODetails()}} className="bg-blue-500 text-white px-2 rounded hover:bg-blue-700 transition text-nowrap">
+          <button onClick={()=>{getPODetails(); setIPrintFormat(true);}} className="bg-blue-500 text-white px-2 rounded hover:bg-blue-700 transition text-nowrap">
             View PO Details
           </button>
-          <button className="bg-blue-500 text-white px-2 rounded hover:bg-blue-700 transition text-nowrap">
+          <button onClick={()=>{router.push(`/view-all-po-changes`)}} className="bg-blue-500 text-white px-2 rounded hover:bg-blue-700 transition text-nowrap">
             View All Changed PO Details
           </button>
         </div>
@@ -206,10 +205,13 @@ const handleGeneratePdf = async () => {
         </button>
       </div>
 
-      <Button onClick={()=>{handleGeneratePdf()}}>Download</Button>
+      <Button onClick={()=>{handleDownloadPDF()}}>Download</Button>
 
       {/* PO Main Section */}
-      <POPrintFormat contentRef={contentRef} prDetails={prDetails} Heading={selectedPODropdown} />
+      {
+        isPrintFormat &&
+      <POPrintFormat contentRef={contentRef} prDetails={prDetails} Heading={selectedPODropdown}/>
+      }
       {/* End of Print Format */}
 
       {

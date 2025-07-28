@@ -28,6 +28,7 @@ import { useAuth } from "@/src/context/AuthContext";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import PopUp from "./PopUp";
 import { useOutsideClick } from "@/src/hooks/useOutsideClick";
+import { useRouter } from "next/navigation";
 
 
 type Props = {
@@ -67,7 +68,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
   const {designation} = useAuth();
   const [isEmailDialog,setIsEmailDialog] = useState<boolean>(false);
   const debouncedSearchName = useDebounce(search, 300);
-
+const router = useRouter();
   
   useEffect(()=>{
     const fetchPoTable = async()=>{
@@ -245,7 +246,8 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
                 <TableCell>
                   <Button
                     variant={"outline"}
-                    onClick={() => downloadPoDetails(item?.name)}
+                    // onClick={() => downloadPoDetails(item?.name)}
+                    onClick={() => router.push(`/view-po?po_name=${item?.name}`)}
                   >
                     view
                   </Button>

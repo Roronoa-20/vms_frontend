@@ -2,9 +2,17 @@ import ViewPO from '@/src/components/pages/ViewPO'
 import ViewVendorPO from '@/src/components/pages/ViewVendorPO'
 import React from 'react'
 
-const page = () => {
+interface PageProps {
+  searchParams: Promise<{ 
+    po_name?:string
+  }>
+}
+
+const page = async({ searchParams }:PageProps) => {
+  const params = await searchParams;
+  const po_name =  params["po_name"];
   return (
-    <ViewVendorPO/>
+    <ViewVendorPO po_name={po_name}/>
   )
 }
 

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import NavbarMenu from "./NavbarMenu";
 import { useRouter,usePathname } from "next/navigation";
+import {NavbarConstant} from '@/src/constants/NavbarConstant'
 const Navbar = () => {
   const { role, name } = useAuth();
    const { designation } = useAuth();
@@ -19,19 +20,7 @@ const Navbar = () => {
   return (
     <div className="bg-white w-full shadow-sm flex justify-between p-3 items-center sticky top-0 z-50">
       <h1 className="text-[24px] text-[#03111F] font-semibold">
-        {pathname == '/vendor-registration'?"Vendor Registration":
-         pathname == "/dashboard"?"Dashboard":
-         pathname == "/pr-request"?"Purchase Request":
-         pathname == "/pr-inquiry"?"Purchase Enquiry":
-         pathname == "/view-pr-inquiry"?"View Purchase Enquiry":
-         pathname == "/dispatch"?"Dispatch":
-         pathname == "/view-grn"?"Good Receipts Note":
-         pathname == "/view-grn-details"?"Good Receipts Note":
-         pathname == "/qms-details"?"QMS Form":
-         pathname == "/view-purchase-requisition"?"Purchase Requisition":
-         pathname == "/qms-details"?"QMS Form":
-         pathname == "/view-po-conf"?"User Confirmation":
-         ""}
+        {NavbarConstant[pathname]}
       </h1>
       <div className='flex items-center gap-4'>
         {/* Notification Icon & Modal */}

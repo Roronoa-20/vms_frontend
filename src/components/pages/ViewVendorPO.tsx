@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import POPrintFormat from "../molecules/POPrintFormat";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Input } from "../atoms/input";
 import { Button } from "../atoms/button";
 import { useRouter } from "next/navigation";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../atoms/select";
 
 
 interface POItemsTable {
@@ -26,19 +27,30 @@ interface POItemsTable {
   approved_by_vendor:boolean
 }
 
+interface PODropdown {
+  name:string,
+  po_no:string,
+  company_code:string
+}
 
-const ViewPO = () => {
+interface Props {
+  po_name?:string
+}
+
+const ViewPO = ({po_name}:Props) => {
   const router = useRouter();
     const [prDetails,setPRDetails] = useState();
-    const [PRNumber,setPRNumber] = useState<string>("");
+    const [PRNumber,setPRNumber] = useState<string | undefined>(po_name);
     const [POItemsTable,setPOItemsTable] = useState<POItemsTable[]>([]);
     const [isEarlyDeliveryDialog,setIsEarlyDeliveryDialog] = useState<boolean>(false);
+    const [PONumberDropdown,setPONumberDropdown] = useState<PODropdown[]>([]);
+    const [isPrintFormat,setIPrintFormat] = useState<boolean>(false);
     const getPODetails = async()=>{
         const url = `${API_END_POINTS?.getPrintFormatData}?po_name=${PRNumber}`;
         const response:AxiosResponse = await requestWrapper({url:url,method:"GET"})
         if(response?.status == 200){
             // console.log(response?.data?.message,"this is response")
-            setPRDetails(response?.data?.message);
+            setPRDetails(response?.data?.message?.data);
         }
     }
 
@@ -46,6 +58,10 @@ const ViewPO = () => {
     const handleClose = ()=>{
         setIsEarlyDeliveryDialog(false);
     }
+
+    useEffect(()=>{
+      getPODropdown();
+    },[])
 
     const handleOpen = ()=>{
       fetchPOItems();
@@ -83,20 +99,45 @@ const ViewPO = () => {
     }
   }
 
+  const getPODropdown = async()=>{
+    const url = API_END_POINTS?.getPONumberDropdown;
+    const response:AxiosResponse = await requestWrapper({url:url,method:'GET'});
+    if(response?.status == 200){
+      // console.log(response?.data?.message?.data,"this is dropdown");
+      setPONumberDropdown(response?.data?.message?.total_po);
+      console.log(response?.data?.message?.total_po);
+    }
+  }
+  console.log(prDetails,"this is pr details")
+
   return (
     <div className="min-h-screen bg-[#f8fafc] p-6 space-y-6 text-sm text-black font-sans m-5">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-md border border-gray-300">
-        <input
+        {/* <input
         onChange={(e)=>{setPRNumber(e.target.value)}}
           type="text"
           className="w-full md:w-1/2 border border-gray-300 rounded px-4 py-2 focus:outline-none hover:border-blue-700 transition"
-        />
+        /> */}
+        <Select onValueChange={(value)=>{setPRNumber(value)}} value={PRNumber ?? ""}>
+              <SelectTrigger className="w-60">
+                <SelectValue placeholder="Select PO Number" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {
+                    PONumberDropdown?.map((item,index)=>(
+                      <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                    ))
+                  }
+                </SelectGroup>
+              </SelectContent>
+            </Select>
         <div className="flex gap-2 md:gap-4">
-          <button onClick={()=>{getPODetails()}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+          <button onClick={()=>{getPODetails(); setIPrintFormat(true)}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
             View PO Details
           </button>
-          <button onClick={()=>{router.push(`/view-po-changes?po_name=${PRNumber}`)}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+          <button onClick={()=>{router.push(`/view-po-line-items?po_name=${PRNumber}`)}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
             View All Changed PO Details
           </button>
         </div>
@@ -110,7 +151,10 @@ const ViewPO = () => {
       </div> */}
 
       {/* PO Main Section */}
-      <POPrintFormat prDetails={prDetails}  />
+      {
+        isPrintFormat &&
+        <POPrintFormat prDetails={prDetails}  />
+      }
       {/* End of Print Format */}
 
       {

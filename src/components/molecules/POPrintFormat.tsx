@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 
 interface Props {
   prDetails: any;
@@ -69,16 +69,17 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
     ],
   ];
 
-  const companyLogo = {
+  const companyLogo:Record<string,string> = {
     "Meril Diagnostics Private Limited":
       "/printFormatLogo/Meril-Diagnostics.svg",
     "Meril Endo Surgery Private Limited":
       "/printFormatLogo/Meril-Endo-surgery.svg",
     "Meril Health Care Private Limited":
       "/printFormatLogo/Meril-Healthcare-Logo.svg",
-    "Meril Life Scinces Private Limited":
+    "Meril Life Sciences Private Limited":
       "/printFormatLogo/Meril-life-sciences-logo.svg",
   };
+  console.log(prDetails)
   return (
     <div
       ref={contentRef}
@@ -94,11 +95,10 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
           <div className="flex justify-center border-b border-black py-4">
             <div className="text-center">
               <img
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNeWQPPw3D0A-4GbBqyuGJa6KHFOa6cO3giQ&s"
-                alt="Meril Logo"
+                src={`${companyLogo[prDetails?.bill_to_company]}`}
+                alt="No Logo"
                 className="h-25 w-25 mx-auto mb-1"
               />
-              <div className="text-gray-700 text-sm">More to Life</div>
             </div>
           </div>
 
@@ -109,7 +109,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
             </div>
             <div className="col-span-2 p-2">
               <span className="font-semibold">Code :</span>{" "}
-              {prDetails?.supplier_name}
+              {prDetails?.vendor_code}
             </div>
           </div>
           <div className="border-b border-black p-2 leading-4 text-sm">
@@ -286,19 +286,41 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
           </div>
           <div className="grid grid-cols-3 text-center border-b border-black">
             <div className="border-r border-black h-20 flex items-center justify-center relative">
-
+            {
+               prDetails?.sign_url1?.base64 &&
               <img
-                src={prDetails && prDetails?.sign_url1?.url}
+              src={`data:image/png;base64,${prDetails && prDetails?.sign_url1?prDetails?.sign_url1?.base64:""}`}
+              alt="Signature"
+              //  crossOrigin="anonymous"
+              style={{ width: "50%", height: "auto", objectFit: "contain" }}
+              // content="contain"
+              />
+            }
+            </div>
+            <div className="border-r border-black h-20 flex items-center justify-center">
+              {
+                 prDetails?.sign_url2?.base64 &&
+                <img
+                src={`data:image/png;base64,${prDetails && prDetails?.sign_url2?prDetails?.sign_url2?.base64:""}`}
                 alt="Signature"
                 //  crossOrigin="anonymous"
                 style={{ width: "50%", height: "auto", objectFit: "contain" }}
                 // content="contain"
                 />
+              }
             </div>
-            <div className="border-r border-black h-20 flex items-center justify-center">
-              Sign 2
+            <div className="h-20 flex items-center justify-center">
+              {
+                prDetails?.sign_url3?.base64 &&
+                <img
+                src={`data:image/png;base64,${prDetails && prDetails?.sign_url3?prDetails?.sign_url3?.base64:""}`}
+                alt="Signature"
+                //  crossOrigin="anonymous"
+                style={{ width: "50%", height: "auto", objectFit: "contain" }}
+                // content="contain"
+                />
+              }
             </div>
-            <div className="h-20 flex items-center justify-center">Sign 3</div>
           </div>
           <div className="grid grid-cols-3 text-center text-[11px]">
             <div className="border-r border-black p-1">Purchase Team</div>

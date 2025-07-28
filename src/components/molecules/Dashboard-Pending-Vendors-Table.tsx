@@ -84,7 +84,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
     if (dashboardPendingVendorTableDataApi?.status == 200) {
       setTable(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding
       );
-      settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count);
+      // settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count);
       settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count)
       // setRecordPerPage(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding?.length)
       setRecordPerPage(5);

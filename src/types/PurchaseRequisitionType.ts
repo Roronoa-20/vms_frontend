@@ -76,7 +76,7 @@ export interface SubheadField {
   purchase_requisition_item_subhead: string | null;
   item_number_of_purchase_requisition_subhead: string | null;
   purchase_requisition_date_subhead: string | null;
-  delivery_date_subhead: string | null;
+  delivery_date_subhead: string ;
   store_location_subhead: string | null;
   item_category_subhead: string | null;
   material_group_subhead: string | null;
@@ -86,7 +86,7 @@ export interface SubheadField {
   asset_subnumber_subhead: string | null;
   profit_ctr_subhead: string | null;
   short_text_subhead: string | null;
-  quantity_subhead: string | null;
+  quantity_subhead: string ;
   price_of_purchase_requisition_subhead: string | null;
   gl_account_number_subhead: string | null;
   material_code_subhead: string | null;
@@ -97,4 +97,9 @@ export interface SubheadField {
   currency_subhead: string | null
   service_type_subhead: string | null
   net_value_subhead: number | null
+  subhead_unique_field: string
+  material_name_subhead: string
+  price_subhead: string
+  original_quantity:string
+  original_delivery_date:string
 }

@@ -21,6 +21,7 @@ import EditSBItemModal from '../molecules/pr-dialogs/EditSBDialog'
 import EditNBItemModal from '../molecules/pr-dialogs/EditNBDilaog'
 import { PurchaseRequisitionDataItem, PurchaseRequisitionResponse } from '@/src/types/PurchaseRequisitionType'
 import SummaryBlock from '../molecules/pr-dialogs/SummaryBlock'
+import { useRouter } from 'next/navigation'
 interface Props {
   Dropdown: PurchaseRequestDropdown["message"]
   PRData: PurchaseRequestData["message"]["data"] | null
@@ -43,7 +44,7 @@ export const updateQueryParam = (key: string, value: string) => {
   window.history.pushState({}, '', url.toString());
 };
 
-const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, StorageLocationDropdown, ValuationClassDropdown, ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, MaterialCodeDropdown, PurchaseOrgDropdown }: Props) => {
+const   PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, StorageLocationDropdown, ValuationClassDropdown, ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, MaterialCodeDropdown, PurchaseOrgDropdown }: Props) => {
   const user = Cookies.get("user_id");
   const [formData, setFormData] = useState<PurchaseRequestData["message"]["data"] | null>(PRData ? { ...PRData, requisitioner: PRData?.requisitioner, cart_id: cartId ? cartId : "" } : null);
   const [requiredField, setRequiredField] = useState(null);
@@ -56,6 +57,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
   const [isNBEditModalOpen, setNBEditModalOpen] = useState(false)
   const [selectedMainItemId, setSelectedMainItemId] = useState<string>("")
   const [purchase_request_no, setPurchaseReqNo] = useState<string>("")
+  const router= useRouter()
   const deleteSubItem = async (subItemId: string) => {
     console.log(subItemId, "subItemId", pur_req, "pur_req")
     const url = `${API_END_POINTS?.PrSubHeadDeleteRow}?name=${pur_req}&row_id=${subItemId}`;
@@ -141,13 +143,15 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
   // }
 
   const handleSubmit = async () => {
-    if (!pur_req) {
+    if (!(mainItems?.docname)) {
       alert("Not able to Submit , PR Request No. Required")
+      return
     }
-    const url = `${API_END_POINTS?.SubmitPR}?name=${pur_req}`;
+    const url = `${API_END_POINTS?.SubmitPR}?name=${pur_req? pur_req: mainItems?.docname? mainItems?.docname :""}`;
     const response: AxiosResponse = await requestWrapper({ url: url, method: "POST" });
     if (response?.status == 200) {
       alert("Submit Successfull");
+      router.push("/dashboard")
     } else {
       alert("error");
     }
@@ -212,7 +216,8 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
     }
   }, [pur_req])
 
-  console.log(mainItems, "mainItems")
+  console.log(!(pur_req),"pur_req")
+  console.log(mainItems?.['Form Status'],"mainItems?.['Form Status']")
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <div className="grid grid-cols-3 gap-6 p-5">
@@ -312,7 +317,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
           <Input placeholder="" name='requisitioner' value={formData?.cart_id ?? ""} disabled />
         </div>
       </div>
-      {!pur_req && <div className={`flex justify-end p-4`}><Button type='button' className='bg-blue-400 hover:bg-blue-400' onClick={() => handleNext()}>Next</Button></div>}
+      {!(mainItems?.docname && mainItems?.docname)  && <div className={`flex justify-end p-4`}><Button type='button' className='bg-blue-400 hover:bg-blue-400' onClick={() => handleNext()}>Next</Button></div>}
       {mainItems && mainItems?.data?.length > 0 && (
         <Card>
           <CardHeader>
@@ -359,7 +364,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        {mainItem?.purchase_requisition_type == "SB" && <Button
+                        {(mainItem?.purchase_requisition_type == "SB" && mainItems?.['Form Status'] != "Submitted") && <Button
                           variant="outline"
                           size="sm"
                           onClick={() => openSubItemModal(mainItem?.row_name)}
@@ -368,101 +373,26 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
                           <Plus className="w-4 h-4" />
                           Add Sub Item
                         </Button>}
-                        <Button
+                        {mainItems?.['Form Status'] != "Submitted" && <Button
                           // variant="destructive"
                           size="sm"
                           onClick={() => { handleModel(mainItem?.purchase_requisition_type ? mainItem?.purchase_requisition_type : "SB"); setEditRow(mainItem) }}
                           className=""
                         >
                           <Edit2Icon className="w-4 h-4" />
-                        </Button>
+                        </Button>}
                       </div>
                     </div>
 
                     {/* Expanded Content - Main Item Details + Sub Items Table */}
                     <CollapsibleContent>
                       <div className="p-4 bg-white">
-                        {/* Main Item Full Details */}
-                        {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
-                          <div>
-                            <strong>Item Number of Purchase Requisition:</strong> {mainItem?.item_number_of_purchase_requisition_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Purchase Requisition Date:</strong> {mainItem.purchase_requisition_date_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Delivery Date:</strong> {mainItem.delivery_date_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Store Location:</strong> {mainItem.store_location_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Item Category:</strong> {mainItem.item_category_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Material Group:</strong> {mainItem.material_group_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>UOM:</strong> {mainItem.uom_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Cost Center:</strong> {mainItem.cost_center_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Main Asset No:</strong> {mainItem.main_asset_no_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Asset Subnumber:</strong> {mainItem.asset_subnumber_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Profit Center:</strong> {mainItem.profit_ctr_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Short Text:</strong> {mainItem.short_text_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Quantity:</strong> {mainItem.quantity_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Price of Purchase Requisition:</strong> {mainItem.price_of_purchase_requisition_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>GL Account Number:</strong> {mainItem.gl_account_number_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Material Code:</strong> {mainItem.material_code_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Account Assignment Category:</strong> {mainItem.account_assignment_category_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Purchase Group:</strong> {mainItem.purchase_group_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Product Name:</strong> {mainItem.product_name_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Product Price:</strong> {mainItem.product_price_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Final Price (By Purchase Team):</strong> {mainItem.final_price_by_purchase_team_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Lead Time:</strong> {mainItem.lead_time_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Plant:</strong> {mainItem?.plant_head || "N/A"}
-                          </div>
-                          <div>
-                            <strong>Purchase Requisition Type:</strong> {mainItem.purchase_requisition_type || "N/A"}
-                          </div>
-                        </div> */}
                         <SummaryBlock mainItem={mainItem} />
                         {/* Sub Items Section */}
                         {mainItem.purchase_requisition_type == "SB" && <div className="mt-4">
                           <div className="flex items-center justify-between mb-4">
                             <h4 className="font-semibold text-lg">Sub Items ({mainItem?.subhead_fields.length})</h4>
-                            <Button
+                            {mainItems?.['Form Status'] != "Submitted" && <Button
                               variant="outline"
                               size="sm"
                               onClick={() => openSubItemModal(mainItem?.row_name)}
@@ -470,7 +400,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
                             >
                               <Plus className="w-4 h-4" />
                               Add Sub Item
-                            </Button>
+                            </Button>}
                           </div>
 
                           {mainItem?.subhead_fields?.length > 0 ? (
@@ -513,7 +443,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
                                         <TableCell className="text-center">{subItem?.cost_center_subhead || "N/A"}</TableCell>
                                         <TableCell className="text-center">{subItem?.gl_account_number_subhead || "N/A"}</TableCell>
                                         {/* Sticky Actions Cell */}
-                                        <TableCell className="text-center sticky right-0 bg-white z-20">
+                                        {mainItems?.['Form Status'] != "Submitted" && <TableCell className="text-center sticky right-0 bg-white z-20">
                                           <Button
                                             variant="destructive"
                                             size="sm"
@@ -521,7 +451,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
                                           >
                                             <Trash2 className="w-4 h-4" />
                                           </Button>
-                                        </TableCell>
+                                        </TableCell>}
                                       </TableRow>
                                     ))}
                                   </TableBody>
@@ -594,7 +524,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
         defaultData={editRow}
       />}
 
-      {(mainItems?.['Form Status'] != "Submitted" && pur_req) && <div className={`flex justify-end py-6`}><Button type='button' className='bg-blue-400 hover:bg-blue-400 px-6 font-medium' onClick={() => { handleSubmit() }}>Submit</Button></div>}
+      {(mainItems?.['Form Status'] != "Submitted" && mainItems?.docname) && <div className={`flex justify-end py-6`}><Button type='button' className='bg-blue-400 hover:bg-blue-400 px-6 font-medium' onClick={() => { handleSubmit() }}>Submit</Button></div>}
     </div>
   )
 }

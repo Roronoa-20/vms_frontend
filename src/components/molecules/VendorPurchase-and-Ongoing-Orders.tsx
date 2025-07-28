@@ -26,6 +26,7 @@ import requestWrapper from "@/src/services/apiCall";
 import { useMultipleVendorCodeStore } from "@/src/store/MultipleVendorCodeStore";
 import { useAuth } from "@/src/context/AuthContext";
 import API_END_POINTS from "@/src/services/apiEndPoints";
+import { useRouter } from "next/navigation";
 
 
 type Props = {
@@ -63,8 +64,11 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
   const [currentPage, setCurrentPage] = useState<number>(1);
   
   const {designation} = useAuth();
+  const router = useRouter();
   
   const debouncedSearchName = useDebounce(search, 300);
+
+  console.log(tableData,"this is table")
 
   useEffect(()=>{
     const fetchPoTable = async()=>{
@@ -221,7 +225,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
                     className={`px-2 py-3 rounded-xl ${
                       item?.status === "Pending"
                         ? "bg-yellow-100 text-yellow-800"
-                        : item?.status === "Approved"
+                        : item?.status.includes("Approved")
                           ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-800"
                     }`}
@@ -233,12 +237,13 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
                 <TableCell>
                   <Button
                     variant={"outline"}
-                    onClick={() => downloadPoDetails(item?.name)}
+                    // onClick={() => downloadPoDetails(item?.name)}
+                    onClick={() => router.push(`/view-vendor-po?po_name=${item?.name}`)}
                   >
                     view
                   </Button>
                 </TableCell>
-                <TableCell className={`flex gap-4 ${designation == "Vendor"?"":"hidden"}`}>
+                <TableCell className={`flex gap-4 ${designation == "Vendor"?"":"hidden"}  ${item?.approved_from_vendor == Boolean(1)?"hidden":""} `}>
                   <Button
                     variant={"outline"}
                     onClick={()=>{setStatus("approve"); setIsDialog((prev)=>!prev); setPONumber(item?.name)}}
