@@ -243,7 +243,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
                     view
                   </Button>
                 </TableCell>
-                <TableCell className={`flex gap-4 ${designation == "Vendor"?"":"hidden"}  ${item?.approved_from_vendor?"hidden":""} `}>
+                <TableCell className={`flex gap-4 ${designation == "Vendor"?"":"hidden"}  ${item?.approved_from_vendor == Boolean(1)?"hidden":""} `}>
                   <Button
                     variant={"outline"}
                     onClick={()=>{setStatus("approve"); setIsDialog((prev)=>!prev); setPONumber(item?.name)}}
