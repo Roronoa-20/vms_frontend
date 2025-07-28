@@ -76,7 +76,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
       "/printFormatLogo/Meril-Endo-surgery.svg",
     "Meril Health Care Private Limited":
       "/printFormatLogo/Meril-Healthcare-Logo.svg",
-    "Meril Life Scinces Private Limited":
+    "Meril Life Sciences Private Limited":
       "/printFormatLogo/Meril-life-sciences-logo.svg",
   };
   return (
