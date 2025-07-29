@@ -32,7 +32,6 @@ type Props = {
   dashboardRejectedVendorTableData: DashboardTableType["rejected_vendor_onboarding"]
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
   prInquiryData: TPRInquiryTable
-  prInquiryData: TPRInquiryTable
   prData: PurchaseRequisition[]
   rfqData: RFQTable
 }
