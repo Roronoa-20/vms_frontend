@@ -47,6 +47,10 @@ const ViewPO = ({po_name,dropdown}:Props) => {
     const [PONumberDropdown,setPONumberDropdown] = useState<PODropdown[]>([]);
     const [isPrintFormat,setIPrintFormat] = useState<boolean>(false);
     const getPODetails = async()=>{
+      if(!PRNumber){
+        alert("Please Select PO Number");
+        return;
+      }
         const url = `${API_END_POINTS?.getPrintFormatData}?po_name=${PRNumber}`;
         const response:AxiosResponse = await requestWrapper({url:url,method:"GET"})
         if(response?.status == 200){
