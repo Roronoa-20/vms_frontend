@@ -213,7 +213,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
           {tableData && tableData?.length > 0 ? (
             tableData.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="font-medium">{item?.idx}</TableCell>
+                <TableCell className="font-medium">{index + 1}</TableCell>
                 <TableCell>{item?.name}</TableCell>
                 <TableCell>
                   {item?.supplier_name ? item.supplier_name : "-"}
