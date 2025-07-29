@@ -28,7 +28,7 @@ type Props = {
 }
 
 const DashboardRFQTable = ({ dashboardTableData,companyDropdown }: Props) => {
-  const user = Cookies?.get("user_id");
+console.log(dashboardTableData,"dashboardTableData")
   return (
 
     <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
@@ -80,6 +80,7 @@ const DashboardRFQTable = ({ dashboardTableData,companyDropdown }: Props) => {
             <TableHead className="text-center">Company</TableHead>
             <TableHead className="text-center">RFQ Type</TableHead>
             <TableHead className="text-center">RFQ Date</TableHead>
+            <TableHead className="text-center">Logistic Type</TableHead>
             <TableHead className="text-center">Status</TableHead>
             <TableHead className={`text-center`}>Action</TableHead>
           </TableRow>
@@ -93,6 +94,7 @@ const DashboardRFQTable = ({ dashboardTableData,companyDropdown }: Props) => {
                 <TableCell className="text-nowrap text-center">{item?.company_name}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.rfq_type}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.rfq_date}</TableCell>
+                <TableCell className="text-nowrap text-center">{item?.logistic_type}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.status}</TableCell>
                 <TableCell className="text-nowrap text-center"><Link href={`/view-rfq?refno=${item?.name}`}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
                 {/* <TableCell>

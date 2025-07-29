@@ -1347,6 +1347,7 @@ export interface RFQTable {
     company_name: string,
     rfq_type: string,
     rfq_date: string,
+    logistic_type:string,
     status: string,
   }[]
 }

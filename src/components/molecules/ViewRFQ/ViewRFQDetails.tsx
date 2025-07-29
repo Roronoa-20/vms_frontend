@@ -20,17 +20,18 @@ const RFQBasicDetails = ({ RFQData }: Props) => {
         </div>
         <div className='grid-cols-1 px-4 border-r'>
           <ul className=''>
+            <li className='border-b p-1'>Shipment Type :<span className='font-semibold px-1'>{RFQData ? RFQData.shipment_type : ''}</span></li>
             <li className='border-b p-1'>Destination Port :<span className='font-semibold px-1'>{RFQData ? RFQData.destination_port : ''}</span></li>
             <li className='border-b p-1'>Country :<span className='font-semibold px-1'>{RFQData ? RFQData.country : ''}</span></li>
             <li className='border-b p-1'>Port Code :<span className='font-semibold px-1'>{RFQData ? RFQData.port_code : ''}</span></li>
             <li className='border-b p-1'>Port of Loading :<span className='font-semibold px-1'>{RFQData ? RFQData.port_of_loading : ''}</span></li>
             <li className='border-b p-1'>Inco Terms :<span className='font-semibold px-1'>{RFQData ? RFQData.inco_terms : ''}</span></li>
-            <li className='border-b p-1'>Package Type :<span className='font-semibold px-1'>{RFQData ? RFQData.package_type : ''}</span></li>
             <li className='border-b p-1'>Product Category :<span className='font-semibold px-1'>{RFQData ? RFQData.product_category : ''}</span></li>
           </ul>
         </div>
         <div className='grid-cols-1 px-4'>
           <ul className=''>
+            <li className='border-b p-1'>Package Type :<span className='font-semibold px-1'>{RFQData ? RFQData.package_type : ''}</span></li>
             <li className='border-b p-1'>Vol Weight(KG) :<span className='font-semibold px-1'>{RFQData ? RFQData.vol_weight : ''}</span></li>
             <li className='border-b p-1'>Actual Weight(KG) :<span className='font-semibold px-1'>{RFQData ? RFQData.actual_weight : ''}</span></li>
             <li className='border-b p-1'>Invoice Date :<span className='font-semibold px-1'>{RFQData ? RFQData.invoice_date : ''}</span></li>

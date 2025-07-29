@@ -20,7 +20,7 @@ interface Props {
     Dropdown: PurchaseRequestDropdown["message"];
     refno: string;
 }
-const LogisticsExportQuatationForm = ({ Dropdown,refno }: Props) => {
+const LogisticsImportQuatationForm = ({ Dropdown ,refno}: Props) => {
     const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Logistic Vendor",rfq_number:refno});
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const router = useRouter()
@@ -137,15 +137,36 @@ const LogisticsExportQuatationForm = ({ Dropdown,refno }: Props) => {
                     (item) => item.name,
                     (item) => `${item.name}`
                 )}
-                {renderInput('airlinevessel_name', 'Airline/Vessel Name')}
+                {renderInput('airlinevessel_name', 'Name')}
+                {renderInput('chargeable_weight', 'Chargeable Weight')}
                 {renderInput('ratekg', 'Rate/Kg')}
                 {renderInput('fuel_surcharge', 'Fuel Surcharge')}
                 {renderInput('sc', 'SC')}
                 {renderInput('xray', 'X-Ray')}
-                {renderInput('other_charges_in_total', 'Other Charges in Total')}
-                {renderInput('chargeable_weight', 'Chargeable Weight')}
+                {renderInput('pickuporigin', 'Pick Up / Origin Charge')}
+                {renderInput('ex_works', 'Ex Works')}
                 {renderInput('total_freight', 'Total Freight')}
-                {renderInput('expected_delivery_in_no_of_days', 'Expected Delivery in No of Days')}
+                {renderSelect(
+                    'from_currency',
+                    'From Currency',
+                    Dropdown?.currency_master,
+                    (item) => item.name,
+                    (item) => `${item.name}`
+                )}
+                {renderSelect(
+                    'to_currency',
+                    'To Currency',
+                    Dropdown?.currency_master,
+                    (item) => item.name,
+                    (item) => `${item.name}`
+                )}
+                {renderInput('exchange_rate', 'XR(XE.COM)')}
+                {renderInput('total_freightinr', 'Total Freight(INR)')}
+                {renderInput('destination_charge', 'DC(INR)')}
+                {renderInput('shipping_line_charge', 'Shipping Line Charges')}
+                {renderInput('cfs_charge', 'CFS Charges')}
+                {renderInput('total_landing_price', 'Total Landing Price(INR)')}
+                {renderInput('transit_days', 'Transit Days')}
                 {renderTextarea('remarks', 'Remarks')}
                 <div>
                     <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -166,4 +187,4 @@ const LogisticsExportQuatationForm = ({ Dropdown,refno }: Props) => {
     )
 }
 
-export default LogisticsExportQuatationForm
+export default LogisticsImportQuatationForm

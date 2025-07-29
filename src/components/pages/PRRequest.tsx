@@ -36,9 +36,9 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
     }
   });
   const Dropdown = resposne?.status == 200 ? resposne?.data.message : "";
-console.log(Dropdown,"DropdownDropdownDropdownDropdownDropdownDropdown")
+  console.log(Dropdown, "DropdownDropdownDropdownDropdownDropdownDropdown")
   const company = PRData?.company || "";
-  console.log(company,"companycompanycompany")
+  console.log(company, "companycompanycompany")
   const purchaseGroupURL = `${API_END_POINTS?.filterpurchasegroup}?company=${company}`;
   const PurGroupresposne: AxiosResponse = await requestWrapper({
     url: purchaseGroupURL,

@@ -97,13 +97,17 @@ const API_END_POINTS = {
   fetchVendorListBasedOnRFQType: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.vendor_list`,
   CreateImportRFQ: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.create_import_logistic_rfq`,
   CreateExportRFQ: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.create_export_logistic_rfq`,
-  rfqTableData: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.rfq_dashboard`,
-  rfqTableData: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.rfq_dashboard`,
+  rfqTableData: `${url}/api/method/vms.APIs.req_for_quotation.rfq.rfq_dashboard`,
   fetchPRDropdown: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_material.pr_number_list`,
   fetchPRItems: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_material.add_pr_number`,
   CreateMaterialRFQ: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_material.create_rfq_material`,
   CreateServiceRFQ: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_service.create_rfq_service`,
+
+  //Quatataion apis
+  SubmitQuatation: `${url}/api/method/vms.APIs.quotation.create_quotation.create_or_update_quotation`,
   getRFQData: `${url}/api/method/vms.APIs.req_for_quotation.rfq.get_full_rfq_data`,
+  fetchQuatationVendorList:`${url}/api/method/vms.APIs.quotation.quotation.get_quotations_by_rfq`,
+
 
   AllGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_all_grn_details`,
   SingleGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_grn_details_of_grn_number`,
@@ -132,10 +136,10 @@ const API_END_POINTS = {
   filtervaluationclass: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_valuation_class_master`,
   filterMaterialCode: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_material_master`,
   filterpurchaseorg: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_purchase_organisation`,
-  getPrintFormatDropdown:`${url}/api/method/vms.APIs.master_apis.po_print.get_po_printformat`,
-  getStateBasedOnPincode:`${url}/api/method/vms.APIs.master_apis.address_custom.address_filter`,
-  getAllPOChangesTable:`${url}/api/method/vms.APIs.purchase_api.po_early_deliver_get.filtering_po_earlydel_details`,
-  getPONumberDropdown:`${url}/api/method/vms.APIs.purchase_api.po_early_deliver_get.filtering_po_details`
+  getPrintFormatDropdown: `${url}/api/method/vms.APIs.master_apis.po_print.get_po_printformat`,
+  getStateBasedOnPincode: `${url}/api/method/vms.APIs.master_apis.address_custom.address_filter`,
+  getAllPOChangesTable: `${url}/api/method/vms.APIs.purchase_api.po_early_deliver_get.filtering_po_earlydel_details`,
+  getPONumberDropdown: `${url}/api/method/vms.APIs.purchase_api.po_early_deliver_get.filtering_po_details`
 };
 
 export default API_END_POINTS;

@@ -87,6 +87,8 @@ export type RFQDetails = {
   first_reminder: string | null;
   second_reminder: string | null;
   third_reminder: string | null;
+  shipment_type: string | null;
+  logistic_type:string | null;
   pr_items: any[]; // Can be defined more strictly if you know the structure
   vendor_details: VendorDetail[];
   non_onboarded_vendors: any[]; // Can also be typed properly if needed
