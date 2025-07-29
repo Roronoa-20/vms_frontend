@@ -115,6 +115,7 @@ const ViewLogisticsQuatationVendors = ({
 }: Props) => {
     const exportColumns: ColumnConfig[] = [
         { label: "Sr No.", key: "index" },
+        { label: "RefNo", key: "name" },
         { label: "Vendor Name", key: "vendor_name" },
         { label: "Vendor Code", key: "vendor_code" },
         { label: "Shipment Mode", key: "mode_of_shipment" },
@@ -133,6 +134,7 @@ const ViewLogisticsQuatationVendors = ({
 
     const importColumns: ColumnConfig[] = [
         { label: "Sr No.", key: "index" },
+        { label: "RefNo", key: "name" },
         { label: "Vendor Name", key: "vendor_name" },
         { label: "Vendor Code", key: "vendor_code" },
         { label: "Shipment Mode", key: "mode_of_shipment" },
@@ -198,7 +200,7 @@ console.log(logistic_type,"logistic_typelogistic_typelogistic_typelogistic_typel
                                         }
 
                                         return (
-                                            <TableCell key={idx} className="text-center">
+                                            <TableCell key={idx}  className={`text-center ${col.key === "name" ? "text-nowrap" : ""}`}>
                                                 {getValueByKey(item, col.key, index)}
                                             </TableCell>
                                         );
