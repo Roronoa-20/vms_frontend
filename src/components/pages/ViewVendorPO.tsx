@@ -60,9 +60,15 @@ const ViewPO = ({po_name,dropdown}:Props) => {
         setIsEarlyDeliveryDialog(false);
     }
 
-    // useEffect(()=>{
-    //   getPODropdown();
-    // },[])
+    useEffect(()=>{
+      if(po_name){
+        const button = document.getElementById("viewPrintBtn");
+        if(button){
+          button.click();
+        }
+      }
+    },[])
+    
 
     const handleOpen = ()=>{
       fetchPOItems();
@@ -135,7 +141,7 @@ const ViewPO = ({po_name,dropdown}:Props) => {
               </SelectContent>
             </Select>
         <div className="flex gap-2 md:gap-4">
-          <button onClick={()=>{getPODetails(); setIPrintFormat(true)}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+          <button id="viewPrintBtn" onClick={()=>{getPODetails(); setIPrintFormat(true)}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
             View PO Details
           </button>
           <button onClick={()=>{router.push(`/view-po-line-items?po_name=${PRNumber}`)}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">

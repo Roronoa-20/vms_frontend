@@ -122,6 +122,12 @@ const ViewPO = ({po_name}:Props) => {
   useEffect(()=>{
     getDropdown();
     getPODropdown();
+    if(po_name){
+      const button = document.getElementById("viewPrintBtn");
+      if(button){
+        button?.click();
+      }
+    }
   },[])
 
   const getPODropdown = async()=>{
@@ -189,7 +195,7 @@ const ViewPO = ({po_name}:Props) => {
                 </SelectGroup>
               </SelectContent>
             </Select>
-          <button onClick={()=>{getPODetails(); setIPrintFormat(true);}} className="bg-blue-500 text-white px-2 rounded hover:bg-blue-700 transition text-nowrap">
+          <button id="viewPrintBtn" onClick={()=>{getPODetails(); setIPrintFormat(true);}} className="bg-blue-500 text-white px-2 rounded hover:bg-blue-700 transition text-nowrap">
             View PO Details
           </button>
           <button onClick={()=>{router.push(`/view-all-po-changes`)}} className="bg-blue-500 text-white px-2 rounded hover:bg-blue-700 transition text-nowrap">
