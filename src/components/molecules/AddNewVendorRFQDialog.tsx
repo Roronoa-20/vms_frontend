@@ -1,169 +1,79 @@
-import React from 'react'
+import React, { Dispatch, useState } from 'react'
 import PopUp from './PopUp'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../atoms/select'
 import { Input } from '../atoms/input'
+import { DropdownData, newVendorTable } from '../templates/RFQTemplates/LogisticsImportRFQ'
 
 
 interface Props {
     handleClose:()=>void
+    setNewVendorTable:Dispatch<React.SetStateAction<newVendorTable[]>>
+    Dropdown:DropdownData
 }
 
-const AddNewVendorRFQDialog = ({handleClose}:Props) => {
+const AddNewVendorRFQDialog = ({handleClose,setNewVendorTable,Dropdown}:Props) => {
+
+  const [singleRow,setSingleRow] = useState<newVendorTable | null>(null)
+
+  const handleNewVendor = ()=>{
+    
+      setNewVendorTable((prev:any)=>([...prev,singleRow]));
+      setSingleRow(null)
+      handleClose();
+    }
+
   return (
-    <PopUp headerText='Add New Vendor' classname='w-full h-full overflow-y-scroll' handleClose={handleClose}>
+    <PopUp disableRef={false} isSubmit={true} Submitbutton={handleNewVendor} headerText='Add New Vendor' classname='w-full h-full md:max-h-[350px] md:max-w-[700px]' handleClose={handleClose}>
         <div className="grid grid-cols-3 gap-6 p-5">
           <div>
-            <div className="grid grid-cols-4 gap-1">
-              <div className="flex flex-col col-span-1">
-                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                  Vendor Title
-                </h1>
-                <Input className="col-span-2" placeholder="Enter Company Name" />
-              </div>
-              <div className="col-span-3">
-                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                  Company Name
-                </h1>
-                <Input className="col-span-2 w-full border rounded-lg" placeholder="Enter Company Name" />
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973] flex">
-              Type Of Business (Please select any one) <span className="pl-2 text-red-400 text-xl">*</span>
-            </h1>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Vendor Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {/* {
-                    companyDetailDropdown?.type_of_business?.map((item, index) => (
-                      <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                    ))
-                  } */}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            {/* {errors?.type_of_business && !data?.type_of_business && <span style={{ color: 'red' }}>{errors?.type_of_business}</span>} */}
-          </div>
-          <div className="flex flex-col">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Size of Company
+              Vendor Name
             </h1>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="apple">50-100</SelectItem>
-                  <SelectItem value="banana">100-200</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            <Input onChange={(e)=>{setSingleRow((prev:any)=>({...prev,vendor_name:e.target.value}))}} placeholder="Enter Vendor Name" />
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Website
+              Official Email Primary
             </h1>
-            <Input placeholder="" />
+            <Input onChange={(e)=>{setSingleRow((prev:any)=>({...prev,office_email_primary:e.target.value}))}} placeholder="Enter Email Address" />
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] flex">
-              Reg No.
-              {/* <span className="pl-2 text-red-400 text-xl">*</span> */}
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+              Company Pan Number
             </h1>
-            <Input placeholder="Enter Reg No." />
+            <Input onChange={(e)=>{setSingleRow((prev:any)=>({...prev,pan_number:e.target.value}))}} placeholder="Enter Company Pan" />
             {/* {errors?.registered_office_number && !data?.registered_office_number && <span style={{ color: 'red' }}>{errors?.registered_office_number}</span>} */}
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Mobile Number
             </h1>
-            <Input placeholder="Enter Mobile Number" />
+            <Input onChange={(e)=>{setSingleRow((prev:any)=>({...prev,mobile_number:e.target.value}))}} placeholder="Enter Mobile Number" />
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              WhatsApp Number (If applicable)
+              Enter GST Number
             </h1>
-            <Input placeholder="" />
+            <Input onChange={(e)=>{setSingleRow((prev:any)=>({...prev,gst_number:e.target.value}))}} placeholder="Enter GST Number" />
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Established Year
+              Country
             </h1>
-            <Input placeholder="" />
-          </div>
-          <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Office Email Primary
-            </h1>
-            <Input placeholder="" />
-          </div>
-          <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Office Email (Secondary)
-            </h1>
-            <Input placeholder="" />
-          </div>
-          <div>
-            <h1 className="text-[12px] font-normal text-[#626973] flex">
-              Corporate Identification No.(CIN No.) <span className="pl-2 text-red-400 text-xl">*</span>
-            </h1>
-            <Input placeholder="" />
-            {/* {errors?.corporate_identification_number && !data?.corporate_identification_number && <span style={{ color: 'red' }}>{errors?.corporate_identification_number}</span>} */}
-          </div>
-          <div>
-            <h1 className="text-[12px] font-normal text-[#626973] flex">
-              Cin Date <span className="pl-2 text-red-400 text-xl">*</span>
-            </h1>
-            <Input type="date" placeholder="Enter your CIN Date" max={new Date().toISOString().split("T")[0]}/>
-            {/* {errors?.cin_date && !data?.cin_date && <span style={{ color: 'red' }}>{errors?.cin_date}</span>} */}
-          </div>
-          <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Nature of Company(Please select anyone)
-            </h1>
-            <Select>
+            <Select onValueChange={(value)=>{setSingleRow((prev:any)=>({...prev,country:value}))}}>
               <SelectTrigger>
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {/* {
-                    companyDetailDropdown?.company_nature_master?.map((item, index) => (
+                  {
+                    Dropdown?.country_master?.map((item, index) => (
                       <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
                     ))
-                  } */}
+                  }
                 </SelectGroup>
               </SelectContent>
             </Select>
-          </div>
-          <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Nature of Business (Please Select anyone)
-            </h1>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {/* {
-                    companyDetailDropdown?.business_nature_master?.map((item, index) => (
-                      <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                    ))
-                  } */}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Vendor Type
-            </h1>
           </div>
         </div>
     </PopUp>

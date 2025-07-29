@@ -234,6 +234,13 @@ export interface RFQType {
   vendor_type_name: string;
 }
 
+export interface ShipmentType {
+  name: string;
+  shipment_type_code: string;
+  shipment_type_name: string;
+  description:string
+}
+
 export interface ServiceCode {
   name: string;
   service_code: string;
@@ -285,6 +292,7 @@ export type PurchaseRequestDropdown = {
     service_category: serviceCategory[]
     plant_code: plantCode[];
     quantity_unit: quantityUnit[]
+    shipment_type:ShipmentType[]
   }
 }
 
