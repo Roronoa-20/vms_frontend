@@ -34,7 +34,7 @@ const DashboardRFQTable = ({ dashboardTableData,companyDropdown }: Props) => {
     <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
       <div className="flex w-full justify-between pb-4">
         <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Purchase Requisition
+            RFQ Comparision
         </h1>
         <div className="flex gap-4">
           <Input placeholder="Search..." />
@@ -94,7 +94,7 @@ const DashboardRFQTable = ({ dashboardTableData,companyDropdown }: Props) => {
                 <TableCell className="text-nowrap text-center">{item?.rfq_type}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.rfq_date}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.status}</TableCell>
-                <TableCell className="text-nowrap text-center"><Link href={`/view-rfq?pur_req=${item?.name}`}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
+                <TableCell className="text-nowrap text-center"><Link href={`/view-rfq?refno=${item?.name}`}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
                 {/* <TableCell>
                   <div
                     className={`px-2 py-3 rounded-xl ${item?.status === "pending"

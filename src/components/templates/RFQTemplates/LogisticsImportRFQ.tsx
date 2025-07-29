@@ -69,7 +69,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
                 alert("error");
             }
         }
-        if (formData?.service_provider != "Select" && formData?.service_provider  ) {
+        if (formData?.service_provider != "Select" && formData?.service_provider) {
             fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Logistic Vendor");
         }
     }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider]);
@@ -167,7 +167,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
             alert("error");
         }
     }
-    console.log(Dropdown,"Bidding Person")
+    console.log(Dropdown, "Bidding Person")
     return (
         <div className='bg-white h-full w-full pb-6'>
             <h1 className='font-bold text-[24px] p-5'>RFQ Data for Importing</h1>
@@ -208,7 +208,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
                     (item) => `${item.company_name}`
                 )}
                 {renderInput('sr_no', 'Sr No.')}
-                {renderInput('rfq_cutoff_date_logistic', 'RFQ CutOff', 'date')}
+                {renderInput('rfq_cutoff_date_logistic', 'RFQ CutOff', 'datetime-local')}
                 {renderInput('rfq_date_logistic', 'RFQ Date', 'date')}
                 {renderSelect(
                     'mode_of_shipment',

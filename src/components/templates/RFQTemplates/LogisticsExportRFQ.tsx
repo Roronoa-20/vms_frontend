@@ -206,7 +206,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
                     (item) => `${item.company_name}`
                 )}
                 {renderInput('sr_no', 'Sr No.')}
-                {renderInput('rfq_cutoff_date_logistic', 'RFQ CutOff', 'date')}
+                {renderInput('rfq_cutoff_date_logistic', 'RFQ CutOff', 'datetime-local')}
                 {renderInput('rfq_date_logistic', 'RFQ Date', 'date')}
                 {renderSelect(
                     'mode_of_shipment',
