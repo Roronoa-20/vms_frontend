@@ -2,11 +2,14 @@
 
 import React, { Suspense } from 'react';
 import QMSForm from '@/src/components/pages/QMSForm';
+import { AuthProvider } from '@/src/context/AuthContext';
 
 export default function QMSFormPage() {
   return (
     <Suspense>
-  <QMSForm />
+      <AuthProvider>
+        <QMSForm />
+      </AuthProvider>
     </Suspense>
   )
 }
