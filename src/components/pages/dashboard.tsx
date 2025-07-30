@@ -98,6 +98,9 @@ const Dashboard = async () => {
   const dropDownApi: AxiosResponse = await requestWrapper({
     url: dropdownUrl,
     method: "GET",
+    headers: {
+      cookie: cookieHeaderString
+    }
   });
   const dropdownData: TvendorRegistrationDropdown["message"]["data"] =
     dropDownApi?.status == 200 ? dropDownApi?.data?.message?.data : "";

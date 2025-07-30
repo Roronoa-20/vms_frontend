@@ -136,10 +136,11 @@ const API_END_POINTS = {
   filtervaluationclass: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_valuation_class_master`,
   filterMaterialCode: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_material_master`,
   filterpurchaseorg: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_purchase_organisation`,
-  getPrintFormatDropdown: `${url}/api/method/vms.APIs.master_apis.po_print.get_po_printformat`,
-  getStateBasedOnPincode: `${url}/api/method/vms.APIs.master_apis.address_custom.address_filter`,
-  getAllPOChangesTable: `${url}/api/method/vms.APIs.purchase_api.po_early_deliver_get.filtering_po_earlydel_details`,
-  getPONumberDropdown: `${url}/api/method/vms.APIs.purchase_api.po_early_deliver_get.filtering_po_details`
+  getPrintFormatDropdown:`${url}/api/method/vms.APIs.master_apis.po_print.get_po_printformat`,
+  getStateBasedOnPincode:`${url}/api/method/vms.APIs.master_apis.address_custom.address_filter`,
+  getAllPOChangesTable:`${url}/api/method/vms.APIs.purchase_api.po_early_deliver_get.filtering_po_earlydel_details`,
+  getPONumberDropdown:`${url}/api/method/vms.APIs.purchase_api.po_early_deliver_get.filtering_po_details`,
+  sendPOEmailVendor:`${url}/api/method/vms.APIs.purchase_api.send_po_to_pr.send_po_to_pr`
 };
 
 export default API_END_POINTS;

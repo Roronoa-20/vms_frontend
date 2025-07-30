@@ -68,6 +68,8 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData,companyDropdown }: Prop
   const {designation} = useAuth();
   const [isEmailDialog,setIsEmailDialog] = useState<boolean>(false);
   const debouncedSearchName = useDebounce(search, 300);
+  const [POFile,setPOFile] = useState<File | null>(null)
+  const [email,setEmail] = useState<any>();
 const router = useRouter();
   
   useEffect(()=>{
@@ -150,11 +152,31 @@ const router = useRouter();
     setIsEmailDialog(false);
     setDate("");
     setComments("");
+    setEmail(null);
   }
 
   const handleSubmit = async ()=>{
-    // const sendPoEmailUrl = API_END_POINTS
-    // const response:AxiosResponse = await requestWrapper({url:sendPoEmailUrl,})
+    if(!POFile){
+      alert("please add PO");
+      return;
+    }
+
+    if(!email?.cc){
+      alert("please cc emails");
+      return;
+    }
+    const sendPoEmailUrl = API_END_POINTS?.sendPOEmailVendor;
+    const formdata = new FormData();
+    if(POFile){
+      formdata.append("attach",POFile)
+    }
+    formdata.append("to",JSON.stringify(email?.to))
+    formdata.append("cc",JSON.stringify(email?.cc))
+    const response:AxiosResponse = await requestWrapper({url:sendPoEmailUrl,data:formdata,method:"POST"});
+    if(response?.status == 200){
+      alert("email sent successfully");
+      handleClose();
+    }
   }
   
   return (
@@ -252,7 +274,7 @@ const router = useRouter();
                     view
                   </Button>
                 </TableCell>
-                <TableCell><Button onClick={()=>{setIsEmailDialog(true)}} className="bg-blue-400 hover:bg-blue-300">Send</Button></TableCell>
+                <TableCell><Button onClick={()=>{setIsEmailDialog(true); setEmail((prev:any)=>({...prev,to:item?.email}))}} className="bg-blue-400 hover:bg-blue-300">Send</Button></TableCell>
               </TableRow>
             ))
           ) : (
@@ -273,19 +295,20 @@ const router = useRouter();
     }
     {
       isEmailDialog && 
-      <PopUp handleClose={handleClose} headerText="Send Email" isSubmit={true} Submitbutton={handleSubmit}>
+      <PopUp handleClose={handleClose} classname="md:max-h-[400px]" headerText="Send Email" isSubmit={true} Submitbutton={handleSubmit}>
         <div className="mb-3">
                   <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                     To
                   </h1>
-                  <Input/>
+                  <Input disabled value={email?.to ?? ""}/>
                 </div>
                 <div>
                   <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                     CC
                   </h1>
-                  <Input/>
+                  <Input onChange={(e)=>{setEmail((prev:any)=>({...prev,cc:e.target.value}))}}/>
                 </div>
+                <Input onChange={(e)=>{setPOFile(e.target.files && e.target.files[0])}} className="mt-4" type="file"/>
       </PopUp>
     }
     </>

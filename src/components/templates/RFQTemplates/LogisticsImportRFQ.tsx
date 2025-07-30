@@ -9,7 +9,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { AccountAssignmentCategory, Company, CostCenter, Country, DestinationPort, GLAccountNumber, IncoTerms, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ModeOfShipment, PackageType, PortCode, PortOfLoading, ProductCategory, ProfitCenter, PurchaseGroup, RFQType, StoreLocation, UOMMaster, ValuationArea } from '@/src/types/PurchaseRequestType';
+import { AccountAssignmentCategory, Company, CostCenter, Country, DestinationPort, GLAccountNumber, IncoTerms, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ModeOfShipment, PackageType, PortCode, PortOfLoading, ProductCategory, ProfitCenter, PurchaseGroup, RFQType, ShipmentType, StoreLocation, UOMMaster, ValuationArea } from '@/src/types/PurchaseRequestType';
 import VendorTable from '../../molecules/rfq/VendorTable';
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
@@ -18,7 +18,9 @@ import useDebounce from '@/src/hooks/useDebounce';
 import { VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
 import Pagination from '../../molecules/Pagination';
 import SingleSelectVendorTable from '../../molecules/rfq/SingleSelectVendorTable';
-interface DropdownData {
+import AddNewVendorRFQDialog from '../../molecules/AddNewVendorRFQDialog';
+import NewVendorTable from '../../molecules/rfq/NewVendorTable';
+export interface DropdownData {
     account_assignment_category: AccountAssignmentCategory[];
     item_category_master: ItemCategoryMaster[];
     uom_master: UOMMaster[];
@@ -40,10 +42,24 @@ interface DropdownData {
     incoterm_master: IncoTerms[];
     package_type: PackageType[];
     rfq_type: RFQType[];
+    shipment_type:ShipmentType[]
 }
 type Props = {
     Dropdown: DropdownData;
 }
+
+export interface newVendorTable {
+    refno:string,
+    vendor_name:string,
+    vendor_code:string,
+    service_provider_type:string,
+    office_email_primary:string,
+    mobile_number:string,
+    country:string
+    pan_number:string
+    gst_number:string
+}
+
 const LogisticsImportRFQ = ({ Dropdown }: Props) => {
     const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Logistic Vendor" });
     const [vendorSearchName, setVendorSearchName] = useState('')
@@ -56,6 +72,8 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
         }
     );
     const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
+    const [isDialog,setIsDialog] = useState<boolean>(false);
+    const [newVendorTable,setNewVendorTable] = useState<newVendorTable[]>([])
     useEffect(() => {
         const fetchVendorTableData = async (rfq_type: string) => {
             setSelectedRows({ vendors: [] })
@@ -160,17 +178,29 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
             setSelectedRows({ vendors: [] })
         }
         const url = `${API_END_POINTS?.CreateImportRFQ}`;
-        const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...formData, vendors: selectedRows.vendors } }, method: "POST" });
+        const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...formData,logistic_type:"import",non_onboarded_vendors:newVendorTable, vendors: selectedRows.vendors } }, method: "POST" });
         if (response?.status == 200) {
             alert("Submit Successfull");
         } else {
             alert("error");
         }
     }
-    console.log(Dropdown, "Bidding Person")
+
+    const handleOpen = ()=>{
+        setIsDialog(true);
+    }
+
+    const handleClose = ()=>{
+        setIsDialog(false);
+    }
+
+
     return (
         <div className='bg-white h-full w-full pb-6'>
+            <div className='flex justify-between items-center pr-2'>
             <h1 className='font-bold text-[24px] p-5'>RFQ Data for Importing</h1>
+            <Button onClick={()=>{handleOpen()}}>Add New Vendor</Button>
+            </div>
             <div className="grid grid-cols-3 gap-6 p-5">
                 {/* {renderInput('rfq_type', 'RFQ Type')} */}
                 {renderSelect(
@@ -216,6 +246,13 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
                     Dropdown?.mode_of_shipment,
                     (item) => item.name,
                     (item) => `${item.name}`
+                )}
+                {renderSelect(
+                    'shipment_type',
+                    'Shipment Type',
+                    Dropdown?.shipment_type,
+                    (item) => item.name,
+                    (item) => `${item.shipment_type_name}`
                 )}
                 {renderSelect(
                     'destination_port',
@@ -286,8 +323,13 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
                 <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
             </div>}
             <div className='flex justify-end pt-10 px-4'>
-                <Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium' onClick={() => { handleSubmit() }}>Submit RFQ</Button>
+                <Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium mb-4' onClick={() => { handleSubmit() }}>Submit RFQ</Button>
             </div>
+                <NewVendorTable newVendorTable={newVendorTable} />
+            {
+                isDialog && 
+                <AddNewVendorRFQDialog Dropdown={Dropdown} setNewVendorTable={setNewVendorTable} handleClose={handleClose}/>
+            }
         </div>
     )
 }

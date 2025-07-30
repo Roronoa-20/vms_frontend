@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AccountAssignmentCategory, Company, CostCenter, Country, Currency, DestinationPort, GLAccountNumber, IncoTerms, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ModeOfShipment, PackageType, PortCode, PortOfLoading, ProductCategory, ProfitCenter, PurchaseGroup, PurchaseOrganisation, RFQType, StoreLocation, UOMMaster, ValuationArea } from '@/src/types/PurchaseRequestType';
+import { AccountAssignmentCategory, Company, CostCenter, Country, Currency, DestinationPort, GLAccountNumber, IncoTerms, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ModeOfShipment, PackageType, PortCode, PortOfLoading, ProductCategory, ProfitCenter, PurchaseGroup, PurchaseOrganisation, RFQType, ShipmentType, StoreLocation, UOMMaster, ValuationArea } from '@/src/types/PurchaseRequestType';
 import VendorTable from '../../molecules/rfq/VendorTable';
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
@@ -19,6 +19,8 @@ import useDebounce from '@/src/hooks/useDebounce';
 import { SAPPRData, VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
 import Pagination from '../../molecules/Pagination';
 import PRMaterialsManager, { SelectedMaterial } from './PRMaterialsManager';
+import NewVendorTable from '../../molecules/rfq/NewVendorTable';
+import AddNewVendorRFQDialog from '../../molecules/AddNewVendorRFQDialog';
 
 
 interface DropdownData {
@@ -45,12 +47,25 @@ interface DropdownData {
   rfq_type: RFQType[];
   purchase_organisation: PurchaseOrganisation[];
   currency_master: Currency[];
+  shipment_type:ShipmentType[]
 }
 type Props = {
   Dropdown: DropdownData;
   pr_codes?: string | null;
   pr_type?: string | null;
 };
+
+export interface newVendorTable {
+    refno:string,
+    vendor_name:string,
+    vendor_code:string,
+    service_provider_type:string,
+    office_email_primary:string,
+    mobile_number:string,
+    country:string
+    pan_number:string
+    gst_number:string
+}
 
 
 const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
@@ -70,6 +85,9 @@ const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
   const [selectedMaterials, setSelectedMaterials] = useState<SelectedMaterial[]>([])
   const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
   const [files, setFiles] = useState<Record<string, File | null>>({});
+
+  const [isDialog,setIsDialog] = useState<boolean>(false);
+    const [newVendorTable,setNewVendorTable] = useState<newVendorTable[]>([])
 
   useEffect(() => {
     const fetchVendorTableData = async (rfq_type: string) => {
@@ -227,9 +245,21 @@ const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
   const setPRItems = async (materials: SelectedMaterial[]) => {
     setSelectedMaterials(materials)
   }
+
+  const handleOpen = ()=>{
+        setIsDialog(true);
+    }
+
+    const handleClose = ()=>{
+        setIsDialog(false);
+    }
+
   return (
     <div className='bg-white h-full w-full pb-6'>
+      <div className='flex justify-between items-center pr-4'>
       <h1 className='font-bold text-[24px] p-5'>RFQ Data for Material</h1>
+      <Button onClick={handleOpen}>Add New Vendor</Button>
+      </div>
 
       <div className="w-full mx-auto space-y-6 p-5">
        
@@ -305,6 +335,11 @@ const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
       <div className='flex justify-end pt-10 px-4'>
         <Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium' onClick={() => { handleSubmit() }}>Submit RFQ</Button>
       </div>
+          <NewVendorTable newVendorTable={newVendorTable} />
+            {
+                isDialog && 
+                <AddNewVendorRFQDialog Dropdown={Dropdown} setNewVendorTable={setNewVendorTable} handleClose={handleClose}/>
+            }
     </div>
   )
 }

@@ -51,6 +51,10 @@ const ViewPO = ({po_name}:Props) => {
     // const [sign,setSign] = useState();
     const router = useRouter();
     const getPODetails = async()=>{
+      if(!PRNumber){
+        alert("Please Select PO Number");
+        return;
+      }
         const url = `${API_END_POINTS?.getPrintFormatData}?po_name=${PRNumber}&po_format_name=${selectedPODropdown}`;
         const response:AxiosResponse = await requestWrapper({url:url,method:"GET"})
         if(response?.status == 200){
