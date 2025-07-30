@@ -140,7 +140,8 @@ const API_END_POINTS = {
   getStateBasedOnPincode:`${url}/api/method/vms.APIs.master_apis.address_custom.address_filter`,
   getAllPOChangesTable:`${url}/api/method/vms.APIs.purchase_api.po_early_deliver_get.filtering_po_earlydel_details`,
   getPONumberDropdown:`${url}/api/method/vms.APIs.purchase_api.po_early_deliver_get.filtering_po_details`,
-  sendPOEmailVendor:`${url}/api/method/vms.APIs.purchase_api.send_po_to_pr.send_po_to_pr`
+  sendPOEmailVendor:`${url}/api/method/vms.APIs.purchase_api.send_po_to_pr.send_po_to_pr`,
+  verifyNewVendor:`${url}/api/method/vms.APIs.req_for_quotation.rfq.check_duplicate_vendor`
 };
 
 export default API_END_POINTS;
