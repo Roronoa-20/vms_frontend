@@ -93,4 +93,6 @@ export type RFQDetails = {
   vendor_details: VendorDetail[];
   non_onboarded_vendors: any[]; // Can also be typed properly if needed
   attachments: any[]; // Can also be typed if needed
+  total_quotation_received:number;
+  total_rfq_sent:number;
 };

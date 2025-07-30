@@ -74,7 +74,7 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno }: Props) => {
             </section>
             <RFQBasicDetails RFQData={RFQData} />
             <ViewFileAttachment RFQData={RFQData} />
-            <ViewRFQCards />
+            <ViewRFQCards RFQData={RFQData}/>
             <ViewRFQVendors RFQData={RFQData} handleVendorSearch={handleVendorSearch} />
             <ViewLogisticsQuatationVendors QuatationData={QuatationVendorList} handleVendorSearch={handleVendorSearch} logistic_type={RFQData.logistic_type?RFQData.logistic_type:"Export"}/>
             {/* <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} /> */}

@@ -94,6 +94,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { QuotationDetail } from "@/src/types/QuatationTypes";
 import { Button } from '@/components/ui/button';
+import { AttachmentsDialog } from "../../common/MultipleFileViewDialog";
 interface Props {
     QuatationData: QuotationDetail[];
     logistic_type: string;
@@ -118,6 +119,7 @@ const ViewLogisticsQuatationVendors = ({
         { label: "RefNo", key: "name" },
         { label: "Vendor Name", key: "vendor_name" },
         { label: "Vendor Code", key: "vendor_code" },
+        { label: "Email", key: "office_email_primary" },
         { label: "Shipment Mode", key: "mode_of_shipment" },
         { label: "Airline / Vessel Name", key: "airlinevessel_name" },
         { label: "Rate Per Kg", key: "ratekg" },
@@ -129,6 +131,7 @@ const ViewLogisticsQuatationVendors = ({
         { label: "Total Freight FCR", key: "total_freight" },
         { label: "Expected Delivery in No of Days", key: "expected_delivery_in_no_of_days" },
         { label: "Remarks", key: "remarks" },
+        { label: "Attachments", key: "attachments" },
         { label: "Action", key: "action" },
     ];
 
@@ -137,6 +140,7 @@ const ViewLogisticsQuatationVendors = ({
         { label: "RefNo", key: "name" },
         { label: "Vendor Name", key: "vendor_name" },
         { label: "Vendor Code", key: "vendor_code" },
+        { label: "Email", key: "office_email_primary" },
         { label: "Shipment Mode", key: "mode_of_shipment" },
         { label: "AirLine Name", key: "airlinevessel_name" },
         { label: "Weight", key: "destination_port" },
@@ -157,16 +161,31 @@ const ViewLogisticsQuatationVendors = ({
         { label: "Landing Price", key: "total_landing_price" },
         { label: "Transit Days", key: "transit_days" },
         { label: "Remarks", key: "remarks" },
-         { label: "Action", key: "action" },
+        { label: "Attachments", key: "attachments" },
+        { label: "Action", key: "action" },
     ];
 
     const columns = logistic_type === "Export" ? exportColumns : importColumns;
-    const getValueByKey = (item: QuotationDetail, key: QuotationColumnKey, index: number) => {
+    const getValueByKey = (
+        item: QuotationDetail,
+        key: QuotationColumnKey,
+        index: number
+    ): React.ReactNode => {
         if (key === "index") return index + 1;
         if (key === "action") return null;
-        return item[key as keyof QuotationDetail] ?? "-";
+
+        if (key === "attachments") {
+            return <AttachmentsDialog attachments={item.attachments ?? []} />;
+        }
+        const value = item[key as keyof QuotationDetail];
+        // Prevent non-primitive types like arrays or objects from being returned directly
+        if (Array.isArray(value) || typeof value === "object") {
+            return "-";
+        }
+        return value ?? "-";
     };
-console.log(logistic_type,"logistic_typelogistic_typelogistic_typelogistic_typelogistic_type")
+
+    console.log(logistic_type, "logistic_typelogistic_typelogistic_typelogistic_typelogistic_type")
     return (
         <div>
             <div className="flex w-full justify-between py-2 ">
@@ -200,7 +219,7 @@ console.log(logistic_type,"logistic_typelogistic_typelogistic_typelogistic_typel
                                         }
 
                                         return (
-                                            <TableCell key={idx}  className={`text-center ${col.key === "name" ? "text-nowrap" : ""}`}>
+                                            <TableCell key={idx} className={`text-center ${col.key === "name" ? "text-nowrap" : ""}`}>
                                                 {getValueByKey(item, col.key, index)}
                                             </TableCell>
                                         );

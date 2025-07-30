@@ -31,4 +31,10 @@ export type QuotationDetail = {
   expected_delivery_in_no_of_days:string;
   remarks:string;
   vendor_name:string;
+  attachments:DocumentAttachment[]
+};
+export type DocumentAttachment = {
+  document_name: string;
+  attach: string;
+  file_url: string;
 };
