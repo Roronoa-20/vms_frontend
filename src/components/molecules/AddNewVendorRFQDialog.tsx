@@ -39,22 +39,9 @@ const AddNewVendorRFQDialog = ({handleClose,setNewVendorTable,Dropdown}:Props) =
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Company Pan Number
-            </h1>
-            <Input onChange={(e)=>{setSingleRow((prev:any)=>({...prev,pan_number:e.target.value}))}} placeholder="Enter Company Pan" />
-            {/* {errors?.registered_office_number && !data?.registered_office_number && <span style={{ color: 'red' }}>{errors?.registered_office_number}</span>} */}
-          </div>
-          <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Mobile Number
             </h1>
             <Input onChange={(e)=>{setSingleRow((prev:any)=>({...prev,mobile_number:e.target.value}))}} placeholder="Enter Mobile Number" />
-          </div>
-          <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Enter GST Number
-            </h1>
-            <Input onChange={(e)=>{setSingleRow((prev:any)=>({...prev,gst_number:e.target.value}))}} placeholder="Enter GST Number" />
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -74,6 +61,19 @@ const AddNewVendorRFQDialog = ({handleClose,setNewVendorTable,Dropdown}:Props) =
                 </SelectGroup>
               </SelectContent>
             </Select>
+          </div>
+          <div className={`${singleRow?.country.includes("India")?"":"hidden"}`}>
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+              Company Pan Number
+            </h1>
+            <Input onChange={(e)=>{setSingleRow((prev:any)=>({...prev,pan_number:e.target.value}))}} placeholder="Enter Company Pan" />
+            {/* {errors?.registered_office_number && !data?.registered_office_number && <span style={{ color: 'red' }}>{errors?.registered_office_number}</span>} */}
+          </div>
+          <div className={`${singleRow?.country.includes("India")?"":"hidden"}`}>
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+              Enter GST Number
+            </h1>
+            <Input onChange={(e)=>{setSingleRow((prev:any)=>({...prev,gst_number:e.target.value}))}} placeholder="Enter GST Number" />
           </div>
         </div>
     </PopUp>
