@@ -190,31 +190,17 @@ export default function PRMaterialsManager({
 
 
   const selectedMaterials = useMemo(() => {
-    console.log(materials,"materials in use memeo")
-    return materials
-      .map((material) => {
-        if (!Array.isArray(material.subhead_fields)) return null;
-
-        // Filter subheads that are selected
-        const selectedSubheadFields = material.subhead_fields.filter((sub) =>
-          selectedSubheads.includes(sub.subhead_unique_field)
-        );
-        console.log(selectedSubheadFields, "selectedSubheadFields     selected subhead")
-        if (selectedSubheadFields.length === 0) return null;
-
-        // Add isUpdated flag for each selected subhead
-        const updatedSubheads = selectedSubheadFields.map((sub) => ({
+    // Return a flat array of SelectedMaterial objects
+    return materials.flatMap((material) =>
+      (material.subhead_fields || [])
+        .filter((sub) => selectedSubheads.includes(sub.subhead_unique_field))
+        .map((sub) => ({
           ...sub,
           isUpdated:
             sub.quantity_subhead !== sub.original_quantity ||
             sub.delivery_date_subhead !== sub.original_delivery_date,
-        }));
-        return {
-          ...material,
-          subhead_fields: updatedSubheads,
-        };
-      })
-      .filter(Boolean); // remove nulls
+        }))
+    );
   }, [materials, selectedSubheads]);
 
 
