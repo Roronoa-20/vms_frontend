@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { VendorOnboardingResponse } from "@/src/types/types";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { Trash2 } from "lucide-react";
 
 interface Props {
   ref_no: string,
@@ -122,8 +123,8 @@ const TestingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
                   <TableCell>
                     {item?.remarks}
                   </TableCell>
-                  <TableCell>
-                    <Button onClick={() => { handleRowDelete(index) }}>Delete</Button>
+                  <TableCell className="flex justify-center">
+                    <Trash2 onClick={() => { handleRowDelete(index) }} className="text-red-400 cursor-pointer"/>
                   </TableCell>
                 </TableRow>
               ))}

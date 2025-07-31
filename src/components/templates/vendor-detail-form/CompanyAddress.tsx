@@ -25,7 +25,7 @@ import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
 import FilePreview from "../../molecules/FilePreview";
 import Link from "next/link";
-import { CropIcon, Cross, CrossIcon, X } from "lucide-react";
+import { CropIcon, Cross, CrossIcon, Trash2, X } from "lucide-react";
 
 interface Props {
   companyAddressDropdown?: TCompanyAddressDropdown["message"]["data"];
@@ -293,6 +293,14 @@ const CompanyAddress = ({
   const handleBack = () => {
     router.push(`/vendor-details-form?tabtype=Company%20Details&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   };
+
+  const handleRowDelete = (index: number) => {
+    // Remove the contact at the given index from the contactDetail store
+    const updatedContacts = multiple_location_table.filter((_, itemIndex) => itemIndex !== index);
+    // addMultipleLocation({});
+    resetMultiple();
+    updatedContacts.forEach((item:any) => addMultipleLocation(item));
+  }
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
@@ -615,6 +623,7 @@ const CompanyAddress = ({
                   <TableHead className="text-center">City</TableHead>
                   <TableHead className="text-center">State</TableHead>
                   <TableHead className="text-center">Country</TableHead>
+                  <TableHead className="text-center">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
@@ -630,6 +639,7 @@ const CompanyAddress = ({
                     <TableCell>{item?.ma_city?.city_name}</TableCell>
                     <TableCell>{item?.ma_state?.state_name}</TableCell>
                     <TableCell>{item?.ma_country?.country_name}</TableCell>
+                    <TableCell className="flex justify-center"><Trash2 className="text-red-400 cursor-pointer" onClick={()=>{handleRowDelete(index)}}/></TableCell>
                   </TableRow>
                 ))}
               </TableBody>

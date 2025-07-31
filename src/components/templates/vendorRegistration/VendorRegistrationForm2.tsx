@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { handleSubmit } from "./utility";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
-import { EyeIcon } from "lucide-react";
+import { EyeIcon, Trash2 } from "lucide-react";
 import { TtableData } from "../../pages/VendorRegistration";
 
 interface Props {
@@ -80,6 +80,13 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
     })))
     setTableData((prev:any) => ([...prev, { ...singleTableData, vendor_types: [...multiVendorType] }]))
     setSingleTableData(null);
+  }
+
+    const handleRowDelete = (index: number) => {
+    // Remove the contact at the given index from the contactDetail store
+    const updatedContacts = tableData.filter((_, itemIndex) => itemIndex !== index);
+    setTableData([]);
+    updatedContacts.forEach((item:any) => setTableData(item));
   }
 
   return (
@@ -303,7 +310,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                   <TableHead className="text-center">Order Currency</TableHead>
                   <TableHead className="text-center">Inco Terms</TableHead>
                   <TableHead className="text-center">Reconciliation Account</TableHead>
-                  {/* <TableHead className="text-center">Action</TableHead> */}
+                  <TableHead className="text-center">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
@@ -318,6 +325,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                     <TableCell>{item?.order_currency}</TableCell>
                     <TableCell>{item?.incoterms}</TableCell>
                     <TableCell>{item?.reconciliation_account}</TableCell>
+                    <TableCell><Trash2 className="text-red-400 cursor-pointer" onClick={()=>{handleRowDelete(index)}}></Trash2></TableCell>
                     {/* <TableCell><div className='flex gap-4 justify-center items-center'>
                         <EyeIcon className='cursor-pointer'/>
                         </div>
