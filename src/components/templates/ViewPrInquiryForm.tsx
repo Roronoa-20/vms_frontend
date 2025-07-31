@@ -202,7 +202,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
+      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg z-30">
         Purchase Inquiry
       </h1>
       <div className="grid grid-cols-3 gap-6 p-5">
