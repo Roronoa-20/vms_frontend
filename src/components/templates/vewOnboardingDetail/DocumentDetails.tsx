@@ -61,7 +61,8 @@ interface gstRow {
   gst_registration_date:string,
   gst_number:string,
   gst_document:FileAttachment,
-  pincode:string
+  pincode:string,
+  company:string
 }
 
 const DocumentDetails = ({
@@ -614,6 +615,7 @@ const DocumentDetails = ({
                     <TableHeader className="text-center">
                       <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                         <TableHead className="text-center">GST Type</TableHead>
+                        <TableHead className="text-center">Company</TableHead>
                         <TableHead className="text-center">GST State</TableHead>
                         <TableHead className="text-center">GST Pincode</TableHead>
                         <TableHead className="text-center">GST Number</TableHead>
@@ -627,6 +629,7 @@ const DocumentDetails = ({
                        
                         <TableRow key={item?.name?item?.name:""}>
                           <TableCell className="text-center">{item?.gst_ven_type}</TableCell>
+                          <TableCell className="text-center">{item?.company}</TableCell>
                           <TableCell className="text-center">{item?.gst_state}</TableCell>
                           <TableCell className="text-center">{item?.pincode}</TableCell>
                           <TableCell className="text-center">{item?.gst_number}</TableCell>
