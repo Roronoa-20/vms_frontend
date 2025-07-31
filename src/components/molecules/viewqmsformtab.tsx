@@ -33,7 +33,7 @@ const ViewQMSFormDetails = ({ vendor_onboarding, company_code }: Props) => {
   return (
     <div className="fixed top-16 z-30 bg-[#DDE8FE] shadow-md w-[calc(100%-7rem)]">
         <div className="flex overflow-x-auto gap-3 text-md">
-          {QMSFormTabs?.map((item, index) => (
+          {visibleTabs?.map((item, index) => (
             <div
               key={index}
               className={`cursor-pointer p-2 rounded-lg whitespace-nowrap ${item.key === tabType ? "bg-[#0C72F5] text-white" : "text-[#0C72F5]"}`}
