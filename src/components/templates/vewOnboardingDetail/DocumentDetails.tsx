@@ -65,6 +65,21 @@ interface gstRow {
   company:string
 }
 
+
+interface gstDropdown {
+    states:{
+      state_name: string;
+      name: string;
+      pincode: string;
+    }[],
+    company: {
+      name: string;
+      company_code: string;
+      company_name: string;
+      description: string;
+    }[];
+  }
+
 const DocumentDetails = ({
   ref_no,
   onboarding_ref_no,
@@ -98,7 +113,7 @@ const DocumentDetails = ({
   const {designation} = useAuth();
 
 
-  const [gstStateDropdown,setGstStateDropdown] = useState<{state_name:string,name:string}[]>();
+  const [gstStateDropdown,setGstStateDropdown] = useState<gstDropdown>();
   useEffect(()=>{
     if(ref_no && onboarding_ref_no){
       getState();
@@ -446,13 +461,11 @@ const DocumentDetails = ({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {gstStateDropdown?.map(
-                      (item, index) => (
-                        <SelectItem key={index} value={item?.name}>
-                          {item?.state_name}
-                        </SelectItem>
-                      )
-                    )}
+                    {gstStateDropdown?.states?.map((item, index) => (
+                                          <SelectItem key={index} value={item?.name}>
+                                            {item?.state_name}
+                                          </SelectItem>
+                                        ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
