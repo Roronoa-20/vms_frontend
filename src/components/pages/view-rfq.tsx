@@ -15,7 +15,7 @@ export const ViewRFQ = async ({refno}: PageProps) => {
     const cookieStore = await cookies();
     const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");  
     console.log(refno,"refno-----------------") 
-    const RFQDataUrl = `${API_END_POINTS?.getRFQData}?name=${refno}`;
+    const RFQDataUrl = `${API_END_POINTS?.getRFQData}?unique_id=${refno}`;
     const RFQDataResponse: AxiosResponse = await requestWrapper({
         url: RFQDataUrl, method: "GET", headers: {
             cookie: cookieHeaderString

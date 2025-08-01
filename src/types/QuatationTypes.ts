@@ -32,6 +32,7 @@ export type QuotationDetail = {
   remarks:string;
   vendor_name:string;
   attachments:DocumentAttachment[]
+  status:string;
 };
 export type DocumentAttachment = {
   document_name: string;

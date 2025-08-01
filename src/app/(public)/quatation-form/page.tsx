@@ -46,7 +46,7 @@ const Page = async ({ searchParams }: PageProps): Promise<React.ReactElement> =>
         <Suspense>
             {
                 <div className='px-4 py-6'>
-                    <h1 className='text-lg py-2'>RFQ RefNo : <span className='font-bold'>{RFQData?.rfq ? RFQData?.rfq : ""}</span></h1>
+                    <h1 className='text-lg py-2'>RFQ RefNo : <span className='font-bold'>{RFQData?.unique_id ? RFQData?.unique_id : ""}</span></h1>
                     {
                         RFQData.rfq_type == "Logistic Vendor" &&
                         <>

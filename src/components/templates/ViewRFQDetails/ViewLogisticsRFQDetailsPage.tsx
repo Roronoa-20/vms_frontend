@@ -46,7 +46,7 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
     useEffect(() => {
         const fetchVendorTableData = async () => {
             // const url = `${API_END_POINTS?.fetchQuatationVendorList}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&service_provider=${formData?.service_provider}`
-            const url = `${API_END_POINTS?.fetchQuatationVendorList}?rfq_number=${refno}`
+            const url = `${API_END_POINTS?.fetchQuatationVendorList}?rfq_number=${RFQData?.name}`
             const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
             if (response?.status == 200) {
 
@@ -58,7 +58,7 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
         }
         fetchVendorTableData();
 
-    }, [currentVendorPage, debouncedDoctorSearchName, refno]);
+    }, [currentVendorPage, debouncedDoctorSearchName, RFQData?.name]);
     const handleVendorSearch = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         setVendorCurrentPage(1)
         setVendorSearchName(e.target.value);
@@ -106,7 +106,7 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
                     </Badge>
                 )}
                 </h1>
-                <div className='flex gap-4 items-center'>
+                {RFQData?.status != "Approved" && <div className='flex gap-4 items-center'>
                     <Button className='flex gap-1 p-2' onClick={() => setReviseDialog(true)}><Repeat width={20} height={20} />Revise RFQ </Button>
                     {/* <Sheet>
                         <SheetTrigger className='p-2 bg-black text-white text-sm rounded-md flex gap-1'><History width={20} height={20} />RFQ History</SheetTrigger>
@@ -120,16 +120,16 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
                             </SheetHeader>
                         </SheetContent>
                     </Sheet> */}
-                </div>
+                </div>}
             </section>
             <RFQBasicDetails RFQData={RFQData} />
             <ViewFileAttachment RFQData={RFQData} />
             {/* <ViewRFQCards RFQData={RFQData} /> */}
             <ViewRFQVendors RFQData={RFQData} handleVendorSearch={handleVendorSearch} />
-            <ViewLogisticsQuatationVendors QuatationData={QuatationVendorList} handleVendorSearch={handleVendorSearch} logistic_type={RFQData.logistic_type ? RFQData.logistic_type : "Export"} selectedVendorName={selectedVendorName ? selectedVendorName : ""} setSelectedVendorName={setSelectedVendorName} />
+            <ViewLogisticsQuatationVendors QuatationData={QuatationVendorList} handleVendorSearch={handleVendorSearch} logistic_type={RFQData.logistic_type ? RFQData.logistic_type : "Export"} selectedVendorName={selectedVendorName ? selectedVendorName : ""} setSelectedVendorName={setSelectedVendorName} RFQData={RFQData}/>
             {/* <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} /> */}
             {selectedVendorName && <FinalNegotiatedRateFormLogistics logisticType={RFQData.logistic_type ? RFQData.logistic_type : "Export"} formData={formData} setFormData={setFormData} />}
-            <div className='flex justify-end py-4'><Button type='button' className={`flex bg-blue-400 hover:bg-blue-400 px-10 font-medium  ${!selectedVendorName ? "cursor-not-allowed" : "cursor-pointer"}`} disabled={!selectedVendorName} onClick={() => setOpen(true)}>Approve</Button></div>
+            {RFQData?.status != "Approved" &&<div className='flex justify-end py-4'><Button type='button' className={`flex bg-blue-400 hover:bg-blue-400 px-10 font-medium  ${!selectedVendorName ? "cursor-not-allowed" : "cursor-pointer"}`} disabled={!selectedVendorName} onClick={() => setOpen(true)}>Approve</Button></div>}
             <ApproveConfirmationDialog
                 open={open}
                 onClose={() => setOpen(false)}

@@ -95,7 +95,10 @@ import { Input } from '@/components/ui/input';
 import { QuotationDetail } from "@/src/types/QuatationTypes";
 import { Button } from '@/components/ui/button';
 import { AttachmentsDialog } from "../../common/MultipleFileViewDialog";
+import { RFQDetails } from "@/src/types/RFQtype";
+import { Badge } from '@/components/ui/badge';
 interface Props {
+    RFQData: RFQDetails;
     QuatationData: QuotationDetail[];
     logistic_type: string;
     handleVendorSearch: (
@@ -117,7 +120,8 @@ const ViewLogisticsQuatationVendors = ({
     logistic_type,
     handleVendorSearch,
     selectedVendorName,
-    setSelectedVendorName
+    setSelectedVendorName,
+    RFQData
 }: Props) => {
     const exportColumns: ColumnConfig[] = [
         { label: "Select", key: "select" },
@@ -137,8 +141,8 @@ const ViewLogisticsQuatationVendors = ({
         { label: "Total Freight FCR", key: "total_freight" },
         { label: "Expected Delivery in No of Days", key: "expected_delivery_in_no_of_days" },
         { label: "Remarks", key: "remarks" },
+        { label: "Status", key: "status" },
         { label: "Attachments", key: "attachments" },
-        { label: "Action", key: "action" },
     ];
 
     const importColumns: ColumnConfig[] = [
@@ -168,8 +172,8 @@ const ViewLogisticsQuatationVendors = ({
         { label: "Landing Price", key: "total_landing_price" },
         { label: "Transit Days", key: "transit_days" },
         { label: "Remarks", key: "remarks" },
+        { label: "Status", key: "status" },
         { label: "Attachments", key: "attachments" },
-        { label: "Action", key: "action" },
     ];
 
     const columns = logistic_type === "Export" ? exportColumns : importColumns;
@@ -180,19 +184,38 @@ const ViewLogisticsQuatationVendors = ({
     ): React.ReactNode => {
         if (key === "select") return null;
         if (key === "index") return index + 1;
-        if (key === "action") return null;
 
         if (key === "attachments") {
             return <AttachmentsDialog attachments={item.attachments ?? []} />;
         }
+
+        if (key === "status") {
+            const status = item.status?.toLowerCase(); // normalize case
+            let colorClass = "bg-gray-200 text-gray-800";
+
+            if (status === "approved") {
+                colorClass = "bg-green-100 text-green-700";
+            } else if (status === "lost") {
+                colorClass = "bg-red-100 text-red-700";
+            }
+
+            return (
+                <Badge className={colorClass} variant="outline">
+                    {item.status}
+                </Badge>
+            );
+        }
+
         const value = item[key as keyof QuotationDetail];
-        // Prevent non-primitive types like arrays or objects from being returned directly
+
         if (Array.isArray(value) || typeof value === "object") {
             return "-";
         }
+
         return value ?? "-";
     };
-console.log(selectedVendorName,"selectedVendorName")
+
+
     console.log(logistic_type, "logistic_typelogistic_typelogistic_typelogistic_typelogistic_type")
     return (
         <div>
@@ -207,6 +230,7 @@ console.log(selectedVendorName,"selectedVendorName")
                     <TableHeader className="text-center hover:none">
                         <TableRow className="bg-[#DDE8FE]  hover:bg-[#DDE8FE] text-[#2568EF] text-[14px]">
                             {columns.map((col, idx) => (
+
                                 <TableHead key={idx} className="text-center">{col.label}</TableHead>
                             ))}
                         </TableRow>
@@ -223,22 +247,22 @@ console.log(selectedVendorName,"selectedVendorName")
                                                         type="radio"
                                                         name="vendor-selection"
                                                         checked={item.name === selectedVendorName}
-                                                       onChange={() => setSelectedVendorName(item.name)}
+                                                        onChange={() => setSelectedVendorName(item.name)}
                                                         className="h-4 w-4"
+                                                        disabled={RFQData?.status === "Approved"}
                                                     />
                                                 </TableCell>
                                             );
                                         }
-                                        if (col.key === "action") {
-                                            return (
-                                                <TableCell key={idx} className="text-center">
-                                                    <Button className="bg-white text-black hover:bg-white hover:text-black">
-                                                        View
-                                                    </Button>
-                                                </TableCell>
-                                            );
-                                        }
-
+                                        // if (col.key === "action") {
+                                        //     return (
+                                        //         <TableCell key={idx} className="text-center">
+                                        //             <Button className="bg-white text-black hover:bg-white hover:text-black">
+                                        //                 View
+                                        //             </Button>
+                                        //         </TableCell>
+                                        //     );
+                                        // }
                                         return (
                                             <TableCell key={idx} className={`text-center ${col.key === "name" ? "text-nowrap" : ""}`}>
                                                 {getValueByKey(item, col.key, index)}

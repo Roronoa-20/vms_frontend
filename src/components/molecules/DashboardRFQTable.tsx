@@ -90,7 +90,7 @@ console.log(dashboardTableData,"dashboardTableData")
             dashboardTableData?.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium text-center">{index + 1}</TableCell>
-                <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
+                <TableCell className="text-nowrap text-center">{item?.unique_id}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.company_name}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.rfq_type}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.rfq_date}</TableCell>

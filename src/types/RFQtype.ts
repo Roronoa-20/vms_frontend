@@ -41,6 +41,7 @@ export type VendorDetail = {
 };
 
 export type RFQDetails = {
+  unique_id:string;
   rfq:string;
   rfq_type: string;
   company_name_logistic: string;
@@ -101,4 +102,5 @@ export type RFQDetails = {
   total_quotation_received:number;
   total_rfq_sent:number;
   status:string;
+  name:string;
 };
