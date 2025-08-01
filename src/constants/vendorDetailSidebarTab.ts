@@ -64,3 +64,4 @@ export const ViewQMSFormTabs = [
   { label: "Quality Agreement", key: "quality_agreement" },
   { label: "Conclusion", key: "conclusion" }
 ];
+

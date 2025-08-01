@@ -9,6 +9,7 @@ import requestWrapper from "@/src/services/apiCall";
 import { VendorOnboardingResponse } from "@/src/types/types";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { Trash2 } from "lucide-react";
 
 type TReputedPartnerDetails = {
   company_name: string,
@@ -118,7 +119,7 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props)
                   <TableCell>{item?.company_name}</TableCell>
                   <TableCell>{item?.supplied_qtyyear}</TableCell>
                   <TableCell>{item?.remark}</TableCell>
-                  <TableCell><Button onClick={() => { handleRowDelete(index) }} >Delete</Button></TableCell>
+                  <TableCell className="flex justify-center"><Trash2 onClick={() => { handleRowDelete(index) }} className="text-red-400 cursor-pointer"/></TableCell>
                 </TableRow>
               ))}
             </TableBody>

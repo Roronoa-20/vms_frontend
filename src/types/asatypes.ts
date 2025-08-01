@@ -115,3 +115,113 @@ export type TasaformDetail = {
         };
     };
 };
+
+
+export type CompanyInformation = {
+    companyName: string;
+    companyAddress: string;
+    productOrServiceName: string;
+}
+export type YesNoNAValue = {
+    selection: "yes" | "no" | "na" | "";
+    comment: string;
+    file: File | null;
+};
+
+export type GeneralDisclosureData = {
+    question1: YesNoNAValue;
+    question2: YesNoNAValue;
+    question3: YesNoNAValue;
+};
+
+export type EnvironmentalManagementSystem = {
+    question1: YesNoNAValue;
+    question2: YesNoNAValue;
+    question3: YesNoNAValue;
+};
+
+export type EnergyConsumptionAndEmission = {
+    question1: YesNoNAValue;
+    question2: YesNoNAValue;
+    question3: YesNoNAValue;
+    question4: YesNoNAValue;
+    question5: YesNoNAValue;
+    question6: YesNoNAValue;
+    question7: YesNoNAValue;
+    question8: YesNoNAValue;
+    question9: YesNoNAValue;
+};
+
+export type WaterConsumptionAndManagement = {
+    question1: YesNoNAValue;
+    question2: YesNoNAValue;
+    question3: YesNoNAValue;
+    question4: YesNoNAValue;
+    question5: YesNoNAValue;
+    question6: YesNoNAValue;
+    question7: YesNoNAValue;
+};
+
+export type WasteManagement = {
+    question1: YesNoNAValue;
+    question2: YesNoNAValue;
+    question3: YesNoNAValue;
+    question4: YesNoNAValue;
+    question5: YesNoNAValue;
+};
+
+export type GreenProducts = {
+    question1: YesNoNAValue;
+};
+
+export type Biodiversity = {
+    question1: YesNoNAValue;
+};
+
+export type LaborRightsAndWorkingConditions = {
+    question1: YesNoNAValue;
+    question2: YesNoNAValue;
+    question3: YesNoNAValue;
+    question4: YesNoNAValue;
+    question5: YesNoNAValue;
+    question6: YesNoNAValue;
+    question7: YesNoNAValue;
+    question8: YesNoNAValue;
+    question9: YesNoNAValue;
+    question10: YesNoNAValue;
+    question11: YesNoNAValue;
+    question12: YesNoNAValue;
+};
+
+export type GrievanceMechanism = {
+    question1: YesNoNAValue;
+};
+
+export type EmployeeWellBeing = {
+    question1: YesNoNAValue;
+};
+
+export type HealthAndSafety = {
+    question1: YesNoNAValue;
+    question2: YesNoNAValue;
+    question3: YesNoNAValue;
+    question4: YesNoNAValue;
+    question5: YesNoNAValue;
+    question6: YesNoNAValue;
+    question7: YesNoNAValue;
+};
+
+export type EmployeeSatisfaction = {
+    question1: YesNoNAValue;
+};
+
+export type Governance = {
+    question1: YesNoNAValue;
+    question2: YesNoNAValue;
+    question3: YesNoNAValue;
+    question4: YesNoNAValue;
+    question5: YesNoNAValue;
+    question6: YesNoNAValue;
+    question7: YesNoNAValue;
+    question8: YesNoNAValue;
+};

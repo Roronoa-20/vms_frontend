@@ -322,7 +322,8 @@ const emptyFormData: SubheadField = {
   profit_ctr_subhead: "",
   price_of_purchase_requisition_subhead: "",
   material_code_subhead: "",
-  purchase_group_subhead: ""
+  purchase_group_subhead: "",
+  subhead_unique_field:"", material_name_subhead:"", price_subhead:"", original_quantity:"", original_delivery_date:""
 };
 
 const SubItemModal: React.FC<SubItemModalProps> = ({
