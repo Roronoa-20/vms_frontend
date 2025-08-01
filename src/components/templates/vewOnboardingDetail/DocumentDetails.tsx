@@ -108,7 +108,7 @@ const DocumentDetails = ({
   const [isGstFilePreview, setIsGstFilePreview] = useState<boolean>(true);
   const [isPanFilePreview, setIsPanFilePreview] = useState<boolean>(true);
   const [singlerow,setSingleRow] = useState<gstRow | null>();
-  const [GSTTable,setGSTTable] = useState<gstRow[]>(OnboardingDetail?.gst_table);
+  const [GSTTable,setGSTTable] = useState<gstRow[]>(OnboardingDetail?.company_gst_table);
   const [isDisabled,setIsDisabled] = useState<boolean>(true);
   const {designation} = useAuth();
 

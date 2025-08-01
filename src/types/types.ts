@@ -698,7 +698,8 @@ type DocumentDetailsTab = {
   trc_certificate: FileAttachment,
   form_10f_proof: FileAttachment,
   pe_certificate: FileAttachment,
-  gst_table: any[]; // Adjust if GST structure is known
+  gst_table: any[]; // Adjust if GST structure is known,
+  company_gst_table:any[]
 };
 
 type PaymentDetailsTab = {
