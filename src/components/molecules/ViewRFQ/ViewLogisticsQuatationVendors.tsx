@@ -101,8 +101,11 @@ interface Props {
     handleVendorSearch: (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => void;
+    selectedVendorName: string;
+    setSelectedVendorName: (name: string) => void;
 }
-type QuotationColumnKey = keyof QuotationDetail | "index" | "action";
+
+type QuotationColumnKey = keyof QuotationDetail | "index" | "action" | "select";
 
 interface ColumnConfig {
     label: string;
@@ -113,8 +116,11 @@ const ViewLogisticsQuatationVendors = ({
     QuatationData,
     logistic_type,
     handleVendorSearch,
+    selectedVendorName,
+    setSelectedVendorName
 }: Props) => {
     const exportColumns: ColumnConfig[] = [
+        { label: "Select", key: "select" },
         { label: "Sr No.", key: "index" },
         { label: "RefNo", key: "name" },
         { label: "Vendor Name", key: "vendor_name" },
@@ -136,6 +142,7 @@ const ViewLogisticsQuatationVendors = ({
     ];
 
     const importColumns: ColumnConfig[] = [
+        { label: "Select", key: "select" },
         { label: "Sr No.", key: "index" },
         { label: "RefNo", key: "name" },
         { label: "Vendor Name", key: "vendor_name" },
@@ -171,6 +178,7 @@ const ViewLogisticsQuatationVendors = ({
         key: QuotationColumnKey,
         index: number
     ): React.ReactNode => {
+        if (key === "select") return null;
         if (key === "index") return index + 1;
         if (key === "action") return null;
 
@@ -184,7 +192,7 @@ const ViewLogisticsQuatationVendors = ({
         }
         return value ?? "-";
     };
-
+console.log(selectedVendorName,"selectedVendorName")
     console.log(logistic_type, "logistic_typelogistic_typelogistic_typelogistic_typelogistic_type")
     return (
         <div>
@@ -194,7 +202,7 @@ const ViewLogisticsQuatationVendors = ({
                     <Input placeholder="Search..." onChange={handleVendorSearch} />
                 </div>
             </div>
-            <div className="overflow-y-scroll max-h-[55vh]">
+            <div className="overflow-y-scroll max-h-[90vh]">
                 <Table>
                     <TableHeader className="text-center hover:none">
                         <TableRow className="bg-[#DDE8FE]  hover:bg-[#DDE8FE] text-[#2568EF] text-[14px]">
@@ -208,6 +216,19 @@ const ViewLogisticsQuatationVendors = ({
                             QuatationData.map((item, index) => (
                                 <TableRow key={index}>
                                     {columns.map((col, idx) => {
+                                        if (col.key === "select") {
+                                            return (
+                                                <TableCell key={idx} className="text-center">
+                                                    <input
+                                                        type="radio"
+                                                        name="vendor-selection"
+                                                        checked={item.name === selectedVendorName}
+                                                       onChange={() => setSelectedVendorName(item.name)}
+                                                        className="h-4 w-4"
+                                                    />
+                                                </TableCell>
+                                            );
+                                        }
                                         if (col.key === "action") {
                                             return (
                                                 <TableCell key={idx} className="text-center">

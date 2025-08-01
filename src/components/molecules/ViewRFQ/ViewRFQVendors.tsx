@@ -18,23 +18,24 @@ const ViewRFQVendors = ({ RFQData, handleVendorSearch }: Props) => {
     return (
         <div>
             <div className="flex w-full justify-between py-2 ">
-                <h1 className='text-lg py-2 font-semibold'>Bidding Vendors Details</h1>
-                <div className="flex gap-4 w-[25%]">
+                <h1 className='text-lg py-2 font-semibold'>No. of Quotation Received</h1>
+                {/* <div className="flex gap-4 w-[25%]">
                     <Input placeholder="Search..." onChange={(e => { handleVendorSearch(e) })} />
-                </div>
+                </div> */}
             </div>
             <div className="overflow-y-scroll max-h-[55vh]">
                 <Table className="">
                     {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
                     <TableHeader className="text-center">
                         <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                            <TableHead className="">Sr No.</TableHead>
+                            <TableHead className="">#</TableHead>
                             <TableHead className="text-center">Vendor Name</TableHead>
                             <TableHead className="text-center">Vendor Code</TableHead>
                             <TableHead className="text-center">Mobile</TableHead>
                             <TableHead className="text-center">Email</TableHead>
                             <TableHead className="text-center">Service Provider</TableHead>
                             <TableHead className={`text-center`}>Country</TableHead>
+                            <TableHead className={`text-center`}>Quotations Submitted</TableHead>
                             {/* <TableHead className={`text-center`}>Action</TableHead> */}
                         </TableRow>
                     </TableHeader>
@@ -49,6 +50,11 @@ const ViewRFQVendors = ({ RFQData, handleVendorSearch }: Props) => {
                                     <TableCell className="text-nowrap text-center">{item?.office_email_primary}</TableCell>
                                     <TableCell className="text-nowrap text-center">{item?.service_provider_type}</TableCell>
                                     <TableCell className="text-nowrap text-center">{item?.country}</TableCell>
+                                    <TableCell className="text-center">
+                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                            {item?.quotations?.length}
+                                        </span>
+                                    </TableCell>
                                     {/* <TableCell className="text-nowrap text-center"><Link href={`/view-rfq?refno=${item?.name}`}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell> */}
                                 </TableRow>
                             ))

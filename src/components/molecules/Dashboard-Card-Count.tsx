@@ -130,7 +130,7 @@ const DashboardCards = ({ ...Props }: Props) => {
     },
     {
       name: "RFQ Comparision",
-      count: Props.cardData?.rfq_count ?? 0,
+      count: Props.cardData?.total_rfq_count ?? 0,
       icon: "/dashboard-assests/cards_icon/file-search.svg",
       text_color: "text-violet-800",
       bg_color: "bg-violet-100",

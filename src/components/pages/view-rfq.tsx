@@ -22,13 +22,12 @@ export const ViewRFQ = async ({refno}: PageProps) => {
         }
     })
     const RFQData: RFQDetails = RFQDataResponse?.status == 200 ? RFQDataResponse?.data?.message : "";
-    // console.log(PRData, "this is data")
-    // const dropdownApiUrl = API_END_POINTS?.vendorPurchaseRequestDropdown;
-    // const resposne: AxiosResponse = await requestWrapper({ url: dropdownApiUrl, method: "GET", });
-    // const Dropdown = resposne?.status == 200 ? resposne?.data.message : "";
+    const dropdownApiUrl = API_END_POINTS?.vendorPurchaseRequestDropdown;
+    const resposne: AxiosResponse = await requestWrapper({ url: dropdownApiUrl, method: "GET", });
+    const Dropdown = resposne?.status == 200 ? resposne?.data.message : "";
 
     console.log(RFQData,"RFQData")
     return (
-        <ViewLogisticsRFQDetailsPage  RFQData={RFQData} refno={refno} />
+        <ViewLogisticsRFQDetailsPage  RFQData={RFQData} refno={refno} Dropdown={Dropdown}/>
     )
 }

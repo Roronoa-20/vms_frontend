@@ -25,7 +25,10 @@ export interface SAPPRData {
   sap_pr_code: string;
 }
 
-
+interface Quotation {
+  quotation: string;
+  creation: string; // or `Date` if you'll parse it
+}
 export type VendorDetail = {
   refno: string;
   vendor_name: string;
@@ -34,9 +37,11 @@ export type VendorDetail = {
   mobile_number: string;
   service_provider_type: string | null;
   country: string;
+  quotations:Quotation[];
 };
 
 export type RFQDetails = {
+  rfq:string;
   rfq_type: string;
   company_name_logistic: string;
   service_provider: string;
@@ -95,4 +100,5 @@ export type RFQDetails = {
   attachments: any[]; // Can also be typed if needed
   total_quotation_received:number;
   total_rfq_sent:number;
+  status:string;
 };
