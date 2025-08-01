@@ -104,6 +104,11 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
   const handleSubmit = async () => {
     const validationErrors = validate();
 
+    if(!bankProofFile){
+      alert("Please upload bank proof");
+      return;
+    }
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
