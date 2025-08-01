@@ -850,7 +850,7 @@ export type dashboardCardData = {
   purchase_order_count: number;
   pr_count: number;
   cart_count: number,
-  total_rfq_count: number
+  overall_total_rfq: number
 }
 
 export interface DashboardPOTableItem {
@@ -1351,5 +1351,7 @@ export interface RFQTable {
     logistic_type:string,
     status: string,
     unique_id:string,
+    creation:string
   }[]
+  overall_total_rfq:string
 }

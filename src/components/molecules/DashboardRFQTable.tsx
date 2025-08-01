@@ -93,7 +93,7 @@ console.log(dashboardTableData,"dashboardTableData")
                 <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.company_name}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.rfq_type}</TableCell>
-                <TableCell className="text-nowrap text-center">{item?.rfq_date}</TableCell>
+                <TableCell className="text-nowrap text-center">{item?.creation}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.logistic_type}</TableCell>
                 <TableCell className="text-nowrap text-center">{item?.status}</TableCell>
                 <TableCell className="text-nowrap text-center"><Link href={`/view-rfq?refno=${item?.unique_id}`}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
