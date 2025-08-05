@@ -4,7 +4,7 @@ export interface VendorDataRFQ {
   office_email_primary: string;
   mobile_number: string;
   country: string;
-  service_provider_type:string;
+  service_provider_type: string;
   vendor_code: string[];
 }
 
@@ -17,8 +17,8 @@ export interface VendorApiResponse {
   page_length: number;
 }
 
-export interface VendorSelectType{
-    vendors :VendorDataRFQ[]
+export interface VendorSelectType {
+  vendors: VendorDataRFQ[]
 }
 export interface SAPPRData {
   name: string;
@@ -37,12 +37,12 @@ export type VendorDetail = {
   mobile_number: string;
   service_provider_type: string | null;
   country: string;
-  quotations:Quotation[];
+  quotations: Quotation[];
 };
 
 export type RFQDetails = {
-  unique_id:string;
-  rfq:string;
+  unique_id: string;
+  rfq: string;
   rfq_type: string;
   company_name_logistic: string;
   service_provider: string;
@@ -94,13 +94,37 @@ export type RFQDetails = {
   second_reminder: string | null;
   third_reminder: string | null;
   shipment_type: string | null;
-  logistic_type:string | null;
+  logistic_type: string | null;
   pr_items: any[]; // Can be defined more strictly if you know the structure
   vendor_details: VendorDetail[];
   non_onboarded_vendors: any[]; // Can also be typed properly if needed
   attachments: any[]; // Can also be typed if needed
-  total_quotation_received:number;
-  total_rfq_sent:number;
-  status:string;
-  name:string;
+  total_quotation_received: number;
+  total_rfq_sent: number;
+  status: string;
+  name: string;
+  is_approved: boolean;
+  final_quotation_id: string;
+  final_ffn: string;
+  final_rate_kg: string;
+  final_chargeable_weight: string;
+  final_freight_fcr: string;
+  final_fsc: string;
+  final_sc: string;
+  final_xcr: string;
+  final_pickup: string;
+  final_xray: string;
+  final_sum_freight_inr: string;
+  final_gst_amount: string;
+  final_total: string;
+  final_others: string;
+  final_airline: string;
+  final_landing_price: string;
+  final_dc: string;
+  final_transit_days: string;
+  final_freight_total: string;
+  final_remarks: string;
+  final_tat: string;
+  final_mode_of_shipment:string;
+  is_negotiated:string;
 };

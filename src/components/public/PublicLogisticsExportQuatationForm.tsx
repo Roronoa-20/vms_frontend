@@ -7,12 +7,13 @@ import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import { useRouter } from 'next/navigation';
 import LogisticsExportQuatationFormFields from '../templates/QuatationForms/LogisticsExportQuatationFormFields';
+import { RFQDetails } from '@/src/types/RFQtype';
 interface Props {
     Dropdown: PurchaseRequestDropdown["message"];
     token: string;
-
+    RFQData:RFQDetails;
 }
-const PublicLogisticsExportQuatationForm = ({ Dropdown, token }: Props) => {
+const PublicLogisticsExportQuatationForm = ({ Dropdown, token}: Props) => {
     const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Logistic Vendor" });
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const router = useRouter()
@@ -49,7 +50,9 @@ const PublicLogisticsExportQuatationForm = ({ Dropdown, token }: Props) => {
                 setFormData={setFormData}
                 uploadedFiles={uploadedFiles}
                 setUploadedFiles={setUploadedFiles}
-                Dropdown={Dropdown} />
+                Dropdown={Dropdown} 
+                
+                />
             <div className='flex justify-end'><Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium' onClick={() => { handleSubmit() }}>Submit</Button></div>
         </div>
     )
