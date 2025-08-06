@@ -109,6 +109,7 @@ const API_END_POINTS = {
   getRFQData: `${url}/api/method/vms.APIs.req_for_quotation.rfq.get_full_rfq_data`,
   fetchQuatationVendorList: `${url}/api/method/vms.APIs.quotation.quotation.get_quotations_by_rfq`,
   ApproveQuotation: `${url}/api/method/vms.APIs.quotation.quotation.approve_quotation`,
+  quotationTracking:`${url}/api/method/vms.APIs.quotation.create_quotation.get_quotation_details_by_token`,
 
   //Public apis
   ProcessToken: `${url}/api/method/vms.purchase.doctype.request_for_quotation.request_for_quotation.process_token`,
