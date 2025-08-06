@@ -24,9 +24,7 @@ const TrackQuotation = async({token}:Props) => {
   
 
   const exportColumns: ColumnConfig[] = [
-        { label: "Select", key: "select" },
         { label: "Sr No.", key: "index" },
-        { label: "RefNo", key: "name" },
         { label: "Vendor Name", key: "vendor_name" },
         { label: "Vendor Code", key: "vendor_code" },
         { label: "Email", key: "office_email_primary" },
@@ -46,9 +44,7 @@ const TrackQuotation = async({token}:Props) => {
     ];
 
     const importColumns: ColumnConfig[] = [
-        { label: "Select", key: "select" },
         { label: "Sr No.", key: "index" },
-        { label: "RefNo", key: "name" },
         { label: "Vendor Name", key: "vendor_name" },
         { label: "Vendor Code", key: "vendor_code" },
         { label: "Email", key: "office_email_primary" },
@@ -86,14 +82,26 @@ const TrackQuotation = async({token}:Props) => {
         },
     });
 
-    const data = resposne?.status == 200?resposne?.data : "";
+    const data = resposne?.status == 200?resposne?.data?.message?.data : "";
 
     console.log(data,"this is data");
 
   return (
-    <div>
-        
-    </div>
+    <div className='bg-white p-4'>
+      <h1 className='p-2 pl-10 flex gap-5 items-center'>RFQ No : {data?.name} <span className='bg-green-100 text-green-500 rounded-md px-2 py-1'>{data?.rank}</span></h1>
+      <div className='border p-6 border-black rounded-lg mx-8'>
+          <ul className='grid grid-cols-3'>
+            {
+             data?.logistic_type == "Import"? importColumns?.map((item,index)=>(
+                <li key={index} className='border-b p-1'>{item?.label} :<span className='font-semibold px-1'>{data[item?.key]}</span></li>
+              ))
+              :data?.logistic_type == "Export"?exportColumns?.map((item,index)=>(
+                <li key={index} className='border-b p-1'>{item?.label} :<span className='font-semibold px-1'>{data[item?.key]}</span></li>
+              )):""
+            }
+          </ul>
+        </div>
+      </div>
   )
 }
 
