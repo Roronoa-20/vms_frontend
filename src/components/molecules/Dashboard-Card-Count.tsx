@@ -183,7 +183,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       <Tabs defaultValue={cardData?.[0]?.name} className="">
         <div className="">
           <TabsList className="grid grid-cols-4 gap-4 h-full pb-6 bg-white">
-            {cardData.map((item, index) => (
+            {cardData?.map((item, index) => (
               <TabsTrigger
                 key={item.name || index}
                 value={item.name}

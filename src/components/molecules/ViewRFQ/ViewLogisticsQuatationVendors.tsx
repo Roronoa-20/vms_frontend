@@ -130,6 +130,7 @@ const ViewLogisticsQuatationVendors = ({
         { label: "Vendor Name", key: "vendor_name" },
         { label: "Vendor Code", key: "vendor_code" },
         { label: "Email", key: "office_email_primary" },
+        { label: "Status", key: "status" },
         { label: "Shipment Mode", key: "mode_of_shipment" },
         { label: "Airline / Vessel Name", key: "airlinevessel_name" },
         { label: "Rate Per Kg", key: "ratekg" },
@@ -141,7 +142,6 @@ const ViewLogisticsQuatationVendors = ({
         { label: "Total Freight FCR", key: "total_freight" },
         { label: "Expected Delivery in No of Days", key: "expected_delivery_in_no_of_days" },
         { label: "Remarks", key: "remarks" },
-        { label: "Status", key: "status" },
         { label: "Attachments", key: "attachments" },
     ];
 
@@ -152,6 +152,7 @@ const ViewLogisticsQuatationVendors = ({
         { label: "Vendor Name", key: "vendor_name" },
         { label: "Vendor Code", key: "vendor_code" },
         { label: "Email", key: "office_email_primary" },
+        { label: "Status", key: "status" },
         { label: "Shipment Mode", key: "mode_of_shipment" },
         { label: "AirLine Name", key: "airlinevessel_name" },
         { label: "Weight", key: "destination_port" },
@@ -172,7 +173,6 @@ const ViewLogisticsQuatationVendors = ({
         { label: "Landing Price", key: "total_landing_price" },
         { label: "Transit Days", key: "transit_days" },
         { label: "Remarks", key: "remarks" },
-        { label: "Status", key: "status" },
         { label: "Attachments", key: "attachments" },
     ];
 

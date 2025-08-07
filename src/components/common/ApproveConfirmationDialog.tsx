@@ -6,18 +6,20 @@ import { useState } from "react";
 
 interface ApproveDialogProps {
   open: boolean;
+  title?: string;
   onClose: () => void;
   handleSubmit: () => void;
+  buttontext?: string;
 }
 
-export const ApproveConfirmationDialog: React.FC<ApproveDialogProps> = ({ open, onClose, handleSubmit }) => {
+export const ApproveConfirmationDialog: React.FC<ApproveDialogProps> = ({ open, onClose, handleSubmit, title, buttontext }) => {
   const [loading, setLoading] = useState(false);
 
   const onApprove = async () => {
     setLoading(true);
     try {
       await handleSubmit();
-      onClose(); 
+      onClose();
     } finally {
       setLoading(false);
     }
@@ -30,14 +32,14 @@ export const ApproveConfirmationDialog: React.FC<ApproveDialogProps> = ({ open, 
           <DialogTitle>Confirm Approval</DialogTitle>
         </DialogHeader>
         <p className="text-sm text-muted-foreground">
-          Are you sure you want to approve this Quotation?
+          {title ? title : "Are you sure you want to approve this Quotation?"}
         </p>
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={loading}>
             Cancel
           </Button>
           <Button onClick={onApprove} disabled={loading}>
-            {loading ? 'Approving...' : 'Approve'}
+            {loading ? `${buttontext ? buttontext + "..." : "Approving..."}` : `${buttontext ? buttontext : "Approve"}`}
           </Button>
         </DialogFooter>
       </DialogContent>
