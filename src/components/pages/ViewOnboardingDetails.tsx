@@ -21,6 +21,7 @@ import ApprovalButton from '../molecules/ApprovalButton'
 import PurchaseDetails from '../templates/vewOnboardingDetail/PurchaseDetails'
 import InternationalDocumentDetails from '../templates/vewOnboardingDetail/InternationalDocumentDetails'
 import InternationalPaymentDetail from '../templates/vewOnboardingDetail/InternationalPaymentDetail'
+import InternationalCompanyAddress from '../templates/vewOnboardingDetail/InternationalCompanyAddress'
 
 interface Props {
   vendor_onboarding: any;
@@ -96,7 +97,11 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
           multipleCompany={OnboardingDetail?.multi_company_data}
           ismulticompany={OnboardingDetail?.is_multi_company}
           />
-        ) : tabType == "Company Address" ? (
+        )
+        : tabType == "Company Address" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
+          <InternationalCompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
+        )
+        : tabType == "Company Address" ? (
           <CompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
         )
         : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
