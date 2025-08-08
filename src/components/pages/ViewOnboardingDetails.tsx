@@ -73,7 +73,7 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
       console.log(OnboardingDetail,"this is onboarding data")
 
       const reconsiliationUrl = API_END_POINTS?.reconsiliationDropdown;
-      const ReconciliationdropDownApi:AxiosResponse = await requestWrapper({url:reconsiliationUrl,method:"POST",data:{data:{account_group:OnboardingDetail?.purchasing_details?.[0]?.account_group}}});
+      const ReconciliationdropDownApi:AxiosResponse = await requestWrapper({url:reconsiliationUrl,method:"POST",data:{data:{company:OnboardingDetail?.purchasing_details?.[0]?.company_name}}});
       const reconciliationDropdown:TReconsiliationDropdown["message"]["data"] = ReconciliationdropDownApi?.status == 200 ? ReconciliationdropDownApi?.data?.message?.data : ""
       console.log(reconciliationDropdown,"this is reconciliation")
       console.log(OnboardingDetail?.purchasing_details?.[0]?.account_group,"this is onboarding details")

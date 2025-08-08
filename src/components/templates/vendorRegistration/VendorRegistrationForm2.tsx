@@ -51,6 +51,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
     const response = await requestWrapper({url:url,method:"GET",params:{company_name:value}})
     const data:TcompanyNameBasedDropdown = response?.status == 200?response?.data:"";
     setCompanyBasedDropdown(data?.message?.data);
+    fetchReconciliationAccount(value);
   }
 
   const handlePurchaseOrganizationDropdownChange = async(value:string)=>{
@@ -69,7 +70,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
 
   const fetchReconciliationAccount = async (value:string)=>{
     const reconsiliationUrl = API_END_POINTS?.reconsiliationDropdown;
-      const ReconciliationdropDownApi:AxiosResponse = await requestWrapper({url:reconsiliationUrl,method:"POST",data:{data:{account_group:value}}});
+      const ReconciliationdropDownApi:AxiosResponse = await requestWrapper({url:reconsiliationUrl,method:"POST",data:{data:{company:value}}});
       const reconciliationDropdown:TReconsiliationDropdown["message"]["data"] = ReconciliationdropDownApi?.status == 200 ? ReconciliationdropDownApi?.data?.message?.data : ""
       setReconciliationDropdown(reconciliationDropdown);
   }
@@ -167,7 +168,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Account Group
           </h1>
-          <Select required value={singleTableData?.account_group ?? ""} onValueChange={(value)=>{setSingleTableData((prev:any)=>({...prev,account_group:value})); fetchReconciliationAccount(value)}}>
+          <Select required value={singleTableData?.account_group ?? ""} onValueChange={(value)=>{setSingleTableData((prev:any)=>({...prev,account_group:value}));}}>
             <SelectTrigger>
               <SelectValue placeholder="Select Account Group" />
             </SelectTrigger>
@@ -337,7 +338,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
           </div>
       <div className="flex justify-end gap-3">
         <Button className="bg-blue-400 hover:bg-blue-400">Cancel</Button>
-        <Button type="submit" className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Submit</Button>
+        <Button id="submitButton" type="submit" className="bg-blue-400 hover:bg-blue-400" onClick={()=>{handleSubmit()}}>Submit</Button>
       </div>
     </div>
   );

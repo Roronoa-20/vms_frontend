@@ -58,6 +58,15 @@ const [tableData,setTableData] = useState<TtableData[]>([]);
   // const {data,resetForm} = useVendorStore()
   const router = useRouter();
    const handleSubmit = async()=>{
+     if(tableData?.length == 0){
+       alert("Please Add atleast 1 Row");
+       return;
+      }
+      const submitButton = document.getElementById("submitButton") as HTMLButtonElement | null;
+    if (submitButton) {
+      console.log("inside button")
+      submitButton.disabled = true;
+    }
     const url = API_END_POINTS?.vendorRegistrationSubmit;
     let updateFormData;
     if(tableData?.length > 1){
@@ -97,6 +106,10 @@ const [tableData,setTableData] = useState<TtableData[]>([]);
       alert("Submit Successfully");
       router.push("/dashboard");
       return;
+    }else{
+      if(submitButton){
+        submitButton.disabled = false;
+      }
     }
   }
 

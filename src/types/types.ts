@@ -414,7 +414,8 @@ export type TcertificateCodeDropdown = {
 export type TbankNameDropdown = {
   message: {
     data: {
-      name: string
+      name: string,
+      bank_name:string
     }[]
   }
 }

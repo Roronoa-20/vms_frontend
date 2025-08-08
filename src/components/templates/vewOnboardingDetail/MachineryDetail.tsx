@@ -59,7 +59,7 @@ const MachineryDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
       <h1 className="border-b-2 pb-2 pt-2">Details Of Machinary and Other Equipments</h1>
       <Button onClick={()=>{setIsDisabled(prev=>!prev)}} className="mb-2">{isDisabled?"Enable Edit":"Disable Edit"}</Button>
       </div>
-      <div className="grid grid-cols-3 gap-6 p-5">
+      <div className={`grid grid-cols-3 gap-6 p-5 ${isDisabled?"hidden":""}`}>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Equipment Name
