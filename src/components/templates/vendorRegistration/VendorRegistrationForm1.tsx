@@ -39,7 +39,7 @@ type OptionType = {
 
 const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDropdown,formData,handlefieldChange,handleSelectChange,setMultiVendor}:Props) => {
   // const { data, updateField,updateVendorTypes, resetForm } = useVendorStore();
-  const [isQa,setIsQa] = useState<boolean>(false);
+  // const [isQa,setIsQa] = useState<boolean>(false);
   const [newVendorTypeDropdown,setNewVendorTypeDropdown] = useState<MultiValue<OptionType>>([]);
   const [countryMobileCode,setCountryMobileCode] = useState<string>("");
   useEffect(()=>{
@@ -71,11 +71,11 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
     // updateVendorTypes(newArray2)
     handleSelectChange(newArray2,"vendor_types");
     setMultiVendor(newArray)
-    if(newArray?.includes("Material Vendor")){
-      setIsQa(true);
-    }else{
-      setIsQa(false);
-    }
+    // if(newArray?.includes("Material Vendor")){
+    //   setIsQa(true);
+    // }else{
+    //   setIsQa(false);
+    // }
   }
 
   const fetchCountryCode = async(value:string)=>{
@@ -98,7 +98,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
           </h1>
           <MultiSelect onChange={(value)=>{handleVendorTypeChange(value)}} instanceId="multiselect" options={newVendorTypeDropdown} isMulti required={true}/>
         </div>
-        {
+        {/* {
               isQa &&
               <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -116,7 +116,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
             </SelectContent>
           </Select>
         </div>
-            }
+            } */}
         <div>
           <div className="grid grid-cols-4 gap-1">
             <div className="flex flex-col col-span-1">

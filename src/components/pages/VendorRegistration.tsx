@@ -29,6 +29,7 @@ export type TtableData = {
   incoterms:string,
   reconciliation_account:string
   vendor_types:{vendor_type:string}[]
+  qms_required:string
 }
 
 const VendorRegistration = ({...Props}:Props) => {
@@ -86,6 +87,7 @@ const [tableData,setTableData] = useState<TtableData[]>([]);
         order_currency:tableData?.[0]?.order_currency,
         reconciliation_account:tableData?.[0]?.reconciliation_account,
         incoterms:tableData?.[0]?.incoterms,
+        qms_required:tableData?.[0]?.qms_required,
         for_multiple_company:0
        }
     }

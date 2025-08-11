@@ -143,6 +143,25 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
             </SelectContent>
           </Select>
         </div>
+        {
+                      multiVendor?.includes("Material Vendor") && (singleTableData?.company_name?.includes("2000") || singleTableData?.company_name?.includes("7000")) &&
+                      <div>
+                  <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                  QA Required
+                  </h1>
+                  <Select onValueChange={(value)=>{setSingleTableData((prev:any)=>({...prev,qms_required:value}))}} value={singleTableData?.qms_required ?? ""}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select QMS" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                      <SelectItem value={"Yes"}>Yes</SelectItem>
+                      <SelectItem value={"No"}>No</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                    }
         <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Purchase Organization
@@ -304,6 +323,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
                   <TableHead className="w-[100px]">Sr No.</TableHead>
                   <TableHead className="text-center">Company</TableHead>
+                  <TableHead className="text-center">QMS Required?</TableHead>
                   <TableHead className="text-center">Purchase Organization</TableHead>
                   <TableHead className="text-center">Account Group</TableHead>
                   <TableHead className="text-center">Purchase Group</TableHead>
@@ -319,6 +339,7 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
                   <TableRow key={index}>
                     <TableCell className="font-medium">{index +1}</TableCell>
                     <TableCell>{item?.company_name}</TableCell>
+                    <TableCell>{item?.qms_required ?? "NA"}</TableCell>
                     <TableCell>{item?.purchase_organization}</TableCell>
                     <TableCell>{item?.account_group}</TableCell>
                     <TableCell>{item?.purchase_group}</TableCell>
