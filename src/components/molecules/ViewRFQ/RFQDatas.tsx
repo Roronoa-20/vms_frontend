@@ -1,6 +1,6 @@
 import { RFQDetails } from "@/src/types/RFQtype";
-interface iteminterface {
-    key:string | undefined
+export interface iteminterface {
+    key: keyof RFQDetails
     label:string | undefined
 }
 type Props = {
@@ -12,9 +12,9 @@ export default function RFQDatas({item,RFQData}:Props) {
     <>
       <div className="grid-cols-1 px-2 ">
         <ul>
-          <li className="border-b p-1 cursor-pointer text-xs">
+          <li className="border-b p-1 cursor-pointer text-sm">
             {item?.label ? item?.label : "-"}
-            <span className="font-semibold px-1 w-full break-words whitespace-normal">{RFQData[item?.key]}</span>
+            <span className="font-semibold px-1 w-full break-words whitespace-normal">{RFQData[item.key] != null ? String(RFQData[item.key]) : "-"}</span>
           </li>
         </ul>
       </div>

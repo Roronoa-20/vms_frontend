@@ -8,13 +8,15 @@ import requestWrapper from '@/src/services/apiCall'
 import { useRouter } from 'next/navigation';
 import LogisticsExportQuatationFormFields from '../templates/QuatationForms/LogisticsExportQuatationFormFields';
 import { RFQDetails } from '@/src/types/RFQtype';
+import MaterialQuatationFormFields from '../templates/QuatationForms/MaterialQuotationFormFields';
+import PublicQuotePRItemsTable from './PublicQuotePRItemsTable';
 interface Props {
     Dropdown: PurchaseRequestDropdown["message"];
     token: string;
-    RFQData:RFQDetails;
+    RFQData: RFQDetails;
 }
-const PublicLogisticsExportQuatationForm = ({ Dropdown, token}: Props) => {
-    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Logistic Vendor" });
+const PublicServiceQuotationForm = ({ Dropdown, token }: Props) => {
+    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Material Vendor" });
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const router = useRouter()
     const handleSubmit = async () => {
@@ -37,7 +39,7 @@ const PublicLogisticsExportQuatationForm = ({ Dropdown, token}: Props) => {
         if (response?.status == 200) {
             console.log(response, "response")
             alert("Submit Successfull");
-             router.push("/success")
+            router.push("/success")
         } else {
             alert("error");
         }
@@ -45,17 +47,26 @@ const PublicLogisticsExportQuatationForm = ({ Dropdown, token}: Props) => {
     return (
         <div>
             <h1 className='text-lg py-2 font-semibold'>Fill Quatation Details</h1>
-            <LogisticsExportQuatationFormFields
+            {/* <LogisticsExportQuatationFormFields
                 formData={formData}
                 setFormData={setFormData}
                 uploadedFiles={uploadedFiles}
                 setUploadedFiles={setUploadedFiles}
-                Dropdown={Dropdown} 
-                
-                />
+                Dropdown={Dropdown}
+                /> */}
+            <MaterialQuatationFormFields
+                formData={formData}
+                setFormData={setFormData}
+                uploadedFiles={uploadedFiles}
+                setUploadedFiles={setUploadedFiles}
+                Dropdown={Dropdown}
+            />
+            <div className='flex justify-end'><Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium' onClick={() => { handleAddItems() }}>Add Row</Button></div>
+
+            {/* <PublicQuotePRItemsTable  /> */}
             <div className='flex justify-end'><Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium' onClick={() => { handleSubmit() }}>Submit</Button></div>
         </div>
     )
 }
 
-export default PublicLogisticsExportQuatationForm
+export default PublicServiceQuotationForm

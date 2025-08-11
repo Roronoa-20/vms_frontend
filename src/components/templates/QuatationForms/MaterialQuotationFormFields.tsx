@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { PurchaseRequestDropdown } from "@/src/types/PurchaseRequestType";
 import MultipleFileUpload from "../../molecules/MultipleFileUpload";
+import { PurchaseRequisitionRow } from "@/src/types/RFQtype";
 
 interface Props {
   formData: Record<string, string>;
@@ -18,41 +19,17 @@ interface Props {
   uploadedFiles: File[];
   setUploadedFiles: React.Dispatch<React.SetStateAction<File[]>>;
   Dropdown: PurchaseRequestDropdown["message"];
+  itemcodes:PurchaseRequisitionRow[]
 }
 
-const LogisticsExportQuatationFormFields = ({
+const MaterialQuatationFormFields = ({
   formData,
   setFormData,
   uploadedFiles,
   setUploadedFiles,
   Dropdown,
+  itemcodes
 }: Props) => {
-
-  // Parse numeric inputs safely
-  const chargeableWeight = parseFloat(formData["chargeable_weight"]) || 0;
-  const rateKg = parseFloat(formData["ratekg"]) || 0;
-  const fuelSurcharge = parseFloat(formData["fuel_surcharge"]) || 0;
-  const sc = parseFloat(formData["sc"]) || 0;
-  const xray = parseFloat(formData["xray"]) || 0;
-  const otherCharges = parseFloat(formData["other_charges_in_total"]) || 0;
-
-  // Auto-calculate total freight
-  useEffect(() => {
-    const totalFreight = chargeableWeight * (rateKg + fuelSurcharge + sc + xray) + otherCharges;
-
-    setFormData((prev) => ({
-      ...prev,
-      total_freight: totalFreight.toFixed(2),
-    }));
-  }, [
-    chargeableWeight,
-    rateKg,
-    fuelSurcharge,
-    sc,
-    xray,
-    otherCharges,
-    setFormData,
-  ]);
 
   const handleFieldChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -128,29 +105,40 @@ const LogisticsExportQuatationFormFields = ({
     </div>
   );
 
+// "row_id": "u9e7atrp0o",
+// 				"head_unique_field": "H123",
+// 				"purchase_requisition_number": "PR-0001",
+// 				"material_code_head": "MAT-001",
+// 				"delivery_date_head": null,
+// 				"plant_head": null,
+// 				"material_name_head": "Material A",
+// 				"quantity_head": "100",
+// 				"uom_head": "12",
+// 				"price_head": "150",
+// 				"rate_with_tax": 0,
+// 				"rate_without_tax":  0,
+// 				"moq_head":  0,
+// 				"lead_time_head": 0,
+// 				"tax":  0
+
   return (
     <div className="grid grid-cols-3 gap-6 p-5">
       {renderSelect(
-        "mode_of_shipment",
-        "Mode of Shipment",
-        Dropdown?.mode_of_shipment,
-        (item) => item.name,
-        (item) => `${item.name}`
+        "material_code_head",
+        "Select item Code",
+        itemcodes,
+        (item) => item.material_code_head,
+        (item) => `${item.material_code_head}`
       )}
-      {renderInput("airlinevessel_name", "Airline/Vessel Name")}
-      {renderInput("chargeable_weight", "Chargeable Weight")}
-      {renderInput("ratekg", "Rate/Kg")}
-      {renderInput("fuel_surcharge", "Fuel Surcharge")}
-      {renderInput("sc", "SC")}
-      {renderInput("xray", "X-Ray")}
-      {renderInput("other_charges_in_total", "Other Charges in Total")}
-      {renderInput("total_freight", "Total Freight", "text", true)}
-      {renderInput(
-        "expected_delivery_in_no_of_days",
-        "Expected Delivery in No of Days"
-      )}
+      {renderInput("material_name_head","Material Desc. & Specifications")}
+      {renderInput("rate_head","Rate")}
+      {renderInput("quantity_head","MOQ")}
+      {renderInput("uom_head","UOM")}
+      {renderInput("price_head","Price")}
+      {renderInput("delivery_date_head","Delivery Date","date")}
+      {renderInput("lead_time_head","Lead Time")}
       {renderTextarea("remarks", "Remarks")}
-      <div>
+      {/* <div>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           Upload Documents
         </h1>
@@ -160,9 +148,9 @@ const LogisticsExportQuatationFormFields = ({
           onNext={(files) => console.log("Final selected files:", files)}
           buttonText="Attach Files"
         />
-      </div>
+      </div> */}
     </div>
   );
 };
 
-export default LogisticsExportQuatationFormFields;
+export default MaterialQuatationFormFields;

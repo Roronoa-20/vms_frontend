@@ -30,7 +30,6 @@ import requestWrapper from "@/src/services/apiCall";
 import { AuthProvider, useAuth } from "@/src/context/AuthContext";
 import InternationalDocumentDetails from "../templates/vendor-detail-form/InternationalDocumentDetails";
 import InternationalPaymentDetail from "../templates/vendor-detail-form/InternationalPaymentDetail";
-import InternationalCompanyAddress from "../templates/vendor-detail-form/InternationalCompanyAddress";
 
 interface Props {
   vendor_onboarding: string;
@@ -38,7 +37,7 @@ interface Props {
   refno: string;
 }
 
-const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
+const ViewProfile = async ({ vendor_onboarding, tabtype, refno }: Props) => {
   const cookie = await cookies()
   const cookieStore = await cookies();
   const user = cookie.get("user_id")?.value
@@ -85,14 +84,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
     <AuthProvider>
 
     <div className="h-screen flex flex-col bg-gray-200 relative">
-      {/* navbar */}
-      <div className="bg-white py-4 px-10 flex gap-5 items-center mb-6 sticky top-0">
-        <div className="w-6">
-          <VMSLogo />
-        </div>
-        <h1 className="text-[24px] font-semibold">Vendor Onboarding</h1>
-      </div>
-      <div className="flex px-10 justify-between gap-5">
+      <div className="flex px-10 justify-between gap-5 pt-5">
         {/* sidebar */}
         <OnboardingSidebar onboarding_refno={vendorOnboardingRefno} refno={refno} />
         {/* form */}
@@ -105,18 +97,12 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
           multipleCompany={OnboardingDetail?.multi_company_data}
           ismulticompany={OnboardingDetail?.is_multi_company}
           />
-          
-        ) 
-        
-        : tabType == "Company Address" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
-          <InternationalCompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
-        )
-        : tabType == "Company Address" ? (
+        ) : tabType == "Company Address" ? (
           <CompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
        ) 
-       : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
-          <InternationalDocumentDetails  ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
-        )
+      //  : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
+      //     <InternationalDocumentDetails  ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
+      //   )
          : tabType == "Document Detail" ? (
           <DocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
         ) 
@@ -150,4 +136,4 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
   );
 };
 
-export default VendorDetail;
+export default ViewProfile;

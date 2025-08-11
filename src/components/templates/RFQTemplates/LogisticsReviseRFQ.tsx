@@ -59,6 +59,8 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
             fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Logistic Vendor");
         }
     }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider]);
+
+    
     const [selectedRows, setSelectedRows] = useState<VendorSelectType>(
         {
             vendors: []

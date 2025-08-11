@@ -112,7 +112,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
         setIsDialog(false);
     }
 
-
+console.log(Dropdown,"Dropdown")
     return (
         <div className='bg-white h-full w-full pb-6'>
             <div className='flex justify-between items-center pr-2'>

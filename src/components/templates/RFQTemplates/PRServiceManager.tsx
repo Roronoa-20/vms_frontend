@@ -37,7 +37,6 @@ export interface PRItem {
   uom_subhead?: string
   price_subhead?: number
   delivery_date_subhead?: string
-  // Store original values for comparison
   original_quantity_head?: number
   original_delivery_date_head?: string
   subhead_fields: SubheadField[];
@@ -53,7 +52,6 @@ interface PRMaterialsManagerProps {
   title?: string
   className?: string
   disabled?: boolean
-  apiEndpoint?: string
 }
 
 export default function PRMaterialsManager({
@@ -62,67 +60,23 @@ export default function PRMaterialsManager({
   title = "PR Materials Management",
   className = "",
   disabled = false,
-  apiEndpoint = "/api/pr-items",
 }: PRMaterialsManagerProps) {
   const [selectedPRs, setSelectedPRs] = useState<string[]>([])
   const [selectedRows, setSelectedRows] = useState<string[]>([])
   const [editingCell, setEditingCell] = useState<{ id: string; field: string } | null>(null)
   const [materials, setMaterials] = useState<PRItem[]>([])
   const [open, setOpen] = useState(false)
-  // const [editValues, setEditValues] = useState<{ [key: string]: string | number }>({})
   const [loading, setLoading] = useState(false)
   const [selectedSubheads, setSelectedSubheads] = useState<string[]>([])
   const [editingRow, setEditingRow] = useState<string | null>(null)
   const [editValues, setEditValues] = useState<Record<string, any>>({})
   // Fetch materials when selected PRs change
-  // const fetchMaterials = useCallback(async (prCodes: string[]) => {
-  //   if (prCodes.length === 0) {
-  //     setMaterials([])
-  //     return
-  //   }
 
-  //   setLoading(true)
-  //   try {
-  //     console.log(prCodes, "prCodes before API call")
-  //     const url = `${API_END_POINTS?.fetchPRItems}`
-  //     const response: AxiosResponse = await requestWrapper({
-  //       url: url,
-  //       data: { data: { pr_numbers: prCodes } },
-  //       method: "POST",
-  //     })
-
-  //     if (response?.status == 200) {
-  //       console.log(response.data.message.pr_items, "API response pr_items")
-
-  //       // Add original values for comparison and ensure unique IDs
-  //       const materialsWithOriginals = response.data.message.pr_items.map((item: PRItem) => ({
-  //         ...item,
-  //         original_quantity_head: item.quantity_head,
-  //         original_delivery_date_head: item.delivery_date_head,
-  //         // Ensure unique ID exists
-  //         head_unique_field:
-  //           item.head_unique_field || `${item.requisition_no}_${item.material_code_head}_${Date.now()}`,
-  //       }))
-
-  //       setMaterials(materialsWithOriginals)
-  //       console.log(materialsWithOriginals, "processed materials")
-  //     } else {
-  //       alert("Error fetching materials")
-  //       setMaterials([])
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching PR items:", error)
-  //     setMaterials([])
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }, [])
   const fetchMaterials = useCallback(async (prCodes: string[]) => {
     if (prCodes.length === 0) {
       setMaterials([]);
       return;
     }
-
     setLoading(true);
     try {
       console.log(prCodes, "prCodes before API call");
@@ -174,48 +128,50 @@ export default function PRMaterialsManager({
   useEffect(() => {
     fetchMaterials(selectedPRs)
   }, [selectedPRs, fetchMaterials])
-
-  // Get selected materials with update status
-  // const selectedMaterials = useMemo(() => {
-  //   const selected = materials
-  //     .filter((material) => selectedSubheads.includes(material.head_unique_field))
-  //     .map((material) => ({
-  //       ...material,
-  //       isUpdated:
-  //         material.quantity_head !== material.original_quantity_head ||
-  //         material.delivery_date_head !== material.original_delivery_date_head,
-  //     }))
-  //   return selected
-  // }, [materials, selectedSubheads])
-
-
   const selectedMaterials = useMemo(() => {
-    // Return a flat array of SelectedMaterial objects
-    return materials.flatMap((material) =>
-      (material.subhead_fields || [])
-        .filter((sub) => selectedSubheads.includes(sub.subhead_unique_field))
-        .map((sub) => ({
-          ...sub,
-          isUpdated:
-            sub.quantity_subhead !== sub.original_quantity ||
-            sub.delivery_date_subhead !== sub.original_delivery_date,
-        }))
-    );
+    const selected = materials
+      .map((material) => {
+        const filteredSubheads = (material.subhead_fields || []).filter((sub) =>
+          selectedSubheads.includes(sub.subhead_unique_field)
+        );
+
+        if (filteredSubheads.length === 0) return null;
+
+        return {
+          row_id: filteredSubheads[0].row_id || "",
+          head_unique_field: material.head_unique_field,
+          requisition_no: material.requisition_no,
+          material_code_head: material.material_code_head,
+          material_name_head: material.material_name_head,
+          quantity_head: String(material.quantity_head),
+          uom_head: material.uom_head,
+          price_head: String(material.price_head),
+          delivery_date_head: material.delivery_date_head,
+          plant_head: (material as any).plant_head || "",
+
+          // Add required fields
+          isUpdated: false,
+          row_name: "",
+          sub_head_unique_id: "",
+          purchase_requisition_item_subhead: "",
+          // Fill all other missing required fields with defaults if needed
+
+          subhead_fields: filteredSubheads.map((sub) => ({
+            ...sub,
+            isUpdated:
+              sub.quantity_subhead !== sub.original_quantity ||
+              sub.delivery_date_subhead !== sub.original_delivery_date,
+          })),
+        };
+      })
+      .filter((item): item is Exclude<typeof item, null> => item !== null);
+
+    // 👇 Force-cast to SelectedMaterial[]
+    return selected as unknown as SelectedMaterial[];
   }, [materials, selectedSubheads]);
 
 
-//   const selectedSubheadDetails = useMemo(() => {
-//   return materials.flatMap((material) =>
-//     (material.subhead_fields || [])
-//       .filter((sub) => selectedSubheads.includes(sub.subhead_unique_field))
-//       .map((sub) => ({
-//         ...sub,
-//         isUpdated:
-//           sub.quantity_subhead !== sub.original_quantity ||
-//           sub.delivery_date_subhead !== sub.original_delivery_date,
-//       }))
-//   );
-// }, [materials, selectedSubheads]);
+
 
   // Notify parent of selection changes
   useEffect(() => {
@@ -267,11 +223,24 @@ export default function PRMaterialsManager({
   }
 
 
-  const handleSelectSubhead = (id: string, checked: boolean) => {
-    setSelectedSubheads((prev) =>
-      checked ? [...prev, id] : prev.filter((val) => val !== id)
-    )
-  }
+  const isHeadSelected = (head: PRItem) => {
+    const subIds = head.subhead_fields.map((sub) => sub.subhead_unique_field);
+    return subIds.every((id) => selectedSubheads.includes(id));
+  };
+
+  const toggleHeadSelection = (head: PRItem, checked: boolean) => {
+    const subIds = head.subhead_fields.map((sub) => sub.subhead_unique_field);
+    setSelectedSubheads((prev) => {
+      if (checked) {
+        // Add all subhead IDs
+        return [...prev, ...subIds.filter((id) => !prev.includes(id))];
+      } else {
+        // Remove all subhead IDs
+        return prev.filter((id) => !subIds.includes(id));
+      }
+    });
+  };
+
 
   const handleEditValueChange = (id: string, field: string, value: string) => {
     setEditValues((prev) => ({
@@ -420,7 +389,7 @@ export default function PRMaterialsManager({
           )}
 
           {/* Materials Table */}
-          {!loading && materials.length > 0 && (
+          {!loading && materials?.length > 0 && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold">Services List</h3>
@@ -431,30 +400,42 @@ export default function PRMaterialsManager({
 
               <div className="border rounded-lg overflow-hidden">
                 <Accordion type="multiple" className="w-full space-y-4">
-                  {materials.map((head, index) => (
+                  {materials?.map((head, index) => (
+
                     <AccordionItem
                       key={head.head_unique_field}
                       value={head.head_unique_field}
                       className="rounded-lg border border-gray-200 shadow-sm dark:border-gray-700"
                     >
-                      <AccordionTrigger className="p-4 bg-gray-100 dark:bg-gray-800 rounded-t-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                      {/* Trigger moved to a separate arrow button */}
+                      <div className="flex items-center gap-4 w-full p-4 bg-gray-100 dark:bg-gray-800 rounded-t-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+
+                        {/* Checkbox - now safely outside <button> */}
+                        <Checkbox
+                          checked={isHeadSelected(head)}
+                          onCheckedChange={(checked) => toggleHeadSelection(head, checked as boolean)}
+                        />
+
+                        {/* Main info block */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full text-left text-sm md:text-base">
                           <div><strong>Requisition No.</strong>: {head.requisition_no || "N/A"}</div>
-                          <div><strong>Material Name</strong>: {head.material_name_head || "Unnamed"}</div>
-                          <div><strong>Material Code</strong>: {head.material_code_head || "N/A"}</div>
+                          <div><strong>Service Name</strong>: {head.material_name_head || "Unnamed"}</div>
+                          <div><strong>Service Code</strong>: {head.material_code_head || "N/A"}</div>
                           <div><strong>Price</strong>: ₹{head.price_head || "0"}</div>
                           <div><strong>Quantity</strong>: {head.quantity_head}</div>
                           <div><strong>UOM</strong>: {head.uom_head || "N/A"}</div>
                           <div><strong>Delivery Date</strong>: {head.delivery_date_head || "N/A"}</div>
                         </div>
-                      </AccordionTrigger>
+
+                        {/* Accordion toggle arrow only */}
+                        <AccordionTrigger className="ml-auto w-6 h-6" />
+                      </div>
 
                       <AccordionContent className="p-4 bg-white dark:bg-gray-900 rounded-b-lg">
                         <Table>
                           <TableHeader>
                             <TableRow className="bg-muted/50 text-xs md:text-sm">
-                              <TableHead className="w-12">Select</TableHead>
-                              <TableHead>Material Name</TableHead>
+                              <TableHead>Service Name</TableHead>
                               <TableHead>Quantity</TableHead>
                               <TableHead>UOM</TableHead>
                               <TableHead>Price</TableHead>
@@ -469,14 +450,14 @@ export default function PRMaterialsManager({
 
                               return (
                                 <TableRow key={sub.subhead_unique_field} className="text-sm">
-                                  <TableCell>
+                                  {/* <TableCell>
                                     <Checkbox
                                       checked={isSelected}
                                       onCheckedChange={(checked) =>
                                         handleSelectSubhead(sub.subhead_unique_field, checked as boolean)
                                       }
                                     />
-                                  </TableCell>
+                                  </TableCell> */}
                                   <TableCell>{sub.material_name_subhead}</TableCell>
                                   <TableCell>
                                     {isEditing ? (
@@ -554,6 +535,31 @@ export default function PRMaterialsManager({
                         </Table>
                       </AccordionContent>
                     </AccordionItem>
+
+                    // <AccordionItem
+                    //   key={head.head_unique_field}
+                    //   value={head.head_unique_field}
+                    //   className="rounded-lg border border-gray-200 shadow-sm dark:border-gray-700"
+                    // >
+                    //     <AccordionTrigger className="p-4 w-full bg-gray-100 dark:bg-gray-800 rounded-t-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                    //       <div className="flex items-center gap-4 w-full">
+                    //         <Checkbox
+                    //           checked={isHeadSelected(head)}
+                    //           onCheckedChange={(checked) => toggleHeadSelection(head, checked as boolean)}
+                    //         />
+                    //         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full text-left text-sm md:text-base">
+                    //           <div><strong>Requisition No.</strong>: {head.requisition_no || "N/A"}</div>
+                    //           <div><strong>Service Name</strong>: {head.material_name_head || "Unnamed"}</div>
+                    //           <div><strong>Service Code</strong>: {head.material_code_head || "N/A"}</div>
+                    //           <div><strong>Price</strong>: ₹{head.price_head || "0"}</div>
+                    //           <div><strong>Quantity</strong>: {head.quantity_head}</div>
+                    //           <div><strong>UOM</strong>: {head.uom_head || "N/A"}</div>
+                    //           <div><strong>Delivery Date</strong>: {head.delivery_date_head || "N/A"}</div>
+                    //         </div>
+                    //       </div>
+                    //     </AccordionTrigger>
+
+                    // </AccordionItem>
                   ))}
                 </Accordion>
               </div>
@@ -561,13 +567,13 @@ export default function PRMaterialsManager({
           )}
 
           {/* Empty States */}
-          {!loading && selectedPRs.length === 0 && (
+          {!loading && selectedPRs?.length === 0 && (
             <div className="text-center py-12 text-muted-foreground">
               <p className="text-lg">No PR numbers selected</p>
               <p className="text-sm">Select PR numbers from the dropdown above to view materials</p>
             </div>
           )}
-          {!loading && selectedPRs.length > 0 && materials.length === 0 && (
+          {!loading && selectedPRs?.length > 0 && materials.length === 0 && (
             <div className="text-center py-12 text-muted-foreground">
               <p className="text-lg">No materials found</p>
               <p className="text-sm">The selected PR numbers don't have any associated materials</p>

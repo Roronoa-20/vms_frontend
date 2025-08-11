@@ -43,38 +43,6 @@ const LogisticsExportQuatationForm = ({ Dropdown, refno }: Props) => {
     return (
         <div>
             <h1 className='text-lg py-2 font-semibold'>Fill Quatation Details</h1>
-            {/* <div className="grid grid-cols-3 gap-6 p-5">
-                {renderSelect(
-                    'mode_of_shipment',
-                    'Mode of Shipment',
-                    Dropdown?.mode_of_shipment,
-                    (item) => item.name,
-                    (item) => `${item.name}`
-                )}
-                {renderInput('airlinevessel_name', 'Airline/Vessel Name')}
-                {renderInput('ratekg', 'Rate/Kg')}
-                {renderInput('fuel_surcharge', 'Fuel Surcharge')}
-                {renderInput('sc', 'SC')}
-                {renderInput('xray', 'X-Ray')}
-                {renderInput('other_charges_in_total', 'Other Charges in Total')}
-                {renderInput('chargeable_weight', 'Chargeable Weight')}
-                {renderInput('total_freight', 'Total Freight')}
-                {renderInput('expected_delivery_in_no_of_days', 'Expected Delivery in No of Days')}
-                {renderTextarea('remarks', 'Remarks')}
-                <div>
-                    <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                        Uplaod Documents
-                    </h1>
-                    <MultipleFileUpload
-                        files={uploadedFiles}
-                        setFiles={setUploadedFiles}
-                        onNext={(files) => {
-                            console.log("Final selected files:", files)
-                        }}
-                        buttonText="Attach Files"
-                    />
-                </div>
-            </div> */}
             <LogisticsExportQuatationFormFields
                 formData={formData}
                 setFormData={setFormData}

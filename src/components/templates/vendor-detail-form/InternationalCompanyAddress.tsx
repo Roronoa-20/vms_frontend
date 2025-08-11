@@ -352,17 +352,6 @@ const CompanyAddress = ({
           />
           {errors?.pincode && !billingAddress?.pincode && <span style={{ color: 'red' }}>{errors?.pincode}</span>}
         </div>
-        <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-7">
-            District
-          </h1>
-          <Input
-            placeholder=""
-            value={billingAddress?.district?.district_name ?? OnboardingDetail?.billing_address?.district_details?.district_name ?? ""}
-            // defaultValue={}
-            readOnly
-          />
-        </div>
         <div className="grid grid-cols-3 col-span-4 gap-4">
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -457,17 +446,6 @@ const CompanyAddress = ({
             }}
           />
         </div>
-        <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            District
-          </h1>
-          <Input
-            // placeholder={shippingData?.district}
-            value={shippingAddress?.district?.district_name ?? ""}
-            disabled={isShippingSame ? true : false}
-            onChange={() => { }}
-          />
-        </div>
         <div className="grid grid-cols-3 col-span-4 gap-4">
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -559,15 +537,6 @@ const CompanyAddress = ({
                 value={MultipleAddress?.pincode ? MultipleAddress?.pincode : ""}
               />
             </div>
-            <div className="col-span-2">
-              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                District
-              </h1>
-              <Input
-                value={MultipleAddress?.district?.district_name ?? ""}
-                readOnly
-              />
-            </div>
             <div className="grid grid-cols-3 col-span-4 gap-4">
               <div>
                 <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -625,7 +594,6 @@ const CompanyAddress = ({
                   <TableHead>Address1</TableHead>
                   <TableHead>Address2</TableHead>
                   <TableHead className="text-center">Pincode</TableHead>
-                  <TableHead className="text-center">District</TableHead>
                   <TableHead className="text-center">City</TableHead>
                   <TableHead className="text-center">State</TableHead>
                   <TableHead className="text-center">Country</TableHead>
@@ -639,9 +607,6 @@ const CompanyAddress = ({
                     <TableCell>{item?.address_line_1}</TableCell>
                     <TableCell>{item?.address_line_2}</TableCell>
                     <TableCell>{item?.ma_pincode}</TableCell>
-                    <TableCell>
-                      <div>{item?.ma_district?.district_name}</div>
-                    </TableCell>
                     <TableCell>{item?.ma_city?.city_name}</TableCell>
                     <TableCell>{item?.ma_state?.state_name}</TableCell>
                     <TableCell>{item?.ma_country?.country_name}</TableCell>
