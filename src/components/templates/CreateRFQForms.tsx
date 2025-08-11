@@ -45,7 +45,7 @@ const CreateRFQForms = ({ Dropdown }: Props) => {
     setDefaultTab(newTab);
   }, [prTypeParam]);
 
-
+console.log(Dropdown,"Dropdown")
   return (
     <div className="bg-[#F4F4F6]">
       <div className=" mx-auto pt-6">

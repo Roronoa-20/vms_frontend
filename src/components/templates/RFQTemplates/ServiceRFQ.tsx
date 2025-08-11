@@ -255,7 +255,7 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
     const handleClose = ()=>{
         setIsDialog(false);
     }
-
+console.log(Dropdown,"Dropdown")
   return (
     <div className='bg-white h-full w-full pb-6'>
       <div className='flex justify-between items-center pr-4'>
@@ -290,7 +290,7 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
           (item) => `${item.company_name}`
         )}
         {renderSelect(
-          'purchase_organisation',
+          'purchase_organization',
           'Purchasing Organization',
           Dropdown?.purchase_organisation,
           (item) => item.name,
@@ -337,12 +337,12 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
         {renderSelect(
           'plant_code',
           'Plant Code',
-          Dropdown?.plant_code,
-          (item) => item.name,
-          (item) => `${item.plant_name}`
+          Dropdown?.plant,
+          (item) => item.plant_code,
+          (item) => `${item.plant_code}`
         )}
         {renderSelect(
-          'store_location',
+          'storage_location',
           'Storage Location',
           Dropdown?.store_location,
           (item) => item.name,
@@ -354,7 +354,7 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
 
       <h1 className='text-[24px] font-normal pt-5 px-5'>Material/Item Details</h1>
       <div className="grid grid-cols-3 gap-6 p-5">
-        {renderInput('collection_no', 'Collection No.')}
+        {renderInput('collection_number', 'Collection No.')}
         {renderInput('quotation_deadline', 'Quotation Deadline', 'date')}
         {renderInput('bidding_person', 'Bidding Person')}
         {/* {renderFileInput('file', 'Upload Document')} */}
@@ -362,13 +362,12 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
       <h1 className='text-[24px] font-normal pt-5 px-5'>Quantity & Date</h1>
       <div className="grid grid-cols-3 gap-6 p-5">
         {renderInput('rfq_quantity', 'RFQ Quantity')}
-
         {renderSelect(
           'quantity_unit',
           'Quantity Unit',
-          Dropdown?.quantity_unit,
+          Dropdown?.uom_master,
           (item) => item.name,
-          (item) => `${item.quantity_unit_name}`
+          (item) => `${item.uom}`
         )}
         {renderInput('delivery_date', 'Delivery Date', 'date')}
         {renderInput('estimated_price', 'Enter estimated Price', 'number')}
@@ -390,9 +389,9 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
 
       <h1 className='text-[24px] font-normal pt-5 px-5'>Deadline Monitoring</h1>
       <div className="grid grid-cols-3 gap-6 p-5">
-        {renderInput('first_remainder', '1st Reminder', 'date')}
-        {renderInput('second_remainder', '2nd Reminder', 'date')}
-        {renderInput('third_remainder', '3rd Reminder', 'date')}
+        {renderInput('first_reminder', '1st Reminder', 'date')}
+        {renderInput('second_reminder', '2nd Reminder', 'date')}
+        {renderInput('third_reminder', '3rd Reminder', 'date')}
       </div>
 
       <VendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />
