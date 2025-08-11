@@ -37,6 +37,7 @@ type Props = {
 }
 
 const DashboardCards = ({ ...Props }: Props) => {
+ console.log(Props?.cardData,"this is card data")
   const { MultipleVendorCode } = useMultipleVendorCodeStore();
   // const cookieStore = await cookies();
   const { designation } = useAuth();
@@ -130,7 +131,7 @@ const DashboardCards = ({ ...Props }: Props) => {
     },
     {
       name: "RFQ Comparision",
-      count: Props.cardData?.rfq_count ?? 0,
+      count: Props?.rfqData?.overall_total_rfq ?? 0,
       icon: "/dashboard-assests/cards_icon/file-search.svg",
       text_color: "text-violet-800",
       bg_color: "bg-violet-100",
@@ -182,7 +183,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       <Tabs defaultValue={cardData?.[0]?.name} className="">
         <div className="">
           <TabsList className="grid grid-cols-4 gap-4 h-full pb-6 bg-white">
-            {cardData.map((item, index) => (
+            {cardData?.map((item, index) => (
               <TabsTrigger
                 key={item.name || index}
                 value={item.name}

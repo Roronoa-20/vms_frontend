@@ -21,9 +21,11 @@ import Pagination from '../../molecules/Pagination';
 import PRMaterialsManager, { SelectedMaterial } from './PRMaterialsManager';
 import NewVendorTable from '../../molecules/rfq/NewVendorTable';
 import AddNewVendorRFQDialog from '../../molecules/AddNewVendorRFQDialog';
+import { useRouter } from 'next/navigation';
+import MaterialRFQFormFields from './MaterialRFQFormFields';
 
 
-interface DropdownData {
+export interface DropdownDataMaterial {
   account_assignment_category: AccountAssignmentCategory[];
   item_category_master: ItemCategoryMaster[];
   uom_master: UOMMaster[];
@@ -47,24 +49,24 @@ interface DropdownData {
   rfq_type: RFQType[];
   purchase_organisation: PurchaseOrganisation[];
   currency_master: Currency[];
-  shipment_type:ShipmentType[]
+  shipment_type: ShipmentType[]
 }
 type Props = {
-  Dropdown: DropdownData;
+  Dropdown: DropdownDataMaterial;
   pr_codes?: string | null;
   pr_type?: string | null;
 };
 
 export interface newVendorTable {
-    refno:string,
-    vendor_name:string,
-    vendor_code:string,
-    service_provider_type:string,
-    office_email_primary:string,
-    mobile_number:string,
-    country:string
-    pan_number:string
-    gst_number:string
+  refno: string,
+  vendor_name: string,
+  vendor_code: string,
+  service_provider_type: string,
+  office_email_primary: string,
+  mobile_number: string,
+  country: string
+  pan_number: string
+  gst_number: string
 }
 
 
@@ -86,9 +88,9 @@ const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
   const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
   const [files, setFiles] = useState<Record<string, File | null>>({});
 
-  const [isDialog,setIsDialog] = useState<boolean>(false);
-    const [newVendorTable,setNewVendorTable] = useState<newVendorTable[]>([])
-
+  const [isDialog, setIsDialog] = useState<boolean>(false);
+  const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([])
+  const router = useRouter()
   useEffect(() => {
     const fetchVendorTableData = async (rfq_type: string) => {
       console.log(rfq_type, "rfq_type in table code")
@@ -238,6 +240,7 @@ const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
     if (response?.status == 200) {
       console.log(response, "response")
       alert("Submit Successfull");
+      router.push("/dashboard")
     } else {
       alert("error");
     }
@@ -246,23 +249,23 @@ const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
     setSelectedMaterials(materials)
   }
 
-  const handleOpen = ()=>{
-        setIsDialog(true);
-    }
+  const handleOpen = () => {
+    setIsDialog(true);
+  }
 
-    const handleClose = ()=>{
-        setIsDialog(false);
-    }
+  const handleClose = () => {
+    setIsDialog(false);
+  }
 
   return (
     <div className='bg-white h-full w-full pb-6'>
       <div className='flex justify-between items-center pr-4'>
-      <h1 className='font-bold text-[24px] p-5'>RFQ Data for Material</h1>
-      <Button onClick={handleOpen}>Add New Vendor</Button>
+        <h1 className='font-bold text-[24px] p-5'>RFQ Data for Material</h1>
+        <Button onClick={handleOpen}>Add New Vendor</Button>
       </div>
 
       <div className="w-full mx-auto space-y-6 p-5">
-       
+
 
         {/* PR Materials Manager Component */}
         <PRMaterialsManager
@@ -273,7 +276,7 @@ const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
         />
 
       </div>
-      <div className="grid grid-cols-3 gap-6 p-5">
+      {/* <div className="grid grid-cols-3 gap-6 p-5">
         {renderSelect(
           'rfq_type',
           'RFQ Type',
@@ -289,7 +292,7 @@ const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
           Dropdown?.company,
           (item) => item.name,
           (item) => `${item.company_name}`
-          
+
         )}
         {renderSelect(
           'purchase_organisation',
@@ -326,20 +329,30 @@ const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
         {renderInput('first_remainder', '1st Reminder', 'date')}
         {renderInput('second_remainder', '2nd Reminder', 'date')}
         {renderInput('third_remainder', '3rd Reminder', 'date')}
-      </div>
+      </div> */}
+
+      <MaterialRFQFormFields
+        formData={formData}
+        setFormData={setFormData}
+        Dropdown={Dropdown}
+        setFiles={setFiles}
+        files={files}
+      />
 
       <VendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />
       <div className='px-4'>
         <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
       </div>
+      <div className='py-6'>
+        <NewVendorTable newVendorTable={newVendorTable} />
+      </div>
+      {
+        isDialog &&
+        <AddNewVendorRFQDialog Dropdown={Dropdown} setNewVendorTable={setNewVendorTable} handleClose={handleClose} />
+      }
       <div className='flex justify-end pt-10 px-4'>
         <Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium' onClick={() => { handleSubmit() }}>Submit RFQ</Button>
       </div>
-          <NewVendorTable newVendorTable={newVendorTable} />
-            {
-                isDialog && 
-                <AddNewVendorRFQDialog Dropdown={Dropdown} setNewVendorTable={setNewVendorTable} handleClose={handleClose}/>
-            }
     </div>
   )
 }

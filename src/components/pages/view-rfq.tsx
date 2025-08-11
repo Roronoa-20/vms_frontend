@@ -15,20 +15,19 @@ export const ViewRFQ = async ({refno}: PageProps) => {
     const cookieStore = await cookies();
     const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");  
     console.log(refno,"refno-----------------") 
-    const RFQDataUrl = `${API_END_POINTS?.getRFQData}?name=${refno}`;
+    const RFQDataUrl = `${API_END_POINTS?.getRFQData}?unique_id=${refno}`;
     const RFQDataResponse: AxiosResponse = await requestWrapper({
         url: RFQDataUrl, method: "GET", headers: {
             cookie: cookieHeaderString
         }
     })
     const RFQData: RFQDetails = RFQDataResponse?.status == 200 ? RFQDataResponse?.data?.message : "";
-    // console.log(PRData, "this is data")
-    // const dropdownApiUrl = API_END_POINTS?.vendorPurchaseRequestDropdown;
-    // const resposne: AxiosResponse = await requestWrapper({ url: dropdownApiUrl, method: "GET", });
-    // const Dropdown = resposne?.status == 200 ? resposne?.data.message : "";
+    const dropdownApiUrl = API_END_POINTS?.vendorPurchaseRequestDropdown;
+    const resposne: AxiosResponse = await requestWrapper({ url: dropdownApiUrl, method: "GET", });
+    const Dropdown = resposne?.status == 200 ? resposne?.data.message : "";
 
     console.log(RFQData,"RFQData")
     return (
-        <ViewLogisticsRFQDetailsPage  RFQData={RFQData} refno={refno} />
+        <ViewLogisticsRFQDetailsPage  RFQData={RFQData} refno={refno} Dropdown={Dropdown}/>
     )
 }

@@ -123,7 +123,7 @@ const Dashboard = async () => {
   const prData: PurchaseRequisition[] = prApi?.status == 200 ? prApi?.data?.message?.data : "";
 
 
-  const rfqDashboardUrl = API_END_POINTS?.rfqTableData;
+  const rfqDashboardUrl = API_END_POINTS?.rfqTableData; 
   const rfqApi: AxiosResponse = await requestWrapper({ url: rfqDashboardUrl, method: "GET",headers:{cookie:cookieHeaderString} });
   const rfqData: RFQTable = rfqApi?.status == 200 ? rfqApi?.data?.message : "";
   console.log(rfqData, "this is rfqData");

@@ -9,5 +9,8 @@ export const NavbarConstant:Record<string,string> = {
     "/view-grn-details":"Good Receipts Note",
     "/qms-details":"QMS Form",
     "/view-purchase-requisition":"Purchase Requisition",
-    "/view-po-conf":"User Confirmation"
+    "/view-po-conf":"User Confirmation",
+    "/view-po":"View PO",
+    "/view-vendor-po":"View PO",
+    "/total-vendor":"Total Vendors"
 }

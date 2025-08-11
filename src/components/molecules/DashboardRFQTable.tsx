@@ -1,5 +1,5 @@
 "use client"
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -22,110 +22,139 @@ import { DashboardTableType, PurchaseRequisition, RFQTable, TPRInquiryTable } fr
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Cookies from "js-cookie";
+import requestWrapper from "@/src/services/apiCall";
+import { AxiosResponse } from "axios";
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import Pagination from "./Pagination";
 type Props = {
   dashboardTableData?: RFQTable["data"]
-  companyDropdown: {name:string}[]
+  companyDropdown: { name: string }[]
 }
 
-const DashboardRFQTable = ({ dashboardTableData,companyDropdown }: Props) => {
-  const user = Cookies?.get("user_id");
-  return (
+const DashboardRFQTable = ({ dashboardTableData, companyDropdown }: Props) => {
+  const [total_event_list, settotalEventList] = useState(0);
+  const [record_per_page, setRecordPerPage] = useState<number>(5);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [table, setTable] = useState<RFQTable["data"]>(dashboardTableData || []);
+  useEffect(() => {
+    fetchTable();
+  }, [currentPage])
+  const fetchTable = async () => {
+    const dashboardPRTableDataApi: AxiosResponse = await requestWrapper({
+      url: `${API_END_POINTS?.rfqTableData}?page_no=${currentPage}`,
+      method: "GET",
+    });
+    if (dashboardPRTableDataApi?.status == 200) {
+      setTable(dashboardPRTableDataApi?.data?.message?.data);
+      settotalEventList(dashboardPRTableDataApi?.data?.message?.total_count);
+      settotalEventList(dashboardPRTableDataApi?.data?.message?.total_count);
+      // setRecordPerPage(dashboardPRTableDataApi?.data?.message?.rejected_vendor_onboarding?.length);
+      setRecordPerPage(5)
+    }
+  };
 
-    <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
-      <div className="flex w-full justify-between pb-4">
-        <h1 className="text-[20px] text-[#03111F] font-semibold">
+  return (
+    <>
+
+      <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
+        <div className="flex w-full justify-between pb-4">
+          <h1 className="text-[20px] text-[#03111F] font-semibold">
             RFQ Comparision
-        </h1>
-        <div className="flex gap-4">
-          <Input placeholder="Search..." />
-          {/* <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Company" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup className="w-full">
-                {
-                  companyDropdown?.map((item,index)=>(
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select> */}
+          </h1>
+          <div className="flex gap-4">
+            <Input placeholder="Search..." />
+            {/* <Select>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select Company" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup className="w-full">
+            {
+              companyDropdown?.map((item,index)=>(
+                <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+              ))
+            }
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+      <Select>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Status" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectItem value="apple">Apple</SelectItem>
+            <SelectItem value="banana">Banana</SelectItem>
+            <SelectItem value="blueberry">Blueberry</SelectItem>
+            <SelectItem value="grapes">Grapes</SelectItem>
+            <SelectItem value="pineapple">Pineapple</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select> */}
+          </div>
+        </div>
+        <div className="overflow-y-scroll max-h-[55vh]">
+          <Table className="">
+            {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+            <TableHeader className="text-center">
+              <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
+                <TableHead className="">Sr No.</TableHead>
+                <TableHead className="text-center">Ref No.</TableHead>
+                {/* <TableHead className="text-center">Cart</TableHead> */}
+                {/* <TableHead className="text-center">Plant</TableHead> */}
+                <TableHead className="text-center">Company</TableHead>
+                <TableHead className="text-center">RFQ Type</TableHead>
+                <TableHead className="text-center">RFQ Date</TableHead>
+                <TableHead className="text-center">Logistic Type</TableHead>
+                <TableHead className="text-center">Status</TableHead>
+                <TableHead className={`text-center`}>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="text-center">
+              {table ? (
+                table?.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium text-center">{index + 1}</TableCell>
+                    <TableCell className="text-nowrap text-center">{item?.unique_id}</TableCell>
+                    <TableCell className="text-nowrap text-center">{item?.company_name}</TableCell>
+                    <TableCell className="text-nowrap text-center">{item?.rfq_type}</TableCell>
+                    <TableCell className="text-nowrap text-center">{item?.creation}</TableCell>
+                    <TableCell className="text-nowrap text-center">{item?.logistic_type}</TableCell>
+                    <TableCell className="text-nowrap text-center">{item?.status}</TableCell>
+                    <TableCell className="text-nowrap text-center"><Link href={`/view-rfq?refno=${item?.unique_id}`}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
+                    {/* <TableCell>
+              <div
+                className={`px-2 py-3 rounded-xl ${item?.status === "pending"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : item?.status === "approved"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-800"
+                  }`}
+              >
+                {item?.status}
+              </div>
+            </TableCell>
+            <TableCell>{item?.purchase_team}</TableCell>
+            <TableCell>{item?.purchase_head}</TableCell>
+            <TableCell>{item?.accounts_team}</TableCell>
+            <TableCell><Link href={`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
+            <TableCell className="text-right">{item?.qms_form}</TableCell> */}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={9} className="text-center text-gray-500 py-4">
+                    No results found
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+
+          </Table>
         </div>
       </div>
-      <div className="overflow-y-scroll max-h-[55vh]">
-      <Table className="">
-        {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-        <TableHeader className="text-center">
-          <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-            <TableHead className="">Sr No.</TableHead>
-            <TableHead className="text-center">Ref No.</TableHead>
-            {/* <TableHead className="text-center">Cart</TableHead> */}
-            {/* <TableHead className="text-center">Plant</TableHead> */}
-            <TableHead className="text-center">Company</TableHead>
-            <TableHead className="text-center">RFQ Type</TableHead>
-            <TableHead className="text-center">RFQ Date</TableHead>
-            <TableHead className="text-center">Status</TableHead>
-            <TableHead className={`text-center`}>Action</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody className="text-center">
-          {dashboardTableData ? (
-            dashboardTableData?.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-medium text-center">{index + 1}</TableCell>
-                <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
-                <TableCell className="text-nowrap text-center">{item?.company_name}</TableCell>
-                <TableCell className="text-nowrap text-center">{item?.rfq_type}</TableCell>
-                <TableCell className="text-nowrap text-center">{item?.rfq_date}</TableCell>
-                <TableCell className="text-nowrap text-center">{item?.status}</TableCell>
-                <TableCell className="text-nowrap text-center"><Link href={`/view-rfq?refno=${item?.name}`}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
-                {/* <TableCell>
-                  <div
-                    className={`px-2 py-3 rounded-xl ${item?.status === "pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : item?.status === "approved"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                  >
-                    {item?.status}
-                  </div>
-                </TableCell>
-                <TableCell>{item?.purchase_team}</TableCell>
-                <TableCell>{item?.purchase_head}</TableCell>
-                <TableCell>{item?.accounts_team}</TableCell>
-                <TableCell><Link href={`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                <TableCell className="text-right">{item?.qms_form}</TableCell> */}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={9} className="text-center text-gray-500 py-4">
-                No results found
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-
-      </Table>
-      </div>
-    </div>
+      <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
+    </>
   );
 };
 

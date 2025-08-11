@@ -21,8 +21,10 @@ import PRServiceManager, { SelectedMaterial } from './PRServiceManager';
 import MultipleFileUpload from '../../molecules/MultipleFileUpload';
 import NewVendorTable from '../../molecules/rfq/NewVendorTable';
 import AddNewVendorRFQDialog from '../../molecules/AddNewVendorRFQDialog';
+import { useRouter } from 'next/navigation';
+import ServiceRFQFormFields from './ServiceRFQFormFields';
 
-interface DropdownData {
+export interface DropdownDataService {
   account_assignment_category: AccountAssignmentCategory[];
   item_category_master: ItemCategoryMaster[];
   uom_master: UOMMaster[];
@@ -50,24 +52,24 @@ interface DropdownData {
   service_category: serviceCategory[]
   plant_code: plantCode[];
   quantity_unit: quantityUnit[]
-  shipment_type:ShipmentType[]
+  shipment_type: ShipmentType[]
 }
 type Props = {
-  Dropdown: DropdownData;
+  Dropdown: DropdownDataService;
   pr_codes?: string | null;
   pr_type?: string | null;
 };
 
 export interface newVendorTable {
-    refno:string,
-    vendor_name:string,
-    vendor_code:string,
-    service_provider_type:string,
-    office_email_primary:string,
-    mobile_number:string,
-    country:string
-    pan_number:string
-    gst_number:string
+  refno: string,
+  vendor_name: string,
+  vendor_code: string,
+  service_provider_type: string,
+  office_email_primary: string,
+  mobile_number: string,
+  country: string
+  pan_number: string
+  gst_number: string
 }
 
 const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
@@ -86,8 +88,9 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
   const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
   // const [files, setFiles] = useState<Record<string, File | null>>({});
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
-  const [isDialog,setIsDialog] = useState<boolean>(false);
-    const [newVendorTable,setNewVendorTable] = useState<newVendorTable[]>([])
+  const [isDialog, setIsDialog] = useState<boolean>(false);
+  const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([])
+  const router = useRouter()
   useEffect(() => {
     const fetchVendorTableData = async (rfq_type: string) => {
       console.log(rfq_type, "rfq_type in Service table code")
@@ -147,22 +150,6 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
     </div>
   );
 
-  // const renderFileInput = (name: string, label: string) => (
-  //   <div className="col-span-1">
-  //     <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-  //       {label}
-  //     </h1>
-  //     <Input
-  //       name={name}
-  //       type="file"
-  //       className="border-neutral-200"
-  //       onChange={(e) => {
-  //         const file = e.target.files?.[0] || null;
-  //         setFiles((prev) => ({ ...prev, [name]: file }));
-  //       }}
-  //     />
-  //   </div>
-  // );
   const renderSelect = <T,>(
     name: string,
     label: string,
@@ -215,7 +202,7 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
     </div>
   );
   const handleSubmit = async () => {
-    console.log(selectedMaterials,"selectedMaterials")
+    console.log(selectedMaterials, "selectedMaterials")
     const formdata = new FormData();
     const fullData = {
       ...formData,
@@ -224,7 +211,7 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
       // non_onboarded_vendors: nonOnboardedVendors, 
     };
     // Append JSON data as a string under key 'data'
-    console.log(fullData,"fullData")
+    console.log(fullData, "fullData")
     formdata.append('data', JSON.stringify(fullData));
 
     // Append file only if exists
@@ -235,10 +222,11 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
     }
 
     const url = `${API_END_POINTS?.CreateServiceRFQ}`;
-    const response: AxiosResponse = await requestWrapper({ url: url,  data: formdata, method: "POST" });
+    const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" });
     if (response?.status == 200) {
-      console.log(response,"response")
+      console.log(response, "response")
       alert("Submit Successfull");
+      router.push("/dashboard")
     } else {
       alert("error");
     }
@@ -248,19 +236,21 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
     setSelectedMaterials(materials)
   }
 
-  const handleOpen = ()=>{
-        setIsDialog(true);
-    }
+  const handleOpen = () => {
+    setIsDialog(true);
+  }
 
-    const handleClose = ()=>{
-        setIsDialog(false);
-    }
+  const handleClose = () => {
+    setIsDialog(false);
+  }
+
+  console.log(selectedMaterials,"selectedMaterials")
 
   return (
     <div className='bg-white h-full w-full pb-6'>
       <div className='flex justify-between items-center pr-4'>
-      <h1 className='font-bold text-[24px] p-5'>RFQ Data for Service</h1>
-      <Button onClick={handleOpen}>Add New Vendor</Button>
+        <h1 className='font-bold text-[24px] p-5'>RFQ Data for Service</h1>
+        <Button onClick={handleOpen}>Add New Vendor</Button>
       </div>
 
       <div className="w-full mx-auto space-y-6 p-5">
@@ -271,8 +261,7 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
           title="Select Purchase Request Numbers"
         />
       </div>
-      <div className="grid grid-cols-3 gap-6 p-5">
-        {/* {renderInput('rfq_type', 'RFQ Type')} */}
+      {/* <div className="grid grid-cols-3 gap-6 p-5">
         {renderSelect(
           'rfq_type',
           'RFQ Type',
@@ -357,7 +346,6 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
         {renderInput('collection_no', 'Collection No.')}
         {renderInput('quotation_deadline', 'Quotation Deadline', 'date')}
         {renderInput('bidding_person', 'Bidding Person')}
-        {/* {renderFileInput('file', 'Upload Document')} */}
       </div>
       <h1 className='text-[24px] font-normal pt-5 px-5'>Quantity & Date</h1>
       <div className="grid grid-cols-3 gap-6 p-5">
@@ -372,7 +360,6 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
         )}
         {renderInput('delivery_date', 'Delivery Date', 'date')}
         {renderInput('estimated_price', 'Enter estimated Price', 'number')}
-        {/* {renderInput('file', 'Upload Document', 'file')} */}
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Uplaod Documents
@@ -387,26 +374,33 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
           />
         </div>
       </div>
-
       <h1 className='text-[24px] font-normal pt-5 px-5'>Deadline Monitoring</h1>
       <div className="grid grid-cols-3 gap-6 p-5">
         {renderInput('first_remainder', '1st Reminder', 'date')}
         {renderInput('second_remainder', '2nd Reminder', 'date')}
         {renderInput('third_remainder', '3rd Reminder', 'date')}
-      </div>
-
+      </div> */}
+      <ServiceRFQFormFields
+        formData={formData}
+        setFormData={setFormData}
+        Dropdown={Dropdown}
+        setUploadedFiles={setUploadedFiles}
+        uploadedFiles={uploadedFiles}
+      />
       <VendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />
       <div className='px-4'>
         <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
       </div>
+      <div className='py-6'>
+        <NewVendorTable newVendorTable={newVendorTable} />
+      </div>
+      {
+        isDialog &&
+        <AddNewVendorRFQDialog Dropdown={Dropdown} setNewVendorTable={setNewVendorTable} handleClose={handleClose} />
+      }
       <div className='flex justify-end pt-10 px-4'>
         <Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium' onClick={() => { handleSubmit() }}>Submit RFQ</Button>
       </div>
-          <NewVendorTable newVendorTable={newVendorTable} />
-            {
-                isDialog && 
-                <AddNewVendorRFQDialog Dropdown={Dropdown} setNewVendorTable={setNewVendorTable} handleClose={handleClose}/>
-            }
     </div>
   )
 }

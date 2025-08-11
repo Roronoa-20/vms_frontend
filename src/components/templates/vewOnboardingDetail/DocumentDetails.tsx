@@ -61,8 +61,24 @@ interface gstRow {
   gst_registration_date:string,
   gst_number:string,
   gst_document:FileAttachment,
-  pincode:string
+  pincode:string,
+  company:string
 }
+
+
+interface gstDropdown {
+    states:{
+      state_name: string;
+      name: string;
+      pincode: string;
+    }[],
+    company: {
+      name: string;
+      company_code: string;
+      company_name: string;
+      description: string;
+    }[];
+  }
 
 const DocumentDetails = ({
   ref_no,
@@ -92,12 +108,12 @@ const DocumentDetails = ({
   const [isGstFilePreview, setIsGstFilePreview] = useState<boolean>(true);
   const [isPanFilePreview, setIsPanFilePreview] = useState<boolean>(true);
   const [singlerow,setSingleRow] = useState<gstRow | null>();
-  const [GSTTable,setGSTTable] = useState<gstRow[]>(OnboardingDetail?.gst_table);
+  const [GSTTable,setGSTTable] = useState<gstRow[]>(OnboardingDetail?.company_gst_table);
   const [isDisabled,setIsDisabled] = useState<boolean>(true);
   const {designation} = useAuth();
 
 
-  const [gstStateDropdown,setGstStateDropdown] = useState<{state_name:string,name:string}[]>();
+  const [gstStateDropdown,setGstStateDropdown] = useState<gstDropdown>();
   useEffect(()=>{
     if(ref_no && onboarding_ref_no){
       getState();
@@ -445,13 +461,11 @@ const DocumentDetails = ({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {gstStateDropdown?.map(
-                      (item, index) => (
-                        <SelectItem key={index} value={item?.name}>
-                          {item?.state_name}
-                        </SelectItem>
-                      )
-                    )}
+                    {gstStateDropdown?.states?.map((item, index) => (
+                                          <SelectItem key={index} value={item?.name}>
+                                            {item?.state_name}
+                                          </SelectItem>
+                                        ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -614,6 +628,7 @@ const DocumentDetails = ({
                     <TableHeader className="text-center">
                       <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                         <TableHead className="text-center">GST Type</TableHead>
+                        <TableHead className="text-center">Company</TableHead>
                         <TableHead className="text-center">GST State</TableHead>
                         <TableHead className="text-center">GST Pincode</TableHead>
                         <TableHead className="text-center">GST Number</TableHead>
@@ -627,6 +642,7 @@ const DocumentDetails = ({
                        
                         <TableRow key={item?.name?item?.name:""}>
                           <TableCell className="text-center">{item?.gst_ven_type}</TableCell>
+                          <TableCell className="text-center">{item?.company}</TableCell>
                           <TableCell className="text-center">{item?.gst_state}</TableCell>
                           <TableCell className="text-center">{item?.pincode}</TableCell>
                           <TableCell className="text-center">{item?.gst_number}</TableCell>

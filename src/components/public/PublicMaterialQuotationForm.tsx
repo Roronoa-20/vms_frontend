@@ -1,0 +1,153 @@
+"use client"
+import React, { useState } from 'react'
+import { Button } from "@/components/ui/button";
+import { PurchaseRequestDropdown } from '@/src/types/PurchaseRequestType';
+import API_END_POINTS from '@/src/services/apiEndPoints'
+import { AxiosResponse } from 'axios'
+import requestWrapper from '@/src/services/apiCall'
+import { useRouter } from 'next/navigation';
+import { RFQDetails } from '@/src/types/RFQtype';
+import MaterialQuatationFormFields from '../templates/QuatationForms/MaterialQuotationFormFields';
+import PublicQuotePRItemsTable from './PublicQuotePRItemsTable';
+import MultipleFileUpload from '../molecules/MultipleFileUpload';
+interface Props {
+    Dropdown: PurchaseRequestDropdown["message"];
+    token: string;
+    RFQData: RFQDetails;
+}
+const PublicMaterialQuotationForm = ({ Dropdown, token, RFQData }: Props) => {
+    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Material Vendor" });
+    const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
+    const [tableData, setTableData] = useState<Record<string, string>[]>([]);
+    const [paymentterms, setPaymentTerms] = useState<string>("");
+    const [negotiation, setNegotiation] = useState<Record<string, string>>({});
+    const router = useRouter()
+    const handleSubmit = async () => {
+        const formdata = new FormData();
+        const fullData = {
+            "rfq_item_list": tableData,
+            "negotiation": negotiation.payment_terms,
+            "payment_terms": paymentterms,
+            "rfq_type":"Material Vendor"
+        };
+        // Append JSON data as a string under key 'data'
+        console.log(fullData, "fullData")
+        formdata.append('data', JSON.stringify(fullData));
+        formdata.append("token", token)
+        // Append file only if exists
+        if (uploadedFiles) {
+            uploadedFiles?.forEach((file) => {
+                formdata.append("file", file);
+            });
+        }
+        const url = `${API_END_POINTS?.SubmitPublicQuatation}`;
+        const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" });
+        if (response?.status == 200) {
+            console.log(response, "response")
+            alert("Submit Successfull");
+            router.push("/success")
+        } else {
+            alert("error");
+        }
+    }
+    const handleAddItems = () => {
+        setTableData((prev) => [...prev, formData]);
+        setFormData({
+            material_name_head: "",
+            rate_head: "",
+            quantity_head: "",
+            uom_head: "",
+            price_head: "",
+            validity: "",
+            remarks: "",
+        });
+    };
+    const handleFieldChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const { name, value } = e.target;
+        setPaymentTerms(value);
+    };
+
+    const handleRadioChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const { name, value } = e.target;
+        setNegotiation((prev) => ({ ...prev, [name]: value }));
+    };
+    const renderTextarea = (name: string, label: string, rows = 4) => (
+        <div className="col-span-1">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-1">{label}</h1>
+            <textarea
+                name={name}
+                rows={rows}
+                value={paymentterms || ""}
+                onChange={handleFieldChange}
+                className="w-full rounded-md border border-neutral-200 px-3 h-10 py-2 text-sm text-gray-800"
+            />
+        </div>
+    );
+    const renderRadioGroup = (
+        name: string,
+        label: string,
+        options: { value: string; label: string }[],
+        disabled = false
+    ) => (
+        <div className="col-span-1">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">{label}</h1>
+            <div className="flex gap-4">
+                {options.map((option) => (
+                    <label key={option.value} className="flex items-center gap-2 text-sm pb-1">
+                        <input
+                            type="radio"
+                            name={name}
+                            value={option.value}
+                            checked={negotiation[name] === option.value}
+                            onChange={handleRadioChange}
+                            disabled={disabled}
+                        />
+                        {option.label}
+                    </label>
+                ))}
+            </div>
+        </div>
+    );
+
+    console.log(negotiation, "negotiation")
+    return (
+        <div>
+            <h1 className='text-lg py-2 font-semibold'>Fill Quatation Details</h1>
+            <MaterialQuatationFormFields
+                formData={formData}
+                setFormData={setFormData}
+                uploadedFiles={uploadedFiles}
+                setUploadedFiles={setUploadedFiles}
+                Dropdown={Dropdown}
+                itemcodes={RFQData.pr_items}
+            />
+            <div className='flex justify-end'><Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium' onClick={() => { handleAddItems() }}>Add Row</Button></div>
+            <PublicQuotePRItemsTable prItems={tableData} setPrItems={setTableData} />
+            <div className='grid grid-cols-3 gap-6 items-center pt-6'>
+                {renderTextarea("payment_terms", "Payment Terms")}
+                {renderRadioGroup("payment_terms", "Payment Terms", [
+                    { value: "1", label: "Negotiable" },
+                    { value: "0", label: "Non-Negotiable" }
+                ])}
+                <div>
+                    <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                        Upload Documents
+                    </h1>
+                    <MultipleFileUpload
+                        files={uploadedFiles}
+                        setFiles={setUploadedFiles}
+                        onNext={(files) => console.log("Final selected files:", files)}
+                        buttonText="Attach Files"
+                    />
+                </div>
+            </div>
+            <div className='flex justify-end'><Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium' disabled={tableData?.length > 0?false:true} onClick={() => { handleSubmit() }}>Submit</Button></div>
+        </div>
+    )
+}
+
+export default PublicMaterialQuotationForm

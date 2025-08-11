@@ -18,6 +18,7 @@ import { AxiosResponse } from "axios";
 import { VendorOnboardingResponse } from "@/src/types/types";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { Trash2 } from "lucide-react";
 
 type Props = {
   ref_no: string,
@@ -146,7 +147,7 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
                   </TableCell>
                   <TableCell>{item?.contact_number}</TableCell>
                   <TableCell>{item?.department_name}</TableCell>
-                  <TableCell><Button onClick={() => { handleRowDelete(index) }}>Delete</Button></TableCell>
+                  <TableCell className="flex justify-center"><Trash2 className="text-red-400 cursor-pointer" onClick={() => { handleRowDelete(index) }}/></TableCell>
                 </TableRow>
               ))}
             </TableBody>

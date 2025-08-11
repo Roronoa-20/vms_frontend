@@ -11,6 +11,11 @@ export const sidebarMenu = [
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
+    name: "Total Vendors",
+    href:"/total-vendor"
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
     name: "PR",
     href:"/pr-request"
   },
