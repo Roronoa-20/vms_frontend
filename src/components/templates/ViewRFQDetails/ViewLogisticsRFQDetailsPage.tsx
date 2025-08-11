@@ -28,6 +28,8 @@ import { ApproveConfirmationDialog } from '../../common/ApproveConfirmationDialo
 import { Badge } from '@/components/ui/badge';
 import LogisticsReviseRFQ from '../RFQTemplates/LogisticsReviseRFQ';
 import { PurchaseRequestDropdown } from '@/src/types/PurchaseRequestType';
+import ViewMaterialPRItemsTable from '../../molecules/ViewRFQ/ViewMaterialPRItemsTable';
+import ViewServicePRItemsTable from '../../molecules/ViewRFQ/ViewServicePRItemsTable';
 
 
 interface Props {
@@ -138,6 +140,8 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
             location.reload();
         }
     }
+
+    console.log(QuatationVendorList,'QuatationVendorList')
     return (
         <div className='px-4 pb-6 bg-gray-100'>
             <section className='flex justify-between py-4'>
@@ -177,12 +181,18 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
             <ViewFileAttachment RFQData={RFQData} />
             {/* <ViewRFQCards RFQData={RFQData} /> */}
             <ViewRFQVendors RFQData={RFQData} handleVendorSearch={handleVendorSearch} />
+            {RFQData?.rfq_type === "Service Vendor" ? (
+                <ViewServicePRItemsTable RFQData={RFQData} />
+            ) : RFQData?.rfq_type === "Material Vendor" ? (
+                <ViewMaterialPRItemsTable RFQData={RFQData} />
+            ) : null}
+
             <ViewLogisticsQuatationVendors QuatationData={QuatationVendorList} handleVendorSearch={handleVendorSearch} logistic_type={RFQData?.logistic_type ? RFQData?.logistic_type : "Export"} selectedVendorName={selectedVendorName ? selectedVendorName : ""} setSelectedVendorName={setSelectedVendorName} RFQData={RFQData} />
-            {/* <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} /> */}
+            {/* <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={QuatationVendorList?.length ? QuatationVendorList?.length : 0} total_event_list={QuatationVendorList?.total_count ? QuatationVendorList?.total_count : 0} /> */}
             {RFQData?.is_approved &&
                 <>
                     <FinalNegotiatedRateFormLogistics logisticType={RFQData.logistic_type ? RFQData.logistic_type : "Export"} formData={formData} setFormData={setFormData} mode_of_shipment={RFQData?.final_mode_of_shipment} />
-                    {!RFQData?.is_negotiated &&<div className='flex justify-end py-4'><Button type='button' className={`flex bg-blue-400 hover:bg-blue-400 px-10 font-medium`} onClick={() => setFinalNegotation(true)}>Submit</Button></div>}
+                    {!RFQData?.is_negotiated && <div className='flex justify-end py-4'><Button type='button' className={`flex bg-blue-400 hover:bg-blue-400 px-10 font-medium`} onClick={() => setFinalNegotation(true)}>Submit</Button></div>}
                 </>
             }
             {RFQData?.status != "Approved" && <div className='flex justify-end py-4'><Button type='button' className={`flex bg-blue-400 hover:bg-blue-400 px-10 font-medium  ${!selectedVendorName ? "cursor-not-allowed" : "cursor-pointer"}`} disabled={!selectedVendorName} onClick={() => setOpen(true)}>Approve</Button></div>}

@@ -7,6 +7,10 @@ import ViewFileAttachment from '@/src/components/molecules/ViewRFQ/ViewFileAttac
 import PublicLogisticsImportQuatationForm from '@/src/components/public/PublicLogisticsImportQuatationForm';
 import ErrorComponent from '@/src/components/public/ErrorComponent';
 import { cookies } from 'next/headers';
+import PublicMaterialQuotationForm from '@/src/components/public/PublicMaterialQuotationForm';
+import PublicServiceQuotationForm from '@/src/components/public/PublicServiceQuotationForm';
+import ViewServicePRItemsTable from '@/src/components/molecules/ViewRFQ/ViewServicePRItemsTable';
+import ViewMaterialPRItemsTable from '@/src/components/molecules/ViewRFQ/ViewMaterialPRItemsTable';
 
 interface PageProps {
     searchParams: Promise<{ [key: string]: string }>;
@@ -61,7 +65,7 @@ const Page = async ({ searchParams }: PageProps): Promise<React.ReactElement> =>
             </div>
         );
     }
-
+    console.log(RFQData?.rfq_type, "RFQData?.rfq_type")
     return (
         <Suspense>
             <div className="px-4 py-6">
@@ -69,17 +73,28 @@ const Page = async ({ searchParams }: PageProps): Promise<React.ReactElement> =>
                     RFQ RefNo: <span className="font-bold">{RFQData?.unique_id || ""}</span>
                 </h1>
 
+                <RFQBasicDetails RFQData={RFQData} />
+                <ViewFileAttachment RFQData={RFQData} />
                 {RFQData.rfq_type === "Logistic Vendor" && (
                     <>
-                        <RFQBasicDetails RFQData={RFQData} />
-                        <ViewFileAttachment RFQData={RFQData} />
                         {RFQData.logistic_type === "Export" ? (
-                            <PublicLogisticsExportQuatationForm token={token} Dropdown={Dropdown}  RFQData={RFQData}/>
+                            <PublicLogisticsExportQuatationForm token={token} Dropdown={Dropdown} RFQData={RFQData} />
                         ) : (
-                            <PublicLogisticsImportQuatationForm token={token} Dropdown={Dropdown}  RFQData={RFQData}/>
+                            <PublicLogisticsImportQuatationForm token={token} Dropdown={Dropdown} RFQData={RFQData} />
                         )}
                     </>
                 )}
+                {RFQData?.rfq_type === "Service Vendor" ? (
+                    <>
+                        <ViewServicePRItemsTable RFQData={RFQData} />
+                        <PublicServiceQuotationForm token={token} Dropdown={Dropdown} RFQData={RFQData} />
+                    </>
+                ) : RFQData?.rfq_type === "Material Vendor" ? (
+                    <>
+                        <ViewMaterialPRItemsTable RFQData={RFQData} />
+                        <PublicMaterialQuotationForm token={token} Dropdown={Dropdown} RFQData={RFQData} />
+                    </>
+                ) : null}
             </div>
         </Suspense>
     );
