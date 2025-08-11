@@ -139,9 +139,12 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
               <TableHead>Vendor Name</TableHead>
               <TableHead className="text-center">Company Name</TableHead>
               <TableHead className="text-center">Status</TableHead>
-              <TableHead className="text-center">Purchase Team</TableHead>
-              <TableHead className="text-center">Purchase Head</TableHead>
-              <TableHead className="text-center">Account Team</TableHead>
+              <TableHead className="text-center">Rejected By Designation</TableHead>
+              {/* <TableHead className="text-center">Purchase Team</TableHead> */}
+              {/* <TableHead className="text-center">Purchase Head</TableHead> */}
+              {/* <TableHead className="text-center">Account Team</TableHead> */}
+              <TableHead className="text-center">Rejected By</TableHead>
+              <TableHead className="text-center">Rejection Reason</TableHead>
               <TableHead className="text-center">View Details</TableHead>
               {/* <TableHead className="text-center">QMS Form</TableHead> */}
             </TableRow>
@@ -166,9 +169,12 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                       {item?.onboarding_form_status}
                     </div>
                   </TableCell>
-                  <TableCell>{item?.purchase_t_approval}</TableCell>
-                  <TableCell>{item?.purchase_h_approval}</TableCell>
-                  <TableCell>{item?.accounts_t_approval}</TableCell>
+                  <TableCell>{item?.rejected_by_designation}</TableCell>
+                  {/* <TableCell>{item?.purchase_t_approval}</TableCell> */}
+                  {/* <TableCell>{item?.purchase_h_approval}</TableCell> */}
+                  {/* <TableCell>{item?.accounts_t_approval}</TableCell> */}
+                  <TableCell>{item?.rejected_by}</TableCell>
+                  <TableCell>{item?.reason_for_rejection}</TableCell>
                   <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
                   {/* <TableCell className="text-right">{item?.qms_form}</TableCell> */}
                 </TableRow>

@@ -1,40 +1,85 @@
+
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import Form_Input from "@/src/components/common/FormInput";
 import Textarea_Input from "@/src/components/common/TextareaWithLabel";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { CompanyInformation } from "@/src/types/asatypes";
+import { useASAForm } from "@/src/hooks/useASAForm";
 
 export default function Company_Information_Form() {
-    const router = useRouter()
-    const [formData, setFormData] = useState<CompanyInformation>({
-        companyName: "",
-        companyAddress: "",
-        productOrServiceName: "",
-    });
+    const router = useRouter();
+    const params = useSearchParams();
+    const vmsRefNo = params.get("vms_ref_no") || "";
+    const { companyInfo, updateCompanyInfo, refreshFormData } = useASAForm();
+
+    useEffect(() => {
+        const stored = localStorage.getItem("companyInfo");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+    
+          for (const key in parsed) {
+            const entry = parsed[key];
+          }
+          updateCompanyInfo(parsed);
+          refreshFormData();
+        }
+      }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        const updatedInfo = { ...companyInfo, [name]: value };
+        updateCompanyInfo(updatedInfo);
     };
-    const generaldisclosure = () => {
-        router.push("/asaform/generaldisclosure")
-    }
+
+    const handleNext = () => {
+        console.log("Submitting Company Info and navigating to next tab:", companyInfo);
+        updateCompanyInfo(companyInfo);
+        localStorage.setItem("companyInfo", JSON.stringify(companyInfo));
+        router.push(`asa-form?tabtype=general_disclosures_sub&vms_ref_no=${vmsRefNo}`);
+    };
+
     return (
-        <>
-            <div className="ml-6 mt-3 mr-6">
-                <div className="text-xl font-semibold">Company Information</div>
-                <div className="border-b border-gray-400"></div>
-                <div className="mt-6">
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">1. Name of the Company</label>
-                    <Form_Input name="companyName" value={formData.companyName} onChange={handleChange} />
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">2. Location(Full Address)</label>
-                    <Textarea_Input name="companyAddress" label="Company Address" value={formData.companyAddress} onChange={handleChange}/>
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">3. Name of the product/products/services supplied/provided to Meril</label>
-                    <Form_Input name="productOrServiceName" value={formData.productOrServiceName} onChange={handleChange} />
-                    <Button className="bg-gray-900 hover:bg-gray-700 mt-3" onClick={generaldisclosure}>Next</Button>
+        <div className="mt-1 p-2 bg-white rounded-xl shadow-sm border border-gray-200">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-2">Company Information</h2>
+
+            <div className="border-b border-gray-300 dark:border-gray-700 mb-2" />
+            <div className="space-y-6 p-2">
+                <Form_Input
+                    name="name_of_the_company"
+                    value={companyInfo.name_of_the_company}
+                    onChange={handleChange}
+                    placeholder="Enter company name"
+                    label="1. Name of the Company"
+                />
+
+                <Textarea_Input
+                    name="location"
+                    label="2. Location (Full Address)"
+                    value={companyInfo.location}
+                    onChange={handleChange}
+                    placeholder="Enter full address"
+                />
+
+                <Form_Input
+                    name="name_of_product"
+                    value={companyInfo.name_of_product}
+                    onChange={handleChange}
+                    placeholder="e.g., Medical devices, logistics services"
+                    label="3. Name of the product/products/services supplied/provided to Meril"
+                />
+
+                <div className="flex justify-end">
+                    <Button
+                        className="py-2.5"
+                        variant="nextbtn"
+                        size="nextbtnsize"
+                        onClick={handleNext}
+                    >
+                        Next
+                    </Button>
                 </div>
             </div>
-        </>
-    )
+        </div>
+    );
 }

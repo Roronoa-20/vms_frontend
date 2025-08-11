@@ -2,139 +2,139 @@ import YesNoNA from "@/src/components/common/YesNoNAwithFile";
 import { Button } from "@/components/ui/button"
 import { Governance } from "@/src/types/asatypes";
 import { useState } from "react";
+import { useASAForm } from "@/src/hooks/useASAForm";
 
 export default function GovernanceForm() {
-   const [formData, setFormData] = useState<Governance>({
-      question1: { selection: "", comment: "", file: null },
-      question2: { selection: "", comment: "", file: null },
-      question3: { selection: "", comment: "", file: null },
-      question4: { selection: "", comment: "", file: null },
-      question5: { selection: "", comment: "", file: null },
-      question6: { selection: "", comment: "", file: null },
-      question7: { selection: "", comment: "", file: null },
-      question8: { selection: "", comment: "", file: null },
-   });
-   // handlers
-   const handleSelectionChange = (name: string, selection: "yes" | "no" | "na") => {
-      setFormData((prev) => ({
-         ...prev,
-         [name]: {
-            ...prev[name as keyof Governance],
-            selection,
-         },
-      }));
-   };
 
-   const handleCommentChange = (name: string, comment: string) => {
-      setFormData((prev) => ({
-         ...prev,
-         [name]: {
-            ...prev[name as keyof Governance],
-            comment,
-         },
-      }));
-   };
+   const {governanceform, updateGovernanceForm, submitGoveranceForm, refreshFormData } = useASAForm();
+   console.log("Governance web Form Data:", governanceform);
 
-   const handleFileChange = (name: string, file: File | null) => {
-      setFormData((prev) => ({
-         ...prev,
-         [name]: {
-            ...prev[name as keyof Governance],
-            file,
-         },
-      }));
-   };
+   const handleSelectionChange = ( name: string, selection: "Yes" | "No" | "NA" | "") => {
+           updateGovernanceForm({
+               ...governanceform,
+               [name]: {
+                   ...governanceform[name as keyof Governance],
+                   selection,
+               },
+           });
+       };
+   
+       const handleCommentChange = (name: string, comment: string) => {
+           updateGovernanceForm({
+               ...governanceform,
+               [name]: {
+                   ...governanceform[name as keyof Governance],
+                   comment,
+               },
+           });
+       };
+   
+       const handleFileChange = (name: string, file: File | null) => {
+           updateGovernanceForm({
+               ...governanceform,
+               [name]: {
+                   ...governanceform[name as keyof Governance],
+                   file,
+               },
+           });
+       };
+
+   const handleSubmit = async () => {
+        await submitGoveranceForm();
+        refreshFormData();
+    };
 
 
    return (
-      <>
-         <div className="ml-6 mt-3 mr-6">
-            <div className="text-xl font-semibold">Governance</div>
+      <div className="h-full">
+         <div className="p-3 bg-white shadow-md rounded-xl">
+            <div className="text-2xl font-bold text-gray-800 mb-2">Governance</div>
             <div className="border-b border-gray-400"></div>
-            <div className="mt-6">
-               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  1. Does the company have a formal governance structure in place to oversee ESG matters, including roles like Board-level committees, ESG heads, and specific committees for health, safety, and prevention of sexual harassment?
-               </label>
+            <div className="space-y-6 p-3">
+
                <YesNoNA
-                  name="question1"
-                  value={formData.question1}
+                  name="have_formal_governance_structure"
+                  label="1. Does the company have a formal governance structure in place to oversee ESG matters, including roles like Board-level committees, ESG heads, and specific committees for health, safety, and prevention of sexual harassment?"
+                  value={governanceform.have_formal_governance_structure}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                />
-               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  2. Does the company have policies in place for various ESG aspects, such as environment, health, safety, child labor, diversity, employee conduct, human rights, CSR, whistleblowing, anti-bribery, anti-discrimination, anti-money laundering, fair competition, and intellectual property rights?
-               </label>
+
                <YesNoNA
-                  name="question2"
-                  value={formData.question2}
+                  name="esg_policies_coverage"
+                  label="2. Does the company have policies in place for various ESG aspects, such as environment, health, safety, child labor, diversity, employee conduct, human rights, CSR, whistleblowing, anti-bribery, anti-discrimination, anti-money laundering, fair competition, and intellectual property rights?"
+                  value={governanceform.esg_policies_coverage}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                />
-               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  3. Are ESG risks integrated into the company's risk register?
-               </label>
+
                <YesNoNA
-                  name="question3"
-                  value={formData.question3}
+                  name="esg_risk_integration"
+                  label="3. Are ESG risks integrated into the company's risk register?"
+                  value={governanceform.esg_risk_integration}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                />
-               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  4. Does your company annually publish a Sustainability report/ESG Report/Integrated report?
-               </label>
+
                <YesNoNA
-                  name="question4"
-                  value={formData.question4}
+                  name="company_publish_sustainability_report"
+                  label="4. Does your company annually publish a Sustainability report/ESG Report/Integrated report?"
+                  value={governanceform.company_publish_sustainability_report}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                />
-               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  5. Have you participated in ESG/Sustainability ratings like DJSI, CDP, MSCI, Ecovadis, etc.? If Yes, provide the scoring/rating achieved.
-               </label>
+
                <YesNoNA
-                  name="question5"
-                  value={formData.question5}
+                  name="esg_rating_participated"
+                  label="5. Have you participated in ESG/Sustainability ratings like DJSI, CDP, MSCI, Ecovadis, etc.? If Yes, provide the scoring/rating achieved."
+                  value={governanceform.esg_rating_participated}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                />
-               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  6. Does the company provide incentives to employees on achieving ESG targets?
-               </label>
+
                <YesNoNA
-                  name="question6"
-                  value={formData.question6}
+                  name="esg_incentive_for_employee"
+                  label="6. Does the company provide incentives to employees on achieving ESG targets?"
+                  value={governanceform.esg_incentive_for_employee}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                />
-               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  7. Do you conduct customer satisfaction survey (CSAT)? If yes, provide the CSAT score.
-               </label>
+
                <YesNoNA
-                  name="question7"
-                  value={formData.question7}
+                  name="csat_survey_conducted"
+                  label="7. Do you conduct customer satisfaction survey (CSAT)? If yes, provide the CSAT score."
+                  value={governanceform.csat_survey_conducted}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                />
-               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  8. Was there any instances involving loss / breach of data of customers? If Yes, provide the number of such incidents.
-               </label>
+
                <YesNoNA
-                  name="question8"
-                  value={formData.question8}
+                  name="instance_of_loss_customer_data"
+                  label="8. Was there any instances involving loss / breach of data of customers? If Yes, provide the number of such incidents."
+                  value={governanceform.instance_of_loss_customer_data}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                />
-               <Button className="bg-gray-900 hover:bg-gray-700 mt-3">Submit</Button>
+               <div className="flex justify-end">
+                  <Button
+                     className="py-2.5"
+                     variant="nextbtn"
+                     size="nextbtnsize"
+                     onClick={handleSubmit}
+                  >
+                     Submit
+                  </Button>
+               </div>
             </div>
          </div>
-      </>
+      </div>
    )
 }

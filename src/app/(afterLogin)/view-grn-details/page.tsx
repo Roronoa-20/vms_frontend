@@ -7,13 +7,9 @@ import requestWrapper from '@/src/services/apiCall';
 import API_END_POINTS from '@/src/services/apiEndPoints';
 import { GRNForm } from '@/src/types/grntypes';
 
-type PageProps = {
-  searchParams?: Promise<{ grn_ref?: string }>;
-};
-
-const ViewGRNDetailPage = async ({ searchParams }: PageProps) => {
-  const grn_ref = (await searchParams)?.grn_ref || '';
-
+const ViewGRNDetailPage = () => {
+  const params = useSearchParams();
+  const grn_ref = params.get('grn_ref') || '';
   const [data, setData] = useState<GRNForm | null>(null);
 
   useEffect(() => {

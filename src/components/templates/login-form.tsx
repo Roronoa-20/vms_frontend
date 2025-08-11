@@ -13,6 +13,8 @@ import OtpDialog from "../molecules/forgotPassword/OtpDialog";
 import PasswordDialog from "../molecules/forgotPassword/PasswordDialog";
 import { AuthProvider, useAuth } from "../../context/AuthContext";
 import { TMultipleVendorCode, useMultipleVendorCodeStore } from "@/src/store/MultipleVendorCodeStore";
+
+
 export default function LoginForm() {
   const router = useRouter();
   const [form, setForm] = useState<Tlogin>();
@@ -52,9 +54,10 @@ export default function LoginForm() {
       const savedRole = Cookies.get("role");
       const savedName = Cookies.get("full_name");
       const savedid = Cookies.get("user_id");
-      // const designation = response?.data?.message?.employee?.designation;
       const designation = data?.message?.employee?.designation as string;
       const designationVendor = data?.message?.designation as string;
+      const VendorRefNo = data?.message?.ref_no as string;
+      console.log("Vendor Ref---->",VendorRefNo);
       if (designationVendor) {
         reset();
         resetVendorCode();
@@ -63,7 +66,8 @@ export default function LoginForm() {
         ))
       }
       Cookies.set("designation", designation || designationVendor);
-      setAuthData(savedRole, savedName, savedid, designation || designationVendor);
+      Cookies.set("VendorRef", VendorRefNo);
+      setAuthData(savedRole, savedName, savedid, designation || designationVendor, VendorRefNo);
       if (designationVendor) {
         router.push("/vendor-dashboard");
         return

@@ -7,7 +7,12 @@ export const NavbarConstant:Record<string,string> = {
     "/dispatch":"Dispatch",
     "/view-grn":"Good Receipts Note",
     "/view-grn-details":"Good Receipts Note",
-    "/qms-details":"QMS Form",
+    "/qms-form-details":"QMS Form",
     "/view-purchase-requisition":"Purchase Requisition",
-    "/view-po-conf":"User Confirmation"
+    "/view-po-conf":"User Confirmation",
+    "/asa-form": "Annual Supplier Assessment Questionnarie",
+    "/view-vendor-asa": "Annual supplier Assessment (ASA)",
+    "/vendor-dashboard": "Dashboard",
+    "/view-asa-form": "Annual Supplier Assessment (ASA)"
+
 }

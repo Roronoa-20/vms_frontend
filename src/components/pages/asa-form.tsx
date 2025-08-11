@@ -7,12 +7,12 @@ import ASAFormTab from '../molecules/asa-form-tabs';
 import CompanyInformationForm from '@/src/components/templates/asa-form/company-information-form';
 import GeneralDisclosureSubForm from '@/src/components/templates/asa-form/general-disclosure-sub-form';
 import EMSForm from '@/src/components/templates/asa-form/ems-form';
-import ECMForm from '@/src/components/templates/asa-form/ece-form';
+import ECEForm from '@/src/components/templates/asa-form/ece-form';
 import WCMForm from '@/src/components/templates/asa-form/wcm-form';
 import WasteManagementForm from '@/src/components/templates/asa-form/waste-management-form';
 import GreenProductsForm from '@/src/components/templates/asa-form/green-products-form';
 import BiodiversityForm from '@/src/components/templates/asa-form/biodiversity-form';
-import LabourRightsForm from '@/src/components/templates/asa-form/labor-rights-form';
+import LaborRightsForm from '@/src/components/templates/asa-form/labor-rights-form';
 import GrievanceMechanismForm from '@/src/components/templates/asa-form/grievance-mechanism-form';
 import EmployeeWellbeingForm from '@/src/components/templates/asa-form/employee-well-being-form';
 import HealthSafetyForm from '@/src/components/templates/asa-form/health-safety-form';
@@ -22,7 +22,7 @@ import GovernanceForm from '@/src/components/templates/asa-form/governance-form'
 
 export default function ASAForm() {
     const params = useSearchParams();
-    const tabType = (params.get('tabtype') || 'vendor information').toLowerCase();
+    const tabType = (params.get('tabtype') || 'company_information').toLowerCase();
 
     const renderFormComponent = () => {
         switch (tabType) {
@@ -32,18 +32,18 @@ export default function ASAForm() {
                 return <GeneralDisclosureSubForm />;
             case 'ems':
                 return <EMSForm />;
-            case 'ecm':
-                return <ECMForm />;
+            case 'ece':
+                return <ECEForm />;
             case 'wcm':
                 return <WCMForm />;
-            case 'water_management':
+            case 'waste_management':
                 return <WasteManagementForm />;
             case 'green_products':
                 return <GreenProductsForm />;
             case 'biodiversity':
                 return <BiodiversityForm />;
-            case 'labour_rights':
-                return <LabourRightsForm />;
+            case 'labor_rights':
+                return <LaborRightsForm />;
             case 'grievance_mechanism':
                 return <GrievanceMechanismForm />;
             case 'employee_wellbeing':
@@ -64,17 +64,10 @@ export default function ASAForm() {
     };
 
     return (
-        <div className="flex flex-col bg-gray-100">
-            <div className="bg-white py-4 px-10 flex items-center gap-4 sticky top-0 z-10 shadow-sm">
-                <div className="w-6">
-                    <VMSLogo />
-                </div>
-                <h1 className="text-[24px] font-semibold text-gray-800">Annual Supplier Assessment Questionnaire</h1>
-            </div>
-
-            <div className="flex px-10 gap-6 py-6">
-                <div className="w-1/4 border-r pr-4">
-                    <div className="sticky top-[100px] max-h-[80vh] overflow-y-auto no-scrollbar">
+        <div className="flex flex-col bg-gray-200">
+            <div className="min-h-screen flex px-2 gap-4 py-2">
+                <div className="w-1/4 border-r border-gray-400 pr-3">
+                    <div className="sticky top-[75px] overflow-y-auto no-scrollbar">
                         <ASAFormTab />
                     </div>
                 </div>

@@ -103,6 +103,11 @@ export const VendorsidebarMenu = [
     name: "View PO",
     href:"/view-vendor-po"
   },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "ASA Form",
+    href:"/asa-form"
+  },
   // {
   //   logo: "/sidebar-assests/po-details.svg",
   //   name: "View PO",
