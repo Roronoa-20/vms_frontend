@@ -67,7 +67,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
         const fetchVendorTableData = async (rfq_type: string) => {
             setSelectedRows({ vendors: [] })
             console.log(rfq_type, "rfq_type in table code")
-            const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&service_provider=${formData?.service_provider}`
+            const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&service_provider=${formData?.service_provider}company=${formData?.company_name_logistic}`
             const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
             if (response?.status == 200) {
                 setVendorList(response.data.message)
@@ -76,7 +76,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
                 alert("error");
             }
         }
-        if (formData?.service_provider != "Select" && formData?.service_provider) {
+        if (formData?.service_provider != "Select" && formData?.service_provider &&  formData?.company_name_logistic) {
             fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Logistic Vendor");
         }
     }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider]);

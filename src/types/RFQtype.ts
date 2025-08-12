@@ -40,6 +40,13 @@ export type VendorDetail = {
   quotations: Quotation[];
 };
 
+export interface UploadedFile {
+  url: string;
+  name: string;
+  file_name: string;
+  file_url:string;
+}
+
 export type RFQDetails = {
   unique_id: string;
   rfq: string;
@@ -95,10 +102,10 @@ export type RFQDetails = {
   third_reminder: string | null;
   shipment_type: string | null;
   logistic_type: string | null;
-  pr_items: any[]; // Can be defined more strictly if you know the structure
+  pr_items: PurchaseRequisitionRow[];
   vendor_details: VendorDetail[];
-  non_onboarded_vendors: any[]; // Can also be typed properly if needed
-  attachments: any[]; // Can also be typed if needed
+  non_onboarded_vendors: any[]; 
+  attachments: UploadedFile[]; 
   total_quotation_received: number;
   total_rfq_sent: number;
   status: string;
@@ -127,4 +134,31 @@ export type RFQDetails = {
   final_tat: string;
   final_mode_of_shipment:string;
   is_negotiated:string;
+  requestor_name:string;
+  first_remainder:string,
+  second_remainder:string,
+  third_remainder:string,
+  service_location:string,
 };
+
+export interface PurchaseRequisitionRow {
+  row_id: string;
+  head_unique_field: string;
+  purchase_requisition_number: string;
+  material_code_head: string;
+  delivery_date_head: string;
+  plant_head: string;
+  material_name_head: string;
+  quantity_head: string;
+  uom_head: string;
+  price_head: string;
+  subhead_unique_field: string | null;
+  material_code_subhead: string | null;
+  material_name_subhead: string | null;
+  quantity_subhead: string | null;
+  uom_subhead: string | null;
+  price_subhead: string | null;
+  delivery_date_subhead: string | null;
+  lead_time_head:string;
+  remarks:string;
+}

@@ -1246,9 +1246,8 @@ export default function PRMaterialsManager({
 
   // Get PR name by sap code
   const getPRName = (sapCode: string) => {
-    return prNumbers.find((pr) => pr.sap_pr_code === sapCode)?.name || sapCode
+    return prNumbers.find((pr) => pr?.sap_pr_code === sapCode)?.name || sapCode
   }
-console.log(selectedRows,"selectedRows")
   return (
     <div className={cn("space-y-6", className)}>
       <Card>
@@ -1261,9 +1260,9 @@ console.log(selectedRows,"selectedRows")
             {/* <Label className="text-sm font-medium">Select Purchase Request Numbers</Label> */}
 
             {/* Selected PRs Display */}
-            {selectedPRs.length > 0 && (
+            {selectedPRs?.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-3">
-                {selectedPRs.map((prCode) => (
+                {selectedPRs?.map((prCode) => (
                   <Badge key={prCode} variant="secondary" className="px-3 py-1">
                     {getPRName(prCode)}
                     {!disabled && (
@@ -1292,7 +1291,7 @@ console.log(selectedRows,"selectedRows")
                     className="w-full justify-between bg-transparent"
                     disabled={loading}
                   >
-                    {selectedPRs.length === 0 ? "Select PR Numbers..." : `${selectedPRs.length} PR(s) selected`}
+                    {selectedPRs?.length === 0 ? "Select PR Numbers..." : `${selectedPRs?.length} PR(s) selected`}
                     <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
@@ -1303,16 +1302,16 @@ console.log(selectedRows,"selectedRows")
                       <CommandEmpty>No PR numbers found.</CommandEmpty>
                       <CommandGroup>
                         {prNumbers?.map((pr) => (
-                          <CommandItem key={pr.sap_pr_code} value={pr.sap_pr_code} onSelect={() => { handlePRToggle(pr) 
+                          <CommandItem key={pr?.sap_pr_code} value={pr?.sap_pr_code} onSelect={() => { handlePRToggle(pr) 
                             setOpen(false)}}>
                             <Check
                               className={cn(
                                 "mr-2 h-4 w-4",
-                                selectedPRs.includes(pr.sap_pr_code) ? "opacity-100" : "opacity-0",
+                                selectedPRs.includes(pr?.sap_pr_code) ? "opacity-100" : "opacity-0",
                               )}
                             />
                             <div className="flex flex-col">
-                              <span>{pr.sap_pr_code}</span>
+                              <span>{pr?.sap_pr_code}</span>
                             </div>
                           </CommandItem>
                         ))}
@@ -1333,12 +1332,12 @@ console.log(selectedRows,"selectedRows")
           )}
 
           {/* Materials Table */}
-          {!loading && materials.length > 0 && (
+          {!loading && materials?.length > 0 && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold">Materials List</h3>
                 <div className="text-sm text-muted-foreground">
-                  {selectedRows.length} of {materials.length} items selected
+                  {selectedRows?.length} of {materials?.length} items selected
                 </div>
               </div>
 
@@ -1361,7 +1360,7 @@ console.log(selectedRows,"selectedRows")
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {materials.map((material, index) => {
+                    {materials?.map((material, index) => {
                       const isSelected = selectedRows.includes(material.head_unique_field)
                       const isQuantityUpdated = material.quantity_head !== material.original_quantity_head
                       const isDateUpdated = material.delivery_date_head !== material.original_delivery_date_head
@@ -1369,7 +1368,7 @@ console.log(selectedRows,"selectedRows")
 
                       return (
                         <TableRow
-                          key={material.head_unique_field}
+                          key={material?.head_unique_field}
                           className={isSelected ? "bg-blue-50 dark:bg-blue-950/20" : ""}
                         >
                           <TableCell>
@@ -1391,9 +1390,9 @@ console.log(selectedRows,"selectedRows")
                             {isEditing ? (
                               <Input
                                 type="number"
-                                value={editValues[`${material.head_unique_field}-quantity`] || material.quantity_head}
+                                value={editValues[`${material?.head_unique_field}-quantity`] || material?.quantity_head}
                                 onChange={(e) =>
-                                  handleEditValueChange(material.head_unique_field, "quantity", e.target.value)
+                                  handleEditValueChange(material?.head_unique_field, "quantity", e.target.value)
                                 }
                                 className="w-20"
                               />

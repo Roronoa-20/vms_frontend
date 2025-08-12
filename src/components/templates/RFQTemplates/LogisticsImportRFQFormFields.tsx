@@ -84,6 +84,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
             </Select>
         </div>
     );
+    console.log(formData?.company_name_logistic,"formData?.company_name_logistic")
     return (
         <div>
             <div className="grid grid-cols-3 gap-6 p-5">
@@ -95,12 +96,19 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
                     (item) => `${item.vendor_type_name}`,
                     true
                 )}
+                {renderSelect(
+                    'company_name_logistic',
+                    'Company Name',
+                    Dropdown?.company,
+                    (item) => item.name,
+                    (item) => `${item.company_name}`
+                )}
                 <div className="col-span-1">
                     <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                         Select Service
                     </h1>
                     <Select value={formData?.service_provider ?? ""} onValueChange={(value) => { handleSelectChange(value, "service_provider") }}>
-                        <SelectTrigger>
+                        <SelectTrigger disabled={formData?.company_name_logistic ? false: true}>
                             <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
@@ -114,13 +122,6 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
                         </SelectContent>
                     </Select>
                 </div>
-                {renderSelect(
-                    'company_name_logistic',
-                    'Company Name',
-                    Dropdown?.company,
-                    (item) => item.name,
-                    (item) => `${item.company_name}`
-                )}
                 {renderInput('sr_no', 'Sr No.')}
                 {renderInput('rfq_cutoff_date_logistic', 'RFQ CutOff', 'datetime-local')}
                 {renderInput('rfq_date_logistic', 'RFQ Date', 'date')}
