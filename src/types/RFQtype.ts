@@ -44,6 +44,7 @@ export interface UploadedFile {
   url: string;
   name: string;
   file_name: string;
+  file_url:string;
 }
 
 export type RFQDetails = {
@@ -139,6 +140,7 @@ export type RFQDetails = {
   third_remainder:string,
   service_location:string,
 };
+
 export interface PurchaseRequisitionRow {
   row_id: string;
   head_unique_field: string;
@@ -157,4 +159,6 @@ export interface PurchaseRequisitionRow {
   uom_subhead: string | null;
   price_subhead: string | null;
   delivery_date_subhead: string | null;
+  lead_time_head:string;
+  remarks:string;
 }
