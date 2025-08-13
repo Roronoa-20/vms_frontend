@@ -2,12 +2,12 @@ export const sidebarMenu = [
   {
     logo: "/sidebar-assests/home-logo.svg",
     name: "Home",
-    href:"/dashboard"
+    href: "/dashboard"
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
-    name: "Vendor",
-    href:"/vendor-registration"
+    name: "Vendor Registration",
+    href: "/vendor-registration"
   },
   // {
   //   logo: "/sidebar-assests/vendor-icon.svg",
@@ -94,68 +94,44 @@ export const HeadSidebar = [
     href:"/dashboard"
   },
   {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "PR",
-    href:"/pr-request"
-  },
-    {
-    logo: "/sidebar-assests/rfq_icon.svg",
-    name: "Raise RFQ",
-    href:"/create-rfq"
-  },
-  {
-    logo: "/sidebar-assests/rfq_icon.svg",
-    name: "View PO",
-    href:"/view-po"
-  },
-  {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "ASA",
-    href:"/view-vendor-asa"
+    logo: "/sidebar-assests/purchase-enquiry-logo.svg",
+    name: "Product Enquiry",
+    href: "/pr-inquiry"
   },
   // {
   //   logo: "/sidebar-assests/vendor-icon.svg",
-  //   name: "PR",
-  //   href:"/pr-request"
+  //   name: "Create PR",
+  //   href: "/pr-request"
   // },
   {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "Product Enquiry",
-    href:"/pr-inquiry"
+    logo: "/sidebar-assests/raise-rfq-logo.svg",
+    name: "Raise RFQ",
+    href: "/create-rfq"
   },
-  // {
-  //   logo: "/sidebar-assests/raise-rfq-logo.svg",
-  //   name: "Raise RFQ",
-  //   href:""
-  // },
   {
     logo: "/sidebar-assests/view-pr.svg",
     name: "View PR",
-    href:"/view-purchase-requisition"
+    href: "/view-purchase-requisition"
   },
-  // {
-  //   logo: "/sidebar-assests/po-details.svg",
-  //   name: "View PO",
-  //   href:""
-  // },
   {
-    logo: "/sidebar-assests/view-grn.svg",
-    name: "View GRN",
-    href:"/view-grn"
+    logo: "/sidebar-assests/po-details.svg",
+    name: "View PO",
+    href: "/view-po"
   },
   // {
   //   logo: "/sidebar-assests/dispatch-logo.svg",
   //   name: "View Dispatch",
   //   href:""
   // },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "View GRN",
+    href: "/view-grn"
+  },
+  
   // {
   //   logo: "/sidebar-assests/raise-payment-1.svg",
   //   name: "View Payment",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-  //   name: "Purchase Enquiry",
   //   href:""
   // },
   // {
@@ -170,12 +146,12 @@ export const VendorsidebarMenu = [
   {
     logo: "/sidebar-assests/home-logo.svg",
     name: "Home",
-    href:"/vendor-dashboard"
+    href: "/vendor-dashboard"
   },
   {
     logo: "/sidebar-assests/dispatch-logo.svg",
     name: "Dispatch",
-    href:"/dispatch"
+    href: "/dispatch"
   },
   // {
   //   logo: "/sidebar-assests/raise-rfq-logo.svg",
@@ -183,9 +159,14 @@ export const VendorsidebarMenu = [
   //   href:""
   // },
   {
-    logo: "/sidebar-assests/view-pr.svg",
+    logo: "/sidebar-assests/po-details.svg",
     name: "View PO",
-    href:"/view-vendor-po"
+    href: "/view-vendor-po"
+  },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "ASA Form",
+    href: "/asa-form"
   },
   // {
   //   logo: "/sidebar-assests/po-details.svg",
@@ -223,16 +204,29 @@ export const EnquirysidebarMenu = [
   {
     logo: "/sidebar-assests/home-logo.svg",
     name: "Home",
-    href:"/dashboard"
+    href: "/dashboard"
   },
   {
-    logo: "/sidebar-assests/vendor-icon.svg",
+    logo: "/sidebar-assests/purchase-enquiry-logo.svg",
     name: "Enquiry",
-    href:"/pr-inquiry"
+    href: "/pr-inquiry"
+  },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "PR",
+    href: "/pr-request"
+  },
+];
+
+export const ASASideBarMenu = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/dashboard"
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
-    name: "PR",
-    href:"/pr-request"
+    name: "ASA",
+    href: "/view-vendor-asa"
   },
 ];

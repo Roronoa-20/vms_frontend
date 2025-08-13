@@ -7,6 +7,7 @@ import DashboardTotalVendorsTable from "./Dashboard-Total-Vendors-Table";
 import DashboardPendingVendorsTable from "./Dashboard-Pending-Vendors-Table";
 import DashboardApprovedVendorsTable from "./Dashboard-Approved-Vendors-Table";
 import DashboardRejectedVendorsTable from "./Dashboard-Rejected-Vendors-Table";
+import DashboardASAFormTable from "./Dashboard-ASA-Vendors-Form-Table";
 import DashboardDispatchVendorsTable from "./Dashboard-Dispatch-Vendors-Table";
 import DashboardPaymentVendorsTable from "./Dashboard-Payment-Vendors-Table";
 import DashboardCurrentMonthsVendorsTable from "./Dashboard-Current-Months-Vendors-Table";
@@ -22,6 +23,7 @@ import DashboardPurchaseEnquiryTable from "./Dashboard-Purchase-Enquiry-Table";
 import DashboardPurchaseRequisitionTable from "./Dashboard-Purchase-Requisition-Table";
 import { FileSearch } from "lucide-react";
 import DashboardRFQTable from "./DashboardRFQTable";
+import ASAVendorMonthWiseChart from "./ASAVendorMonthWiseChart";
 
 type Props = {
   cardData: dashboardCardData
@@ -34,6 +36,7 @@ type Props = {
   prInquiryData: TPRInquiryTable
   prData: PurchaseRequisition[]
   rfqData: RFQTable
+  dashboardASAFormTableData: DashboardTableType["asa_form_data"]
 }
 
 const DashboardCards = ({ ...Props }: Props) => {
@@ -46,64 +49,78 @@ const DashboardCards = ({ ...Props }: Props) => {
 
   console.log(user, "this is desingation")
   // const user = cookieStore.get("designation")?.value;
-  let allCardData: any[] = [
-    {
-      name: "Pending Vendors",
-      count: Props.cardData?.pending_vendor_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/doc.svg",
-      text_color: "text-rose-800",
-      bg_color: "bg-rose-100",
-      hover: "hover:border-rose-400",
-    },
-    // {
-    //   name: "Total Vendors",
-    //   count: Props.cardData?.total_vendor_count ?? 0,
-    //   icon: "/dashboard-assests/cards_icon/total_count.svg",
-    //   text_color: "text-yellow-800",
-    //   bg_color: "bg-yellow-100",
-    //   hover: "hover:border-yellow-400",
-    // },
-    {
-      name: "Onboarded Vendors",
-      count: Props.cardData?.approved_vendor_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/tick.svg",
-      text_color: "text-emerald-800",
-      bg_color: "bg-emerald-100",
-      hover: "hover:border-emerald-400",
-    },
-    {
-      name: "Rejcted Vendors",
-      count: Props.cardData?.rejected_vendor_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/doc.svg",
-      text_color: "text-rose-800",
-      bg_color: "bg-rose-100",
-      hover: "hover:border-rose-400",
-    },
-    // {
-    //   name: "Dispatch Details",
-    //   count: 0,
-    //   icon: "/dashboard-assests/cards_icon/truck.svg",
-    //   text_color: "text-blue-800",
-    //   bg_color: "bg-blue-100",
-    //   hover: "hover:border-blue-400",
-    // },
+  let allCardData: any[] = [];
 
-    // {
-    //   name: "Payment Request",
-    //   count: 0,
-    //   icon: "/dashboard-assests/cards_icon/hand.svg",
-    //   text_color: "text-orange-800",
-    //   bg_color: "bg-orange-100",
-    //   hover: "hover:border-orange-400",
-    // },
-    // {
-    //   name: "Current Month Vendors",
-    //   count: Props.cardData?.current_month_vendor ?? 0,
-    //   icon: "/dashboard-assests/cards_icon/calender.svg",
-    //   text_color: "text-black-800",
-    //   bg_color: "bg-gray-100",
-    //   hover: "hover:border-gray-400",
-    // },
+  if (user === "ASA") {
+    allCardData = [
+      {
+        name: "ASA Complete Form",
+        count: Props.dashboardASAFormTableData?.overall_total_asa ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
+    ];
+  } else {
+    allCardData = [
+      {
+        name: "Pending Vendors",
+        count: Props.cardData?.pending_vendor_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/doc.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-rose-100",
+        hover: "hover:border-rose-400",
+      },
+      // {
+      //   name: "Total Vendors",
+      //   count: Props.cardData?.total_vendor_count ?? 0,
+      //   icon: "/dashboard-assests/cards_icon/total_count.svg",
+      //   text_color: "text-yellow-800",
+      //   bg_color: "bg-yellow-100",
+      //   hover: "hover:border-yellow-400",
+      // },
+      {
+        name: "Onboarded Vendors",
+        count: Props.cardData?.approved_vendor_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/tick.svg",
+        text_color: "text-emerald-800",
+        bg_color: "bg-emerald-100",
+        hover: "hover:border-emerald-400",
+      },
+      {
+        name: "Rejcted Vendors",
+        count: Props.cardData?.rejected_vendor_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/doc.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-rose-100",
+        hover: "hover:border-rose-400",
+      },
+      // {
+      //   name: "Dispatch Details",
+      //   count: 0,
+      //   icon: "/dashboard-assests/cards_icon/truck.svg",
+      //   text_color: "text-blue-800",
+      //   bg_color: "bg-blue-100",
+      //   hover: "hover:border-blue-400",
+      // },
+
+      // {
+      //   name: "Payment Request",
+      //   count: 0,
+      //   icon: "/dashboard-assests/cards_icon/hand.svg",
+      //   text_color: "text-orange-800",
+      //   bg_color: "bg-orange-100",
+      //   hover: "hover:border-orange-400",
+      // },
+      // {
+      //   name: "Current Month Vendors",
+      //   count: Props.cardData?.current_month_vendor ?? 0,
+      //   icon: "/dashboard-assests/cards_icon/calender.svg",
+      //   text_color: "text-black-800",
+      //   bg_color: "bg-gray-100",
+      //   hover: "hover:border-gray-400",
+      // },
 
     {
       name: "Purchase Inquiry",
@@ -138,6 +155,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       hover: "hover:border-violet-400",
     },
   ];
+}
 
   let cardData = user === "Enquirer"
     ? allCardData.filter(item => item.name === "Purchase Inquiry" || item.name === "Purchase Requisition") : allCardData;
@@ -203,6 +221,18 @@ const DashboardCards = ({ ...Props }: Props) => {
           </TabsList>
         </div>
         {cardData.map((item, index) => {
+          if (user === "ASA") {
+            return (
+              <TabsContent key={item.name} value={item.name}>
+
+                <ASAVendorMonthWiseChart tableData={Props.dashboardASAFormTableData.data || []} />
+                <DashboardASAFormTable
+                  dashboardTableData={Props.dashboardASAFormTableData}
+                  companyDropdown={Props?.companyDropdown}
+                />
+              </TabsContent>
+            );
+          }
           const isEnquirerAllowed =
             user !== "Enquirer" ||
             item.name === "Purchase Inquiry" ||
