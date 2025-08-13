@@ -4,7 +4,7 @@ export interface VendorDataRFQ {
   office_email_primary: string;
   mobile_number: string;
   country: string;
-  service_provider_type:string;
+  service_provider_type: string;
   vendor_code: string[];
 }
 
@@ -17,15 +17,18 @@ export interface VendorApiResponse {
   page_length: number;
 }
 
-export interface VendorSelectType{
-    vendors :VendorDataRFQ[]
+export interface VendorSelectType {
+  vendors: VendorDataRFQ[]
 }
 export interface SAPPRData {
   name: string;
   sap_pr_code: string;
 }
 
-
+interface Quotation {
+  quotation: string;
+  creation: string; // or `Date` if you'll parse it
+}
 export type VendorDetail = {
   refno: string;
   vendor_name: string;
@@ -34,9 +37,18 @@ export type VendorDetail = {
   mobile_number: string;
   service_provider_type: string | null;
   country: string;
+  quotations: Quotation[];
 };
 
+export interface UploadedFile {
+  url: string;
+  name: string;
+  file_name: string;
+}
+
 export type RFQDetails = {
+  unique_id: string;
+  rfq: string;
   rfq_type: string;
   company_name_logistic: string;
   service_provider: string;
@@ -87,8 +99,62 @@ export type RFQDetails = {
   first_reminder: string | null;
   second_reminder: string | null;
   third_reminder: string | null;
-  pr_items: any[]; // Can be defined more strictly if you know the structure
+  shipment_type: string | null;
+  logistic_type: string | null;
+  pr_items: PurchaseRequisitionRow[];
   vendor_details: VendorDetail[];
-  non_onboarded_vendors: any[]; // Can also be typed properly if needed
-  attachments: any[]; // Can also be typed if needed
+  non_onboarded_vendors: any[]; 
+  attachments: UploadedFile[]; 
+  total_quotation_received: number;
+  total_rfq_sent: number;
+  status: string;
+  name: string;
+  is_approved: boolean;
+  final_quotation_id: string;
+  final_ffn: string;
+  final_rate_kg: string;
+  final_chargeable_weight: string;
+  final_freight_fcr: string;
+  final_fsc: string;
+  final_sc: string;
+  final_xcr: string;
+  final_pickup: string;
+  final_xray: string;
+  final_sum_freight_inr: string;
+  final_gst_amount: string;
+  final_total: string;
+  final_others: string;
+  final_airline: string;
+  final_landing_price: string;
+  final_dc: string;
+  final_transit_days: string;
+  final_freight_total: string;
+  final_remarks: string;
+  final_tat: string;
+  final_mode_of_shipment:string;
+  is_negotiated:string;
+  requestor_name:string;
+  first_remainder:string,
+  second_remainder:string,
+  third_remainder:string,
+  service_location:string,
 };
+export interface PurchaseRequisitionRow {
+  row_id: string;
+  head_unique_field: string;
+  purchase_requisition_number: string;
+  material_code_head: string;
+  delivery_date_head: string;
+  plant_head: string;
+  material_name_head: string;
+  quantity_head: string;
+  uom_head: string;
+  price_head: string;
+  subhead_unique_field: string | null;
+  material_code_subhead: string | null;
+  material_name_subhead: string | null;
+  quantity_subhead: string | null;
+  uom_subhead: string | null;
+  price_subhead: string | null;
+  delivery_date_subhead: string | null;
+}

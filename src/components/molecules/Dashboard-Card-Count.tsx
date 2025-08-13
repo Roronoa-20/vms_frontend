@@ -40,6 +40,7 @@ type Props = {
 }
 
 const DashboardCards = ({ ...Props }: Props) => {
+ console.log(Props?.cardData,"this is card data")
   const { MultipleVendorCode } = useMultipleVendorCodeStore();
   // const cookieStore = await cookies();
   const { designation } = useAuth();
@@ -121,40 +122,39 @@ const DashboardCards = ({ ...Props }: Props) => {
       //   hover: "hover:border-gray-400",
       // },
 
-      {
-        name: "Purchase Inquiry",
-        count: Props.cardData?.cart_count ?? 0,
-        icon: "/dashboard-assests/cards_icon/doc.svg",
-        text_color: "text-rose-800",
-        bg_color: "bg-rose-100",
-        hover: "hover:border-rose-400",
-      },
-      {
-        name: "Purchase Requisition",
-        count: Props.cardData?.pr_count ?? 0,
-        icon: "/dashboard-assests/cards_icon/file-search.svg",
-        text_color: "text-rose-800",
-        bg_color: "bg-green-200",
-        hover: "hover:border-rose-400",
-      },
-      {
-        name: "Purchase & Ongoing Orders",
-        count: Props.cardData?.purchase_order_count ?? 0,
-        icon: "/dashboard-assests/cards_icon/package.svg",
-        text_color: "text-violet-800",
-        bg_color: "bg-violet-100",
-        hover: "hover:border-violet-400",
-      },
-      {
-        name: "RFQ Comparision",
-        count: Props.cardData?.rfq_count ?? 0,
-        icon: "/dashboard-assests/cards_icon/file-search.svg",
-        text_color: "text-violet-800",
-        bg_color: "bg-violet-100",
-        hover: "hover:border-violet-400",
-      },
-    ];
-  };
+    {
+      name: "Purchase Inquiry",
+      count: Props.cardData?.cart_count ?? 0,
+      icon: "/dashboard-assests/cards_icon/doc.svg",
+      text_color: "text-rose-800",
+      bg_color: "bg-rose-100",
+      hover: "hover:border-rose-400",
+    },
+    {
+      name: "Purchase Requisition",
+      count: Props.cardData?.pr_count ?? 0,
+      icon: "/dashboard-assests/cards_icon/file-search.svg",
+      text_color: "text-rose-800",
+      bg_color: "bg-green-200",
+      hover: "hover:border-rose-400",
+    },
+    {
+      name: "Purchase & Ongoing Orders",
+      count: Props.cardData?.purchase_order_count ?? 0,
+      icon: "/dashboard-assests/cards_icon/package.svg",
+      text_color: "text-violet-800",
+      bg_color: "bg-violet-100",
+      hover: "hover:border-violet-400",
+    },
+    {
+      name: "RFQ Comparision",
+      count: Props?.rfqData?.overall_total_rfq ?? 0,
+      icon: "/dashboard-assests/cards_icon/file-search.svg",
+      text_color: "text-violet-800",
+      bg_color: "bg-violet-100",
+      hover: "hover:border-violet-400",
+    },
+  ];
 
   let cardData = user === "Enquirer"
     ? allCardData.filter(item => item.name === "Purchase Inquiry" || item.name === "Purchase Requisition") : allCardData;
@@ -200,7 +200,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       <Tabs defaultValue={cardData?.[0]?.name} className="">
         <div className="">
           <TabsList className="grid grid-cols-4 gap-4 h-full pb-6 bg-white">
-            {cardData.map((item, index) => (
+            {cardData?.map((item, index) => (
               <TabsTrigger
                 key={item.name || index}
                 value={item.name}

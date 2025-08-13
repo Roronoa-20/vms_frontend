@@ -71,6 +71,7 @@ export interface PurchaseRequisitionDataItem {
 
 
 export interface SubheadField {
+  row_id:string;
   row_name: string;
   sub_head_unique_id: string;
   purchase_requisition_item_subhead: string | null;

@@ -726,7 +726,8 @@ type DocumentDetailsTab = {
   trc_certificate: FileAttachment,
   form_10f_proof: FileAttachment,
   pe_certificate: FileAttachment,
-  gst_table: any[]; // Adjust if GST structure is known
+  gst_table: any[]; // Adjust if GST structure is known,
+  company_gst_table:any[]
 };
 
 type PaymentDetailsTab = {
@@ -877,7 +878,7 @@ export type dashboardCardData = {
   purchase_order_count: number;
   pr_count: number;
   cart_count: number,
-  rfq_count: number
+  overall_total_rfq: number
 }
 
 export interface DashboardPOTableItem {
@@ -1387,8 +1388,12 @@ export interface RFQTable {
     company_name: string,
     rfq_type: string,
     rfq_date: string,
+    logistic_type:string,
     status: string,
+    unique_id:string,
+    creation:string
   }[]
+  overall_total_rfq:string
 }
 
 export interface RFQTable {

@@ -3,6 +3,9 @@ import PopUp from './PopUp'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../atoms/select'
 import { Input } from '../atoms/input'
 import { DropdownData, newVendorTable } from '../templates/RFQTemplates/LogisticsImportRFQ'
+import API_END_POINTS from '@/src/services/apiEndPoints'
+import { AxiosResponse } from 'axios'
+import requestWrapper from '@/src/services/apiCall'
 
 
 interface Props {
@@ -15,11 +18,19 @@ const AddNewVendorRFQDialog = ({handleClose,setNewVendorTable,Dropdown}:Props) =
 
   const [singleRow,setSingleRow] = useState<newVendorTable | null>(null)
 
-  const handleNewVendor = ()=>{
-    
-      setNewVendorTable((prev:any)=>([...prev,singleRow]));
-      setSingleRow(null)
-      handleClose();
+  const handleNewVendor = async()=>{
+      const verifyURL = API_END_POINTS?.verifyNewVendor;
+      const formdata = new FormData();
+      formdata.append("email",JSON.stringify(singleRow?.office_email_primary));
+      formdata.append("mobile_number",JSON.stringify(singleRow?.mobile_number));
+      const response:AxiosResponse = await requestWrapper({url:verifyURL,method:"POST",data:formdata});
+      if(response?.status == 200 && response?.data?.message?.status != "error"){
+        setNewVendorTable((prev:any)=>([...prev,singleRow]));
+        setSingleRow(null)
+        handleClose();
+      }else{
+        alert(response?.data?.message?.message);
+      }
     }
 
   return (
@@ -39,22 +50,9 @@ const AddNewVendorRFQDialog = ({handleClose,setNewVendorTable,Dropdown}:Props) =
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Company Pan Number
-            </h1>
-            <Input onChange={(e)=>{setSingleRow((prev:any)=>({...prev,pan_number:e.target.value}))}} placeholder="Enter Company Pan" />
-            {/* {errors?.registered_office_number && !data?.registered_office_number && <span style={{ color: 'red' }}>{errors?.registered_office_number}</span>} */}
-          </div>
-          <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Mobile Number
             </h1>
             <Input onChange={(e)=>{setSingleRow((prev:any)=>({...prev,mobile_number:e.target.value}))}} placeholder="Enter Mobile Number" />
-          </div>
-          <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Enter GST Number
-            </h1>
-            <Input onChange={(e)=>{setSingleRow((prev:any)=>({...prev,gst_number:e.target.value}))}} placeholder="Enter GST Number" />
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -74,6 +72,19 @@ const AddNewVendorRFQDialog = ({handleClose,setNewVendorTable,Dropdown}:Props) =
                 </SelectGroup>
               </SelectContent>
             </Select>
+          </div>
+          <div className={`${singleRow?.country?.includes("India")?"":"hidden"}`}>
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+              Company Pan Number
+            </h1>
+            <Input onChange={(e)=>{setSingleRow((prev:any)=>({...prev,pan_number:e.target.value}))}} placeholder="Enter Company Pan" />
+            {/* {errors?.registered_office_number && !data?.registered_office_number && <span style={{ color: 'red' }}>{errors?.registered_office_number}</span>} */}
+          </div>
+          <div className={`${singleRow?.country?.includes("India")?"":"hidden"}`}>
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+              Enter GST Number
+            </h1>
+            <Input onChange={(e)=>{setSingleRow((prev:any)=>({...prev,gst_number:e.target.value}))}} placeholder="Enter GST Number" />
           </div>
         </div>
     </PopUp>

@@ -7,6 +7,7 @@ import { RFQDetails } from '@/src/types/RFQtype';
 import RFQBasicDetails from '../molecules/ViewRFQ/ViewRFQDetails';
 import ViewFileAttachment from '../molecules/ViewRFQ/ViewFileAttachment';
 import LogisticsExportQuatationForm from '../templates/QuatationForms/LogisticsExportQuatationForm';
+import LogisticsImportQuatationForm from '../templates/QuatationForms/LogisticsImportQuatationForm';
 
 
 interface PageProps {
@@ -32,10 +33,20 @@ const SubmitQuatation = async ({ refno }: PageProps) => {
     const Dropdown = resposne?.status == 200 ? resposne?.data.message : "";
     return (
         <div className='px-4 py-6'>
-            <h1 className='text-lg py-2'>RFQ RefNo : <span className='font-bold'>{refno ? refno : ""}</span>  </h1>
-            <RFQBasicDetails RFQData={RFQData} />
-            <ViewFileAttachment RFQData={RFQData} />
-            <LogisticsExportQuatationForm  Dropdown={Dropdown}/>
+            <h1 className='text-lg py-2'>RFQ RefNo : <span className='font-bold'>{refno ? refno : ""}</span></h1>
+            {
+                RFQData.rfq_type == "Logistic Vendor" &&
+                <>
+                    <RFQBasicDetails RFQData={RFQData} />
+                    <ViewFileAttachment RFQData={RFQData} />
+                    {
+                        RFQData.logistic_type == "Export" ?
+                            <LogisticsExportQuatationForm Dropdown={Dropdown} refno={refno?refno:""}/>
+                            :
+                            <LogisticsImportQuatationForm Dropdown={Dropdown} refno={refno?refno:""}/>
+                    }
+                </>
+            }
         </div>
     )
 }

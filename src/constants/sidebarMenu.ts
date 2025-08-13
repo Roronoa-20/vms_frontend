@@ -10,9 +10,29 @@ export const sidebarMenu = [
     href: "/vendor-registration"
   },
   {
-    logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-    name: "Product Enquiry",
-    href: "/pr-inquiry"
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "Total Vendors",
+    href:"/total-vendor"
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "PR",
+    href:"/pr-request"
+  },
+    {
+    logo: "/sidebar-assests/rfq_icon.svg",
+    name: "Raise RFQ",
+    href:"/create-rfq"
+  },
+  {
+    logo: "/sidebar-assests/rfq_icon.svg",
+    name: "View PO",
+    href:"/view-po"
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "ASA",
+    href:"/view-vendor-asa"
   },
   // {
   //   logo: "/sidebar-assests/vendor-icon.svg",

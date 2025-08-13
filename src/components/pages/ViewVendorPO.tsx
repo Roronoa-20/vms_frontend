@@ -57,6 +57,7 @@ const ViewPO = ({po_name,dropdown}:Props) => {
             // console.log(response?.data?.message,"this is response")
             setPRDetails(response?.data?.message?.data);
         }
+        setIPrintFormat(true)
     }
 
 
@@ -145,7 +146,7 @@ const ViewPO = ({po_name,dropdown}:Props) => {
               </SelectContent>
             </Select>
         <div className="flex gap-2 md:gap-4">
-          <button id="viewPrintBtn" onClick={()=>{getPODetails(); setIPrintFormat(true)}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+          <button id="viewPrintBtn" onClick={()=>{getPODetails()}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
             View PO Details
           </button>
           <button onClick={()=>{router.push(`/view-po-line-items?po_name=${PRNumber}`)}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
