@@ -32,51 +32,51 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
   console.log(OnboardingDetail?.reconciliation_account, "this is reconsiliation")
   return (
     <div className="flex flex-col bg-white rounded-lg p-4 w-full">
-      <h1 className="border-b-2 pb-2">Purchasing Details</h1>
-      <div className="grid grid-cols-3 gap-6 p-5 overflow-y-scroll max-h-[70vh]">
-        <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Company Name
-          </h1>
-          <Input placeholder="" className='disabled:opacity-100' disabled defaultValue={OnboardingDetail?.company_details?.company_name} />
-        </div>
-        <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Purchase Organization
-          </h1>
-          <Input placeholder="" className='disabled:opacity-100' defaultValue={OnboardingDetail?.pur_org_details?.description} disabled />
-        </div>
-        <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Order Currency
-          </h1>
-          <Input placeholder="" className='disabled:opacity-100' defaultValue={OnboardingDetail?.order_currency} disabled />
-        </div>
-        <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Terms Of Payment
-          </h1>
-          <Input placeholder="" className='disabled:opacity-100' disabled defaultValue={OnboardingDetail?.term_payment_details?.description} />
-        </div>
-        <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Purchase Group
-          </h1>
-          <Input required placeholder="" className='disabled:opacity-100' disabled defaultValue={OnboardingDetail?.pur_group_details?.description} />
-        </div>
-        <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Purchase Team Remarks
-          </h1>
-          <Input placeholder="" className='disabled:opacity-100' disabled defaultValue={OnboardingDetail?.purchase_team_remarks} />
-        </div>
-        <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Purchase Head Remarks
-          </h1>
-          <Input disabled className='disabled:opacity-100' defaultValue={OnboardingDetail?.purchase_head_remarks} />
-        </div>
-        {/* <div>
+    <h1 className="border-b-2 pb-2">Purchasing Details</h1>
+    <div className="grid grid-cols-3 gap-6 p-5 overflow-y-scroll max-h-[70vh] disabled:opacity-100">
+    <div>
+        <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          Company Name
+        </h1>
+        <Input placeholder="" disabled defaultValue={OnboardingDetail?.company_name} />
+      </div>
+      <div>
+        <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          Purchase Organization
+        </h1>
+        <Input placeholder="" defaultValue={OnboardingDetail?.purchase_organization} disabled/>
+      </div>
+      <div>
+        <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          Order Currency
+        </h1>
+        <Input placeholder="" defaultValue={OnboardingDetail?.order_currency} disabled />
+      </div>
+      <div>
+        <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          Terms Of Payment
+        </h1>
+        <Input placeholder="" disabled defaultValue={OnboardingDetail?.terms_of_payment}/>
+      </div>
+      <div>
+        <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          Purchase Group
+        </h1>
+        <Input required placeholder="Enter Reg No." disabled defaultValue={OnboardingDetail?.purchase_group} />
+      </div>
+      <div>
+        <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          Purchase Team Remarks
+        </h1>
+        <Input placeholder="" disabled defaultValue={OnboardingDetail?.purchase_team_remarks}/>
+      </div>
+      <div>
+        <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          Purchase Head Remarks
+        </h1>
+        <Input  disabled defaultValue={OnboardingDetail?.purchase_head_remarks} />
+      </div>
+      {/* <div>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           QA Team Remarks
         </h1>

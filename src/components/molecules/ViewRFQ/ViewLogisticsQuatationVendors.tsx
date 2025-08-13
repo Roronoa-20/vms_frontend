@@ -8,10 +8,10 @@ import {
 } from "@/src/components/atoms/table";
 import { Input } from '@/components/ui/input';
 import { QuotationDetail } from "@/src/types/QuatationTypes";
-import { Button } from '@/components/ui/button';
 import { AttachmentsDialog } from "../../common/MultipleFileViewDialog";
 import { RFQDetails } from "@/src/types/RFQtype";
 import { Badge } from '@/components/ui/badge';
+import ViewQuotationItems from "./ViewQuotationItems";
 interface Props {
     RFQData: RFQDetails;
     QuatationData: QuotationDetail[];
@@ -91,7 +91,33 @@ const ViewLogisticsQuatationVendors = ({
         { label: "Attachments", key: "attachments" },
     ];
 
-    const columns = logistic_type === "Export" ? exportColumns : importColumns;
+    const materialColumns: ColumnConfig[] = [
+        { label: "Select", key: "select" },
+        { label: "Sr No.", key: "index" },
+        { label: "RefNo", key: "name" },
+        { label: "Vendor Name", key: "vendor_name" },
+        { label: "Vendor Code", key: "vendor_code" },
+        { label: "Email", key: "office_email_primary" },
+        { label: "Status", key: "status" },
+        { label: "Payment Terms", key: "payment_terms" },
+        { label: "View Items", key: "quotation_item_list" },
+        { label: "Attachments", key: "attachments" },
+    ];
+    const serviceColumns: ColumnConfig[] = [
+        { label: "Select", key: "select" },
+        { label: "Sr No.", key: "index" },
+        { label: "RefNo", key: "name" },
+        { label: "Vendor Name", key: "vendor_name" },
+        { label: "Vendor Code", key: "vendor_code" },
+        { label: "Email", key: "office_email_primary" },
+        { label: "Status", key: "status" },
+        { label: "Payement Terms", key: "status" },
+        { label: "View Items", key: "quotation_item_list" },
+        { label: "Attachments", key: "attachments" },
+    ];
+
+    // const columns = logistic_type === "Export" ? exportColumns : importColumns;
+    const columns = RFQData?.rfq_type === "Material Vendor" ? materialColumns : RFQData?.rfq_type === "Service Vendor" ? serviceColumns : logistic_type === "Export" ? exportColumns : importColumns;
     const getValueByKey = (
         item: QuotationDetail,
         key: QuotationColumnKey,
@@ -102,6 +128,9 @@ const ViewLogisticsQuatationVendors = ({
 
         if (key === "attachments") {
             return <AttachmentsDialog attachments={item.attachments ?? []} />;
+        }
+        if (key === "quotation_item_list") {
+            return <ViewQuotationItems items={item.quotation_item_list ?? []} />;
         }
 
         if (key === "status") {
@@ -122,7 +151,6 @@ const ViewLogisticsQuatationVendors = ({
         }
 
         const value = item[key as keyof QuotationDetail];
-
         if (Array.isArray(value) || typeof value === "object") {
             return "-";
         }
@@ -130,8 +158,6 @@ const ViewLogisticsQuatationVendors = ({
         return value ?? "-";
     };
 
-
-    console.log(logistic_type, "logistic_typelogistic_typelogistic_typelogistic_typelogistic_type")
     return (
         <div>
             <div className="flex w-full justify-between py-2 ">
@@ -145,7 +171,6 @@ const ViewLogisticsQuatationVendors = ({
                     <TableHeader className="text-center hover:none">
                         <TableRow className="bg-[#DDE8FE]  hover:bg-[#DDE8FE] text-[#2568EF] text-[14px]">
                             {columns.map((col, idx) => (
-
                                 <TableHead key={idx} className="text-center">{col.label}</TableHead>
                             ))}
                         </TableRow>

@@ -72,7 +72,7 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
 
   const fetchTable = async () => {
     const dashboardPRTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.prTableData}?usr=${user}&company=${selectedCompany}&refno=${search}&page_no=${currentPage}`,
+      url: `${API_END_POINTS?.prTableData}?usr=${user}&company=${selectedCompany}&cart_id=${search}&page_no=${currentPage}`,
       method: "GET",
     });
     if (dashboardPRTableDataApi?.status == 200) {
@@ -94,7 +94,7 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
             Purchase Requisition
           </h1>
           <div className="flex gap-4">
-            <Input placeholder="Search..." />
+            <Input placeholder="Search..." onChange={(e)=>{handlesearchname(e)}} />
             <Select>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select Company" />

@@ -55,13 +55,13 @@ export const RFQmaterial: iteminterface[] = [{ label: "RFQ Type :", key: "rfq_ty
   { label: "Requestor Name :", key: "requestor_name" },
   { label: "RFQ Date :", key: "rfq_date" },
   { label: "Collection No. :", key: "collection_number" },
-  { label: "1st Reminder :", key: "first_remainder" },
-  { label: "Quotation Deadline :", key: "quotation_deadline" },
+  { label: "1st Reminder :", key: "first_reminder" },
+  { label: "Quotation Deadline :", key: "rfq_cutoff_date_logistic" },
   { label: "Select Currency :", key: "currency" },
-  { label: "2nd Reminder :", key: "second_remainder" },
+  { label: "2nd Reminder :", key: "second_reminder" },
   { label: "Purchasing Organization :", key: "purchase_organization" },
   { label: "Purchase Group :", key: "purchase_group" },
-  { label: "3rd Reminder :", key: "third_remainder" }
+  { label: "3rd Reminder :", key: "third_reminder" }
 ];
 
 export const RFQservices: iteminterface[] = [{ label: "RFQ Type :", key: "rfq_type" },

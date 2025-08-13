@@ -105,10 +105,9 @@ const MaterialRFQFormFields = ({ formData, setFormData, Dropdown, setFiles, file
                     Dropdown?.company,
                     (item) => item.name,
                     (item) => `${item.company_name}`
-
                 )}
                 {renderSelect(
-                    'purchase_organisation',
+                    'purchase_organization',
                     'Purchasing Organization',
                     Dropdown?.purchase_organisation,
                     (item) => item.name,
@@ -131,17 +130,16 @@ const MaterialRFQFormFields = ({ formData, setFormData, Dropdown, setFiles, file
             </div>
             <h1 className='text-[24px] font-normal pt-5 px-5'>Administrative Fields</h1>
             <div className="grid grid-cols-3 gap-6 p-5">
-                {renderInput('collection_no', 'Collection No.')}
+                {renderInput('collection_number', 'Collection No.')}
                 {renderInput('rfq_cutoff_date_logistic', 'Quotation Deadline', 'datetime-local')}
                 {renderInput('requestor_name', 'Requestor Name')}
                 {renderFileInput('file', 'Upload Document')}
             </div>
-
             <h1 className='text-[24px] font-normal pt-5 px-5'>Deadline Monitoring</h1>
             <div className="grid grid-cols-3 gap-6 p-5">
-                {renderInput('first_remainder', '1st Reminder', 'date')}
-                {renderInput('second_remainder', '2nd Reminder', 'date')}
-                {renderInput('third_remainder', '3rd Reminder', 'date')}
+                {renderInput('first_reminder', '1st Reminder', 'date')}
+                {renderInput('second_reminder', '2nd Reminder', 'date')}
+                {renderInput('third_reminder', '3rd Reminder', 'date')}
             </div>
         </div>
     )

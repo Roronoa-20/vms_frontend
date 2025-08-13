@@ -76,7 +76,7 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
 
   const fetchTable = async () => {
     const dashboardRejectedVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.dashboardRejectedVendorTableURL}?usr=${user}&company=${selectedCompany}&refno=${search}&page_no=${currentPage}`,
+      url: `${API_END_POINTS?.dashboardRejectedVendorTableURL}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}`,
       method: "GET",
     });
     console.log("dashboardRejectedVendorTableDataApi---->", dashboardRejectedVendorTableDataApi)
