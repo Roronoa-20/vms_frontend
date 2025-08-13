@@ -92,13 +92,13 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
 
   const fetchTable = async () => {
     const dashboardApprovedVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.dashboardApprovedVendorTableURL}?usr=${user}&company=${selectedCompany}&refno=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
+      url: `${API_END_POINTS?.dashboardApprovedVendorTableURL}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
       method: "GET",
     });
     if (dashboardApprovedVendorTableDataApi?.status == 200) {
       setTable(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding
       );
-      settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count);
+      // settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count);
       settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count)
       // setRecordPerPage(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding?.length)
       setRecordPerPage(5);
@@ -118,7 +118,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
             Total OnBoarded Vendors
           </h1>
           <div className="flex gap-4">
-            <Input placeholder="Search..." />
+            <Input placeholder="Search..." onChange={(e)=>{handlesearchname(e)}} />
             <Select>
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />

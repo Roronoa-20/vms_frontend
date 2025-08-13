@@ -31,22 +31,49 @@ type Props = {
   companyDropdown: { name: string }[]
 }
 
+
+const useDebounce = (value: any, delay: any) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
 const DashboardRFQTable = ({ dashboardTableData, companyDropdown }: Props) => {
   const [total_event_list, settotalEventList] = useState(0);
   const [record_per_page, setRecordPerPage] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [table, setTable] = useState<RFQTable["data"]>(dashboardTableData || []);
+  const [search, setSearch] = useState<string>("");
+  const debouncedSearchName = useDebounce(search, 300);
+
+
   useEffect(() => {
     fetchTable();
-  }, [currentPage])
+  }, [debouncedSearchName,currentPage])
+
+  const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      console.log(value, "this is search name")
+      setSearch(value);
+    }
+
+
   const fetchTable = async () => {
     const dashboardPRTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.rfqTableData}?page_no=${currentPage}`,
+      url: `${API_END_POINTS?.rfqTableData}?page_no=${currentPage}&company_name=${search}`,
       method: "GET",
     });
     if (dashboardPRTableDataApi?.status == 200) {
       setTable(dashboardPRTableDataApi?.data?.message?.data);
-      settotalEventList(dashboardPRTableDataApi?.data?.message?.total_count);
       settotalEventList(dashboardPRTableDataApi?.data?.message?.total_count);
       // setRecordPerPage(dashboardPRTableDataApi?.data?.message?.rejected_vendor_onboarding?.length);
       setRecordPerPage(5)
@@ -62,7 +89,7 @@ const DashboardRFQTable = ({ dashboardTableData, companyDropdown }: Props) => {
             RFQ Comparision
           </h1>
           <div className="flex gap-4">
-            <Input placeholder="Search..." />
+            <Input placeholder="Search..." onChange={(e)=>{handlesearchname(e)}}/>
             {/* <Select>
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Select Company" />
