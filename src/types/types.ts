@@ -1410,12 +1410,12 @@ export interface RFQTable {
   overall_total_rfq:string
 }
 
-export interface RFQTable {
-  data: {
-    name: string,
-    company_name: string,
-    rfq_type: string,
-    rfq_date: string,
-    status: string,
-  }[]
-}
+// export interface RFQTable {
+//   data: {
+//     name: string,
+//     company_name: string,
+//     rfq_type: string,
+//     rfq_date: string,
+//     status: string,
+//   }[]
+// }
