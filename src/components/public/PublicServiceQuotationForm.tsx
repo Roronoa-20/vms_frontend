@@ -54,14 +54,14 @@ const PublicServiceQuotationForm = ({ Dropdown, token }: Props) => {
                 setUploadedFiles={setUploadedFiles}
                 Dropdown={Dropdown}
                 /> */}
-            <MaterialQuatationFormFields
+            {/* <MaterialQuatationFormFields
                 formData={formData}
                 setFormData={setFormData}
                 uploadedFiles={uploadedFiles}
                 setUploadedFiles={setUploadedFiles}
                 Dropdown={Dropdown}
-            />
-            <div className='flex justify-end'><Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium' onClick={() => { handleAddItems() }}>Add Row</Button></div>
+            /> */}
+            {/* <div className='flex justify-end'><Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium' onClick={() => { handleAddItems() }}>Add Row</Button></div> */}
 
             {/* <PublicQuotePRItemsTable  /> */}
             <div className='flex justify-end'><Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium' onClick={() => { handleSubmit() }}>Submit</Button></div>
