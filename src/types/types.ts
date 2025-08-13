@@ -348,6 +348,19 @@ export type TvendorOnboardingDetail = {
   }
 }
 
+export type ASAForm = {
+  name: string;
+  owner: string;
+  creation: string;
+  modified: string;
+  vendor_ref_no: string;
+  vendor_name: string;
+  total_count: string;
+  overall_total_asa: string,
+  page_no: string,
+  page_length: string
+}
+
 export type TCompanyDetailForm = {
   ref_no: string,
   vendor_onboarding: string,
@@ -1206,10 +1219,22 @@ export interface DashboardTableType {
   rejected_vendor_onboarding: VendorOnboarding[];
   approved_vendor_onboarding: VendorOnboarding[];
   dispatch_vendor_onboarding: dispatch_vendor_onboarding[],
-  vendor_purchase_orders: TvendorPOTable[]
-  cart_details: CartDetails[]
-  qms_form: string
+  vendor_purchase_orders: TvendorPOTable[],
+  cart_details: CartDetails[],
+  qms_form: string,
+  asa_form_data: ASAFormResponse;
 }
+
+export type ASAFormResponse = {
+  status: string;
+  message: string;
+  data: ASAForm[];
+  total_count: number;
+  overall_total_asa: number;
+  page_no: number;
+  page_length: number;
+};
+
 
 export type TReconsiliationDropdown = {
   message: {
@@ -1354,6 +1379,16 @@ export interface PurchaseRequisition {
   mail_sent_to_purchase_head: number;
   ack_mail_to_user: number;
   purchase_group: string | null;
+}
+
+export interface RFQTable {
+  data: {
+    name: string,
+    company_name: string,
+    rfq_type: string,
+    rfq_date: string,
+    status: string,
+  }[]
 }
 
 export interface RFQTable {

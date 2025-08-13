@@ -49,7 +49,7 @@ const ViewASAEntry = ({ ASAData }: Props) => {
                                 <TableHead className="text-center">Vendor Name</TableHead>
                                 <TableHead className="text-center">Vendor Ref No.</TableHead>
                                 <TableHead className="text-center">Date when Created</TableHead>
-                                <TableHead className="text-center">Actions</TableHead>
+                                <TableHead className="text-center">View Details</TableHead>
                             </TableRow>
                         </TableHeader>
 
