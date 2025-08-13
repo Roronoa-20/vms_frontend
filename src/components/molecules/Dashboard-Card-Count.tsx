@@ -155,7 +155,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       hover: "hover:border-violet-400",
     },
   ];
-
+  }
   let cardData = user === "Enquirer"
     ? allCardData.filter(item => item.name === "Purchase Inquiry" || item.name === "Purchase Requisition") : allCardData;
 
