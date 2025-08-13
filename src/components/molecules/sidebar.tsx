@@ -15,8 +15,6 @@ const Sidebar = () => {
   return (
     <div className="w-[110px] bg-[#0C2741] flex flex-col items-center gap-4 overflow-y-scroll no-scrollbar sticky left-0">
       <div className="w-3 h-3 pb-6 pt-5">
-    <div className="w-[110px] bg-[#0C2741] flex flex-col items-center gap-4 overflow-y-scroll no-scrollbar sticky left-0">
-      <div className="w-3 h-3 pb-6 pt-5">
         <Logo />
       </div>
       {sideBar?.map((item, index) => (
