@@ -15,17 +15,17 @@ export const sidebarMenu = [
   //   href:"/total-vendor"
   // },
   {
-    logo: "/sidebar-assests/vendor-icon.svg",
+    logo: "/sidebar-assests/view-pr.svg",
     name: "PR",
     href:"/pr-request"
   },
     {
-    logo: "/sidebar-assests/rfq_icon.svg",
+    logo: "/sidebar-assests/raise-rfq-logo.svg",
     name: "Raise RFQ",
     href:"/create-rfq"
   },
   {
-    logo: "/sidebar-assests/rfq_icon.svg",
+    logo: "/sidebar-assests/po-details.svg",
     name: "View PO",
     href:"/view-po"
   },
@@ -40,7 +40,7 @@ export const sidebarMenu = [
   //   href:"/pr-request"
   // },
   {
-    logo: "/sidebar-assests/vendor-icon.svg",
+    logo: "/sidebar-assests/purchase-enquiry-logo.svg",
     name: "Product Enquiry",
     href:"/pr-inquiry"
   },
@@ -94,9 +94,24 @@ export const HeadSidebar = [
     href:"/dashboard"
   },
   {
-    logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-    name: "Product Enquiry",
-    href: "/pr-inquiry"
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "PR",
+    href:"/pr-request"
+  },
+    {
+    logo: "/sidebar-assests/raise-rfq-logo.svg",
+    name: "Raise RFQ",
+    href:"/create-rfq"
+  },
+  {
+    logo: "/sidebar-assests/po-details.svg",
+    name: "View PO",
+    href:"/view-po"
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "ASA",
+    href:"/view-vendor-asa"
   },
   // {
   //   logo: "/sidebar-assests/vendor-icon.svg",

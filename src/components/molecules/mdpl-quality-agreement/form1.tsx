@@ -19,6 +19,20 @@ const form1 = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
     }));
   }, [selectedDate]);
 
+  useEffect(() => {
+  if (formData.vendor_title && formData.vendor_name1 && selectedDate) {
+    const agreementData = {
+      vendor_title: formData.vendor_title,
+      vendor_name1: formData.vendor_name1,
+      mdpl_qa_date: selectedDate,
+    };
+
+    localStorage.setItem("QualityAgreementInfo", JSON.stringify(agreementData));
+    console.log("🧾 Stored Quality Agreement Info:", agreementData);
+  }
+}, [formData.vendor_title, formData.vendor_name1, selectedDate]);
+
+
 
   return (
     <div className="space-y-[32px] flex flex-col justify-between min-h-[80vh]">

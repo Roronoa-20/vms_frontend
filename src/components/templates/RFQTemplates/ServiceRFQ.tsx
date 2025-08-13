@@ -261,7 +261,7 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
           title="Select Purchase Request Numbers"
         />
       </div>
-      {/* <div className="grid grid-cols-3 gap-6 p-5">
+       <div className="grid grid-cols-3 gap-6 p-5">
         {renderSelect(
           'rfq_type',
           'RFQ Type',
@@ -279,7 +279,7 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
           (item) => `${item.company_name}`
         )}
         {renderSelect(
-          'purchase_organisation',
+          'purchase_organization',
           'Purchasing Organization',
           Dropdown?.purchase_organisation,
           (item) => item.name,
@@ -323,15 +323,15 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
           (item) => item.name,
           (item) => `${item.material_name}`
         )}
-        {renderSelect(
+        {/* {renderSelect(
           'plant_code',
           'Plant Code',
-          Dropdown?.plant_code,
-          (item) => item.name,
-          (item) => `${item.plant_name}`
-        )}
+          Dropdown?.plant,
+          (item) => item.plant_code,
+          (item) => `${item.plant_code}`
+        )} */}
         {renderSelect(
-          'store_location',
+          'storage_location',
           'Storage Location',
           Dropdown?.store_location,
           (item) => item.name,
@@ -343,20 +343,19 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
 
       <h1 className='text-[24px] font-normal pt-5 px-5'>Material/Item Details</h1>
       <div className="grid grid-cols-3 gap-6 p-5">
-        {renderInput('collection_no', 'Collection No.')}
+        {renderInput('collection_number', 'Collection No.')}
         {renderInput('quotation_deadline', 'Quotation Deadline', 'date')}
         {renderInput('bidding_person', 'Bidding Person')}
       </div>
       <h1 className='text-[24px] font-normal pt-5 px-5'>Quantity & Date</h1>
       <div className="grid grid-cols-3 gap-6 p-5">
         {renderInput('rfq_quantity', 'RFQ Quantity')}
-
         {renderSelect(
           'quantity_unit',
           'Quantity Unit',
-          Dropdown?.quantity_unit,
+          Dropdown?.uom_master,
           (item) => item.name,
-          (item) => `${item.quantity_unit_name}`
+          (item) => `${item.uom}`
         )}
         {renderInput('delivery_date', 'Delivery Date', 'date')}
         {renderInput('estimated_price', 'Enter estimated Price', 'number')}
@@ -379,14 +378,8 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
         {renderInput('first_remainder', '1st Reminder', 'date')}
         {renderInput('second_remainder', '2nd Reminder', 'date')}
         {renderInput('third_remainder', '3rd Reminder', 'date')}
-      </div> */}
-      <ServiceRFQFormFields
-        formData={formData}
-        setFormData={setFormData}
-        Dropdown={Dropdown}
-        setUploadedFiles={setUploadedFiles}
-        uploadedFiles={uploadedFiles}
-      />
+      </div>
+
       <VendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />
       <div className='px-4'>
         <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />

@@ -129,7 +129,7 @@ const Dashboard = async () => {
   console.log(rfqData, "this is rfqData");
 
   const dashboardASAFormTableDataApi: AxiosResponse = await requestWrapper({
-    url: API_END_POINTS?.asaformDetails,
+    url: API_END_POINTS?.asavendorListdashboard,
     method: "GET",
     headers: {
       cookie: cookieHeaderString

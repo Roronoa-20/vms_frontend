@@ -24,9 +24,9 @@ const ViewQMSFormDetails = ({ vendor_onboarding, company_code }: Props) => {
     return true;
   });
 
-  const handleTabClick = (key: string) => {
-    router.push(`/qms-form?tabtype=${encodeURIComponent(key)}&vendor_onboarding=${vendor_onboarding}&ref_no=${ref_no}&company_code=${company_code}`);
-  };
+  // const handleTabClick = (key: string) => {
+  //   router.push(`/qms-form-details?tabtype=${encodeURIComponent(key)}&vendor_onboarding=${vendor_onboarding}&ref_no=${ref_no}&company_code=${company_code}`);
+  // };
 
   if (designation === "Accounts Team") return null;
 

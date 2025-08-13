@@ -133,6 +133,14 @@ const API_END_POINTS = {
   submitPOItems: `${url}/api/method/vms.APIs.purchase_api.purchase_order.update_purchase_team_remarks`,
   POItemsApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_order.update_vendor_approval_status`,
 
+  // ASA Form API:
+  getASAFormSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.get_data_ann_ass_form`,
+  asaformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_annual_ass_form`,
+  asagrovernanceformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_gov_asa_form`,
+  asasocialformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_social_asa_form`,
+  asaenvformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_env_asa_form`,
+  asavendorListdashboard: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.asa_dashboard`,
+
   // Company Filter API for Purchase Enquiry and Purchase Requisition
   filterpurchasegroup: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.filter_purchase_group`,
   filterstoragelocation: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_store_location`,

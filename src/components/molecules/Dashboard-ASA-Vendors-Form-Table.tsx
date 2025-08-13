@@ -1,21 +1,7 @@
 "use client"
 import React, { useState, useEffect } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/src/components/atoms/table";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/src/components/atoms/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/src/components/atoms/table";
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/src/components/atoms/select";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Input } from "../atoms/input";
@@ -24,7 +10,6 @@ import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "./Pagination";
-import ASAVendorMonthWiseChart from "./ASAVendorMonthWiseChart";
 
 type Props = {
   dashboardTableData: ASAFormResponse;
@@ -46,6 +31,7 @@ const useDebounce = (value: any, delay: any) => {
 };
 
 const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Props) => {
+  console.log("Dashboard tabe ASA---->",dashboardTableData)
 
   const [table, setTable] = useState<ASAForm[]>(dashboardTableData?.data || []);
   const [selectedCompany, setSelectedCompany] = useState<string>("")

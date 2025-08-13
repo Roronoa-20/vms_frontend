@@ -25,6 +25,46 @@ export const Form5 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
     }));
   }, [signedDate, merilSignedDate]);
 
+  useEffect(() => {
+    const {
+      name_of_person,
+      designation_of_person,
+      signed_date,
+      meril_signed_date,
+    } = formData;
+    const {
+      person_signature,
+      meril_signature
+    } = signaturePreviews;
+
+    const allFieldsPresent = name_of_person && designation_of_person && signed_date && meril_signed_date && person_signature && meril_signature;
+
+    if (allFieldsPresent) {
+      const signatureData = {
+        name_of_person,
+        designation_of_person,
+        signed_date,
+        meril_signed_date,
+        person_signature,
+        meril_signature,
+      };
+      localStorage.setItem("QualityAgreementSignatures", JSON.stringify(signatureData));
+      console.log("✅ Stored Signature Info:", signatureData);
+    } else {
+      console.warn("❌ Missing fields - not saving to localStorage", {
+        name_of_person,
+        designation_of_person,
+        signed_date,
+        meril_signed_date,
+        person_signature,
+        meril_signature
+      });
+    }
+  }, [formData, signaturePreviews]);
+
+
+
+
   return (
     <div className="space-y-[32px] flex flex-col justify-between min-h-[80vh]">
       <div style={{ boxShadow: '0px 0px 5px 5px rgba(0, 0, 0, 0.05)' }} className='space-y-10'>

@@ -15,7 +15,6 @@ export default function QMSFormTab() {
     const companyCodes = company_code.split(',').map(code => code.trim());
     const is7000 = companyCodes.includes('7000');
 
-    // Filter the tabs before rendering
     const visibleTabs = QMSFormTabs.filter(tab => {
         if (is7000 && tab.key.toLowerCase() === 'quality_agreement') return false;
         return true;
