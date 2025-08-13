@@ -20,12 +20,12 @@ export const sidebarMenu = [
     href:"/pr-request"
   },
     {
-    logo: "/sidebar-assests/rasie-rfq-logo.svg",
+    logo: "/sidebar-assests/raise-rfq-logo.svg",
     name: "Raise RFQ",
     href:"/create-rfq"
   },
   {
-    logo: "/sidebar-assests/po_details.svg",
+    logo: "/sidebar-assests/po-details.svg",
     name: "View PO",
     href:"/view-po"
   },
