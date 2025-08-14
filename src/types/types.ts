@@ -53,6 +53,11 @@ export type TcompanyNameBasedDropdown = {
         name: string,
         terms_of_payment_name: string,
         description: string
+      }[],
+      incoterms:{
+        name:string,
+        incoterm_name:string,
+        incoterm_code:string,
       }[]
     }
   }
@@ -454,23 +459,25 @@ export type TPurchaseDetails = {
   purchase_team_remarks: string,
   qa_team_remarks: string,
   reconciliation_account: string,
-  terms_of_payment: string,
-  account_team_remarks: string,
-  company_details: {
-    company_name: string,
+  terms_of_payment: string
+  account_team_remarks: string
+  pur_group_details:{
+    name:string,
+    description:string
   },
-  pur_org_details: {
-    description: string,
+  term_payment_details:{
+    name:string,
+    description:string
   },
-  pur_group_details: {
-    description: string,
+  company_details:{
+    name:string,
+    description:string
   },
-  reconciliation_details: {
-    description: string,
-  },
-  term_payment_details: {
-    description: string,
-  },
+  pur_org_details:{
+    name:string,
+    description:string
+  }
+
 }
 
 

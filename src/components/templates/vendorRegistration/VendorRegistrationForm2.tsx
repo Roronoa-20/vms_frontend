@@ -40,6 +40,7 @@ interface Props {
 const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown,formData,handlefieldChange,handleSelectChange,setTableData,tableData,handleSubmit,multiVendor}:Props) => {
   // const { data, updateField,updateVendorTypes, resetForm } = useVendorStore();
   const [companyBasedDropdown,setCompanyBasedDropdown] = useState<TcompanyNameBasedDropdown["message"]["data"]>();
+  const [incotermsDropdown,setIncotermsDropdown] = useState<TcompanyNameBasedDropdown["message"]["data"]["incoterms"]>();
   const [purchaseOrganizationBasedDropdown,setPurchaseOrganizationBasedDropdown] = useState<TpurchaseOrganizationBasedDropdown["message"]["all_account_groups"]>()
   const [reconciliationDropdown,setReconciliationDropdown] = useState<TReconsiliationDropdown["message"]["data"]>([])
   const [singleTableData,setSingleTableData] = useState<TtableData | null>(null);
@@ -52,6 +53,8 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
     const data:TcompanyNameBasedDropdown = response?.status == 200?response?.data:"";
     setCompanyBasedDropdown(data?.message?.data);
     fetchReconciliationAccount(value);
+    console.log(response?.data?.message?.data?.incoterms,"this is incotersms")
+    setIncotermsDropdown(response?.data?.message?.data?.incoterms)
   }
 
   const handlePurchaseOrganizationDropdownChange = async(value:string)=>{
@@ -279,9 +282,9 @@ const VendorRegistration2 = ({incoTermsDropdown,companyDropdown,currencyDropdown
             <SelectContent>
               <SelectGroup>
                 {
-                  incoTermsDropdown ? 
-                  incoTermsDropdown?.map((item)=>(
-                    <SelectItem value={item?.name} key={item?.name}>{item?.name}</SelectItem>
+                  incotermsDropdown ?
+                  incotermsDropdown?.map((item,index)=>(
+                    <SelectItem value={item?.name} key={index}>{item?.name}</SelectItem>
                   )):
                   <div className="text-center">No Value</div>
                 }
