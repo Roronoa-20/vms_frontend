@@ -196,7 +196,6 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
         setFiles={setFiles}
         files={files}
       />
-
       <VendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />
       <div className='px-4'>
         <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
