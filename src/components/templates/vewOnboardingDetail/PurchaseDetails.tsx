@@ -38,13 +38,13 @@ const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,reconciliati
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           Company Name
         </h1>
-        <Input placeholder="" disabled defaultValue={OnboardingDetail?.company_name} />
+        <Input placeholder="" disabled defaultValue={OnboardingDetail?.company_details?.description} />
       </div>
       <div>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           Purchase Organization
         </h1>
-        <Input placeholder="" defaultValue={OnboardingDetail?.purchase_organization} disabled/>
+        <Input placeholder="" defaultValue={OnboardingDetail?.pur_org_details?.description} disabled/>
       </div>
       <div>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -56,13 +56,19 @@ const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,reconciliati
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           Terms Of Payment
         </h1>
-        <Input placeholder="" disabled defaultValue={OnboardingDetail?.terms_of_payment}/>
+        <Input placeholder="" disabled defaultValue={OnboardingDetail?.term_payment_details?.description}/>
       </div>
       <div>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           Purchase Group
         </h1>
-        <Input required placeholder="Enter Reg No." disabled defaultValue={OnboardingDetail?.purchase_group} />
+        <Input required placeholder="Enter Reg No." disabled defaultValue={OnboardingDetail?.pur_group_details?.description} />
+      </div>
+      <div>
+        <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          Incoterms
+        </h1>
+        <Input required placeholder="Enter Reg No." disabled defaultValue={OnboardingDetail?.incoterms} />
       </div>
       <div>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
