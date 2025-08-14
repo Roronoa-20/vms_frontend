@@ -202,15 +202,15 @@ const DocumentDetails = ({
       errors.name_on_udyam_certificate = "Please Enter Name Udhyam Certificate";
     }
 
-    if (
-      documentDetails?.msme_registered == "Yes" &&
-      documentDetails?.udyamCertificate?.length &&
-      documentDetails?.udyamCertificate?.length == 0 &&
-      OnboardingDetail?.msme_registered == "Yes" &&
-      !OnboardingDetail?.msme_proof
-    ) {
-      errors.udyamCertificate = "Please Upload Udhyam Certificate";
-    }
+    // if (
+    //   documentDetails?.msme_registered == "Yes" &&
+    //   documentDetails?.udyamCertificate?.length &&
+    //   documentDetails?.udyamCertificate?.length == 0 &&
+    //   OnboardingDetail?.msme_registered == "Yes" &&
+    //   !OnboardingDetail?.msme_proof
+    // ) {
+    //   errors.udyamCertificate = "Please Upload Udhyam Certificate";
+    // }
 
     if (
       !documentDetails?.enterprise_registration_number &&
@@ -453,6 +453,20 @@ const DocumentDetails = ({
       }));
     }
   };
+
+  const validateGSTDate = (date:string)=>{
+    const todayDate = new Date();
+    const inputDate = new Date(date);
+    if(inputDate > todayDate){
+      alert("Selected Date Cannot be Greater Than Today's Date");
+      return;
+    }else{
+      setSingleRow((prev: any) => ({
+                    ...prev,
+                    gst_registration_date: date,
+                  }));
+    }
+  }
 
   console.log(singlerow);
   console.log(gstStateDropdown, "this is dropown");
@@ -737,6 +751,7 @@ const DocumentDetails = ({
                 <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Input
+              
                 placeholder="Enter Registration Date"
                 value={singlerow?.gst_registration_date ?? ""}
                 type="date"
@@ -747,10 +762,7 @@ const DocumentDetails = ({
                 //   }));
                 // }}
                 onChange={(e) => {
-                  setSingleRow((prev: any) => ({
-                    ...prev,
-                    gst_registration_date: e.target.value,
-                  }));
+                  validateGSTDate(e.target.value);
                 }}
               />
               {errors?.gst_registration_date &&
@@ -1042,7 +1054,7 @@ const DocumentDetails = ({
                 )}
             </div>
           </div>
-          <div className={`flex flex-col col-span-1`}>
+          <div className={`flex flex-col col-span-1`} title="Type NA for if you don't have the Number">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Enterprise Registration Number{" "}
               <span className="pl-2 text-red-400 text-2xl">*</span>
@@ -1069,9 +1081,9 @@ const DocumentDetails = ({
               )}
           </div>
           <div className={`flex flex-col col-span-1`}>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-6">
               Upload Enterprise Registration Document{" "}
-              <span className="pl-2 text-red-400 text-2xl">*</span>
+              {/* <span className="pl-2 text-red-400 text-2xl">*</span> */}
             </h1>
             <div className="flex gap-4 w-full">
               <Input

@@ -47,6 +47,7 @@ const Dashboard = async () => {
   const dashboardTotalVendorTableData: DashboardTableType =
     dashboardTotalVendorTableDataApi?.status == 200 ? dashboardTotalVendorTableDataApi?.data?.message : "";
   console.log(dashboardTotalVendorTableData, "lkshklsdzlkjsdflksd.jfvbh")
+
   // pending vendor table
   const dashboardPendingVendorTableDataApi: AxiosResponse = await requestWrapper({
     url: `${API_END_POINTS?.dashboardPendingVendorTableURL}?usr=${user}`,
@@ -122,14 +123,23 @@ const Dashboard = async () => {
   const prApi: AxiosResponse = await requestWrapper({ url: prDashboardUrl, method: "GET", headers:{cookie:cookieHeaderString} });
   const prData: PurchaseRequisition[] = prApi?.status == 200 ? prApi?.data?.message?.data : "";
 
-
   const rfqDashboardUrl = API_END_POINTS?.rfqTableData; 
   const rfqApi: AxiosResponse = await requestWrapper({ url: rfqDashboardUrl, method: "GET",headers:{cookie:cookieHeaderString} });
   const rfqData: RFQTable = rfqApi?.status == 200 ? rfqApi?.data?.message : "";
   console.log(rfqData, "this is rfqData");
 
+  const dashboardASAFormTableDataApi: AxiosResponse = await requestWrapper({
+    url: API_END_POINTS?.asavendorListdashboard,
+    method: "GET",
+    headers: {
+      cookie: cookieHeaderString
+    }
+  });
+  const dashboardASAFormTableData: DashboardTableType["asa_form_data"] =
+    dashboardASAFormTableDataApi?.status == 200 ? dashboardASAFormTableDataApi?.data?.message : "";
+
   return (
-    <div className="p-8">
+    <div className="p-4">
       {/* Cards */}
       <DashboardCardCounter
         cardData={CardData}
@@ -143,6 +153,7 @@ const Dashboard = async () => {
         prInquiryData={prInquiryData}
         prData={prData}
         rfqData={rfqData}
+        dashboardASAFormTableData={dashboardASAFormTableData}
       />
     </div>
   );

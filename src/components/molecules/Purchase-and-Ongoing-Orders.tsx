@@ -74,7 +74,7 @@ const router = useRouter();
   
   useEffect(()=>{
     const fetchPoTable = async()=>{
-      const POUrl = `${API_END_POINTS?.poTable}?refno=${search}`
+      const POUrl = `${API_END_POINTS?.poTable}?vendor_name=${search}`
       const dashboardPOTableDataApi: AxiosResponse = await requestWrapper({
         url: POUrl,
         method: "GET",

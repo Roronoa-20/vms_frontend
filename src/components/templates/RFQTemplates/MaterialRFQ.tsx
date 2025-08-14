@@ -70,7 +70,7 @@ export interface newVendorTable {
 }
 
 
-const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
+const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
   const [formData, setFormData] = useState<Record<string, string | null>>({ rfq_type: "Material Vendor" });
   const [vendorSearchName, setVendorSearchName] = useState('')
   const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
@@ -82,12 +82,9 @@ const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
     }
   );
   const [availablePRs, setAvailablePRs] = useState<SAPPRData[]>([])
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitResult, setSubmitResult] = useState<string | null>(null)
   const [selectedMaterials, setSelectedMaterials] = useState<SelectedMaterial[]>([])
   const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
   const [files, setFiles] = useState<Record<string, File | null>>({});
-
   const [isDialog, setIsDialog] = useState<boolean>(false);
   const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([])
   const router = useRouter()
@@ -131,90 +128,11 @@ const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
     }
   }, [pr_codes ?? null]);
 
-
-  const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
   const handleVendorSearch = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setVendorCurrentPage(1)
     setVendorSearchName(e.target.value);
   }
-  const handleSelectChange = (value: string, field: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
 
-  const renderInput = (name: string, label: string, type = 'text') => (
-    <div className="col-span-1">
-      <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-        {label}
-        {/* {errors[name] && <span className="text-red-600 ml-1">*</span>} */}
-      </h1>
-      <Input
-        name={name}
-        type={type}
-        // className={errors[name] ? 'border-red-600' : 'border-neutral-200'}
-        className={'border-neutral-200'}
-        value={formData[name] || ''}
-        onChange={handleFieldChange}
-      />
-    </div>
-  );
-
-  const renderFileInput = (name: string, label: string) => (
-    <div className="col-span-1">
-      <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-        {label}
-      </h1>
-      <Input
-        name={name}
-        type="file"
-        className="border-neutral-200"
-        onChange={(e) => {
-          const file = e.target.files?.[0] || null;
-          setFiles((prev) => ({ ...prev, [name]: file }));
-        }}
-      />
-    </div>
-  );
-
-
-  const renderSelect = <T,>(
-    name: string,
-    label: string,
-    options: T[],
-    getValue: (item: T) => string,
-    getLabel: (item: T) => string,
-    isDisabled?: boolean,
-  ) => (
-    <div className="col-span-1">
-      <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-        {label}
-        {/* {errors[name as keyof typeof errors] && (
-                    <span className="text-red-600 ml-1">*</span>
-                )} */}
-      </h1>
-      <Select
-        value={formData[name] ?? ""}
-        onValueChange={(value) => handleSelectChange(value, name)}
-        disabled={isDisabled}
-      >
-        {/* className={errors[name as keyof typeof errors] ? 'border border-red-600' : ''} */}
-        <SelectTrigger>
-          <SelectValue placeholder="Select" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            {options?.map((item, idx) => (
-              <SelectItem key={idx} value={getValue(item)}>
-                {getLabel(item)}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-    </div>
-  );
   const handleSubmit = async () => {
     console.log(selectedMaterials, "selectedMaterials")
     console.log({ ...formData, vendors: selectedRows.vendors, pr_items: selectedMaterials }, "submit data")
@@ -223,14 +141,11 @@ const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
       ...formData,
       vendors: selectedRows.vendors,
       pr_items: selectedMaterials,
-      // non_onboarded_vendors: nonOnboardedVendors, 
+      non_onboarded_vendors: newVendorTable,
     };
-
     console.log(fullData, "submit data ------------------------------");
-
     // Append JSON data as a string under key 'data'
     formdata.append('data', JSON.stringify(fullData));
-
     // Append file only if exists
     if (files && files['file']) {
       formdata.append('file', files['file']);
@@ -265,8 +180,6 @@ const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
       </div>
 
       <div className="w-full mx-auto space-y-6 p-5">
-
-
         {/* PR Materials Manager Component */}
         <PRMaterialsManager
           prNumbers={availablePRs}
@@ -276,61 +189,6 @@ const MaterialRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
         />
 
       </div>
-      {/* <div className="grid grid-cols-3 gap-6 p-5">
-        {renderSelect(
-          'rfq_type',
-          'RFQ Type',
-          Dropdown?.rfq_type,
-          (item) => item.name,
-          (item) => `${item.vendor_type_name}`,
-          true
-        )}
-        {renderInput('rfq_date', 'RFQ Date', 'date')}
-        {renderSelect(
-          'company_name',
-          'Company Name',
-          Dropdown?.company,
-          (item) => item.name,
-          (item) => `${item.company_name}`
-
-        )}
-        {renderSelect(
-          'purchase_organization',
-          'Purchasing Organization',
-          Dropdown?.purchase_organisation,
-          (item) => item.name,
-          (item) => `${item.name}`
-        )}
-        {renderSelect(
-          'purchase_group',
-          'Purchase Group',
-          Dropdown?.purchase_group,
-          (item) => item.name,
-          (item) => `${item.purchase_group_name}`
-        )}
-        {renderSelect(
-          'currency',
-          'Select Currency',
-          Dropdown?.currency_master,
-          (item) => item.name,
-          (item) => `${item.currency_name}`
-        )}
-      </div>
-      <h1 className='text-[24px] font-normal pt-5 px-5'>Administrative Fields</h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
-        {renderInput('collection_number', 'Collection No.')}
-        {renderInput('quotation_deadline', 'Quotation Deadline', 'date')}
-        {renderInput('requestor_name', 'Requestor Name')}
-        {renderFileInput('file', 'Upload Document')}
-      </div>
-
-      <h1 className='text-[24px] font-normal pt-5 px-5'>Deadline Monitoring</h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
-        {renderInput('first_remainder', '1st Reminder', 'date')}
-        {renderInput('second_remainder', '2nd Reminder', 'date')}
-        {renderInput('third_remainder', '3rd Reminder', 'date')}
-      </div> */}
-
       <MaterialRFQFormFields
         formData={formData}
         setFormData={setFormData}

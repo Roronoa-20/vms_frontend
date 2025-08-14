@@ -261,7 +261,7 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
           title="Select Purchase Request Numbers"
         />
       </div>
-      {/* <div className="grid grid-cols-3 gap-6 p-5">
+       <div className="grid grid-cols-3 gap-6 p-5">
         {renderSelect(
           'rfq_type',
           'RFQ Type',
@@ -323,13 +323,13 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
           (item) => item.name,
           (item) => `${item.material_name}`
         )}
-        {renderSelect(
+        {/* {renderSelect(
           'plant_code',
           'Plant Code',
           Dropdown?.plant,
           (item) => item.plant_code,
           (item) => `${item.plant_code}`
-        )}
+        )} */}
         {renderSelect(
           'storage_location',
           'Storage Location',

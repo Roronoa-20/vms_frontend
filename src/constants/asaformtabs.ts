@@ -12,7 +12,7 @@ export const ASAFormTabs = [
     key: "environment",
     children: [
       { label: "Environmental Management System", key: "ems" },
-      { label: "Energy Consumption and Emissions&M", key: "ece" },
+      { label: "Energy Consumption and Emissions", key: "ece" },
       { label: "Water Consumption and Management", key: "wcm" },
       { label: "Waste Management", key: "waste_management" },
       { label: "Green Products", key: "green_products" },

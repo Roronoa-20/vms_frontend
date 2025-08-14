@@ -297,6 +297,7 @@ interface SubItemModalProps {
 }
 
 const emptyFormData: SubheadField = {
+  row_id:"",
   item_number_of_purchase_requisition_subhead: "",
   service_number_subhead: "",
   short_text_subhead: "",

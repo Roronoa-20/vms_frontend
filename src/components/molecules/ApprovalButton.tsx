@@ -53,6 +53,12 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
 
     //   return;
     // }
+
+    if(!comments){
+      alert("Please Enter Comments");
+      return
+    }
+
     const formData = new FormData();
     if(designation == "Purchase Team"){
       const purchaseTeamData = {

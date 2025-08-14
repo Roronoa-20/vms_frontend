@@ -92,13 +92,13 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
 
   const fetchTable = async () => {
     const dashboardApprovedVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.dashboardApprovedVendorTableURL}?usr=${user}&company=${selectedCompany}&refno=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
+      url: `${API_END_POINTS?.dashboardApprovedVendorTableURL}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
       method: "GET",
     });
     if (dashboardApprovedVendorTableDataApi?.status == 200) {
       setTable(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding
       );
-      settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count);
+      // settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count);
       settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count)
       // setRecordPerPage(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding?.length)
       setRecordPerPage(5);
@@ -106,8 +106,6 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
   };
 
   if (!dashboardTableData) { return <div>Loading...</div>; }
-
-
 
 
   return (
@@ -118,7 +116,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
             Total OnBoarded Vendors
           </h1>
           <div className="flex gap-4">
-            <Input placeholder="Search..." />
+            <Input placeholder="Search..." onChange={(e)=>{handlesearchname(e)}} />
             <Select>
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
@@ -191,7 +189,6 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                   <TableCell>{item?.vendor_country}</TableCell>
                   <TableCell>{item?.registered_by}</TableCell>
                   <TableCell><Link href={`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-blue-400 hover:bg-blue-300">View</Button></Link></TableCell>
-                  {/* <TableCell><Link href={`/qms-details?tabtype=vendor%20information&vendor_onboarding=${item?.name}`}><Button variant={"outline"}>View</Button></Link></TableCell> */}
                   {!isAccountsUser && (
                     <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
                   )}

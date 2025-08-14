@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -10,7 +10,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PurchaseRequestDropdown } from "@/src/types/PurchaseRequestType";
-import MultipleFileUpload from "../../molecules/MultipleFileUpload";
 import { PurchaseRequisitionRow } from "@/src/types/RFQtype";
 
 interface Props {
@@ -25,8 +24,6 @@ interface Props {
 const MaterialQuatationFormFields = ({
   formData,
   setFormData,
-  uploadedFiles,
-  setUploadedFiles,
   Dropdown,
   itemcodes
 }: Props) => {
@@ -104,23 +101,6 @@ const MaterialQuatationFormFields = ({
       </Select>
     </div>
   );
-
-// "row_id": "u9e7atrp0o",
-// 				"head_unique_field": "H123",
-// 				"purchase_requisition_number": "PR-0001",
-// 				"material_code_head": "MAT-001",
-// 				"delivery_date_head": null,
-// 				"plant_head": null,
-// 				"material_name_head": "Material A",
-// 				"quantity_head": "100",
-// 				"uom_head": "12",
-// 				"price_head": "150",
-// 				"rate_with_tax": 0,
-// 				"rate_without_tax":  0,
-// 				"moq_head":  0,
-// 				"lead_time_head": 0,
-// 				"tax":  0
-
   return (
     <div className="grid grid-cols-3 gap-6 p-5">
       {renderSelect(
@@ -133,22 +113,18 @@ const MaterialQuatationFormFields = ({
       {renderInput("material_name_head","Material Desc. & Specifications")}
       {renderInput("rate_head","Rate")}
       {renderInput("quantity_head","MOQ")}
-      {renderInput("uom_head","UOM")}
+      {/* {renderInput("uom_head","UOM")} */}
+      {renderSelect(
+        "uom_head",
+        "UOM",
+        Dropdown.uom_master,
+        (item) => item.name,
+        (item) => `${item.uom}`
+      )}
       {renderInput("price_head","Price")}
       {renderInput("delivery_date_head","Delivery Date","date")}
       {renderInput("lead_time_head","Lead Time")}
       {renderTextarea("remarks", "Remarks")}
-      {/* <div>
-        <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-          Upload Documents
-        </h1>
-        <MultipleFileUpload
-          files={uploadedFiles}
-          setFiles={setUploadedFiles}
-          onNext={(files) => console.log("Final selected files:", files)}
-          buttonText="Attach Files"
-        />
-      </div> */}
     </div>
   );
 };

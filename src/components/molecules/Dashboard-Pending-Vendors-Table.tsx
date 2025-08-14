@@ -78,7 +78,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
 
   const fetchTable = async () => {
     const dashboardPendingVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.dashboardPendingVendorTableURL}?usr=${user}&company=${selectedCompany}&refno=${search}&page_no=${currentPage}`,
+      url: `${API_END_POINTS?.dashboardPendingVendorTableURL}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}`,
       method: "GET",
     });
     if (dashboardPendingVendorTableDataApi?.status == 200) {

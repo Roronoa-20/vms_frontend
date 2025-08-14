@@ -1,69 +1,98 @@
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import YesNoNA from "@/src/components/common/YesNoNAwithFile";
-import { EmployeeSatisfaction } from "@/src/types/asatypes";
-import Link from "next/link";
+import { EmployeeSatisfaction, HealthAndSafety } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useASAForm } from "@/src/hooks/useASAForm";
+import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+
 
 export default function Employee_Satisfaction() {
-const [formData, setFormData] = useState<EmployeeSatisfaction>({
-        question1: { selection: "", comment: "", file: null }
-    });
-    // handlers
-    const handleSelectionChange = (name: string, selection: "yes" | "no" | "na") => {
-        setFormData((prev) => ({
-            ...prev,
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const vmsRefNo = searchParams.get("vms_ref_no") || "";
+    const { EmpSatisfactionForm, updateEmpSatisactionForm, refreshFormData, submitSocialForm, updateHealthSafetyForm } = useASAForm();
+    console.log("Emp Satisfaction Form Data:", EmpSatisfactionForm);
+
+    const handleSelectionChange = (name: string, selection: "Yes" | "No" | "NA" | "") => {
+        updateEmpSatisactionForm({
+            ...EmpSatisfactionForm,
             [name]: {
-                ...prev[name as keyof EmployeeSatisfaction],
+                ...EmpSatisfactionForm[name as keyof EmployeeSatisfaction],
                 selection,
             },
-        }));
+        });
     };
 
     const handleCommentChange = (name: string, comment: string) => {
-        setFormData((prev) => ({
-            ...prev,
+        updateEmpSatisactionForm({
+            ...EmpSatisfactionForm,
             [name]: {
-                ...prev[name as keyof EmployeeSatisfaction],
+                ...EmpSatisfactionForm[name as keyof EmployeeSatisfaction],
                 comment,
             },
-        }));
+        });
     };
 
     const handleFileChange = (name: string, file: File | null) => {
-        setFormData((prev) => ({
-            ...prev,
+        updateEmpSatisactionForm({
+            ...EmpSatisfactionForm,
             [name]: {
-                ...prev[name as keyof EmployeeSatisfaction],
+                ...EmpSatisfactionForm[name as keyof EmployeeSatisfaction],
                 file,
             },
-        }));
+        });
     };
 
-    // routing
-    const router = useRouter()
-    const governance = () => {
-        router.push("/asaform/governance")
-    }
+    const handleSubmit = async () => {
+        await submitSocialForm();
+        refreshFormData();
+    };
+
+    const handleBack = useBackNavigation<HealthAndSafety>(
+        "HealthSafetyForm",
+        updateHealthSafetyForm,
+        "health_safety",
+        vmsRefNo
+    );
+
+
     return (
-        <>
-            <div className="ml-6 mt-3 mr-6">
-                <div className="text-xl font-semibold">Employee Satisfaction</div>
+        <div className="h-full">
+            <div className="p-3 bg-white shadow-md rounded-xl">
+                <div className="text-2xl font-bold text-gray-800 mb-2">Employee Satisfaction</div>
                 <div className="border-b border-gray-400"></div>
-                <div className="mt-6">
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                        Do you conduct employee satisfaction survey (ESAT)? If yes, provide the ESAT score.
-                    </label>
+                <div className="space-y-6 p-3">
+
                     <YesNoNA
-                        name="question1"
-                        value={formData.question1}
+                        name="conduct_esat"
+                        label="1. Do you conduct employee satisfaction survey (ESAT)? If yes, provide the ESAT score."
+                        value={EmpSatisfactionForm.conduct_esat}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                     />
-                    <Button className="bg-gray-900 hover:bg-gray-700 mt-3" onClick={governance}>Next</Button>
+                    <div className="space-x-4 flex justify-end">
+                        <Button
+                            className="py-2.5"
+                            variant="backbtn"
+                            size="backbtnsize"
+                            onClick={handleBack}
+                        >
+                            Back
+                        </Button>
+                        <Button
+                            className="py-2.5"
+                            variant="nextbtn"
+                            size="nextbtnsize"
+                            onClick={handleSubmit}
+                        >
+                            Submit & Next
+                        </Button>
+                    </div>
                 </div>
             </div>
-        </>
+        </div>
     )
 }

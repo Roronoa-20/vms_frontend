@@ -93,7 +93,6 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
             }
         }
         fetchVendorTableData();
-
     }, [currentVendorPage, debouncedDoctorSearchName, RFQData?.name]);
     const handleVendorSearch = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         setVendorCurrentPage(1)
@@ -118,8 +117,6 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
             location.reload();
         }
     }
-
-
     const handleNegotationSubmit = async () => {
         const formdata = new FormData();
         const fullData = {
@@ -140,8 +137,7 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
             location.reload();
         }
     }
-
-    console.log(QuatationVendorList,'QuatationVendorList')
+    console.log(selectedVendorName,'selectedVendorName')
     return (
         <div className='px-4 pb-6 bg-gray-100'>
             <section className='flex justify-between py-4'>

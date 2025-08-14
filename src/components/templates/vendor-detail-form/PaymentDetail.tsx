@@ -151,7 +151,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
               <SelectGroup>
                 {
                   bankNameDropown?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                    <SelectItem key={index} value={item?.name}>{item?.bank_name}</SelectItem>
                   ))
                 }
               </SelectGroup>
