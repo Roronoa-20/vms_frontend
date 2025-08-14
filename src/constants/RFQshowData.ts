@@ -1,9 +1,12 @@
-export const RFQlogicIm = [
+
+import { iteminterface } from "../components/molecules/ViewRFQ/RFQDatas";
+
+export const RFQlogicIm : iteminterface[] = [
   { label: "Sr No. :", key: "sr_no" },
   { label: "Shipment Type :", key: "shipment_type" },
   { label: "Package Type :", key: "package_type" },
   { label: "RFQ Type :", key: "rfq_type" },
-  { label: "Destination Port :", Key: "destination_port" },
+  { label: "Destination Port :", key: "destination_port" },
   { label: "Vol Weight(KG) :", key: "vol_weight" },
   { label: "Service Type :", key: "service_provider" },
   { label: "Country :", key: "country" },
@@ -14,7 +17,7 @@ export const RFQlogicIm = [
   { label: "RFQ Date :", key: "rfq_date_logistic" },
   { label: "Port of Loading :", key: "port_of_loading" },
   { label: "Invoice No :", key: "invoice_no" },
-  { label: "RFQ CutOff :", Key: "rfq_cutoff_date_logistic" },
+  { label: "RFQ CutOff :", key: "rfq_cutoff_date_logistic" },
   { label: "Inco Terms :", key: "inco_terms" },
   { label: "Invoice Value :", key: "invoice_value" },
   { label: "Mode of Shipment :", key: "mode_of_shipment" },
@@ -22,15 +25,13 @@ export const RFQlogicIm = [
   { label: "Expected Date of Arrival :", key: "expected_date_of_arrival" },
   { label: "Shipper Name :", key: "shipper_name" },
   { label: "No.Of Pkg Units :", key: "no_of_pkg_units" },
-  { label: "", key: "" },
-  { label: "Remarks :", key: "remarks" }
 ];
 
-export const RFQlogicEx = [{ label: "Sr No. :", key: "sr_no" },
+export const RFQlogicEx: iteminterface[] = [{ label: "Sr No. :", key: "sr_no" },
   { label: "Shipment Date :", key: "shipment_date" },
   { label: "Package Type :", key: "package_type" },
   { label: "RFQ Type :", key: "rfq_type" },
-  { label: "Destination Port :", Key: "destination_port" },
+  { label: "Destination Port :", key: "destination_port" },
   { label: "Vol Weight(KG) :", key: "vol_weight" },
   { label: "Service Type :", key: "service_provider" },
   { label: "Country :", key: "country" },
@@ -41,33 +42,30 @@ export const RFQlogicEx = [{ label: "Sr No. :", key: "sr_no" },
   { label: "RFQ Date :", key: "rfq_date_logistic" },
   { label: "Port of Loading :", key: "port_of_loading" },
   { label: "Invoice No :", key: "invoice_no" },
-  { label: "RFQ CutOff :", Key: "rfq_cutoff_date_logistic" },
+  { label: "RFQ CutOff :", key: "rfq_cutoff_date_logistic" },
   { label: "Inco Terms :", key: "inco_terms" },
   { label: "No.Of Pkg Units :", key: "no_of_pkg_units" },
   { label: "Mode of Shipment :", key: "mode_of_shipment" },
   { label: "Product Category :", key: "product_category" },
   { label: "Ship to Address :", key: "ship_to_address" },
   { label: "Consignee Name :", key: "consignee_name" },
-  { label: "", key: "" },
-  { label: "", key: "" },
-  { label: "Remarks :", key: "remarks" }
 ];
 
-export const RFQmaterial = [{ label: "RFQ Type :", key: "rfq_type" },
+export const RFQmaterial: iteminterface[] = [{ label: "RFQ Type :", key: "rfq_type" },
   { label: "Company Name :", key: "company_name" },
   { label: "Requestor Name :", key: "requestor_name" },
   { label: "RFQ Date :", key: "rfq_date" },
   { label: "Collection No. :", key: "collection_number" },
-  { label: "1st Reminder :", key: "first_remainder" },
-  { label: "Quotation Deadline :", key: "quotation_deadline" },
+  { label: "1st Reminder :", key: "first_reminder" },
+  { label: "Quotation Deadline :", key: "rfq_cutoff_date_logistic" },
   { label: "Select Currency :", key: "currency" },
-  { label: "2nd Reminder :", key: "second_remainder" },
+  { label: "2nd Reminder :", key: "second_reminder" },
   { label: "Purchasing Organization :", key: "purchase_organization" },
   { label: "Purchase Group :", key: "purchase_group" },
-  { label: "3rd Reminder :", key: "third_remainder" }
+  { label: "3rd Reminder :", key: "third_reminder" }
 ];
 
-export const RFQservices = [{ label: "RFQ Type :", key: "rfq_type" },
+export const RFQservices: iteminterface[] = [{ label: "RFQ Type :", key: "rfq_type" },
   { label: "Company Name :", key: "company_name" },
   { label: "Purchasing Organization :", key: "purchase_organization" },
   { label: "RFQ Quantity :", key: "rfq_quantity" },

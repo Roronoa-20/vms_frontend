@@ -33,7 +33,7 @@ const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,reconciliati
   return (
     <div className="flex flex-col bg-white rounded-lg p-4 w-full">
     <h1 className="border-b-2 pb-2">Purchasing Details</h1>
-    <div className="grid grid-cols-3 gap-6 p-5 overflow-y-scroll max-h-[70vh]">
+    <div className="grid grid-cols-3 gap-6 p-5 overflow-y-scroll max-h-[70vh] disabled:opacity-100">
     <div>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           Company Name
@@ -66,15 +66,15 @@ const PurchaseDetails = ({ref_no,onboarding_ref_no,OnboardingDetail,reconciliati
       </div>
       <div>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-          Purchase Head Remarks
-        </h1>
-        <Input  disabled defaultValue={OnboardingDetail?.purchase_head_remarks} />
-      </div>
-      <div>
-        <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           Purchase Team Remarks
         </h1>
         <Input placeholder="" disabled defaultValue={OnboardingDetail?.purchase_team_remarks}/>
+      </div>
+      <div>
+        <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          Purchase Head Remarks
+        </h1>
+        <Input  disabled defaultValue={OnboardingDetail?.purchase_head_remarks} />
       </div>
       {/* <div>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">

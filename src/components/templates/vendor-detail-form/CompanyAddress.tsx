@@ -291,7 +291,7 @@ const CompanyAddress = ({
   };
 
   const handleBack = () => {
-    router.push(`/vendor-details-form?tabtype=Company%20Details&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    router.push(`/vendor-details-form?tabtype=Company%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   };
 
   const handleRowDelete = (index: number) => {
@@ -314,6 +314,7 @@ const CompanyAddress = ({
             Address 1 <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
+          maxLength={40}
             placeholder=""
             onChange={(e) => {
               updatebillingAddress("address_line_1", e.target.value);
@@ -327,6 +328,7 @@ const CompanyAddress = ({
             Address 2 <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
+          maxLength={40}
             placeholder=""
             onChange={(e) => {
               updatebillingAddress("address_line_2", e.target.value);
@@ -419,6 +421,7 @@ const CompanyAddress = ({
             Address 1
           </h1>
           <Input
+          maxLength={40}
             // placeholder={shippingData?.address1}
             value={shippingAddress?.address_line_1 ?? OnboardingDetail?.shipping_address?.street_1 ?? ""}
             disabled={isShippingSame ? true : false}
@@ -432,6 +435,7 @@ const CompanyAddress = ({
             Address 2
           </h1>
           <Input
+          maxLength={40}
             // placeholder={shippingData?.address2}
             value={shippingAddress?.address_line_2 ?? OnboardingDetail?.shipping_address?.street_2 ?? ""}
             disabled={isShippingSame ? true : false}
@@ -519,6 +523,7 @@ const CompanyAddress = ({
                 Address 1
               </h1>
               <Input
+              maxLength={40}
                 onChange={(e) => {
                   setMultipleAddress((prev) => ({
                     ...prev,
@@ -533,6 +538,7 @@ const CompanyAddress = ({
                 Address 2
               </h1>
               <Input
+              maxLength={40}
                 onChange={(e) => {
                   setMultipleAddress((prev) => ({
                     ...prev,

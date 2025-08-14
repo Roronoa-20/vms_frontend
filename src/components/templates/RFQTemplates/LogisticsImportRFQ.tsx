@@ -71,8 +71,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
     useEffect(() => {
         const fetchVendorTableData = async (rfq_type: string) => {
             setSelectedRows({ vendors: [] })
-            console.log(rfq_type, "rfq type", currentVendorPage, "page no ", debouncedDoctorSearchName, "vendor_name", formData?.service_provider, "rfq_type in table code api call ")
-            const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&service_provider=${formData?.service_provider}`
+            const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&service_provider=${formData?.service_provider}&company=${formData?.company_name_logistic}`
             const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
             if (response?.status == 200) {
                 setVendorList(response.data.message)
@@ -81,7 +80,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
                 alert("error");
             }
         }
-        if (formData?.service_provider != "Select" && formData?.service_provider) {
+        if (formData?.service_provider != "Select" && formData?.service_provider && formData?.company_name_logistic) {
             fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Logistic Vendor");
         }
     }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider]);
@@ -91,7 +90,6 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
         setVendorSearchName(e.target.value);
     }
     const handleSubmit = async () => {
-        console.log({ ...formData, vendors: selectedRows.vendors }, "submit data")
         if (formData?.service_provider == "All Service Provider" || formData?.service_provider == "Select" || formData?.service_provider == "Premium Service Provider") {
             setSelectedRows({ vendors: [] })
         }
@@ -99,7 +97,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
         const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...formData, logistic_type: "Import", non_onboarded_vendors: newVendorTable, vendors: selectedRows.vendors } }, method: "POST" });
         if (response?.status == 200) {
             alert("Submit Successfull");
-            router.push("/dashboard")
+            router.push("/dashboard");
         } else {
             alert("error");
         }
@@ -107,12 +105,9 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
     const handleOpen = () => {
         setIsDialog(true);
     }
-
     const handleClose = () => {
         setIsDialog(false);
     }
-
-
     return (
         <div className='bg-white h-full w-full pb-6'>
             <div className='flex justify-between items-center pr-2'>

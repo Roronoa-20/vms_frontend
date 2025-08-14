@@ -1,88 +1,3 @@
-// import React from 'react'
-// import {
-//     Table,
-//     TableBody,
-//     TableCell,
-//     TableHead,
-//     TableHeader,
-//     TableRow,
-// } from "@/src/components/atoms/table";
-// import { Input } from '@/components/ui/input';
-// import { QuotationDetail } from '@/src/types/QuatationTypes';
-// import { Button } from '@/components/ui/button';
-// interface Props {
-//     QuatationData: QuotationDetail[];
-//     refno?: string;
-//     handleVendorSearch: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
-// }
-// const ViewLogisticsQuatationVendors = ({ QuatationData, handleVendorSearch }: Props) => {
-//     return (
-//         <div>
-//             <div className="flex w-full justify-between py-2 ">
-//                 <h1 className='text-lg py-2 font-semibold'>Bidding Brief Details</h1>
-//                 <div className="flex gap-4 w-[25%]">
-//                     <Input placeholder="Search..." onChange={(e => { handleVendorSearch(e) })} />
-//                 </div>
-//             </div>
-//             <div className="overflow-y-scroll max-h-[55vh]">
-//                 <Table className="">
-//                     <TableHeader className="text-center">
-//                         <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-//                             <TableHead className="">Sr No.</TableHead>
-//                             <TableHead className="text-center">Vendor Name</TableHead>
-//                             <TableHead className="text-center">Vendor Code</TableHead>
-//                             <TableHead className="text-center">Shipment Mode</TableHead>
-//                             <TableHead className="text-center">Airline / Vessel Name</TableHead>
-//                             <TableHead className="text-center">Rate Per Kg</TableHead>
-//                             <TableHead className="text-center">Fuel Surcharge</TableHead>
-//                             <TableHead className="text-center">SC</TableHead>
-//                             <TableHead className="text-center">XRAY</TableHead>
-//                             <TableHead className="text-center">Others Charges in Total</TableHead>
-//                             <TableHead className={`text-center`}>Chargeable Weight</TableHead>
-//                             <TableHead className="text-center">Total Freight FCR</TableHead>
-//                             <TableHead className={`text-center`}>Expected Delivery in No of Days</TableHead>
-//                             <TableHead className="text-center">Remarks</TableHead>
-//                             <TableHead className={`text-center`}>Action</TableHead>
-//                         </TableRow>
-//                     </TableHeader>
-//                     <TableBody className="text-center bg-white">
-//                         {QuatationData.length > 0 ? (
-//                             QuatationData?.map((item, index) => (
-//                                 <TableRow key={index}>
-//                                     <TableCell className="font-medium text-center">{index + 1}</TableCell>
-//                                     <TableCell className="text-nowrap text-center">{item?.vendor_name}</TableCell>
-//                                     <TableCell className="text-nowrap text-center">{item?.vendor_code}</TableCell>
-//                                     <TableCell className="text-nowrap text-center">{item?.mode_of_shipment}</TableCell>
-//                                     <TableCell className="text-nowrap text-center">{item?.airlinevessel_name}</TableCell>
-//                                     <TableCell className="text-nowrap text-center">{item?.ratekg}</TableCell>
-//                                     <TableCell className="text-nowrap text-center">{item?.fuel_surcharge}</TableCell>
-//                                     <TableCell className="text-nowrap text-center">{item?.sc}</TableCell>
-//                                     <TableCell className="text-nowrap text-center">{item?.xray}</TableCell>
-//                                     <TableCell className="text-nowrap text-center">{item?.other_charges_in_total}</TableCell>
-//                                     <TableCell className="text-nowrap text-center">{item?.chargeable_weight}</TableCell>
-//                                     <TableCell className="text-nowrap text-center">{item?.total_freight}</TableCell>
-//                                     <TableCell className="text-nowrap text-center">{item?.expected_delivery_in_no_of_days}</TableCell>
-//                                     <TableCell className="text-nowrap text-center">{item?.remarks}</TableCell>
-//                                     <TableCell className="text-nowrap text-center"><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></TableCell>
-//                                 </TableRow>
-//                             ))
-//                         ) : (
-//                             <TableRow>
-//                                 <TableCell colSpan={9} className="text-center text-gray-500 py-4">
-//                                     No results found
-//                                 </TableCell>
-//                             </TableRow>
-//                         )}
-//                     </TableBody>
-
-//                 </Table>
-//             </div>
-//         </div>
-//     )
-// }
-
-// export default ViewLogisticsQuatationVendors
-
 import {
     Table,
     TableBody,
@@ -93,10 +8,10 @@ import {
 } from "@/src/components/atoms/table";
 import { Input } from '@/components/ui/input';
 import { QuotationDetail } from "@/src/types/QuatationTypes";
-import { Button } from '@/components/ui/button';
 import { AttachmentsDialog } from "../../common/MultipleFileViewDialog";
 import { RFQDetails } from "@/src/types/RFQtype";
 import { Badge } from '@/components/ui/badge';
+import ViewQuotationItems from "./ViewQuotationItems";
 interface Props {
     RFQData: RFQDetails;
     QuatationData: QuotationDetail[];
@@ -130,6 +45,7 @@ const ViewLogisticsQuatationVendors = ({
         { label: "Vendor Name", key: "vendor_name" },
         { label: "Vendor Code", key: "vendor_code" },
         { label: "Email", key: "office_email_primary" },
+        { label: "Status", key: "status" },
         { label: "Shipment Mode", key: "mode_of_shipment" },
         { label: "Airline / Vessel Name", key: "airlinevessel_name" },
         { label: "Rate Per Kg", key: "ratekg" },
@@ -141,7 +57,6 @@ const ViewLogisticsQuatationVendors = ({
         { label: "Total Freight FCR", key: "total_freight" },
         { label: "Expected Delivery in No of Days", key: "expected_delivery_in_no_of_days" },
         { label: "Remarks", key: "remarks" },
-        { label: "Status", key: "status" },
         { label: "Attachments", key: "attachments" },
     ];
 
@@ -152,6 +67,7 @@ const ViewLogisticsQuatationVendors = ({
         { label: "Vendor Name", key: "vendor_name" },
         { label: "Vendor Code", key: "vendor_code" },
         { label: "Email", key: "office_email_primary" },
+        { label: "Status", key: "status" },
         { label: "Shipment Mode", key: "mode_of_shipment" },
         { label: "AirLine Name", key: "airlinevessel_name" },
         { label: "Weight", key: "destination_port" },
@@ -172,11 +88,36 @@ const ViewLogisticsQuatationVendors = ({
         { label: "Landing Price", key: "total_landing_price" },
         { label: "Transit Days", key: "transit_days" },
         { label: "Remarks", key: "remarks" },
-        { label: "Status", key: "status" },
         { label: "Attachments", key: "attachments" },
     ];
 
-    const columns = logistic_type === "Export" ? exportColumns : importColumns;
+    const materialColumns: ColumnConfig[] = [
+        { label: "Select", key: "select" },
+        { label: "Sr No.", key: "index" },
+        { label: "RefNo", key: "name" },
+        { label: "Vendor Name", key: "vendor_name" },
+        { label: "Vendor Code", key: "vendor_code" },
+        { label: "Email", key: "office_email_primary" },
+        { label: "Status", key: "status" },
+        { label: "Payment Terms", key: "payment_terms" },
+        { label: "View Items", key: "quotation_item_list" },
+        { label: "Attachments", key: "attachments" },
+    ];
+    const serviceColumns: ColumnConfig[] = [
+        { label: "Select", key: "select" },
+        { label: "Sr No.", key: "index" },
+        { label: "RefNo", key: "name" },
+        { label: "Vendor Name", key: "vendor_name" },
+        { label: "Vendor Code", key: "vendor_code" },
+        { label: "Email", key: "office_email_primary" },
+        { label: "Status", key: "status" },
+        { label: "Payement Terms", key: "status" },
+        { label: "View Items", key: "quotation_item_list" },
+        { label: "Attachments", key: "attachments" },
+    ];
+
+    // const columns = logistic_type === "Export" ? exportColumns : importColumns;
+    const columns = RFQData?.rfq_type === "Material Vendor" ? materialColumns : RFQData?.rfq_type === "Service Vendor" ? serviceColumns : logistic_type === "Export" ? exportColumns : importColumns;
     const getValueByKey = (
         item: QuotationDetail,
         key: QuotationColumnKey,
@@ -187,6 +128,9 @@ const ViewLogisticsQuatationVendors = ({
 
         if (key === "attachments") {
             return <AttachmentsDialog attachments={item.attachments ?? []} />;
+        }
+        if (key === "quotation_item_list") {
+            return <ViewQuotationItems items={item.quotation_item_list ?? []} />;
         }
 
         if (key === "status") {
@@ -207,7 +151,6 @@ const ViewLogisticsQuatationVendors = ({
         }
 
         const value = item[key as keyof QuotationDetail];
-
         if (Array.isArray(value) || typeof value === "object") {
             return "-";
         }
@@ -215,8 +158,6 @@ const ViewLogisticsQuatationVendors = ({
         return value ?? "-";
     };
 
-
-    console.log(logistic_type, "logistic_typelogistic_typelogistic_typelogistic_typelogistic_type")
     return (
         <div>
             <div className="flex w-full justify-between py-2 ">
@@ -230,7 +171,6 @@ const ViewLogisticsQuatationVendors = ({
                     <TableHeader className="text-center hover:none">
                         <TableRow className="bg-[#DDE8FE]  hover:bg-[#DDE8FE] text-[#2568EF] text-[14px]">
                             {columns.map((col, idx) => (
-
                                 <TableHead key={idx} className="text-center">{col.label}</TableHead>
                             ))}
                         </TableRow>

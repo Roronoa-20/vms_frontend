@@ -1,3 +1,5 @@
+import { PurchaseRequisitionRow } from "./RFQtype";
+
 export type QuotationDetail = {
   name: string;
   rfq_number: string;
@@ -27,12 +29,15 @@ export type QuotationDetail = {
   total_landing_price: string | null;
   invoice_no: string;
   transit_days: string | null;
-  other_charges_in_total:string;
-  expected_delivery_in_no_of_days:string;
-  remarks:string;
-  vendor_name:string;
-  attachments:DocumentAttachment[]
-  status:string;
+  other_charges_in_total: string;
+  expected_delivery_in_no_of_days: string;
+  remarks: string;
+  vendor_name: string;
+  attachments: DocumentAttachment[]
+  status: string;
+  payment_terms:string;
+  negotiation:boolean;
+  quotation_item_list: PurchaseRequisitionRow[]
 };
 export type DocumentAttachment = {
   document_name: string;

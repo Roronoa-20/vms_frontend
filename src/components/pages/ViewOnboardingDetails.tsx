@@ -21,6 +21,7 @@ import ApprovalButton from '../molecules/ApprovalButton'
 import PurchaseDetails from '../templates/vewOnboardingDetail/PurchaseDetails'
 import InternationalDocumentDetails from '../templates/vewOnboardingDetail/InternationalDocumentDetails'
 import InternationalPaymentDetail from '../templates/vewOnboardingDetail/InternationalPaymentDetail'
+import InternationalCompanyAddress from '../templates/vewOnboardingDetail/InternationalCompanyAddress'
 
 interface Props {
   vendor_onboarding: any;
@@ -72,7 +73,7 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
       console.log(OnboardingDetail,"this is onboarding data")
 
       const reconsiliationUrl = API_END_POINTS?.reconsiliationDropdown;
-      const ReconciliationdropDownApi:AxiosResponse = await requestWrapper({url:reconsiliationUrl,method:"POST",data:{data:{account_group:OnboardingDetail?.purchasing_details?.[0]?.account_group}}});
+      const ReconciliationdropDownApi:AxiosResponse = await requestWrapper({url:reconsiliationUrl,method:"POST",data:{data:{company:OnboardingDetail?.purchasing_details?.[0]?.company_name}}});
       const reconciliationDropdown:TReconsiliationDropdown["message"]["data"] = ReconciliationdropDownApi?.status == 200 ? ReconciliationdropDownApi?.data?.message?.data : ""
       console.log(reconciliationDropdown,"this is reconciliation")
       console.log(OnboardingDetail?.purchasing_details?.[0]?.account_group,"this is onboarding details")
@@ -96,7 +97,11 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
           multipleCompany={OnboardingDetail?.multi_company_data}
           ismulticompany={OnboardingDetail?.is_multi_company}
           />
-        ) : tabType == "Company Address" ? (
+        )
+        : tabType == "Company Address" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
+          <InternationalCompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
+        )
+        : tabType == "Company Address" ? (
           <CompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
         )
         : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (

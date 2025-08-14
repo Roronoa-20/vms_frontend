@@ -414,7 +414,8 @@ export type TcertificateCodeDropdown = {
 export type TbankNameDropdown = {
   message: {
     data: {
-      name: string
+      name: string,
+      bank_name:string
     }[]
   }
 }
@@ -506,6 +507,10 @@ type BillingAddress = {
   district: string;
   state: string;
   country: string;
+  international_city:string,
+  international_state:string,
+  international_country:string,
+  international_zipcode:string,
   city_details: LocationDetail;
   district_details: LocationDetail;
   state_details: LocationDetail;
@@ -515,6 +520,10 @@ type BillingAddress = {
 type ShippingAddress = {
   street_1: string;
   street_2: string;
+  inter_manufacture_city:string,
+  inter_manufacture_state:string,
+  inter_manufacture_country:string,
+  inter_manufacture_zipcode:string,
   manufacturing_pincode: string;
   manufacturing_city: string;
   manufacturing_district: string;
@@ -546,6 +555,11 @@ type MultipleLocationEntry = {
   parentfield: string;
   parenttype: string;
   doctype: string;
+  city:string,
+  state:string,
+  country:string,
+  pincode:string
+  zipcode:string
   city_details: LocationDetail;
   district_details: LocationDetail;
   state_details: LocationDetail;

@@ -505,7 +505,6 @@ const   PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropd
           ValuationClassDropdown={ValuationClassDropdown}
           PurchaseOrgDropdown={PurchaseOrgDropdown}
           MaterialGroupDropdown={MaterialGroupDropdown}
-
           pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
         />}
 
