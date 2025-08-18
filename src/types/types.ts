@@ -510,6 +510,10 @@ interface IvalidationChecks {
   mandatory_data_filled: number;
   purchase_head_undertaking: number;
   purchase_team_undertaking: number;
+  is_purchase_approve:number,
+  is_purchase_head_approve:number,
+  is_accounts_team_approve:number,
+  is_accounts_head_approve:number
 }
 
 type CompanyAddressDetails = {
@@ -899,7 +903,8 @@ export type dashboardCardData = {
   purchase_order_count: number;
   pr_count: number;
   cart_count: number,
-  overall_total_rfq: number
+  overall_total_rfq: number,
+  sap_error_vendor_count:number
 }
 
 export interface DashboardPOTableItem {
@@ -1245,7 +1250,50 @@ export interface DashboardTableType {
   cart_details: CartDetails[],
   qms_form: string,
   asa_form_data: ASAFormResponse;
+  sapErrorDashboardData:SapErrorVendorOnboardingResponse
 }
+
+
+type SapErrorVendorOnboarding = {
+  name: string;
+  ref_no: string;
+  company_name: string;
+  vendor_name: string;
+  onboarding_form_status: string;
+  awaiting_approval_status: string | null;
+  modified: string; // ISO timestamp string
+  purchase_t_approval: string;
+  accounts_t_approval: string;
+  purchase_h_approval: string;
+  mandatory_data_filled: 0 | 1;
+  purchase_team_undertaking: 0 | 1;
+  accounts_team_undertaking: 0 | 1;
+  purchase_head_undertaking: 0 | 1;
+  form_fully_submitted_by_vendor: 0 | 1;
+  sent_registration_email_link: 0 | 1;
+  rejected: 0 | 1;
+  data_sent_to_sap: 0 | 1;
+  expired: 0 | 1;
+  payee_in_document: 0 | 1;
+  check_double_invoice: 0 | 1;
+  gr_based_inv_ver: 0 | 1;
+  service_based_inv_ver: 0 | 1;
+  qms_form_filled: 0 | 1;
+  sent_qms_form_link: 0 | 1;
+  registered_by: string;
+  register_by_account_team: 0 | 1;
+  vendor_country: string;
+  rejected_by: string;
+  rejected_by_designation: string;
+  reason_for_rejection: string;
+};
+
+type SapErrorVendorOnboardingResponse = {
+  sap_error_vendor_onboarding: SapErrorVendorOnboarding[];
+  total_count: number;
+  page_no: number;
+  page_length: number;
+};
 
 export type ASAFormResponse = {
   status: string;

@@ -46,6 +46,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
       "Purchase Team": `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.vendor_onboarding.approvals.purchase_team_check`,
       "Accounts Team": `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.vendor_onboarding.approvals.accounts_team_check`,
       "Purchase Head": `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.vendor_onboarding.approvals.purchase_head_check`,
+      "Accounts Head": `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.vendor_onboarding.approvals.accounts_head_check`,
     };
     // const geturl = url[designation];
     const geturl = url[designation];

@@ -12,6 +12,11 @@ interface IvalidationChecks {
   mandatory_data_filled: number;
   purchase_head_undertaking: number;
   purchase_team_undertaking: number;
+  is_purchase_approve:number,
+  is_purchase_head_approve:number,
+  is_accounts_team_approve:number,
+  is_accounts_head_approve:number,
+  
 }
 
 
@@ -99,7 +104,7 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
             Reconciliation Account
           </h1>
           {/* <Input placeholder="" disabled defaultValue={OnboardingDetail?.reconciliation_account}/> */}
-          <Select value={reconciliationAccount ?? OnboardingDetail?.reconciliation_details?.description ?? ""} onValueChange={(value) => { setReconciliationAccountt(value) }}>
+          <Select value={reconciliationAccount ?? OnboardingDetail?.reconciliation_account ?? ""} onValueChange={(value) => { setReconciliationAccountt(value) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -118,15 +123,19 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
       <div className={`flex justify-end pr-6`}>
         {/* <Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`}>Next</Button> */}
         {
-          designation == "Purchase Team" && validation_check?.purchase_team_undertaking == 0 && validation_check?.form_fully_submitted_by_vendor == 1 &&
+          designation == "Purchase Team" && validation_check?.is_purchase_approve == 1 &&
           <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} />
         }
         {
-          designation == "Purchase Head" && validation_check?.purchase_head_undertaking == 0 && validation_check?.purchase_team_undertaking == 1 &&
+          designation == "Purchase Head" && validation_check?.is_purchase_head_approve &&
           <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} />
         }
         {
-          designation == "Accounts Team" && validation_check?.accounts_team_undertaking == 0 && validation_check?.purchase_head_undertaking == 1 &&
+          designation == "Accounts Team" && validation_check?.is_accounts_team_approve &&
+          <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} />
+        }
+        {
+          designation == "Accounts Head" && validation_check?.is_accounts_head_approve &&
           <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} />
         }
       </div>

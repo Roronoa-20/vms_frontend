@@ -139,6 +139,17 @@ const Dashboard = async () => {
   const dashboardASAFormTableData: DashboardTableType["asa_form_data"] =
     dashboardASAFormTableDataApi?.status == 200 ? dashboardASAFormTableDataApi?.data?.message : "";
 
+  const dashboardSAPErrorTable:AxiosResponse = await requestWrapper({
+    url:API_END_POINTS?.sapApiDashboardDetails,
+    method:"GET",
+    headers:{
+      cookie:cookieHeaderString
+    }
+  })
+
+  const sapErrorDashboardData = dashboardSAPErrorTable?.status == 200 ? dashboardSAPErrorTable?.data?.message?.sap_error_vendor_onboarding : ""
+
+
   return (
     <div className="p-4">
       {/* Cards */}
@@ -155,6 +166,7 @@ const Dashboard = async () => {
         prData={prData}
         rfqData={rfqData}
         dashboardASAFormTableData={dashboardASAFormTableData}
+        sapErrorDashboardData={sapErrorDashboardData}
       />
     </div>
   );

@@ -158,7 +158,8 @@ const API_END_POINTS = {
   sendPOEmailVendor: `${url}/api/method/vms.APIs.purchase_api.send_po_to_pr.send_po_to_pr`,
   verifyNewVendor: `${url}/api/method/vms.APIs.req_for_quotation.rfq.check_duplicate_vendor`,
 
-  sapApiDashboardDetails:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.sap_error_vendor_details`
+  sapApiDashboardDetails:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.sap_error_vendor_details`,
+  sapErrorSendEmail:`${url}/api/method/vms.APIs.sap.send_sap_error_email.send_sap_error_email`
 };
 
 export default API_END_POINTS;

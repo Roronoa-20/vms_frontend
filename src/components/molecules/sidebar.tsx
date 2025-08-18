@@ -10,7 +10,7 @@ const Sidebar = () => {
   const { designation } = useAuth();
   const { vendorRef } = useAuth();
 
-  const sideBar = designation === "Vendor" ? VendorsidebarMenu : designation === "Enquirer" ? EnquirysidebarMenu : designation === "ASA" ? ASASideBarMenu : designation == "Accounts Team"?AccountSideBarMenu: sidebarMenu;
+  const sideBar = designation === "Vendor" ? VendorsidebarMenu : designation === "Enquirer" ? EnquirysidebarMenu : designation === "ASA" ? ASASideBarMenu : designation == "Accounts Team" || designation == "Accounts Head"?AccountSideBarMenu: sidebarMenu;
 
   return (
     <div className="w-[110px] bg-[#0C2741] flex flex-col items-center gap-4 overflow-y-scroll no-scrollbar sticky left-0">
