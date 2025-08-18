@@ -1,7 +1,7 @@
 "use client"
 import React from "react";
 import Logo from "@/src/components/atoms/vms-logo";
-import { sidebarMenu, VendorsidebarMenu, EnquirysidebarMenu,ASASideBarMenu } from "@/src/constants/sidebarMenu";
+import { sidebarMenu, VendorsidebarMenu, EnquirysidebarMenu,ASASideBarMenu,AccountSideBarMenu } from "@/src/constants/sidebarMenu";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/context/AuthContext";
@@ -10,7 +10,7 @@ const Sidebar = () => {
   const { designation } = useAuth();
   const { vendorRef } = useAuth();
 
-  const sideBar = designation === "Vendor" ? VendorsidebarMenu : designation === "Enquirer" ? EnquirysidebarMenu : designation === "ASA" ? ASASideBarMenu : sidebarMenu;
+  const sideBar = designation === "Vendor" ? VendorsidebarMenu : designation === "Enquirer" ? EnquirysidebarMenu : designation === "ASA" ? ASASideBarMenu : designation == "Accounts Team"?AccountSideBarMenu: sidebarMenu;
 
   return (
     <div className="w-[110px] bg-[#0C2741] flex flex-col items-center gap-4 overflow-y-scroll no-scrollbar sticky left-0">

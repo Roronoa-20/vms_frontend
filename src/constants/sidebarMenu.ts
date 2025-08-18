@@ -245,3 +245,36 @@ export const ASASideBarMenu = [
     href: "/view-vendor-asa"
   },
 ];
+
+export const AccountSideBarMenu = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/dashboard"
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "Vendor Registration",
+    href: "/vendor-registration"
+  },
+  // {
+  //   logo: "/sidebar-assests/vendor-icon.svg",
+  //   name: "Total Vendors",
+  //   href:"/total-vendor"
+  // },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "PR",
+    href:"/pr-request"
+  },
+  {
+    logo: "/sidebar-assests/po-details.svg",
+    name: "View PO",
+    href:"/view-po"
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "View GRN",
+    href:"/view-grn"
+  }
+];
