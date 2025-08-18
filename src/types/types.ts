@@ -476,7 +476,11 @@ export type TPurchaseDetails = {
   pur_org_details:{
     name:string,
     description:string
-  }
+  },
+  reconciliation_details: {
+    name:string,
+    description: string,
+  },
 
 }
 

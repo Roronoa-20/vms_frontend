@@ -54,31 +54,31 @@ interface Props {
 }
 
 interface gstRow {
-  name?:string,
-  gst_document_upload:FileList,
-  gst_state:string,
-  gst_ven_type:string,
-  gst_registration_date:string,
-  gst_number:string,
-  gst_document:FileAttachment,
-  pincode:string,
-  company:string
+  name?: string,
+  gst_document_upload: FileList,
+  gst_state: string,
+  gst_ven_type: string,
+  gst_registration_date: string,
+  gst_number: string,
+  gst_document: FileAttachment,
+  pincode: string,
+  company: string
 }
 
 
 interface gstDropdown {
-    states:{
-      state_name: string;
-      name: string;
-      pincode: string;
-    }[],
-    company: {
-      name: string;
-      company_code: string;
-      company_name: string;
-      description: string;
-    }[];
-  }
+  states: {
+    state_name: string;
+    name: string;
+    pincode: string;
+  }[],
+  company: {
+    name: string;
+    company_code: string;
+    company_name: string;
+    description: string;
+  }[];
+}
 
 const DocumentDetails = ({
   ref_no,
@@ -96,44 +96,45 @@ const DocumentDetails = ({
   const [documentDetails, setDocumentDetail] =
     useState<Partial<documentDetail>>();
 
-  useEffect(()=>{
-    setDocumentDetail((prev)=>(
-      {...prev
+  useEffect(() => {
+    setDocumentDetail((prev) => (
+      {
+        ...prev
       }
     ))
-  },[])
+  }, [])
 
   const [isRegistrationFilePreview, setIsRegistrationFilePreview] = useState<boolean>(true);
   const [isMsmeFilePreview, setIsMsmeFilePreview] = useState<boolean>(true);
   const [isGstFilePreview, setIsGstFilePreview] = useState<boolean>(true);
   const [isPanFilePreview, setIsPanFilePreview] = useState<boolean>(true);
-  const [singlerow,setSingleRow] = useState<gstRow | null>();
-  const [GSTTable,setGSTTable] = useState<gstRow[]>(OnboardingDetail?.company_gst_table);
-  const [isDisabled,setIsDisabled] = useState<boolean>(true);
-  const {designation} = useAuth();
+  const [singlerow, setSingleRow] = useState<gstRow | null>();
+  const [GSTTable, setGSTTable] = useState<gstRow[]>(OnboardingDetail?.company_gst_table);
+  const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const { designation } = useAuth();
 
 
-  const [gstStateDropdown,setGstStateDropdown] = useState<gstDropdown>();
-  useEffect(()=>{
-    if(ref_no && onboarding_ref_no){
+  const [gstStateDropdown, setGstStateDropdown] = useState<gstDropdown>();
+  useEffect(() => {
+    if (ref_no && onboarding_ref_no) {
       getState();
     }
-  },[])
+  }, [])
 
-  const getState = async()=>{
+  const getState = async () => {
     const url = `${API_END_POINTS?.gstVendorStateDropdown}?vendor_onboarding=${onboarding_ref_no}`;
-    const response:AxiosResponse = await requestWrapper({url:url,method:"GET"});
-    if(response?.status == 200){
-       setGstStateDropdown(response?.data?.message?.data)
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+    if (response?.status == 200) {
+      setGstStateDropdown(response?.data?.message?.data)
     }
   }
 
-    const [errors, setErrors] = useState<any>({});
+  const [errors, setErrors] = useState<any>({});
 
-    const fileInput = useRef<HTMLInputElement>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
 
   const validate = () => {
-    const errors:any = {};
+    const errors: any = {};
     // if (!documentDetails?.company_pan_number && !OnboardingDetail?.company_pan_number) {
     //   errors.company_pan_number = "Please Enter Company Pan Number";
     // }
@@ -183,34 +184,34 @@ const DocumentDetails = ({
   };
 
 
-  const checkGST = (str:string)=>{
+  const checkGST = (str: string) => {
     let regex = new RegExp(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/);
     if (str == null) {
-        return false;
+      return false;
     }
 
     // Return true if the GST_CODE
     // matched the ReGex
     if (regex.test(str) == true) {
-        return true;
+      return true;
     }
     else {
-        return false;
+      return false;
     }
   }
 
-  const checkPAN = (str:string)=>{
+  const checkPAN = (str: string) => {
     const regex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
     if (str == null) {
-        return false;
+      return false;
     }
 
     // Return true if the PAN matches the regex
     if (regex.test(str) == true) {
-        return true;
+      return true;
     }
     else {
-        return false;
+      return false;
     }
   }
 
@@ -223,7 +224,7 @@ const DocumentDetails = ({
       return;
     }
     const url = API_END_POINTS?.documentDetailSubmit;
-    if(!checkPAN(documentDetails?.company_pan_number as string) || !checkPAN(OnboardingDetail?.company_pan_number)){
+    if (!checkPAN(documentDetails?.company_pan_number as string) || !checkPAN(OnboardingDetail?.company_pan_number)) {
       alert("please enter correct PAN Number")
       return;
     }
@@ -258,51 +259,51 @@ const DocumentDetails = ({
     });
     if (Response?.status == 200)
       setDocumentDetail({})
-      router.push(
-        `${designation == "Purchase Team" || designation == "Purchase Head"?`/view-onboarding-details?tabtype=Payment Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`:`/view-onboarding-details?tabtype=Payment Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`
-      );
+    router.push(
+      `${designation == "Purchase Team" || designation == "Purchase Head" ? `/view-onboarding-details?tabtype=Payment Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}` : `/view-onboarding-details?tabtype=Payment Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`
+    );
   };
 
 
-  const handleGSTTableAdd = async()=>{
+  const handleGSTTableAdd = async () => {
     // console.log(singlerow,"this is single row after add");
-    if(singlerow?.gst_ven_type != "Not-Registered" && !checkGST(singlerow?.gst_number as string)){
+    if (singlerow?.gst_ven_type != "Not-Registered" && !checkGST(singlerow?.gst_number as string)) {
       alert("please enter correct gst number")
       return;
     }
     const url = API_END_POINTS?.addGSTTAbleData;
-    const table = [{...singlerow}]
-    const data = {ref_no:ref_no,vendor_onboarding:onboarding_ref_no,gst_table:table};
+    const table = [{ ...singlerow }]
+    const data = { ref_no: ref_no, vendor_onboarding: onboarding_ref_no, gst_table: table };
     const formdata = new FormData()
-    formdata.append("data",JSON.stringify(data));
-    if(singlerow?.gst_document_upload){
-      formdata.append("gst_document",singlerow?.gst_document_upload[0]);
+    formdata.append("data", JSON.stringify(data));
+    if (singlerow?.gst_document_upload) {
+      formdata.append("gst_document", singlerow?.gst_document_upload[0]);
     }
-    const response:AxiosResponse = await requestWrapper({url:url,data:formdata,method:"POST"}) 
-    if(response?.status == 200){
+    const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" })
+    if (response?.status == 200) {
       alert("submittes successfully");
       fetchGstTable();
       setSingleRow(null);
-      if(fileInput?.current){
-      fileInput.current.value =''
-    }
+      if (fileInput?.current) {
+        fileInput.current.value = ''
+      }
     }
   }
 
-  const handleGSTDelete = async(row_name:string)=>{
+  const handleGSTDelete = async (row_name: string) => {
     const deleteUrl = `${API_END_POINTS?.deleteGSTRow}?row_name=${row_name}&ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
-    const response:AxiosResponse = await requestWrapper({url:deleteUrl,method:"GET"});
-    if(response?.status == 200){
+    const response: AxiosResponse = await requestWrapper({ url: deleteUrl, method: "GET" });
+    if (response?.status == 200) {
       alert("Sccessfully Deleted");
       fetchGstTable();
     }
   }
 
-  const fetchGstTable = async()=>{
+  const fetchGstTable = async () => {
     const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
-      const fetchOnboardingDetailResponse:AxiosResponse = await requestWrapper({url:fetchOnboardingDetailUrl,method:"GET"});
-      const OnboardingDetail:VendorOnboardingResponse["message"]["document_details_tab"]["gst_table"] = fetchOnboardingDetailResponse?.status == 200 ?fetchOnboardingDetailResponse?.data?.message?.document_details_tab?.gst_table : "";
-      setGSTTable(OnboardingDetail);
+    const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: fetchOnboardingDetailUrl, method: "GET" });
+    const OnboardingDetail: VendorOnboardingResponse["message"]["document_details_tab"]["gst_table"] = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message?.document_details_tab?.gst_table : "";
+    setGSTTable(OnboardingDetail);
   }
 
   console.log(singlerow)
@@ -310,18 +311,18 @@ const DocumentDetails = ({
   return (
     <div className="flex flex-col bg-white rounded-lg p-4 w-full max-h-[80vh]">
       <div className="flex justify-between">
-            <h1 className="border-b-2 pb-2 pt-2">Document Details</h1>
-            <Button onClick={()=>{setIsDisabled(prev=>!prev)}} className="mb-2">{isDisabled?"Enable Edit":"Disable Edit"}</Button>
-            </div>
+        <h1 className="border-b-2 font-semibold text-[18px]">Document Details</h1>
+        <Button onClick={() => { setIsDisabled(prev => !prev) }} className="mb-2">{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+      </div>
       <div className="overflow-y-scroll">
-        <div className="grid grid-cols-3 gap-6 p-5 ">
+        <div className="grid grid-cols-3 gap-6 p-2">
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Company PAN Number <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
-            disabled={isDisabled}
-            className="disabled:opacity-100"
+              disabled={isDisabled}
+              className="disabled:opacity-100"
               placeholder="Enter Company Pan Number"
               value={
                 documentDetails?.company_pan_number ??
@@ -342,8 +343,8 @@ const DocumentDetails = ({
               Name of Company on PAN Card <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
-            disabled={isDisabled}
-            className="disabled:opacity-100"
+              disabled={isDisabled}
+              className="disabled:opacity-100"
               placeholder="Enter Pan Card"
               value={
                 documentDetails?.name_on_company_pan ??
@@ -365,40 +366,40 @@ const DocumentDetails = ({
             </h1>
             <div className="flex gap-4">
 
-            <Input
-            disabled={isDisabled}
-            className="disabled:opacity-100"
-              placeholder=""
-              type="file"
-              onChange={(e) => {
-                setDocumentDetail((prev: any) => ({
-                  ...prev,
-                  panDocument: e.target.files,
-                }));
-              }}
+              <Input
+                disabled={isDisabled}
+                className="disabled:opacity-100"
+                placeholder=""
+                type="file"
+                onChange={(e) => {
+                  setDocumentDetail((prev: any) => ({
+                    ...prev,
+                    panDocument: e.target.files,
+                  }));
+                }}
               />
-            {/* file preview */}
-            {isPanFilePreview &&
-              !documentDetails?.panDocument &&
-              OnboardingDetail?.pan_proof?.url && (
-                <div className="flex gap-2">
-                  <Link
-                  target="blank"
-                    href={OnboardingDetail?.pan_proof?.url}
-                    className={`underline text-blue-300 max-w-44 truncate`}
+              {/* file preview */}
+              {isPanFilePreview &&
+                !documentDetails?.panDocument &&
+                OnboardingDetail?.pan_proof?.url && (
+                  <div className="flex gap-2">
+                    <Link
+                      target="blank"
+                      href={OnboardingDetail?.pan_proof?.url}
+                      className={`underline text-blue-300 max-w-44 truncate`}
                     >
-                    <span>{OnboardingDetail?.pan_proof?.file_name}</span>
-                  </Link>
-                  <X
-                    className={`cursor-pointer ${isDisabled?"hidden":""}`}
-                    onClick={() => {
-                      setIsPanFilePreview((prev) => !prev);
-                    }}
+                      <span>{OnboardingDetail?.pan_proof?.file_name}</span>
+                    </Link>
+                    <X
+                      className={`cursor-pointer ${isDisabled ? "hidden" : ""}`}
+                      onClick={() => {
+                        setIsPanFilePreview((prev) => !prev);
+                      }}
                     />
-                </div>
-              )}
+                  </div>
+                )}
               {errors?.panDocument && !documentDetails?.panDocument && <span style={{ color: 'red' }}>{errors?.panDocument}</span>}
-              </div>
+            </div>
           </div>
           <div className="col-span-3 grid grid-cols-3 gap-6">
             <div className="flex flex-col">
@@ -406,7 +407,7 @@ const DocumentDetails = ({
                 GST Vendor Type <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Select
-              disabled={isDisabled}
+                disabled={isDisabled}
                 // onValueChange={(value) => {
                 //   setBusinessType(value);
                 //   setDocumentDetail((prev) => ({
@@ -415,7 +416,7 @@ const DocumentDetails = ({
                 //   }));
                 // }}
                 onValueChange={(value) => {
-                  setSingleRow((prev:any) => ({
+                  setSingleRow((prev: any) => ({
                     ...prev,
                     gst_ven_type: value,
                   }));
@@ -445,12 +446,12 @@ const DocumentDetails = ({
               </h1>
               {/* <Input placeholder="Enter State" value={documentDetails?.gst_state ?? OnboardingDetail?.gst_table[0]?.gst_state} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,gst_state:e.target.value}))}}/> */}
               <Select
-              disabled={isDisabled}
+                disabled={isDisabled}
                 // onValueChange={(value) => {
                 //   setDocumentDetail((prev) => ({ ...prev, gst_state: value }));
                 // }}
                 onValueChange={(value) => {
-                  setSingleRow((prev:any) => ({ ...prev, gst_state: value }));
+                  setSingleRow((prev: any) => ({ ...prev, gst_state: value }));
                 }}
                 value={
                   singlerow?.gst_state ?? ""
@@ -462,10 +463,10 @@ const DocumentDetails = ({
                 <SelectContent>
                   <SelectGroup>
                     {gstStateDropdown?.states?.map((item, index) => (
-                                          <SelectItem key={index} value={item?.name}>
-                                            {item?.state_name}
-                                          </SelectItem>
-                                        ))}
+                      <SelectItem key={index} value={item?.name}>
+                        {item?.state_name}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -476,8 +477,8 @@ const DocumentDetails = ({
                 Pincode <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Input
-              disabled={isDisabled}
-              className="disabled:opacity-100"
+                disabled={isDisabled}
+                className="disabled:opacity-100"
                 placeholder="Enter Pincode"
                 value={
                   singlerow?.pincode ??
@@ -490,7 +491,7 @@ const DocumentDetails = ({
                 //   }));
                 // }}
                 onChange={(e) => {
-                  setSingleRow((prev:any) => ({
+                  setSingleRow((prev: any) => ({
                     ...prev,
                     pincode: e.target.value,
                   }));
@@ -507,8 +508,8 @@ const DocumentDetails = ({
                 GST Number <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Input
-              disabled={isDisabled}
-              className="disabled:opacity-100"
+                disabled={isDisabled}
+                className="disabled:opacity-100"
                 placeholder="Enter GST Number"
                 value={
                   singlerow?.gst_number ??
@@ -521,7 +522,7 @@ const DocumentDetails = ({
                 //   }));
                 // }}
                 onChange={(e) => {
-                  setSingleRow((prev:any) => ({
+                  setSingleRow((prev: any) => ({
                     ...prev,
                     gst_number: e.target.value,
                   }));
@@ -534,8 +535,8 @@ const DocumentDetails = ({
                 GST Registration Date <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Input
-              disabled={isDisabled}
-              className="disabled:opacity-100"
+                disabled={isDisabled}
+                className="disabled:opacity-100"
                 placeholder="Enter Registration Date"
                 value={
                   singlerow?.gst_registration_date ??
@@ -549,7 +550,7 @@ const DocumentDetails = ({
                 //   }));
                 // }}
                 onChange={(e) => {
-                  setSingleRow((prev:any) => ({
+                  setSingleRow((prev: any) => ({
                     ...prev,
                     gst_registration_date: e.target.value,
                   }));
@@ -562,27 +563,27 @@ const DocumentDetails = ({
                 Upload GST Document <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <div className="flex gap-4">
-              <Input
-              disabled={isDisabled}
-              className="disabled:opacity-100"
-              ref={fileInput}
-                type="file"
-                // onChange={(e) => {
-                //   setDocumentDetail((prev: any) => ({
-                //     ...prev,
-                //     gstDocument: e.target.files,
-                //   }));
-                // }}
-                onChange={(e) => {
-                  setSingleRow((prev: any) => ({
-                    ...prev,
-                    gst_document_upload: e.target.files,
-                  }));
-                }}
+                <Input
+                  disabled={isDisabled}
+                  className="disabled:opacity-100"
+                  ref={fileInput}
+                  type="file"
+                  // onChange={(e) => {
+                  //   setDocumentDetail((prev: any) => ({
+                  //     ...prev,
+                  //     gstDocument: e.target.files,
+                  //   }));
+                  // }}
+                  onChange={(e) => {
+                    setSingleRow((prev: any) => ({
+                      ...prev,
+                      gst_document_upload: e.target.files,
+                    }));
+                  }}
                 />
                 {/* {errors?.gstDocument && !documentDetails?.gstDocument && <span style={{ color: 'red' }}>{errors?.gstDocument}</span>} */}
-              {/* file preview */}
-            {/* {isGstFilePreview &&
+                {/* file preview */}
+                {/* {isGstFilePreview &&
               !documentDetails?.gstDocument &&
               OnboardingDetail?.gst_table[0]?.gst_document?.url && (
                 <div className="flex gap-2">
@@ -605,11 +606,11 @@ const DocumentDetails = ({
             </div>
           </div>
 
-          
+
         </div>
         <div className={`flex justify-end pr-6 mb-4`}>
           <Button
-            className={`bg-blue-400 hover:bg-blue-400 ${isDisabled?"hidden":""}`}
+            className={`bg-blue-400 hover:bg-blue-400 ${isDisabled ? "hidden" : ""}`}
             onClick={() => {
               handleGSTTableAdd();
             }}
@@ -618,51 +619,51 @@ const DocumentDetails = ({
           </Button>
         </div>
         <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
-                  <div className="flex w-full justify-between pb-4">
-                    <h1 className="text-[20px] text-[#03111F] font-semibold">
-                      Multiple GST Certificates
-                    </h1>
-                  </div>
-                  <Table className=" max-h-40 overflow-y-scroll">
-                    {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-                    <TableHeader className="text-center">
-                      <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                        <TableHead className="text-center">GST Type</TableHead>
-                        <TableHead className="text-center">Company</TableHead>
-                        <TableHead className="text-center">GST State</TableHead>
-                        <TableHead className="text-center">GST Pincode</TableHead>
-                        <TableHead className="text-center">GST Number</TableHead>
-                        <TableHead className="text-center">GST Date</TableHead>
-                        <TableHead className="text-center">File</TableHead>
-                        <TableHead className="text-center">Action</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                    {GSTTable?.map((item, index) => (  
-                       
-                        <TableRow key={item?.name?item?.name:""}>
-                          <TableCell className="text-center">{item?.gst_ven_type}</TableCell>
-                          <TableCell className="text-center">{item?.company}</TableCell>
-                          <TableCell className="text-center">{item?.gst_state}</TableCell>
-                          <TableCell className="text-center">{item?.pincode}</TableCell>
-                          <TableCell className="text-center">{item?.gst_number}</TableCell>
-                          <TableCell className="text-center">{item?.gst_registration_date}</TableCell>
-                          <TableCell className="text-center"><Link href={item?.gst_document?.url} target="blank">{item?.gst_document?.file_name}</Link></TableCell>
-                          <TableCell className="flex justify-center items-center text-center"><Trash2 onClick={()=>{handleGSTDelete(item?.name?item?.name:"")}} className={` text-red-400 cursor-pointer ${isDisabled?"hidden":""}`}/></TableCell>
-                        </TableRow>
-                      ))
-                      
-                    }
-                    </TableBody>
-                  </Table>
-                </div>
+          <div className="flex w-full justify-between pb-4">
+            <h1 className="text-[20px] text-[#03111F] font-semibold">
+              Multiple GST Certificates
+            </h1>
+          </div>
+          <Table className=" max-h-40 overflow-y-scroll">
+            {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+            <TableHeader className="text-center">
+              <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
+                <TableHead className="text-center">GST Type</TableHead>
+                <TableHead className="text-center">Company</TableHead>
+                <TableHead className="text-center">GST State</TableHead>
+                <TableHead className="text-center">GST Pincode</TableHead>
+                <TableHead className="text-center">GST Number</TableHead>
+                <TableHead className="text-center">GST Date</TableHead>
+                <TableHead className="text-center">File</TableHead>
+                <TableHead className="text-center">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {GSTTable?.map((item, index) => (
+
+                <TableRow key={item?.name ? item?.name : ""}>
+                  <TableCell className="text-center">{item?.gst_ven_type}</TableCell>
+                  <TableCell className="text-center">{item?.company}</TableCell>
+                  <TableCell className="text-center">{item?.gst_state}</TableCell>
+                  <TableCell className="text-center">{item?.pincode}</TableCell>
+                  <TableCell className="text-center">{item?.gst_number}</TableCell>
+                  <TableCell className="text-center">{item?.gst_registration_date}</TableCell>
+                  <TableCell className="text-center"><Link href={item?.gst_document?.url} target="blank">{item?.gst_document?.file_name}</Link></TableCell>
+                  <TableCell className="flex justify-center items-center text-center"><Trash2 onClick={() => { handleGSTDelete(item?.name ? item?.name : "") }} className={` text-red-400 cursor-pointer ${isDisabled ? "hidden" : ""}`} /></TableCell>
+                </TableRow>
+              ))
+
+              }
+            </TableBody>
+          </Table>
+        </div>
         <div className="grid grid-cols-3 pl-5 gap-6">
           <div className="flex flex-col col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               MSME Registered?
             </h1>
             <Select
-            disabled={isDisabled}
+              disabled={isDisabled}
               onValueChange={(value) => {
                 setIsMSME(value);
                 setDocumentDetail((prev) => ({
@@ -690,7 +691,7 @@ const DocumentDetails = ({
               MSME Enterprise Type <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Select
-            disabled={isDisabled}
+              disabled={isDisabled}
               value={
                 documentDetails?.msme_enterprise_type ??
                 OnboardingDetail?.msme_enterprise_type
@@ -720,8 +721,8 @@ const DocumentDetails = ({
               Udyam Registration No. <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
-            disabled={isDisabled}
-            className="disabled:opacity-100"
+              disabled={isDisabled}
+              className="disabled:opacity-100"
               placeholder=" Enter Udyam Registration No"
               value={
                 documentDetails?.udyam_number ??
@@ -742,8 +743,8 @@ const DocumentDetails = ({
               Name of Company in Udyam Certificate <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
-            disabled={isDisabled}
-            className="disabled:opacity-100"
+              disabled={isDisabled}
+              className="disabled:opacity-100"
               placeholder=""
               value={
                 documentDetails?.name_on_udyam_certificate ??
@@ -764,48 +765,48 @@ const DocumentDetails = ({
               Upload Udyam Certificate <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <div className="flex gap-4">
-            <Input
-            disabled={isDisabled}
-            className="disabled:opacity-100"
-              placeholder=""
-              type="file"
-              onChange={(e) => {
-                setDocumentDetail((prev: any) => ({
-                  ...prev,
-                  udyamCertificate: e.target.files,
-                }));
-              }}
+              <Input
+                disabled={isDisabled}
+                className="disabled:opacity-100"
+                placeholder=""
+                type="file"
+                onChange={(e) => {
+                  setDocumentDetail((prev: any) => ({
+                    ...prev,
+                    udyamCertificate: e.target.files,
+                  }));
+                }}
               />
               {errors?.udyamCertificate && !documentDetails?.udyamCertificate && <span style={{ color: 'red' }}>{errors?.udyamCertificate}</span>}
-            {/* file preview */}
-            {isMsmeFilePreview &&
-              !documentDetails?.udyamCertificate &&
-              OnboardingDetail?.msme_proof?.url && (
-                <div className="flex gap-2">
-                  <Link
-                  target="blank"
-                  href={OnboardingDetail?.msme_proof?.url}
-                  className="underline text-blue-300 max-w-44 truncate"
-                  >
-                    <span>{OnboardingDetail?.msme_proof?.file_name}</span>
-                  </Link>
-                  <X
-                    className={`cursor-pointer disabled:opacity-100 ${isDisabled?"hidden":""}`}
-                    onClick={() => {
-                      setIsMsmeFilePreview((prev) => !prev);
-                    }}
+              {/* file preview */}
+              {isMsmeFilePreview &&
+                !documentDetails?.udyamCertificate &&
+                OnboardingDetail?.msme_proof?.url && (
+                  <div className="flex gap-2">
+                    <Link
+                      target="blank"
+                      href={OnboardingDetail?.msme_proof?.url}
+                      className="underline text-blue-300 max-w-44 truncate"
+                    >
+                      <span>{OnboardingDetail?.msme_proof?.file_name}</span>
+                    </Link>
+                    <X
+                      className={`cursor-pointer disabled:opacity-100 ${isDisabled ? "hidden" : ""}`}
+                      onClick={() => {
+                        setIsMsmeFilePreview((prev) => !prev);
+                      }}
                     />
-                </div>
-              )}
-              </div>
+                  </div>
+                )}
+            </div>
           </div>
           <div className={``}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Enterprise Registration Number <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Input
-            disabled={isDisabled}
-            className="disabled:opacity-100"
+              disabled={isDisabled}
+              className="disabled:opacity-100"
               placeholder="Enter Enterprise Registration Number"
               value={
                 documentDetails?.enterprise_registration_number ??
@@ -827,45 +828,45 @@ const DocumentDetails = ({
             </h1>
             <div className="flex gap-4 w-full">
 
-            <Input
-            disabled={isDisabled}
-            className="disabled:opacity-100"
-              placeholder=""
-              type="file"
-              onChange={(e) => {
-                setDocumentDetail((prev: any) => ({
-                  ...prev,
-                  registrationDocument: e.target.files,
-                }));
-              }}
+              <Input
+                disabled={isDisabled}
+                className="disabled:opacity-100"
+                placeholder=""
+                type="file"
+                onChange={(e) => {
+                  setDocumentDetail((prev: any) => ({
+                    ...prev,
+                    registrationDocument: e.target.files,
+                  }));
+                }}
               />
               {errors?.registrationDocument && !documentDetails?.registrationDocument && <span style={{ color: 'red' }}>{errors?.registrationDocument}</span>}
-            {/* file preview */}
-            {isRegistrationFilePreview &&
-              !documentDetails?.registrationDocument &&
-              OnboardingDetail?.entity_proof?.url && (
-                <div className="flex gap-2">
-                  <Link
-                  target="blank"
-                    href={OnboardingDetail?.entity_proof?.url}
-                    className="underline text-blue-300 max-w-44 truncate"
+              {/* file preview */}
+              {isRegistrationFilePreview &&
+                !documentDetails?.registrationDocument &&
+                OnboardingDetail?.entity_proof?.url && (
+                  <div className="flex gap-2">
+                    <Link
+                      target="blank"
+                      href={OnboardingDetail?.entity_proof?.url}
+                      className="underline text-blue-300 max-w-44 truncate"
                     >
-                    <span>{OnboardingDetail?.entity_proof?.file_name}</span>
-                  </Link>
-                  <X
-                    className={`cursor-pointer ${isDisabled?"hidden":""}`}
-                    onClick={() => {
-                      setIsRegistrationFilePreview((prev) => !prev);
-                    }}
+                      <span>{OnboardingDetail?.entity_proof?.file_name}</span>
+                    </Link>
+                    <X
+                      className={`cursor-pointer ${isDisabled ? "hidden" : ""}`}
+                      onClick={() => {
+                        setIsRegistrationFilePreview((prev) => !prev);
+                      }}
                     />
-                </div>
-              )}
-              </div>
+                  </div>
+                )}
+            </div>
           </div>
         </div>
         <div className="flex justify-end pr-6">
           <Button
-            className={`bg-blue-400 hover:bg-blue-400 ${isDisabled?"hidden":""}`}
+            className={`bg-blue-400 hover:bg-blue-400 ${isDisabled ? "hidden" : ""}`}
             onClick={() => {
               handleSubmit();
             }}

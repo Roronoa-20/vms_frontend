@@ -29,11 +29,6 @@ export const sidebarMenu = [
     name: "View PO",
     href:"/view-po"
   },
-  {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "ASA",
-    href:"/view-vendor-asa"
-  },
   // {
   //   logo: "/sidebar-assests/vendor-icon.svg",
   //   name: "PR",
@@ -107,11 +102,6 @@ export const HeadSidebar = [
     logo: "/sidebar-assests/po-details.svg",
     name: "View PO",
     href:"/view-po"
-  },
-  {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "ASA",
-    href:"/view-vendor-asa"
   },
   // {
   //   logo: "/sidebar-assests/vendor-icon.svg",

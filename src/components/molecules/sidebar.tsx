@@ -1,7 +1,7 @@
 "use client"
 import React from "react";
 import Logo from "@/src/components/atoms/vms-logo";
-import { sidebarMenu, VendorsidebarMenu, EnquirysidebarMenu,ASASideBarMenu,AccountSideBarMenu } from "@/src/constants/sidebarMenu";
+import { sidebarMenu, VendorsidebarMenu, EnquirysidebarMenu, ASASideBarMenu, AccountSideBarMenu } from "@/src/constants/sidebarMenu";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/context/AuthContext";
@@ -13,7 +13,7 @@ const Sidebar = () => {
   const sideBar = designation === "Vendor" ? VendorsidebarMenu : designation === "Enquirer" ? EnquirysidebarMenu : designation === "ASA" ? ASASideBarMenu : designation == "Accounts Team" || designation == "Accounts Head"?AccountSideBarMenu: sidebarMenu;
 
   return (
-    <div className="w-[110px] bg-[#0C2741] flex flex-col items-center gap-4 overflow-y-scroll no-scrollbar sticky left-0">
+    <div className="w-[110px] bg-[#0C2741] flex flex-col items-center gap-3 overflow-y-scroll overflow-x-hidden no-scrollbar sticky left-0">
       <div className="w-3 h-3 pb-6 pt-5">
         <Logo />
       </div>
@@ -31,7 +31,7 @@ const Sidebar = () => {
 
         >
           <Image src={item?.logo} alt="" width={25} height={20} />
-          <h1>{item?.name}</h1>
+          <h1 className="text-center text-[14px] break-words">{item?.name}</h1>
         </button>
       ))}
     </div>
