@@ -8,7 +8,6 @@ interface Props {
 }
 
 const RFQBasicDetails = ({ RFQData }: Props) => {
-  console.log(RFQData, "RFQData")
   return (
     <>
       <div className="bg-white">

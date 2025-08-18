@@ -94,7 +94,6 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
         if (formData?.service_provider == "All Service Provider" || formData?.service_provider == "Select" || formData?.service_provider == "Premium Service Provider") {
             setSelectedRows({ vendors: [] })
         }
-        console.log({ ...formData, vendors: selectedRows.vendors }, "submit data")
         const url = `${API_END_POINTS?.CreateExportRFQ}`;
         const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...formData, logistic_type: "Export", non_onboarded_vendors: newVendorTable, vendors: selectedRows.vendors } }, method: "POST" });
         if (response?.status == 200) {

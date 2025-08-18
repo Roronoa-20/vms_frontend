@@ -31,7 +31,6 @@ const PublicMaterialQuotationForm = ({ Dropdown, token, RFQData }: Props) => {
             "rfq_type":"Material Vendor"
         };
         // Append JSON data as a string under key 'data'
-        console.log(fullData, "fullData")
         formdata.append('data', JSON.stringify(fullData));
         formdata.append("token", token)
         // Append file only if exists
@@ -65,7 +64,7 @@ const PublicMaterialQuotationForm = ({ Dropdown, token, RFQData }: Props) => {
     const handleFieldChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
-        const { name, value } = e.target;
+        const {value } = e.target;
         setPaymentTerms(value);
     };
 
@@ -112,8 +111,6 @@ const PublicMaterialQuotationForm = ({ Dropdown, token, RFQData }: Props) => {
             </div>
         </div>
     );
-
-    console.log(negotiation, "negotiation")
     return (
         <div>
             <h1 className='text-lg py-2 font-semibold'>Fill Quatation Details</h1>
@@ -140,7 +137,6 @@ const PublicMaterialQuotationForm = ({ Dropdown, token, RFQData }: Props) => {
                     <MultipleFileUpload
                         files={uploadedFiles}
                         setFiles={setUploadedFiles}
-                        onNext={(files) => console.log("Final selected files:", files)}
                         buttonText="Attach Files"
                     />
                 </div>

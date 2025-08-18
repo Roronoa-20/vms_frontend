@@ -109,7 +109,7 @@ const ServiceRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFile
                     (item) => `${item.company_name}`
                 )}
                 {renderSelect(
-                    'purchase_organisation',
+                    'purchase_organization',
                     'Purchasing Organization',
                     Dropdown?.purchase_organisation,
                     (item) => item.name,
@@ -156,12 +156,12 @@ const ServiceRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFile
                 {renderSelect(
                     'plant_code',
                     'Plant Code',
-                    Dropdown?.plant_code,
+                    Dropdown?.plant,
                     (item) => item.name,
                     (item) => `${item.plant_name}`
                 )}
                 {renderSelect(
-                    'store_location',
+                    'storage_location',
                     'Storage Location',
                     Dropdown?.store_location,
                     (item) => item.name,
@@ -173,7 +173,7 @@ const ServiceRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFile
 
             <h1 className='text-[24px] font-normal pt-5 px-5'>Material/Item Details</h1>
             <div className="grid grid-cols-3 gap-6 p-5">
-                {renderInput('collection_no', 'Collection No.')}
+                {renderInput('collection_number', 'Collection No.')}
                 {renderInput('rfq_cutoff_date_logistic', 'Quotation Deadline', 'datetime-local')}
                 {renderInput('bidding_person', 'Bidding Person')}
             </div>
@@ -184,9 +184,9 @@ const ServiceRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFile
                 {renderSelect(
                     'quantity_unit',
                     'Quantity Unit',
-                    Dropdown?.quantity_unit,
+                    Dropdown?.uom_master,
                     (item) => item.name,
-                    (item) => `${item.quantity_unit_name}`
+                    (item) => `${item.uom}`
                 )}
                 {renderInput('delivery_date', 'Delivery Date', 'date')}
                 {renderInput('estimated_price', 'Enter estimated Price', 'number')}
@@ -197,9 +197,6 @@ const ServiceRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFile
                     <MultipleFileUpload
                         files={uploadedFiles}
                         setFiles={setUploadedFiles}
-                        onNext={(files) => {
-                            console.log("Final selected files:", files)
-                        }}
                         buttonText="Attach Files"
                     />
                 </div>
@@ -207,9 +204,9 @@ const ServiceRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFile
 
             <h1 className='text-[24px] font-normal pt-5 px-5'>Deadline Monitoring</h1>
             <div className="grid grid-cols-3 gap-6 p-5">
-                {renderInput('first_remainder', '1st Reminder', 'date')}
-                {renderInput('second_remainder', '2nd Reminder', 'date')}
-                {renderInput('third_remainder', '3rd Reminder', 'date')}
+                {renderInput('first_reminder', '1st Reminder', 'date')}
+                {renderInput('second_reminder', '2nd Reminder', 'date')}
+                {renderInput('third_reminder', '3rd Reminder', 'date')}
             </div>
         </div>
     )

@@ -20,8 +20,6 @@ const LogisticsExportQuatationForm = ({ Dropdown, refno }: Props) => {
         const fullData = {
             ...formData,
         };
-        // Append JSON data as a string under key 'data'
-        console.log(fullData, "fullData")
         formdata.append('data', JSON.stringify(fullData));
 
         // Append file only if exists

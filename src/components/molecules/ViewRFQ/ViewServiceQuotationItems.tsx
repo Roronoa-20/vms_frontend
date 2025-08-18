@@ -7,24 +7,39 @@ import {
     TableHeader,
     TableRow,
 } from "@/src/components/atoms/table";
-import { RFQDetails } from '@/src/types/RFQtype';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { PurchaseRequisitionRow } from '@/src/types/RFQtype';
+import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 interface Props {
-    RFQData: RFQDetails;
+    items: PurchaseRequisitionRow[];
     refno?: string
 }
-const ViewServicePRItemsTable = ({ RFQData }: Props) => {
+const ViewQuotationServiceItems = ({ items }: Props) => {
     return (
-        <div>
-            <div>
-                <h1 className='text-lg py-2 font-semibold'>RFQ Items</h1>
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button variant="outline" className="text-sm">
+                    View
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="max-h-[80vh] max-w-screen-lg overflow-y-auto">
+                <DialogHeader>
+                    <DialogTitle>Quotation Items</DialogTitle>
+                </DialogHeader>
                 <div className="border rounded-lg overflow-hidden">
-                    <Accordion type="multiple" className="w-full space-y-4" defaultValue={RFQData?.pr_items.map((head) => head.head_unique_field)}>
-                        {RFQData?.pr_items.map((head, index) => (
+                    <Accordion type="multiple" className="w-full space-y-4" defaultValue={items.map((head) => head.head_unique_field)}>
+                        {items.map((head) => (
                             <AccordionItem
                                 key={head.head_unique_field}
                                 value={head.head_unique_field}
-                                defaultValue={RFQData?.pr_items.map((head) => head.head_unique_field)}
+                                defaultValue={items.map((head) => head.head_unique_field)}
                                 className="rounded-lg border border-gray-200 shadow-sm dark:border-gray-700 hover:none"
                             >
                                 {/* Trigger moved to a separate arrow button */}
@@ -76,9 +91,9 @@ const ViewServicePRItemsTable = ({ RFQData }: Props) => {
                         ))}
                     </Accordion>
                 </div>
-            </div>
-        </div>
+            </DialogContent>
+        </Dialog>
     )
 }
 
-export default ViewServicePRItemsTable
+export default ViewQuotationServiceItems

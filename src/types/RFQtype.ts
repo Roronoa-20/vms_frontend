@@ -1,3 +1,5 @@
+import { SubheadField } from "./PurchaseRequisitionType";
+
 export interface VendorDataRFQ {
   refno: string;
   vendor_name: string;
@@ -142,6 +144,7 @@ export type RFQDetails = {
 };
 
 export interface PurchaseRequisitionRow {
+  rfq_type:string;
   row_id: string;
   head_unique_field: string;
   purchase_requisition_number: string;
@@ -161,4 +164,5 @@ export interface PurchaseRequisitionRow {
   delivery_date_subhead: string | null;
   lead_time_head:string;
   remarks:string;
+  subhead_fields: SubheadField[];
 }

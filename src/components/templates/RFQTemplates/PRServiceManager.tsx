@@ -54,7 +54,7 @@ interface PRMaterialsManagerProps {
   disabled?: boolean
 }
 
-export default function PRMaterialsManager({
+export default function PRServiceManager({
   prNumbers,
   onSelectionChange,
   title = "PR Materials Management",
@@ -62,8 +62,6 @@ export default function PRMaterialsManager({
   disabled = false,
 }: PRMaterialsManagerProps) {
   const [selectedPRs, setSelectedPRs] = useState<string[]>([])
-  const [selectedRows, setSelectedRows] = useState<string[]>([])
-  const [editingCell, setEditingCell] = useState<{ id: string; field: string } | null>(null)
   const [materials, setMaterials] = useState<PRItem[]>([])
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -79,7 +77,6 @@ export default function PRMaterialsManager({
     }
     setLoading(true);
     try {
-      console.log(prCodes, "prCodes before API call");
       const url = `${API_END_POINTS?.fetchPRItems}`;
       const response: AxiosResponse = await requestWrapper({
         url: url,
@@ -111,7 +108,6 @@ export default function PRMaterialsManager({
         });
 
         setMaterials(materialsWithOriginals);
-        console.log(materialsWithOriginals, "processed materials with subheads");
       } else {
         alert("Error fetching materials");
         setMaterials([]);
@@ -187,12 +183,6 @@ export default function PRMaterialsManager({
         // Remove PR and its selected rows
         const newPRs = prev.filter((pr) => pr !== prNumber.sap_pr_code)
         // Remove selected rows that belong to this PR
-        setSelectedRows((current) =>
-          current?.filter((id) => {
-            const material = materials.find((m) => m.head_unique_field === id)
-            return material && newPRs.includes(material.requisition_no)
-          }),
-        )
         return newPRs
       } else {
         // Add PR
@@ -208,12 +198,6 @@ export default function PRMaterialsManager({
     setSelectedPRs((prev) => {
       const newPRs = prev.filter((pr) => pr !== prCode)
       // Remove selected rows that belong to this PR
-      setSelectedRows((current) =>
-        current.filter((id) => {
-          const material = materials.find((m) => m.head_unique_field === id)
-          return material && newPRs.includes(material.requisition_no)
-        }),
-      )
       return newPRs
     })
   }
@@ -299,7 +283,6 @@ export default function PRMaterialsManager({
   }
 
   const cancelEdit = () => {
-    setEditingCell(null)
     setEditValues({})
   }
   return (
@@ -450,14 +433,6 @@ export default function PRMaterialsManager({
 
                               return (
                                 <TableRow key={sub.subhead_unique_field} className="text-sm">
-                                  {/* <TableCell>
-                                    <Checkbox
-                                      checked={isSelected}
-                                      onCheckedChange={(checked) =>
-                                        handleSelectSubhead(sub.subhead_unique_field, checked as boolean)
-                                      }
-                                    />
-                                  </TableCell> */}
                                   <TableCell>{sub.material_name_subhead}</TableCell>
                                   <TableCell>
                                     {isEditing ? (
@@ -535,31 +510,6 @@ export default function PRMaterialsManager({
                         </Table>
                       </AccordionContent>
                     </AccordionItem>
-
-                    // <AccordionItem
-                    //   key={head.head_unique_field}
-                    //   value={head.head_unique_field}
-                    //   className="rounded-lg border border-gray-200 shadow-sm dark:border-gray-700"
-                    // >
-                    //     <AccordionTrigger className="p-4 w-full bg-gray-100 dark:bg-gray-800 rounded-t-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                    //       <div className="flex items-center gap-4 w-full">
-                    //         <Checkbox
-                    //           checked={isHeadSelected(head)}
-                    //           onCheckedChange={(checked) => toggleHeadSelection(head, checked as boolean)}
-                    //         />
-                    //         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full text-left text-sm md:text-base">
-                    //           <div><strong>Requisition No.</strong>: {head.requisition_no || "N/A"}</div>
-                    //           <div><strong>Service Name</strong>: {head.material_name_head || "Unnamed"}</div>
-                    //           <div><strong>Service Code</strong>: {head.material_code_head || "N/A"}</div>
-                    //           <div><strong>Price</strong>: ₹{head.price_head || "0"}</div>
-                    //           <div><strong>Quantity</strong>: {head.quantity_head}</div>
-                    //           <div><strong>UOM</strong>: {head.uom_head || "N/A"}</div>
-                    //           <div><strong>Delivery Date</strong>: {head.delivery_date_head || "N/A"}</div>
-                    //         </div>
-                    //       </div>
-                    //     </AccordionTrigger>
-
-                    // </AccordionItem>
                   ))}
                 </Accordion>
               </div>

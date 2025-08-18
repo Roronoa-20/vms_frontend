@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
     Table,
     TableBody,
@@ -7,14 +7,11 @@ import {
     TableHeader,
     TableRow,
 } from "@/src/components/atoms/table";
-import { Input } from "../../../components/atoms/input";
-import { VendorDataRFQ, VendorSelectType } from "@/src/types/RFQtype";
-import { DropdownData, newVendorTable } from "../../templates/RFQTemplates/LogisticsImportRFQ";
+import {newVendorTable } from "../../templates/RFQTemplates/LogisticsImportRFQ";
 type Props = {
     newVendorTable:newVendorTable[] | null
 }
 const NewVendorTable = ({newVendorTable}:Props) => {
-    console.log(newVendorTable,"this is table data")
     return (
         <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
             <div className="flex w-full justify-between pb-4">
