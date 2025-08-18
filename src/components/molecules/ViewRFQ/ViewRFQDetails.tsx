@@ -3,6 +3,7 @@ import React from "react";
 import { RFQlogicIm, RFQlogicEx, RFQmaterial, RFQservices } from "@/src/constants/RFQshowData";
 import RFQDatas from "./RFQDatas";
 
+
 interface Props {
   RFQData: RFQDetails;
 }
@@ -39,6 +40,7 @@ const RFQBasicDetails = ({ RFQData }: Props) => {
               <RFQDatas RFQData={RFQData} item={{ label:"Remarks :", key:"remarks" }} />
             }
           </div>
+
 
           {/*RFQ material*/}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">

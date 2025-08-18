@@ -159,6 +159,7 @@ const ServiceRFQ = ({ Dropdown }: Props) => {
     setIsDialog(true);
   }
 
+
   const handleClose = () => {
     setIsDialog(false);
   }
@@ -177,6 +178,125 @@ const ServiceRFQ = ({ Dropdown }: Props) => {
           title="Select Purchase Request Numbers"
         />
       </div>
+      {/* <div className="grid grid-cols-3 gap-6 p-5">
+        {renderSelect(
+          'rfq_type',
+          'RFQ Type',
+          Dropdown?.rfq_type,
+          (item) => item.name,
+          (item) => `${item.vendor_type_name}`,
+          true
+        )}
+        {renderInput('rfq_date', 'RFQ Date', 'date')}
+        {renderSelect(
+          'company_name',
+          'Company Name',
+          Dropdown?.company,
+          (item) => item.name,
+          (item) => `${item.company_name}`
+        )}
+        {renderSelect(
+          'purchase_organisation',
+          'Purchasing Organization',
+          Dropdown?.purchase_organisation,
+          (item) => item.name,
+          (item) => `${item.name}`
+        )}
+        {renderSelect(
+          'purchase_group',
+          'Purchase Group',
+          Dropdown?.purchase_group,
+          (item) => item.name,
+          (item) => `${item.purchase_group_name}`
+        )}
+        {renderSelect(
+          'currency',
+          'Select Currency',
+          Dropdown?.currency_master,
+          (item) => item.name,
+          (item) => `${item.currency_name}`
+        )}
+      </div>
+      <h1 className='text-[24px] font-normal pt-5 px-5'>Administrative Fields</h1>
+      <div className="grid grid-cols-3 gap-6 p-5">
+        {renderSelect(
+          'service_code',
+          'Service Code',
+          Dropdown?.service_code,
+          (item) => item.name,
+          (item) => `${item.service_name}`
+        )}
+        {renderSelect(
+          'service_category',
+          'Service Category',
+          Dropdown?.service_category,
+          (item) => item.name,
+          (item) => `${item.service_category_name}`
+        )}
+        {renderSelect(
+          'material_code',
+          'Material Code',
+          Dropdown?.material_code,
+          (item) => item.name,
+          (item) => `${item.material_name}`
+        )}
+        {renderSelect(
+          'plant_code',
+          'Plant Code',
+          Dropdown?.plant_code,
+          (item) => item.name,
+          (item) => `${item.plant_name}`
+        )}
+        {renderSelect(
+          'store_location',
+          'Storage Location',
+          Dropdown?.store_location,
+          (item) => item.name,
+          (item) => `${item.store_location_name}`
+        )}
+        {renderInput('short_text', 'Short Text')}
+        {renderTextarea('service_location', 'Service Location')}
+      </div>
+
+      <h1 className='text-[24px] font-normal pt-5 px-5'>Material/Item Details</h1>
+      <div className="grid grid-cols-3 gap-6 p-5">
+        {renderInput('collection_no', 'Collection No.')}
+        {renderInput('quotation_deadline', 'Quotation Deadline', 'date')}
+        {renderInput('bidding_person', 'Bidding Person')}
+      </div>
+      <h1 className='text-[24px] font-normal pt-5 px-5'>Quantity & Date</h1>
+      <div className="grid grid-cols-3 gap-6 p-5">
+        {renderInput('rfq_quantity', 'RFQ Quantity')}
+
+        {renderSelect(
+          'quantity_unit',
+          'Quantity Unit',
+          Dropdown?.quantity_unit,
+          (item) => item.name,
+          (item) => `${item.quantity_unit_name}`
+        )}
+        {renderInput('delivery_date', 'Delivery Date', 'date')}
+        {renderInput('estimated_price', 'Enter estimated Price', 'number')}
+        <div>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Uplaod Documents
+          </h1>
+          <MultipleFileUpload
+            files={uploadedFiles}
+            setFiles={setUploadedFiles}
+            onNext={(files) => {
+              console.log("Final selected files:", files)
+            }}
+            buttonText="Attach Files"
+          />
+        </div>
+      </div>
+      <h1 className='text-[24px] font-normal pt-5 px-5'>Deadline Monitoring</h1>
+      <div className="grid grid-cols-3 gap-6 p-5">
+        {renderInput('first_remainder', '1st Reminder', 'date')}
+        {renderInput('second_remainder', '2nd Reminder', 'date')}
+        {renderInput('third_remainder', '3rd Reminder', 'date')}
+      </div> */}
       <ServiceRFQFormFields
         formData={formData}
         setFormData={setFormData}
