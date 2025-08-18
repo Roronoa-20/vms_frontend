@@ -58,9 +58,9 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
     if(manufacturingDetailResponse?.status == 200) router.push(`${designation == "Purchase Head" || designation == "Purchase Team"?`/view-onboarding-details?tabtype=Employee%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`:`/view-onboarding-details?tabtype=Employee%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`);
   }
   return (
-    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
+    <div className="flex flex-col bg-white rounded-lg p-4 w-full">
       <div className="flex justify-between">
-      <h1 className="border-b-2 pb-2">Manufacturing Detail</h1>
+      <h1 className="border-b-2 font-semibold text-[18px]">Manufacturing Detail</h1>
       <Button onClick={()=>{setIsDisabled(prev=>!prev)}} className="mb-2">{isDisabled?"Enable Edit":"Disable Edit"}</Button>
       </div>
       <div className="grid grid-cols-3 gap-6 p-5">

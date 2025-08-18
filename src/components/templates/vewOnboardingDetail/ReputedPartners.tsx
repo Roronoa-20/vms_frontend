@@ -57,7 +57,7 @@ const handleAdd = ()=>{
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
+      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-[18px] font-semibold">
         Reputed Partners
       </h1>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">

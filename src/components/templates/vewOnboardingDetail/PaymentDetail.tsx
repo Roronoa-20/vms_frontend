@@ -126,7 +126,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <div className="flex justify-between">
-      <h1 className="border-b-2 pb-2">Bank Detail</h1>
+      <h1 className="border-b-2 font-semibold text-[18px]">Bank</h1>
       <Button onClick={()=>{setIsDisabled(prev=>!prev)}} className="mb-2">{isDisabled?"Enable Edit":"Disable Edit"}</Button>
       </div>
       {/* <h1 className="pl-2 ">Billing Address</h1> */}

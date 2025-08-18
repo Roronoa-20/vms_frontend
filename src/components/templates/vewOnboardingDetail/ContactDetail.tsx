@@ -64,9 +64,9 @@ const ContactDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   }
 
   return (
-    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <div className="flex justify-end">
-      {/* <h1 className="border-b-2 pb-2">Contact Detail</h1> */}
+    <div className="flex flex-col bg-white rounded-lg p-4 w-full">
+      <div className="flex justify-between">
+      <h1 className="border-b-2 font-semibold text-[18px]">Contact Detail</h1>
       <Button onClick={()=>{setIsDisabled(prev=>!prev)}} className="mb-2">{isDisabled?"Enable Edit":"Disable Edit"}</Button>
       </div>
       <div className={`grid grid-cols-3 gap-6 p-5 ${isDisabled?"hidden":""}`}>

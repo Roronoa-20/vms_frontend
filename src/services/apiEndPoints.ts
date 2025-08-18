@@ -115,6 +115,8 @@ const API_END_POINTS = {
   ProcessToken: `${url}/api/method/vms.purchase.doctype.request_for_quotation.request_for_quotation.process_token`,
   SubmitPublicQuatation: `${url}/api/method/vms.APIs.quotation.create_quotation.create_or_update_quotation_non_onboarded`,
 
+  // Amend API
+  AmendAPI: `${url}/api/method/vms.APIs.vendor_onboarding.onboarding_amendment.create_vendor_onboarding_amendment`,
 
   AllGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_all_grn_details`,
   SingleGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_grn_details_of_grn_number`,

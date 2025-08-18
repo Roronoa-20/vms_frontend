@@ -1,22 +1,10 @@
 "use client"
 import React, { useState, useEffect } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/src/components/atoms/table";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/src/components/atoms/select";
-import { tableData } from "@/src/constants/dashboardTableData";
+import { useRouter } from "next/navigation";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/src/components/atoms/table";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/src/components/atoms/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
 import { Input } from "../atoms/input";
 import { DashboardTableType, TvendorRegistrationDropdown } from "@/src/types/types";
 import Link from "next/link";
@@ -57,6 +45,17 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
   const [total_event_list, settotalEventList] = useState(0);
   const [record_per_page, setRecordPerPage] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedVendor, setSelectedVendor] = useState<string | null>(null);
+  const [remarks, setRemarks] = useState<string>("");
+  const router = useRouter();
+
+  const handleAmendClick = (vendorOnboarding: string) => {
+    setSelectedVendor(vendorOnboarding);
+    setRemarks("");
+    setOpenDialog(true);
+  };
+
 
   const user = Cookies?.get("user_id");
   console.log(user, "this is user");
@@ -89,6 +88,35 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
     }
   };
 
+  const handleSubmitAmend = async () => {
+    if (!remarks.trim()) {
+      alert("Remarks are mandatory before submitting.");
+      return;
+    }
+    try {
+      const res: AxiosResponse = await requestWrapper({
+        url: API_END_POINTS.AmendAPI,
+        method: "POST",
+        data: {
+          data: {
+            vendor_onboarding: selectedVendor,
+            remarks: remarks,
+          }
+        }
+      });
+
+      if (res?.status === 200) {
+        console.log("Amend successful", res.data);
+        setOpenDialog(false);
+        fetchTable();
+        router.refresh();
+      }
+    } catch (err) {
+      console.error("Error in Amend API:", err);
+    }
+  };
+
+
   console.log(table, "this is table");
 
   return (
@@ -114,20 +142,6 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {/* <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select> */}
           </div>
         </div>
         <Table>
@@ -146,6 +160,7 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
               <TableHead className="text-center">Rejected By</TableHead>
               <TableHead className="text-center">Rejection Reason</TableHead>
               <TableHead className="text-center">View Details</TableHead>
+              <TableHead className="text-center">Amend Email</TableHead>
               {/* <TableHead className="text-center">QMS Form</TableHead> */}
             </TableRow>
           </TableHeader>
@@ -176,7 +191,7 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                   <TableCell>{item?.rejected_by}</TableCell>
                   <TableCell>{item?.reason_for_rejection}</TableCell>
                   <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                  {/* <TableCell className="text-right">{item?.qms_form}</TableCell> */}
+                  <TableCell><Button onClick={() => handleAmendClick(item?.name)} className="bg-blue-400 hover:bg-blue-300">Amend</Button></TableCell>
                 </TableRow>
               ))
             ) : (
@@ -189,6 +204,29 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
           </TableBody>
 
         </Table>
+        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Amend Vendor</DialogTitle>
+            </DialogHeader>
+
+            <div className="py-4">
+              <Textarea
+                placeholder="Enter remarks..."
+                value={remarks}
+                onChange={(e) => setRemarks(e.target.value)}
+              />
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setOpenDialog(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSubmitAmend}>Submit</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
       </div>
       <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
     </>

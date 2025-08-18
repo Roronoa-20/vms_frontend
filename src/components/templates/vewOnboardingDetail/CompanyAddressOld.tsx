@@ -265,11 +265,11 @@ const CompanyAddress = ({
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg z-50">
-        Company Address
+      <h1 className="border-b-2 font-semibold text-[18px]">
+        Company
       </h1>
       <h1 className="pl-2 ">Office Address</h1>
-      <div className="grid grid-cols-4 gap-6 p-5">
+      <div className="grid grid-cols-4 gap-6 p-2">
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Address 1

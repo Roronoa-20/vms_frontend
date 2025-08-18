@@ -32,8 +32,8 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
   console.log(OnboardingDetail?.reconciliation_account, "this is reconsiliation")
   return (
     <div className="flex flex-col bg-white rounded-lg p-4 w-full">
-    <h1 className="border-b-2 pb-2">Purchasing Details</h1>
-    <div className="grid grid-cols-3 gap-6 p-5 overflow-y-scroll max-h-[70vh] disabled:opacity-100">
+    <h1 className="border-b-2 font-semibold text-[18px]">Purchasing Details</h1>
+    <div className="grid grid-cols-3 gap-6 p-2 overflow-y-scroll max-h-[70vh] disabled:opacity-100">
     <div>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           Company Name
