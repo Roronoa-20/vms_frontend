@@ -87,7 +87,7 @@ const DocumentDetails = ({
   };
 
   const handleBack = () => {
-    router.push(`/vendor-details-form?tabtype=Comapany%20Address&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    router.push(`/vendor-details-form?tabtype=Company%20Address&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   };
 
   const handleFieldChange = (e: React.ChangeEvent<

@@ -156,7 +156,9 @@ const API_END_POINTS = {
   getAllPOChangesTable: `${url}/api/method/vms.APIs.purchase_api.po_early_deliver_get.filtering_po_earlydel_details`,
   getPONumberDropdown: `${url}/api/method/vms.APIs.purchase_api.po_early_deliver_get.filtering_po_details`,
   sendPOEmailVendor: `${url}/api/method/vms.APIs.purchase_api.send_po_to_pr.send_po_to_pr`,
-  verifyNewVendor: `${url}/api/method/vms.APIs.req_for_quotation.rfq.check_duplicate_vendor`
+  verifyNewVendor: `${url}/api/method/vms.APIs.req_for_quotation.rfq.check_duplicate_vendor`,
+
+  sapApiDashboardDetails:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.sap_error_vendor_details`
 };
 
 export default API_END_POINTS;
