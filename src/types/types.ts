@@ -371,7 +371,15 @@ export type ASAForm = {
   registered_date: string,
   pending_asa_count: string,
   approved_vendor_count: string,
-
+  company_vendor_codes: {
+    company_name: string,
+    company_code: string,
+    vendor_codes: {
+      state: string,
+      gst_no: string,
+      vendor_code: string,
+    }[]
+  }[]
 }
 
 export type TCompanyDetailForm = {
@@ -1321,12 +1329,22 @@ export type ASAFormResponse = {
   page_no: number;
   page_length: number;
   pending_asa_vendors: ASAForm[];
+  approved_vendors: ASAForm[];
   name: string,
   vendor_name: string,
   office_email_primary: string,
   country: string,
   mobile_number: string,
   registered_date: string,
+  company_vendor_codes: {
+    company_name: string,
+    company_code: string,
+    vendor_codes: {
+      state: string,
+      gst_no: string,
+      vendor_code: string,
+    }[]
+  }[]
 };
 
 

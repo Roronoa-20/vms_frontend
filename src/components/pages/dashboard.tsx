@@ -128,7 +128,7 @@ const Dashboard = async () => {
   const rfqData: RFQTable = rfqApi?.status == 200 ? rfqApi?.data?.message : "";
   console.log(rfqData, "this is rfqData");
 
-
+// ASA API's
   const dashboardASAFormTableDataApi: AxiosResponse = await requestWrapper({
     url: API_END_POINTS?.asavendorListdashboard,
     method: "GET",
@@ -159,16 +159,27 @@ const Dashboard = async () => {
   const dashboardASAPendingVendorListTableData: DashboardTableType["asa_form_data"] = 
   dashboardASAPendingVendorListTableDataApi?.status == 200 ? dashboardASAPendingVendorListTableDataApi?.data?.message : "";
 
-  const ASAdashboardApprovedVendorCountTableDataApi: AxiosResponse = await requestWrapper({
-    url: API_END_POINTS?.asaapprovedvendorcount,
+  const ASAdashboardOnboardedVendorCountTableDataApi: AxiosResponse = await requestWrapper({
+    url: API_END_POINTS?.asaonboardedvendorcount,
     method: "GET",
     headers: {
       cookie: cookieHeaderString
     }
   });
-  const ASAdashboardApprovedVendorcountTableData: DashboardTableType["asa_form_data"] = 
-  ASAdashboardApprovedVendorCountTableDataApi?.status == 200 ? ASAdashboardApprovedVendorCountTableDataApi?.data?.message : "";
+  const ASAdashboardOnboardedVendorcountTableData: DashboardTableType["asa_form_data"] = 
+  ASAdashboardOnboardedVendorCountTableDataApi?.status == 200 ? ASAdashboardOnboardedVendorCountTableDataApi?.data?.message : "";
 
+  const ASAdashboardOnboardedVendorListTableDataApi: AxiosResponse = await requestWrapper({
+    url: API_END_POINTS?.asaonboardedvendorlist,
+    method: "GET",
+    headers: {
+      cookie: cookieHeaderString
+    }
+  });
+  const ASAdashboardOnboardedVendorListTableData: DashboardTableType["asa_form_data"] = 
+  ASAdashboardOnboardedVendorListTableDataApi?.status == 200 ? ASAdashboardOnboardedVendorListTableDataApi?.data?.message : "";
+
+  // SAP error
   const dashboardSAPErrorTable: AxiosResponse = await requestWrapper({
     url: API_END_POINTS?.sapApiDashboardDetails,
     method: "GET",
@@ -233,14 +244,14 @@ const Dashboard = async () => {
         rfqData={rfqData}
         dashboardASAFormTableData={dashboardASAFormTableData}
         dashboardPendingASAFormTableData={dashboardPendingASAFormTableData}
-        ASAdashboardApprovedVendorcountTableData={ASAdashboardApprovedVendorcountTableData}
+        ASAdashboardOnboardedVendorcountTableData={ASAdashboardOnboardedVendorcountTableData}
         dashboardASAPendingVendorListTableData={dashboardASAPendingVendorListTableData}
         sapErrorDashboardData={sapErrorDashboardData}
         dashboardAccountsPending={dashboardAccountsPending}
         dashboardAccountsOnboarded={dashboardAccountsOnboarded}
         dashboardAccountsRejected={dashboardAccountsRejected}
         dashboardAccountsSapErrors={dashboardAccountsSapErrors}
-
+        
       />
     </div>
   );
