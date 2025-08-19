@@ -303,7 +303,7 @@ const ServiceQuotationFormFields = ({
             <Button
               variant="default"
               onClick={() => {
-                setTableData(prev => [...prev, { ...formData }]);
+                setTableData((prev:any)=> ([...prev, { ...formData }]));
                 // Reset the form
                 setFormData({
                   material_code_head: "",
