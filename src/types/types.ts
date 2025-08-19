@@ -457,6 +457,7 @@ export type TCurrencyDropdown = {
 }
 
 export type TPurchaseDetails = {
+  account_head_remarks:string
   account_group: string,
   company_name: string,
   incoterms: string,

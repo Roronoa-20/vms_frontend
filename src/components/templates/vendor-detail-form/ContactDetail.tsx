@@ -39,6 +39,14 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
   }, [])
 
   const handleAdd = () => {
+    if(contact?.first_name ==""){
+      alert("please enter First Name");
+      return;
+    }
+    if(contact?.last_name ==""){
+      alert("please enter Last Name");
+      return;
+    }
     addContactDetail(contact)
     setshowtable(true)
     setContact({});

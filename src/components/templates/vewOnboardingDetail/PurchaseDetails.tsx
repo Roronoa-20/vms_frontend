@@ -75,13 +75,13 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
         </h1>
         <Input required placeholder="Enter Reg No." disabled defaultValue={OnboardingDetail?.incoterms} />
       </div>
-      <div>
+      <div className={`${designation == "Purchase Team" || designation == "Purchase Head"?"":"hidden"}`}>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           Purchase Team Remarks
         </h1>
         <Input placeholder="" disabled defaultValue={OnboardingDetail?.purchase_team_remarks}/>
       </div>
-      <div>
+      <div className={`${designation == "Purchase Team" || designation == "Purchase Head"?"":"hidden"}`}>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           Purchase Head Remarks
         </h1>
@@ -98,6 +98,12 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
             Accounts Team Remarks
           </h1>
           <Input placeholder="" className='disabled:opacity-100' disabled defaultValue={OnboardingDetail?.account_team_remarks} />
+        </div>
+        <div className={`${designation == "Purchase Team" || designation == "Purchase Head"?"hidden":""}`}>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Accounts Head Remarks
+          </h1>
+          <Input placeholder="" className='disabled:opacity-100' disabled defaultValue={OnboardingDetail?.account_head_remarks} />
         </div>
         <div className={`${designation == "Purchase Head" ? "hidden" : ""}`}>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
