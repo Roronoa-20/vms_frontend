@@ -224,10 +224,10 @@ const DocumentDetails = ({
       return;
     }
     const url = API_END_POINTS?.documentDetailSubmit;
-    if (!checkPAN(documentDetails?.company_pan_number as string) || !checkPAN(OnboardingDetail?.company_pan_number)) {
-      alert("please enter correct PAN Number")
-      return;
-    }
+    // if (!checkPAN(documentDetails?.company_pan_number as string) || !checkPAN(OnboardingDetail?.company_pan_number)) {
+    //   alert("please enter correct PAN Number")
+    //   return;
+    // }
     // if(!checkGST(documentDetails?.gst_number as string)){
     //   alert("please enter correct gst number")
     //   return;
