@@ -26,6 +26,10 @@ import { FileSearch } from "lucide-react";
 import DashboardRFQTable from "./DashboardRFQTable";
 import ASAVendorMonthWiseChart from "./ASAVendorMonthWiseChart";
 import DashboardSAPErrorTable from "./DashboardSAPErrorTable";
+import DashboardAccountsPendingTable from "./DashboardAccountsPendingTable";
+import DashboardAccountsOnboardedTable from "./DashboardAccountsOnboardedTable";
+import DashboardAccountsRejectedTable from "./DashboardAccountsRejectedTable";
+import DashboardAccountsSAPErrorTable from "./DashboardAccountsSAPErrorTable";
 
 type Props = {
   cardData: dashboardCardData
@@ -43,6 +47,10 @@ type Props = {
   dashboardASAPendingVendorListTableData: DashboardTableType["asa_form_data"]
   ASAdashboardApprovedVendorcountTableData: DashboardTableType["asa_form_data"]
   sapErrorDashboardData: DashboardTableType["sapErrorDashboardData"]
+  dashboardAccountsPending:any
+  dashboardAccountsOnboarded:any
+  dashboardAccountsRejected:any
+  dashboardAccountsSapErrors:any
 }
 
 const DashboardCards = ({ ...Props }: Props) => {
@@ -219,6 +227,38 @@ const DashboardCards = ({ ...Props }: Props) => {
         bg_color: "bg-violet-100",
         hover: "hover:border-violet-400",
       },
+      {
+        name: "Accounts Pending Vendors",
+        count: Props?.cardData?.pending_vendor_count_by_accounts_team ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
+      {
+        name: "Accounts Onboarded Vendors",
+        count: Props?.cardData?.approved_vendor_count_by_accounts_team ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
+      {
+        name: "Accounts Rejected Vendors",
+        count: Props?.cardData?.rejected_vendor_count_by_accounts_team ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
+      {
+        name: "Accounts SAP Error Log",
+        count: Props?.cardData?.sap_error_vendor_count_by_accounts_team ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
     ];
   }
 
@@ -374,6 +414,30 @@ const DashboardCards = ({ ...Props }: Props) => {
               {item.name === "SAP Error Log" && (
                 <DashboardSAPErrorTable
                   dashboardTableData={Props?.sapErrorDashboardData}
+                  companyDropdown={Props?.companyDropdown}
+                />
+              )}
+              {item.name === "Accounts Pending Vendors" && (
+                <DashboardAccountsPendingTable
+                  dashboardTableData={Props?.dashboardAccountsPending}
+                  companyDropdown={Props?.companyDropdown}
+                />
+              )}
+              {item.name === "Accounts Onboarded Vendors" && (
+                <DashboardAccountsOnboardedTable
+                  dashboardTableData={Props?.dashboardAccountsOnboarded}
+                  companyDropdown={Props?.companyDropdown}
+                />
+              )}
+              {item.name === "Accounts Rejected Vendors" && (
+                <DashboardAccountsRejectedTable
+                  dashboardTableData={Props?.dashboardAccountsRejected}
+                  companyDropdown={Props?.companyDropdown}
+                />
+              )}
+              {item.name === "Accounts SAP Error Log" && (
+                <DashboardAccountsSAPErrorTable
+                  dashboardTableData={Props?.dashboardAccountsSapErrors}
                   companyDropdown={Props?.companyDropdown}
                 />
               )}

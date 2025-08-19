@@ -165,7 +165,11 @@ const API_END_POINTS = {
   verifyNewVendor: `${url}/api/method/vms.APIs.req_for_quotation.rfq.check_duplicate_vendor`,
 
   sapApiDashboardDetails:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.sap_error_vendor_details`,
-  sapErrorSendEmail:`${url}/api/method/vms.APIs.sap.send_sap_error_email.send_sap_error_email`
+  sapErrorSendEmail:`${url}/api/method/vms.APIs.sap.send_sap_error_email.send_sap_error_email`,
+  dashboardPendingVendorsAccounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.pending_vendor_details_by_accounts`,
+  dashboardOnboardedVendorsAccounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.approved_vendor_details_by_accounts`,
+  dashboardRejectedVendorsAccounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.rejected_vendor_details_by_accounts`,
+  dashboardSapErrorAcounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.sap_error_vendor_details_by_accounts`
 };
 
 export default API_END_POINTS;

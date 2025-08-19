@@ -145,6 +145,7 @@ type VendorTypeGroup = {
 };
 
 export type VendorOnboarding = {
+  accounts_head_approval:string,
   registered_by: string
   vendor_country: string
   company_vendor_codes: {
@@ -913,6 +914,10 @@ export type dashboardCardData = {
   cart_count: number,
   overall_total_rfq: number,
   sap_error_vendor_count: number
+  sap_error_vendor_count_by_accounts_team:number,
+  rejected_vendor_count_by_accounts_team:number,
+  approved_vendor_count_by_accounts_team:number,
+  pending_vendor_count_by_accounts_team:number
 }
 
 export interface DashboardPOTableItem {
@@ -1263,6 +1268,7 @@ export interface DashboardTableType {
 
 
 type SapErrorVendorOnboarding = {
+  accounts_head_approval:string
   name: string;
   ref_no: string;
   company_name: string;

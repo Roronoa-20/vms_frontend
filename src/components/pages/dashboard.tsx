@@ -180,6 +180,42 @@ const Dashboard = async () => {
   const sapErrorDashboardData = dashboardSAPErrorTable?.status == 200 ? dashboardSAPErrorTable?.data?.message?.sap_error_vendor_onboarding : ""
 
 
+  const dashboardPendingVendorAccounts:AxiosResponse = await requestWrapper({
+    url:API_END_POINTS?.dashboardPendingVendorsAccounts,
+    method:"GET",
+    headers:{
+      cookie: cookieHeaderString
+    }
+  })
+
+  const dashboardOnboardedVendorAccounts:AxiosResponse = await requestWrapper({
+    url:API_END_POINTS?.dashboardOnboardedVendorsAccounts,
+    method:"GET",
+    headers:{
+      cookie: cookieHeaderString
+    }
+  })
+  const dashboardRejectedVendorAccounts:AxiosResponse = await requestWrapper({
+    url:API_END_POINTS?.dashboardRejectedVendorsAccounts,
+    method:"GET",
+    headers:{
+      cookie: cookieHeaderString
+    }
+  })
+  const dashboardSapErrorAccounts:AxiosResponse = await requestWrapper({
+    url:API_END_POINTS?.dashboardSapErrorAcounts,
+    method:"GET",
+    headers:{
+      cookie: cookieHeaderString
+    }
+  })
+
+  const dashboardAccountsPending = dashboardPendingVendorAccounts?.status == 200?dashboardPendingVendorAccounts?.data?.message : ""
+  const dashboardAccountsOnboarded = dashboardOnboardedVendorAccounts?.status == 200?dashboardOnboardedVendorAccounts?.data?.message : ""
+  const dashboardAccountsRejected = dashboardRejectedVendorAccounts?.status == 200?dashboardRejectedVendorAccounts?.data?.message : ""
+  const dashboardAccountsSapErrors = dashboardSapErrorAccounts?.status == 200?dashboardSapErrorAccounts?.data?.message : ""
+
+
   return (
     <div className="p-4">
       {/* Cards */}
@@ -200,6 +236,11 @@ const Dashboard = async () => {
         ASAdashboardApprovedVendorcountTableData={ASAdashboardApprovedVendorcountTableData}
         dashboardASAPendingVendorListTableData={dashboardASAPendingVendorListTableData}
         sapErrorDashboardData={sapErrorDashboardData}
+        dashboardAccountsPending={dashboardAccountsPending}
+        dashboardAccountsOnboarded={dashboardAccountsOnboarded}
+        dashboardAccountsRejected={dashboardAccountsRejected}
+        dashboardAccountsSapErrors={dashboardAccountsSapErrors}
+
       />
     </div>
   );

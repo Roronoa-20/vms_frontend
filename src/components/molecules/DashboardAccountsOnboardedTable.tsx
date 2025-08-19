@@ -30,7 +30,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "./Pagination";
 
 type Props = {
-  dashboardTableData?: DashboardTableType["approved_vendor_onboarding"]
+  dashboardTableData?: DashboardTableType
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
 }
 
@@ -49,7 +49,7 @@ const useDebounce = (value: any, delay: any) => {
   return debouncedValue;
 };
 
-const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
+const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
   console.log(dashboardTableData, "this is approved table onboarded")
 
   const { designation } = useAuth();
@@ -66,7 +66,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
     setIsVendorCodeDialog(true);
   };
 
-  const [table, setTable] = useState<DashboardTableType["approved_vendor_onboarding"]>(dashboardTableData || []);
+  const [table, setTable] = useState<any>(dashboardTableData?.approved_vendor_onboarding || []);
   const [selectedCompany, setSelectedCompany] = useState<string>("")
   const [search, setSearch] = useState<string>("");
 
@@ -92,7 +92,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
 
   const fetchTable = async () => {
     const dashboardApprovedVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.dashboardApprovedVendorTableURL}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
+      url: `${API_END_POINTS?.dashboardOnboardedVendorsAccounts}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
       method: "GET",
     });
     if (dashboardApprovedVendorTableDataApi?.status == 200) {
@@ -102,6 +102,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
       settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count)
       // setRecordPerPage(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding?.length)
       setRecordPerPage(5);
+      console.log(dashboardApprovedVendorTableDataApi,"this is onboarded")
     }
   };
 
@@ -113,7 +114,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Total OnBoarded Vendors
+            Total Accounts OnBoarded Vendors
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e)=>{handlesearchname(e)}} />
@@ -167,7 +168,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
           </TableHeader>
           <TableBody className="text-center">
             {table ? (
-              table?.map((item, index) => (
+              table?.map((item:any, index:any) => (
                 <TableRow key={index}>
                    <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                   <TableCell className="text-nowrap">{item?.name}</TableCell>
@@ -207,7 +208,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
       </div>
       {
         isVendorCodeDialog &&
-        <PopUp handleClose={handleClose} classname="overflow-y-scroll">
+        <PopUp handleClose={handleClose}>
           <Table>
             <TableHeader>
               <TableRow>
@@ -243,4 +244,4 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
   );
 };
 
-export default DashboardApprovedVendorsTable;
+export default DashboardAccountsApprovedVendorsTable;
