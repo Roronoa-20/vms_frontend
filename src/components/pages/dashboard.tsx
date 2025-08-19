@@ -251,7 +251,7 @@ const Dashboard = async () => {
         dashboardAccountsOnboarded={dashboardAccountsOnboarded}
         dashboardAccountsRejected={dashboardAccountsRejected}
         dashboardAccountsSapErrors={dashboardAccountsSapErrors}
-        
+        ASAdashboardOnboardedVendorListTableData={ASAdashboardOnboardedVendorListTableData}
       />
     </div>
   );
