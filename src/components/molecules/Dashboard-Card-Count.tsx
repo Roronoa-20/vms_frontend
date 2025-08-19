@@ -7,6 +7,7 @@ import DashboardTotalVendorsTable from "./Dashboard-Total-Vendors-Table";
 import DashboardPendingVendorsTable from "./Dashboard-Pending-Vendors-Table";
 import DashboardApprovedVendorsTable from "./Dashboard-Approved-Vendors-Table";
 import DashboardRejectedVendorsTable from "./Dashboard-Rejected-Vendors-Table";
+import DashboardASAOnboardedVendorsList from "./Dashboard-ASA-Onboarded-Vendors-List";
 import DashboardASAFormTable from "./Dashboard-ASA-Vendors-Form-Table";
 import DashboardASAPendingVendorFormTableList from "./Dashboard-ASA-Pending-Vendor-List";
 import DashboardDispatchVendorsTable from "./Dashboard-Dispatch-Vendors-Table";
@@ -41,8 +42,9 @@ type Props = {
   dashboardASAFormTableData: DashboardTableType["asa_form_data"]
   dashboardPendingASAFormTableData: DashboardTableType["asa_form_data"]
   dashboardASAPendingVendorListTableData: DashboardTableType["asa_form_data"]
-  ASAdashboardApprovedVendorcountTableData: DashboardTableType["asa_form_data"]
+  ASAdashboardOnboardedVendorcountTableData: DashboardTableType["asa_form_data"]
   sapErrorDashboardData: DashboardTableType["sapErrorDashboardData"]
+  ASAdashboardOnboardedVendorListTableData: DashboardTableType["asa_form_data"]
 }
 
 const DashboardCards = ({ ...Props }: Props) => {
@@ -61,11 +63,11 @@ const DashboardCards = ({ ...Props }: Props) => {
     allCardData = [
       {
         name: "Total Onboarded Vendor",
-        count: Props.ASAdashboardApprovedVendorcountTableData?.approved_vendor_count ?? 0,
+        count: Props.ASAdashboardOnboardedVendorcountTableData?.approved_vendor_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
-        text_color: "text-violet-800",
-        bg_color: "bg-violet-100",
-        hover: "hover:border-violet-400",
+        text_color: "text-emerald-800",
+        bg_color: "bg-emerald-100",
+        hover: "hover:border-emerald-400",
       },
       {
         name: "Submitted ASA Form",
@@ -79,9 +81,9 @@ const DashboardCards = ({ ...Props }: Props) => {
         name: "Pending ASA Form",
         count: Props.dashboardPendingASAFormTableData?.pending_asa_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
-        text_color: "text-violet-800",
-        bg_color: "bg-violet-100",
-        hover: "hover:border-violet-400",
+        text_color: "text-rose-800",
+        bg_color: "bg-rose-100",
+        hover: "hover:border-rose-400",
       },
     ];
   } else if (user == "Purchase Team" || user == "Purchase Head") {
@@ -290,8 +292,8 @@ const DashboardCards = ({ ...Props }: Props) => {
             return (
               <TabsContent key={item.name} value={item.name}>
                 {item.name === "Total Onboarded Vendor" && (
-                  <DashboardApprovedVendorsTable
-                    dashboardTableData={Props.dashboardApprovedVendorTableData.approved_vendor_onboarding}
+                  <DashboardASAOnboardedVendorsList
+                    dashboardTableData={Props.ASAdashboardOnboardedVendorListTableData}
                     companyDropdown={Props?.companyDropdown}
                   />
                 )}
