@@ -83,9 +83,6 @@ const TrackQuotation = async({token}:Props) => {
     });
 
     const data = resposne?.status == 200?resposne?.data?.message?.data : "";
-
-    console.log(data,"this is data");
-
   return (
     <div className='bg-white p-4'>
       <h1 className='p-2 pl-10 flex gap-5 items-center'>RFQ No : {data?.name} <span className='bg-green-100 text-green-500 rounded-md px-2 py-1'>{data?.rank}</span></h1>

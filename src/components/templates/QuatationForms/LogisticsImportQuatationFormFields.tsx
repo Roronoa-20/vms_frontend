@@ -52,7 +52,6 @@ const LogisticsImportQuatationFormFields = ({
                 // Replace with your real API call
                 const response = await fetch(`https://v6.exchangerate-api.com/v6/dd3284edb1dd6c2f9a1d4a12/pair/${from}/${to}`);
                 const data = await response.json();
-                console.log(data.conversion_rate, "data of XR")
                 setFormData(prev => ({
                     ...prev,
                     exchange_rate: data.conversion_rate
@@ -72,20 +71,16 @@ const LogisticsImportQuatationFormFields = ({
 
         if (mode === "Air") {
             totalFreight = chargeableWeight * (rateKg + fuelSurcharge + sc) + xray + pickupOrigin;
-            console.log(totalFreight,"totalFreight-----------------=-===========")
             exWorks = xray + pickupOrigin;
             totalFreightINR = exchangeRate * totalFreight;
             totalLandingPriceINR = totalFreightINR + dcInr;
         }
-        console.log(chargeableWeight, "chargeableWeight", xray, "xray", totalFreightINR, "totalFreightINR", "totalLandingPriceINR", totalLandingPriceINR)
         if (mode === "Ocean") {
             totalFreight = chargeableWeight * (rateKg + fuelSurcharge + sc) + xray;
-            console.log(totalFreight,"totalFreight-----------------=-===========")
             exWorks = xray;
             totalFreightINR = exchangeRate * totalFreight;
             totalLandingPriceINR = totalFreightINR + dcInr + shippingLineCharge + cfsCharge;
         }
-console.log(totalFreight,"totalFreight")
         setFormData(prev => ({
             ...prev,
             total_freight: totalFreight.toFixed(2),
@@ -121,7 +116,6 @@ console.log(totalFreight,"totalFreight")
     const handleSelectChange = (value: string, field: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
-    console.log(formData, "formData")
     const renderInput = (name: string, label: string, type = 'text', disabled = false) => (
         <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">{label}</h1>
@@ -228,7 +222,6 @@ console.log(totalFreight,"totalFreight")
                     <MultipleFileUpload
                         files={uploadedFiles}
                         setFiles={setUploadedFiles}
-                        onNext={(files) => console.log("Final selected files:", files)}
                         buttonText="Attach Files"
                     />
                 </div>

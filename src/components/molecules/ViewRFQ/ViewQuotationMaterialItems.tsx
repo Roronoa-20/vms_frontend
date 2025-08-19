@@ -14,14 +14,14 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { PurchaseRequisitionRow, RFQDetails } from '@/src/types/RFQtype';
+import { PurchaseRequisitionRow } from '@/src/types/RFQtype';
 import { Button } from '@/components/ui/button';
 
 interface Props {
     items: PurchaseRequisitionRow[];
     refno?: string
 }
-const ViewQuotationItems = ({ items }: Props) => {
+const ViewQuotationMaterialItems = ({ items }: Props) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -38,12 +38,12 @@ const ViewQuotationItems = ({ items }: Props) => {
                         <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                             <TableHead className="">Sr No.</TableHead>
                             <TableHead className="text-center">Material Code</TableHead>
-                             <TableHead className="text-center">Material Name</TableHead>
+                            <TableHead className="text-center">Material Name</TableHead>
                             <TableHead className="text-center">Quantity</TableHead>
-                             <TableHead className="text-center">UOM</TableHead>
+                            <TableHead className="text-center">UOM</TableHead>
                             <TableHead className="text-center">Price</TableHead>
-                             <TableHead className="text-center">Lead Time</TableHead>
-                             <TableHead className="text-center">Remarks</TableHead>
+                            <TableHead className="text-center">Lead Time</TableHead>
+                            <TableHead className="text-center">Remarks</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody className="text-center bg-white">
@@ -74,4 +74,4 @@ const ViewQuotationItems = ({ items }: Props) => {
     )
 }
 
-export default ViewQuotationItems
+export default ViewQuotationMaterialItems

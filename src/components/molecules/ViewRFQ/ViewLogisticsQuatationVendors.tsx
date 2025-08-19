@@ -11,7 +11,8 @@ import { QuotationDetail } from "@/src/types/QuatationTypes";
 import { AttachmentsDialog } from "../../common/MultipleFileViewDialog";
 import { RFQDetails } from "@/src/types/RFQtype";
 import { Badge } from '@/components/ui/badge';
-import ViewQuotationItems from "./ViewQuotationItems";
+import ViewQuotationServiceItems from "./ViewServiceQuotationItems";
+import ViewQuotationMaterialItems from "./ViewQuotationMaterialItems";
 interface Props {
     RFQData: RFQDetails;
     QuatationData: QuotationDetail[];
@@ -41,6 +42,7 @@ const ViewLogisticsQuatationVendors = ({
     const exportColumns: ColumnConfig[] = [
         { label: "Select", key: "select" },
         { label: "Sr No.", key: "index" },
+        { label: "Rank", key: "rank" },
         { label: "RefNo", key: "name" },
         { label: "Vendor Name", key: "vendor_name" },
         { label: "Vendor Code", key: "vendor_code" },
@@ -63,6 +65,7 @@ const ViewLogisticsQuatationVendors = ({
     const importColumns: ColumnConfig[] = [
         { label: "Select", key: "select" },
         { label: "Sr No.", key: "index" },
+        { label: "Rank", key: "rank" },
         { label: "RefNo", key: "name" },
         { label: "Vendor Name", key: "vendor_name" },
         { label: "Vendor Code", key: "vendor_code" },
@@ -94,6 +97,7 @@ const ViewLogisticsQuatationVendors = ({
     const materialColumns: ColumnConfig[] = [
         { label: "Select", key: "select" },
         { label: "Sr No.", key: "index" },
+        { label: "Rank", key: "rank" },
         { label: "RefNo", key: "name" },
         { label: "Vendor Name", key: "vendor_name" },
         { label: "Vendor Code", key: "vendor_code" },
@@ -106,12 +110,13 @@ const ViewLogisticsQuatationVendors = ({
     const serviceColumns: ColumnConfig[] = [
         { label: "Select", key: "select" },
         { label: "Sr No.", key: "index" },
+        { label: "Rank", key: "rank" },
         { label: "RefNo", key: "name" },
         { label: "Vendor Name", key: "vendor_name" },
         { label: "Vendor Code", key: "vendor_code" },
         { label: "Email", key: "office_email_primary" },
         { label: "Status", key: "status" },
-        { label: "Payement Terms", key: "status" },
+        { label: "Payment Terms", key: "payment_terms" },
         { label: "View Items", key: "quotation_item_list" },
         { label: "Attachments", key: "attachments" },
     ];
@@ -129,8 +134,11 @@ const ViewLogisticsQuatationVendors = ({
         if (key === "attachments") {
             return <AttachmentsDialog attachments={item.attachments ?? []} />;
         }
-        if (key === "quotation_item_list") {
-            return <ViewQuotationItems items={item.quotation_item_list ?? []} />;
+        if (key === "quotation_item_list" && RFQData?.rfq_type === "Material Vendor") {
+            return <ViewQuotationMaterialItems items={item.quotation_item_list ?? []} />;
+        }
+        if (key === "quotation_item_list" && RFQData?.rfq_type === "Service Vendor") {
+            return <ViewQuotationServiceItems items={item.quotation_item_list ?? []} />;
         }
 
         if (key === "status") {
@@ -154,7 +162,6 @@ const ViewLogisticsQuatationVendors = ({
         if (Array.isArray(value) || typeof value === "object") {
             return "-";
         }
-
         return value ?? "-";
     };
 
@@ -194,15 +201,6 @@ const ViewLogisticsQuatationVendors = ({
                                                 </TableCell>
                                             );
                                         }
-                                        // if (col.key === "action") {
-                                        //     return (
-                                        //         <TableCell key={idx} className="text-center">
-                                        //             <Button className="bg-white text-black hover:bg-white hover:text-black">
-                                        //                 View
-                                        //             </Button>
-                                        //         </TableCell>
-                                        //     );
-                                        // }
                                         return (
                                             <TableCell key={idx} className={`text-center ${col.key === "name" ? "text-nowrap" : ""}`}>
                                                 {getValueByKey(item, col.key, index)}

@@ -1,4 +1,5 @@
 import { RFQDetails } from "@/src/types/RFQtype";
+
 export interface iteminterface {
     key: keyof RFQDetails
     label:string | undefined

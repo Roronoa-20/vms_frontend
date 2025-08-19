@@ -90,27 +90,25 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
   const router = useRouter()
   useEffect(() => {
     const fetchVendorTableData = async (rfq_type: string) => {
-      console.log(rfq_type, "rfq_type in table code")
-      const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}`
+      const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&company=${formData?.company_name}`
       const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
       if (response?.status == 200) {
         setVendorList(response.data.message)
-        console.log(response, "response of vendor table data")
       } else {
         alert("error");
       }
     }
-    fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Material Vendor");
-  }, [currentVendorPage, debouncedDoctorSearchName]);
+    if (formData?.company_name) {
+      fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Material Vendor");
+    }
+  }, [currentVendorPage, debouncedDoctorSearchName,formData?.company_name]);
 
   useEffect(() => {
     const fetchPRDropdown = async (rfq_type: string) => {
-      console.log(rfq_type, "rfq_type in table code")
       const url = `${API_END_POINTS?.fetchPRDropdown}?rfq_type=${rfq_type}`
       const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
       if (response?.status == 200) {
         setAvailablePRs(response.data.message.pr_numbers)
-        console.log(response, "response of pr dropdown")
       } else {
         alert("error");
       }
@@ -120,7 +118,6 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
 
   useEffect(() => {
     if (pr_codes) {
-      console.log("Auto-filling PR number with:", pr_codes);
       setFormData((prev) => ({
         ...prev,
         pr_number: pr_codes
@@ -134,8 +131,6 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
   }
 
   const handleSubmit = async () => {
-    console.log(selectedMaterials, "selectedMaterials")
-    console.log({ ...formData, vendors: selectedRows.vendors, pr_items: selectedMaterials }, "submit data")
     const formdata = new FormData();
     const fullData = {
       ...formData,
@@ -143,8 +138,6 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
       pr_items: selectedMaterials,
       non_onboarded_vendors: newVendorTable,
     };
-    console.log(fullData, "submit data ------------------------------");
-    // Append JSON data as a string under key 'data'
     formdata.append('data', JSON.stringify(fullData));
     // Append file only if exists
     if (files && files['file']) {
@@ -187,7 +180,6 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
           onSelectionChange={setPRItems}
           title="Select Purchase Request Numbers"
         />
-
       </div>
       <MaterialRFQFormFields
         formData={formData}
@@ -196,7 +188,6 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
         setFiles={setFiles}
         files={files}
       />
-
       <VendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />
       <div className='px-4'>
         <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />

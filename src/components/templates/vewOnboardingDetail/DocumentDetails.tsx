@@ -441,6 +441,31 @@ const DocumentDetails = ({
               {errors?.gst_ven_type && !documentDetails?.gst_ven_type && <span style={{ color: 'red' }}>{errors?.gst_ven_type}</span>}
             </div>
             <div>
+                          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                            Company <span className="pl-2 text-red-400 text-2xl">*</span>
+                          </h1>
+                          <Select
+                          disabled={isDisabled}
+                            onValueChange={(value) => {
+                              setSingleRow((prev: any) => ({ ...prev, company: value }));
+                            }}
+                            value={singlerow?.company ?? ""}
+                          >
+                            <SelectTrigger className="disabled:opacity-100">
+                              <SelectValue placeholder="Select Company" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                {gstStateDropdown?.company?.map((item, index) => (
+                                  <SelectItem key={index} value={item?.name}>
+                                    {item?.description}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </div>
+            <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 State <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
