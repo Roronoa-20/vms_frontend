@@ -157,7 +157,6 @@ const LogisticsExportQuatationFormFields = ({
         <MultipleFileUpload
           files={uploadedFiles}
           setFiles={setUploadedFiles}
-          onNext={(files) => console.log("Final selected files:", files)}
           buttonText="Attach Files"
         />
       </div>

@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AccountAssignmentCategory, Company, CostCenter, Country, Currency, DestinationPort, GLAccountNumber, IncoTerms, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ModeOfShipment, PackageType, plantCode, PortCode, PortOfLoading, ProductCategory, ProfitCenter, PurchaseGroup, PurchaseOrganisation, quantityUnit, RFQType, serviceCategory, serviceCode, ShipmentType, StoreLocation, UOMMaster, ValuationArea } from '@/src/types/PurchaseRequestType';
+import { AccountAssignmentCategory, Company, CostCenter, Country, Currency, DestinationPort, GLAccountNumber, IncoTerms, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ModeOfShipment, PackageType, Plant, plantCode, PortCode, PortOfLoading, ProductCategory, ProfitCenter, PurchaseGroup, PurchaseOrganisation, quantityUnit, RFQType, serviceCategory, serviceCode, ShipmentType, StoreLocation, UOMMaster, ValuationArea } from '@/src/types/PurchaseRequestType';
 import VendorTable from '../../molecules/rfq/VendorTable';
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
@@ -18,7 +18,6 @@ import useDebounce from '@/src/hooks/useDebounce';
 import { SAPPRData, VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
 import Pagination from '../../molecules/Pagination';
 import PRServiceManager, { SelectedMaterial } from './PRServiceManager';
-import MultipleFileUpload from '../../molecules/MultipleFileUpload';
 import NewVendorTable from '../../molecules/rfq/NewVendorTable';
 import AddNewVendorRFQDialog from '../../molecules/AddNewVendorRFQDialog';
 import { useRouter } from 'next/navigation';
@@ -53,6 +52,7 @@ export interface DropdownDataService {
   plant_code: plantCode[];
   quantity_unit: quantityUnit[]
   shipment_type: ShipmentType[]
+  plant: Plant[];
 }
 type Props = {
   Dropdown: DropdownDataService;
@@ -72,7 +72,7 @@ export interface newVendorTable {
   gst_number: string
 }
 
-const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
+const ServiceRFQ = ({ Dropdown }: Props) => {
   const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Service Vendor" });
   const [vendorSearchName, setVendorSearchName] = useState('')
   const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
@@ -93,27 +93,25 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
   const router = useRouter()
   useEffect(() => {
     const fetchVendorTableData = async (rfq_type: string) => {
-      console.log(rfq_type, "rfq_type in Service table code")
-      const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}`
+      const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&company=${formData?.company_name}`
       const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
       if (response?.status == 200) {
         setVendorList(response.data.message)
-        console.log(response, "response of vendor table data")
       } else {
         alert("error");
       }
     }
-    fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Service Vendor");
-  }, [currentVendorPage, debouncedDoctorSearchName]);
+    if (formData?.company_name) {
+      fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Service Vendor");
+    }
+  }, [currentVendorPage, debouncedDoctorSearchName,formData?.company_name]);
 
   useEffect(() => {
     const fetchPRDropdown = async (rfq_type: string) => {
-      console.log(rfq_type, "rfq_type in table code")
       const url = `${API_END_POINTS?.fetchPRDropdown}?rfq_type=${rfq_type}`
       const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
       if (response?.status == 200) {
         setAvailablePRs(response.data.message.pr_numbers)
-        console.log(response, "response of pr dropdown")
       } else {
         alert("error");
       }
@@ -121,97 +119,19 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
     fetchPRDropdown(formData?.rfq_type ? formData?.rfq_type : "Service Vendor");
   }, []);
 
-  const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
   const handleVendorSearch = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setVendorCurrentPage(1)
     setVendorSearchName(e.target.value);
   }
-  const handleSelectChange = (value: string, field: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
 
-  const renderInput = (name: string, label: string, type = 'text') => (
-    <div className="col-span-1">
-      <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-        {label}
-        {/* {errors[name] && <span className="text-red-600 ml-1">*</span>} */}
-      </h1>
-      <Input
-        name={name}
-        type={type}
-        // className={errors[name] ? 'border-red-600' : 'border-neutral-200'}
-        className={'border-neutral-200'}
-        value={formData[name] || ''}
-        onChange={handleFieldChange}
-      />
-    </div>
-  );
-
-  const renderSelect = <T,>(
-    name: string,
-    label: string,
-    options: T[],
-    getValue: (item: T) => string,
-    getLabel: (item: T) => string,
-    isDisabled?: boolean,
-  ) => (
-    <div className="col-span-1">
-      <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-        {label}
-        {/* {errors[name as keyof typeof errors] && (
-                    <span className="text-red-600 ml-1">*</span>
-                )} */}
-      </h1>
-      <Select
-        value={formData[name] ?? ""}
-        onValueChange={(value) => handleSelectChange(value, name)}
-        disabled={isDisabled}
-      >
-        {/* className={errors[name as keyof typeof errors] ? 'border border-red-600' : ''} */}
-        <SelectTrigger>
-          <SelectValue placeholder="Select" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            {options?.map((item, idx) => (
-              <SelectItem key={idx} value={getValue(item)}>
-                {getLabel(item)}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-    </div>
-  );
-  const renderTextarea = (name: string, label: string, rows = 4) => (
-    <div className="col-span-1">
-      <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-        {label}
-        {/* {errors[name] && <span className="text-red-600 ml-1">*</span>} */}
-      </h1>
-      <textarea
-        name={name}
-        rows={rows}
-        value={formData[name] || ''}
-        onChange={(e) => handleFieldChange(e)}
-        className="w-full rounded-md border border-neutral-200 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-      />
-    </div>
-  );
   const handleSubmit = async () => {
-    console.log(selectedMaterials, "selectedMaterials")
     const formdata = new FormData();
     const fullData = {
       ...formData,
       vendors: selectedRows.vendors,
       pr_items: selectedMaterials,
-      // non_onboarded_vendors: nonOnboardedVendors, 
+      non_onboarded_vendors: newVendorTable, 
     };
-    // Append JSON data as a string under key 'data'
-    console.log(fullData, "fullData")
     formdata.append('data', JSON.stringify(fullData));
 
     // Append file only if exists
@@ -224,7 +144,6 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
     const url = `${API_END_POINTS?.CreateServiceRFQ}`;
     const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" });
     if (response?.status == 200) {
-      console.log(response, "response")
       alert("Submit Successfull");
       router.push("/dashboard")
     } else {
@@ -240,12 +159,10 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
     setIsDialog(true);
   }
 
+
   const handleClose = () => {
     setIsDialog(false);
   }
-
-  console.log(selectedMaterials,"selectedMaterials")
-
   return (
     <div className='bg-white h-full w-full pb-6'>
       <div className='flex justify-between items-center pr-4'>
@@ -279,7 +196,7 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
           (item) => `${item.company_name}`
         )}
         {renderSelect(
-          'purchase_organization',
+          'purchase_organisation',
           'Purchasing Organization',
           Dropdown?.purchase_organisation,
           (item) => item.name,
@@ -326,12 +243,12 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
         {/* {renderSelect(
           'plant_code',
           'Plant Code',
-          Dropdown?.plant,
-          (item) => item.plant_code,
-          (item) => `${item.plant_code}`
-        )} */}
+          Dropdown?.plant_code,
+          (item) => item.name,
+          (item) => `${item.plant_name}`
+        )}
         {renderSelect(
-          'storage_location',
+          'store_location',
           'Storage Location',
           Dropdown?.store_location,
           (item) => item.name,
@@ -343,19 +260,20 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
 
       <h1 className='text-[24px] font-normal pt-5 px-5'>Material/Item Details</h1>
       <div className="grid grid-cols-3 gap-6 p-5">
-        {renderInput('collection_number', 'Collection No.')}
+        {renderInput('collection_no', 'Collection No.')}
         {renderInput('quotation_deadline', 'Quotation Deadline', 'date')}
         {renderInput('bidding_person', 'Bidding Person')}
       </div>
       <h1 className='text-[24px] font-normal pt-5 px-5'>Quantity & Date</h1>
       <div className="grid grid-cols-3 gap-6 p-5">
         {renderInput('rfq_quantity', 'RFQ Quantity')}
+
         {renderSelect(
           'quantity_unit',
           'Quantity Unit',
-          Dropdown?.uom_master,
+          Dropdown?.quantity_unit,
           (item) => item.name,
-          (item) => `${item.uom}`
+          (item) => `${item.quantity_unit_name}`
         )}
         {renderInput('delivery_date', 'Delivery Date', 'date')}
         {renderInput('estimated_price', 'Enter estimated Price', 'number')}
@@ -378,8 +296,14 @@ const ServiceRFQ = ({ Dropdown, pr_codes, pr_type }: Props) => {
         {renderInput('first_remainder', '1st Reminder', 'date')}
         {renderInput('second_remainder', '2nd Reminder', 'date')}
         {renderInput('third_remainder', '3rd Reminder', 'date')}
-      </div>
-
+      </div> */}
+      <ServiceRFQFormFields
+        formData={formData}
+        setFormData={setFormData}
+        Dropdown={Dropdown}
+        setUploadedFiles={setUploadedFiles}
+        uploadedFiles={uploadedFiles}
+      />
       <VendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />
       <div className='px-4'>
         <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />

@@ -30,6 +30,8 @@ import LogisticsReviseRFQ from '../RFQTemplates/LogisticsReviseRFQ';
 import { PurchaseRequestDropdown } from '@/src/types/PurchaseRequestType';
 import ViewMaterialPRItemsTable from '../../molecules/ViewRFQ/ViewMaterialPRItemsTable';
 import ViewServicePRItemsTable from '../../molecules/ViewRFQ/ViewServicePRItemsTable';
+import MaterialReviseRFQ from '../RFQTemplates/MaterialReviseRFQ';
+import ServiceReviseRFQ from '../RFQTemplates/ServiceReviseRFQ';
 
 
 interface Props {
@@ -68,26 +70,20 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
         "final_remarks",
         "final_tat",
     ];
-
     const filteredData = Object.fromEntries(
         requiredKeysForNegotataion.map((key) => [key, String(RFQData[key] ?? "")])
     );
-
     const [formData, setFormData] = useState<Record<string, string>>(filteredData);
-    // const [formData, setFormData] = useState<Record<string, string>>({ ...RFQData });
     const [open, setOpen] = useState(false);
     const [finalNegotation, setFinalNegotation] = useState(false);
     const [reviseDialog, setReviseDialog] = useState(false);
     const router = useRouter()
     useEffect(() => {
         const fetchVendorTableData = async () => {
-            // const url = `${API_END_POINTS?.fetchQuatationVendorList}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&service_provider=${formData?.service_provider}`
             const url = `${API_END_POINTS?.fetchQuatationVendorList}?rfq_number=${RFQData?.name}`
             const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
             if (response?.status == 200) {
-
                 setQuatationVendorList(response?.data?.message?.data ? response?.data?.message?.data : [])
-                console.log(response, "response of vendor table data")
             } else {
                 alert("error");
             }
@@ -137,9 +133,9 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
             location.reload();
         }
     }
-    console.log(selectedVendorName,'selectedVendorName')
+    console.log(QuatationVendorList, 'QuatationVendorList')
     return (
-        <div className='px-4 pb-6 bg-gray-100'>
+        <div className='px-4 pb-6 bg-white'>
             <section className='flex justify-between py-4'>
                 <h1 className='text-lg py-2'>RFQ RefNo : <span className='font-bold pr-2'>{refno ? refno : ""}</span>
                     {RFQData?.status && (
@@ -158,7 +154,7 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
                     )}
                 </h1>
                 {RFQData?.status != "Approved" && <div className='flex gap-4 items-center'>
-                    <Button className='flex gap-1 p-2' onClick={() => setReviseDialog(true)}><Repeat width={20} height={20} />Revise RFQ </Button>
+                    <Button className='flex gap-1 p-2' disabled={RFQData.rfq_type != "Logistic Vendor" ? true : false} onClick={() => setReviseDialog(true)}><Repeat width={20} height={20} />Revise RFQ </Button>
                     {/* <Sheet>
                         <SheetTrigger className='p-2 bg-black text-white text-sm rounded-md flex gap-1'><History width={20} height={20} />RFQ History</SheetTrigger>
                         <SheetContent>
@@ -185,7 +181,7 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
 
             <ViewLogisticsQuatationVendors QuatationData={QuatationVendorList} handleVendorSearch={handleVendorSearch} logistic_type={RFQData?.logistic_type ? RFQData?.logistic_type : "Export"} selectedVendorName={selectedVendorName ? selectedVendorName : ""} setSelectedVendorName={setSelectedVendorName} RFQData={RFQData} />
             {/* <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={QuatationVendorList?.length ? QuatationVendorList?.length : 0} total_event_list={QuatationVendorList?.total_count ? QuatationVendorList?.total_count : 0} /> */}
-            {RFQData?.is_approved &&
+            {(RFQData?.is_approved && (RFQData?.rfq_type != "Service Vendor" && RFQData?.rfq_type != "Material Vendor")) &&
                 <>
                     <FinalNegotiatedRateFormLogistics logisticType={RFQData.logistic_type ? RFQData.logistic_type : "Export"} formData={formData} setFormData={setFormData} mode_of_shipment={RFQData?.final_mode_of_shipment} />
                     {!RFQData?.is_negotiated && <div className='flex justify-end py-4'><Button type='button' className={`flex bg-blue-400 hover:bg-blue-400 px-10 font-medium`} onClick={() => setFinalNegotation(true)}>Submit</Button></div>}
@@ -204,12 +200,28 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
                 title='Are you sure you want to Submit?'
                 buttontext="Submit"
             />
-            <LogisticsReviseRFQ
+            {(reviseDialog && RFQData?.rfq_type === "Logistic Vendor") && <LogisticsReviseRFQ
                 open={reviseDialog}
                 onClose={() => setReviseDialog(false)}
                 Dropdown={Dropdown}
                 RFQData={RFQData}
-            />
+            />}
+
+            {(reviseDialog && RFQData?.rfq_type === "Material Vendor") &&
+                <MaterialReviseRFQ
+                    open={reviseDialog}
+                    onClose={() => setReviseDialog(false)}
+                    Dropdown={Dropdown}
+                    RFQData={RFQData}
+                />}
+
+            {(reviseDialog && RFQData?.rfq_type === "Service Vendor") &&
+                <ServiceReviseRFQ
+                    open={reviseDialog}
+                    onClose={() => setReviseDialog(false)}
+                    Dropdown={Dropdown}
+                    RFQData={RFQData}
+                />}
         </div>
     )
 }

@@ -2,20 +2,20 @@ import React from 'react'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import { LogisticsExportRFQFormFields } from './LogisticsExportRFQFormFields';
-import LogisticsImportRFQFormFields from './LogisticsImportRFQFormFields';
 import { PurchaseRequestDropdown } from '@/src/types/PurchaseRequestType';
-import { RFQDetails, VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
+import { RFQDetails, SAPPRData, VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import useDebounce from '@/src/hooks/useDebounce';
 import { newVendorTable } from './LogisticsImportRFQ';
 import VendorTable from '../../molecules/rfq/VendorTable';
-import SingleSelectVendorTable from '../../molecules/rfq/SingleSelectVendorTable';
 import Pagination from '../../molecules/Pagination';
 import NewVendorTable from '../../molecules/rfq/NewVendorTable';
 import AddNewVendorRFQDialog from '../../molecules/AddNewVendorRFQDialog';
+import PRServiceManager, { SelectedMaterial } from './PRServiceManager';
+import ServiceRFQFormFields from './ServiceRFQFormFields';
+import { useRouter } from 'next/navigation';
 interface Props {
     RFQData: RFQDetails
     open: boolean;
@@ -31,7 +31,7 @@ const sanitizeData = (data: RFQDetails): Record<string, string> => {
     });
     return result;
 };
-const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
+const ServiceReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
 
     // const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<Record<string, string>>(sanitizeData(RFQData));
@@ -39,50 +39,80 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
     const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
     const [VendorList, setVendorList] = useState<VendorApiResponse>();
     const [loading, setLoading] = useState(true);
-    const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
-    const [isDialog, setIsDialog] = useState<boolean>(false);
-    const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([])
-    useEffect(() => {
-        const fetchVendorTableData = async (rfq_type: string) => {
-            setSelectedRows({ vendors: [] })
-            const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&service_provider=${formData?.service_provider}&company=${formData?.company_name_logistic}`
-            const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
-            if (response?.status == 200) {
-                setVendorList(response.data.message)
-                console.log(response, "response of vendor table data")
-            } else {
-                alert("error");
-            }
-        }
-        if (formData?.service_provider != "Select" && formData?.service_provider) {
-            fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Logistic Vendor");
-        }
-    }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider]);
-
-    
     const [selectedRows, setSelectedRows] = useState<VendorSelectType>(
         {
             vendors: []
         }
     );
+    const [availablePRs, setAvailablePRs] = useState<SAPPRData[]>([])
+    const [selectedMaterials, setSelectedMaterials] = useState<SelectedMaterial[]>([])
+    const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
+    const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
+    const [isDialog, setIsDialog] = useState<boolean>(false);
+    const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([])
+    const router = useRouter()
+    useEffect(() => {
+        const fetchVendorTableData = async (rfq_type: string) => {
+            const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&company=${formData?.company_name}`
+            const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+            if (response?.status == 200) {
+                setVendorList(response.data.message)
+            } else {
+                alert("error");
+            }
+        }
+        if (formData?.company_name) {
+            fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Service Vendor");
+        }
+    }, [currentVendorPage, debouncedDoctorSearchName, formData?.company_name]);
+
+    useEffect(() => {
+        const fetchPRDropdown = async (rfq_type: string) => {
+            const url = `${API_END_POINTS?.fetchPRDropdown}?rfq_type=${rfq_type}`
+            const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+            if (response?.status == 200) {
+                setAvailablePRs(response.data.message.pr_numbers)
+            } else {
+                alert("error");
+            }
+        }
+        fetchPRDropdown(formData?.rfq_type ? formData?.rfq_type : "Service Vendor");
+    }, []);
 
     const handleVendorSearch = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         setVendorCurrentPage(1)
         setVendorSearchName(e.target.value);
     }
-    const handleSubmit = async () => {
 
-        if (formData?.service_provider == "All Service Provider" || formData?.service_provider == "Select" || formData?.service_provider == "Premium Service Provider") {
-            setSelectedRows({ vendors: [] })
+    const handleSubmit = async () => {
+        const formdata = new FormData();
+        const fullData = {
+            ...formData,
+            vendors: selectedRows.vendors,
+            pr_items: selectedMaterials,
+            non_onboarded_vendors: newVendorTable,
+        };
+        formdata.append('data', JSON.stringify(fullData));
+
+        // Append file only if exists
+        if (uploadedFiles) {
+            uploadedFiles?.forEach((file) => {
+                formdata.append("file", file);
+            });
         }
+
         const url = `${API_END_POINTS?.ReviseRFQ}`;
-        const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...formData, non_onboarded_vendors: newVendorTable, vendors: selectedRows.vendors } }, method: "POST" });
+        const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" });
         if (response?.status == 200) {
-            alert("Submit Successfull RFQ Revised");
-            location.reload()
+            alert("Submit Successfull");
+            router.push("/dashboard")
         } else {
             alert("error");
         }
+
+    }
+    const setItems = async (materials: SelectedMaterial[]) => {
+        setSelectedMaterials(materials)
     }
 
     const handleOpen = () => {
@@ -92,6 +122,7 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
     const handleClose = () => {
         setIsDialog(false);
     }
+
     return (
         <Dialog open={open} onOpenChange={onClose}>
             <DialogContent className="max-w-screen-xl max-h-[90vh] overflow-y-auto">
@@ -103,26 +134,28 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
                         </div>
                     </DialogTitle>
                 </DialogHeader>
-                {RFQData?.logistic_type === 'Export' ? <LogisticsExportRFQFormFields
+                <div className="w-full mx-auto space-y-6 p-5">
+                    {/* PR Materials Manager Component */}
+                    <PRServiceManager
+                        prNumbers={availablePRs}
+                        onSelectionChange={setItems}
+                        title="Select Purchase Request Numbers"
+                    />
+                </div>
+                <ServiceRFQFormFields
                     formData={formData}
                     setFormData={setFormData}
                     Dropdown={Dropdown}
-                /> :
-                    <LogisticsImportRFQFormFields
-                        formData={formData}
-                        setFormData={setFormData}
-                        Dropdown={Dropdown}
-                    />}
-
-                {formData?.service_provider === "Adhoc Service Provider" && <VendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />}
-                {formData?.service_provider === "Courier Service Provider" && <SingleSelectVendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />}
-                {formData?.service_provider === "Courier Service Provider" || formData?.service_provider === "Adhoc Service Provider" && <div className='px-4'>
+                    setUploadedFiles={setUploadedFiles}
+                    uploadedFiles={uploadedFiles}
+                />
+                <VendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />
+                <div className='px-4'>
                     <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
-                </div>}
+                </div>
                 <div className='py-6'>
                     <NewVendorTable newVendorTable={newVendorTable} />
                 </div>
-
                 {
                     isDialog &&
                     <AddNewVendorRFQDialog Dropdown={Dropdown} setNewVendorTable={setNewVendorTable} handleClose={handleClose} />
@@ -131,16 +164,11 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
                     <Button variant="outline" onClick={onClose}>
                         Cancel
                     </Button>
-                    {/* <Button onClick={onApprove} disabled={loading}>
-                        {loading ? 'Approving...' : 'Approve'}
-                    </Button> */}
-                    {/* <div className='flex justify-end pt-10 px-4'> */}
-                    <Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium' onClick={() => { handleSubmit() }}>Submit RFQ</Button>
-                    {/* </div> */}
+                    <Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium' onClick={() => { handleSubmit() }}>Revise RFQ</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
     )
 }
 
-export default LogisticsReviseRFQ
+export default ServiceReviseRFQ

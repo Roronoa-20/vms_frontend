@@ -23,7 +23,6 @@ const PublicLogisticsExportQuatationForm = ({ Dropdown, token}: Props) => {
             ...formData,
         };
         // Append JSON data as a string under key 'data'
-        console.log(fullData, "fullData")
         formdata.append('data', JSON.stringify(fullData));
         formdata.append("token", token)
         // Append file only if exists

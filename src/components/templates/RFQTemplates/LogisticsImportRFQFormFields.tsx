@@ -84,7 +84,6 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
             </Select>
         </div>
     );
-    console.log(formData?.company_name_logistic,"formData?.company_name_logistic")
     return (
         <div>
             <div className="grid grid-cols-3 gap-6 p-5">

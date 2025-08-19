@@ -27,7 +27,6 @@ const PublicLogisticsImportQuatationForm = ({ Dropdown, token,RFQData }: Props) 
         console.log(fullData, "fullData")
         formdata.append('data', JSON.stringify(fullData));
         formdata.append("token", token)
-        console.log(formdata, "formdata")
         // Append file only if exists
         if (uploadedFiles) {
             uploadedFiles?.forEach((file) => {
