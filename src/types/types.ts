@@ -54,10 +54,10 @@ export type TcompanyNameBasedDropdown = {
         terms_of_payment_name: string,
         description: string
       }[],
-      incoterms:{
-        name:string,
-        incoterm_name:string,
-        incoterm_code:string,
+      incoterms: {
+        name: string,
+        incoterm_name: string,
+        incoterm_code: string,
       }[]
     }
   }
@@ -363,7 +363,14 @@ export type ASAForm = {
   total_count: string;
   overall_total_asa: string,
   page_no: string,
-  page_length: string
+  page_length: string,
+  office_email_primary: string,
+  country: string,
+  mobile_number: string,
+  registered_date: string,
+  pending_asa_count: string,
+  approved_vendor_count: string,
+
 }
 
 export type TCompanyDetailForm = {
@@ -434,7 +441,7 @@ export type TbankNameDropdown = {
   message: {
     data: {
       name: string,
-      bank_name:string
+      bank_name: string
     }[]
   }
 }
@@ -461,30 +468,27 @@ export type TPurchaseDetails = {
   reconciliation_account: string,
   terms_of_payment: string
   account_team_remarks: string
-  pur_group_details:{
-    name:string,
-    description:string
+  pur_group_details: {
+    name: string,
+    description: string
   },
-  term_payment_details:{
-    name:string,
-    description:string
+  term_payment_details: {
+    name: string,
+    description: string
   },
-  company_details:{
-    name:string,
-    description:string
+  company_details: {
+    name: string,
+    description: string
   },
-  pur_org_details:{
-    name:string,
-    description:string
+  pur_org_details: {
+    name: string,
+    description: string
   },
   reconciliation_details: {
-    name:string,
+    name: string,
     description: string,
   },
-
 }
-
-
 
 export type VendorOnboardingResponse = {
   message: {
@@ -514,10 +518,10 @@ interface IvalidationChecks {
   mandatory_data_filled: number;
   purchase_head_undertaking: number;
   purchase_team_undertaking: number;
-  is_purchase_approve:number,
-  is_purchase_head_approve:number,
-  is_accounts_team_approve:number,
-  is_accounts_head_approve:number
+  is_purchase_approve: number,
+  is_purchase_head_approve: number,
+  is_accounts_team_approve: number,
+  is_accounts_head_approve: number
 }
 
 type CompanyAddressDetails = {
@@ -550,10 +554,10 @@ type BillingAddress = {
   district: string;
   state: string;
   country: string;
-  international_city:string,
-  international_state:string,
-  international_country:string,
-  international_zipcode:string,
+  international_city: string,
+  international_state: string,
+  international_country: string,
+  international_zipcode: string,
   city_details: LocationDetail;
   district_details: LocationDetail;
   state_details: LocationDetail;
@@ -563,10 +567,10 @@ type BillingAddress = {
 type ShippingAddress = {
   street_1: string;
   street_2: string;
-  inter_manufacture_city:string,
-  inter_manufacture_state:string,
-  inter_manufacture_country:string,
-  inter_manufacture_zipcode:string,
+  inter_manufacture_city: string,
+  inter_manufacture_state: string,
+  inter_manufacture_country: string,
+  inter_manufacture_zipcode: string,
   manufacturing_pincode: string;
   manufacturing_city: string;
   manufacturing_district: string;
@@ -598,11 +602,11 @@ type MultipleLocationEntry = {
   parentfield: string;
   parenttype: string;
   doctype: string;
-  city:string,
-  state:string,
-  country:string,
-  pincode:string
-  zipcode:string
+  city: string,
+  state: string,
+  country: string,
+  pincode: string
+  zipcode: string
   city_details: LocationDetail;
   district_details: LocationDetail;
   state_details: LocationDetail;
@@ -627,7 +631,7 @@ type CertificateDetail = {
   name: string;
   idx: number;
   certificate_code: string;
-  valid_till: string; // format: YYYY-MM-DD
+  valid_till: string;
   certificate_attach: CertificateAttachment;
   fileDetail?: CertificateAttachment
 };
@@ -756,7 +760,7 @@ type DocumentDetailsTab = {
   form_10f_proof: FileAttachment,
   pe_certificate: FileAttachment,
   gst_table: any[]; // Adjust if GST structure is known,
-  company_gst_table:any[]
+  company_gst_table: any[]
 };
 
 type PaymentDetailsTab = {
@@ -908,7 +912,7 @@ export type dashboardCardData = {
   pr_count: number;
   cart_count: number,
   overall_total_rfq: number,
-  sap_error_vendor_count:number
+  sap_error_vendor_count: number
 }
 
 export interface DashboardPOTableItem {
@@ -1254,7 +1258,7 @@ export interface DashboardTableType {
   cart_details: CartDetails[],
   qms_form: string,
   asa_form_data: ASAFormResponse;
-  sapErrorDashboardData:SapErrorVendorOnboardingResponse
+  sapErrorDashboardData: SapErrorVendorOnboardingResponse
 }
 
 
@@ -1305,8 +1309,17 @@ export type ASAFormResponse = {
   data: ASAForm[];
   total_count: number;
   overall_total_asa: number;
+  pending_asa_count: number,
+  approved_vendor_count: number,
   page_no: number;
   page_length: number;
+  pending_asa_vendors: ASAForm[];
+  name: string,
+  vendor_name: string,
+  office_email_primary: string,
+  country: string,
+  mobile_number: string,
+  registered_date: string,
 };
 
 
@@ -1461,12 +1474,12 @@ export interface RFQTable {
     company_name: string,
     rfq_type: string,
     rfq_date: string,
-    logistic_type:string,
+    logistic_type: string,
     status: string,
-    unique_id:string,
-    creation:string
+    unique_id: string,
+    creation: string
   }[]
-  overall_total_rfq:string
+  overall_total_rfq: string
 }
 
 // export interface RFQTable {

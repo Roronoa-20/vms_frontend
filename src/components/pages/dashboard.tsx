@@ -3,7 +3,7 @@ import DashboardCardCounter from "../molecules/Dashboard-Card-Count";
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
-import { DashboardPOTableData, dashboardCardData, DashboardTableType, TvendorRegistrationDropdown, TPRInquiryTable, PurchaseRequisition ,RFQTable } from "@/src/types/types";
+import { DashboardPOTableData, dashboardCardData, DashboardTableType, TvendorRegistrationDropdown, TPRInquiryTable, PurchaseRequisition, RFQTable } from "@/src/types/types";
 import { cookies } from "next/headers";
 
 const Dashboard = async () => {
@@ -112,22 +112,22 @@ const Dashboard = async () => {
   const prInquiryApi: AxiosResponse = await requestWrapper({
     url: prInquiryDashboardUrl,
     method: "GET",
-    headers:{
-      cookie:cookieHeaderString
+    headers: {
+      cookie: cookieHeaderString
     }
   });
-  const prInquiryData:TPRInquiryTable  =
+  const prInquiryData: TPRInquiryTable =
     prInquiryApi?.status == 200 ? prInquiryApi?.data?.message : "";
 
   const prDashboardUrl = API_END_POINTS?.prTableData;
-  const prApi: AxiosResponse = await requestWrapper({ url: prDashboardUrl, method: "GET", headers:{cookie:cookieHeaderString} });
+  const prApi: AxiosResponse = await requestWrapper({ url: prDashboardUrl, method: "GET", headers: { cookie: cookieHeaderString } });
   const prData: PurchaseRequisition[] = prApi?.status == 200 ? prApi?.data?.message?.data : "";
 
-  const rfqDashboardUrl = API_END_POINTS?.rfqTableData; 
-  const rfqApi: AxiosResponse = await requestWrapper({ url: rfqDashboardUrl, method: "GET",headers:{cookie:cookieHeaderString} });
+  const rfqDashboardUrl = API_END_POINTS?.rfqTableData;
+  const rfqApi: AxiosResponse = await requestWrapper({ url: rfqDashboardUrl, method: "GET", headers: { cookie: cookieHeaderString } });
   const rfqData: RFQTable = rfqApi?.status == 200 ? rfqApi?.data?.message : "";
   console.log(rfqData, "this is rfqData");
-  
+
 
   const dashboardASAFormTableDataApi: AxiosResponse = await requestWrapper({
     url: API_END_POINTS?.asavendorListdashboard,
@@ -139,11 +139,41 @@ const Dashboard = async () => {
   const dashboardASAFormTableData: DashboardTableType["asa_form_data"] =
     dashboardASAFormTableDataApi?.status == 200 ? dashboardASAFormTableDataApi?.data?.message : "";
 
-  const dashboardSAPErrorTable:AxiosResponse = await requestWrapper({
-    url:API_END_POINTS?.sapApiDashboardDetails,
-    method:"GET",
-    headers:{
-      cookie:cookieHeaderString
+  const dashboardPendingASAFormTableDataApi: AxiosResponse = await requestWrapper({
+    url: API_END_POINTS?.asavendorListdashboard,
+    method: "GET",
+    headers: {
+      cookie: cookieHeaderString
+    }
+  });
+  const dashboardPendingASAFormTableData: DashboardTableType["asa_form_data"] =
+    dashboardPendingASAFormTableDataApi?.status == 200 ? dashboardPendingASAFormTableDataApi?.data?.message : "";
+
+  const dashboardASAPendingVendorListTableDataApi: AxiosResponse = await requestWrapper({
+    url: API_END_POINTS?.asapendingVendorList,
+    method: "GET",
+    headers: {
+      cookie: cookieHeaderString
+    }
+  });
+  const dashboardASAPendingVendorListTableData: DashboardTableType["asa_form_data"] = 
+  dashboardASAPendingVendorListTableDataApi?.status == 200 ? dashboardASAPendingVendorListTableDataApi?.data?.message : "";
+
+  const ASAdashboardApprovedVendorCountTableDataApi: AxiosResponse = await requestWrapper({
+    url: API_END_POINTS?.asaapprovedvendorcount,
+    method: "GET",
+    headers: {
+      cookie: cookieHeaderString
+    }
+  });
+  const ASAdashboardApprovedVendorcountTableData: DashboardTableType["asa_form_data"] = 
+  ASAdashboardApprovedVendorCountTableDataApi?.status == 200 ? ASAdashboardApprovedVendorCountTableDataApi?.data?.message : "";
+
+  const dashboardSAPErrorTable: AxiosResponse = await requestWrapper({
+    url: API_END_POINTS?.sapApiDashboardDetails,
+    method: "GET",
+    headers: {
+      cookie: cookieHeaderString
     }
   })
 
@@ -156,7 +186,7 @@ const Dashboard = async () => {
       <DashboardCardCounter
         cardData={CardData}
         companyDropdown={companyDropdown}
-         dashboardPOTableData={dashboardPOTableData}
+        dashboardPOTableData={dashboardPOTableData}
         // dashboardDispatchVendorTableData={dashboardTotalVendorTableData}
         dashboardTotalVendorTableData={dashboardTotalVendorTableData}
         dashboardPendingVendorTableData={dashboardPendingVendorTableData}
@@ -166,6 +196,9 @@ const Dashboard = async () => {
         prData={prData}
         rfqData={rfqData}
         dashboardASAFormTableData={dashboardASAFormTableData}
+        dashboardPendingASAFormTableData={dashboardPendingASAFormTableData}
+        ASAdashboardApprovedVendorcountTableData={ASAdashboardApprovedVendorcountTableData}
+        dashboardASAPendingVendorListTableData={dashboardASAPendingVendorListTableData}
         sapErrorDashboardData={sapErrorDashboardData}
       />
     </div>
