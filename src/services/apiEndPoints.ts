@@ -142,6 +142,10 @@ const API_END_POINTS = {
   asasocialformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_social_asa_form`,
   asaenvformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_env_asa_form`,
   asavendorListdashboard: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.asa_dashboard`,
+  asaapprovedvendorcount: `${url}//api/method/vms.APIs.assessment_apis.asa_dashboard.approved_vendor_count`,
+  asapendingVendorcount: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.pending_asa_count`,
+  asapendingVendorList: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.pending_asa_vendor_list`,
+  asasendremindermail: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.send_asa_reminder_email`,
 
   // Company Filter API for Purchase Enquiry and Purchase Requisition
   filterpurchasegroup: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.filter_purchase_group`,

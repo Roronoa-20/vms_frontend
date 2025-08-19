@@ -8,6 +8,7 @@ import DashboardPendingVendorsTable from "./Dashboard-Pending-Vendors-Table";
 import DashboardApprovedVendorsTable from "./Dashboard-Approved-Vendors-Table";
 import DashboardRejectedVendorsTable from "./Dashboard-Rejected-Vendors-Table";
 import DashboardASAFormTable from "./Dashboard-ASA-Vendors-Form-Table";
+import DashboardASAPendingVendorFormTableList from "./Dashboard-ASA-Pending-Vendor-List";
 import DashboardDispatchVendorsTable from "./Dashboard-Dispatch-Vendors-Table";
 import DashboardPaymentVendorsTable from "./Dashboard-Payment-Vendors-Table";
 import DashboardCurrentMonthsVendorsTable from "./Dashboard-Current-Months-Vendors-Table";
@@ -38,11 +39,14 @@ type Props = {
   prData: PurchaseRequisition[]
   rfqData: RFQTable
   dashboardASAFormTableData: DashboardTableType["asa_form_data"]
-  sapErrorDashboardData:DashboardTableType["sapErrorDashboardData"]
+  dashboardPendingASAFormTableData: DashboardTableType["asa_form_data"]
+  dashboardASAPendingVendorListTableData: DashboardTableType["asa_form_data"]
+  ASAdashboardApprovedVendorcountTableData: DashboardTableType["asa_form_data"]
+  sapErrorDashboardData: DashboardTableType["sapErrorDashboardData"]
 }
 
 const DashboardCards = ({ ...Props }: Props) => {
- console.log(Props?.cardData,"this is card data")
+  console.log(Props?.cardData, "this is card data")
   const { MultipleVendorCode } = useMultipleVendorCodeStore();
   // const cookieStore = await cookies();
   const { designation } = useAuth();
@@ -56,15 +60,31 @@ const DashboardCards = ({ ...Props }: Props) => {
   if (user === "ASA") {
     allCardData = [
       {
-        name: "ASA Complete Form",
+        name: "Total Onboarded Vendor",
+        count: Props.ASAdashboardApprovedVendorcountTableData?.approved_vendor_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
+      {
+        name: "Submitted ASA Form",
         count: Props.dashboardASAFormTableData?.overall_total_asa ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-violet-800",
         bg_color: "bg-violet-100",
         hover: "hover:border-violet-400",
       },
+      {
+        name: "Pending ASA Form",
+        count: Props.dashboardPendingASAFormTableData?.pending_asa_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
     ];
-  } else if(user == "Purchase Team" || user == "Purchase Head") {
+  } else if (user == "Purchase Team" || user == "Purchase Head") {
     allCardData = [
       {
         name: "Pending Vendors",
@@ -124,49 +144,49 @@ const DashboardCards = ({ ...Props }: Props) => {
       //   hover: "hover:border-gray-400",
       // },
 
-    {
-      name: "Purchase Inquiry",
-      count: Props.cardData?.cart_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/doc.svg",
-      text_color: "text-rose-800",
-      bg_color: "bg-rose-100",
-      hover: "hover:border-rose-400",
-    },
-    {
-      name: "Purchase Requisition",
-      count: Props.cardData?.pr_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/file-search.svg",
-      text_color: "text-rose-800",
-      bg_color: "bg-green-200",
-      hover: "hover:border-rose-400",
-    },
-    {
-      name: "Purchase & Ongoing Orders",
-      count: Props.cardData?.purchase_order_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/package.svg",
-      text_color: "text-violet-800",
-      bg_color: "bg-violet-100",
-      hover: "hover:border-violet-400",
-    },
-    {
-      name: "RFQ Comparision",
-      count: Props?.rfqData?.overall_total_rfq ?? 0,
-      icon: "/dashboard-assests/cards_icon/file-search.svg",
-      text_color: "text-violet-800",
-      bg_color: "bg-violet-100",
-      hover: "hover:border-violet-400",
-    },
-    {
-      name: "SAP Error Log",
-      count: Props?.cardData?.sap_error_vendor_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/file-search.svg",
-      text_color: "text-violet-800",
-      bg_color: "bg-violet-100",
-      hover: "hover:border-violet-400",
-    },
-  ];
-}else{
-  allCardData = [
+      {
+        name: "Purchase Inquiry",
+        count: Props.cardData?.cart_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/doc.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-rose-100",
+        hover: "hover:border-rose-400",
+      },
+      {
+        name: "Purchase Requisition",
+        count: Props.cardData?.pr_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-green-200",
+        hover: "hover:border-rose-400",
+      },
+      {
+        name: "Purchase & Ongoing Orders",
+        count: Props.cardData?.purchase_order_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/package.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
+      {
+        name: "RFQ Comparision",
+        count: Props?.rfqData?.overall_total_rfq ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
+      {
+        name: "SAP Error Log",
+        count: Props?.cardData?.sap_error_vendor_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
+    ];
+  } else {
+    allCardData = [
       {
         name: "Pending Vendors",
         count: Props.cardData?.pending_vendor_count ?? 0,
@@ -191,16 +211,16 @@ const DashboardCards = ({ ...Props }: Props) => {
         bg_color: "bg-rose-100",
         hover: "hover:border-rose-400",
       },
-    {
-      name: "SAP Error Log",
-      count: Props?.cardData?.sap_error_vendor_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/file-search.svg",
-      text_color: "text-violet-800",
-      bg_color: "bg-violet-100",
-      hover: "hover:border-violet-400",
-    },
-  ];
-}
+      {
+        name: "SAP Error Log",
+        count: Props?.cardData?.sap_error_vendor_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
+    ];
+  }
 
   let cardData = user === "Enquirer"
     ? allCardData.filter(item => item.name === "Purchase Inquiry" || item.name === "Purchase Requisition") : allCardData;
@@ -269,12 +289,20 @@ const DashboardCards = ({ ...Props }: Props) => {
           if (user === "ASA") {
             return (
               <TabsContent key={item.name} value={item.name}>
-
+                {item.name === "Submitted ASA Form" && (
+                  <DashboardASAFormTable
+                    dashboardTableData={Props.dashboardASAFormTableData}
+                    companyDropdown={Props?.companyDropdown}
+                  />
+                )}
+                {item.name === "Pending ASA Form" && (
+                  <DashboardASAPendingVendorFormTableList
+                    // dashboardTableData={Props.dashboardASAFormTableData}
+                    dashboardTableData={Props.dashboardASAPendingVendorListTableData}
+                    companyDropdown={Props?.companyDropdown}
+                  />
+                )}
                 <ASAVendorMonthWiseChart tableData={Props.dashboardASAFormTableData.data || []} />
-                <DashboardASAFormTable
-                  dashboardTableData={Props.dashboardASAFormTableData}
-                  companyDropdown={Props?.companyDropdown}
-                />
               </TabsContent>
             );
           }
