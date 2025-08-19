@@ -1,8 +1,5 @@
-import React from 'react';
-import ViewGRNDetails from '@/src/components/pages/viewGRNDetails';
+import ViewGRNDetailsPage from '@/src/components/pages/viewGRNDetails';
 
-const Page = (): React.ReactElement => {
-  return <ViewGRNDetails />;
-};
-
-export default Page;
+export default function Page({ searchParams }: any) {
+  return <ViewGRNDetailsPage searchParams={searchParams} />;
+}
