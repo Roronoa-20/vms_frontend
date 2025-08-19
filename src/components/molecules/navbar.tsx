@@ -21,7 +21,7 @@ const Navbar = () => {
       setVendorName(storedVendorName);
     }
   }, []);
-  console.log("Navbar Console for heading---->", vendorName);
+  // console.log("Navbar Console for heading---->", vendorName);
 
   const handleClose = () => {
     setIsDialog(false);

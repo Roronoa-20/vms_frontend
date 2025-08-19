@@ -23,7 +23,7 @@ const ViewASAPage = async () => {
   });
 
   if (ASADataResponse?.status === 200) {
-    ASAData = ASADataResponse?.data?.message || [];
+    ASAData = ASADataResponse?.data?.message?.data || [];
   }
 
   return (
