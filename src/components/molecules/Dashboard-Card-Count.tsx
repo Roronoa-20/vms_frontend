@@ -289,20 +289,27 @@ const DashboardCards = ({ ...Props }: Props) => {
           if (user === "ASA") {
             return (
               <TabsContent key={item.name} value={item.name}>
-                {item.name === "Submitted ASA Form" && (
-                  <DashboardASAFormTable
-                    dashboardTableData={Props.dashboardASAFormTableData}
+                {item.name === "Total Onboarded Vendor" && (
+                  <DashboardApprovedVendorsTable
+                    dashboardTableData={Props.dashboardApprovedVendorTableData.approved_vendor_onboarding}
                     companyDropdown={Props?.companyDropdown}
                   />
                 )}
+                {item.name === "Submitted ASA Form" && (
+                  <>
+                    <ASAVendorMonthWiseChart tableData={Props.dashboardASAFormTableData.data || []} />
+                    <DashboardASAFormTable
+                      dashboardTableData={Props.dashboardASAFormTableData}
+                      companyDropdown={Props?.companyDropdown}
+                    />
+                  </>
+                )}
                 {item.name === "Pending ASA Form" && (
                   <DashboardASAPendingVendorFormTableList
-                    // dashboardTableData={Props.dashboardASAFormTableData}
                     dashboardTableData={Props.dashboardASAPendingVendorListTableData}
                     companyDropdown={Props?.companyDropdown}
                   />
                 )}
-                <ASAVendorMonthWiseChart tableData={Props.dashboardASAFormTableData.data || []} />
               </TabsContent>
             );
           }

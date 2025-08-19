@@ -140,7 +140,7 @@ const Dashboard = async () => {
     dashboardASAFormTableDataApi?.status == 200 ? dashboardASAFormTableDataApi?.data?.message : "";
 
   const dashboardPendingASAFormTableDataApi: AxiosResponse = await requestWrapper({
-    url: API_END_POINTS?.asavendorListdashboard,
+    url: API_END_POINTS?.asapendingVendorcount,
     method: "GET",
     headers: {
       cookie: cookieHeaderString
