@@ -32,8 +32,8 @@ type Props = {
   ref_no: string;
   onboarding_ref_no: string;
   OnboardingDetail: VendorOnboardingResponse["message"]["manufacturing_details_tab"];
-  isAccountsTeam:number,
-  VendorType:string[]
+  isAccountsTeam?:number,
+  VendorType?:string[]
 };
 
 const ManufacturingDetail = ({
@@ -136,7 +136,7 @@ const ManufacturingDetail = ({
     if (manufacturingDetailResponse?.status == 200)
       if(isAccountsTeam == 1){
         router.push(`/vendor-details-form?Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`)
-      }else if(!VendorType.includes("Material Vendor")){
+      }else if(VendorType && !VendorType.includes("Material Vendor")){
         router.push(
           `/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
         );

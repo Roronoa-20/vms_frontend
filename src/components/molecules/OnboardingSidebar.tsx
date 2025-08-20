@@ -7,8 +7,8 @@ import OnboardingTab from "./OnboardingTab";
 interface Props {
   onboarding_refno?:string,
   refno:string,
-  isAccountsTeam:number,
-  vendor_type:string[]
+  isAccountsTeam?:number,
+  vendor_type?:string[]
 }
 
 
@@ -16,7 +16,7 @@ const OnboardingSidebar = ({onboarding_refno,refno,isAccountsTeam,vendor_type}:P
   const param = useSearchParams();
   const tabType = param?.get("tabtype");
   const router = useRouter();
-  const isMaterialType = vendor_type.includes("Material Vendor")?true:false;
+  const isMaterialType =vendor_type && vendor_type.includes("Material Vendor")?true:false;
   let tabs;
   if(isAccountsTeam == 1){
     tabs = AccountsTeamOnboardingSidebar;
