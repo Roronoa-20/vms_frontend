@@ -66,7 +66,7 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
     // const url = API_END_POINTS?.certificateSubmit;
     // const certificateSubmit:AxiosResponse = await requestWrapper({url:url,data:{data:{onb_id:onboarding_ref_no,completed:1}},method:"POST"})
     // if(certificateSubmit?.status == 200){
-    router.push(`${designation == "Purchase Team" || designation == "Purchase Head" ? `/view-onboarding-details?tabtype=Purchase%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}` : `/view-onboarding-details?tabtype=Reputed%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`);
+    location.reload();
     // }
   }
 

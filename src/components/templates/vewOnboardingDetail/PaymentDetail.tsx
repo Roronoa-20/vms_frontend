@@ -119,8 +119,10 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
     }
     const response:AxiosResponse = await requestWrapper({url:submitUrl,method:"POST",data:formData})
     
-      if(response?.status == 200) router.push(`${designation == "Purchase Team" || designation == "Purchase Head"?`/view-onboarding-details?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`:`/view-onboarding-details?tabtype=Contact%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`);
-    
+      if(response?.status == 200){
+        alert("updated successfully");
+        location.reload();
+      }
   }
   console.log(OnboardingDetail?.bank_proof?.file_name,"thiskjdvb")
   return (

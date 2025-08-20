@@ -67,7 +67,10 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
     const updatedData: TCompanyDetailForm | {} = { ...data, vendor_onboarding: onboarding_refno as string, ref_no: refno as string }
     try {
       const resposne: AxiosResponse = await requestWrapper({ url: companyDetailSubmitUrl, method: "POST", data: { data: updatedData } });
-      if (resposne?.status == 200) router.push(`/view-onboarding-details?tabtype=Company%20Address&vendor_onboarding=${onboarding_refno}&refno=${refno}`);
+      if (resposne?.status == 200) {
+        alert("update successfully");
+        location.reload();
+      };
     } catch (error) {
       console.log(error);
     }

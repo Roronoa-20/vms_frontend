@@ -35,7 +35,10 @@ const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
     const employeeSubmitUrl = API_END_POINTS?.employeeDetailSubmit;
     const updatedData = {data:{number_of_employee:[...employeeDetail],ref_no:ref_no,vendor_onboarding:onboarding_ref_no}}
     const employeeDetailResponse:AxiosResponse = await requestWrapper({url:employeeSubmitUrl,data:updatedData,method:"POST"});
-    if(employeeDetailResponse?.status == 200) router.push(`${designation == "Purchase Team" || designation == "Purchase Head"?`/view-onboarding-details?tabtype=Machinery%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`:`/view-onboarding-details?tabtype=Machinery%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`);
+    if(employeeDetailResponse?.status == 200) {
+      alert("updated successfully")
+      location.reload();
+    }
   }
 
   const handleAdd = ()=>{

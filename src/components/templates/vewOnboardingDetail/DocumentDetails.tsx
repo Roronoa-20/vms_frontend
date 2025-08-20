@@ -257,11 +257,11 @@ const DocumentDetails = ({
       data: formData,
       method: "POST",
     });
-    if (Response?.status == 200)
+    if (Response?.status == 200){
       setDocumentDetail({})
-    router.push(
-      `${designation == "Purchase Team" || designation == "Purchase Head" ? `/view-onboarding-details?tabtype=Payment Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}` : `/view-onboarding-details?tabtype=Payment Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`
-    );
+      alert("successfully Updated the Records");
+      location.reload();
+    }
   };
 
 

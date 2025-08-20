@@ -60,7 +60,10 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
     // }
     const submitUrl = API_END_POINTS?.contactDetailSubmit;
     const submitResponse: AxiosResponse = await requestWrapper({ url: submitUrl, data: { data: { contact_details: contactDetail, ref_no: ref_no, vendor_onboarding: onboarding_ref_no } }, method: "POST" });
-    if (submitResponse?.status == 200) router.push(`${designation == "Purchase Team" || designation == "Purchase Head" ? `/view-onboarding-details?tabtype=Payment%20Detail%20%2F%20Bank%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}` : `/view-onboarding-details?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`);
+    if (submitResponse?.status == 200) {
+      alert("successfully updated");
+      location.reload();
+    }
   }
 
   return (
@@ -108,7 +111,7 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
       <div className={`flex justify-end pb-4`}>
         <Button className={`bg-blue-400 hover:bg-blue-400 ${isDisabled ? "hidden" : ""}`} onClick={() => { handleAdd() }}>Add</Button>
       </div>
-      <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
+      <div className={`shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl`}>
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
             Multiple Contact
@@ -129,7 +132,7 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
             </TableRow>
           </TableHeader>
           <TableBody className="text-center">
-            {contactDetail?.map((item, index) => (
+            {contactDetail?contactDetail.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{index + 1}</TableCell>
                 <TableCell>{item?.first_name}</TableCell>
@@ -142,7 +145,9 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
                 <TableCell>{item?.department_name}</TableCell>
                 <TableCell><Button className={`${isDisabled ? "hidden" : ""}`} onClick={() => { handleRowDelete(index) }}>Delete</Button></TableCell>
               </TableRow>
-            ))}
+            )):<TableRow>
+              <div className="flex justify-center">No Data</div>
+              </TableRow>}
           </TableBody>
         </Table>
       </div>

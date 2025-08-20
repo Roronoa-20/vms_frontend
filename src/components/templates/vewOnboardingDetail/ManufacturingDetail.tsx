@@ -55,7 +55,10 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
       formData.append("organisation_structure_document",organisation_structure_document[0]);
     }
     const manufacturingDetailResponse:AxiosResponse = await requestWrapper({url:manufacturingUrl,data:formData,method:"POST"});
-    if(manufacturingDetailResponse?.status == 200) router.push(`${designation == "Purchase Head" || designation == "Purchase Team"?`/view-onboarding-details?tabtype=Employee%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`:`/view-onboarding-details?tabtype=Employee%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`);
+    if(manufacturingDetailResponse?.status == 200) {
+      alert("updated successfully")
+      location.reload();
+    }
   }
   return (
     <div className="flex flex-col bg-white rounded-lg p-3 w-full">

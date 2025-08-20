@@ -289,7 +289,10 @@ const CompanyAddress = ({
       formData.append("file", file[0])
     }
     const submitResponse: AxiosResponse = await requestWrapper({ url: submitUrl, method: "POST", data: formData });
-    if (submitResponse?.status == 200) router.push(`${designation == "Purchase Team" || designation == "Purchase Head" ? `/view-onboarding-details?tabtype=Contact%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}` : `/view-onboarding-details?tabtype=Document%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`);
+    if (submitResponse?.status == 200) {
+      alert("successfully updated the record");
+      location.reload();
+    }
   };
 
 

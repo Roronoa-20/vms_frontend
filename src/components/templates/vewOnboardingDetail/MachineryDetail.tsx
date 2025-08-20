@@ -37,7 +37,10 @@ const MachineryDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props)
     const updatedData = { machinery_detail: machineDetail, ref_no: ref_no, vendor_onboarding: onboarding_ref_no }
     const machineDetailResponse: AxiosResponse = await requestWrapper({ url: submitUrl, data: { data: updatedData }, method: "POST" });
 
-    if (machineDetailResponse?.status == 200) router.push(`${designation == "Purchase Team" || designation == "Purchase Head" ? `/view-onboarding-details?tabtype=Testing%20Facility&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}` : `/view-onboarding-details?tabtype=Testing%20Facility&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`);
+    if (machineDetailResponse?.status == 200) {
+      alert("updated successfully");
+      location.reload();
+    }
   }
 
   const handleAdd = async () => {

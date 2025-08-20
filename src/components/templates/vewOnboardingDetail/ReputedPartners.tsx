@@ -43,12 +43,8 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props)
     const updateData = { reputed_partners: reputedPartnersDetails }
     const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...updateData, ref_no: ref_no, vendor_onboarding: onboarding_ref_no } }, method: "POST" })
     if (response?.status == 200) {
-      router.push(
-        `${designation == "Purchase Team" || designation == "Purchase Head"
-          ? `/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
-          : `/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
-        }`
-      );
+      alert("updated successfully");
+      location.reload();
     }
   };
 

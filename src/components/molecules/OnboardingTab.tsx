@@ -14,7 +14,7 @@ const OnboardingTab = ({onboarding_refno,refno}:Props) => {
   const param = useSearchParams();
   const tabType = param?.get("tabtype");
   const router = useRouter();
-  const data = designation == "Accounts Team"?sidebarAccountsTabs : sidebarTabs;
+  const data = designation == "Accounts Team" || designation == "Accounts Head"?sidebarAccountsTabs : sidebarTabs;
   return (
     <div className="p-2 flex overflow-x-scroll bg-[#DDE8FE] rounded-xl gap-3 h-fit max-h-[80vh] text-sm">
       {data?.map((item, index) => {

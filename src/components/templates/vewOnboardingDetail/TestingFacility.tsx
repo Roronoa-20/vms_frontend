@@ -43,7 +43,10 @@ const TestingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
     const updatedData = {testing_detail:testingDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}
     const machineDetailResponse:AxiosResponse = await requestWrapper({url:submitUrl,data:{data:updatedData},method:"POST"});
 
-    if(machineDetailResponse?.status == 200) router.push(`${designation == "Purchase Team" || designation == "Purchase Head"?`/view-onboarding-details?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`:`/view-onboarding-details?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`);
+    if(machineDetailResponse?.status == 200) {
+      alert("updated successfully");
+      location.reload();
+    }
   }
 
   const handleAdd = async()=>{
