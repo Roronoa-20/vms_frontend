@@ -63,6 +63,32 @@ const [tableData,setTableData] = useState<TtableData[]>([]);
        alert("Please Add atleast 1 Row");
        return;
       }
+
+      if(formData?.vendor_type && formData?.vendor_type?.length < 0){
+        alert("Please Select Vendor Type");
+        return;
+      } 
+
+      if(formData?.vendor_name == ""){
+        alert("please Enter Vendor Name");
+        return;
+      }
+
+      if(formData?.office_email_primary == ""){
+        alert("please Enter Vendor Email");
+        return;
+      }
+
+      if(formData?.country == ""){
+        alert("please Select Vendor Country");
+        return;
+      }
+
+      if(formData?.search_term == ""){
+        alert("please Enter Search Terms");
+        return;
+      }
+
       const submitButton = document.getElementById("submitButton") as HTMLButtonElement | null;
     if (submitButton) {
       console.log("inside button")
