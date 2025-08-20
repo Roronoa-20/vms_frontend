@@ -151,14 +151,13 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
   }
   console.log(OnboardingDetail?.bank_proof?.file_name, "thiskjdvb")
   return (
-    <div className="flex flex-col bg-white rounded-lg p-4 w-full">
-      <div className="flex justify-between">
-        <h1 className="border-b-2 font-semibold text-[18px]">
+    <div className="flex flex-col bg-white rounded-lg p-3 w-full">
+      <div className="flex justify-between items-center border-b-2">
+        <h1 className="font-semibold text-[18px]">
           Bank Details
         </h1>
       </div>
-      {/* <h1 className="pl-2 ">Billing Address</h1> */}
-      <div className="grid grid-cols-3 gap-6 p-2">
+      <div className="grid grid-cols-3 gap-6 p-3">
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Beneficiary Name

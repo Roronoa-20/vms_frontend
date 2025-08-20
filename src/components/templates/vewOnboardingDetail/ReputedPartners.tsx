@@ -9,30 +9,27 @@ import requestWrapper from "@/src/services/apiCall";
 import { VendorOnboardingResponse } from "@/src/types/types";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { TReputedPartner, useReputedPartnerStore } from "@/src/store/ReputedPartnerStore";
 
-type TReputedPartnerDetails = {
-  company_name:string,
-  supplied_qtyyear:string,
-  remark:string
-}
 type Props = {
-  ref_no:string,
-  onboarding_ref_no:string,
-  OnboardingDetail:VendorOnboardingResponse["message"]["reputed_partners_details_tab"]
+  ref_no: string,
+  onboarding_ref_no: string,
+  OnboardingDetail: VendorOnboardingResponse["message"]["reputed_partners_details_tab"]
 }
 
-const ReputedPartners = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
-  const [reputedPartnersDetails,setReputedPartnersDetails] = useState<Partial<TReputedPartnerDetails[]>>([]);
-  const [reputedPartners,setReputedPartners] = useState<Partial<TReputedPartnerDetails>>()
+const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) => {
+  const [reputedPartnersDetails, setReputedPartnersDetails] = useState<Partial<TReputedPartner>>();
+  const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const { reputedPartners, updateReputedPartner, reset } = useReputedPartnerStore();
+  const { designation } = useAuth();
+  const router = useRouter()
 
-  const {designation} = useAuth();
-  
-  useEffect(()=>{
-    setReputedPartnersDetails([])
-    OnboardingDetail?.map((item)=>{
-      setReputedPartnersDetails((prev)=>([...prev,item]))
+  useEffect(() => {
+    reset();
+    OnboardingDetail?.map((item, index) => {
+      updateReputedPartner(item)
     })
-  },[])
+  }, [])
 
   // if(!designation){
   //   return(
@@ -40,55 +37,98 @@ const ReputedPartners = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   //   )
   // }
 
-    const router = useRouter();
 
-  const handleSubmit = async()=>{
+  const handleSubmit = async () => {
     const url = API_END_POINTS?.reputedDetailSubmit;
-    const updateData = {reputed_partners:reputedPartnersDetails}
-    const response:AxiosResponse = await requestWrapper({url:url,data:{data:{...updateData,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}},method:"POST"})
-    if(response?.status == 200) router.push(`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
-  }
+    const updateData = { reputed_partners: reputedPartnersDetails }
+    const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...updateData, ref_no: ref_no, vendor_onboarding: onboarding_ref_no } }, method: "POST" })
+    if (response?.status == 200) {
+      router.push(
+        `${designation == "Purchase Team" || designation == "Purchase Head"
+          ? `/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
+          : `/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
+        }`
+      );
+    }
+  };
 
-const handleAdd = ()=>{
-  setReputedPartnersDetails((prev:any)=>([...prev,reputedPartners]));
-  setReputedPartners({});
-}
+  const handleAdd = async () => {
+    updateReputedPartner(reputedPartnersDetails);
+    setReputedPartnersDetails({});
+  };
+
+  const handleRowDelete = (index: number) => {
+    // Remove the testing facility at the given index from the testingDetail store
+    const updateReputedPartners = reputedPartners.filter((_, itemIndex) => itemIndex !== index);
+    reset();
+    updateReputedPartners.forEach(item => updateReputedPartner(item));
+  };
 
 
   return (
-    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-[18px] font-semibold">
-        Reputed Partners
-      </h1>
-      <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
-            <div className="flex w-full justify-between pb-4">
-              <h1 className="text-[20px] text-[#03111F] font-semibold">
-                Multiple Reputed Partners
-              </h1>
-            </div>
-            <Table className=" max-h-40 overflow-y-scroll">
-              {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-              <TableHeader className="text-center">
-                <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                  <TableHead className="w-[100px]">Sr No.</TableHead>
-                  <TableHead className="text-center">Company Name</TableHead>
-                  <TableHead className="text-center">Supplied Quantity</TableHead>
-                  <TableHead className="text-center">Remarks</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody className="text-center">
-                {reputedPartnersDetails?.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">{index+1}</TableCell>
-                    <TableCell>{item?.company_name}</TableCell>
-                    <TableCell>{item?.supplied_qtyyear}</TableCell>
-                    <TableCell>{item?.remark}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-          {/* <div className={`flex justify-end pr-4 ${designation?"hidden":""}`}><Button onClick={()=>{handleSubmit()}}>Next</Button></div> */}
+    <div className="flex flex-col bg-white rounded-lg p-3 w-full">
+      <div className="flex justify-between items-center border-b-2">
+        <h1 className="font-semibold text-[18px]">
+          Reputed Partners
+        </h1>
+        <Button onClick={() => { setIsDisabled(prev => !prev) }} className="mb-2">{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+      </div>
+      <div className={`grid grid-cols-3 gap-6 p-3 ${isDisabled ? "hidden" : ""}`}>
+        <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Company Name
+          </h1>
+          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={reputedPartnersDetails?.company_name ?? ""} onChange={(e) => { setReputedPartnersDetails((prev: any) => ({ ...prev, company_name: e.target.value })) }} />
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Supplied Qty. & Year
+          </h1>
+          <Input placeholder="" disabled={isDisabled} className="disabled:opacity-100" value={reputedPartnersDetails?.supplied_qtyyear ?? ""} onChange={(e) => { setReputedPartnersDetails((prev: any) => ({ ...prev, supplied_qtyyear: e.target.value })) }} />
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Remarks
+          </h1>
+          <Input placeholder="" disabled={isDisabled} className="disabled:opacity-100" value={reputedPartnersDetails?.remarks ?? ""} onChange={(e) => { setReputedPartnersDetails((prev: any) => ({ ...prev, remarks: e.target.value })) }} />
+        </div>
+        <div className="col-span-1 flex items-end">
+          <Button className={`bg-blue-400 hover:bg-blue-300 ${isDisabled ? "hidden" : ""}`} onClick={() => { handleAdd() }}>Add</Button>
+        </div>
+      </div>
+
+      <div className="shadow- bg-[#f6f6f7] p-4 mb-4 mt-4 rounded-2xl">
+        <div className="flex w-full justify-between pb-4">
+          <h1 className="text-[20px] text-[#03111F] font-semibold">
+            Reputed Partners
+          </h1>
+        </div>
+        <Table className=" max-h-40 overflow-y-scroll">
+          <TableHeader className="text-center">
+            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
+              <TableHead className="w-[100px]">Sr No.</TableHead>
+              <TableHead className="text-center">Company Name</TableHead>
+              <TableHead className="text-center">Supplied Quantity</TableHead>
+              <TableHead className="text-center">Remarks</TableHead>
+              <TableHead className="text-center">Delete</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="text-center">
+            {reputedPartners?.map((item, index) => (
+              <TableRow key={index}>
+                <TableCell className="font-medium">{index + 1}</TableCell>
+                <TableCell>{item?.company_name}</TableCell>
+                <TableCell>{item?.supplied_qtyyear}</TableCell>
+                <TableCell>{item?.remarks}</TableCell>
+                <TableCell>
+                  <Button className={`${isDisabled ? "hidden" : ""}`} onClick={() => { handleRowDelete(index) }}>Delete</Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <div className={`flex justify-end pr-4 ${isDisabled ? "hidden" : ""}`}><Button onClick={() => { handleSubmit() }}>Next</Button></div>
     </div>
   );
 };

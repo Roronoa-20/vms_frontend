@@ -80,7 +80,7 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
   return (
     <div>
         <OnboardingTab onboarding_refno={vendorOnboardingRefno} refno={refno} />
-        <div className="flex px-10 justify-center gap-5 max-h-[70vh] w-full">
+        <div className="flex p-2 justify-center gap-5 max-h-[70vh] w-full">
         {/* form */}
         {tabType == "Company Detail" ? (
           // <CompanyDetailForm

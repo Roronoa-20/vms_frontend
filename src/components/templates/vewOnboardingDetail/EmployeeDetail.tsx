@@ -51,12 +51,12 @@ const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
   }
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-4 w-full">
-      <div className="flex justify-between">
-      <h1 className="border-b-2 font-semibold text-[18px]">Number of Employees</h1>
+    <div className="flex flex-col bg-white rounded-lg p-3 w-full">
+      <div className="flex justify-between items-center border-b-2">
+        <h1 className="font-semibold text-[18px]">Number of Employees</h1>
       <Button onClick={()=>{setIsDisabled(prev=>!prev)}} className="mb-2">{isDisabled?"Enable Edit":"Disable Edit"}</Button>
       </div>
-      <div className={`grid grid-cols-3 gap-6 p-5 ${isDisabled?"hidden":""}`}>
+      <div className={`grid grid-cols-3 gap-6 p-3 ${isDisabled?"hidden":""}`}>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Employees in Production

@@ -95,13 +95,13 @@ const DocumentDetails = ({
   }
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-4 w-full max-h-[80vh]">
-      <div className="flex justify-between">
-        <h1 className="border-b-2 font-semibold text-[18px]">Document Details</h1>
+    <div className="flex flex-col bg-white rounded-lg p-3 w-full max-h-[80vh]">
+      <div className="flex justify-between items-center border-b-2">
+        <h1 className="font-semibold text-[18px]">Document Details</h1>
         <Button onClick={() => { setIsDisabled(prev => !prev) }} className="mb-2">{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
       </div>
       <div className="overflow-y-scroll">
-        <div className="grid grid-cols-2 gap-6 p-2">
+        <div className="grid grid-cols-2 gap-6 p-3">
           <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Import/Export Code

@@ -74,13 +74,18 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
   }
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-4 w-full">
-      <div className="flex justify-between">
-        <h1 className="border-b-2 font-semibold text-[18px]">Company Detail</h1>
-        <Button onClick={() => { setIsDisabled(prev => !prev) }} className="mb-2">{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+    <div className="flex flex-col bg-white rounded-lg p-3 w-full">
+      <div className="flex justify-between items-center border-b-2">
+        <h1 className="font-semibold text-[18px]">Company Detail</h1>
+        <Button
+          onClick={() => setIsDisabled(prev => !prev)}
+          className="mb-2"
+        >
+          {isDisabled ? "Enable Edit" : "Disable Edit"}
+        </Button>
       </div>
       <form onSubmit={(e) => { handleSubmit(e) }}>
-        <div className="grid grid-cols-3 gap-6 p-5 overflow-y-scroll max-h-[70vh]">
+        <div className="grid grid-cols-3 gap-6 p-3 overflow-y-scroll max-h-[70vh]">
           <div>
             <div className="grid grid-cols-4 gap-1">
               <div className="flex flex-col col-span-1">

@@ -58,12 +58,12 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
     if(manufacturingDetailResponse?.status == 200) router.push(`${designation == "Purchase Head" || designation == "Purchase Team"?`/view-onboarding-details?tabtype=Employee%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`:`/view-onboarding-details?tabtype=Employee%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`);
   }
   return (
-    <div className="flex flex-col bg-white rounded-lg p-4 w-full">
-      <div className="flex justify-between">
-      <h1 className="border-b-2 font-semibold text-[18px]">Manufacturing Detail</h1>
+    <div className="flex flex-col bg-white rounded-lg p-3 w-full">
+      <div className="flex justify-between items-center border-b-2">
+        <h1 className="font-semibold text-[18px]">Manufacturing Detail</h1>
       <Button onClick={()=>{setIsDisabled(prev=>!prev)}} className="mb-2">{isDisabled?"Enable Edit":"Disable Edit"}</Button>
       </div>
-      <div className="grid grid-cols-3 gap-6 p-5">
+      <div className="grid grid-cols-3 gap-6 p-3">
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Total Godown Area (Sq. ft.)
@@ -146,7 +146,7 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
       <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
         Products Details
       </h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
+      <div className="grid grid-cols-3 gap-6 p-2">
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Product Manufactured
@@ -195,7 +195,7 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
               </div>
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-3 pl-5 pb-6">
+      <div className="grid grid-cols-3 gap-3 p-2">
         <div className="col-span-1">
           <h1 className="text-[16px] font-normal text-[#626973] pb-3">
             Upload your Material Brochure (PDF)
@@ -225,7 +225,7 @@ const ManufacturingDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) 
               </div>
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-3 pl-5">
+      <div className="grid grid-cols-3 gap-3 p-2">
         <div className="col-span-1">
           <h1 className="text-[16px] font-normal text-[#626973] pb-3">
             Organization Structure Document
