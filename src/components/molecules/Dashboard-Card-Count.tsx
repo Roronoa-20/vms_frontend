@@ -264,8 +264,27 @@ const DashboardCards = ({ ...Props }: Props) => {
     ];
   }
 
+  let EnquirerCard = [
+   {
+        name: "Purchase Inquiry",
+        count: Props.cardData?.cart_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/doc.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-rose-100",
+        hover: "hover:border-rose-400",
+      },
+      {
+        name: "Purchase Requisition",
+        count: Props.cardData?.pr_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-green-200",
+        hover: "hover:border-rose-400",
+      },
+  ]
+
   let cardData = user === "Enquirer"
-    ? allCardData.filter(item => item.name === "Purchase Inquiry" || item.name === "Purchase Requisition") : allCardData;
+    ?EnquirerCard : allCardData;
 
   useEffect(() => {
     if (user) {
@@ -392,7 +411,7 @@ const DashboardCards = ({ ...Props }: Props) => {
                   companyDropdown={Props?.companyDropdown}
                 />
               )}
-              {item.name === "Purchase Inquiry" && (
+              {item.name === "Purchase Inquiry" && (user === "Enquirer" || user === "Purchase Team") && (
                 <DashboardPurchaseEnquiryTable
                   dashboardTableData={Props?.prInquiryData?.cart_details}
                   companyDropdown={Props?.companyDropdown}
