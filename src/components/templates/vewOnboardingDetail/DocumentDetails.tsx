@@ -401,7 +401,7 @@ const DocumentDetails = ({
               {errors?.panDocument && !documentDetails?.panDocument && <span style={{ color: 'red' }}>{errors?.panDocument}</span>}
             </div>
           </div>
-          <div className="col-span-3 grid grid-cols-3 gap-6">
+          <div className={`col-span-3 grid grid-cols-3 gap-6 ${isDisabled?"hidden":""}`}>
             <div className="flex flex-col">
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 GST Vendor Type <span className="pl-2 text-red-400 text-2xl">*</span>
@@ -526,7 +526,7 @@ const DocumentDetails = ({
             </div>
           </div>
           <div
-            className={`col-span-3 grid grid-cols-3 gap-6`}
+            className={`col-span-3 grid grid-cols-3 gap-6 ${isDisabled?"hidden":""}`}
           >
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
