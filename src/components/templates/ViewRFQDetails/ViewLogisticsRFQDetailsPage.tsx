@@ -154,7 +154,7 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
                     )}
                 </h1>
                 {RFQData?.status != "Approved" && <div className='flex gap-4 items-center'>
-                    <Button className='flex gap-1 p-2' disabled={RFQData.rfq_type != "Logistic Vendor" ? true : false} onClick={() => setReviseDialog(true)}><Repeat width={20} height={20} />Revise RFQ </Button>
+                    <Button className='flex gap-1 p-2' disabled={RFQData.rfq_type != "logistics Vendor" ? true : false} onClick={() => setReviseDialog(true)}><Repeat width={20} height={20} />Revise RFQ </Button>
                     {/* <Sheet>
                         <SheetTrigger className='p-2 bg-black text-white text-sm rounded-md flex gap-1'><History width={20} height={20} />RFQ History</SheetTrigger>
                         <SheetContent>
@@ -200,7 +200,7 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
                 title='Are you sure you want to Submit?'
                 buttontext="Submit"
             />
-            {(reviseDialog && RFQData?.rfq_type === "Logistic Vendor") && <LogisticsReviseRFQ
+            {(reviseDialog && RFQData?.rfq_type === "logistics Vendor") && <LogisticsReviseRFQ
                 open={reviseDialog}
                 onClose={() => setReviseDialog(false)}
                 Dropdown={Dropdown}

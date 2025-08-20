@@ -12,7 +12,7 @@ interface Props {
     refno: string;
 }
 const LogisticsImportQuatationForm = ({ Dropdown, refno }: Props) => {
-    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Logistic Vendor", rfq_number: refno });
+    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "logistics Vendor", rfq_number: refno });
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const router = useRouter()
     const handleSubmit = async () => {
