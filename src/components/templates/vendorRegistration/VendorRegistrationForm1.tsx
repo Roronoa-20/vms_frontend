@@ -87,11 +87,11 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
   }
 
   return (
-    <div>
-      <h1 className="text-[20px] font-medium pb-1 leading-[24px] text-[#03111F] border-b border-slate-500">
+    <div className="mb-4">
+      <h1 className="text-[18px] font-semibold pb-1 leading-[24px] text-[#03111F] border-b border-slate-500">
         Vendor Details
       </h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
+      <div className="grid grid-cols-3 gap-6 p-2">
         <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Vendor Type

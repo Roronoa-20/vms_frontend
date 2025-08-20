@@ -145,7 +145,7 @@ const [tableData,setTableData] = useState<TtableData[]>([]);
 
 
   return (
-    <div className="p-6">
+    <div className="p-3">
       {/* <form onSubmit={(e)=>{handleSubmit(e)}}> */}
       <VendorRegistration1
         vendorTitleDropdown={vendorTitleDropdown}
