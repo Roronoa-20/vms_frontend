@@ -82,6 +82,90 @@ export const sidebarMenu = [
 ];
 
 
+export const PurchaseHeadsidebarMenu = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/dashboard"
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "Vendor Registration",
+    href: "/vendor-registration"
+  },
+  // {
+  //   logo: "/sidebar-assests/vendor-icon.svg",
+  //   name: "Total Vendors",
+  //   href:"/total-vendor"
+  // },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "PR",
+    href:"/pr-request"
+  },
+    {
+    logo: "/sidebar-assests/raise-rfq-logo.svg",
+    name: "Raise RFQ",
+    href:"/create-rfq"
+  },
+  {
+    logo: "/sidebar-assests/po-details.svg",
+    name: "View PO",
+    href:"/view-po"
+  },
+  // {
+  //   logo: "/sidebar-assests/vendor-icon.svg",
+  //   name: "PR",
+  //   href:"/pr-request"
+  // },
+  {
+    logo: "/sidebar-assests/purchase-enquiry-logo.svg",
+    name: "Product Enquiry",
+    href:"/pr-inquiry"
+  },
+  // {
+  //   logo: "/sidebar-assests/raise-rfq-logo.svg",
+  //   name: "Raise RFQ",
+  //   href:""
+  // },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "View PR",
+    href:"/view-purchase-requisition"
+  },
+  // {
+  //   logo: "/sidebar-assests/po-details.svg",
+  //   name: "View PO",
+  //   href:""
+  // },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "View GRN",
+    href:"/view-grn"
+  },
+  // {
+  //   logo: "/sidebar-assests/dispatch-logo.svg",
+  //   name: "View Dispatch",
+  //   href:""
+  // },
+  // {
+  //   logo: "/sidebar-assests/raise-payment-1.svg",
+  //   name: "View Payment",
+  //   href:""
+  // },
+  // {
+  //   logo: "/sidebar-assests/purchase-enquiry-logo.svg",
+  //   name: "Purchase Enquiry",
+  //   href:""
+  // },
+  // {
+  //   logo: "/sidebar-assests/complaint-box.svg",
+  //   name: "Complain Box",
+  //   href:""
+  // },
+];
+
+
 export const HeadSidebar = [
   {
     logo: "/sidebar-assests/home-logo.svg",
@@ -237,6 +321,40 @@ export const ASASideBarMenu = [
 ];
 
 export const AccountSideBarMenu = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/dashboard"
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "Vendor Registration",
+    href: "/vendor-registration"
+  },
+  // {
+  //   logo: "/sidebar-assests/vendor-icon.svg",
+  //   name: "Total Vendors",
+  //   href:"/total-vendor"
+  // },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "PR",
+    href:"/pr-request"
+  },
+  {
+    logo: "/sidebar-assests/po-details.svg",
+    name: "View PO",
+    href:"/view-po"
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "View GRN",
+    href:"/view-grn"
+  }
+];
+
+
+export const AccountHeadSideBarMenu = [
   {
     logo: "/sidebar-assests/home-logo.svg",
     name: "Home",
