@@ -17,17 +17,17 @@ export const sidebarMenu = [
   {
     logo: "/sidebar-assests/view-pr.svg",
     name: "PR",
-    href:"/pr-request"
+    href: "/pr-request"
   },
-    {
+  {
     logo: "/sidebar-assests/raise-rfq-logo.svg",
     name: "Raise RFQ",
-    href:"/create-rfq"
+    href: "/create-rfq"
   },
   {
     logo: "/sidebar-assests/po-details.svg",
     name: "View PO",
-    href:"/view-po"
+    href: "/view-po"
   },
   // {
   //   logo: "/sidebar-assests/vendor-icon.svg",
@@ -37,7 +37,7 @@ export const sidebarMenu = [
   {
     logo: "/sidebar-assests/purchase-enquiry-logo.svg",
     name: "Product Enquiry",
-    href:"/pr-inquiry"
+    href: "/pr-inquiry"
   },
   // {
   //   logo: "/sidebar-assests/raise-rfq-logo.svg",
@@ -47,7 +47,7 @@ export const sidebarMenu = [
   {
     logo: "/sidebar-assests/view-pr.svg",
     name: "View PR",
-    href:"/view-purchase-requisition"
+    href: "/view-purchase-requisition"
   },
   // {
   //   logo: "/sidebar-assests/po-details.svg",
@@ -57,7 +57,7 @@ export const sidebarMenu = [
   {
     logo: "/sidebar-assests/view-grn.svg",
     name: "View GRN",
-    href:"/view-grn"
+    href: "/view-grn"
   },
   // {
   //   logo: "/sidebar-assests/dispatch-logo.svg",
@@ -88,30 +88,30 @@ export const PurchaseHeadsidebarMenu = [
     name: "Home",
     href: "/dashboard"
   },
-  {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "Vendor Registration",
-    href: "/vendor-registration"
-  },
+  // {
+  //   logo: "/sidebar-assests/vendor-icon.svg",
+  //   name: "Vendor Registration",
+  //   href: "/vendor-registration"
+  // },
   // {
   //   logo: "/sidebar-assests/vendor-icon.svg",
   //   name: "Total Vendors",
   //   href:"/total-vendor"
   // },
+  // {
+  //   logo: "/sidebar-assests/view-pr.svg",
+  //   name: "PR",
+  //   href:"/pr-request"
+  // },
   {
-    logo: "/sidebar-assests/view-pr.svg",
-    name: "PR",
-    href:"/pr-request"
-  },
-    {
     logo: "/sidebar-assests/raise-rfq-logo.svg",
     name: "Raise RFQ",
-    href:"/create-rfq"
+    href: "/create-rfq"
   },
   {
     logo: "/sidebar-assests/po-details.svg",
     name: "View PO",
-    href:"/view-po"
+    href: "/view-po"
   },
   // {
   //   logo: "/sidebar-assests/vendor-icon.svg",
@@ -121,7 +121,7 @@ export const PurchaseHeadsidebarMenu = [
   {
     logo: "/sidebar-assests/purchase-enquiry-logo.svg",
     name: "Product Enquiry",
-    href:"/pr-inquiry"
+    href: "/pr-inquiry"
   },
   // {
   //   logo: "/sidebar-assests/raise-rfq-logo.svg",
@@ -131,7 +131,7 @@ export const PurchaseHeadsidebarMenu = [
   {
     logo: "/sidebar-assests/view-pr.svg",
     name: "View PR",
-    href:"/view-purchase-requisition"
+    href: "/view-purchase-requisition"
   },
   // {
   //   logo: "/sidebar-assests/po-details.svg",
@@ -141,7 +141,7 @@ export const PurchaseHeadsidebarMenu = [
   {
     logo: "/sidebar-assests/view-grn.svg",
     name: "View GRN",
-    href:"/view-grn"
+    href: "/view-grn"
   },
   // {
   //   logo: "/sidebar-assests/dispatch-logo.svg",
@@ -170,22 +170,22 @@ export const HeadSidebar = [
   {
     logo: "/sidebar-assests/home-logo.svg",
     name: "Home",
-    href:"/dashboard"
+    href: "/dashboard"
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "PR",
-    href:"/pr-request"
+    href: "/pr-request"
   },
-    {
+  {
     logo: "/sidebar-assests/raise-rfq-logo.svg",
     name: "Raise RFQ",
-    href:"/create-rfq"
+    href: "/create-rfq"
   },
   {
     logo: "/sidebar-assests/po-details.svg",
     name: "View PO",
-    href:"/view-po"
+    href: "/view-po"
   },
   // {
   //   logo: "/sidebar-assests/vendor-icon.svg",
@@ -217,7 +217,7 @@ export const HeadSidebar = [
     name: "View GRN",
     href: "/view-grn"
   },
-  
+
   // {
   //   logo: "/sidebar-assests/raise-payment-1.svg",
   //   name: "View Payment",
@@ -339,17 +339,17 @@ export const AccountSideBarMenu = [
   {
     logo: "/sidebar-assests/view-pr.svg",
     name: "PR",
-    href:"/pr-request"
+    href: "/pr-request"
   },
   {
     logo: "/sidebar-assests/po-details.svg",
     name: "View PO",
-    href:"/view-po"
+    href: "/view-po"
   },
   {
     logo: "/sidebar-assests/view-grn.svg",
     name: "View GRN",
-    href:"/view-grn"
+    href: "/view-grn"
   }
 ];
 
@@ -360,11 +360,11 @@ export const AccountHeadSideBarMenu = [
     name: "Home",
     href: "/dashboard"
   },
-  {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "Vendor Registration",
-    href: "/vendor-registration"
-  },
+  // {
+  //   logo: "/sidebar-assests/vendor-icon.svg",
+  //   name: "Vendor Registration",
+  //   href: "/vendor-registration"
+  // },
   // {
   //   logo: "/sidebar-assests/vendor-icon.svg",
   //   name: "Total Vendors",
@@ -372,17 +372,17 @@ export const AccountHeadSideBarMenu = [
   // },
   {
     logo: "/sidebar-assests/view-pr.svg",
-    name: "PR",
-    href:"/pr-request"
+    name: "View PR",
+    href: "/view-purchase-requisition"
   },
   {
     logo: "/sidebar-assests/po-details.svg",
     name: "View PO",
-    href:"/view-po"
+    href: "/view-po"
   },
   {
     logo: "/sidebar-assests/view-grn.svg",
     name: "View GRN",
-    href:"/view-grn"
+    href: "/view-grn"
   }
 ];
