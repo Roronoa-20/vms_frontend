@@ -111,7 +111,7 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
           <DocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
         ) 
         : tabType?.includes("Payment Detail") && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? ( 
-        <InternationalPaymentDetail ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab}/>
+        <InternationalPaymentDetail ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab} isAccountTeam={OnboardingDetail?.validation_check?.register_by_account_team == 1?1:0}/>
         )
         : tabType?.includes("Payment Detail") ? ( 
           <PaymentDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} company_name={OnboardingDetail?.company_details_tab?.company_name} OnboardingDetail={OnboardingDetail?.payment_details_tab} isAccountTeam={OnboardingDetail?.validation_check?.register_by_account_team == 1?1:0}/>

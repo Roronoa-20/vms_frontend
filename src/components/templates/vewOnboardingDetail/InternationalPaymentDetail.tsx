@@ -26,6 +26,7 @@ interface Props {
   onboarding_ref_no: string,
   OnboardingDetail: VendorOnboardingResponse["message"]["payment_details_tab"],
   company_name?: string
+  isAccountTeam:number
 }
 
 interface IformData {
@@ -58,7 +59,7 @@ interface IformData {
 }
 
 
-const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_name }: Props) => {
+const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_name,isAccountTeam }: Props) => {
   // const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
   const [formData, setFormData] = useState<IformData>();
   // const [bankProofFile,setBankProofFile] = useState<FileList | null>(null);
@@ -284,7 +285,8 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
             Bank Proof By Purchase Team (Upload Passbook Leaf/Cancelled Cheque) <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <div className="flex gap-4">
-          <Input className={`disabled:opacity-100 ${designation != "Purchase Team"?"hidden":""}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
+           <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation == "Purchase Team"?"":"hidden"}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
+                    <Input className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team"?"":"hidden"}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
           {/* file preview */}
           {isPurchaseBankFilePreview &&
               !PurchaseTeambankProof &&
@@ -307,7 +309,8 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
               )}
               </div>
         <div className="flex justify-start items-end pt-4">
-              <Button className={designation!="Purchase Team"?"hidden":""} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
+              <Button className={designation == "Purchase Team" && isAccountTeam == 0?"":"hidden"} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
+              <Button className={designation == "Accounts Team" && isAccountTeam == 1?"":"hidden"} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
         </div>
         </div>
       </div>
@@ -422,10 +425,11 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
           </div>
            <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Bank Proof By Purchase Team (Upload Passbook Leaf/Cancelled Cheque) <span className="pl-2 text-red-400 text-2xl">*</span>
+            Bank Proof By Purchase Team <span className="font-semibold">(2 Way)</span> <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <div className="flex gap-4">
-          <Input className={`disabled:opacity-100 ${designation != "Purchase Team"?"hidden":""}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
+          <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation != "Purchase Team"?"hidden":""}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
+                    <Input className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team"?"":"hidden"}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
           {/* file preview */}
           {isPurchaseBankFilePreview &&
               !PurchaseTeambankProof &&

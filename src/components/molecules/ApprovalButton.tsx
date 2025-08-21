@@ -18,10 +18,11 @@ interface Props {
   reconsiliationDrodown?:TReconsiliationDropdown["message"]["data"]
   reconciliationAccount:string
   isBankProofByPurchaseTeam:boolean
+  isAccountTeam:number
 }
 
 
-const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown,reconciliationAccount,isBankProofByPurchaseTeam }: Props) => {
+const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown,reconciliationAccount,isBankProofByPurchaseTeam,isAccountTeam }: Props) => {
   const [isCommentBox, setIsCommentBox] = useState<boolean>(false);
   const [comments, setComments] = useState<string>("");
   const [isApprove, setIsApprove] = useState<boolean>(false);
@@ -62,10 +63,14 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
     }
 
     const formData = new FormData();
+    if(designation == "Accounts Team" && isAccountTeam == 1){
+      alert("please Upload Bank Proof")
+      return;
+    }
     if(designation == "Purchase Team"){
       if(!isBankProofByPurchaseTeam){
         alert("Please Upload bank Proof By Purchase Team");
-        return;
+        return
       }
       const purchaseTeamData = {
          onboard_id: onboardingRefno,
