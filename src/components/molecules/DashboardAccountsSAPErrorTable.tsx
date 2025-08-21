@@ -147,7 +147,7 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
               </TableRow>
             </TableHeader>
             <TableBody className="text-center">
-              {table.length > 0 ? (
+              {table?.length > 0 ? (
                 table?.map((item, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium text-center">{index + 1}</TableCell>
