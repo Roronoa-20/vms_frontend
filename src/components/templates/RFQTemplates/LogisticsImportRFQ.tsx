@@ -54,7 +54,7 @@ export interface newVendorTable {
 }
 
 const LogisticsImportRFQ = ({ Dropdown }: Props) => {
-    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "logistics Vendor" });
+    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Logistics Vendor" });
     const [vendorSearchName, setVendorSearchName] = useState('')
     const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
     const [VendorList, setVendorList] = useState<VendorApiResponse>();
@@ -81,7 +81,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
             }
         }
         if (formData?.service_provider != "Select" && formData?.service_provider && formData?.company_name_logistic) {
-            fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "logistics Vendor");
+            fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Logistics Vendor");
         }
     }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider]);
 

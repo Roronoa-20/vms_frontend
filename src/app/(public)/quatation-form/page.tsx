@@ -73,7 +73,7 @@ const Page = async ({ searchParams }: PageProps): Promise<React.ReactElement> =>
                 </h1>
                 <RFQBasicDetails RFQData={RFQData} />
                 <ViewFileAttachment RFQData={RFQData} />
-                {RFQData.rfq_type === "logistics Vendor" && (
+                {RFQData.rfq_type === "Logistics Vendor" && (
                     <>
                         {RFQData.logistic_type === "Export" ? (
                             <PublicLogisticsExportQuatationForm token={token} Dropdown={Dropdown} RFQData={RFQData} />
