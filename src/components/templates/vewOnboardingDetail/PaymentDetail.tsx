@@ -292,7 +292,8 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,i
               </div>
         </div>
         <div className="flex justify-start items-end">
-              <Button className={designation!="Purchase Team"?"hidden":""} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
+              <Button className={`disabled:opacity-100 ${isAccountTeam == 0 && designation == "Purchase Team"?"":"hidden"}`} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
+              <Button className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team"?"":"hidden"}`} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
         </div>
 
         {/* <div className="flex flex-col">
