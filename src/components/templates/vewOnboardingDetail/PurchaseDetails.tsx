@@ -105,7 +105,7 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
           </h1>
           <Input placeholder="" className='disabled:opacity-100' disabled defaultValue={OnboardingDetail?.account_head_remarks} />
         </div>
-        <div className={`${designation == "Purchase Head" ? "hidden" : ""}`}>
+        <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Reconciliation Account
           </h1>
