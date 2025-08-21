@@ -26,10 +26,11 @@ interface Props {
   onboarding_ref_no:string,
   OnboardingDetail:VendorOnboardingResponse["message"]["payment_details_tab"],
   company_name?:string
+  isAccountTeam:number
 }
 
 
-const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:Props) => {
+const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,isAccountTeam}:Props) => {
   const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
   const [isDisabled,setIsDisabled] = useState<boolean>(true);
   const [bankProofFile,setBankProofFile] = useState<FileList | null>(null);
@@ -38,6 +39,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
   const [bankNameDropown,setBankNameDropown] = useState<TbankNameDropdown["message"]["data"]>([])
   const [currencyDropdown,setCurrencyDropdown] = useState<TCurrencyDropdown["message"]["data"]>([])
   const {designation} = useAuth();
+  const [PurchaseTeambankProof,setPurchaseTeamBankProof] = useState<File>();
   const {setBankProof,bank_proof} = UsePurchaseTeamApprovalStore();
   // if(!designation){
   //   return(
@@ -123,6 +125,23 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
         alert("updated successfully");
         location.reload();
       }
+  }
+
+  const uploadBankProofByPurchaseTeam = async()=>{
+    const formdata = new FormData();
+    if(PurchaseTeambankProof != null){
+      formdata?.append("bank_proof_by_purchase_team",PurchaseTeambankProof)
+    }
+
+    formdata?.append("data",JSON.stringify({ref_no:ref_no,vendor_onboarding:onboarding_ref_no}));
+
+    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.bankProofByPurchaseTeam,method:"POST",data:formdata});
+    if(response?.status == 200){
+      alert("Uploaded Successfully");
+      location?.reload();
+    }else{
+      alert("Error in Uploading");
+    }
   }
   console.log(OnboardingDetail?.bank_proof?.file_name,"thiskjdvb")
   return (
@@ -241,6 +260,40 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name}:
               )}
               </div>
         </div>
+
+              <div>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Bank Proof By Purchase Team (Upload Passbook Leaf/Cancelled Cheque) <span className="pl-2 text-red-400 text-2xl">*</span>
+          </h1>
+          <div className="flex gap-4">
+          <Input className={`disabled:opacity-100 ${designation != "Purchase Team"?"hidden":""}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
+          <Input className={`disabled:opacity-100 ${designation == "Accounts Team" && isAccountTeam == 1?"hidden":""}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
+          {/* file preview */}
+          {isPurchaseBankFilePreview &&
+              !PurchaseTeambankProof &&
+              OnboardingDetail?.bank_proof_by_purchase_team?.url && (
+                <div className="flex gap-2">
+                  <Link
+                  target="blank"
+                  href={OnboardingDetail?.bank_proof_by_purchase_team?.url}
+                  className="underline text-blue-300 max-w-44 truncate"
+                  >
+                    <span>{OnboardingDetail?.bank_proof_by_purchase_team?.file_name}</span>
+                  </Link>
+                  {/* <X
+                    className={`cursor-pointer ${isDisabled?"hidden":""}`}
+                    onClick={() => {
+                      setPurchaseIsBankFilePreview((prev) => !prev);
+                    }}
+                    /> */}
+                </div>
+              )}
+              </div>
+        </div>
+        <div className="flex justify-start items-end">
+              <Button className={designation!="Purchase Team"?"hidden":""} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
+        </div>
+
         {/* <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Preferred Transaction:

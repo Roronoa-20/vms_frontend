@@ -114,7 +114,7 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
         <InternationalPaymentDetail ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab}/>
         )
         : tabType?.includes("Payment Detail") ? ( 
-          <PaymentDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} company_name={OnboardingDetail?.company_details_tab?.company_name} OnboardingDetail={OnboardingDetail?.payment_details_tab}/>
+          <PaymentDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} company_name={OnboardingDetail?.company_details_tab?.company_name} OnboardingDetail={OnboardingDetail?.payment_details_tab} isAccountTeam={OnboardingDetail?.validation_check?.register_by_account_team}/>
         ) : tabType?.includes("Contact Detail") ? (
           <ContactDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.contact_details_tab}/>
         ) : tabType == "Manufacturing Detail" ? (
@@ -130,7 +130,7 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
         ) : tabType == "Certificate" ? (
           <Certificate certificateCodeDropdown={certificateCodeDropdown?.certificate_names} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.certificate_details_tab}/>
         ) : tabType == "Purchase Detail"?(
-          <PurchaseDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.purchasing_details?.[0]} reconciliationDropdown={reconciliationDropdown} tabType={tabType} validation_check={OnboardingDetail?.validation_check}/>
+          <PurchaseDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.purchasing_details?.[0]} reconciliationDropdown={reconciliationDropdown} tabType={tabType} validation_check={OnboardingDetail?.validation_check} isPurchaseTeamBankFile={OnboardingDetail?.payment_details_tab?.bank_proof_by_purchase_team?.url}/>
         )
         : (
           ""
