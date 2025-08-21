@@ -27,6 +27,7 @@ interface Props {
   OnboardingDetail: VendorOnboardingResponse["message"]["payment_details_tab"],
   company_name?: string
   isAccountTeam:number
+  isAmendment:number
 }
 
 interface IformData {
@@ -59,7 +60,7 @@ interface IformData {
 }
 
 
-const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_name,isAccountTeam }: Props) => {
+const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_name,isAccountTeam,isAmendment }: Props) => {
   // const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
   const [formData, setFormData] = useState<IformData>();
   // const [bankProofFile,setBankProofFile] = useState<FileList | null>(null);

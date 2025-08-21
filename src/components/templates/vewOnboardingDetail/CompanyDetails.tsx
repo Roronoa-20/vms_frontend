@@ -24,10 +24,11 @@ interface Props {
   refno?: string,
   OnboardingDetail: VendorOnboardingResponse["message"]["company_details_tab"]
   multipleCompany: { company: string }[]
-  ismulticompany: boolean
+  ismulticompany: boolean,
+  isAmendment:number
 }
 
-const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, OnboardingDetail, multipleCompany, ismulticompany }: Props) => {
+const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, OnboardingDetail, multipleCompany, ismulticompany, isAmendment }: Props) => {
   const router = useRouter();
 
 
@@ -80,12 +81,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
     <div className="flex flex-col bg-white rounded-lg p-3 w-full">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Company Detail</h1>
-        <Button
-          onClick={() => setIsDisabled(prev => !prev)}
-          className="mb-2"
-        >
-          {isDisabled ? "Enable Edit" : "Disable Edit"}
-        </Button>
+        <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
       </div>
       <form onSubmit={(e) => { handleSubmit(e) }}>
         <div className="grid grid-cols-3 gap-6 p-3 overflow-y-scroll max-h-[70vh]">

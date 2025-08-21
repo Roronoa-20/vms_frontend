@@ -32,6 +32,7 @@ interface Props {
   ref_no: string;
   onboarding_ref_no: string;
   OnboardingDetail: VendorOnboardingResponse["message"]["company_address_tab"];
+  isAmendment:number
 }
 
 
@@ -73,7 +74,8 @@ interface multipleAddress {
 const CompanyAddress = ({
   ref_no,
   onboarding_ref_no,
-  OnboardingDetail
+  OnboardingDetail,
+  isAmendment
 }: Props) => {
 
   const router = useRouter();
@@ -192,7 +194,7 @@ const CompanyAddress = ({
         <h1 className="font-semibold text-[18px]">
           Company Address
         </h1>
-        <Button onClick={() => { setIsDisabled(prev => !prev) }} className="mb-2">{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+        <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
       </div>
       <h1 className="pl-2">Office Address</h1>
       <div className="grid grid-cols-4 gap-6 p-3">

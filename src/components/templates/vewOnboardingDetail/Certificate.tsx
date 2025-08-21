@@ -25,6 +25,7 @@ interface Props {
   ref_no: string,
   onboarding_ref_no: string
   OnboardingDetail: VendorOnboardingResponse["message"]["certificate_details_tab"]
+  isAmendment:number
 }
 
 type certificateData = {
@@ -37,7 +38,7 @@ type certificateData = {
   others?: string
 }
 
-const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, OnboardingDetail }: Props) => {
+const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, OnboardingDetail,isAmendment }: Props) => {
   console.log(OnboardingDetail)
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [certificateData, setCertificateData] = useState<Partial<certificateData>>({});
@@ -119,7 +120,7 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
     <div className="flex flex-col bg-white rounded-lg p-3 w-full">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Certificate Details</h1>
-        <Button onClick={() => { setIsDisabled(prev => !prev) }} className="mb-2">{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+        <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
       </div>
       <div className={`grid grid-cols-3 gap-6 p-3 ${isDisabled ? "hidden" : ""}`}>
         <div className="flex flex-col col-span-1">

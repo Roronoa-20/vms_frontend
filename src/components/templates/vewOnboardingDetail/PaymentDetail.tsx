@@ -26,11 +26,12 @@ interface Props {
   onboarding_ref_no:string,
   OnboardingDetail:VendorOnboardingResponse["message"]["payment_details_tab"],
   company_name?:string
-  isAccountTeam:number
+  isAccountTeam:number,
+  isAmendment:number
 }
 
 
-const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,isAccountTeam}:Props) => {
+const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,isAccountTeam,isAmendment}:Props) => {
   const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
   const [isDisabled,setIsDisabled] = useState<boolean>(true);
   const [bankProofFile,setBankProofFile] = useState<FileList | null>(null);
@@ -149,7 +150,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,i
     <div className="flex flex-col bg-white rounded-lg p-3 w-full">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Bank Details</h1>
-      <Button onClick={()=>{setIsDisabled(prev=>!prev)}} className="mb-2">{isDisabled?"Enable Edit":"Disable Edit"}</Button>
+      <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
       </div>
       <div className="grid grid-cols-3 gap-6 p-3">
         <div className="flex flex-col col-span-1">

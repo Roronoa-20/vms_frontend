@@ -51,6 +51,7 @@ interface Props {
   onboarding_ref_no: string;
   OnboardingDetail: VendorOnboardingResponse["message"]["document_details_tab"];
   documentDetailDropdown: TdocumentDetailDropdown["message"]["data"];
+  isAmendment:number
 }
 
 interface gstRow {
@@ -85,6 +86,7 @@ const DocumentDetails = ({
   onboarding_ref_no,
   OnboardingDetail,
   documentDetailDropdown,
+  isAmendment
 }: Props) => {
   const [BusinessType, setBusinessType] = useState<string>(
     OnboardingDetail?.gst_table[0]?.gst_ven_type
@@ -312,7 +314,7 @@ const DocumentDetails = ({
     <div className="flex flex-col bg-white rounded-lg p-3 w-full max-h-[80vh]">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Document Details</h1>
-        <Button onClick={() => { setIsDisabled(prev => !prev) }} className="mb-2">{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+        <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
       </div>
       <div className="overflow-y-scroll">
         <div className="grid grid-cols-3 gap-6 p-3">

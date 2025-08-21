@@ -29,9 +29,10 @@ interface Props {
   tabType: string
   validation_check: IvalidationChecks
   isPurchaseTeamBankFile?:string
+  isAmendment:number
 }
 
-const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconciliationDropdown, tabType, validation_check,isPurchaseTeamBankFile }: Props) => {
+const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconciliationDropdown, tabType, validation_check,isPurchaseTeamBankFile,isAmendment }: Props) => {
   const [reconciliationAccount, setReconciliationAccountt] = useState<string>(OnboardingDetail?.reconciliation_account as string);
   const { designation } = useAuth();
   console.log(OnboardingDetail, "htis is data")

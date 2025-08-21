@@ -15,9 +15,10 @@ type Props = {
   ref_no:string,
   onboarding_ref_no:string
   OnboardingDetail:VendorOnboardingResponse["message"]["employee_details_tab"]
+  isAmendment:number
 }
 
-const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
+const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,isAmendment}:Props) => {
   const {employeeDetail,updateEmployeeDetail,resetEmployeeDetail} = useEmployeeDetailStore()
   const [isDisabled,setIsDisabled] = useState<boolean>(true);
   const {designation} = useAuth();
@@ -57,7 +58,7 @@ const EmployeeDetail = ({ref_no,onboarding_ref_no,OnboardingDetail}:Props) => {
     <div className="flex flex-col bg-white rounded-lg p-3 w-full">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Number of Employees</h1>
-      <Button onClick={()=>{setIsDisabled(prev=>!prev)}} className="mb-2">{isDisabled?"Enable Edit":"Disable Edit"}</Button>
+      <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
       </div>
       <div className={`grid grid-cols-3 gap-6 p-3 ${isDisabled?"hidden":""}`}>
         <div className="col-span-1">

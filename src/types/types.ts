@@ -532,7 +532,8 @@ interface IvalidationChecks {
   is_purchase_head_approve: number,
   is_accounts_team_approve: number,
   is_accounts_head_approve: number,
-  register_by_account_team:number
+  register_by_account_team:number,
+  is_amendment:number
 }
 
 type CompanyAddressDetails = {
