@@ -266,7 +266,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,i
             Bank Proof By Purchase Team (Upload Passbook Leaf/Cancelled Cheque) <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <div className="flex gap-4">
-          <Input className={`disabled:opacity-100 ${designation != "Purchase Team"?"hidden":""}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
+          <Input className={`disabled:opacity-100 ${isAccountTeam != 1 && designation != "Purchase Team"?"hidden":""}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
           <Input className={`disabled:opacity-100 ${designation == "Accounts Team" && isAccountTeam == 1?"hidden":""}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
           {/* file preview */}
           {isPurchaseBankFilePreview &&
