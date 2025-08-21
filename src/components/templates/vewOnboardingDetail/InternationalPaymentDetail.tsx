@@ -425,7 +425,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
           </div>
            <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Bank Proof By Purchase Team <span className="font-semibold">(2 Way)</span> <span className="pl-2 text-red-400 text-2xl">*</span>
+            Bank Proof By Purchase Team <span className="font-semibold">(2-Way)</span> <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <div className="flex gap-4">
           <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation != "Purchase Team"?"hidden":""}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
