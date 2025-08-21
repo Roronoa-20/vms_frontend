@@ -155,7 +155,7 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
                     <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.vendor_name}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.company_name}</TableCell>
-                    <TableCell className="text-nowrap text-center">{item?.purchase_h_approval}</TableCell>
+                    <TableCell className="text-nowrap text-center">{item?.purchase_t_approval}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.purchase_h_approval}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.accounts_t_approval}</TableCell>
                     <TableCell className="text-nowrap text-center"><Button onClick={()=>{handleEmailSent(item?.name)}}>Send Email</Button></TableCell>
