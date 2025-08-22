@@ -15,6 +15,7 @@ import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "./Pagination";
 import { useAuth } from "@/src/context/AuthContext";
+import { Eye } from "lucide-react";
 
 type Props = {
   dashboardTableData: DashboardTableType["rejected_vendor_onboarding"],
@@ -48,12 +49,19 @@ const DashboardAccountsRejectedVendorsTable = ({ dashboardTableData, companyDrop
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<string | null>(null);
   const [remarks, setRemarks] = useState<string>("");
+  const [openReasonDialog, setOpenReasonDialog] = useState(false);
+  const [selectedReason, setSelectedReason] = useState<string>("");
   const router = useRouter();
 
   const handleAmendClick = (vendorOnboarding: string) => {
     setSelectedVendor(vendorOnboarding);
     setRemarks("");
     setOpenDialog(true);
+  };
+
+  const handleReasonClick = (reason: string) => {
+    setSelectedReason(reason);
+    setOpenReasonDialog(true);
   };
 
 
@@ -189,7 +197,15 @@ const DashboardAccountsRejectedVendorsTable = ({ dashboardTableData, companyDrop
                   {/* <TableCell>{item?.purchase_h_approval}</TableCell> */}
                   {/* <TableCell>{item?.accounts_t_approval}</TableCell> */}
                   <TableCell>{item?.rejected_by}</TableCell>
-                  <TableCell>{item?.reason_for_rejection}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleReasonClick(item?.reason_for_rejection || "No reason provided")}
+                    >
+                      <Eye className="h-8 w-8 text-black" />
+                    </Button>
+                  </TableCell>
                   <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
                   <TableCell><Button onClick={() => handleAmendClick(item?.name)} className="bg-blue-400 hover:bg-blue-300">Amend</Button></TableCell>
                 </TableRow>
@@ -223,6 +239,24 @@ const DashboardAccountsRejectedVendorsTable = ({ dashboardTableData, companyDrop
                 Cancel
               </Button>
               <Button onClick={handleSubmitAmend}>Submit</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={openReasonDialog} onOpenChange={setOpenReasonDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Rejection Reason</DialogTitle>
+            </DialogHeader>
+            <div className="py-4 text-black">
+              <Textarea
+                value={selectedReason}
+                disabled
+                className="resize-none cursor-not-allowed text-black bg-white opacity-100"
+              />
+            </div>
+            <DialogFooter>
+              <Button onClick={() => setOpenReasonDialog(false)}>Close</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
