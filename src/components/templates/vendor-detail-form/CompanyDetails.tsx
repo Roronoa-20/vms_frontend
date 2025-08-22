@@ -171,7 +171,7 @@ const CompanyDetailForm = ({
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Size of Company
             </h1>
-            <Select
+            {/* <Select
               onValueChange={(value) => {
                 updateField("size_of_company", value);
               }}
@@ -186,7 +186,14 @@ const CompanyDetailForm = ({
                   <SelectItem value="banana">100-200</SelectItem>
                 </SelectGroup>
               </SelectContent>
-            </Select>
+            </Select> */}
+            <Input
+              placeholder=""
+              onChange={(e) => {
+                updateField("size_of_company", e.target.value);
+              }}
+              value={data?.size_of_company ?? OnboardingDetail?.size_of_company ?? ""}
+            />
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">

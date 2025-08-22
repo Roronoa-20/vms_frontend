@@ -776,6 +776,7 @@ type DocumentDetailsTab = {
 };
 
 type PaymentDetailsTab = {
+  bank_proof_upload_status:number,
   bank_name: string;
   ifsc_code: string;
   account_number: string;

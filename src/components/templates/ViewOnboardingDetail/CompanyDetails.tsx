@@ -125,7 +125,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Size of Company
             </h1>
-            <Select disabled={isDisabled} onValueChange={(value) => { updateField("size_of_company", value) }} value={data?.size_of_company ?? OnboardingDetail?.size_of_company}>
+            {/* <Select disabled={isDisabled} onValueChange={(value) => { updateField("size_of_company", value) }} value={data?.size_of_company ?? OnboardingDetail?.size_of_company}>
               <SelectTrigger className="disabled:opacity-100">
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
@@ -135,7 +135,16 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
                   <SelectItem value="banana">100-200</SelectItem>
                 </SelectGroup>
               </SelectContent>
-            </Select>
+            </Select> */}
+            <Input
+            className="disabled:opacity-100"
+            disabled={isDisabled}
+                          placeholder=""
+                          onChange={(e) => {
+                            updateField("size_of_company", e.target.value);
+                          }}
+                          value={data?.size_of_company ?? OnboardingDetail?.size_of_company ?? ""}
+                        />
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">

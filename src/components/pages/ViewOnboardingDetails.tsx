@@ -112,10 +112,10 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
           <DocumentDetails isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
         ) 
         : tabType?.includes("Payment Detail") && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? ( 
-        <InternationalPaymentDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab} isAccountTeam={OnboardingDetail?.validation_check?.register_by_account_team == 1?1:0}/>
+        <InternationalPaymentDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab} isAccountTeam={OnboardingDetail?.validation_check?.register_by_account_team == 1?1:0} isBankProof={OnboardingDetail?.payment_details_tab?.bank_proof_upload_status}/>
         )
         : tabType?.includes("Payment Detail") ? ( 
-          <PaymentDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} company_name={OnboardingDetail?.company_details_tab?.company_name} OnboardingDetail={OnboardingDetail?.payment_details_tab} isAccountTeam={OnboardingDetail?.validation_check?.register_by_account_team == 1?1:0}/>
+          <PaymentDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} company_name={OnboardingDetail?.company_details_tab?.company_name} OnboardingDetail={OnboardingDetail?.payment_details_tab} isAccountTeam={OnboardingDetail?.validation_check?.register_by_account_team == 1?1:0} isBankProof={OnboardingDetail?.payment_details_tab?.bank_proof_upload_status} />
         ) : tabType?.includes("Contact Detail") ? (
           <ContactDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.contact_details_tab}/>
         ) : tabType == "Manufacturing Detail" ? (

@@ -28,6 +28,7 @@ interface Props {
   company_name?: string
   isAccountTeam:number
   isAmendment:number
+  isBankProof:number
 }
 
 interface IformData {
@@ -60,7 +61,7 @@ interface IformData {
 }
 
 
-const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_name,isAccountTeam,isAmendment }: Props) => {
+const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_name,isAccountTeam,isAmendment,isBankProof }: Props) => {
   // const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
   const [formData, setFormData] = useState<IformData>();
   // const [bankProofFile,setBankProofFile] = useState<FileList | null>(null);
@@ -286,8 +287,9 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
             Bank Proof By Purchase Team (Upload Passbook Leaf/Cancelled Cheque) <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <div className="flex gap-4">
-           <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation == "Purchase Team"?"":"hidden"}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
-                    <Input className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team"?"":"hidden"}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
+           <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation == "Purchase Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
+          <Input className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
+                     {/* file preview */}
           {/* file preview */}
           {isPurchaseBankFilePreview &&
               !PurchaseTeambankProof &&

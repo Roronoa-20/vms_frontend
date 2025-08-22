@@ -27,6 +27,7 @@ import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "./Pagination";
 import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 
 type Props = {
@@ -60,6 +61,8 @@ const DashboardAccountsPendingVendorsTable = ({ dashboardTableData, companyDropd
   const [record_per_page, setRecordPerPage] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
+  const router = useRouter();
+
   const user = Cookies?.get("user_id");
   console.log(user, "this is user");
 
@@ -90,6 +93,10 @@ const DashboardAccountsPendingVendorsTable = ({ dashboardTableData, companyDropd
       setRecordPerPage(5);
     }
   };
+
+  const handleView = async(refno:string,vendor_Onboarding:string)=>{
+    router.push(`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${vendor_Onboarding}&refno=${refno}`)
+  }
 
   console.log(table, "this is table");
   const { designation } = useAuth();
@@ -154,7 +161,7 @@ const DashboardAccountsPendingVendorsTable = ({ dashboardTableData, companyDropd
           </TableHeader>
           <TableBody className="text-center">
             {table ? (
-              table.map((item, index) => (
+              table?.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                   <TableCell className="text-nowrap">{item?.ref_no}</TableCell>
@@ -174,8 +181,9 @@ const DashboardAccountsPendingVendorsTable = ({ dashboardTableData, companyDropd
                   </TableCell>
                   <TableCell>{item?.accounts_t_approval}</TableCell>
                   <TableCell>{item?.accounts_head_approval}</TableCell>
-                  <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
+                  {/* <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell> */}
                   {/* <TableCell className="text-right">{item?.qms_form}</TableCell> */}
+                  <TableCell><Button onClick={()=>{item?.form_fully_submitted_by_vendor == 1?handleView(item?.ref_no,item?.name):alert("Vendor Form is not fully subitted")}} variant={"outline"}>View</Button></TableCell>
                   {!isAccountsUser && (
                     <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
                   )}
