@@ -9,11 +9,11 @@ export const sidebarMenu = [
     name: "Vendor Registration",
     href: "/vendor-registration"
   },
-  // {
-  //   logo: "/sidebar-assests/vendor-icon.svg",
-  //   name: "Total Vendors",
-  //   href:"/total-vendor"
-  // },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "All Vendors",
+    href:"/all-vendors"
+  },
   {
     logo: "/sidebar-assests/view-pr.svg",
     name: "PR",
@@ -49,11 +49,6 @@ export const sidebarMenu = [
     name: "View PR",
     href: "/view-purchase-requisition"
   },
-  // {
-  //   logo: "/sidebar-assests/po-details.svg",
-  //   name: "View PO",
-  //   href:""
-  // },
   {
     logo: "/sidebar-assests/view-grn.svg",
     name: "View GRN",
@@ -93,11 +88,11 @@ export const PurchaseHeadsidebarMenu = [
   //   name: "Vendor Registration",
   //   href: "/vendor-registration"
   // },
-  // {
-  //   logo: "/sidebar-assests/vendor-icon.svg",
-  //   name: "Total Vendors",
-  //   href:"/total-vendor"
-  // },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "All Vendors",
+    href:"/all-vendors"
+  },
   // {
   //   logo: "/sidebar-assests/view-pr.svg",
   //   name: "PR",
@@ -171,6 +166,11 @@ export const HeadSidebar = [
     logo: "/sidebar-assests/home-logo.svg",
     name: "Home",
     href: "/dashboard"
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "All Vendors",
+    href:"/all-vendors"
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
@@ -331,11 +331,11 @@ export const AccountSideBarMenu = [
     name: "Vendor Registration",
     href: "/vendor-registration"
   },
-  // {
-  //   logo: "/sidebar-assests/vendor-icon.svg",
-  //   name: "Total Vendors",
-  //   href:"/total-vendor"
-  // },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "All Vendors",
+    href:"/all-vendors"
+  },
   {
     logo: "/sidebar-assests/view-pr.svg",
     name: "PR",
@@ -365,11 +365,11 @@ export const AccountHeadSideBarMenu = [
   //   name: "Vendor Registration",
   //   href: "/vendor-registration"
   // },
-  // {
-  //   logo: "/sidebar-assests/vendor-icon.svg",
-  //   name: "Total Vendors",
-  //   href:"/total-vendor"
-  // },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "All Vendors",
+    href:"/all-vendors"
+  },
   {
     logo: "/sidebar-assests/view-pr.svg",
     name: "View PR",

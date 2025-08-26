@@ -9,54 +9,53 @@ import { Button } from '../atoms/button';
 
 
 interface table {
-    po_number:string,
-    po_date:string,
-    status:string,
-    bill_to_company:string,
-    total_value_of_po:string
-    childTable:{
-        name:string,
-  product_name:string,
-  material_code:string,
-  plant:string,
-  schedule_date:string,
-  quantity:string,
-  early_delivery_date:string
-  purchase_team_remarks:string,
-  requested_for_earlydelivery:boolean
-    }[]
+  po_number: string,
+  po_date: string,
+  status: string,
+  bill_to_company: string,
+  total_value_of_po: string
+  childTable: {
+    name: string,
+    product_name: string,
+    material_code: string,
+    plant: string,
+    schedule_date: string,
+    quantity: string,
+    early_delivery_date: string
+    purchase_team_remarks: string,
+    requested_for_earlydelivery: boolean
+  }[]
 }
 
-
 const ViewAllPOChanges = () => {
-    const [table,setTable] = useState<table[]>();
-    const [selectedTable,setSelectedTable] = useState<table["childTable"]>([]);
-    const [isDialog,setIsDialog] = useState<boolean>(false);
+  const [table, setTable] = useState<table[]>();
+  const [selectedTable, setSelectedTable] = useState<table["childTable"]>([]);
+  const [isDialog, setIsDialog] = useState<boolean>(false);
 
-    useEffect(()=>{
-        fetchTable();
-    },[])
-    const fetchTable = async()=>{
-        const url = API_END_POINTS?.getAllPOChangesTable;
-        const response:AxiosResponse = await  requestWrapper({url:url,method:"GET"});
-        if(response?.status == 200){
-            setTable(response?.data?.message?.total_po);
-        }
+  useEffect(() => {
+    fetchTable();
+  }, [])
+  const fetchTable = async () => {
+    const url = API_END_POINTS?.getAllPOChangesTable;
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+    if (response?.status == 200) {
+      setTable(response?.data?.message?.total_po);
     }
+  }
 
-    const handleOpen = (item:table["childTable"])=>{
-        setSelectedTable(item);
-        setIsDialog(true);
-    }
+  const handleOpen = (item: table["childTable"]) => {
+    setSelectedTable(item);
+    setIsDialog(true);
+  }
 
-    const handleClose = ()=>{
-        setIsDialog(false);
-    }
+  const handleClose = () => {
+    setIsDialog(false);
+  }
 
 
   return (
-        <div>
-            <h1 className="pl-5">View All PO Changes</h1>
+    <div>
+      <h1 className="pl-5">View All PO Changes</h1>
       <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
         <Table className=" max-h-40 overflow-y-scroll overflow-x-scroll">
           <TableHeader className="text-center">
@@ -73,28 +72,28 @@ const ViewAllPOChanges = () => {
               <TableHead className="text-center">Approved</TableHead>
               <TableHead className="text-center">Rejected</TableHead>
               <TableHead className="text-center">Vendor Remarks</TableHead> */}
-              
+
             </TableRow>
           </TableHeader>
           <TableBody>
-                {
-                    table?.map((item,index)=>(
-                        <TableRow key={index}>
-                        <TableCell>{item?.po_number}</TableCell>
-                        <TableCell>{item?.po_date}</TableCell>
-                        <TableCell>{item?.status}</TableCell>
-                        <TableCell>{item?.bill_to_company}</TableCell>
-                        <TableCell>{item?.total_value_of_po}</TableCell>
-                        <TableCell><Button onClick={()=>{handleOpen(item?.childTable)}}>View</Button></TableCell>
-                        </TableRow>
-                    ))
-                }
+            {
+              table?.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell>{item?.po_number}</TableCell>
+                  <TableCell>{item?.po_date}</TableCell>
+                  <TableCell>{item?.status}</TableCell>
+                  <TableCell>{item?.bill_to_company}</TableCell>
+                  <TableCell>{item?.total_value_of_po}</TableCell>
+                  <TableCell><Button onClick={() => { handleOpen(item?.childTable) }}>View</Button></TableCell>
+                </TableRow>
+              ))
+            }
           </TableBody>
         </Table>
       </div>
-        {
-            isDialog &&
-            <PopUp classname="w-full md:max-w-[60vw] md:max-h-[60vh] h-full overflow-y-scroll" handleClose={handleClose}>
+      {
+        isDialog &&
+        <PopUp classname="w-full md:max-w-[60vw] md:max-h-[60vh] h-full overflow-y-scroll" handleClose={handleClose}>
           <h1 className="pl-5">Purchase Inquiry Items</h1>
           <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
             <Table className=" max-h-40 overflow-y-scroll overflow-x-scroll">
@@ -126,10 +125,10 @@ const ViewAllPOChanges = () => {
         </PopUp>
       }
 
-      </div>
-      
+    </div>
+
   )
-  }
+}
 
 
 export default ViewAllPOChanges

@@ -1312,6 +1312,9 @@ type SapErrorVendorOnboarding = {
   rejected_by: string;
   rejected_by_designation: string;
   reason_for_rejection: string;
+  sap_error_message: string;
+  sap_error_mail_sent: 0 | 1;
+  
 };
 
 type SapErrorVendorOnboardingResponse = {

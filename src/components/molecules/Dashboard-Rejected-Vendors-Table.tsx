@@ -191,7 +191,18 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                       {item?.onboarding_form_status}
                     </div>
                   </TableCell>
-                  <TableCell>{item?.rejected_by_designation}</TableCell>
+                  {/* <TableCell>{item?.rejected_by_designation}</TableCell> */}
+                  <TableCell
+                    className="max-w-[180px] truncate whitespace-nowrap text-sm"
+                    title={item?.rejected_by_designation ?? ""}
+                  >
+                    {(() => {
+                      const designation = item?.rejected_by_designation;
+                      if (!designation) return "";
+                      const parts = designation.split(/by\s+/i);
+                      return parts.length > 1 ? parts.pop()?.trim() : designation;
+                    })()}
+                  </TableCell>
                   {/* <TableCell>{item?.purchase_t_approval}</TableCell> */}
                   {/* <TableCell>{item?.purchase_h_approval}</TableCell> */}
                   {/* <TableCell>{item?.accounts_t_approval}</TableCell> */}

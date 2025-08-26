@@ -148,6 +148,9 @@ const API_END_POINTS = {
   asasendremindermail: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.send_asa_reminder_email`,
   asaonboardedvendorlist: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.approved_vendor_list`,
 
+  // All Approved Vendors Speicfy Detail API
+  allvendorsdetails: `${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.vendors_brief_details`,
+
   // Company Filter API for Purchase Enquiry and Purchase Requisition
   filterpurchasegroup: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.filter_purchase_group`,
   filterstoragelocation: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_store_location`,

@@ -16,21 +16,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/atoms/select";
-import { tableData } from "@/src/constants/dashboardTableData";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { Input } from "../atoms/input";
 import { DashboardTableType, PurchaseRequisition, RFQTable, TPRInquiryTable } from "@/src/types/types";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import Cookies from "js-cookie";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "./Pagination";
+
 type Props = {
   dashboardTableData?: DashboardTableType["sapErrorDashboardData"]
   companyDropdown: { name: string }[]
 }
-
 
 const useDebounce = (value: any, delay: any) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -48,33 +53,35 @@ const useDebounce = (value: any, delay: any) => {
 };
 
 const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) => {
+  console.log("SAP ERROR TABLE___>", dashboardTableData);
   const [total_event_list, settotalEventList] = useState(0);
   const [record_per_page, setRecordPerPage] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [table, setTable] = useState<DashboardTableType["sapErrorDashboardData"]["sap_error_vendor_onboarding"]>(dashboardTableData?.sap_error_vendor_onboarding || []);
-  const [search, setSearch] = useState<string>("");
-  const debouncedSearchName = useDebounce(search, 300);
-
+  const [searchVendor, setSearchVendor] = useState<string>("");
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [remarks, setRemark] = useState("");
+  const debouncedSearchName = useDebounce(searchVendor, 300);
 
   useEffect(() => {
     fetchTable();
-  }, [debouncedSearchName,currentPage])
+  }, [debouncedSearchName, currentPage])
 
   const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-      const { name, value } = e.target;
-      console.log(value, "this is search name")
-      setSearch(value);
-    }
-
+    const { name, value } = e.target;
+    console.log(value, "this is search name")
+    setSearchVendor(value);
+  };
 
   const fetchTable = async () => {
     const dashboardTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.sapApiDashboardDetails}?page_no=${currentPage}&company_name=${search}`,
+      url: `${API_END_POINTS?.sapApiDashboardDetails}?page_no=${currentPage}&vendor_name=${debouncedSearchName}`,
       method: "GET",
     });
     if (dashboardTableDataApi?.status == 200) {
       setTable(dashboardTableDataApi?.data?.message?.sap_error_vendor_onboarding);
-      console.log(dashboardTableDataApi?.data?.message?.sap_error_vendor_onboarding,"this is data")
+      console.log(dashboardTableDataApi?.data?.message?.sap_error_vendor_onboarding, "this is data")
       settotalEventList(dashboardTableDataApi?.data?.message?.total_count);
       // setRecordPerPage(dashboardPRTableDataApi?.data?.message?.rejected_vendor_onboarding?.length);
       setRecordPerPage(5)
@@ -82,14 +89,31 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
   };
 
 
-  const handleEmailSent = async(onboardingId:string)=>{
-    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.sapErrorSendEmail,method:"POST",params:{doctype:"Vendor Onboarding",docname:onboardingId}});
-    if(response?.status == 200){
-      alert("email sent successfully");
-    }else{
+  const handleEmailSent = async () => {
+    if (!selectedId) return;
+
+    const response: AxiosResponse = await requestWrapper({
+      url: API_END_POINTS?.sapErrorSendEmail,
+      method: "POST",
+      params: { doctype: "Vendor Onboarding", docname: selectedId, remarks },
+    });
+
+    if (response?.status == 200) {
+      alert("Email Sent Successfully to IT Team!!!")
+      setTable(prev =>
+        prev.map(item =>
+          item.name === selectedId
+            ? { ...item, sap_error_mail_sent: 1 }
+            : item
+        )
+      );
+      setOpenDialog(false);
+      setRemark("");
+      setSelectedId(null);
+    } else {
       alert("failed to send email");
     }
-  }
+  };
 
   return (
     <>
@@ -100,50 +124,32 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
             SAP Error Logs
           </h1>
           <div className="flex gap-4">
-            <Input placeholder="Search..." onChange={(e)=>{handlesearchname(e)}}/>
+            <Input placeholder="Search..." value={searchVendor} onChange={(e) => { handlesearchname(e) }} />
             {/* <Select>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Select Company" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup className="w-full">
-            {
-              companyDropdown?.map((item,index)=>(
-                <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-              ))
-            }
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-      <Select>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Status" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectItem value="apple">Apple</SelectItem>
-            <SelectItem value="banana">Banana</SelectItem>
-            <SelectItem value="blueberry">Blueberry</SelectItem>
-            <SelectItem value="grapes">Grapes</SelectItem>
-            <SelectItem value="pineapple">Pineapple</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select> */}
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select Company" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup className="w-full">
+                  {
+                    companyDropdown?.map((item, index) => (
+                      <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                    ))
+                  }
+                </SelectGroup>
+              </SelectContent>
+            </Select> */}
           </div>
         </div>
         <div className="overflow-y-scroll max-h-[55vh]">
           <Table className="">
-            {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                 <TableHead className="">Sr No.</TableHead>
                 <TableHead className="text-center">Ref No.</TableHead>
-                {/* <TableHead className="text-center">Cart</TableHead> */}
                 <TableHead className="text-center">Vendor Name</TableHead>
                 <TableHead className="text-center">Company</TableHead>
-                <TableHead className="text-center">Purchase Team Approval</TableHead>
-                <TableHead className="text-center">Purchase Head Approval</TableHead>
-                <TableHead className="text-center">Accounts Tema Approval</TableHead>
+                <TableHead className="text-center">SAP Error Message</TableHead>
                 <TableHead className={`text-center`}>Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -155,27 +161,21 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
                     <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.vendor_name}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.company_name}</TableCell>
-                    <TableCell className="text-nowrap text-center">{item?.purchase_t_approval}</TableCell>
-                    <TableCell className="text-nowrap text-center">{item?.purchase_h_approval}</TableCell>
-                    <TableCell className="text-nowrap text-center">{item?.accounts_t_approval}</TableCell>
-                    <TableCell className="text-nowrap text-center"><Button onClick={()=>{handleEmailSent(item?.name)}}>Send Email</Button></TableCell>
-                    {/* <TableCell>
-              <div
-                className={`px-2 py-3 rounded-xl ${item?.status === "pending"
-                    ? "bg-yellow-100 text-yellow-800"
-                    : item?.status === "approved"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
-              >
-                {item?.status}
-              </div>
-            </TableCell>
-            <TableCell>{item?.purchase_team}</TableCell>
-            <TableCell>{item?.purchase_head}</TableCell>
-            <TableCell>{item?.accounts_team}</TableCell>
-            <TableCell><Link href={`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-            <TableCell className="text-right">{item?.qms_form}</TableCell> */}
+                    <TableCell className="text-nowrap text-center">{item?.sap_error_message}</TableCell>
+                    <TableCell className="text-nowrap text-center">
+                      {item?.sap_error_mail_sent === 1 ? (
+                        <span className="text-green-600 font-semibold">Email Sent to IT Team</span>
+                      ) : (
+                        <Button
+                          onClick={() => {
+                            setSelectedId(item?.name);
+                            setOpenDialog(true);
+                          }}
+                        >
+                          Send Email
+                        </Button>
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
@@ -186,10 +186,30 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
                 </TableRow>
               )}
             </TableBody>
-
           </Table>
         </div>
       </div>
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Remark before sending</DialogTitle>
+          </DialogHeader>
+          <Textarea
+            placeholder="Write your remark here..."
+            value={remarks}
+            onChange={e => setRemark(e.target.value)}
+          />
+          <DialogFooter className="mt-4 flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setOpenDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleEmailSent} disabled={!remarks.trim()}>
+              Send Email
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
     </>
   );
