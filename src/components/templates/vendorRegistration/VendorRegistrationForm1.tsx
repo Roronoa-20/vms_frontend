@@ -183,7 +183,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
             </div>
             <div className="col-span-3 flex flex-col justify-end">
               {/* <h1 className="text-[12px] font-normal text-[#626973] pb-3">Mobile No.</h1> */}
-              <Input placeholder="Enter Mobile Number" name="mobile_number" maxLength={10} required value={formData?.mobile_number ?? ""}  onChange={(e) => handlefieldChange(e)}/>
+              <Input placeholder="Enter Mobile Number" name="mobile_number" required value={formData?.mobile_number ?? ""}  onChange={(e) => handlefieldChange(e)}/>
             </div>
           </div>
         </div>

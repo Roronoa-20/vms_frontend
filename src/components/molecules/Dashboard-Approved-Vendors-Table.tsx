@@ -210,11 +210,6 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
         <PopUp handleClose={handleClose} classname="overflow-y-scroll">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>State</TableHead>
-                <TableHead>GST No</TableHead>
-                <TableHead>Vendor Code</TableHead>
-              </TableRow>
             </TableHeader>
             <TableBody>
               {selectedVendorCodes?.map((company) => (
@@ -222,6 +217,11 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                   <TableRow className="bg-gray-700 hover:bg-gray-700 text-white font-semibold">
                     <TableCell colSpan={3}>Company Code: {company.company_code}</TableCell>
                   </TableRow>
+              <TableRow>
+                <TableHead>State</TableHead>
+                <TableHead>GST No</TableHead>
+                <TableHead>Vendor Code</TableHead>
+              </TableRow>
                   {company.vendor_codes.map((vendor, vIdx) => (
                     <TableRow
                       key={vIdx}
