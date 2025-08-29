@@ -138,7 +138,6 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
     const handleClose = () => {
         setIsDialog(false);
     }
-console.log(exportCountry,"exportCountry")
     return (
         <div className='bg-white h-full w-full pb-6'>
             <div className='flex justify-between items-center pr-4'>
