@@ -11,7 +11,7 @@ interface Props {
     setFiles: React.Dispatch<React.SetStateAction<Record<string, File | null>>>;
 }
 
-//Matefial RFQ current date
+// RFQ current date
 const today = new Date().toISOString().split("T")[0];
 
 const MaterialRFQFormFields = ({ formData, setFormData, Dropdown, setFiles, files }: Props) => {
