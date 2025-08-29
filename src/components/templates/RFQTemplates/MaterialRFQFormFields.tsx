@@ -2,6 +2,7 @@ import React from 'react'
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from "@/components/ui/select";
 import { DropdownDataMaterial } from './MaterialRFQ';
+import { useEffect } from 'react';
 interface Props {
     formData: Record<string, any>;
     setFormData: React.Dispatch<React.SetStateAction<Record<string, any>>>;
@@ -9,6 +10,10 @@ interface Props {
     files: Record<string, File | null>;
     setFiles: React.Dispatch<React.SetStateAction<Record<string, File | null>>>;
 }
+
+// RFQ current date
+const today = new Date().toISOString().split("T")[0];
+
 const MaterialRFQFormFields = ({ formData, setFormData, Dropdown, setFiles, files }: Props) => {
 
     const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -18,7 +23,7 @@ const MaterialRFQFormFields = ({ formData, setFormData, Dropdown, setFiles, file
     const handleSelectChange = (value: string, field: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
-    const renderInput = (name: string, label: string, type = 'text') => (
+    const renderInput = (name: string, label: string, type = 'text',isdisabled?:boolean) => (
         <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 {label}
@@ -31,6 +36,7 @@ const MaterialRFQFormFields = ({ formData, setFormData, Dropdown, setFiles, file
                 className={'border-neutral-200'}
                 value={formData[name] || ''}
                 onChange={handleFieldChange}
+                disabled={isdisabled}
             />
         </div>
     );
@@ -87,6 +93,14 @@ const MaterialRFQFormFields = ({ formData, setFormData, Dropdown, setFiles, file
             </Select>
         </div>
     );
+
+    //RFQ date
+        useEffect(() => {
+            setFormData((prev) => ({ ...prev, rfq_date: formData?.rfq_date?formData?.rfq_date:today }));
+          }, [today,formData?.rfq_date]);
+        
+          console.log(formData, "formData");
+    
     return (
         <div>
             <div className="grid grid-cols-3 gap-6 p-5">
@@ -98,7 +112,7 @@ const MaterialRFQFormFields = ({ formData, setFormData, Dropdown, setFiles, file
                     (item) => `${item.vendor_type_name}`,
                     true
                 )}
-                {renderInput('rfq_date', 'RFQ Date', 'date')}
+                {renderInput('rfq_date', 'RFQ Date', 'date',true)}
                 {renderSelect(
                     'company_name',
                     'Company Name',
