@@ -70,7 +70,7 @@ export const Form5 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
       <div style={{ boxShadow: '0px 0px 5px 5px rgba(0, 0, 0, 0.05)' }} className='space-y-10'>
         <div className="bg-white text-black px-4 pb-8 pt-4 mx-auto border border-gray-300">
           <Header />
-          <section className='ml-8 space-y-2 z-[50] relative text-justify text-[16px]'>
+          <section className='ml-8 space-y-2 z-[50] text-justify text-[16px]'>
             <h1 className='font-bold border-b border-black w-fit'>Authorization</h1>
             <div className='space-y-2 text-justify pr-16'>
               <p>

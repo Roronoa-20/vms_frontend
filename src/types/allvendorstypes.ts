@@ -24,6 +24,7 @@ export interface VendorOnboarding {
   company_details: CompanyDetails;
   payment_details_data: PaymentDetailsData;
   vendor_master: VendorMaster;
+  registered_for_multi_companies: 0 | 1;
 }
 
 /* ------------ Company & Vendor Codes ------------ */

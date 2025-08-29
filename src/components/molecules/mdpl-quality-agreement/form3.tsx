@@ -8,26 +8,9 @@ const form3 = () => {
         <div className="space-y-[32px] flex flex-col justify-between min-h-[80vh]">
             <div style={{ boxShadow: '0px 0px 5px 5px rgba(0, 0, 0, 0.05)' }} className='space-y-10' >
                 <div className="bg-white text-black px-4 pb-8 pt-4 mx-auto border border-gray-300">
-
-                    {/* START HEADER SECTION  */}
-                    {/* <section className="grid grid-cols-3 items-center">
-                            <div className="relative w-[130px] h-[100px]">
-                                <Image
-                                    src="/images/Meril-Diagnostics.svg"
-                                    alt="Diagnostics logo"
-                                    fill
-                                    priority
-                                    sizes="auto"
-                                />
-                            </div>
-                            <h1 className="text-center text-lg font-semibold text-[10px] md:text-[13px] xl:text-[19px] leading-5">
-                                Supplier Quality Agreement
-                            </h1>
-                        </section> */}
-
                     <Header />
                     {/* Start body  */}
-                    <section className='px-8 ml-8 mt-2 space-y-2 z-[50] relative text-justify text-[16px]'>
+                    <section className='px-8 ml-8 mt-2 space-y-2 z-[50] text-justify text-[16px]'>
                         <div className='space-x-3 flex'>
                             <span className='text-bold'>-</span>
                             <span className='leading-relaxed'>Information required by law to be disclosed, but only to the persons and to the is ougo entes the deal perein are ay such vegumen elgare
@@ -54,7 +37,7 @@ const form3 = () => {
                     </section>
 
                     {/* start General section  */}
-                    <section className='ml-8 space-y-2 z-[50] relative text-justify text-[16px]'>
+                    <section className='ml-8 space-y-2 z-[50] text-justify text-[16px]'>
                         <h1 className='font-bold border-b border-black w-fit mt-6'>5. General</h1>
                         <div className='ml-8 space-y-2 text-justify pr-16'>
                             <div className='space-x-3 flex'>

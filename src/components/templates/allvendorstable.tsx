@@ -10,7 +10,8 @@ import {
 } from "@/src/components/atoms/table";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { FileText } from "lucide-react";
+import { FileText, CheckSquare, Square } from "lucide-react";
+
 
 interface Props {
     vendors: VendorOnboarding[];
@@ -33,6 +34,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                     return {
                         name: vendor.name,
                         ref_no: vendor.ref_no,
+                        multiple_company: vendor.registered_for_multi_companies,
                         company_code: c.company_code,
                         vendor_code: v.vendor_code || "N.A.",
                         vendor_name: vendor.vendor_master.vendor_name || "N.A.",
@@ -47,8 +49,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                         trc_certificate_no: vendor.document_details_data?.trc_certificate_no || "N.A.",
                         msme_type: vendor.document_details_data?.msme_enterprise_type || "N.A.",
                         udyam_no: vendor.document_details_data?.udyam_number || "N.A.",
-                        enterprise_reg_no:
-                            vendor.document_details_data?.enterprise_registration_number || "N.A.",
+                        enterprise_reg_no: vendor.document_details_data?.enterprise_registration_number || "N.A.",
                         iec_code: vendor.document_details_data?.iec || "N.A.",
                         bank_name: vendor.payment_details_data?.bank_name || "N.A.",
                         ifsc_code: vendor.payment_details_data?.ifsc_code || "N.A.",
@@ -89,6 +90,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
             <TableHeader>
                 <TableRow className="bg-[#a4c0fb] text-[14px] hover:bg-[#a4c0fb]">
                     <TableHead className="text-black text-center whitespace-nowrap">Sr. No.</TableHead>
+                    <TableHead className="text-black text-center">Multi-Company?</TableHead>
                     <TableHead className="text-black text-center whitespace-nowrap">Company Code</TableHead>
                     <TableHead className="text-black text-center whitespace-nowrap">Vendor Code</TableHead>
                     <TableHead className="text-black text-center whitespace-nowrap">Vendor Name</TableHead>
@@ -109,12 +111,20 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                     <TableHead className="text-black text-center whitespace-nowrap">IFSC Code</TableHead>
                     <TableHead className="text-black text-center whitespace-nowrap">Bank File</TableHead>
                     <TableHead className="text-black text-center whitespace-nowrap">View Details</TableHead>
+                    <TableHead className="text-black text-center whitespace-nowrap">Extend (Copy to  other company)</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {rows.map((row, index) => (
                     <TableRow key={`${row.company_code}-${row.vendor_code}-${index}`}>
                         <TableCell className="text-center whitespace-nowrap">{index + 1}</TableCell>
+                        <TableCell className="text-center">
+                            {row.multiple_company === 1 ? (
+                                <CheckSquare className="w-4 h-4 text-blue-600 mx-auto" />
+                            ) : (
+                                <Square className="w-4 h-4 text-gray-400 mx-auto" />
+                            )}
+                        </TableCell>
                         <TableCell className="text-center whitespace-nowrap">{renderValue(row.company_code)}</TableCell>
                         <TableCell className="text-center whitespace-nowrap">{renderValue(row.vendor_code)}</TableCell>
                         <TableCell className="text-center whitespace-nowrap">{renderValue(row.vendor_name)}</TableCell>
@@ -137,6 +147,11 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                         <TableCell>
                             <Button onClick={() => handleView(row.ref_no, row.name)} variant={"outline"}>
                                 View Details
+                            </Button>
+                        </TableCell>
+                        <TableCell className="text-center">
+                            <Button variant={"outline"}>
+                                Copy
                             </Button>
                         </TableCell>
                     </TableRow>
