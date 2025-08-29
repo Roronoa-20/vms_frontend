@@ -141,7 +141,6 @@ export const LogisticsExportRFQFormFields = ({
     useEffect(() => {
         setFormData((prev) => ({ ...prev, rfq_date_logistic: formData?.rfq_date_logistic ? formData?.rfq_date_logistic : today }));
     }, [today, formData?.rfq_date_logistic]);
-console.log(Dropdown?.port_of_loading,"Dropdown?.port_of_loading")
     return (
         <div>
             <div className="grid grid-cols-3 gap-6 p-5">
@@ -169,7 +168,7 @@ console.log(Dropdown?.port_of_loading,"Dropdown?.port_of_loading")
                 </div>
                 {renderInput("sr_no", "Sr No.")}
                 {renderInput("rfq_cutoff_date_logistic", "RFQ CutOff", "datetime-local")}
-                {renderInput("rfq_date_logistic", "RFQ Date", "date",true)}
+                {renderInput("rfq_date_logistic", "RFQ Date", "date", true)}
                 {renderSelect("mode_of_shipment", "Mode of Shipment", Dropdown?.mode_of_shipment, (i) => i.name, (i) => i.name)}
                 {renderSelect("country", "Country", exportCountry, (i) => i.country, (i) => `${i.country} - ${i.port_code} - ${i.port_name}`)}
                 {renderInput("destination_port", "Destination Port", "text", true)}
@@ -209,4 +208,5 @@ console.log(Dropdown?.port_of_loading,"Dropdown?.port_of_loading")
                 {renderTextarea("remarks", "Remarks")}
             </div>
         </div>
-    )}
+    )
+}
