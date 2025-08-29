@@ -14,7 +14,7 @@ interface Props {
     RFQData:RFQDetails
 }
 const PublicLogisticsImportQuatationForm = ({ Dropdown, token,RFQData }: Props) => {
-    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Logistic Vendor",mode_of_shipment:RFQData.mode_of_shipment });
+    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "logistics Vendor",mode_of_shipment:RFQData.mode_of_shipment });
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const router = useRouter()
 
@@ -27,7 +27,6 @@ const PublicLogisticsImportQuatationForm = ({ Dropdown, token,RFQData }: Props) 
         console.log(fullData, "fullData")
         formdata.append('data', JSON.stringify(fullData));
         formdata.append("token", token)
-        console.log(formdata, "formdata")
         // Append file only if exists
         if (uploadedFiles) {
             uploadedFiles?.forEach((file) => {

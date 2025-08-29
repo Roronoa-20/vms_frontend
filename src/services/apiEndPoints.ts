@@ -115,6 +115,8 @@ const API_END_POINTS = {
   ProcessToken: `${url}/api/method/vms.purchase.doctype.request_for_quotation.request_for_quotation.process_token`,
   SubmitPublicQuatation: `${url}/api/method/vms.APIs.quotation.create_quotation.create_or_update_quotation_non_onboarded`,
 
+  // Amend API
+  AmendAPI: `${url}/api/method/vms.APIs.vendor_onboarding.onboarding_amendment.create_vendor_onboarding_amendment`,
 
   AllGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_all_grn_details`,
   SingleGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_grn_details_of_grn_number`,
@@ -133,6 +135,22 @@ const API_END_POINTS = {
   submitPOItems: `${url}/api/method/vms.APIs.purchase_api.purchase_order.update_purchase_team_remarks`,
   POItemsApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_order.update_vendor_approval_status`,
 
+  // ASA Form API:
+  getASAFormSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.get_data_ann_ass_form`,
+  asaformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_annual_ass_form`,
+  asagrovernanceformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_gov_asa_form`,
+  asasocialformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_social_asa_form`,
+  asaenvformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_env_asa_form`,
+  asavendorListdashboard: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.asa_dashboard`,
+  asaonboardedvendorcount: `${url}//api/method/vms.APIs.assessment_apis.asa_dashboard.approved_vendor_count`,
+  asapendingVendorcount: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.pending_asa_count`,
+  asapendingVendorList: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.pending_asa_vendor_list`,
+  asasendremindermail: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.send_asa_reminder_email`,
+  asaonboardedvendorlist: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.approved_vendor_list`,
+
+  // All Approved Vendors Speicfy Detail API
+  allvendorsdetails: `${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.vendors_brief_details`,
+
   // Company Filter API for Purchase Enquiry and Purchase Requisition
   filterpurchasegroup: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.filter_purchase_group`,
   filterstoragelocation: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.filter_store_location`,
@@ -148,7 +166,15 @@ const API_END_POINTS = {
   getAllPOChangesTable: `${url}/api/method/vms.APIs.purchase_api.po_early_deliver_get.filtering_po_earlydel_details`,
   getPONumberDropdown: `${url}/api/method/vms.APIs.purchase_api.po_early_deliver_get.filtering_po_details`,
   sendPOEmailVendor: `${url}/api/method/vms.APIs.purchase_api.send_po_to_pr.send_po_to_pr`,
-  verifyNewVendor: `${url}/api/method/vms.APIs.req_for_quotation.rfq.check_duplicate_vendor`
+  verifyNewVendor: `${url}/api/method/vms.APIs.req_for_quotation.rfq.check_duplicate_vendor`,
+
+  sapApiDashboardDetails:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.sap_error_vendor_details`,
+  sapErrorSendEmail:`${url}/api/method/vms.APIs.sap.send_sap_error_email.send_sap_error_email`,
+  dashboardPendingVendorsAccounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.pending_vendor_details_by_accounts`,
+  dashboardOnboardedVendorsAccounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.approved_vendor_details_by_accounts`,
+  dashboardRejectedVendorsAccounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.rejected_vendor_details_by_accounts`,
+  dashboardSapErrorAcounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.sap_error_vendor_details_by_accounts`,
+  bankProofByPurchaseTeam:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`
 };
 
 export default API_END_POINTS;

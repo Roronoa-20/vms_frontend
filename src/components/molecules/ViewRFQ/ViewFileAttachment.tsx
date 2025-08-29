@@ -22,7 +22,7 @@ const ViewFileAttachment = ({ RFQData }: Props) => {
                 <Table className="">
                     <TableHeader className="text-center">
                         <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                            <TableHead className="">Sr No.</TableHead>
+                            <TableHead className="text-center">Sr No.</TableHead>
                             <TableHead className="text-center">File Name</TableHead>
                             <TableHead className="text-center">View</TableHead>
                         </TableRow>
@@ -33,7 +33,7 @@ const ViewFileAttachment = ({ RFQData }: Props) => {
                                 <TableRow key={index}>
                                     <TableCell className="font-medium text-center">{index + 1}</TableCell>
                                     <TableCell className="text-nowrap text-center">{item?.file_name}</TableCell>
-                                    <TableCell className="text-nowrap text-center"><Link href={`${item?.file_url}`} target='_blank'><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
+                                    <TableCell className="text-nowrap text-center"><Link href={`${item?.url}`} target='_blank'><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
                                 </TableRow>
                             ))
                         ) : (

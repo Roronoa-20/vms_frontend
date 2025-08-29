@@ -45,8 +45,7 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
     useEffect(() => {
         const fetchVendorTableData = async (rfq_type: string) => {
             setSelectedRows({ vendors: [] })
-            console.log(rfq_type, "rfq_type in table code")
-            const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&service_provider=${formData?.service_provider}`
+            const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&service_provider=${formData?.service_provider}&company=${formData?.company_name_logistic}`
             const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
             if (response?.status == 200) {
                 setVendorList(response.data.message)
@@ -56,7 +55,7 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
             }
         }
         if (formData?.service_provider != "Select" && formData?.service_provider) {
-            fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Logistic Vendor");
+            fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "logistics Vendor");
         }
     }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider]);
 
@@ -76,7 +75,6 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
         if (formData?.service_provider == "All Service Provider" || formData?.service_provider == "Select" || formData?.service_provider == "Premium Service Provider") {
             setSelectedRows({ vendors: [] })
         }
-        console.log({ ...formData, vendors: selectedRows.vendors,newVendorTable }, "submit data")
         const url = `${API_END_POINTS?.ReviseRFQ}`;
         const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...formData, non_onboarded_vendors: newVendorTable, vendors: selectedRows.vendors } }, method: "POST" });
         if (response?.status == 200) {

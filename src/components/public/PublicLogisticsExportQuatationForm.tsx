@@ -14,7 +14,7 @@ interface Props {
     RFQData:RFQDetails;
 }
 const PublicLogisticsExportQuatationForm = ({ Dropdown, token}: Props) => {
-    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Logistic Vendor" });
+    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "logistics Vendor" });
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const router = useRouter()
     const handleSubmit = async () => {
@@ -23,7 +23,6 @@ const PublicLogisticsExportQuatationForm = ({ Dropdown, token}: Props) => {
             ...formData,
         };
         // Append JSON data as a string under key 'data'
-        console.log(fullData, "fullData")
         formdata.append('data', JSON.stringify(fullData));
         formdata.append("token", token)
         // Append file only if exists

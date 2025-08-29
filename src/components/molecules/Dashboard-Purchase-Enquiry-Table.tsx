@@ -79,7 +79,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
 
   const fetchTable = async () => {
     const dashboardPurchaseEnquiryTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.prInquiryDashboardTable}?usr=${user}&company=${selectedCompany}&refno=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
+      url: `${API_END_POINTS?.prInquiryDashboardTable}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
       method: "GET",
     });
     if (dashboardPurchaseEnquiryTableDataApi?.status == 200) {

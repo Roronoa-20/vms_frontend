@@ -9,7 +9,7 @@ const Form7 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
   const currentTab = params.get("tabtype")?.toLowerCase() || "vendor_information";
   const { formData, handleChange } = useQMSForm(vendor_onboarding, currentTab);
 
-  
+
 
   return (
     <div className="space-y-[32px] flex flex-col justify-between min-h-[80vh]">
@@ -28,7 +28,10 @@ const Form7 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
                       placeholder='Write here'
                       name="contact_person_1"
                       value={formData.contact_person_1 || ""}
-                      onChange={e => handleChange('contact_person_1', e.target.value)}
+                      onChange={e => {
+                        handleChange('contact_person_1', e.target.value);
+                        localStorage.setItem("contact_person_1", e.target.value);
+                      }}
                     />
                   </div>
                   <div className='p-1'>
@@ -37,7 +40,10 @@ const Form7 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
                       placeholder='Write here'
                       name="contact_person_2"
                       value={formData.contact_person_2 || ""}
-                      onChange={e => handleChange('contact_person_2', e.target.value)}
+                      onChange={e => {
+                        handleChange('contact_person_2', e.target.value);
+                        localStorage.setItem("contact_person_2", e.target.value);
+                      }}
                     />
                   </div>
                 </div>

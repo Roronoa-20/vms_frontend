@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect } from "react";
 import Header from "@/src/components/molecules/mdpl-quality-agreement/header";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useQMSForm } from "@/src/hooks/useQMSForm";
@@ -36,6 +37,16 @@ export const Form6 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
       ],
     }));
   };
+
+  useEffect(() => {
+    const productsFromForm = formData?.products_in_qa || [];
+    if (productsFromForm.length > 0) {
+      localStorage.setItem("QAProductList", JSON.stringify(productsFromForm));
+      console.log("Saved QA Product List to localStorage:", productsFromForm);
+    }
+  }, [formData.products_in_qa]);
+
+
 
   return (
     <div className="space-y-[32px] flex flex-col justify-between min-h-[80vh]">

@@ -22,7 +22,6 @@ const handleDeleteRow = (indexToRemove: number) => {
         const updatedItems = prItems.filter((_, index) => index !== indexToRemove);
         setPrItems(updatedItems);
     };
-console.log(prItems,'prItems')
     return (
         <div>
             <h1 className='text-lg py-2 font-semibold'>Added Items</h1>

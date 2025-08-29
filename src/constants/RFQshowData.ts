@@ -71,7 +71,7 @@ export const RFQservices: iteminterface[] = [{ label: "RFQ Type :", key: "rfq_ty
   { label: "RFQ Quantity :", key: "rfq_quantity" },
   { label: "Purchase Group :", key: "purchase_group" },
   { label: "Collection No. :", key: "collection_number" },
-  { label: "Quotation Deadline :", key: "quotation_deadline" },
+  { label: "Quotation Deadline :", key: "rfq_cutoff_date_logistic" },
   { label: "Storage Location :", key: "storage_location" },
   { label: "Bidding Person :", key: "bidding_person" },
   { label: "Quantity Unit :", key: "quantity_unit" },

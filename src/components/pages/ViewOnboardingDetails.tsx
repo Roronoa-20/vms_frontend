@@ -1,16 +1,16 @@
 import React from 'react'
 import OnboardingTab from '../molecules/OnboardingTab'
-import CompanyDetailForm from '../templates/vewOnboardingDetail/CompanyDetails'
-import CompanyAddress from '../templates/vewOnboardingDetail/CompanyAddress'
-import DocumentDetails from '../templates/vewOnboardingDetail/DocumentDetails'
-import PaymentDetail from '../templates/vewOnboardingDetail/PaymentDetail'
-import ContactDetail from '../templates/vewOnboardingDetail/ContactDetail'
-import ManufacturingDetail from '../templates/vewOnboardingDetail/ManufacturingDetail'
-import EmployeeDetail from '../templates/vewOnboardingDetail/EmployeeDetail'
-import MachineryDetail from '../templates/vewOnboardingDetail/MachineryDetail'
-import TestingFacility from '../templates/vewOnboardingDetail/TestingFacility'
-import ReputedPartners from '../templates/vewOnboardingDetail/ReputedPartners'
-import Certificate from '../templates/vewOnboardingDetail/Certificate'
+import CompanyDetailForm from '../templates/ViewOnboardingDetail/CompanyDetails'
+import CompanyAddress from '../templates/ViewOnboardingDetail/CompanyAddress'
+import DocumentDetails from '../templates/ViewOnboardingDetail/DocumentDetails'
+import PaymentDetail from '../templates/ViewOnboardingDetail/PaymentDetail'
+import ContactDetail from '../templates/ViewOnboardingDetail/ContactDetail'
+import ManufacturingDetail from '../templates/ViewOnboardingDetail/ManufacturingDetail'
+import EmployeeDetail from '../templates/ViewOnboardingDetail/EmployeeDetail'
+import MachineryDetail from '../templates/ViewOnboardingDetail/MachineryDetail'
+import TestingFacility from '../templates/ViewOnboardingDetail/TestingFacility'
+import ReputedPartners from '../templates/ViewOnboardingDetail/ReputedPartners'
+import Certificate from '../templates/ViewOnboardingDetail/Certificate'
 import { Button } from '../atoms/button'
 import { cookies } from 'next/headers'
 import API_END_POINTS from '@/src/services/apiEndPoints'
@@ -18,10 +18,10 @@ import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import { TbankNameDropdown, TcertificateCodeDropdown, TCompanyAddressDropdown, TcompanyDetailDropdown, TCurrencyDropdown, TdocumentDetailDropdown, TReconsiliationDropdown, TvendorOnboardingDetail, VendorOnboardingResponse } from '@/src/types/types'
 import ApprovalButton from '../molecules/ApprovalButton'
-import PurchaseDetails from '../templates/vewOnboardingDetail/PurchaseDetails'
-import InternationalDocumentDetails from '../templates/vewOnboardingDetail/InternationalDocumentDetails'
-import InternationalPaymentDetail from '../templates/vewOnboardingDetail/InternationalPaymentDetail'
-import InternationalCompanyAddress from '../templates/vewOnboardingDetail/InternationalCompanyAddress'
+import PurchaseDetails from '../templates/ViewOnboardingDetail/PurchaseDetails'
+import InternationalDocumentDetails from '../templates/ViewOnboardingDetail/InternationalDocumentDetails'
+import InternationalPaymentDetail from '../templates/ViewOnboardingDetail/InternationalPaymentDetail'
+import InternationalCompanyAddress from '../templates/ViewOnboardingDetail/InternationalCompanyAddress'
 
 interface Props {
   vendor_onboarding: any;
@@ -80,7 +80,7 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
   return (
     <div>
         <OnboardingTab onboarding_refno={vendorOnboardingRefno} refno={refno} />
-        <div className="flex px-10 justify-center gap-5 max-h-[70vh] w-full">
+        <div className="flex p-2 justify-center gap-5 max-h-[70vh] w-full">
         {/* form */}
         {tabType == "Company Detail" ? (
           // <CompanyDetailForm
@@ -90,6 +90,7 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
           //   OnboardingDetail={OnboardingDetail?.company_details_tab}
           // />
           <CompanyDetailForm
+          isAmendment={OnboardingDetail?.validation_check?.is_amendment}
           companyDetailDropdown={companyDetailDropdown}
           onboarding_refno={vendorOnboardingRefno}
           refno={refno}
@@ -99,38 +100,38 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
           />
         )
         : tabType == "Company Address" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
-          <InternationalCompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
+          <InternationalCompanyAddress isAmendment={OnboardingDetail?.validation_check?.is_amendment} companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
         )
         : tabType == "Company Address" ? (
-          <CompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
+          <CompanyAddress isAmendment={OnboardingDetail?.validation_check?.is_amendment} companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
         )
         : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
-          <InternationalDocumentDetails  ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
+          <InternationalDocumentDetails isAmendment={OnboardingDetail?.validation_check?.is_amendment}  ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
         )
         : tabType == "Document Detail" ? (
-          <DocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
+          <DocumentDetails isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
         ) 
         : tabType?.includes("Payment Detail") && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? ( 
-        <InternationalPaymentDetail ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab}/>
+        <InternationalPaymentDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab} isAccountTeam={OnboardingDetail?.validation_check?.register_by_account_team == 1?1:0} isBankProof={OnboardingDetail?.payment_details_tab?.bank_proof_upload_status}/>
         )
         : tabType?.includes("Payment Detail") ? ( 
-          <PaymentDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} company_name={OnboardingDetail?.company_details_tab?.company_name} OnboardingDetail={OnboardingDetail?.payment_details_tab}/>
+          <PaymentDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} company_name={OnboardingDetail?.company_details_tab?.company_name} OnboardingDetail={OnboardingDetail?.payment_details_tab} isAccountTeam={OnboardingDetail?.validation_check?.register_by_account_team == 1?1:0} isBankProof={OnboardingDetail?.payment_details_tab?.bank_proof_upload_status} />
         ) : tabType?.includes("Contact Detail") ? (
-          <ContactDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.contact_details_tab}/>
+          <ContactDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.contact_details_tab}/>
         ) : tabType == "Manufacturing Detail" ? (
-          <ManufacturingDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.manufacturing_details_tab}/>
+          <ManufacturingDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.manufacturing_details_tab}/>
         ) : tabType == "Employee Detail" ? (
-          <EmployeeDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.employee_details_tab}/>
+          <EmployeeDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.employee_details_tab}/>
         ) : tabType == "Machinery Detail" ? (
-          <MachineryDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.machinery_details_tab}/>
+          <MachineryDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.machinery_details_tab}/>
         ) : tabType == "Testing Facility" ? (
-          <TestingFacility ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.testing_details_tab}/>
+          <TestingFacility isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.testing_details_tab}/>
         ) : tabType == "Reputed Partners" ? (
-          <ReputedPartners ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.reputed_partners_details_tab}/>
+          <ReputedPartners isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.reputed_partners_details_tab}/>
         ) : tabType == "Certificate" ? (
-          <Certificate certificateCodeDropdown={certificateCodeDropdown?.certificate_names} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.certificate_details_tab}/>
+          <Certificate certificateCodeDropdown={certificateCodeDropdown?.certificate_names} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.certificate_details_tab} isAmendment={OnboardingDetail?.validation_check?.is_amendment}/>
         ) : tabType == "Purchase Detail"?(
-          <PurchaseDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.purchasing_details?.[0]} reconciliationDropdown={reconciliationDropdown} tabType={tabType} validation_check={OnboardingDetail?.validation_check}/>
+          <PurchaseDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.purchasing_details?.[0]} reconciliationDropdown={reconciliationDropdown} tabType={tabType} validation_check={OnboardingDetail?.validation_check} isPurchaseTeamBankFile={OnboardingDetail?.payment_details_tab?.bank_proof_by_purchase_team?.url} isAmendment={OnboardingDetail?.validation_check?.is_amendment}/>
         )
         : (
           ""

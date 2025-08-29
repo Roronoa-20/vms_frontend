@@ -54,7 +54,7 @@ export interface newVendorTable {
 }
 
 const LogisticsExportRFQ = ({ Dropdown }: Props) => {
-    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Logistic Vendor" });
+    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "logistics Vendor" });
     const [vendorSearchName, setVendorSearchName] = useState('')
     const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
     const [VendorList, setVendorList] = useState<VendorApiResponse>();
@@ -77,7 +77,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
             }
         }
         if (formData?.service_provider != "Select" && formData?.service_provider &&  formData?.company_name_logistic) {
-            fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Logistic Vendor");
+            fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "logistics Vendor");
         }
     }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider]);
     const [selectedRows, setSelectedRows] = useState<VendorSelectType>(
@@ -94,7 +94,6 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
         if (formData?.service_provider == "All Service Provider" || formData?.service_provider == "Select" || formData?.service_provider == "Premium Service Provider") {
             setSelectedRows({ vendors: [] })
         }
-        console.log({ ...formData, vendors: selectedRows.vendors }, "submit data")
         const url = `${API_END_POINTS?.CreateExportRFQ}`;
         const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...formData, logistic_type: "Export", non_onboarded_vendors: newVendorTable, vendors: selectedRows.vendors } }, method: "POST" });
         if (response?.status == 200) {

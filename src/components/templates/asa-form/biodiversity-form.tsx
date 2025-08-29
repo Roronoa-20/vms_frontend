@@ -1,69 +1,95 @@
 import YesNoNA from "@/src/components/common/YesNoNAwithFile";
 import { Button } from "@/components/ui/button"
-import { Biodiversity } from "@/src/types/asatypes";
+import { Biodiversity, GreenProducts } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useASAForm } from "@/src/hooks/useASAForm";
+import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+
 
 export default function BiodiversityForm() {
-    const [formData, setFormData] = useState<Biodiversity>({
-        question1: { selection: "", comment: "", file: null }
+  const searchParams = useSearchParams();
+  const vmsRefNo = searchParams.get("vms_ref_no") || "";
+  const { biodiversityForm, updateBiodiversityForm, submitEnvironmentForm, refreshFormData, updateGreenProductsForm } = useASAForm();
+
+  const handleSelectionChange = (name: string, selection: "Yes" | "No" | "NA" | "") => {
+    updateBiodiversityForm({
+      ...biodiversityForm,
+      [name]: {
+        ...biodiversityForm[name as keyof Biodiversity],
+        selection,
+      },
     });
+  };
 
-    // handlers
-    const handleSelectionChange = (name: string, selection: "yes" | "no" | "na") => {
-        setFormData((prev) => ({
-            ...prev,
-            [name]: {
-                ...prev[name as keyof Biodiversity],
-                selection,
-            },
-        }));
-    };
+  const handleCommentChange = (name: string, comment: string) => {
+    updateBiodiversityForm({
+      ...biodiversityForm,
+      [name]: {
+        ...biodiversityForm[name as keyof Biodiversity],
+        comment,
+      },
+    });
+  };
 
-    const handleCommentChange = (name: string, comment: string) => {
-        setFormData((prev) => ({
-            ...prev,
-            [name]: {
-                ...prev[name as keyof Biodiversity],
-                comment,
-            },
-        }));
-    };
+  const handleFileChange = (name: string, file: File | null) => {
+    updateBiodiversityForm({
+      ...biodiversityForm,
+      [name]: {
+        ...biodiversityForm[name as keyof Biodiversity],
+        file,
+      },
+    });
+  };
 
-    const handleFileChange = (name: string, file: File | null) => {
-        setFormData((prev) => ({
-            ...prev,
-            [name]: {
-                ...prev[name as keyof Biodiversity],
-                file,
-            },
-        }));
-    };
+  const handleSubmit = async () => {
+    await submitEnvironmentForm();
+    refreshFormData();
+  };
 
-    // routing
-    const router = useRouter()
-    const laborrightsandworkingconditions = () => {
-        router.push("/asaform/laborrightsandworkingconditions")
-    }
-    return (
-        <>
-            <div className="ml-6 mt-3 mr-6">
-                <div className="text-xl font-semibold">Biodiversity</div>
-                <div className="border-b border-gray-400"></div>
-                <div className="mt-6">
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                        Does the organization have a policy or commitment on biodiversity?
-                    </label>
-                    <YesNoNA
-                        name="question1"
-                        value={formData.question1}
-                        onSelectionChange={handleSelectionChange}
-                        onCommentChange={handleCommentChange}
-                        onFileChange={handleFileChange}
-                    />
-                    <Button className="bg-gray-900 hover:bg-gray-700 mt-3" onClick={laborrightsandworkingconditions}>Next</Button>
-                </div>
-            </div>
-        </>
-    )
+  const handleBack = useBackNavigation<GreenProducts>(
+    "GreenProductsForm",
+    updateGreenProductsForm,
+    "green_products",
+    vmsRefNo
+  );
+
+  return (
+    <div className="h-full">
+      <div className="p-3 bg-white shadow-md rounded-xl">
+        <div className="text-2xl font-bold text-gray-800 mb-2">Biodiversity</div>
+        <div className="border-b border-gray-400"></div>
+        <div className="space-y-6 p-3">
+
+          <YesNoNA
+            name="have_policy_on_biodiversity"
+            label="1. Does the organization have a policy or commitment on biodiversity?"
+            value={biodiversityForm.have_policy_on_biodiversity}
+            onSelectionChange={handleSelectionChange}
+            onCommentChange={handleCommentChange}
+            onFileChange={handleFileChange}
+          />
+          <div className="space-x-4 flex justify-end">
+            <Button
+              className="py-2.5"
+              variant="backbtn"
+              size="backbtnsize"
+              onClick={handleBack}
+            >
+              Back
+            </Button>
+            <Button
+              className="py-2.5"
+              variant="nextbtn"
+              size="nextbtnsize"
+              onClick={handleSubmit}
+            >
+              Submit & Next
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }

@@ -151,7 +151,7 @@ const CompanyAddress = ({
   };
 
   const handleBack = () => {
-    router.push(`/vendor-details-form?tabtype=Company%20Details&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    router.push(`/vendor-details-form?tabtype=Company%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   };
 
   const handleRowDelete = (index: number) => {

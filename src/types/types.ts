@@ -53,6 +53,11 @@ export type TcompanyNameBasedDropdown = {
         name: string,
         terms_of_payment_name: string,
         description: string
+      }[],
+      incoterms: {
+        name: string,
+        incoterm_name: string,
+        incoterm_code: string,
       }[]
     }
   }
@@ -140,6 +145,7 @@ type VendorTypeGroup = {
 };
 
 export type VendorOnboarding = {
+  accounts_head_approval:string,
   registered_by: string
   vendor_country: string
   company_vendor_codes: {
@@ -171,6 +177,7 @@ export type VendorOnboarding = {
   rejected: number;
   rejected_by: string | null;
   reason_for_rejection: string | null;
+  rejected_by_designation: string | null;
   payment_detail: string;
   document_details: string;
   certificate_details: string;
@@ -347,6 +354,34 @@ export type TvendorOnboardingDetail = {
   }
 }
 
+export type ASAForm = {
+  name: string;
+  owner: string;
+  creation: string;
+  modified: string;
+  vendor_ref_no: string;
+  vendor_name: string;
+  total_count: string;
+  overall_total_asa: string,
+  page_no: string,
+  page_length: string,
+  office_email_primary: string,
+  country: string,
+  mobile_number: string,
+  registered_date: string,
+  pending_asa_count: string,
+  approved_vendor_count: string,
+  company_vendor_codes: {
+    company_name: string,
+    company_code: string,
+    vendor_codes: {
+      state: string,
+      gst_no: string,
+      vendor_code: string,
+    }[]
+  }[]
+}
+
 export type TCompanyDetailForm = {
   ref_no: string,
   vendor_onboarding: string,
@@ -415,7 +450,7 @@ export type TbankNameDropdown = {
   message: {
     data: {
       name: string,
-      bank_name:string
+      bank_name: string
     }[]
   }
 }
@@ -430,6 +465,7 @@ export type TCurrencyDropdown = {
 }
 
 export type TPurchaseDetails = {
+  account_head_remarks:string
   account_group: string,
   company_name: string,
   incoterms: string,
@@ -442,10 +478,27 @@ export type TPurchaseDetails = {
   reconciliation_account: string,
   terms_of_payment: string
   account_team_remarks: string
-
+  pur_group_details: {
+    name: string,
+    description: string
+  },
+  term_payment_details: {
+    name: string,
+    description: string
+  },
+  company_details: {
+    name: string,
+    description: string
+  },
+  pur_org_details: {
+    name: string,
+    description: string
+  },
+  reconciliation_details: {
+    name: string,
+    description: string,
+  },
 }
-
-
 
 export type VendorOnboardingResponse = {
   message: {
@@ -475,6 +528,12 @@ interface IvalidationChecks {
   mandatory_data_filled: number;
   purchase_head_undertaking: number;
   purchase_team_undertaking: number;
+  is_purchase_approve: number,
+  is_purchase_head_approve: number,
+  is_accounts_team_approve: number,
+  is_accounts_head_approve: number,
+  register_by_account_team:number,
+  is_amendment:number
 }
 
 type CompanyAddressDetails = {
@@ -507,10 +566,10 @@ type BillingAddress = {
   district: string;
   state: string;
   country: string;
-  international_city:string,
-  international_state:string,
-  international_country:string,
-  international_zipcode:string,
+  international_city: string,
+  international_state: string,
+  international_country: string,
+  international_zipcode: string,
   city_details: LocationDetail;
   district_details: LocationDetail;
   state_details: LocationDetail;
@@ -520,10 +579,10 @@ type BillingAddress = {
 type ShippingAddress = {
   street_1: string;
   street_2: string;
-  inter_manufacture_city:string,
-  inter_manufacture_state:string,
-  inter_manufacture_country:string,
-  inter_manufacture_zipcode:string,
+  inter_manufacture_city: string,
+  inter_manufacture_state: string,
+  inter_manufacture_country: string,
+  inter_manufacture_zipcode: string,
   manufacturing_pincode: string;
   manufacturing_city: string;
   manufacturing_district: string;
@@ -555,11 +614,11 @@ type MultipleLocationEntry = {
   parentfield: string;
   parenttype: string;
   doctype: string;
-  city:string,
-  state:string,
-  country:string,
-  pincode:string
-  zipcode:string
+  city: string,
+  state: string,
+  country: string,
+  pincode: string
+  zipcode: string
   city_details: LocationDetail;
   district_details: LocationDetail;
   state_details: LocationDetail;
@@ -584,7 +643,7 @@ type CertificateDetail = {
   name: string;
   idx: number;
   certificate_code: string;
-  valid_till: string; // format: YYYY-MM-DD
+  valid_till: string;
   certificate_attach: CertificateAttachment;
   fileDetail?: CertificateAttachment
 };
@@ -713,10 +772,11 @@ type DocumentDetailsTab = {
   form_10f_proof: FileAttachment,
   pe_certificate: FileAttachment,
   gst_table: any[]; // Adjust if GST structure is known,
-  company_gst_table:any[]
+  company_gst_table: any[]
 };
 
 type PaymentDetailsTab = {
+  bank_proof_upload_status:number,
   bank_name: string;
   ifsc_code: string;
   account_number: string;
@@ -864,11 +924,16 @@ export type dashboardCardData = {
   purchase_order_count: number;
   pr_count: number;
   cart_count: number,
-  overall_total_rfq: number
+  overall_total_rfq: number,
+  sap_error_vendor_count: number
+  sap_error_vendor_count_by_accounts_team:number,
+  rejected_vendor_count_by_accounts_team:number,
+  approved_vendor_count_by_accounts_team:number,
+  pending_vendor_count_by_accounts_team:number
 }
 
 export interface DashboardPOTableItem {
-  approved_from_vendor:boolean
+  approved_from_vendor: boolean
   name: string;
   creation: string;
   modified: string;
@@ -1206,10 +1271,88 @@ export interface DashboardTableType {
   rejected_vendor_onboarding: VendorOnboarding[];
   approved_vendor_onboarding: VendorOnboarding[];
   dispatch_vendor_onboarding: dispatch_vendor_onboarding[],
-  vendor_purchase_orders: TvendorPOTable[]
-  cart_details: CartDetails[]
-  qms_form: string
+  vendor_purchase_orders: TvendorPOTable[],
+  cart_details: CartDetails[],
+  qms_form: string,
+  asa_form_data: ASAFormResponse;
+  sapErrorDashboardData: SapErrorVendorOnboardingResponse
 }
+
+
+type SapErrorVendorOnboarding = {
+  accounts_head_approval:string
+  name: string;
+  ref_no: string;
+  company_name: string;
+  vendor_name: string;
+  onboarding_form_status: string;
+  awaiting_approval_status: string | null;
+  modified: string; // ISO timestamp string
+  purchase_t_approval: string;
+  accounts_t_approval: string;
+  purchase_h_approval: string;
+  mandatory_data_filled: 0 | 1;
+  purchase_team_undertaking: 0 | 1;
+  accounts_team_undertaking: 0 | 1;
+  purchase_head_undertaking: 0 | 1;
+  form_fully_submitted_by_vendor: 0 | 1;
+  sent_registration_email_link: 0 | 1;
+  rejected: 0 | 1;
+  data_sent_to_sap: 0 | 1;
+  expired: 0 | 1;
+  payee_in_document: 0 | 1;
+  check_double_invoice: 0 | 1;
+  gr_based_inv_ver: 0 | 1;
+  service_based_inv_ver: 0 | 1;
+  qms_form_filled: 0 | 1;
+  sent_qms_form_link: 0 | 1;
+  registered_by: string;
+  register_by_account_team: 0 | 1;
+  vendor_country: string;
+  rejected_by: string;
+  rejected_by_designation: string;
+  reason_for_rejection: string;
+  sap_error_message: string;
+  sap_error_mail_sent: 0 | 1;
+  
+};
+
+type SapErrorVendorOnboardingResponse = {
+  sap_error_vendor_onboarding: SapErrorVendorOnboarding[];
+  total_count: number;
+  page_no: number;
+  page_length: number;
+};
+
+export type ASAFormResponse = {
+  status: string;
+  message: string;
+  data: ASAForm[];
+  total_count: number;
+  overall_total_asa: number;
+  pending_asa_count: number,
+  approved_vendor_count: number,
+  page_no: number;
+  page_length: number;
+  pending_asa_vendors: ASAForm[];
+  approved_vendors: ASAForm[];
+  name: string,
+  vendor_name: string,
+  office_email_primary: string,
+  country: string,
+  mobile_number: string,
+  registered_date: string,
+  company_vendor_codes: {
+    company_name: string,
+    company_code: string,
+    vendor_codes: {
+      state: string,
+      gst_no: string,
+      vendor_code: string,
+    }[]
+  }[]
+};
+
 
 export type TReconsiliationDropdown = {
   message: {
@@ -1271,50 +1414,50 @@ export type TPRInquiryTable = {
 }
 
 export type CartDetails = {
-    asked_to_modify: boolean
-    ack_mail_to_user: number;
-    acknowledged_remarks: string | null;
-    cart_date: string | null;
-    cart_use: string; // e.g., "Individual Use"
-    category_type: string | null;
-    creation: string; // ISO timestamp
-    docstatus: number;
-    enquirer_status: string | null;
-    hod_approval_remarks: string | null;
-    hod_approval_status: string | null;
-    hod_approved: number;
-    idx: number;
-    mail_sent_to_hod: number;
-    mail_sent_to_purchase_team: number;
-    modified: string; // ISO timestamp
-    modified_by: string; // email
-    name: string; // e.g., "CART-25-06-20-00004"
-    naming_series: string; // e.g., "CART-.YY.-.MM.-.DD.-"
-    new_transfer_email: string | null;
-    owner: string; // email
-    purchase_team_approval_remarks: string | null;
-    purchase_team_approval_status: string | null;
-    purchase_team_approved: number;
-    purchase_team_status: string; // e.g., "Pending"
-    reason_for_rejection: string | null;
-    rejected: number;
-    rejected_by: string | null;
-    rejection_reason: string | null;
-    remarks: string | null;
-    representative_head_status: string; // e.g., "Pending"
-    sender_email: string | null;
-    sub_head_email: string | null;
-    sub_head_transfer_status: string; // e.g., "Not Transferred"
-    transfer_reason: string | null;
-    transfer_status: string; // e.g., "Not Transferred"
-    user: string; // email
-    _assign: string | null;
-    _comments: string | null;
-    _liked_by: string | null;
-    _user_tags: string | null;
-    hod: string,
-    purchase_team: string,
-    purchase_type: string,
+  asked_to_modify: boolean
+  ack_mail_to_user: number;
+  acknowledged_remarks: string | null;
+  cart_date: string | null;
+  cart_use: string; // e.g., "Individual Use"
+  category_type: string | null;
+  creation: string; // ISO timestamp
+  docstatus: number;
+  enquirer_status: string | null;
+  hod_approval_remarks: string | null;
+  hod_approval_status: string | null;
+  hod_approved: number;
+  idx: number;
+  mail_sent_to_hod: number;
+  mail_sent_to_purchase_team: number;
+  modified: string; // ISO timestamp
+  modified_by: string; // email
+  name: string; // e.g., "CART-25-06-20-00004"
+  naming_series: string; // e.g., "CART-.YY.-.MM.-.DD.-"
+  new_transfer_email: string | null;
+  owner: string; // email
+  purchase_team_approval_remarks: string | null;
+  purchase_team_approval_status: string | null;
+  purchase_team_approved: number;
+  purchase_team_status: string; // e.g., "Pending"
+  reason_for_rejection: string | null;
+  rejected: number;
+  rejected_by: string | null;
+  rejection_reason: string | null;
+  remarks: string | null;
+  representative_head_status: string; // e.g., "Pending"
+  sender_email: string | null;
+  sub_head_email: string | null;
+  sub_head_transfer_status: string; // e.g., "Not Transferred"
+  transfer_reason: string | null;
+  transfer_status: string; // e.g., "Not Transferred"
+  user: string; // email
+  _assign: string | null;
+  _comments: string | null;
+  _liked_by: string | null;
+  _user_tags: string | null;
+  hod: string,
+  purchase_team: string,
+  purchase_type: string,
 }
 
 export interface PurchaseRequisition {
@@ -1362,10 +1505,20 @@ export interface RFQTable {
     company_name: string,
     rfq_type: string,
     rfq_date: string,
-    logistic_type:string,
+    logistic_type: string,
     status: string,
-    unique_id:string,
-    creation:string
+    unique_id: string,
+    creation: string
   }[]
-  overall_total_rfq:string
+  overall_total_rfq: string
 }
+
+// export interface RFQTable {
+//   data: {
+//     name: string,
+//     company_name: string,
+//     rfq_type: string,
+//     rfq_date: string,
+//     status: string,
+//   }[]
+// }

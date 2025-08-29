@@ -65,17 +65,15 @@ const Page = async ({ searchParams }: PageProps): Promise<React.ReactElement> =>
             </div>
         );
     }
-    console.log(RFQData?.rfq_type, "RFQData?.rfq_type")
     return (
         <Suspense>
             <div className="px-4 py-6">
                 <h1 className="text-lg py-2">
                     RFQ RefNo: <span className="font-bold">{RFQData?.unique_id || ""}</span>
                 </h1>
-
                 <RFQBasicDetails RFQData={RFQData} />
                 <ViewFileAttachment RFQData={RFQData} />
-                {RFQData.rfq_type === "Logistic Vendor" && (
+                {RFQData.rfq_type === "logistics Vendor" && (
                     <>
                         {RFQData.logistic_type === "Export" ? (
                             <PublicLogisticsExportQuatationForm token={token} Dropdown={Dropdown} RFQData={RFQData} />

@@ -36,11 +36,11 @@ const ViewGRNEntry = ({ GRNData }: Props) => {
                 <div className="overflow-y-auto max-h-[55vh]">
                     <Table>
                         <TableHeader>
-                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] text-center">
-                                <TableHead className="text-center">Sr No.</TableHead>
-                                <TableHead className="text-center">GRN No.</TableHead>
-                                <TableHead className="text-center">GRN Date</TableHead>
-                                <TableHead className="text-center">Actions</TableHead>
+                            <TableRow className="bg-[#a4c0fb] text-[14px] hover:bg-[#a4c0fb]">
+                                <TableHead className="text-black text-center">Sr No.</TableHead>
+                                <TableHead className="text-black text-center">GRN No.</TableHead>
+                                <TableHead className="text-black text-center">GRN Date</TableHead>
+                                <TableHead className="text-black text-center">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
 

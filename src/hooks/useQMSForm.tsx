@@ -363,6 +363,12 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         });
 
     const handleSubmit = async () => {
+        const localProducts = JSON.parse(localStorage.getItem("QAProductList") || "[]");
+        const contactPerson1 = localStorage.getItem("contact_person_1") || "";
+        const contactPerson2 = localStorage.getItem("contact_person_2") || "";
+        const form5mdplqa = JSON.parse(localStorage.getItem("QualityAgreementSignatures") || "[]");
+        const agreementInfo = JSON.parse(localStorage.getItem("QualityAgreementInfo") || "{}");
+
         try {
             let qualityManualPayload = null;
             let qualityManualFile: File | null = null;
@@ -433,7 +439,10 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
             console.log("Formdata--->", qaList);
             console.log("Formdata Quaity Manual--->", qualityManualFile);
             console.log("Formdata--->", formData.products_in_qa);
-
+            console.log("Local Storage Form1--->",localProducts);
+            console.log("Local Storage Form5--->",form5mdplqa);
+            console.log("Local Storage Form6--->",agreementInfo);
+            console.log("Local Storage Form7--->",contactPerson1,contactPerson2);
 
             const payload = {
                 vendor_onboarding,
@@ -441,14 +450,16 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
                 data: {
                     ...formData,
                     ...companyPayload,
-                    // ...formDataRef.current,
+                    ...agreementInfo,
                     mdpl_qa_date: formData.date,
-                    // quality_manual: qualityManualFile,
-                    contact_person_1: formData.contact_person_1,
-                    contact_person_2: formData.contact_person_2,
+                    products_in_qa: localProducts,
+                    contact_person_1: contactPerson1,
+                    contact_person_2: contactPerson2,
                     mlspl_qa_list: qaList,
-                    products_in_qa: formData.products_in_qa || [],
-
+                    name_of_person: form5mdplqa.name_of_person,
+                    designation_of_person: form5mdplqa.designation_of_person,
+                    signed_date: form5mdplqa.signed_date,
+                    meril_signed_date: form5mdplqa.meril_signed_date,
                 },
                 attachments: {
                     ...(qualityManualPayload ? { quality_manual: qualityManualPayload } : {}),
@@ -464,6 +475,8 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
                     }
                     return acc;
                 }, {} as Record<string, string>),
+                ...(form5mdplqa?.person_signature ? { person_signature: form5mdplqa.person_signature } : {}),
+                ...(form5mdplqa?.meril_signature ? { meril_signature: form5mdplqa.meril_signature } : {})
             };
 
             console.log("Final Payload to backend:", payload);
@@ -480,6 +493,11 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
             console.log("REsult of API--->", result)
 
             if (result?.message?.status === "success") {
+                localStorage.removeItem("QAProductList");
+                localStorage.removeItem("contact_person_1");
+                localStorage.removeItem("contact_person_2");
+                localStorage.removeItem("QualityAgreementSignatures");
+                localStorage.removeItem("QualityAgreementInfo");
                 if (isLastTab) {
                     alert("This is the last tab and your QMS Form is fully submitted.");
                     window.location.href = "/qms-form/success";

@@ -80,7 +80,7 @@ const DashboardTotalVendorsTable = ({ dashboardTableData, companyDropdown }: Pro
 
   const fetchTable = async () => {
     const dashboardTotalVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.dashboardTotalVendorTableURL}?usr=${user}&company=${selectedCompany}&refno=${search}&page_no=${currentPage}`,
+      url: `${API_END_POINTS?.dashboardTotalVendorTableURL}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}`,
       method: "GET",
     });
     if (dashboardTotalVendorTableDataApi?.status == 200) {

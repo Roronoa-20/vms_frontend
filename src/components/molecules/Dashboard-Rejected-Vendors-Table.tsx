@@ -1,22 +1,10 @@
 "use client"
 import React, { useState, useEffect } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/src/components/atoms/table";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/src/components/atoms/select";
-import { tableData } from "@/src/constants/dashboardTableData";
+import { useRouter } from "next/navigation";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/src/components/atoms/table";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/src/components/atoms/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
 import { Input } from "../atoms/input";
 import { DashboardTableType, TvendorRegistrationDropdown } from "@/src/types/types";
 import Link from "next/link";
@@ -27,6 +15,7 @@ import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "./Pagination";
 import { useAuth } from "@/src/context/AuthContext";
+import { Eye } from "lucide-react";
 
 type Props = {
   dashboardTableData: DashboardTableType["rejected_vendor_onboarding"],
@@ -57,6 +46,23 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
   const [total_event_list, settotalEventList] = useState(0);
   const [record_per_page, setRecordPerPage] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedVendor, setSelectedVendor] = useState<string | null>(null);
+  const [remarks, setRemarks] = useState<string>("");
+  const [openReasonDialog, setOpenReasonDialog] = useState(false);
+  const [selectedReason, setSelectedReason] = useState<string>("");
+  const router = useRouter();
+
+  const handleAmendClick = (vendorOnboarding: string) => {
+    setSelectedVendor(vendorOnboarding);
+    setRemarks("");
+    setOpenDialog(true);
+  };
+
+  const handleReasonClick = (reason: string) => {
+    setSelectedReason(reason);
+    setOpenReasonDialog(true);
+  };
 
   const user = Cookies?.get("user_id");
   console.log(user, "this is user");
@@ -76,7 +82,7 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
 
   const fetchTable = async () => {
     const dashboardRejectedVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.dashboardRejectedVendorTableURL}?usr=${user}&company=${selectedCompany}&refno=${search}&page_no=${currentPage}`,
+      url: `${API_END_POINTS?.dashboardRejectedVendorTableURL}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}`,
       method: "GET",
     });
     console.log("dashboardRejectedVendorTableDataApi---->", dashboardRejectedVendorTableDataApi)
@@ -88,6 +94,35 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
       setRecordPerPage(5)
     }
   };
+
+  const handleSubmitAmend = async () => {
+    if (!remarks.trim()) {
+      alert("Remarks are mandatory before submitting.");
+      return;
+    }
+    try {
+      const res: AxiosResponse = await requestWrapper({
+        url: API_END_POINTS.AmendAPI,
+        method: "POST",
+        data: {
+          data: {
+            vendor_onboarding: selectedVendor,
+            remarks: remarks,
+          }
+        }
+      });
+
+      if (res?.status === 200) {
+        console.log("Amend successful", res.data);
+        setOpenDialog(false);
+        fetchTable();
+        router.refresh();
+      }
+    } catch (err) {
+      console.error("Error in Amend API:", err);
+    }
+  };
+
 
   console.log(table, "this is table");
 
@@ -114,20 +149,6 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {/* <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select> */}
           </div>
         </div>
         <Table>
@@ -139,10 +160,14 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
               <TableHead>Vendor Name</TableHead>
               <TableHead className="text-center">Company Name</TableHead>
               <TableHead className="text-center">Status</TableHead>
-              <TableHead className="text-center">Purchase Team</TableHead>
-              <TableHead className="text-center">Purchase Head</TableHead>
-              <TableHead className="text-center">Account Team</TableHead>
+              <TableHead className="text-center">Rejected By Designation</TableHead>
+              {/* <TableHead className="text-center">Purchase Team</TableHead> */}
+              {/* <TableHead className="text-center">Purchase Head</TableHead> */}
+              {/* <TableHead className="text-center">Account Team</TableHead> */}
+              <TableHead className="text-center">Rejected By</TableHead>
+              <TableHead className="text-center">Rejection Reason</TableHead>
               <TableHead className="text-center">View Details</TableHead>
+              <TableHead className="text-center">Amend Email</TableHead>
               {/* <TableHead className="text-center">QMS Form</TableHead> */}
             </TableRow>
           </TableHeader>
@@ -166,11 +191,33 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                       {item?.onboarding_form_status}
                     </div>
                   </TableCell>
-                  <TableCell>{item?.purchase_t_approval}</TableCell>
-                  <TableCell>{item?.purchase_h_approval}</TableCell>
-                  <TableCell>{item?.accounts_t_approval}</TableCell>
+                  {/* <TableCell>{item?.rejected_by_designation}</TableCell> */}
+                  <TableCell
+                    className="max-w-[180px] truncate whitespace-nowrap text-sm"
+                    title={item?.rejected_by_designation ?? ""}
+                  >
+                    {(() => {
+                      const designation = item?.rejected_by_designation;
+                      if (!designation) return "";
+                      const parts = designation.split(/by\s+/i);
+                      return parts.length > 1 ? parts.pop()?.trim() : designation;
+                    })()}
+                  </TableCell>
+                  {/* <TableCell>{item?.purchase_t_approval}</TableCell> */}
+                  {/* <TableCell>{item?.purchase_h_approval}</TableCell> */}
+                  {/* <TableCell>{item?.accounts_t_approval}</TableCell> */}
+                  <TableCell>{item?.rejected_by}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleReasonClick(item?.reason_for_rejection || "No reason provided")}
+                    >
+                      <Eye className="h-8 w-8 text-black" />
+                    </Button>
+                  </TableCell>
                   <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                  {/* <TableCell className="text-right">{item?.qms_form}</TableCell> */}
+                  <TableCell><Button onClick={() => handleAmendClick(item?.name)} className="bg-blue-400 hover:bg-blue-300">Amend</Button></TableCell>
                 </TableRow>
               ))
             ) : (
@@ -183,6 +230,47 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
           </TableBody>
 
         </Table>
+        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Amend Vendor</DialogTitle>
+            </DialogHeader>
+
+            <div className="py-4">
+              <Textarea
+                placeholder="Enter remarks..."
+                value={remarks}
+                onChange={(e) => setRemarks(e.target.value)}
+              />
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setOpenDialog(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSubmitAmend}>Submit</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={openReasonDialog} onOpenChange={setOpenReasonDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Rejection Reason</DialogTitle>
+            </DialogHeader>
+            <div className="py-4 text-black">
+              <Textarea
+                value={selectedReason}
+                disabled
+                className="resize-none cursor-not-allowed text-black bg-white opacity-100"
+              />
+            </div>
+            <DialogFooter>
+              <Button onClick={() => setOpenReasonDialog(false)}>Close</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
       </div>
       <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
     </>
