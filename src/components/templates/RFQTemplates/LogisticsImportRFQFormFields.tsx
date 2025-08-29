@@ -107,7 +107,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                 destination_port: "",
             }));
             console.log(mode_of_shipment, "mode_of_shipment ---------------------")
-            const url = `${API_END_POINTS?.fetchDestinationPortBasedonShipmentType}?mode_of_shipment=${mode_of_shipment}`
+            const url = `${API_END_POINTS?.fetchDestinationPortBasedonShipmentType}?mode_of_shipment=${mode_of_shipment}&port_type="destination"`
             const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
             if (response?.status == 200) {
                 console.log(response, "response of destination port data")
@@ -183,7 +183,6 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                     (item) => item,
                     (item) => `${item}`
                 )}
-                
                 {renderSelect(
                     'country',
                     'Country',
