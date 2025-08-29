@@ -20,6 +20,7 @@ type Props = {
 };
 
 const ViewASAEntry = ({ ASAData }: Props) => {
+    // console.log("ASA DAta---->",ASAData);
 
     const formatDate = (dateStr: string | undefined) => {
         if (!dateStr) return '-';

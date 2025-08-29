@@ -16,6 +16,7 @@ interface IvalidationChecks {
   is_purchase_head_approve:number,
   is_accounts_team_approve:number,
   is_accounts_head_approve:number,
+  register_by_account_team:number
   
 }
 
@@ -27,9 +28,11 @@ interface Props {
   reconciliationDropdown: TReconsiliationDropdown["message"]["data"],
   tabType: string
   validation_check: IvalidationChecks
+  isPurchaseTeamBankFile?:string
+  isAmendment:number
 }
 
-const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconciliationDropdown, tabType, validation_check }: Props) => {
+const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconciliationDropdown, tabType, validation_check,isPurchaseTeamBankFile,isAmendment }: Props) => {
   const [reconciliationAccount, setReconciliationAccountt] = useState<string>(OnboardingDetail?.reconciliation_account as string);
   const { designation } = useAuth();
   console.log(OnboardingDetail, "htis is data")
@@ -75,13 +78,13 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
         </h1>
         <Input required placeholder="Enter Reg No." disabled defaultValue={OnboardingDetail?.incoterms} />
       </div>
-      <div>
+      <div className={`${validation_check?.register_by_account_team == 0?"":"hidden"}`}>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           Purchase Team Remarks
         </h1>
         <Input placeholder="" disabled defaultValue={OnboardingDetail?.purchase_team_remarks}/>
       </div>
-      <div>
+      <div className={`${validation_check?.register_by_account_team == 0?"":"hidden"}`}>
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
           Purchase Head Remarks
         </h1>
@@ -99,7 +102,13 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
           </h1>
           <Input placeholder="" className='disabled:opacity-100' disabled defaultValue={OnboardingDetail?.account_team_remarks} />
         </div>
-        <div className={`${designation == "Purchase Head" ? "hidden" : ""}`}>
+        <div className={`${validation_check?.register_by_account_team == 0?"hidden":""}`}>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Accounts Head Remarks
+          </h1>
+          <Input placeholder="" className='disabled:opacity-100' disabled defaultValue={OnboardingDetail?.account_head_remarks} />
+        </div>
+        <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Reconciliation Account
           </h1>
@@ -124,19 +133,19 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
         {/* <Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`}>Next</Button> */}
         {
           designation == "Purchase Team" && validation_check?.is_purchase_approve == 1 &&
-          <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} />
+          <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile?true:false} isAccountTeam={validation_check?.register_by_account_team == 1?1:0} />
         }
         {
           designation == "Purchase Head" && validation_check?.is_purchase_head_approve &&
-          <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} />
+          <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile?true:false} isAccountTeam={validation_check?.register_by_account_team == 1?1:0}/>
         }
         {
           designation == "Accounts Team" && validation_check?.is_accounts_team_approve &&
-          <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} />
+          <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile?true:false} isAccountTeam={validation_check?.register_by_account_team == 1?1:0}/>
         }
         {
           designation == "Accounts Head" && validation_check?.is_accounts_head_approve &&
-          <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} />
+          <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile?true:false} isAccountTeam={validation_check?.register_by_account_team == 1?1:0}/>
         }
       </div>
     </div>

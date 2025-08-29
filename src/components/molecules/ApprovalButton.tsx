@@ -17,10 +17,12 @@ interface Props {
   onboardingRefno: string;
   reconsiliationDrodown?:TReconsiliationDropdown["message"]["data"]
   reconciliationAccount:string
+  isBankProofByPurchaseTeam:boolean
+  isAccountTeam:number
 }
 
 
-const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown,reconciliationAccount }: Props) => {
+const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown,reconciliationAccount,isBankProofByPurchaseTeam,isAccountTeam }: Props) => {
   const [isCommentBox, setIsCommentBox] = useState<boolean>(false);
   const [comments, setComments] = useState<string>("");
   const [isApprove, setIsApprove] = useState<boolean>(false);
@@ -60,8 +62,21 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
       return
     }
 
+    const submitButton = document?.getElementById("submitButton") as HTMLButtonElement | null;
+    if(submitButton){
+      submitButton.disabled = true;
+    }
+
     const formData = new FormData();
+    if(designation == "Accounts Team" && isAccountTeam == 1 && isApprove){
+      alert("please Upload Bank Proof")
+      return;
+    }
     if(designation == "Purchase Team"){
+      if(!isBankProofByPurchaseTeam && isApprove){
+        alert("Please Upload bank Proof By Purchase Team");
+        return
+      }
       const purchaseTeamData = {
          onboard_id: onboardingRefno,
             user: user_email,
@@ -98,6 +113,9 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
     setComments("");
     setIsCommentBox(false);
     // setReconsiliation("");
+    if(submitButton){
+      submitButton.disabled = false;
+    }
     router.push("/dashboard");
   }
   }else{
@@ -127,6 +145,9 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
     setComments("");
     setIsCommentBox(false);
     // setReconsiliation("");
+    if(submitButton){
+      submitButton.disabled = false;
+    }
     router.push("/dashboard");
   }
 }
@@ -153,7 +174,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
     <>
       <div className="w-full flex justify-end gap-5 px-5 pt-4">
         <Button
-          className={`bg-blue-400 hover:bg-blue-400 ${designation != "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
+          className={`submitButton bg-blue-400 hover:bg-blue-400 ${designation != "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
           onClick={() => {
             setIsCommentBox((prev) => !prev);
             setIsApprove(true);
@@ -162,7 +183,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
           Approve
         </Button>
         <Button
-          className={`bg-blue-400 hover:bg-blue-400 ${designation != "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
+          className={`submitButton bg-blue-400 hover:bg-blue-400 ${designation != "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
           onClick={() => {
             setIsCommentBox((prev) => !prev);
             setIsReject(true);
@@ -171,7 +192,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
           Reject
         </Button>
         <Button
-          className={`bg-blue-400 hover:bg-blue-400 ${designation == "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
+          className={`submitButton bg-blue-400 hover:bg-blue-400 ${designation == "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
           onClick={() => {
             setIsAccountBox((prev) => !prev);
             setIsApprove(true);
@@ -180,7 +201,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
           Approve
         </Button>
         <Button
-          className={`bg-blue-400 hover:bg-blue-400 ${designation == "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
+          className={`submitButton bg-blue-400 hover:bg-blue-400 ${designation == "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
           onClick={() => {
             setIsAccountBox((prev) => !prev);
             setIsReject(true);

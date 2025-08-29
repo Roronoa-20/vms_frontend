@@ -31,11 +31,11 @@ import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "./Pagination";
-
 type Props = {
   dashboardTableData?: DashboardTableType["sapErrorDashboardData"]
   companyDropdown: { name: string }[]
 }
+
 
 const useDebounce = (value: any, delay: any) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -53,7 +53,6 @@ const useDebounce = (value: any, delay: any) => {
 };
 
 const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) => {
-  console.log("SAP ERROR TABLE___>", dashboardTableData);
   const [total_event_list, settotalEventList] = useState(0);
   const [record_per_page, setRecordPerPage] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -74,9 +73,10 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
     setSearchVendor(value);
   };
 
+
   const fetchTable = async () => {
     const dashboardTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.sapApiDashboardDetails}?page_no=${currentPage}&vendor_name=${debouncedSearchName}`,
+      url: `${API_END_POINTS?.dashboardSapErrorAcounts}?page_no=${currentPage}&vendor_name=${debouncedSearchName}`,
       method: "GET",
     });
     if (dashboardTableDataApi?.status == 200) {
@@ -121,7 +121,7 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            SAP Error Logs
+            Accounts SAP Error Logs
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." value={searchVendor} onChange={(e) => { handlesearchname(e) }} />
@@ -154,7 +154,7 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
               </TableRow>
             </TableHeader>
             <TableBody className="text-center">
-              {table.length > 0 ? (
+              {table?.length > 0 ? (
                 table?.map((item, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium text-center">{index + 1}</TableCell>
@@ -209,7 +209,7 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
+      
       <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
     </>
   );

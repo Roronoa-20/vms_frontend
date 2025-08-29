@@ -37,7 +37,7 @@ const useDebounce = (value: any, delay: any) => {
   return debouncedValue;
 };
 
-const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
+const DashboardAccountsRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
   console.log(dashboardTableData, 'this is rejected vendor list')
   console.log(Array.isArray(dashboardTableData), dashboardTableData)
   const [table, setTable] = useState<DashboardTableType["rejected_vendor_onboarding"]>(dashboardTableData);
@@ -64,6 +64,7 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
     setOpenReasonDialog(true);
   };
 
+
   const user = Cookies?.get("user_id");
   console.log(user, "this is user");
 
@@ -82,7 +83,7 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
 
   const fetchTable = async () => {
     const dashboardRejectedVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.dashboardRejectedVendorTableURL}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}`,
+      url: `${API_END_POINTS?.dashboardRejectedVendorsAccounts}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}`,
       method: "GET",
     });
     console.log("dashboardRejectedVendorTableDataApi---->", dashboardRejectedVendorTableDataApi)
@@ -277,4 +278,4 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
   );
 };
 
-export default DashboardRejectedVendorsTable;
+export default DashboardAccountsRejectedVendorsTable;

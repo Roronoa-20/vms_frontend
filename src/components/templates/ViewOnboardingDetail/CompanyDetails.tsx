@@ -24,10 +24,11 @@ interface Props {
   refno?: string,
   OnboardingDetail: VendorOnboardingResponse["message"]["company_details_tab"]
   multipleCompany: { company: string }[]
-  ismulticompany: boolean
+  ismulticompany: boolean,
+  isAmendment:number
 }
 
-const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, OnboardingDetail, multipleCompany, ismulticompany }: Props) => {
+const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, OnboardingDetail, multipleCompany, ismulticompany, isAmendment }: Props) => {
   const router = useRouter();
 
 
@@ -67,20 +68,23 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
     const updatedData: TCompanyDetailForm | {} = { ...data, vendor_onboarding: onboarding_refno as string, ref_no: refno as string }
     try {
       const resposne: AxiosResponse = await requestWrapper({ url: companyDetailSubmitUrl, method: "POST", data: { data: updatedData } });
-      if (resposne?.status == 200) router.push(`/view-onboarding-details?tabtype=Company%20Address&vendor_onboarding=${onboarding_refno}&refno=${refno}`);
+      if (resposne?.status == 200) {
+        alert("update successfully");
+        location.reload();
+      };
     } catch (error) {
       console.log(error);
     }
   }
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-4 w-full">
-      <div className="flex justify-between">
-        <h1 className="border-b-2 font-semibold text-[18px]">Company Detail</h1>
-        <Button onClick={() => { setIsDisabled(prev => !prev) }} className="mb-2">{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+    <div className="flex flex-col bg-white rounded-lg p-3 w-full">
+      <div className="flex justify-between items-center border-b-2">
+        <h1 className="font-semibold text-[18px]">Company Detail</h1>
+        <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
       </div>
       <form onSubmit={(e) => { handleSubmit(e) }}>
-        <div className="grid grid-cols-3 gap-6 p-5 overflow-y-scroll max-h-[70vh]">
+        <div className="grid grid-cols-3 gap-6 p-3 overflow-y-scroll max-h-[70vh]">
           <div>
             <div className="grid grid-cols-4 gap-1">
               <div className="flex flex-col col-span-1">
@@ -121,7 +125,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Size of Company
             </h1>
-            <Select disabled={isDisabled} onValueChange={(value) => { updateField("size_of_company", value) }} value={data?.size_of_company ?? OnboardingDetail?.size_of_company}>
+            {/* <Select disabled={isDisabled} onValueChange={(value) => { updateField("size_of_company", value) }} value={data?.size_of_company ?? OnboardingDetail?.size_of_company}>
               <SelectTrigger className="disabled:opacity-100">
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
@@ -131,7 +135,16 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
                   <SelectItem value="banana">100-200</SelectItem>
                 </SelectGroup>
               </SelectContent>
-            </Select>
+            </Select> */}
+            <Input
+            className="disabled:opacity-100"
+            disabled={isDisabled}
+                          placeholder=""
+                          onChange={(e) => {
+                            updateField("size_of_company", e.target.value);
+                          }}
+                          value={data?.size_of_company ?? OnboardingDetail?.size_of_company ?? ""}
+                        />
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">

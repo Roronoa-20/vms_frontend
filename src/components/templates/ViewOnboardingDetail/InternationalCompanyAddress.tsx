@@ -32,6 +32,7 @@ interface Props {
   ref_no: string;
   onboarding_ref_no: string;
   OnboardingDetail: VendorOnboardingResponse["message"]["company_address_tab"];
+  isAmendment:number
 }
 
 
@@ -73,7 +74,8 @@ interface multipleAddress {
 const CompanyAddress = ({
   ref_no,
   onboarding_ref_no,
-  OnboardingDetail
+  OnboardingDetail,
+  isAmendment
 }: Props) => {
 
   const router = useRouter();
@@ -187,15 +189,15 @@ const CompanyAddress = ({
   console.log(formdata, "this is form data")
 
   return (
-    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <div className="flex justify-between">
-        <h1 className="border-b-2 font-semibold text-[18px]">
+    <div className="flex flex-col bg-white rounded-lg p-3 max-h-[80vh] overflow-y-scroll w-full">
+      <div className="flex justify-between items-center border-b-2">
+        <h1 className="font-semibold text-[18px]">
           Company Address
         </h1>
-        <Button onClick={() => { setIsDisabled(prev => !prev) }} className="mb-2">{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+        <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
       </div>
       <h1 className="pl-2">Office Address</h1>
-      <div className="grid grid-cols-4 gap-6 p-2">
+      <div className="grid grid-cols-4 gap-6 p-3">
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Street Line 1 <span className="pl-2 text-red-400 text-2xl">*</span>

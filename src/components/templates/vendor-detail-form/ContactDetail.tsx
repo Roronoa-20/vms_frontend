@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useEffect, useState } from "react";
 import {
   Select,
@@ -9,8 +9,18 @@ import {
 } from "../../atoms/select";
 import { Input } from "../../atoms/input";
 import { SelectContent } from "../../atoms/select";
-import { useContactDetailStore, TcontactDetail } from "@/src/store/ContactDetailStore";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
+import {
+  useContactDetailStore,
+  TcontactDetail,
+} from "@/src/store/ContactDetailStore";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../../atoms/table";
 import { Button } from "@/components/ui/button";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
@@ -21,38 +31,53 @@ import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 
 type Props = {
-  ref_no: string,
-  onboarding_ref_no: string
-  OnboardingDetail: VendorOnboardingResponse["message"]["contact_details_tab"]
-}
+  ref_no: string;
+  onboarding_ref_no: string;
+  OnboardingDetail: VendorOnboardingResponse["message"]["contact_details_tab"];
+};
 
-const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) => {
-  const { contactDetail, addContactDetail, resetContactDetail } = useContactDetailStore();
+const ContactDetail = ({
+  ref_no,
+  onboarding_ref_no,
+  OnboardingDetail,
+}: Props) => {
+  const { contactDetail, addContactDetail, resetContactDetail } =
+    useContactDetailStore();
   const [showtable, setshowtable] = useState(false);
   const [contact, setContact] = useState<Partial<TcontactDetail>>();
   const router = useRouter();
   useEffect(() => {
     resetContactDetail();
     OnboardingDetail?.map((item, index) => {
-      addContactDetail(item)
-    })
-  }, [])
+      addContactDetail(item);
+    });
+  }, []);
 
   const handleAdd = () => {
-    addContactDetail(contact)
-    setshowtable(true)
+    if (contact?.first_name == "") {
+      alert("please enter First Name");
+      return;
+    }
+    if (contact?.last_name == "") {
+      alert("please enter Last Name");
+      return;
+    }
+    addContactDetail(contact);
+    setshowtable(true);
     setContact({});
-  }
+  };
 
   const handleRowDelete = (index: number) => {
     // Remove the contact at the given index from the contactDetail store
-    const updatedContacts = contactDetail.filter((_, itemIndex) => itemIndex !== index);
+    const updatedContacts = contactDetail.filter(
+      (_, itemIndex) => itemIndex !== index
+    );
     resetContactDetail();
-    updatedContacts.forEach(item => addContactDetail(item));
+    updatedContacts.forEach((item) => addContactDetail(item));
     if (updatedContacts.length === 0) {
-    setshowtable(false);
-  }
-  }
+      setshowtable(false);
+    }
+  };
 
   const handleSubmit = async () => {
     // if(contactDetail?.length < 1){
@@ -60,14 +85,28 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
     //   return;
     // }
     const submitUrl = API_END_POINTS?.contactDetailSubmit;
-    const submitResponse: AxiosResponse = await requestWrapper({ url: submitUrl, data: { data: { contact_details: contactDetail, ref_no: ref_no, vendor_onboarding: onboarding_ref_no } }, method: "POST" });
-    if (submitResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
-  }
-
-  const handleBack = () => {
-    router.push(`/vendor-details-form?tabtype=Payment%20Detail%20%2F%20Bank%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    const submitResponse: AxiosResponse = await requestWrapper({
+      url: submitUrl,
+      data: {
+        data: {
+          contact_details: contactDetail,
+          ref_no: ref_no,
+          vendor_onboarding: onboarding_ref_no,
+        },
+      },
+      method: "POST",
+    });
+    if (submitResponse?.status == 200)
+      router.push(
+        `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
+      );
   };
 
+  const handleBack = () => {
+    router.push(
+      `/vendor-details-form?tabtype=Payment%20Detail%20%2F%20Bank%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
+    );
+  };
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
@@ -80,39 +119,97 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             First Name
           </h1>
-          <Input placeholder="" onChange={(e) => { setContact((prev: any) => ({ ...prev, first_name: e.target.value })) }} value={contact?.first_name ?? ""} />
+          <Input
+            placeholder=""
+            onChange={(e) => {
+              setContact((prev: any) => ({
+                ...prev,
+                first_name: e.target.value,
+              }));
+            }}
+            value={contact?.first_name ?? ""}
+          />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Last Name
           </h1>
-          <Input placeholder="" onChange={(e) => { setContact((prev: any) => ({ ...prev, last_name: e.target.value })) }} value={contact?.last_name ?? ""} />
+          <Input
+            placeholder=""
+            onChange={(e) => {
+              setContact((prev: any) => ({
+                ...prev,
+                last_name: e.target.value,
+              }));
+            }}
+            value={contact?.last_name ?? ""}
+          />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Designation
           </h1>
-          <Input placeholder="" onChange={(e) => { setContact((prev: any) => ({ ...prev, designation: e.target.value })) }} value={contact?.designation ?? ""} />
+          <Input
+            placeholder=""
+            onChange={(e) => {
+              setContact((prev: any) => ({
+                ...prev,
+                designation: e.target.value,
+              }));
+            }}
+            value={contact?.designation ?? ""}
+          />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">Email</h1>
-          <Input placeholder="" onChange={(e) => { setContact((prev: any) => ({ ...prev, email: e.target.value })) }} value={contact?.email ?? ""} />
+          <Input
+            placeholder=""
+            onChange={(e) => {
+              setContact((prev: any) => ({ ...prev, email: e.target.value }));
+            }}
+            value={contact?.email ?? ""}
+          />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Contact Number
           </h1>
-          <Input placeholder="" onChange={(e) => { setContact((prev: any) => ({ ...prev, contact_number: e.target.value })) }} value={contact?.contact_number ?? ""} />
+          <Input
+            placeholder=""
+            onChange={(e) => {
+              setContact((prev: any) => ({
+                ...prev,
+                contact_number: e.target.value,
+              }));
+            }}
+            value={contact?.contact_number ?? ""}
+          />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Department Name
           </h1>
-          <Input placeholder="" onChange={(e) => { setContact((prev: any) => ({ ...prev, department_name: e.target.value })) }} value={contact?.department_name ?? ""} />
+          <Input
+            placeholder=""
+            onChange={(e) => {
+              setContact((prev: any) => ({
+                ...prev,
+                department_name: e.target.value,
+              }));
+            }}
+            value={contact?.department_name ?? ""}
+          />
         </div>
       </div>
       <div className={`flex justify-end pb-4`}>
-        <Button className="bg-blue-400 hover:bg-blue-400" onClick={() => { handleAdd() }}>Add</Button>
+        <Button
+          className="bg-blue-400 hover:bg-blue-400"
+          onClick={() => {
+            handleAdd();
+          }}
+        >
+          Add
+        </Button>
       </div>
       {contactDetail?.length > 0 && (
         <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
@@ -142,12 +239,17 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
                   <TableCell>{item?.first_name}</TableCell>
                   <TableCell>{item?.last_name}</TableCell>
                   <TableCell>{item?.designation}</TableCell>
-                  <TableCell>
-                    {item?.email}
-                  </TableCell>
+                  <TableCell>{item?.email}</TableCell>
                   <TableCell>{item?.contact_number}</TableCell>
                   <TableCell>{item?.department_name}</TableCell>
-                  <TableCell className="flex justify-center"><Trash2 className="text-red-400 cursor-pointer" onClick={() => { handleRowDelete(index) }}/></TableCell>
+                  <TableCell className="flex justify-center">
+                    <Trash2
+                      className="text-red-400 cursor-pointer"
+                      onClick={() => {
+                        handleRowDelete(index);
+                      }}
+                    />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -155,23 +257,15 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
         </div>
       )}
       <div className="flex justify-end items-center space-x-3 mt-24">
-        <Button
-          onClick={handleBack}
-          variant="backbtn"
-          size="backbtnsize"
-        >
+        <Button onClick={handleBack} variant="backbtn" size="backbtnsize">
           Back
         </Button>
 
-        <Button
-          onClick={handleSubmit}
-          variant="nextbtn"
-          size="nextbtnsize"
-        >
+        <Button onClick={handleSubmit} variant="nextbtn" size="nextbtnsize">
           Next
         </Button>
       </div>
     </div>
   );
 };
-export default ContactDetail
+export default ContactDetail;

@@ -32,7 +32,7 @@ const Comment_box = ({ handleClose, handleComment, Submitbutton, children,classN
         <Button className="bg-white text-black border text-xs font-normal px-8 rounded-md hover:bg-white" onClick={handleClose}>
           Back
         </Button>
-        <Button className={`text-white text-sm font-normal border px-4`} onClick={() => Submitbutton()}>
+        <Button id="submitButton" className={`text-white text-sm font-normal border px-4`} onClick={() => Submitbutton()}>
           Submit
         </Button>
       </div>

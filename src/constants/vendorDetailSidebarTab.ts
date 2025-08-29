@@ -13,6 +13,30 @@ export const sidebarTabs = [
   "Purchase Detail"
 ];
 
+export const sidebarTabsWithoutMaterialType = [
+  "Company Detail",
+  "Company Address",
+  "Document Detail",
+  "Payment Detail / Bank Detail",
+  "Contact Detail",
+  "Manufacturing Detail",
+  "Reputed Partners",
+  "Certificate",
+  // "Purchase Detail"
+];
+
+
+export const AccountsTeamOnboardingSidebar = [
+  "Company Detail",
+  "Company Address",
+  "Contact Detail",
+  "Document Detail",
+  "Payment Detail / Bank Detail",
+  "Manufacturing Detail",
+  "Reputed Partners",
+  "Certificate"
+];
+
 export const sidebarAccountsTabs = [
   "Company Detail",
   "Company Address",
