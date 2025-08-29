@@ -141,7 +141,7 @@ export const LogisticsExportRFQFormFields = ({
     useEffect(() => {
         setFormData((prev) => ({ ...prev, rfq_date_logistic: formData?.rfq_date_logistic ? formData?.rfq_date_logistic : today }));
     }, [today, formData?.rfq_date_logistic]);
-
+console.log(Dropdown?.port_of_loading,"Dropdown?.port_of_loading")
     return (
         <div>
             <div className="grid grid-cols-3 gap-6 p-5">
@@ -169,12 +169,12 @@ export const LogisticsExportRFQFormFields = ({
                 </div>
                 {renderInput("sr_no", "Sr No.")}
                 {renderInput("rfq_cutoff_date_logistic", "RFQ CutOff", "datetime-local")}
-                {renderInput("rfq_date_logistic", "RFQ Date", "date")}
+                {renderInput("rfq_date_logistic", "RFQ Date", "date",true)}
                 {renderSelect("mode_of_shipment", "Mode of Shipment", Dropdown?.mode_of_shipment, (i) => i.name, (i) => i.name)}
                 {renderSelect("country", "Country", exportCountry, (i) => i.country, (i) => `${i.country} - ${i.port_code} - ${i.port_name}`)}
                 {renderInput("destination_port", "Destination Port", "text", true)}
                 {renderInput("port_code", "Port Code", "text", true)}
-                {renderSelect("port_of_loading", "Port of Loading", Dropdown?.port_master, (i) => i.name, (i) => i.port_name)}
+                {renderSelect("port_of_loading", "Port of Loading", Dropdown?.port_of_loading, (i) => i.name, (i) => i.name)}
                 {renderSelect("inco_terms", "Inco Terms", Dropdown?.incoterm_master, (i) => i.name, (i) => i.incoterm_name)}
                 {renderInput("ship_to_address", "Ship to Address")}
                 {renderSelect("package_type", "Package Type", Dropdown?.package_type, (i) => i.name, (i) => i.package_name)}
@@ -184,7 +184,15 @@ export const LogisticsExportRFQFormFields = ({
                 {renderInput("actual_weight", "Actual Weight(KG)", "number")}
                 {renderInput("invoice_date", "Invoice Date", "date")}
                 {renderInput("invoice_no", "Invoice No")}
+                {renderInput("invoice_value", "Invoice Value")}
                 {renderInput("consignee_name", "Consignee Name")}
+                {renderSelect(
+                    'shipment_type',
+                    'Shipment Type',
+                    Dropdown?.shipment_type,
+                    (item) => item.name,
+                    (item) => `${item.shipment_type_name}`
+                )}
                 {renderInput("shipment_date", "Shipment Date", "date")}
                 <div>
                     <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -201,138 +209,4 @@ export const LogisticsExportRFQFormFields = ({
                 {renderTextarea("remarks", "Remarks")}
             </div>
         </div>
-    );
-    useEffect(() => {
-        setFormData((prev) => ({ ...prev, rfq_date_logistic: formData?.rfq_date_logistic ? formData?.rfq_date_logistic : today }));
-    }, [today, formData?.rfq_date_logistic]);
-
-    console.log(formData, "formData");
-    return (
-        <div className="grid grid-cols-3 gap-6 p-5">
-            {renderSelect(
-                "rfq_type",
-                "RFQ Type",
-                Dropdown?.rfq_type,
-                (i) => i.name,
-                (i) => i.vendor_type_name,
-                true
-            )}
-            {renderSelect(
-                "company_name_logistic",
-                "Company Name",
-                Dropdown?.company,
-                (i) => i.name,
-                (i) => i.company_name
-            )}
-            <div className="col-span-1">
-                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                    Select Service
-                </h1>
-                <Select
-                    value={formData?.service_provider ?? ""}
-                    onValueChange={(val) => handleSelectChange(val, "service_provider")}
-                >
-                    <SelectTrigger
-                        disabled={formData?.company_name_logistic ? false : true}
-                    >
-                        <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem value="Select">Select</SelectItem>
-                            <SelectItem value="All Service Provider">
-                                Send notification to all service provider
-                            </SelectItem>
-                            <SelectItem value="Premium Service Provider">
-                                Send notification to specific premium service provider
-                            </SelectItem>
-                            <SelectItem value="Courier Service Provider">
-                                Send notification to specific courier partner
-                            </SelectItem>
-                            <SelectItem value="Adhoc Service Provider">
-                                Send notification to adhoc partner
-                            </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            </div>
-            {renderInput("sr_no", "Sr No.")}
-            {renderInput("rfq_cutoff_date_logistic", "RFQ CutOff", "datetime-local")}
-            {renderInput("rfq_date_logistic", "RFQ Date", "date", true)}
-            {renderSelect(
-                "mode_of_shipment",
-                "Mode of Shipment",
-                Dropdown?.mode_of_shipment,
-                (i) => i.name,
-                (i) => i.name
-            )}
-            {renderSelect(
-                "country",
-                "Country",
-                Dropdown?.country_master,
-                (i) => i.name,
-                (i) => i.country_name
-            )}
-            {renderSelect(
-                "destination_port",
-                "Destination Port",
-                Dropdown?.port_master,
-                (i) => i.name,
-                (i) => i.port_name
-            )}
-            {renderSelect(
-                "port_code",
-                "Port Code",
-                Dropdown?.port_master,
-                (i) => i.name,
-                (i) => i.port_code
-            )}
-            {renderSelect(
-                "port_of_loading",
-                "Port of Loading",
-                Dropdown?.port_master,
-                (i) => i.name,
-                (i) => i.port_name
-            )}
-            {renderSelect(
-                "inco_terms",
-                "Inco Terms",
-                Dropdown?.incoterm_master,
-                (i) => i.name,
-                (i) => i.incoterm_name
-            )}
-            {renderInput("ship_to_address", "Ship to Address")}
-            {renderSelect(
-                "package_type",
-                "Package Type",
-                Dropdown?.package_type,
-                (i) => i.name,
-                (i) => i.package_name
-            )}
-            {renderInput("no_of_pkg_units", "No.Of Pkg Units", "number")}
-            {renderSelect(
-                "product_category",
-                "Product Category",
-                Dropdown?.product_category,
-                (i) => i.name,
-                (i) => i.product_category_name
-            )}
-            {renderInput("vol_weight", "Vol Weight(KG)", "number")}
-            {renderInput("actual_weight", "Actual Weight(KG)", "number")}
-            {renderInput("invoice_date", "Invoice Date", "date")}
-            {renderInput("invoice_no", "Invoice No")}
-            {renderInput("shipment_date", "Shipment Date", "date")}
-            {renderInput("invoice_value", "Invoice Value", "number")}
-            {renderSelect(
-                "shipment_type",
-                "Shipment Type",
-                Dropdown?.shipment_type,
-                (item) => item.name,
-                (item) => `${item.shipment_type_name}`
-            )}
-            {renderInput("consignee_name", "Consignee Name")}
-
-            {renderTextarea("remarks", "Remarks")}
-        </div>
-    );
-};
+    )}
