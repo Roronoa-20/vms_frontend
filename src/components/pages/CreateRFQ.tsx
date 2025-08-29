@@ -23,6 +23,6 @@ export const CreateRFQ = async ({ pur_req, cart_id }: PageProps) => {
   });
   const Dropdown = resposne?.status == 200 ? resposne?.data.message : "";
   return (
-    <CreateRFQForms Dropdown={Dropdown}/>
+    <CreateRFQForms Dropdown={Dropdown} />
   )
 }

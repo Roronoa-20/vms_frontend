@@ -166,3 +166,9 @@ export interface PurchaseRequisitionRow {
   remarks:string;
   subhead_fields: SubheadField[];
 }
+export interface ExportPort {
+  country: string;
+  port_code: string;
+  port_name: string;
+}
+
