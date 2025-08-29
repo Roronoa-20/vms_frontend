@@ -17,7 +17,7 @@ interface Props {
 const today = new Date().toISOString().split("T")[0];
 
 const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFiles, uploadedFiles }: Props) => {
-    const [destinationPort, setDestinationPort] = useState([])   
+    const [destinationPort, setDestinationPort] = useState([])
     const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -25,7 +25,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
     const handleSelectChange = (value: string, field: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
-    const renderInput = (name: string, label: string, type = 'text', isdisabled?:boolean) => (
+    const renderInput = (name: string, label: string, type = 'text', isdisabled?: boolean) => (
         <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 {label}
@@ -120,14 +120,36 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
             fetchDestinationPort(formData?.mode_of_shipment);
         }
     }, [formData?.mode_of_shipment]);
-
+    useEffect(() => {
+        const fetchDestinationPort = async (company_name_logistic: string) => {
+            setFormData((prev) => ({
+                ...prev,
+                destination_port: "",
+            }));
+            console.log(company_name_logistic, "formData.company_name_logistic ---------------------")
+            const url = `${API_END_POINTS?.fetchSerialNumber}?company=${company_name_logistic}&rfq_type=Import`
+            const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+            if (response?.status == 200) {
+                console.log(response, "response of destination port data")
+                setFormData((prev) => ({
+                    ...prev,
+                    sr_no: response.data.message.serial_number,
+                }));
+            } else {
+                alert("error");
+            }
+        }
+        if (formData.company_name_logistic) {
+            fetchDestinationPort(formData.company_name_logistic);
+        }
+    }, [formData.company_name_logistic]);
 
     //RFQ date
     useEffect(() => {
-        setFormData((prev) => ({ ...prev, rfq_date_logistic: formData?.rfq_date_logistic?formData?.rfq_date_logistic:today }));
-      }, [today,formData?.rfq_date_logistic]);
-    
-      console.log(formData, "formData");
+        setFormData((prev) => ({ ...prev, rfq_date_logistic: formData?.rfq_date_logistic ? formData?.rfq_date_logistic : today }));
+    }, [today, formData?.rfq_date_logistic]);
+
+    console.log(formData, "formData");
 
     return (
         <div>
@@ -166,9 +188,9 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                         </SelectContent>
                     </Select>
                 </div>
-                {renderInput('sr_no', 'Sr No.')}
+                {renderInput('sr_no', 'Sr No.',"text",true)}
                 {renderInput('rfq_cutoff_date_logistic', 'RFQ CutOff', 'datetime-local')}
-                {renderInput('rfq_date_logistic', 'RFQ Date', 'date',true)}
+                {renderInput('rfq_date_logistic', 'RFQ Date', 'date', true)}
                 {renderSelect(
                     'mode_of_shipment',
                     'Mode of Shipment',
@@ -223,7 +245,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                     (item) => `${item.package_name}`
                 )}
                 {renderInput('no_of_pkg_units', 'No.Of Pkg Units', 'number')}
-                
+
                 {renderInput('vol_weight', 'Vol Weight(KG)', 'number')}
                 {renderInput('actual_weight', 'Actual Weight(KG)', 'number')}
                 {renderSelect(

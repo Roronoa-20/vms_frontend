@@ -105,7 +105,7 @@ const API_END_POINTS = {
   ReviseRFQ: `${url}/api/method/vms.APIs.req_for_quotation.rfq.send_revised_rfq`,
   CountryExportDropdown: `${url}/api/method/vms.APIs.req_for_quotation.rfq.get_countries_with_ports`,
   fetchDestinationPortBasedonShipmentType: `${url}/api/method/vms.APIs.req_for_quotation.rfq.get_ports_by_mode_of_shipment_simple`,
-  
+  fetchSerialNumber:`${url}/api/method/vms.APIs.req_for_quotation.rfq.get_next_rfq_serial_number`,
   //Quatataion apis
   SubmitQuatation: `${url}/api/method/vms.APIs.quotation.create_quotation.create_or_update_quotation`,
   getRFQData: `${url}/api/method/vms.APIs.req_for_quotation.rfq.get_full_rfq_data`,

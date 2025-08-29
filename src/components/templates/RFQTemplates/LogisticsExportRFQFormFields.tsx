@@ -12,7 +12,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { DropdownDataExport } from "./LogisticsExportRFQ";
 import MultipleFileUpload from "../../molecules/MultipleFileUpload";
 import { ExportPort } from "@/src/types/RFQtype";
-
+import API_END_POINTS from '@/src/services/apiEndPoints'
+import { AxiosResponse } from 'axios'
+import requestWrapper from '@/src/services/apiCall'
 interface Props {
     formData: Record<string, any>;
     setFormData: React.Dispatch<React.SetStateAction<Record<string, any>>>;
@@ -137,6 +139,29 @@ export const LogisticsExportRFQFormFields = ({
             }
         }
     }, [formData.country, exportCountry]);
+    useEffect(() => {
+        const fetchDestinationPort = async (company_name_logistic: string) => {
+            setFormData((prev) => ({
+                ...prev,
+                destination_port: "",
+            }));
+            console.log(company_name_logistic, "formData.company_name_logistic ---------------------")
+            const url = `${API_END_POINTS?.fetchSerialNumber}?company=${company_name_logistic}&rfq_type=Export`
+            const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+            if (response?.status == 200) {
+                console.log(response, "response of destination port data")
+                setFormData((prev) => ({
+                ...prev,
+                sr_no:response.data.message.serial_number,
+            }));
+            } else {
+                alert("error");
+            }
+        }
+        if (formData.company_name_logistic) {
+            fetchDestinationPort(formData.company_name_logistic);
+        }
+        }, [formData.company_name_logistic]);
 
     useEffect(() => {
         setFormData((prev) => ({ ...prev, rfq_date_logistic: formData?.rfq_date_logistic ? formData?.rfq_date_logistic : today }));
@@ -166,7 +191,7 @@ export const LogisticsExportRFQFormFields = ({
                         </SelectContent>
                     </Select>
                 </div>
-                {renderInput("sr_no", "Sr No.")}
+                {renderInput("sr_no", "Sr No.","text",true)}
                 {renderInput("rfq_cutoff_date_logistic", "RFQ CutOff", "datetime-local")}
                 {renderInput("rfq_date_logistic", "RFQ Date", "date", true)}
                 {renderSelect("mode_of_shipment", "Mode of Shipment", Dropdown?.mode_of_shipment, (i) => i.name, (i) => i.name)}
