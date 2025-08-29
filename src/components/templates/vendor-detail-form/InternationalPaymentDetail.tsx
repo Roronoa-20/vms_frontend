@@ -130,6 +130,9 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
     formdata.append("data", JSON.stringify({ ...updatedData, international_bank_details: [updatedData?.international_bank_details], intermediate_bank_details: [updatedData?.intermediate_bank_details] }));
     if (bankProofBeneficiaryFile) {
       formdata.append("bank_proof_for_beneficiary_bank", bankProofBeneficiaryFile[0])
+    }else{
+      alert("Please Upload Beneficiary BankProof");
+      return;
     }
     if (bankProofIntermediateFile) {
       formdata.append("bank_proof_for_intermediate_bank", bankProofIntermediateFile[0])

@@ -6,7 +6,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import useDebounce from '@/src/hooks/useDebounce';
-import { VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
+import { ExportPort, VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
 import Pagination from '../../molecules/Pagination';
 import SingleSelectVendorTable from '../../molecules/rfq/SingleSelectVendorTable';
 import NewVendorTable from '../../molecules/rfq/NewVendorTable';
@@ -54,7 +54,7 @@ export interface newVendorTable {
 }
 
 const LogisticsExportRFQ = ({ Dropdown }: Props) => {
-    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "logistics Vendor" });
+    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Logistics Vendor" });
     const [vendorSearchName, setVendorSearchName] = useState('')
     const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
     const [VendorList, setVendorList] = useState<VendorApiResponse>();
@@ -62,6 +62,8 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
     const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
     const [isDialog, setIsDialog] = useState<boolean>(false);
     const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([])
+    const [exportCountry, setExportCountry] = useState<ExportPort[]>([])
+    const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const router = useRouter()
     useEffect(() => {
         const fetchVendorTableData = async (rfq_type: string) => {
@@ -76,10 +78,22 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
                 alert("error");
             }
         }
-        if (formData?.service_provider != "Select" && formData?.service_provider &&  formData?.company_name_logistic) {
-            fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "logistics Vendor");
+        if (formData?.service_provider != "Select" && formData?.service_provider && formData?.company_name_logistic) {
+            fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Logistics Vendor");
         }
     }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider]);
+     useEffect(() => {
+        const fetchExportCountry = async () => {
+            const url = `${API_END_POINTS?.CountryExportDropdown}`
+            const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+            if (response?.status == 200) {
+                setExportCountry(response.data.message)
+            } else {
+                alert("error");
+            }
+        }
+            fetchExportCountry();
+    }, []);
     const [selectedRows, setSelectedRows] = useState<VendorSelectType>(
         {
             vendors: []
@@ -94,8 +108,21 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
         if (formData?.service_provider == "All Service Provider" || formData?.service_provider == "Select" || formData?.service_provider == "Premium Service Provider") {
             setSelectedRows({ vendors: [] })
         }
+        const formdata = new FormData();
+        const fullData = {
+            ...formData,
+            logistic_type: "Export", non_onboarded_vendors: newVendorTable, vendors: selectedRows.vendors
+        };
+        formdata.append('data', JSON.stringify(fullData));
+        // Append file only if exists
+        if (uploadedFiles) {
+            uploadedFiles?.forEach((file) => {
+                formdata.append("file", file);
+            });
+        }
+
         const url = `${API_END_POINTS?.CreateExportRFQ}`;
-        const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...formData, logistic_type: "Export", non_onboarded_vendors: newVendorTable, vendors: selectedRows.vendors } }, method: "POST" });
+        const response: AxiosResponse = await requestWrapper({ url: url, data:formdata, method: "POST" });
         if (response?.status == 200) {
             alert("Submit Successfull");
             router.push("/dashboard")
@@ -111,7 +138,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
     const handleClose = () => {
         setIsDialog(false);
     }
-
+console.log(exportCountry,"exportCountry")
     return (
         <div className='bg-white h-full w-full pb-6'>
             <div className='flex justify-between items-center pr-4'>
@@ -122,6 +149,9 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
                 formData={formData}
                 setFormData={setFormData}
                 Dropdown={Dropdown}
+                setUploadedFiles={setUploadedFiles}
+                uploadedFiles={uploadedFiles}
+                exportCountry={exportCountry??[]}
             />
             {formData?.service_provider === "Adhoc Service Provider" && <VendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />}
             {formData?.service_provider === "Courier Service Provider" && <SingleSelectVendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />}

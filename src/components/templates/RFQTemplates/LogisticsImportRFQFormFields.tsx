@@ -1,14 +1,23 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from "@/components/ui/select";
 import { DropdownData } from './LogisticsImportRFQ';
+import MultipleFileUpload from '../../molecules/MultipleFileUpload';
+import API_END_POINTS from '@/src/services/apiEndPoints'
+import { AxiosResponse } from 'axios'
+import requestWrapper from '@/src/services/apiCall'
 interface Props {
     formData: Record<string, any>;
     setFormData: React.Dispatch<React.SetStateAction<Record<string, any>>>;
     Dropdown: DropdownData;
+    uploadedFiles: File[];
+    setUploadedFiles: React.Dispatch<React.SetStateAction<File[]>>;
 }
-const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props) => {
+// RFQ current date
+const today = new Date().toISOString().split("T")[0];
 
+const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFiles, uploadedFiles }: Props) => {
+    const [destinationPort, setDestinationPort] = useState([])   
     const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -16,7 +25,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
     const handleSelectChange = (value: string, field: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
-    const renderInput = (name: string, label: string, type = 'text') => (
+    const renderInput = (name: string, label: string, type = 'text', isdisabled?:boolean) => (
         <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 {label}
@@ -29,6 +38,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
                 className={'border-neutral-200'}
                 value={formData[name] || ''}
                 onChange={handleFieldChange}
+                disabled={isdisabled}
             />
         </div>
     );
@@ -60,30 +70,65 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 {label}
                 {/* {errors[name as keyof typeof errors] && (
-                    <span className="text-red-600 ml-1">*</span>
-                )} */}
+          <span className="text-red-600 ml-1">*</span>
+      )} */}
             </h1>
             <Select
                 value={formData[name] ?? ""}
                 onValueChange={(value) => handleSelectChange(value, name)}
                 disabled={isDisabled}
             >
-                {/* className={errors[name as keyof typeof errors] ? 'border border-red-600' : ''} */}
                 <SelectTrigger>
                     <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
-                        {options?.map((item, idx) => (
-                            <SelectItem key={idx} value={getValue(item)}>
-                                {getLabel(item)}
+                        {options && options.length > 0 ? (
+                            options.map((item, idx) => (
+                                <SelectItem key={idx} value={getValue(item)}>
+                                    {getLabel(item)}
+                                </SelectItem>
+                            ))
+                        ) : (
+                            <SelectItem disabled value="no-data">
+                                No data
                             </SelectItem>
-                        ))}
+                        )}
                     </SelectGroup>
                 </SelectContent>
             </Select>
         </div>
     );
+
+    useEffect(() => {
+        const fetchDestinationPort = async (mode_of_shipment: string) => {
+            setFormData((prev) => ({
+                ...prev,
+                destination_port: "",
+            }));
+            console.log(mode_of_shipment, "mode_of_shipment ---------------------")
+            const url = `${API_END_POINTS?.fetchDestinationPortBasedonShipmentType}?mode_of_shipment=${mode_of_shipment}&port_type="destination"`
+            const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+            if (response?.status == 200) {
+                console.log(response, "response of destination port data")
+                setDestinationPort(response.data.message)
+            } else {
+                alert("error");
+            }
+        }
+        if (formData?.mode_of_shipment) {
+            fetchDestinationPort(formData?.mode_of_shipment);
+        }
+    }, [formData?.mode_of_shipment]);
+
+
+    //RFQ date
+    useEffect(() => {
+        setFormData((prev) => ({ ...prev, rfq_date_logistic: formData?.rfq_date_logistic?formData?.rfq_date_logistic:today }));
+      }, [today,formData?.rfq_date_logistic]);
+    
+      console.log(formData, "formData");
+
     return (
         <div>
             <div className="grid grid-cols-3 gap-6 p-5">
@@ -107,7 +152,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
                         Select Service
                     </h1>
                     <Select value={formData?.service_provider ?? ""} onValueChange={(value) => { handleSelectChange(value, "service_provider") }}>
-                        <SelectTrigger disabled={formData?.company_name_logistic ? false: true}>
+                        <SelectTrigger disabled={formData?.company_name_logistic ? false : true}>
                             <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
@@ -123,7 +168,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
                 </div>
                 {renderInput('sr_no', 'Sr No.')}
                 {renderInput('rfq_cutoff_date_logistic', 'RFQ CutOff', 'datetime-local')}
-                {renderInput('rfq_date_logistic', 'RFQ Date', 'date')}
+                {renderInput('rfq_date_logistic', 'RFQ Date', 'date',true)}
                 {renderSelect(
                     'mode_of_shipment',
                     'Mode of Shipment',
@@ -132,18 +177,11 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
                     (item) => `${item.name}`
                 )}
                 {renderSelect(
-                    'shipment_type',
-                    'Shipment Type',
-                    Dropdown?.shipment_type,
-                    (item) => item.name,
-                    (item) => `${item.shipment_type_name}`
-                )}
-                {renderSelect(
                     'destination_port',
                     'Destination Port',
-                    Dropdown?.port_master,
-                    (item) => item.name,
-                    (item) => `${item.port_name}`
+                    destinationPort,
+                    (item) => item,
+                    (item) => `${item}`
                 )}
                 {renderSelect(
                     'country',
@@ -160,13 +198,13 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
                     (item) => item.name,
                     (item) => `${item.port_code}`
                 )}
-                {renderSelect(
+                {/*{renderSelect(
                     'port_of_loading',
                     'Port of Loading',
                     Dropdown?.port_master,
                     (item) => item.name,
                     (item) => `${item.port_name}`
-                )}
+                )}*/}
                 {renderSelect(
                     'inco_terms',
                     'Inco Terms',
@@ -185,6 +223,9 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
                     (item) => `${item.package_name}`
                 )}
                 {renderInput('no_of_pkg_units', 'No.Of Pkg Units', 'number')}
+                
+                {renderInput('vol_weight', 'Vol Weight(KG)', 'number')}
+                {renderInput('actual_weight', 'Actual Weight(KG)', 'number')}
                 {renderSelect(
                     'product_category',
                     'Product Category',
@@ -192,12 +233,29 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
                     (item) => item.name,
                     (item) => `${item.product_category_name}`
                 )}
-                {renderInput('vol_weight', 'Vol Weight(KG)', 'number')}
-                {renderInput('actual_weight', 'Actual Weight(KG)', 'number')}
+                {renderSelect(
+                    'shipment_type',
+                    'Shipment Type',
+                    Dropdown?.shipment_type,
+                    (item) => item.name,
+                    (item) => `${item.shipment_type_name}`
+                )}
                 {renderInput('invoice_date', 'Invoice Date', 'date')}
                 {renderInput('invoice_no', 'Invoice No')}
                 {renderInput('invoice_value', 'Invoice Value', 'number')}
                 {renderInput('expected_date_of_arrival', 'Expected Date of Arrival', 'date')}
+                <div>
+                    <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                        Uplaod Documents
+                    </h1>
+                    <MultipleFileUpload
+                        files={uploadedFiles}
+                        setFiles={setUploadedFiles}
+                        buttonText="Attach Files"
+                    />
+                </div>
+            </div>
+            <div className='p-5'>
                 {renderTextarea('remarks', 'Remarks')}
             </div>
         </div>

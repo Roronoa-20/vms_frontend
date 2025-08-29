@@ -54,11 +54,12 @@ export interface newVendorTable {
 }
 
 const LogisticsImportRFQ = ({ Dropdown }: Props) => {
-    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "logistics Vendor" });
+    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Logistics Vendor" });
     const [vendorSearchName, setVendorSearchName] = useState('')
     const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
     const [VendorList, setVendorList] = useState<VendorApiResponse>();
     const [loading, setLoading] = useState(true);
+    const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const [selectedRows, setSelectedRows] = useState<VendorSelectType>(
         {
             vendors: []
@@ -81,7 +82,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
             }
         }
         if (formData?.service_provider != "Select" && formData?.service_provider && formData?.company_name_logistic) {
-            fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "logistics Vendor");
+            fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Logistics Vendor");
         }
     }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider]);
 
@@ -93,8 +94,20 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
         if (formData?.service_provider == "All Service Provider" || formData?.service_provider == "Select" || formData?.service_provider == "Premium Service Provider") {
             setSelectedRows({ vendors: [] })
         }
+        const formdata = new FormData();
+        const fullData = {
+            ...formData,
+          logistic_type: "Import", non_onboarded_vendors: newVendorTable, vendors: selectedRows.vendors
+        };
+        formdata.append('data', JSON.stringify(fullData));
+        // Append file only if exists
+        if (uploadedFiles) {
+            uploadedFiles?.forEach((file) => {
+                formdata.append("file", file);
+            });
+        }
         const url = `${API_END_POINTS?.CreateImportRFQ}`;
-        const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...formData, logistic_type: "Import", non_onboarded_vendors: newVendorTable, vendors: selectedRows.vendors } }, method: "POST" });
+        const response: AxiosResponse = await requestWrapper({ url: url, data:formdata, method: "POST" });
         if (response?.status == 200) {
             alert("Submit Successfull");
             router.push("/dashboard");
@@ -118,6 +131,8 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
                 formData={formData}
                 setFormData={setFormData}
                 Dropdown={Dropdown}
+                setUploadedFiles={setUploadedFiles}
+                uploadedFiles={uploadedFiles}
             />
             {formData?.service_provider === "Adhoc Service Provider" && <VendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />}
             {formData?.service_provider === "Courier Service Provider" && <SingleSelectVendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />}

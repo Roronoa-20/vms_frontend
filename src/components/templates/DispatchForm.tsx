@@ -95,6 +95,7 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
     const [selectedPO,setSelectedPO] = useState<string[]>([]);
     const [selectedPOMultiple,setSelectedPOMultiple] = useState<MultiValue<OptionType>>();
     const [table,setTable] = useState<TDisptachDetails["items"]>(DispatchDetails?.items ?? []);
+    const [Vehicaltable,setVehicalTable] = useState<TDisptachDetails["items"]>(DispatchDetails?.items ?? []);
     const [formData,setFormData] = useState<formData>();
     const [uploadedFiles,setUploadedFiles] = useState<uploadedFiles | null>(DispatchDetails);
     console.log(DispatchDetails?.items,"this si table")
@@ -382,7 +383,60 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
         </div>
       </div>
       
-        <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
+
+          <div className={`shadow- bg-[#f6f6f7] mb-8 p-4 rounded-2xl mt-4 ${Vehicaltable?.length > 0?"":"hidden"}`}>
+          <div className="flex w-full justify-between pb-4">
+            <h1 className="text-[20px] text-[#03111F] font-semibold">
+              Vehicle Pass
+            </h1>
+          </div>
+          <Table className=" max-h-40 overflow-y-scroll">
+            <TableHeader className="text-center">
+              <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
+                <TableHead className="text-center">Vehical No.</TableHead>
+                <TableHead className="text-center">Loading State</TableHead>
+                <TableHead className="text-center">Loading Location</TableHead>
+                <TableHead className="text-center">Driver Name</TableHead>
+                <TableHead className="text-center">Transporter Name</TableHead>
+                <TableHead className="text-center">Driver Phone</TableHead>
+                <TableHead className="text-center">Driver License</TableHead>
+                <TableHead className="text-center">LR Number</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="text-center">
+              {table?.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell>{item?.product_name}</TableCell>
+                  <TableCell>{item?.quantity}</TableCell>
+                  <TableCell className='flex justify-center'><Input disabled={DispatchDetails?.dispatch_form_submitted?true:false} value={table[index]?.dispatch_qty ?? 0} onChange={(e)=>{handleTableInput(index,Number(e.target.value),Number(item?.quantity))}} min={0}  className='w-24' type='number'/></TableCell>
+                  <TableCell>{item?.pending_qty}</TableCell>
+                  <TableCell>{item?.uom}</TableCell>
+                  <TableCell className='flex justify-center'>
+                    {
+                      item?.coa_document_upload?
+                      <div className='flex gap-4 justify-center'><h1>{item?.coa_document_upload?.name}</h1><Trash2 onClick={()=>{handleTableFileDelete(index,"coa_document_upload")}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div> :
+                      item?.coa_document?.url?
+                      <div className='flex gap-4 justify-center'><h1>{item?.coa_document?.file_name}</h1><Trash2 onClick={()=>{handleTableFileDelete(index,"coa_document")}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>:
+                    <input onChange={(e)=>{handleTableFile(index,e)}} name='coa_document_upload' type='file' className='w-24'/>
+                    }
+                    </TableCell>
+                  <TableCell>
+                    {
+                      item?.msds_document_upload ?
+                     <div className='flex gap-4 justify-center'><h1>{item?.msds_document_upload?.name}</h1><Trash2 onClick={()=>{handleTableFileDelete(index,"msds_document_upload")}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div> :
+                      item?.msds_document?.url ?
+                     <div className='flex gap-4 justify-center'><h1>{ item?.msds_document?.file_name}</h1><Trash2 onClick={()=>{handleTableFileDelete(index,"msds_document")}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div> :
+                    <input type='file' name='msds_document_upload' onChange={(e)=>{handleTableFile(index,e)}} className='w-24'/>
+                    }
+                    </TableCell>
+                    <TableCell><Button className={`bg-blue-400 hover:bg-blue-300 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{handleTableRowUpdate(item)}}>Update</Button></TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        <div className={`shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl ${table?.length > 0?"":"hidden"}`}>
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
               Items List
@@ -436,7 +490,11 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
       
       <div className={`flex justify-end pr-4 gap-4`}>
         {/* <Button className='bg-blue-400 hover:bg-blue-400' >Save As Draft</Button> */}
-      <Button className={`bg-blue-400 hover:bg-blue-400 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{handleSubmit()}} >Submit</Button></div>
+        {
+          table?.length > 0 &&
+          <Button className={`bg-blue-400 hover:bg-blue-400 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{handleSubmit()}} >Submit</Button>
+        }
+        </div>
     </div>
   )
 }
