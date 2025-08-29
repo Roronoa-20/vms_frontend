@@ -55,7 +55,7 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
             }
         }
         if (formData?.service_provider != "Select" && formData?.service_provider) {
-            fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "logistics Vendor");
+            fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Logistics Vendor");
         }
     }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider]);
 

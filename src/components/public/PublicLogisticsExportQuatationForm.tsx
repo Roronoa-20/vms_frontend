@@ -14,7 +14,7 @@ interface Props {
     RFQData:RFQDetails;
 }
 const PublicLogisticsExportQuatationForm = ({ Dropdown, token}: Props) => {
-    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "logistics Vendor" });
+    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Logistics Vendor" });
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const router = useRouter()
     const handleSubmit = async () => {

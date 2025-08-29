@@ -35,7 +35,7 @@ const SubmitQuatation = async ({ refno }: PageProps) => {
         <div className='px-4 py-6'>
             <h1 className='text-lg py-2'>RFQ RefNo : <span className='font-bold'>{refno ? refno : ""}</span></h1>
             {
-                RFQData.rfq_type == "logistics Vendor" &&
+                RFQData.rfq_type == "Logistics Vendor" &&
                 <>
                     <RFQBasicDetails RFQData={RFQData} />
                     <ViewFileAttachment RFQData={RFQData} />
