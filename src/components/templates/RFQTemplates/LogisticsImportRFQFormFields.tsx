@@ -6,7 +6,6 @@ import MultipleFileUpload from '../../molecules/MultipleFileUpload';
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
-import { useEffect } from 'react';
 interface Props {
     formData: Record<string, any>;
     setFormData: React.Dispatch<React.SetStateAction<Record<string, any>>>;
@@ -244,6 +243,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                 )}
                 {renderInput('invoice_date', 'Invoice Date', 'date')}
                 {renderInput('invoice_no', 'Invoice No')}
+                {renderInput('invoice_value', 'Invoice Value', 'number')}
                 {renderInput('expected_date_of_arrival', 'Expected Date of Arrival', 'date')}
                 <div>
                     <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -257,7 +257,6 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                 </div>
             </div>
             <div className='p-5'>
-                {renderInput('invoice_value', 'Invoice Value', 'number')}
                 {renderTextarea('remarks', 'Remarks')}
             </div>
         </div>
