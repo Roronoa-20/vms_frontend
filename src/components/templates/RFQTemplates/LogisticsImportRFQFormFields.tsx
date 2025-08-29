@@ -2,13 +2,17 @@ import React from 'react'
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from "@/components/ui/select";
 import { DropdownData } from './LogisticsImportRFQ';
+import { useEffect } from 'react';
 interface Props {
     formData: Record<string, any>;
     setFormData: React.Dispatch<React.SetStateAction<Record<string, any>>>;
     Dropdown: DropdownData;
 }
-const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props) => {
+// RFQ current date
+const today = new Date().toISOString().split("T")[0];
 
+const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props) => {
+   
     const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -16,7 +20,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
     const handleSelectChange = (value: string, field: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
-    const renderInput = (name: string, label: string, type = 'text') => (
+    const renderInput = (name: string, label: string, type = 'text', isdisabled?:boolean) => (
         <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 {label}
@@ -29,6 +33,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
                 className={'border-neutral-200'}
                 value={formData[name] || ''}
                 onChange={handleFieldChange}
+                disabled={isdisabled}
             />
         </div>
     );
@@ -84,6 +89,14 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
             </Select>
         </div>
     );
+
+    //RFQ date
+    useEffect(() => {
+        setFormData((prev) => ({ ...prev, rfq_date_logistic: formData?.rfq_date_logistic?formData?.rfq_date_logistic:today }));
+      }, [today,formData?.rfq_date_logistic]);
+    
+      console.log(formData, "formData");
+
     return (
         <div>
             <div className="grid grid-cols-3 gap-6 p-5">
@@ -123,7 +136,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
                 </div>
                 {renderInput('sr_no', 'Sr No.')}
                 {renderInput('rfq_cutoff_date_logistic', 'RFQ CutOff', 'datetime-local')}
-                {renderInput('rfq_date_logistic', 'RFQ Date', 'date')}
+                {renderInput('rfq_date_logistic', 'RFQ Date', 'date',true)}
                 {renderSelect(
                     'mode_of_shipment',
                     'Mode of Shipment',
@@ -131,13 +144,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
                     (item) => item.name,
                     (item) => `${item.name}`
                 )}
-                {renderSelect(
-                    'shipment_type',
-                    'Shipment Type',
-                    Dropdown?.shipment_type,
-                    (item) => item.name,
-                    (item) => `${item.shipment_type_name}`
-                )}
+                
                 {renderSelect(
                     'destination_port',
                     'Destination Port',
@@ -160,13 +167,13 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
                     (item) => item.name,
                     (item) => `${item.port_code}`
                 )}
-                {renderSelect(
+                {/*{renderSelect(
                     'port_of_loading',
                     'Port of Loading',
                     Dropdown?.port_master,
                     (item) => item.name,
                     (item) => `${item.port_name}`
-                )}
+                )}*/}
                 {renderSelect(
                     'inco_terms',
                     'Inco Terms',
@@ -185,6 +192,9 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
                     (item) => `${item.package_name}`
                 )}
                 {renderInput('no_of_pkg_units', 'No.Of Pkg Units', 'number')}
+                
+                {renderInput('vol_weight', 'Vol Weight(KG)', 'number')}
+                {renderInput('actual_weight', 'Actual Weight(KG)', 'number')}
                 {renderSelect(
                     'product_category',
                     'Product Category',
@@ -192,12 +202,17 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown }: Props
                     (item) => item.name,
                     (item) => `${item.product_category_name}`
                 )}
-                {renderInput('vol_weight', 'Vol Weight(KG)', 'number')}
-                {renderInput('actual_weight', 'Actual Weight(KG)', 'number')}
+                {renderSelect(
+                    'shipment_type',
+                    'Shipment Type',
+                    Dropdown?.shipment_type,
+                    (item) => item.name,
+                    (item) => `${item.shipment_type_name}`
+                )}
                 {renderInput('invoice_date', 'Invoice Date', 'date')}
                 {renderInput('invoice_no', 'Invoice No')}
-                {renderInput('invoice_value', 'Invoice Value', 'number')}
                 {renderInput('expected_date_of_arrival', 'Expected Date of Arrival', 'date')}
+                {renderInput('invoice_value', 'Invoice Value', 'number')}
                 {renderTextarea('remarks', 'Remarks')}
             </div>
         </div>
