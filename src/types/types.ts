@@ -145,6 +145,7 @@ type VendorTypeGroup = {
 };
 
 export type VendorOnboarding = {
+  accounts_head_approval:string,
   registered_by: string
   vendor_country: string
   company_vendor_codes: {
@@ -370,7 +371,15 @@ export type ASAForm = {
   registered_date: string,
   pending_asa_count: string,
   approved_vendor_count: string,
-
+  company_vendor_codes: {
+    company_name: string,
+    company_code: string,
+    vendor_codes: {
+      state: string,
+      gst_no: string,
+      vendor_code: string,
+    }[]
+  }[]
 }
 
 export type TCompanyDetailForm = {
@@ -456,6 +465,7 @@ export type TCurrencyDropdown = {
 }
 
 export type TPurchaseDetails = {
+  account_head_remarks:string
   account_group: string,
   company_name: string,
   incoterms: string,
@@ -521,7 +531,9 @@ interface IvalidationChecks {
   is_purchase_approve: number,
   is_purchase_head_approve: number,
   is_accounts_team_approve: number,
-  is_accounts_head_approve: number
+  is_accounts_head_approve: number,
+  register_by_account_team:number,
+  is_amendment:number
 }
 
 type CompanyAddressDetails = {
@@ -764,6 +776,7 @@ type DocumentDetailsTab = {
 };
 
 type PaymentDetailsTab = {
+  bank_proof_upload_status:number,
   bank_name: string;
   ifsc_code: string;
   account_number: string;
@@ -913,6 +926,10 @@ export type dashboardCardData = {
   cart_count: number,
   overall_total_rfq: number,
   sap_error_vendor_count: number
+  sap_error_vendor_count_by_accounts_team:number,
+  rejected_vendor_count_by_accounts_team:number,
+  approved_vendor_count_by_accounts_team:number,
+  pending_vendor_count_by_accounts_team:number
 }
 
 export interface DashboardPOTableItem {
@@ -1263,6 +1280,7 @@ export interface DashboardTableType {
 
 
 type SapErrorVendorOnboarding = {
+  accounts_head_approval:string
   name: string;
   ref_no: string;
   company_name: string;
@@ -1294,6 +1312,9 @@ type SapErrorVendorOnboarding = {
   rejected_by: string;
   rejected_by_designation: string;
   reason_for_rejection: string;
+  sap_error_message: string;
+  sap_error_mail_sent: 0 | 1;
+  
 };
 
 type SapErrorVendorOnboardingResponse = {
@@ -1314,12 +1335,22 @@ export type ASAFormResponse = {
   page_no: number;
   page_length: number;
   pending_asa_vendors: ASAForm[];
+  approved_vendors: ASAForm[];
   name: string,
   vendor_name: string,
   office_email_primary: string,
   country: string,
   mobile_number: string,
   registered_date: string,
+  company_vendor_codes: {
+    company_name: string,
+    company_code: string,
+    vendor_codes: {
+      state: string,
+      gst_no: string,
+      vendor_code: string,
+    }[]
+  }[]
 };
 
 

@@ -142,10 +142,14 @@ const API_END_POINTS = {
   asasocialformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_social_asa_form`,
   asaenvformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_env_asa_form`,
   asavendorListdashboard: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.asa_dashboard`,
-  asaapprovedvendorcount: `${url}//api/method/vms.APIs.assessment_apis.asa_dashboard.approved_vendor_count`,
+  asaonboardedvendorcount: `${url}//api/method/vms.APIs.assessment_apis.asa_dashboard.approved_vendor_count`,
   asapendingVendorcount: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.pending_asa_count`,
   asapendingVendorList: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.pending_asa_vendor_list`,
   asasendremindermail: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.send_asa_reminder_email`,
+  asaonboardedvendorlist: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.approved_vendor_list`,
+
+  // All Approved Vendors Speicfy Detail API
+  allvendorsdetails: `${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.vendors_brief_details`,
 
   // Company Filter API for Purchase Enquiry and Purchase Requisition
   filterpurchasegroup: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.filter_purchase_group`,
@@ -165,7 +169,12 @@ const API_END_POINTS = {
   verifyNewVendor: `${url}/api/method/vms.APIs.req_for_quotation.rfq.check_duplicate_vendor`,
 
   sapApiDashboardDetails:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.sap_error_vendor_details`,
-  sapErrorSendEmail:`${url}/api/method/vms.APIs.sap.send_sap_error_email.send_sap_error_email`
+  sapErrorSendEmail:`${url}/api/method/vms.APIs.sap.send_sap_error_email.send_sap_error_email`,
+  dashboardPendingVendorsAccounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.pending_vendor_details_by_accounts`,
+  dashboardOnboardedVendorsAccounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.approved_vendor_details_by_accounts`,
+  dashboardRejectedVendorsAccounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.rejected_vendor_details_by_accounts`,
+  dashboardSapErrorAcounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.sap_error_vendor_details_by_accounts`,
+  bankProofByPurchaseTeam:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`
 };
 
 export default API_END_POINTS;

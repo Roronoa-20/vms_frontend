@@ -51,6 +51,7 @@ interface Props {
   onboarding_ref_no: string;
   OnboardingDetail: VendorOnboardingResponse["message"]["document_details_tab"];
   documentDetailDropdown: TdocumentDetailDropdown["message"]["data"];
+  isAmendment:number
 }
 
 interface gstRow {
@@ -85,6 +86,7 @@ const DocumentDetails = ({
   onboarding_ref_no,
   OnboardingDetail,
   documentDetailDropdown,
+  isAmendment
 }: Props) => {
   const [BusinessType, setBusinessType] = useState<string>(
     OnboardingDetail?.gst_table[0]?.gst_ven_type
@@ -109,7 +111,7 @@ const DocumentDetails = ({
   const [isGstFilePreview, setIsGstFilePreview] = useState<boolean>(true);
   const [isPanFilePreview, setIsPanFilePreview] = useState<boolean>(true);
   const [singlerow, setSingleRow] = useState<gstRow | null>();
-  const [GSTTable, setGSTTable] = useState<gstRow[]>(OnboardingDetail?.company_gst_table);
+  const [GSTTable, setGSTTable] = useState<gstRow[]>(OnboardingDetail?.gst_table);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const { designation } = useAuth();
 
@@ -224,10 +226,10 @@ const DocumentDetails = ({
       return;
     }
     const url = API_END_POINTS?.documentDetailSubmit;
-    if (!checkPAN(documentDetails?.company_pan_number as string) || !checkPAN(OnboardingDetail?.company_pan_number)) {
-      alert("please enter correct PAN Number")
-      return;
-    }
+    // if (!checkPAN(documentDetails?.company_pan_number as string) || !checkPAN(OnboardingDetail?.company_pan_number)) {
+    //   alert("please enter correct PAN Number")
+    //   return;
+    // }
     // if(!checkGST(documentDetails?.gst_number as string)){
     //   alert("please enter correct gst number")
     //   return;
@@ -257,11 +259,11 @@ const DocumentDetails = ({
       data: formData,
       method: "POST",
     });
-    if (Response?.status == 200)
+    if (Response?.status == 200){
       setDocumentDetail({})
-    router.push(
-      `${designation == "Purchase Team" || designation == "Purchase Head" ? `/view-onboarding-details?tabtype=Payment Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}` : `/view-onboarding-details?tabtype=Payment Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`
-    );
+      alert("successfully Updated the Records");
+      location.reload();
+    }
   };
 
 
@@ -309,13 +311,13 @@ const DocumentDetails = ({
   console.log(singlerow)
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-4 w-full max-h-[80vh]">
-      <div className="flex justify-between">
-        <h1 className="border-b-2 font-semibold text-[18px]">Document Details</h1>
-        <Button onClick={() => { setIsDisabled(prev => !prev) }} className="mb-2">{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+    <div className="flex flex-col bg-white rounded-lg p-3 w-full max-h-[80vh]">
+      <div className="flex justify-between items-center border-b-2">
+        <h1 className="font-semibold text-[18px]">Document Details</h1>
+        <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
       </div>
       <div className="overflow-y-scroll">
-        <div className="grid grid-cols-3 gap-6 p-2">
+        <div className="grid grid-cols-3 gap-6 p-3">
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Company PAN Number <span className="pl-2 text-red-400 text-2xl">*</span>
@@ -401,7 +403,7 @@ const DocumentDetails = ({
               {errors?.panDocument && !documentDetails?.panDocument && <span style={{ color: 'red' }}>{errors?.panDocument}</span>}
             </div>
           </div>
-          <div className="col-span-3 grid grid-cols-3 gap-6">
+          <div className={`col-span-3 grid grid-cols-3 gap-6 ${isDisabled?"hidden":""}`}>
             <div className="flex flex-col">
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 GST Vendor Type <span className="pl-2 text-red-400 text-2xl">*</span>
@@ -440,6 +442,31 @@ const DocumentDetails = ({
               </Select>
               {errors?.gst_ven_type && !documentDetails?.gst_ven_type && <span style={{ color: 'red' }}>{errors?.gst_ven_type}</span>}
             </div>
+            <div>
+                          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                            Company <span className="pl-2 text-red-400 text-2xl">*</span>
+                          </h1>
+                          <Select
+                          disabled={isDisabled}
+                            onValueChange={(value) => {
+                              setSingleRow((prev: any) => ({ ...prev, company: value }));
+                            }}
+                            value={singlerow?.company ?? ""}
+                          >
+                            <SelectTrigger className="disabled:opacity-100">
+                              <SelectValue placeholder="Select Company" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                {gstStateDropdown?.company?.map((item, index) => (
+                                  <SelectItem key={index} value={item?.name}>
+                                    {item?.description}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 State <span className="pl-2 text-red-400 text-2xl">*</span>
@@ -501,7 +528,7 @@ const DocumentDetails = ({
             </div>
           </div>
           <div
-            className={`col-span-3 grid grid-cols-3 gap-6`}
+            className={`col-span-3 grid grid-cols-3 gap-6 ${isDisabled?"hidden":""}`}
           >
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">

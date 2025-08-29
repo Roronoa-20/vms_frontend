@@ -7,6 +7,7 @@ import DashboardTotalVendorsTable from "./Dashboard-Total-Vendors-Table";
 import DashboardPendingVendorsTable from "./Dashboard-Pending-Vendors-Table";
 import DashboardApprovedVendorsTable from "./Dashboard-Approved-Vendors-Table";
 import DashboardRejectedVendorsTable from "./Dashboard-Rejected-Vendors-Table";
+import DashboardASAOnboardedVendorsList from "./Dashboard-ASA-Onboarded-Vendors-List";
 import DashboardASAFormTable from "./Dashboard-ASA-Vendors-Form-Table";
 import DashboardASAPendingVendorFormTableList from "./Dashboard-ASA-Pending-Vendor-List";
 import DashboardDispatchVendorsTable from "./Dashboard-Dispatch-Vendors-Table";
@@ -26,6 +27,10 @@ import { FileSearch } from "lucide-react";
 import DashboardRFQTable from "./DashboardRFQTable";
 import ASAVendorMonthWiseChart from "./ASAVendorMonthWiseChart";
 import DashboardSAPErrorTable from "./DashboardSAPErrorTable";
+import DashboardAccountsPendingTable from "./DashboardAccountsPendingTable";
+import DashboardAccountsOnboardedTable from "./DashboardAccountsOnboardedTable";
+import DashboardAccountsRejectedTable from "./DashboardAccountsRejectedTable";
+import DashboardAccountsSAPErrorTable from "./DashboardAccountsSAPErrorTable";
 
 type Props = {
   cardData: dashboardCardData
@@ -41,8 +46,13 @@ type Props = {
   dashboardASAFormTableData: DashboardTableType["asa_form_data"]
   dashboardPendingASAFormTableData: DashboardTableType["asa_form_data"]
   dashboardASAPendingVendorListTableData: DashboardTableType["asa_form_data"]
-  ASAdashboardApprovedVendorcountTableData: DashboardTableType["asa_form_data"]
+  ASAdashboardOnboardedVendorcountTableData: DashboardTableType["asa_form_data"]
   sapErrorDashboardData: DashboardTableType["sapErrorDashboardData"]
+  dashboardAccountsPending:any
+  dashboardAccountsOnboarded:any
+  dashboardAccountsRejected:any
+  dashboardAccountsSapErrors:any
+  ASAdashboardOnboardedVendorListTableData: DashboardTableType["asa_form_data"]
 }
 
 const DashboardCards = ({ ...Props }: Props) => {
@@ -61,11 +71,11 @@ const DashboardCards = ({ ...Props }: Props) => {
     allCardData = [
       {
         name: "Total Onboarded Vendor",
-        count: Props.ASAdashboardApprovedVendorcountTableData?.approved_vendor_count ?? 0,
+        count: Props.ASAdashboardOnboardedVendorcountTableData?.approved_vendor_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
-        text_color: "text-violet-800",
-        bg_color: "bg-violet-100",
-        hover: "hover:border-violet-400",
+        text_color: "text-emerald-800",
+        bg_color: "bg-emerald-100",
+        hover: "hover:border-emerald-400",
       },
       {
         name: "Submitted ASA Form",
@@ -79,9 +89,9 @@ const DashboardCards = ({ ...Props }: Props) => {
         name: "Pending ASA Form",
         count: Props.dashboardPendingASAFormTableData?.pending_asa_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
-        text_color: "text-violet-800",
-        bg_color: "bg-violet-100",
-        hover: "hover:border-violet-400",
+        text_color: "text-rose-800",
+        bg_color: "bg-rose-100",
+        hover: "hover:border-rose-400",
       },
     ];
   } else if (user == "Purchase Team" || user == "Purchase Head") {
@@ -219,11 +229,62 @@ const DashboardCards = ({ ...Props }: Props) => {
         bg_color: "bg-violet-100",
         hover: "hover:border-violet-400",
       },
+      {
+        name: "Accounts Pending Vendors",
+        count: Props?.cardData?.pending_vendor_count_by_accounts_team ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
+      {
+        name: "Accounts Onboarded Vendors",
+        count: Props?.cardData?.approved_vendor_count_by_accounts_team ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
+      {
+        name: "Accounts Rejected Vendors",
+        count: Props?.cardData?.rejected_vendor_count_by_accounts_team ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
+      {
+        name: "Accounts SAP Error Log",
+        count: Props?.cardData?.sap_error_vendor_count_by_accounts_team ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
     ];
   }
 
+  let EnquirerCard = [
+   {
+        name: "Purchase Inquiry",
+        count: Props.cardData?.cart_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/doc.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-rose-100",
+        hover: "hover:border-rose-400",
+      },
+      {
+        name: "Purchase Requisition",
+        count: Props.cardData?.pr_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-green-200",
+        hover: "hover:border-rose-400",
+      },
+  ]
+
   let cardData = user === "Enquirer"
-    ? allCardData.filter(item => item.name === "Purchase Inquiry" || item.name === "Purchase Requisition") : allCardData;
+    ?EnquirerCard : allCardData;
 
   useEffect(() => {
     if (user) {
@@ -289,20 +350,27 @@ const DashboardCards = ({ ...Props }: Props) => {
           if (user === "ASA") {
             return (
               <TabsContent key={item.name} value={item.name}>
-                {item.name === "Submitted ASA Form" && (
-                  <DashboardASAFormTable
-                    dashboardTableData={Props.dashboardASAFormTableData}
+                {item.name === "Total Onboarded Vendor" && (
+                  <DashboardASAOnboardedVendorsList
+                    dashboardTableData={Props.ASAdashboardOnboardedVendorListTableData}
                     companyDropdown={Props?.companyDropdown}
                   />
                 )}
+                {item.name === "Submitted ASA Form" && (
+                  <>
+                    <ASAVendorMonthWiseChart tableData={Props.dashboardASAFormTableData.data || []} />
+                    <DashboardASAFormTable
+                      dashboardTableData={Props.dashboardASAFormTableData}
+                      companyDropdown={Props?.companyDropdown}
+                    />
+                  </>
+                )}
                 {item.name === "Pending ASA Form" && (
                   <DashboardASAPendingVendorFormTableList
-                    // dashboardTableData={Props.dashboardASAFormTableData}
                     dashboardTableData={Props.dashboardASAPendingVendorListTableData}
                     companyDropdown={Props?.companyDropdown}
                   />
                 )}
-                <ASAVendorMonthWiseChart tableData={Props.dashboardASAFormTableData.data || []} />
               </TabsContent>
             );
           }
@@ -343,7 +411,7 @@ const DashboardCards = ({ ...Props }: Props) => {
                   companyDropdown={Props?.companyDropdown}
                 />
               )}
-              {item.name === "Purchase Inquiry" && (
+              {item.name === "Purchase Inquiry" && (user === "Enquirer" || user === "Purchase Team") && (
                 <DashboardPurchaseEnquiryTable
                   dashboardTableData={Props?.prInquiryData?.cart_details}
                   companyDropdown={Props?.companyDropdown}
@@ -367,6 +435,30 @@ const DashboardCards = ({ ...Props }: Props) => {
               {item.name === "SAP Error Log" && (
                 <DashboardSAPErrorTable
                   dashboardTableData={Props?.sapErrorDashboardData}
+                  companyDropdown={Props?.companyDropdown}
+                />
+              )}
+              {item.name === "Accounts Pending Vendors" && (
+                <DashboardAccountsPendingTable
+                  dashboardTableData={Props?.dashboardAccountsPending}
+                  companyDropdown={Props?.companyDropdown}
+                />
+              )}
+              {item.name === "Accounts Onboarded Vendors" && (
+                <DashboardAccountsOnboardedTable
+                  dashboardTableData={Props?.dashboardAccountsOnboarded}
+                  companyDropdown={Props?.companyDropdown}
+                />
+              )}
+              {item.name === "Accounts Rejected Vendors" && (
+                <DashboardAccountsRejectedTable
+                  dashboardTableData={Props?.dashboardAccountsRejected}
+                  companyDropdown={Props?.companyDropdown}
+                />
+              )}
+              {item.name === "Accounts SAP Error Log" && (
+                <DashboardAccountsSAPErrorTable
+                  dashboardTableData={Props?.dashboardAccountsSapErrors}
                   companyDropdown={Props?.companyDropdown}
                 />
               )}

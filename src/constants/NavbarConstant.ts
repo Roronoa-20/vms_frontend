@@ -18,6 +18,7 @@ export const NavbarConstant:Record<string,string> = {
     "/create-rfq": "Raise Request for Quotations (RFQ)",
     "/view-po": "View Purchase Order (PO)",
     "/view-dispatch": "Dispatch Details",
+    "/all-vendors": "List of Approved Vendors"
 
 
 }

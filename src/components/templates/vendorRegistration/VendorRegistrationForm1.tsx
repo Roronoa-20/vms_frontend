@@ -87,11 +87,11 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
   }
 
   return (
-    <div>
-      <h1 className="text-[20px] font-medium pb-1 leading-[24px] text-[#03111F] border-b border-slate-500">
+    <div className="mb-4">
+      <h1 className="text-[18px] font-semibold pb-1 leading-[24px] text-[#03111F] border-b border-slate-500">
         Vendor Details
       </h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
+      <div className="grid grid-cols-3 gap-6 p-2">
         <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Vendor Type
@@ -183,7 +183,7 @@ const VendorRegistration1 = ({vendorTypeDropdown,vendorTitleDropdown,countryDrop
             </div>
             <div className="col-span-3 flex flex-col justify-end">
               {/* <h1 className="text-[12px] font-normal text-[#626973] pb-3">Mobile No.</h1> */}
-              <Input placeholder="Enter Mobile Number" name="mobile_number" maxLength={10} required value={formData?.mobile_number ?? ""}  onChange={(e) => handlefieldChange(e)}/>
+              <Input placeholder="Enter Mobile Number" name="mobile_number" required value={formData?.mobile_number ?? ""}  onChange={(e) => handlefieldChange(e)}/>
             </div>
           </div>
         </div>

@@ -51,7 +51,7 @@ const useDebounce = (value: any, delay: any) => {
   return debouncedValue;
 };
 
-const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
+const DashboardAccountsPendingVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
 
   const [table, setTable] = useState<DashboardTableType["pending_vendor_onboarding"]>(dashboardTableData?.pending_vendor_onboarding);
   const [selectedCompany, setSelectedCompany] = useState<string>("")
@@ -81,7 +81,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
 
   const fetchTable = async () => {
     const dashboardPendingVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.dashboardPendingVendorTableURL}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}`,
+      url: `${API_END_POINTS?.dashboardPendingVendorsAccounts}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}`,
       method: "GET",
     });
     if (dashboardPendingVendorTableDataApi?.status == 200) {
@@ -94,13 +94,13 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
     }
   };
 
-  console.log(table, "this is table");
-  const { designation } = useAuth();
-  const isAccountsUser = designation?.toLowerCase().includes("account");
-
   const handleView = async(refno:string,vendor_Onboarding:string)=>{
     router.push(`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${vendor_Onboarding}&refno=${refno}`)
   }
+
+  console.log(table, "this is table");
+  const { designation } = useAuth();
+  const isAccountsUser = designation?.toLowerCase().includes("account");
 
 
   return (
@@ -108,7 +108,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Total Pending Vendors
+            Total Accounts Pending Vendors
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
@@ -151,9 +151,8 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
               <TableHead>Vendor Name</TableHead>
               <TableHead className="text-center">Company Name</TableHead>
               <TableHead className="text-center">Status</TableHead>
-              <TableHead className="text-center">Purchase Team</TableHead>
-              <TableHead className="text-center">Purchase Head</TableHead>
               <TableHead className="text-center">Account Team</TableHead>
+              <TableHead className="text-center">Account Head</TableHead>
               <TableHead className="text-center">View Details</TableHead>
               {!isAccountsUser && (
                 <TableHead className="text-center">QMS Form</TableHead>
@@ -162,7 +161,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
           </TableHeader>
           <TableBody className="text-center">
             {table ? (
-              table.map((item, index) => (
+              table?.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                   <TableCell className="text-nowrap">{item?.ref_no}</TableCell>
@@ -180,12 +179,11 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
                       {item?.onboarding_form_status}
                     </div>
                   </TableCell>
-                  <TableCell>{item?.purchase_t_approval}</TableCell>
-                  <TableCell>{item?.purchase_h_approval}</TableCell>
                   <TableCell>{item?.accounts_t_approval}</TableCell>
+                  <TableCell>{item?.accounts_head_approval}</TableCell>
                   {/* <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell> */}
-                  <TableCell><Button onClick={()=>{item?.form_fully_submitted_by_vendor == 1?handleView(item?.ref_no,item?.name):alert("Vendor Form is not fully subitted")}} variant={"outline"}>View</Button></TableCell>
                   {/* <TableCell className="text-right">{item?.qms_form}</TableCell> */}
+                  <TableCell><Button onClick={()=>{item?.form_fully_submitted_by_vendor == 1?handleView(item?.ref_no,item?.name):alert("Vendor Form is not fully subitted")}} variant={"outline"}>View</Button></TableCell>
                   {!isAccountsUser && (
                     <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
                   )}
@@ -207,4 +205,4 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
   );
 };
 
-export default DashboardPendingVendorsTable;
+export default DashboardAccountsPendingVendorsTable;

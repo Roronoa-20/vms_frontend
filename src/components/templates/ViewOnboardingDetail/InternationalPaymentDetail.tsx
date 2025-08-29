@@ -26,6 +26,9 @@ interface Props {
   onboarding_ref_no: string,
   OnboardingDetail: VendorOnboardingResponse["message"]["payment_details_tab"],
   company_name?: string
+  isAccountTeam:number
+  isAmendment:number
+  isBankProof:number
 }
 
 interface IformData {
@@ -58,7 +61,7 @@ interface IformData {
 }
 
 
-const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_name }: Props) => {
+const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_name,isAccountTeam,isAmendment,isBankProof }: Props) => {
   // const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
   const [formData, setFormData] = useState<IformData>();
   // const [bankProofFile,setBankProofFile] = useState<FileList | null>(null);
@@ -72,6 +75,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
   const [bankNameDropown, setBankNameDropown] = useState<TbankNameDropdown["message"]["data"]>([])
   const [currencyDropdown, setCurrencyDropdown] = useState<TCurrencyDropdown["message"]["data"]>([])
   const { designation } = useAuth();
+  const [PurchaseTeambankProof,setPurchaseTeamBankProof] = useState<File>();
   const { setBankProof, bank_proof } = UsePurchaseTeamApprovalStore();
   // if(!designation){
   //   return(
@@ -149,16 +153,32 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
       setFormData((prev: any) => ({ ...prev, intermediate_bank_details: { ...prev?.intermediate_bank_details, [name]: value } }));
     }
   }
+
+  const uploadBankProofByPurchaseTeam = async()=>{
+    const formdata = new FormData();
+    if(PurchaseTeambankProof != null){
+      formdata?.append("bank_proof_by_purchase_team",PurchaseTeambankProof)
+    }
+
+    formdata?.append("data",JSON.stringify({ref_no:ref_no,vendor_onboarding:onboarding_ref_no}));
+
+    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.bankProofByPurchaseTeam,method:"POST",data:formdata});
+    if(response?.status == 200){
+      alert("Uploaded Successfully");
+      location?.reload();
+    }else{
+      alert("Error in Uploading");
+    }
+  }
   console.log(OnboardingDetail?.bank_proof?.file_name, "thiskjdvb")
   return (
-    <div className="flex flex-col bg-white rounded-lg p-4 w-full">
-      <div className="flex justify-between">
-        <h1 className="border-b-2 font-semibold text-[18px]">
+    <div className="flex flex-col bg-white rounded-lg p-3 w-full">
+      <div className="flex justify-between items-center border-b-2">
+        <h1 className="font-semibold text-[18px]">
           Bank Details
         </h1>
       </div>
-      {/* <h1 className="pl-2 ">Billing Address</h1> */}
-      <div className="grid grid-cols-3 gap-6 p-2">
+      <div className="grid grid-cols-3 gap-6 p-3">
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Beneficiary Name
@@ -261,6 +281,40 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
                 </div>
               )}
           </div>
+        </div>
+        <div>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Bank Proof By Purchase Team (Upload Passbook Leaf/Cancelled Cheque) <span className="pl-2 text-red-400 text-2xl">*</span>
+          </h1>
+          <div className="flex gap-4">
+           <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation == "Purchase Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
+          <Input className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
+                     {/* file preview */}
+          {/* file preview */}
+          {isPurchaseBankFilePreview &&
+              !PurchaseTeambankProof &&
+              OnboardingDetail?.bank_proof_by_purchase_team?.url && (
+                <div className="flex gap-2">
+                  <Link
+                  target="blank"
+                  href={OnboardingDetail?.bank_proof_by_purchase_team?.url}
+                  className="underline text-blue-300 max-w-44 truncate"
+                  >
+                    <span>{OnboardingDetail?.bank_proof_by_purchase_team?.file_name}</span>
+                  </Link>
+                  {/* <X
+                    className={`cursor-pointer ${isDisabled?"hidden":""}`}
+                    onClick={() => {
+                      setPurchaseIsBankFilePreview((prev) => !prev);
+                    }}
+                    /> */}
+                </div>
+              )}
+              </div>
+        <div className="flex justify-start items-end pt-4">
+              <Button className={designation == "Purchase Team" && isAccountTeam == 0?"":"hidden"} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
+              <Button className={designation == "Accounts Team" && isAccountTeam == 1?"":"hidden"} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
+        </div>
         </div>
       </div>
       <div className="w-full flex justify-start items-center gap-4 pl-10"><Input className="w-4" disabled onChange={(e) => { setIsIntermediateCheck((prev) => (!prev)) }} checked={isIntermediateCheck} type="checkbox" /><h1 className="text-[15px] font-semibold">
@@ -372,6 +426,39 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
                 )}
             </div>
           </div>
+           <div>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Bank Proof By Purchase Team <span className="font-semibold">(2-Way)</span> <span className="pl-2 text-red-400 text-2xl">*</span>
+          </h1>
+          <div className="flex gap-4">
+          <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation != "Purchase Team"?"hidden":""}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
+                    <Input className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team"?"":"hidden"}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
+          {/* file preview */}
+          {isPurchaseBankFilePreview &&
+              !PurchaseTeambankProof &&
+              OnboardingDetail?.bank_proof_by_purchase_team?.url && (
+                <div className="flex gap-2">
+                  <Link
+                  target="blank"
+                  href={OnboardingDetail?.bank_proof_by_purchase_team?.url}
+                  className="underline text-blue-300 max-w-44 truncate"
+                  >
+                    <span>{OnboardingDetail?.bank_proof_by_purchase_team?.file_name}</span>
+                  </Link>
+                  {/* <X
+                    className={`cursor-pointer ${isDisabled?"hidden":""}`}
+                    onClick={() => {
+                      setPurchaseIsBankFilePreview((prev) => !prev);
+                    }}
+                    /> */}
+                </div>
+              )}
+              </div>
+        </div>
+        <div className="flex justify-start items-end">
+               <Button className={`disabled:opacity-100 ${isAccountTeam == 0 && designation == "Purchase Team"?"":"hidden"}`} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
+                            <Button className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team"?"":"hidden"}`} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
+        </div>
         </div>
       }
       {/* <div className={`flex justify-end pr-4 ${designation?"hidden":""} `}><Button className="bg-blue-400 hover:to-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div> */}

@@ -32,6 +32,7 @@ interface Props {
   ref_no: string;
   onboarding_ref_no: string;
   OnboardingDetail: VendorOnboardingResponse["message"]["company_address_tab"];
+  isAmendment:number
 }
 
 interface pincodeFetchData {
@@ -64,7 +65,8 @@ interface multipleAddress {
 const CompanyAddress = ({
   ref_no,
   onboarding_ref_no,
-  OnboardingDetail
+  OnboardingDetail,
+  isAmendment
 }: Props) => {
 
   const router = useRouter();
@@ -289,7 +291,10 @@ const CompanyAddress = ({
       formData.append("file", file[0])
     }
     const submitResponse: AxiosResponse = await requestWrapper({ url: submitUrl, method: "POST", data: formData });
-    if (submitResponse?.status == 200) router.push(`${designation == "Purchase Team" || designation == "Purchase Head" ? `/view-onboarding-details?tabtype=Contact%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}` : `/view-onboarding-details?tabtype=Document%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`}`);
+    if (submitResponse?.status == 200) {
+      alert("successfully updated the record");
+      location.reload();
+    }
   };
 
 
@@ -297,13 +302,13 @@ const CompanyAddress = ({
 
 
   return (
-    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <div className="flex justify-between">
-        <h1 className="border-b-2 font-semibold text-[18px]">Company</h1>
-        <Button onClick={() => { setIsDisabled(prev => !prev) }} className="mb-2">{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+    <div className="flex flex-col bg-white rounded-lg p-3 w-full">
+      <div className="flex justify-between items-center border-b-2">
+        <h1 className="font-semibold text-[18px]">Company</h1>
+        <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
       </div>
       <h1 className="pl-2">Office Address</h1>
-      <div className="grid grid-cols-4 gap-6 p-2">
+      <div className="grid grid-cols-4 gap-6 p-3">
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Address 1 <span className="pl-2 text-red-400 text-2xl">*</span>

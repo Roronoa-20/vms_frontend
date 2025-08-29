@@ -16,9 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/atoms/select";
-import { tableData } from "@/src/constants/dashboardTableData";
 import { Input } from "../atoms/input";
-import { DashboardTableType, TvendorRegistrationDropdown, VendorOnboarding } from "@/src/types/types";
+import { DashboardTableType, TvendorRegistrationDropdown, VendorOnboarding, ASAFormResponse, ASAForm } from "@/src/types/types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import PopUp from "./PopUp";
@@ -30,7 +29,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "./Pagination";
 
 type Props = {
-  dashboardTableData?: DashboardTableType["approved_vendor_onboarding"]
+  dashboardTableData?: DashboardTableType["asa_form_data"]
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
 }
 
@@ -49,24 +48,23 @@ const useDebounce = (value: any, delay: any) => {
   return debouncedValue;
 };
 
-const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
+const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
   console.log(dashboardTableData, "this is approved table onboarded")
 
-  const { designation } = useAuth();
-  const isAccountsUser = designation?.toLowerCase().includes("account");
   const handleClose = () => {
     setIsVendorCodeDialog(false);
     setSelectedVendorcodes([]);
   }
   const [isVendorCodeDialog, setIsVendorCodeDialog] = useState<boolean>();
-  const [selectedVendorCodes, setSelectedVendorcodes] = useState<VendorOnboarding["company_vendor_codes"]>([]);
+  const [selectedVendorCodes, setSelectedVendorcodes] = useState<ASAForm["company_vendor_codes"]>([]);
+  
 
   const openVendorCodes = (data: any) => {
     setSelectedVendorcodes(data);
     setIsVendorCodeDialog(true);
   };
 
-  const [table, setTable] = useState<DashboardTableType["approved_vendor_onboarding"]>(dashboardTableData || []);
+  const [table, setTable] = useState<ASAForm[]>(dashboardTableData?.approved_vendors || []);
   const [selectedCompany, setSelectedCompany] = useState<string>("")
   const [search, setSearch] = useState<string>("");
 
@@ -91,16 +89,13 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
   }
 
   const fetchTable = async () => {
-    const dashboardApprovedVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.dashboardApprovedVendorTableURL}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
+    const dashboardASAOnboardedVendorTableDataApi: AxiosResponse = await requestWrapper({
+      url: `${API_END_POINTS?.asaonboardedvendorlist}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
       method: "GET",
     });
-    if (dashboardApprovedVendorTableDataApi?.status == 200) {
-      setTable(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding
-      );
-      // settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count);
-      settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count)
-      // setRecordPerPage(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding?.length)
+    if (dashboardASAOnboardedVendorTableDataApi?.status == 200) {
+      setTable(dashboardASAOnboardedVendorTableDataApi?.data?.message?.approved_vendors);
+      settotalEventList(dashboardASAOnboardedVendorTableDataApi?.data?.message?.total_count)
       setRecordPerPage(5);
     }
   };
@@ -113,11 +108,11 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Total OnBoarded Vendors
+            Onboarded Vendors List
           </h1>
           <div className="flex gap-4">
-            <Input placeholder="Search..." onChange={(e)=>{handlesearchname(e)}} />
-            <Select>
+            <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
+            {/* <Select>
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
@@ -130,68 +125,34 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                   }
                 </SelectGroup>
               </SelectContent>
-            </Select>
-            {/* <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select> */}
+            </Select> */}
           </div>
         </div>
         <Table>
-          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
               <TableHead className="w-[100px]">Sr No.</TableHead>
-              <TableHead>Ref No.</TableHead>
-              <TableHead>Vendor Name</TableHead>
-              <TableHead className="text-center">Company Name</TableHead>
-              <TableHead className="text-center">Status</TableHead>
+              <TableHead className="text-center">Ref No.</TableHead>
+              <TableHead className="text-center">Vendor Name</TableHead>
+              <TableHead className="text-center">Email</TableHead>
               <TableHead className="text-center">Vendor Code</TableHead>
               <TableHead className="text-center">Country</TableHead>
               <TableHead className="text-center">Register By</TableHead>
-              <TableHead className="text-center">View Details</TableHead>
-              {!isAccountsUser && (
-                <TableHead className="text-center">QMS Form</TableHead>
-              )}
+              <TableHead className="text-center">Register Date</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="text-center">
             {table ? (
               table?.map((item, index) => (
                 <TableRow key={index}>
-                   <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
+                  <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                   <TableCell className="text-nowrap">{item?.name}</TableCell>
                   <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
-                  <TableCell className="text-nowrap">{item?.company_name}</TableCell>
-                  <TableCell>
-                    <div
-                      className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "Pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : item?.onboarding_form_status === "Approved"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                        }`}
-                    >
-                      {item?.onboarding_form_status}
-                    </div>
-                  </TableCell>
+                  <TableCell className="text-nowrap">{item?.office_email_primary}</TableCell>
                   <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
-                  <TableCell>{item?.vendor_country}</TableCell>
-                  <TableCell>{item?.registered_by}</TableCell>
-                  <TableCell><Link href={`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-blue-400 hover:bg-blue-300">View</Button></Link></TableCell>
-                  {!isAccountsUser && (
-                    <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
-                  )}
+                  <TableCell>{item?.country}</TableCell>
+                  <TableCell>{item?.registered_date}</TableCell>
+                  {/* <TableCell>{item?.registered_by}</TableCell> */}
                 </TableRow>
               ))
             ) : (
@@ -207,9 +168,14 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
       </div>
       {
         isVendorCodeDialog &&
-        <PopUp handleClose={handleClose} classname="overflow-y-scroll">
+        <PopUp handleClose={handleClose}>
           <Table>
             <TableHeader>
+              <TableRow>
+                <TableHead>State</TableHead>
+                <TableHead>GST No</TableHead>
+                <TableHead>Vendor Code</TableHead>
+              </TableRow>
             </TableHeader>
             <TableBody>
               {selectedVendorCodes?.map((company) => (
@@ -217,11 +183,6 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                   <TableRow className="bg-gray-700 hover:bg-gray-700 text-white font-semibold">
                     <TableCell colSpan={3}>Company Code: {company.company_code}</TableCell>
                   </TableRow>
-              <TableRow>
-                <TableHead>State</TableHead>
-                <TableHead>GST No</TableHead>
-                <TableHead>Vendor Code</TableHead>
-              </TableRow>
                   {company.vendor_codes.map((vendor, vIdx) => (
                     <TableRow
                       key={vIdx}
