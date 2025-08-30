@@ -8,12 +8,9 @@ const form4 = () => {
         <div className="space-y-[32px] flex flex-col justify-between min-h-[80vh]">
             <div style={{ boxShadow: '0px 0px 5px 5px rgba(0, 0, 0, 0.05)' }} className='space-y-10' >
                 <div className="bg-white text-black px-4 pb-8 pt-4 mx-auto border border-gray-300">
-
                     <Header />
-
                     {/* start General section  */}
-                    <section className='ml-8 space-y-2 z-[50] relative text-justify text-[16px]'>
-                        {/* <h1 className='font-bold border-b border-black w-fit'>5. General</h1> */}
+                    <section className='ml-8 space-y-2 z-[50] text-justify text-[16px]'>
                         <div className='ml-8 space-y-2 text-justify pr-16'>
                             <div className='space-x-3 flex pl-6'>
                                 <span className=''>
@@ -48,7 +45,7 @@ const form4 = () => {
                         </div>
                     </section>
 
-                    <section className='ml-8 space-y-2 z-[50] relative text-justify text-[16px]'>
+                    <section className='ml-8 space-y-2 z-[50] text-justify text-[16px]'>
                         <h1 className='font-bold border-b border-black w-fit mt-6'>6. Appendices to the agreement</h1>
                         <div className='space-y-2 text-justify pr-16'>
                             <div className='mt-5 flex flex-col'>

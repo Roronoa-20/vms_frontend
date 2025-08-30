@@ -52,9 +52,9 @@ export default function QMSForm() {
                         {is2000 && (
                             <MLSPLQualityAgreementForm vendor_onboarding={vendor_onboarding} ref_no={ref_no} company_code={company_code}/>
                         )}
-                        {/* {is7000 && (
+                        {is7000 && (
                             <MDPLQualityAgreementForm vendor_onboarding={vendor_onboarding} ref_no={ref_no} company_code={company_code}/>
-                        )} */}
+                        )}
                     </>
                 );
             default:

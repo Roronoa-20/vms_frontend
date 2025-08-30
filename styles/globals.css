@@ -99,3 +99,31 @@
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+/* PDF page style */
+.page {
+  width: 210mm;                   /* A4 width */
+  min-height: 297mm;              /* At least A4 tall */
+  margin: 0 auto 30px auto;       /* gap between pages */
+  padding: 20mm;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+
+  /* Force content to break correctly */
+  page-break-after: always;       /* print/pdf break */
+  break-after: page;              /* modern browsers */
+  overflow: visible;
+}
+
+.page:last-child {
+  page-break-after: auto;
+  break-after: auto;
+}
+
+/* Prevent inner elements from splitting weirdly */
+.page * {
+  break-inside: avoid;            /* prevent elements splitting across pages */
+  page-break-inside: avoid;       /* legacy */
+}
+
