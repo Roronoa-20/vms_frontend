@@ -45,10 +45,12 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
   const [purchaseOrganizationBasedDropdown, setPurchaseOrganizationBasedDropdown] = useState<TpurchaseOrganizationBasedDropdown["message"]["all_account_groups"]>()
   const [reconciliationDropdown, setReconciliationDropdown] = useState<any>([])
   const [termsOfPaymentDropdown,setTermsOfPaymentDropdown] = useState<any>([]);
+  const [purchaseGroupDropdown,setPurchaseGroupDropdown] = useState<any>([]);
   const [singleTableData, setSingleTableData] = useState<TtableData | null>(null);
   const [showTable, setShowTable] = useState(false);
   const [reconciliation,setReconciliation] = useState<{label:string,value:string} | null>(null);
   const [termsOfPayment,setTermsOfPayment] = useState<{label:string,value:string} | null>();
+  const [purchaseGroup,setPurchaseGroup] = useState<{label:string,value:string} | null>();
   const handleCompanyDropdownChange = async (value: string) => {
     // handleSelectChange(value,'company_name');
     setSingleTableData((prev: any) => ({ ...prev, company_name: value }));
@@ -64,7 +66,18 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
         }
         )
       }))
+
+      const newArray2 = await Promise.all(
+      data?.message?.data?.purchase_groups?.map((item)=>{
+        return ({
+          label:item?.description,
+          value:item?.name
+        }
+        )
+      }))
+
       setTermsOfPaymentDropdown(newArray);
+      setPurchaseGroupDropdown(newArray2);
     fetchReconciliationAccount(value);
     setIncotermsDropdown(response?.data?.message?.data?.incoterms)
   }
@@ -104,7 +117,7 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
       { key: "company_name", label: "Company Name" },
       { key: "purchase_organization", label: "Purchase Organization" },
       { key: "account_group", label: "Account Group" },
-      { key: "purchase_group", label: "Purchase Group" },
+      // { key: "purchase_group", label: "Purchase Group" },
       // { key: "terms_of_payment", label: "Terms Of Payment" },
       { key: "order_currency", label: "Order Currency" },
       { key: "incoterms", label: "IncoTerms" },
@@ -132,10 +145,15 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
     if(!termsOfPayment) {
       alert(`Please Select Terms Of Payment`);
       return;
+    } 
+    if(!purchaseGroup){
+      alert("Please Select Purchase Group");
+      return;
     }
-    setTableData((prev: any) => ([...prev, { ...singleTableData, vendor_types: [...multiVendorType],reconciliation_account:reconciliation?.value,terms_of_payment:termsOfPayment?.value }]))
+    setTableData((prev: any) => ([...prev, { ...singleTableData, vendor_types: [...multiVendorType],reconciliation_account:reconciliation?.value,terms_of_payment:termsOfPayment?.value,purchase_group:purchaseGroup?.value }]))
     setReconciliation(null);
     setTermsOfPayment(null);
+    setPurchaseGroup(null);
     setSingleTableData(null);
     setShowTable(true);
   }
@@ -265,7 +283,7 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Purchase Group
           </h1>
-          <Select required value={singleTableData?.purchase_group ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, purchase_group: value })) }}>
+          {/* <Select required value={singleTableData?.purchase_group ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, purchase_group: value })) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select Purchase Group" />
             </SelectTrigger>
@@ -280,7 +298,8 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
                 }
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
+          <MultiSelect options={purchaseGroupDropdown} value={purchaseGroup} onChange={(value:any)=>{setPurchaseGroup(value)}} instanceId="multiselect" required={true}/>
         </div>
         <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
