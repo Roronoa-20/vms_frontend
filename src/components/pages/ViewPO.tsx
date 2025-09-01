@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useRouter } from "next/navigation";
-
+import { useSearchParams } from "next/navigation";
 interface POItemsTable {
   name:string,
   product_name:string,
@@ -48,6 +48,14 @@ const ViewPO = ({po_name}:Props) => {
     const [selectedPODropdown,setSelectedPODropdown] = useState<string>("");
     const [PONumberDropdown,setPONumberDropdown] = useState<PODropdown[]>([]);
     const [isPrintFormat,setIPrintFormat] = useState<boolean>(false);
+    const [isEmailDialog, setIsEmailDialog] = useState<boolean>(false);
+    const email_to = useSearchParams().get("email_to");
+    const [email, setEmail] = useState<any>({to:email_to});
+    const [date, setDate] = useState("");
+      const [comments, setComments] = useState("");
+      const [POFile, setPOFile] = useState<File | null>(null)
+
+      // setEmail((prev:any)=>({...prev,to:email_to}));
     // const [sign,setSign] = useState();
     const router = useRouter();
     const getPODetails = async()=>{
@@ -95,6 +103,10 @@ const ViewPO = ({po_name}:Props) => {
 
     const handleClose = ()=>{
         setIsEarlyDeliveryDialog(false);
+    setIsEmailDialog(false);
+    setDate("");
+    setComments("");
+    setEmail(null);
     }
 
   const handleOpen = () => {
@@ -161,6 +173,31 @@ const ViewPO = ({po_name}:Props) => {
     }
   }
 
+
+  const handleSubmit = async () => {
+    if (!POFile) {
+      alert("please add PO");
+      return;
+    }
+
+    if (!email?.cc) {
+      alert("please cc emails");
+      return;
+    }
+    const sendPoEmailUrl = API_END_POINTS?.sendPOEmailVendor;
+    const formdata = new FormData();
+    if (POFile) {
+      formdata.append("attach", POFile)
+    }
+    formdata.append("to", JSON.stringify(email?.to))
+    formdata.append("cc", JSON.stringify(email?.cc))
+    const response: AxiosResponse = await requestWrapper({ url: sendPoEmailUrl, data: formdata, method: "POST" });
+    if (response?.status == 200) {
+      alert("email sent successfully");
+      handleClose();
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#f8fafc] p-6 space-y-6 text-sm text-black font-sans m-5">
       {/* Header Section */}
@@ -221,6 +258,27 @@ const ViewPO = ({po_name}:Props) => {
       {
         isPrintFormat &&
       <POPrintFormat contentRef={contentRef} prDetails={prDetails} Heading={selectedPODropdown}/>
+      }
+
+      <div className="flex justify-end items-center"><Button onClick={()=>{setIsEmailDialog(true)}}>Send Email</Button></div>
+
+      {
+        isEmailDialog &&
+        <PopUp handleClose={handleClose} classname="md:max-h-[400px]" headerText="Send Email" isSubmit={true} Submitbutton={handleSubmit}>
+          <div className="mb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+              To
+            </h1>
+            <Input disabled value={email?.to ?? ""} />
+          </div>
+          <div>
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+              CC
+            </h1>
+            <Input onChange={(e) => { setEmail((prev: any) => ({ ...prev, cc: e.target.value })) }} />
+          </div>
+          <Input onChange={(e) => { setPOFile(e.target.files && e.target.files[0]) }} className="mt-4" type="file" />
+        </PopUp>
       }
       {/* End of Print Format */}
 
