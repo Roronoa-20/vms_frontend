@@ -13,9 +13,10 @@ import { MultiValue } from 'react-select'
 import MultiSelect from 'react-select'
 import { tableData } from '@/src/constants/dashboardTableData'
 import { useRouter } from 'next/navigation'
-import { TDisptachDetails } from '../pages/Dispatch'
+import { DispatchStateAndPlant, TDisptachDetails } from '../pages/Dispatch'
 import Link from 'next/link'
 import { updateQueryParam } from './PRRequestForm'
+import PopUp from '../molecules/PopUp'
 
 interface TPoDropdown{
     name:string
@@ -58,6 +59,7 @@ interface formData{
 interface Props {
   DispatchDetails:TDisptachDetails | null,
   refno?:string
+  StateAndPlant:DispatchStateAndPlant
 }
 
 type FileAttachment = {
@@ -89,14 +91,32 @@ interface tablerow  {
     pending_qty:number,
 }[]
 
-const DispatchForm = ({DispatchDetails,refno}:Props) => {
+type vehicalForm = {
+  vehical_number:string,
+  loading_state:string,
+  loading_location:string,
+  driver_name:string,
+  transporter_name:string,
+  driver_phone:string,
+  driver_license:string,
+  lr_number:string,
+  lr_date:string,
+  destination_plant:string,
+  upload_attachment:File,
+}
+
+
+const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
     const {MultipleVendorCode} = useMultipleVendorCodeStore();
     const [PODropdown,setPODropdown] = useState<MultiValue<OptionType>>([]);
     const [selectedPO,setSelectedPO] = useState<string[]>([]);
     const [selectedPOMultiple,setSelectedPOMultiple] = useState<MultiValue<OptionType>>();
     const [table,setTable] = useState<TDisptachDetails["items"]>(DispatchDetails?.items ?? []);
+    const [Vehicaltable,setVehicalTable] = useState<vehicalForm[]>([]);
     const [formData,setFormData] = useState<formData>();
     const [uploadedFiles,setUploadedFiles] = useState<uploadedFiles | null>(DispatchDetails);
+    const [isDialog,setIsDialog] = useState<boolean>(false);
+    const [vehicalForm,setVehicalForm] = useState<vehicalForm | null>(null)
     console.log(DispatchDetails?.items,"this si table")
     // const [newVendorTypeDropdown,setNewVendorTypeDropdown] = useState<MultiValue<OptionType>>([]);
     const [poTable,setPOTable] = useState();
@@ -209,6 +229,11 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
     })
   }
 
+  const handleVehicalAdd = ()=>{
+    setVehicalTable((prev:any)=>([...prev,vehicalForm]));
+    handleclose();
+  }
+
   const handleAdd = async()=>{
     const url = API_END_POINTS?.AddDispatch;
 
@@ -269,9 +294,16 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
     }
   }
 
-  console.log(formData, "this is form Data")
+  const handleclose = ()=>{
+    setIsDialog(false);
+    setVehicalForm(null)
+  }
+
+  console.log(vehicalForm, "this is vehical form Data")
+  console.log(Vehicaltable, "this is vehical table Data")
       
   return (
+    <>
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       {/* <h1 className="border-b-2 border-gray-400 top-0 bg-white text-[#000000] text-lg">
         Purchase Inquiry
@@ -377,12 +409,53 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
           <Input placeholder="" type='file' name='user' onChange={(e)=>{setFormData((prev:any)=>({...prev,test_certificates_attachment:e.target.files?.[0]}))}} />
           }
         </div>
-        <div className='col-span-1 flex items-end'>
+        <div className='col-span-1 flex items-end gap-4'>
         <Button className={`bg-blue-400 hover:bg-blue-400 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{handleAdd()}} >Add</Button>
+        <Button className={`bg-blue-400 hover:bg-blue-400 `} onClick={()=>{setIsDialog(true)}} >Add Vehical Pass</Button>
         </div>
       </div>
       
-        <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
+
+          <div className={`shadow- bg-[#f6f6f7] mb-8 p-4 rounded-2xl mt-4 ${Vehicaltable?.length > 0?"":"hidden"}`}>
+          <div className="flex w-full justify-between pb-4">
+            <h1 className="text-[20px] text-[#03111F] font-semibold">
+              Vehicle Pass
+            </h1>
+          </div>
+          <Table className=" max-h-40 overflow-y-scroll">
+            <TableHeader className="text-center">
+              <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
+                <TableHead className="text-center">Vehical No.</TableHead>
+                <TableHead className="text-center">Loading State</TableHead>
+                <TableHead className="text-center">Loading Location</TableHead>
+                <TableHead className="text-center">Driver Name</TableHead>
+                <TableHead className="text-center">Transporter Name</TableHead>
+                <TableHead className="text-center">Driver Phone</TableHead>
+                <TableHead className="text-center">Driver License</TableHead>
+                <TableHead className="text-center">LR Number</TableHead>
+                <TableHead className="text-center">Attachment</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="text-center">
+              {Vehicaltable?.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell>{item?.vehical_number}</TableCell>
+                  <TableCell>{item?.loading_state}</TableCell>
+                  <TableCell>{item?.loading_location}</TableCell>
+                  <TableCell>{item?.driver_name}</TableCell>
+                  <TableCell>{item?.transporter_name}</TableCell>
+                  <TableCell>{item?.driver_phone}</TableCell>
+                  <TableCell>{item?.driver_license}</TableCell>
+                  <TableCell>{item?.lr_number}</TableCell>
+                  <TableCell>{item?.upload_attachment?.name}</TableCell>
+                    {/* <TableCell><Button className={`bg-blue-400 hover:bg-blue-300 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{handleTableRowUpdate(item)}}>Update</Button></TableCell> */}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        <div className={`shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl ${table?.length > 0?"":"hidden"}`}>
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
               Items List
@@ -436,8 +509,95 @@ const DispatchForm = ({DispatchDetails,refno}:Props) => {
       
       <div className={`flex justify-end pr-4 gap-4`}>
         {/* <Button className='bg-blue-400 hover:bg-blue-400' >Save As Draft</Button> */}
-      <Button className={`bg-blue-400 hover:bg-blue-400 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{handleSubmit()}} >Submit</Button></div>
+        {
+          table?.length > 0 &&
+          <Button className={`bg-blue-400 hover:bg-blue-400 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{handleSubmit()}} >Submit</Button>
+        }
+        </div>
     </div>
+    {
+      isDialog &&
+      <PopUp Submitbutton={()=>{handleVehicalAdd()}} isSubmit={true} headerText='Items List' handleClose={handleclose} classname='overflow-y-scroll md:w-full md:max-w-[800px] md:max-h-[700px]'>
+        <div className='grid grid-cols-3 gap-5 w-full'>
+          <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Vehical Number</h1>
+          <Input placeholder="" name='vehical_number' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,vehical_number:e.target.value}))}} />
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
+            Location State
+          </h1>
+          <Select onValueChange={(e)=>{setVehicalForm((prev:any)=>({...prev,loading_state:e}))}}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {
+                    StateAndPlant?.states?.map((item,index)=>(
+                        <SelectItem key={index} value={item?.name}>{item?.state_name}</SelectItem>
+                    ))
+                }
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Loading Location</h1>
+          <Input placeholder=""  name='loading_location' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,loading_location:e.target.value}))}} />
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Driver Name</h1>
+          <Input placeholder="" name='driver_name' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,driver_name:e.target.value}))}}/>
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Transporter Name</h1>
+          <Input placeholder="" name='transporter_name' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,transporter_name:e.target.value}))}}/>
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Driver Phone</h1>
+          <Input placeholder="" name='driver_phone' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,driver_phone:e.target.value}))}} />
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Driver License</h1>
+          <Input placeholder="" name='driver_license' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,driver_license:e.target.value}))}}/>
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">LR Number</h1>
+          <Input placeholder="" name='lr_number' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,lr_number:e.target.value}))}} />
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">LR Date</h1>
+          <Input placeholder="" type='date' name='lr_date' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,lr_date:e.target.value}))}}/>
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
+            Destination Plant
+          </h1>
+          <Select onValueChange={(e)=>{setVehicalForm((prev:any)=>({...prev,destination_plant:e}))}}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {
+                    StateAndPlant?.plants?.map((item,index)=>(
+                        <SelectItem key={index} value={item?.name}>{item?.plant_name}</SelectItem>
+                    ))
+                }
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload Attachment</h1>
+          <Input placeholder="" name='upload_attachment' type='file' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,upload_attachment:e.target.files?.[0]}))}} />
+        </div>
+        </div>
+        </PopUp>
+    }
+    </>
   )
 }
 

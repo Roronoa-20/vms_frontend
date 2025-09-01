@@ -97,7 +97,7 @@ const form1 = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
             </p>
           </section>
 
-          <section className='px-8 mt-6 space-y-2 z-[50] relative text-justify text-[15px]'>
+          <section className='px-8 mt-6 space-y-2 z-[50] text-justify text-[15px]'>
             <h1 className='font-bold border-b border-black w-fit'>3. Construction and Interpretation:</h1>
             <div className='ml-4 space-y-2'>
               <div className='space-x-3 flex'>
@@ -107,7 +107,7 @@ const form1 = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
               </div>
             </div>
           </section>
-          <Button
+          {/* <Button
             onClick={() => {
               console.log("🔥 Form 5 Data Preview:", formData);
               alert("Check the console! 🔍");
@@ -115,7 +115,7 @@ const form1 = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
             className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
           >
             Preview Form 5 Data
-          </Button>
+          </Button> */}
           <section className="mt-6 px-8 items-center text-center">
             <h2 className="text-lg font-bold">1 of 7</h2>
 

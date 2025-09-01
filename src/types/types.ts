@@ -801,6 +801,7 @@ type PaymentDetailsTab = {
     beneficiary_routing_no: string,
     beneficiary_currency: string,
     bank_proof_for_beneficiary_bank: FileAttachment,
+    international_bank_proof_by_purchase_team:FileAttachment
   }[]
   intermediate_bank_details: {
     name: string
@@ -815,6 +816,7 @@ type PaymentDetailsTab = {
     intermediate_routing_no: string,
     intermediate_currency: string
     bank_proof_for_intermediate_bank: FileAttachment
+    intermediate_bank_proof_by_purchase_team:FileAttachment
   }[]
   address: { country: string }
 };

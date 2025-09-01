@@ -16,7 +16,7 @@ const Form7 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
       <div style={{ boxShadow: '0px 0px 5px 5px rgba(0, 0, 0, 0.05)' }} className='space-y-10'>
         <div className="bg-white text-black px-4 pb-8 pt-4 mx-auto border border-gray-300">
           <Header />
-          <section className='ml-8 space-y-2 z-[50] relative text-justify text-[15px]'>
+          <section className='ml-8 space-y-2 z-[50] text-justify text-[15px]'>
             <div className='space-y-2 text-justify pr-16'>
               <h1 className='text-center font-bold text-[17px]'>Annex II – Contact person details</h1>
               <div className='mt-5'>
@@ -50,7 +50,7 @@ const Form7 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
               </div>
             </div>
           </section>
-          <Button
+          {/* <Button
             onClick={() => {
               console.log("🔥 Form 5 Data Preview:", formData);
               alert("Check the console! 🔍");
@@ -58,7 +58,7 @@ const Form7 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
             className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
           >
             Preview Form 5 Data
-          </Button>
+          </Button> */}
           <section className="items-center">
             <div className="text-center text-lg font-semibold mt-[400px]">Page 7 of 7</div>
           </section>

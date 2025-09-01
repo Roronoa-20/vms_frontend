@@ -130,7 +130,13 @@ const [tableData,setTableData] = useState<TtableData[]>([]);
     }
   
     if(response?.status == 200){
-      // resetForm();
+      if(response?.data?.message?.status == "duplicate"){
+        alert(response?.data?.message?.message);
+        if(submitButton){
+          submitButton.disabled = false;
+        }
+        return;
+      }
       console.log("handle submit successfully");
       alert("Submit Successfully");
       router.push("/dashboard");

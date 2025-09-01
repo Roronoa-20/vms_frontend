@@ -21,6 +21,7 @@ import { handleSubmit } from "./utility";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
 import { EyeIcon, Trash2 } from "lucide-react";
 import { TtableData } from "../../pages/VendorRegistration";
+import MultiSelect from 'react-select'
 
 interface Props {
   incoTermsDropdown: TvendorRegistrationDropdown["message"]["data"]["incoterm_master"]
@@ -42,10 +43,14 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
   const [companyBasedDropdown, setCompanyBasedDropdown] = useState<TcompanyNameBasedDropdown["message"]["data"]>();
   const [incotermsDropdown, setIncotermsDropdown] = useState<TcompanyNameBasedDropdown["message"]["data"]["incoterms"]>();
   const [purchaseOrganizationBasedDropdown, setPurchaseOrganizationBasedDropdown] = useState<TpurchaseOrganizationBasedDropdown["message"]["all_account_groups"]>()
-  const [reconciliationDropdown, setReconciliationDropdown] = useState<TReconsiliationDropdown["message"]["data"]>([])
+  const [reconciliationDropdown, setReconciliationDropdown] = useState<any>([])
+  const [termsOfPaymentDropdown,setTermsOfPaymentDropdown] = useState<any>([]);
+  const [purchaseGroupDropdown,setPurchaseGroupDropdown] = useState<any>([]);
   const [singleTableData, setSingleTableData] = useState<TtableData | null>(null);
   const [showTable, setShowTable] = useState(false);
-  const router = useRouter();
+  const [reconciliation,setReconciliation] = useState<{label:string,value:string} | null>(null);
+  const [termsOfPayment,setTermsOfPayment] = useState<{label:string,value:string} | null>();
+  const [purchaseGroup,setPurchaseGroup] = useState<{label:string,value:string} | null>();
   const handleCompanyDropdownChange = async (value: string) => {
     // handleSelectChange(value,'company_name');
     setSingleTableData((prev: any) => ({ ...prev, company_name: value }));
@@ -53,13 +58,31 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
     const response = await requestWrapper({ url: url, method: "GET", params: { company_name: value } })
     const data: TcompanyNameBasedDropdown = response?.status == 200 ? response?.data : "";
     setCompanyBasedDropdown(data?.message?.data);
+    const newArray = await Promise.all(
+      data?.message?.data?.terms_of_payment?.map((item)=>{
+        return ({
+          label:item?.description,
+          value:item?.name
+        }
+        )
+      }))
+
+      const newArray2 = await Promise.all(
+      data?.message?.data?.purchase_groups?.map((item)=>{
+        return ({
+          label:item?.description,
+          value:item?.name
+        }
+        )
+      }))
+
+      setTermsOfPaymentDropdown(newArray);
+      setPurchaseGroupDropdown(newArray2);
     fetchReconciliationAccount(value);
-    console.log(response?.data?.message?.data?.incoterms, "this is incotersms")
     setIncotermsDropdown(response?.data?.message?.data?.incoterms)
   }
 
   const handlePurchaseOrganizationDropdownChange = async (value: string) => {
-    // handleSelectChange(value,'purchase_organization');
     setSingleTableData((prev: any) => ({ ...prev, purchase_organization: value }));
     const url = API_END_POINTS?.purchaseGroupBasedDropdown;
     const response = await requestWrapper({ url: url, method: "POST", data: { data: { purchase_organization: value, vendor_types: multiVendor } } })
@@ -76,7 +99,15 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
     const reconsiliationUrl = API_END_POINTS?.reconsiliationDropdown;
     const ReconciliationdropDownApi: AxiosResponse = await requestWrapper({ url: reconsiliationUrl, method: "POST", data: { data: { company: value } } });
     const reconciliationDropdown: TReconsiliationDropdown["message"]["data"] = ReconciliationdropDownApi?.status == 200 ? ReconciliationdropDownApi?.data?.message?.data : ""
-    setReconciliationDropdown(reconciliationDropdown);
+    const newArray = await Promise.all(
+      reconciliationDropdown?.map((item)=>{
+        return ({
+          label:item?.reconcil_description,
+          value:item?.name
+        }
+        )
+      }))
+    setReconciliationDropdown(newArray);
   }
 
   const validateFields = () => {
@@ -86,11 +117,11 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
       { key: "company_name", label: "Company Name" },
       { key: "purchase_organization", label: "Purchase Organization" },
       { key: "account_group", label: "Account Group" },
-      { key: "purchase_group", label: "Purchase Group" },
-      { key: "terms_of_payment", label: "Terms Of Payment" },
+      // { key: "purchase_group", label: "Purchase Group" },
+      // { key: "terms_of_payment", label: "Terms Of Payment" },
       { key: "order_currency", label: "Order Currency" },
       { key: "incoterms", label: "IncoTerms" },
-      { key: "reconciliation_account", label: "Reconciliation Account" },
+      // { key: "reconciliation_account", label: "Reconciliation Account" },
     ];
 
     for (let field of requiredFields) {
@@ -107,13 +138,27 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
     const multiVendorType = await Promise.all(multiVendor?.map((item: any) => ({
       vendor_type: item
     })))
-    setTableData((prev: any) => ([...prev, { ...singleTableData, vendor_types: [...multiVendorType] }]))
+    if(!reconciliation ) {
+      alert(`Please Select Reconciliation Account`);
+      return;
+    }
+    if(!termsOfPayment) {
+      alert(`Please Select Terms Of Payment`);
+      return;
+    } 
+    if(!purchaseGroup){
+      alert("Please Select Purchase Group");
+      return;
+    }
+    setTableData((prev: any) => ([...prev, { ...singleTableData, vendor_types: [...multiVendorType],reconciliation_account:reconciliation?.value,terms_of_payment:termsOfPayment?.value,purchase_group:purchaseGroup?.value }]))
+    setReconciliation(null);
+    setTermsOfPayment(null);
+    setPurchaseGroup(null);
     setSingleTableData(null);
     setShowTable(true);
   }
 
   const handleRowDelete = (index: number) => {
-    // Remove the contact at the given index from the contactDetail store
     const updatedContacts = tableData.filter((_, itemIndex) => itemIndex !== index);
     setTableData([]);
     updatedContacts.forEach((item: any) => setTableData(item));
@@ -238,7 +283,7 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Purchase Group
           </h1>
-          <Select required value={singleTableData?.purchase_group ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, purchase_group: value })) }}>
+          {/* <Select required value={singleTableData?.purchase_group ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, purchase_group: value })) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select Purchase Group" />
             </SelectTrigger>
@@ -253,13 +298,14 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
                 }
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
+          <MultiSelect options={purchaseGroupDropdown} value={purchaseGroup} onChange={(value:any)=>{setPurchaseGroup(value)}} instanceId="multiselect" required={true}/>
         </div>
         <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Terms Of Payment
           </h1>
-          <Select required value={singleTableData?.terms_of_payment ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, terms_of_payment: value })) }}>
+          {/* <Select required value={singleTableData?.terms_of_payment ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, terms_of_payment: value })) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select Terms Of Payment" />
             </SelectTrigger>
@@ -274,7 +320,8 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
                 }
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
+          <MultiSelect options={termsOfPaymentDropdown} value={termsOfPayment} onChange={(value:any)=>{setTermsOfPayment(value)}} instanceId="multiselect" required={true}/>
         </div>
         <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -323,7 +370,7 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
             Reconciliation Account
           </h1>
           {/* <Input placeholder="" disabled defaultValue={OnboardingDetail?.reconciliation_account}/> */}
-          <Select value={singleTableData?.reconciliation_account ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, reconciliation_account: value })) }} required={true}>
+          {/* <Select value={singleTableData?.reconciliation_account ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, reconciliation_account: value })) }} required={true}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -336,7 +383,8 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
                 }
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
+          <MultiSelect options={reconciliationDropdown} value={reconciliation} onChange={(value:any)=>{setReconciliation(value)}} instanceId="multiselect" required={true}/>
         </div>
         <div className="flex mt-7">
           <Button className="bg-blue-700 hover:bg-blue-400 rounded-[24px] py-2" variant="nextbtn" size="nextbtnsize" onClick={() => { handleAdd() }}>Add</Button>

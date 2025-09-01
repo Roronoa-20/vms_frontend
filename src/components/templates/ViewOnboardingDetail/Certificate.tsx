@@ -19,6 +19,7 @@ import { CrossIcon, Trash, Trash2 } from "lucide-react";
 import { it } from "node:test";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface Props {
   certificateCodeDropdown: TcertificateCodeDropdown["message"]["data"]["certificate_names"];
@@ -188,7 +189,7 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
                 <TableCell className="font-medium text-center">{index + 1}</TableCell>
                 <TableCell className="text-center">{item?.certificate_code}</TableCell>
                 <TableCell className="text-center">{item?.valid_till}</TableCell>
-                <TableCell className="text-center">{item?.certificate_attach?.file_name}</TableCell>
+                <TableCell className="text-center"><Link href={item?.fileDetail?.url || ""} target="blank">{item?.certificate_attach?.file_name}</Link></TableCell>
                 <TableCell className="flex justify-center items-center text-center"><Trash2 onClick={() => { deleteRow(item?.certificate_code ? item?.certificate_code : "") }} className={`text-red-400 cursor-pointer ${isDisabled ? "hidden" : ""}`} /></TableCell>
               </TableRow>
             ))
