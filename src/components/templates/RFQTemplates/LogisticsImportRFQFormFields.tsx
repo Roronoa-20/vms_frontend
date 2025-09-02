@@ -7,7 +7,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import SearchSelectComponent from '../../common/SelectSearchComponent';
-import {Country, PortCode } from '@/src/types/PurchaseRequestType';
+import { Country, PortCode } from '@/src/types/PurchaseRequestType';
 interface Props {
     formData: Record<string, any>;
     setFormData: React.Dispatch<React.SetStateAction<Record<string, any>>>;
@@ -21,7 +21,7 @@ const today = new Date().toISOString().split("T")[0];
 const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFiles, uploadedFiles }: Props) => {
     const [destinationPort, setDestinationPort] = useState([])
     const [portNumberData, setPortNumberData] = useState<PortCode[]>([])
-     const [countryData, setCountryData] = useState<Country[]>([])
+    const [countryData, setCountryData] = useState<Country[]>([])
     const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -200,7 +200,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                     (item) => `${item.vendor_type_name}`,
                     true
                 )}
-                
+
                 <div className="col-span-1">
                     <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                         Select Service
@@ -228,7 +228,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                     (item) => `${item.company_name}`,
                     !formData?.service_provider || formData?.service_provider === "Select"
                 )}
-                {renderInput('sr_no', 'Sr No.')}
+                {renderInput("sr_no", "Sr No.", "text", true)}
                 {renderInput('rfq_cutoff_date_logistic', 'RFQ CutOff', 'datetime-local')}
                 {renderInput('rfq_date_logistic', 'RFQ Date', 'date', true)}
                 {renderSelect(
