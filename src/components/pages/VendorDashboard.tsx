@@ -66,7 +66,7 @@ const VendorDashboard = async() => {
 
           
   return (
-    <div className="p-8">
+    <div className="p-4">
       {/* Cards */}
       <VendorDashboardCardCounter
       companyDropdown={companyDropdown}

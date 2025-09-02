@@ -25,16 +25,10 @@ export default function LoginForm() {
   const [authorization, setAuthorization] = useState<string | "">("")
   const { setAuthData } = useAuth();
   const { MultipleVendorCode, addMultipleVendorCode, reset, resetVendorCode } = useMultipleVendorCodeStore();
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const url = API_END_POINTS?.login;
-    // const response: AxiosResponse = await requestWrapper({
-    //   url: url,
-    //   method: "POST",
-    //   headers:{"Content-Type":"application/json"},
-    //   data: { data: form },
-    // });
-
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -57,7 +51,7 @@ export default function LoginForm() {
       const designation = data?.message?.employee?.designation as string;
       const designationVendor = data?.message?.designation as string;
       const VendorRefNo = data?.message?.ref_no as string;
-      console.log("Vendor Ref---->",VendorRefNo);
+      console.log("Vendor Ref---->", VendorRefNo);
       if (designationVendor) {
         reset();
         resetVendorCode();
@@ -71,6 +65,10 @@ export default function LoginForm() {
       if (designationVendor) {
         router.push("/vendor-dashboard");
         return
+      }
+      if (designation === "QA Team" || designation === "QA Head") {
+        router.push("/qa-dashboard");
+        return;
       }
       router.push("/dashboard");
     }

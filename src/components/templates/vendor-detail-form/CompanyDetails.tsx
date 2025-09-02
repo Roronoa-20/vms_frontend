@@ -40,6 +40,7 @@ const CompanyDetailForm = ({
   multipleCompany,
   ismulticompany,
 }: Props) => {
+  console.log("Onboarding Details---->",OnboardingDetail);
   const router = useRouter();
 
   const [errors, setErrors] = useState<any>({});

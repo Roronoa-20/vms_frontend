@@ -176,7 +176,19 @@ const API_END_POINTS = {
   dashboardOnboardedVendorsAccounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.approved_vendor_details_by_accounts`,
   dashboardRejectedVendorsAccounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.rejected_vendor_details_by_accounts`,
   dashboardSapErrorAcounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.sap_error_vendor_details_by_accounts`,
-  bankProofByPurchaseTeam:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`
+  bankProofByPurchaseTeam:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`,
+
+  // QA Dashboard APIs
+  TotalQMSDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_dashboard.total_qms_onboarding_details`,
+  PendingQMDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_dashboard.pending_qms_onboarding_details`,
+  FullyFilledQMSDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_dashboard.completed_qms_onboarding_details`,
+  DraftQMSDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_doc_dashboard.draft_qms_details`,
+  ApprovedQMSDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_doc_dashboard.approved_qms_details`,
+  RejectedQMSDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_doc_dashboard.rejected_qms_details`,
+
+  // View Vendor Profile APIs
+  getvendorsmerilcompany: `${url}/api/method/vms.APIs.vendors_dashboards_api.vendor_data.get_vendor_multi_company`,
+  getvendorsonboardingidandstatus: `${url}/api/method/vms.APIs.vendors_dashboards_api.vendor_data.get_vendor_onb_via_company`,
 };
 
 export default API_END_POINTS;

@@ -892,8 +892,8 @@ type DropdownMasters = {
 
 export type TdocumentDetailDropdown = {
   message: {
-    status: string; // e.g., "success"
-    message: string; // e.g., "Dropdown masters fetched successfully."
+    status: string;
+    message: string;
     data: DropdownMasters;
   }
 }

@@ -145,14 +145,13 @@ export const LogisticsExportRFQFormFields = ({
         <div>
             <div className="grid grid-cols-3 gap-6 p-5">
                 {renderSelect("rfq_type", "RFQ Type", Dropdown?.rfq_type, (i) => i.name, (i) => i.vendor_type_name, true)}
-                {renderSelect("company_name_logistic", "Company Name", Dropdown?.company, (i) => i.name, (i) => i.company_name)}
                 <div className="col-span-1">
                     <h1 className="text-[12px] font-normal text-[#626973] pb-3">Select Service</h1>
                     <Select
                         value={formData?.service_provider ?? ""}
                         onValueChange={(val) => handleSelectChange(val, "service_provider")}
                     >
-                        <SelectTrigger disabled={formData?.company_name_logistic ? false : true}>
+                        <SelectTrigger>
                             <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
@@ -166,6 +165,15 @@ export const LogisticsExportRFQFormFields = ({
                         </SelectContent>
                     </Select>
                 </div>
+
+                {renderSelect(
+                    "company_name_logistic",
+                    "Company Name",
+                    Dropdown?.company,
+                    (i) => i.name,
+                    (i) => i.company_name,
+                    !formData?.service_provider || formData?.service_provider === "Select"
+                )}
                 {renderInput("sr_no", "Sr No.")}
                 {renderInput("rfq_cutoff_date_logistic", "RFQ CutOff", "datetime-local")}
                 {renderInput("rfq_date_logistic", "RFQ Date", "date", true)}

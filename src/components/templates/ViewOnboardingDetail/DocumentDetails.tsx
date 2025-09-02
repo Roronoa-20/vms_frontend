@@ -51,7 +51,7 @@ interface Props {
   onboarding_ref_no: string;
   OnboardingDetail: VendorOnboardingResponse["message"]["document_details_tab"];
   documentDetailDropdown: TdocumentDetailDropdown["message"]["data"];
-  isAmendment:number
+  isAmendment: number
 }
 
 interface gstRow {
@@ -259,7 +259,7 @@ const DocumentDetails = ({
       data: formData,
       method: "POST",
     });
-    if (Response?.status == 200){
+    if (Response?.status == 200) {
       setDocumentDetail({})
       alert("successfully Updated the Records");
       location.reload();
@@ -314,7 +314,7 @@ const DocumentDetails = ({
     <div className="flex flex-col bg-white rounded-lg p-3 w-full max-h-[80vh]">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Document Details</h1>
-        <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+        <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1 ? "" : "hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
       </div>
       <div className="overflow-y-scroll">
         <div className="grid grid-cols-3 gap-6 p-3">
@@ -403,7 +403,7 @@ const DocumentDetails = ({
               {errors?.panDocument && !documentDetails?.panDocument && <span style={{ color: 'red' }}>{errors?.panDocument}</span>}
             </div>
           </div>
-          <div className={`col-span-3 grid grid-cols-3 gap-6 ${isDisabled?"hidden":""}`}>
+          <div className={`col-span-3 grid grid-cols-3 gap-6 ${isDisabled ? "hidden" : ""}`}>
             <div className="flex flex-col">
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 GST Vendor Type <span className="pl-2 text-red-400 text-2xl">*</span>
@@ -443,30 +443,30 @@ const DocumentDetails = ({
               {errors?.gst_ven_type && !documentDetails?.gst_ven_type && <span style={{ color: 'red' }}>{errors?.gst_ven_type}</span>}
             </div>
             <div>
-                          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                            Company <span className="pl-2 text-red-400 text-2xl">*</span>
-                          </h1>
-                          <Select
-                          disabled={isDisabled}
-                            onValueChange={(value) => {
-                              setSingleRow((prev: any) => ({ ...prev, company: value }));
-                            }}
-                            value={singlerow?.company ?? ""}
-                          >
-                            <SelectTrigger className="disabled:opacity-100">
-                              <SelectValue placeholder="Select Company" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                {gstStateDropdown?.company?.map((item, index) => (
-                                  <SelectItem key={index} value={item?.name}>
-                                    {item?.description}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        </div>
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                Meril Company <span className="pl-2 text-red-400 text-2xl">*</span>
+              </h1>
+              <Select
+                disabled={isDisabled}
+                onValueChange={(value) => {
+                  setSingleRow((prev: any) => ({ ...prev, company: value }));
+                }}
+                value={singlerow?.company ?? ""}
+              >
+                <SelectTrigger className="disabled:opacity-100">
+                  <SelectValue placeholder="Select Company" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {gstStateDropdown?.company?.map((item, index) => (
+                      <SelectItem key={index} value={item?.name}>
+                        {item?.description}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 State <span className="pl-2 text-red-400 text-2xl">*</span>
@@ -528,7 +528,7 @@ const DocumentDetails = ({
             </div>
           </div>
           <div
-            className={`col-span-3 grid grid-cols-3 gap-6 ${isDisabled?"hidden":""}`}
+            className={`col-span-3 grid grid-cols-3 gap-6 ${isDisabled ? "hidden" : ""}`}
           >
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -656,7 +656,7 @@ const DocumentDetails = ({
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                 <TableHead className="text-center">GST Type</TableHead>
-                <TableHead className="text-center">Company</TableHead>
+                <TableHead className="text-center">Meril Company</TableHead>
                 <TableHead className="text-center">GST State</TableHead>
                 <TableHead className="text-center">GST Pincode</TableHead>
                 <TableHead className="text-center">GST Number</TableHead>
