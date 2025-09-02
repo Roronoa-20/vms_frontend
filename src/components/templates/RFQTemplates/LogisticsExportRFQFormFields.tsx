@@ -40,7 +40,7 @@ export const LogisticsExportRFQFormFields = ({
 
     const handleSelectChange = (value: string, name: string) => {
         if (name === "country") {
-            const selected = exportCountry.find((p) => p.country === value);
+            const selected = exportCountry.find((p) => p.port_code === value);
             if (selected) {
                 setFormData((prev) => ({
                     ...prev,
@@ -124,7 +124,7 @@ export const LogisticsExportRFQFormFields = ({
         console.log(query, "query")
         let url = `${API_END_POINTS?.CountryExportDropdown}`;
         if (query && query.trim() !== "") {
-            url += `?search=${encodeURIComponent(query)}`;
+            url += `?search_term=${encodeURIComponent(query)}`;
         }
         const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
         if (response?.status == 200) {
@@ -173,11 +173,13 @@ export const LogisticsExportRFQFormFields = ({
         }
     }, [formData.company_name_logistic]);
     useEffect(() => {
-        fetchExportCountry();
-    }, []);
+        fetchExportCountry(formData?.country);
+    }, [formData?.country]);
     useEffect(() => {
         setFormData((prev) => ({ ...prev, rfq_date_logistic: formData?.rfq_date_logistic ? formData?.rfq_date_logistic : today }));
     }, [today, formData?.rfq_date_logistic]);
+
+    console.log(formData,"formData")
     return (
         <div>
             <div className="grid grid-cols-3 gap-6 p-5">
@@ -214,9 +216,9 @@ export const LogisticsExportRFQFormFields = ({
                     </h1>
                     <SearchSelectComponent
                         setData={(value) => handleSelectChange(value ?? "", "country")}
-                        data={formData?.country ?? ""}
+                        data={formData?.port_code ?? ""}
                         getLabel={(item) => `${item.country} - ${item.port_code} - ${item.port_name}`}
-                        getValue={(item) => item?.country}
+                        getValue={(item) => item?.port_code}
                         dropdown={exportCountry}
                         setDropdown={setExportCountry}
                         searchApi={fetchExportCountry}
