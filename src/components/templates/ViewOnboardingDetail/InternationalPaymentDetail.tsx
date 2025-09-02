@@ -71,12 +71,14 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
   const [isBankFileIntermediatePreview, setIsBankFileIntermediatePreview] = useState<boolean>(true);
   const [isIntermediateCheck, setIsIntermediateCheck] = useState<boolean>(OnboardingDetail?.international_bank_details?.[0] ? true : false);
   // const [isBankFilePreview, setIsBankFilePreview] = useState<boolean>(true);
-  const [isPurchaseBankFilePreview, setPurchaseIsBankFilePreview] = useState<boolean>(true);
+  const [isPurchaseBeneficiaryBankFilePreview, setPurchaseBeneficiaryIsBankFilePreview] = useState<boolean>(true);
+  const [isPurchaseIntermediateBankFilePreview, setPurchaseIntermediateIsBankFilePreview] = useState<boolean>(true);
   const [bankNameDropown, setBankNameDropown] = useState<TbankNameDropdown["message"]["data"]>([])
   const [currencyDropdown, setCurrencyDropdown] = useState<TCurrencyDropdown["message"]["data"]>([])
   const { designation } = useAuth();
   const [PurchaseTeambankProof,setPurchaseTeamBankProof] = useState<File>();
-  const { setBankProof, bank_proof } = UsePurchaseTeamApprovalStore();
+  const [PurchaseTeamBeneficiaryProof,setPurchaseTeamBeneficiaryProof] = useState<File>();
+  const [PurchaseTeamIntermediateProof,setPurchaseTeamIntermideateProof] = useState<File>();
     const [isDisabled, setIsDisabled] = useState<boolean>(true);
   // if(!designation){
   //   return(
@@ -160,8 +162,11 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
 
   const uploadBankProofByPurchaseTeam = async()=>{
     const formdata = new FormData();
-    if(PurchaseTeambankProof != null){
-      formdata?.append("bank_proof_by_purchase_team",PurchaseTeambankProof)
+    if(PurchaseTeamBeneficiaryProof != null){
+      formdata?.append("international_bank_proof_by_purchase_team",PurchaseTeamBeneficiaryProof)
+    }
+    if(PurchaseTeamIntermediateProof != null){
+      formdata?.append("intermediate_bank_proof_by_purchase_team",PurchaseTeamIntermediateProof)
     }
 
     formdata?.append("data",JSON.stringify({ref_no:ref_no,vendor_onboarding:onboarding_ref_no}));
@@ -169,12 +174,11 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
     const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.bankProofByPurchaseTeam,method:"POST",data:formdata});
     if(response?.status == 200){
       alert("Uploaded Successfully");
-      location?.reload();
+      // location?.reload();
     }else{
       alert("Error in Uploading");
     }
   }
-  console.log(OnboardingDetail?.bank_proof?.file_name, "thiskjdvb")
   return (
     <div className="flex flex-col bg-white rounded-lg p-3 w-full">
       <div className="flex justify-between items-center border-b-2">
@@ -295,23 +299,23 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Bank Proof By Purchase Team (Upload Passbook Leaf/Cancelled Cheque) <span className="pl-2 text-red-400 text-2xl">*</span>
+            Bank Proof By Purchase Team <span className="font-semibold">(2-Way)</span> <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <div className="flex gap-4">
-           <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation == "Purchase Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
-          <Input className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
+           <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation == "Purchase Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBeneficiaryProof(e?.target?.files?.[0])}} />
+          <Input className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBeneficiaryProof(e?.target?.files?.[0])}} />
                      {/* file preview */}
           {/* file preview */}
-          {isPurchaseBankFilePreview &&
-              !PurchaseTeambankProof &&
-              OnboardingDetail?.bank_proof_by_purchase_team?.url && (
+          {isPurchaseBeneficiaryBankFilePreview &&
+              !PurchaseTeamBeneficiaryProof &&
+              OnboardingDetail?.international_bank_details[0]?.international_bank_proof_by_purchase_team?.name && (
                 <div className="flex gap-2">
                   <Link
                   target="blank"
-                  href={OnboardingDetail?.bank_proof_by_purchase_team?.url}
+                  href={OnboardingDetail?.international_bank_details[0]?.international_bank_proof_by_purchase_team?.url}
                   className="underline text-blue-300 max-w-44 truncate"
                   >
-                    <span>{OnboardingDetail?.bank_proof_by_purchase_team?.file_name}</span>
+                    <span>{OnboardingDetail?.international_bank_details[0]?.international_bank_proof_by_purchase_team?.file_name}</span>
                   </Link>
                   {/* <X
                     className={`cursor-pointer ${isDisabled?"hidden":""}`}
@@ -445,19 +449,19 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
             Bank Proof By Purchase Team <span className="font-semibold">(2-Way)</span> <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <div className="flex gap-4">
-          <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation != "Purchase Team"?"hidden":""}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
-                    <Input className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team"?"":"hidden"}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
+          <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation != "Purchase Team"?"hidden":""}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamIntermideateProof(e?.target?.files?.[0])}} />
+                    <Input className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team"?"":"hidden"}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamIntermideateProof(e?.target?.files?.[0])}} />
           {/* file preview */}
-          {isPurchaseBankFilePreview &&
-              !PurchaseTeambankProof &&
-              OnboardingDetail?.bank_proof_by_purchase_team?.url && (
+          {isBankFileIntermediatePreview &&
+              !PurchaseTeamIntermediateProof &&
+              OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_bank_proof_by_purchase_team?.name && (
                 <div className="flex gap-2">
                   <Link
                   target="blank"
-                  href={OnboardingDetail?.bank_proof_by_purchase_team?.url}
+                  href={OnboardingDetail?.intermediate_bank_details[0]?.intermediate_bank_proof_by_purchase_team?.url}
                   className="underline text-blue-300 max-w-44 truncate"
                   >
-                    <span>{OnboardingDetail?.bank_proof_by_purchase_team?.file_name}</span>
+                    <span>{OnboardingDetail?.intermediate_bank_details[0]?.intermediate_bank_proof_by_purchase_team?.file_name}</span>
                   </Link>
                   {/* <X
                     className={`cursor-pointer ${isDisabled?"hidden":""}`}

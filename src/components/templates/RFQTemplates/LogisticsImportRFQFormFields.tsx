@@ -6,6 +6,8 @@ import MultipleFileUpload from '../../molecules/MultipleFileUpload';
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
+import SearchSelectComponent from '../../common/SelectSearchComponent';
+import {Country, PortCode } from '@/src/types/PurchaseRequestType';
 interface Props {
     formData: Record<string, any>;
     setFormData: React.Dispatch<React.SetStateAction<Record<string, any>>>;
@@ -17,7 +19,9 @@ interface Props {
 const today = new Date().toISOString().split("T")[0];
 
 const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFiles, uploadedFiles }: Props) => {
-    const [destinationPort, setDestinationPort] = useState([])   
+    const [destinationPort, setDestinationPort] = useState([])
+    const [portNumberData, setPortNumberData] = useState<PortCode[]>([])
+     const [countryData, setCountryData] = useState<Country[]>([])
     const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -25,7 +29,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
     const handleSelectChange = (value: string, field: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
-    const renderInput = (name: string, label: string, type = 'text', isdisabled?:boolean) => (
+    const renderInput = (name: string, label: string, type = 'text', isdisabled?: boolean) => (
         <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 {label}
@@ -69,9 +73,6 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
         <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 {label}
-                {/* {errors[name as keyof typeof errors] && (
-          <span className="text-red-600 ml-1">*</span>
-      )} */}
             </h1>
             <Select
                 value={formData[name] ?? ""}
@@ -99,6 +100,46 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
             </Select>
         </div>
     );
+    const handlePortNumberApi = async (query?: string) => {
+        console.log(query, "query")
+        let url = `${API_END_POINTS?.fetchPortNumber}`;
+        if (query && query.trim() !== "") {
+            url += `?search_term=${encodeURIComponent(query)}`;
+        }
+        const response: AxiosResponse = await requestWrapper({
+            url,
+            method: "GET",
+        });
+        if (response?.status == 200) {
+            console.log(response.data.message.data, "response of port data")
+            setPortNumberData(response.data.message.data)
+            return response.data.message.data
+        } else {
+            alert("error");
+        }
+    }
+    const handleCountryApi = async (query?: string) => {
+        console.log(query, "query")
+        let url = `${API_END_POINTS?.fetchCountry}`;
+        if (query && query.trim() !== "") {
+            url += `?search_term=${encodeURIComponent(query)}`;
+        }
+        const response: AxiosResponse = await requestWrapper({
+            url,
+            method: "GET",
+        });
+        if (response?.status == 200) {
+            console.log(response.data.message.data, "response of country data")
+            setCountryData(response.data.message.data)
+            return response.data.message.data
+        } else {
+            alert("error");
+        }
+    }
+    //RFQ date
+    useEffect(() => {
+        setFormData((prev) => ({ ...prev, rfq_date_logistic: formData?.rfq_date_logistic ? formData?.rfq_date_logistic : today }));
+    }, [today, formData?.rfq_date_logistic]);
 
     useEffect(() => {
         const fetchDestinationPort = async (mode_of_shipment: string) => {
@@ -106,8 +147,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                 ...prev,
                 destination_port: "",
             }));
-            console.log(mode_of_shipment, "mode_of_shipment ---------------------")
-            const url = `${API_END_POINTS?.fetchDestinationPortBasedonShipmentType}?mode_of_shipment=${mode_of_shipment}&port_type="destination"`
+            const url = `${API_END_POINTS?.fetchDestinationPortBasedonShipmentType}?mode_of_shipment=${mode_of_shipment}&port_type=destination`
             const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
             if (response?.status == 200) {
                 console.log(response, "response of destination port data")
@@ -120,14 +160,34 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
             fetchDestinationPort(formData?.mode_of_shipment);
         }
     }, [formData?.mode_of_shipment]);
-
-
-    //RFQ date
     useEffect(() => {
-        setFormData((prev) => ({ ...prev, rfq_date_logistic: formData?.rfq_date_logistic?formData?.rfq_date_logistic:today }));
-      }, [today,formData?.rfq_date_logistic]);
-    
-      console.log(formData, "formData");
+        const fetchDestinationPort = async (company_name_logistic: string) => {
+            setFormData((prev) => ({
+                ...prev,
+                destination_port: "",
+            }));
+            const url = `${API_END_POINTS?.fetchSerialNumber}?company=${company_name_logistic}&rfq_type=Import`
+            const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+            if (response?.status == 200) {
+                console.log(response, "response of destination port data")
+                setFormData((prev) => ({
+                    ...prev,
+                    sr_no: response.data.message.serial_number,
+                }));
+            } else {
+                alert("error");
+            }
+        }
+        if (formData.company_name_logistic) {
+            fetchDestinationPort(formData.company_name_logistic);
+        }
+    }, [formData.company_name_logistic]);
+    useEffect(() => {
+        handleCountryApi(formData?.country);
+    }, [formData?.country]);
+    useEffect(() => {
+        handlePortNumberApi(formData?.port_code)
+    }, [formData?.port_code])
 
     return (
         <div>
@@ -170,7 +230,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                 )}
                 {renderInput('sr_no', 'Sr No.')}
                 {renderInput('rfq_cutoff_date_logistic', 'RFQ CutOff', 'datetime-local')}
-                {renderInput('rfq_date_logistic', 'RFQ Date', 'date',true)}
+                {renderInput('rfq_date_logistic', 'RFQ Date', 'date', true)}
                 {renderSelect(
                     'mode_of_shipment',
                     'Mode of Shipment',
@@ -185,21 +245,52 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                     (item) => item,
                     (item) => `${item}`
                 )}
-                {renderSelect(
+                {/* {renderSelect(
                     'country',
                     'Country',
                     Dropdown?.country_master,
                     (item) => item.name,
                     (item) => `${item.country_name}`
-                )}
-                {renderSelect(
+                )} */}
+                <div className='w-full'>
+                    <h1 className="flex items-center gap-1  text-[12px] font-normal text-[#626973] pb-3">
+                        {"Select Country"}
+                    </h1>
+                    <SearchSelectComponent
+                        setData={(value) => handleSelectChange(value ?? "", "country")}
+                        data={formData?.country ?? ""}
+                        getLabel={(item) => item.country_name}
+                        getValue={(item) => item?.name}
+                        dropdown={countryData}
+                        setDropdown={setCountryData}
+                        searchApi={handleCountryApi}
+                        placeholder='Select Country'
+                    />
+                </div>
+                {/* {renderSelect(
                     'port_code',
                     'Port Code',
                     Dropdown?.port_master
                     ,
                     (item) => item.name,
                     (item) => `${item.port_code}`
-                )}
+                )} */}
+                <div className='w-full'>
+                    <h1 className="flex items-center gap-1  text-[12px] font-normal text-[#626973] pb-3">
+                        {"Select Port Code"}
+                    </h1>
+                    <SearchSelectComponent
+                        setData={(value) => handleSelectChange(value ?? "", "port_code")}
+                        data={formData?.port_code ?? ""}
+                        getLabel={(item) => item.port_code}
+                        getValue={(item) => item?.name}
+                        dropdown={portNumberData}
+                        setDropdown={setPortNumberData}
+                        searchApi={handlePortNumberApi}
+                        placeholder='Select Port Code'
+                    // disabled={formData?.is_submitted}
+                    />
+                </div>
                 {/*{renderSelect(
                     'port_of_loading',
                     'Port of Loading',
@@ -214,9 +305,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                     (item) => item.name,
                     (item) => `${item.incoterm_name}`
                 )}
-
                 {renderInput('shipper_name', 'Shipper Name')}
-
                 {renderSelect(
                     'package_type',
                     'Package Type',
@@ -225,7 +314,6 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                     (item) => `${item.package_name}`
                 )}
                 {renderInput('no_of_pkg_units', 'No.Of Pkg Units', 'number')}
-                
                 {renderInput('vol_weight', 'Vol Weight(KG)', 'number')}
                 {renderInput('actual_weight', 'Actual Weight(KG)', 'number')}
                 {renderSelect(
