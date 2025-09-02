@@ -62,7 +62,6 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
     const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
     const [isDialog, setIsDialog] = useState<boolean>(false);
     const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([])
-    const [exportCountry, setExportCountry] = useState<ExportPort[]>([])
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const router = useRouter()
     useEffect(() => {
@@ -82,18 +81,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
             fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Logistics Vendor");
         }
     }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider]);
-     useEffect(() => {
-        const fetchExportCountry = async () => {
-            const url = `${API_END_POINTS?.CountryExportDropdown}`
-            const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
-            if (response?.status == 200) {
-                setExportCountry(response.data.message)
-            } else {
-                alert("error");
-            }
-        }
-            fetchExportCountry();
-    }, []);
+
     const [selectedRows, setSelectedRows] = useState<VendorSelectType>(
         {
             vendors: []
@@ -122,7 +110,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
         }
 
         const url = `${API_END_POINTS?.CreateExportRFQ}`;
-        const response: AxiosResponse = await requestWrapper({ url: url, data:formdata, method: "POST" });
+        const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" });
         if (response?.status == 200) {
             alert("Submit Successfull");
             router.push("/dashboard")
@@ -150,7 +138,6 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
                 Dropdown={Dropdown}
                 setUploadedFiles={setUploadedFiles}
                 uploadedFiles={uploadedFiles}
-                exportCountry={exportCountry??[]}
             />
             {formData?.service_provider === "Adhoc Service Provider" && <VendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />}
             {formData?.service_provider === "Courier Service Provider" && <SingleSelectVendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />}

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
     Select,
@@ -15,35 +15,32 @@ import { ExportPort } from "@/src/types/RFQtype";
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
+import SearchSelectComponent from "../../common/SelectSearchComponent";
 interface Props {
     formData: Record<string, any>;
     setFormData: React.Dispatch<React.SetStateAction<Record<string, any>>>;
     Dropdown: DropdownDataExport;
     uploadedFiles: File[];
     setUploadedFiles: React.Dispatch<React.SetStateAction<File[]>>;
-    exportCountry: ExportPort[]
 }
 
 export const LogisticsExportRFQFormFields = ({
     formData,
     setFormData,
     Dropdown,
-    exportCountry,
     setUploadedFiles,
     uploadedFiles
 }: Props) => {
     const today = new Date().toISOString().split("T")[0];
-
-    const handleFieldChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
+    const [exportCountry, setExportCountry] = useState<ExportPort[]>([])
+    const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleSelectChange = (value: string, name: string) => {
         if (name === "country") {
-            const selected = exportCountry.find((p) => p.country === value);
+            const selected = exportCountry.find((p) => p.port_code === value);
             if (selected) {
                 setFormData((prev) => ({
                     ...prev,
@@ -123,7 +120,21 @@ export const LogisticsExportRFQFormFields = ({
             </Select>
         </div>
     );
-
+    const fetchExportCountry = async (query?: string) => {
+        console.log(query, "query")
+        let url = `${API_END_POINTS?.CountryExportDropdown}`;
+        if (query && query.trim() !== "") {
+            url += `?search_term=${encodeURIComponent(query)}`;
+        }
+        const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+        if (response?.status == 200) {
+            console.log(response.data.message.data, "response.data.message in export country")
+            setExportCountry(response.data.message.data)
+            return response.data.message.data
+        } else {
+            alert("error");
+        }
+    }
     useEffect(() => {
         if (formData.country) {
             const selected = exportCountry.find(
@@ -145,15 +156,14 @@ export const LogisticsExportRFQFormFields = ({
                 ...prev,
                 destination_port: "",
             }));
-            console.log(company_name_logistic, "formData.company_name_logistic ---------------------")
             const url = `${API_END_POINTS?.fetchSerialNumber}?company=${company_name_logistic}&rfq_type=Export`
             const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
             if (response?.status == 200) {
                 console.log(response, "response of destination port data")
                 setFormData((prev) => ({
-                ...prev,
-                sr_no:response.data.message.serial_number,
-            }));
+                    ...prev,
+                    sr_no: response.data.message.serial_number,
+                }));
             } else {
                 alert("error");
             }
@@ -161,11 +171,15 @@ export const LogisticsExportRFQFormFields = ({
         if (formData.company_name_logistic) {
             fetchDestinationPort(formData.company_name_logistic);
         }
-        }, [formData.company_name_logistic]);
-
+    }, [formData.company_name_logistic]);
+    useEffect(() => {
+        fetchExportCountry(formData?.country);
+    }, [formData?.country]);
     useEffect(() => {
         setFormData((prev) => ({ ...prev, rfq_date_logistic: formData?.rfq_date_logistic ? formData?.rfq_date_logistic : today }));
     }, [today, formData?.rfq_date_logistic]);
+
+    console.log(formData,"formData")
     return (
         <div>
             <div className="grid grid-cols-3 gap-6 p-5">
@@ -191,11 +205,27 @@ export const LogisticsExportRFQFormFields = ({
                         </SelectContent>
                     </Select>
                 </div>
-                {renderInput("sr_no", "Sr No.","text",true)}
+                {renderInput("sr_no", "Sr No.", "text", true)}
                 {renderInput("rfq_cutoff_date_logistic", "RFQ CutOff", "datetime-local")}
                 {renderInput("rfq_date_logistic", "RFQ Date", "date", true)}
                 {renderSelect("mode_of_shipment", "Mode of Shipment", Dropdown?.mode_of_shipment, (i) => i.name, (i) => i.name)}
-                {renderSelect("country", "Country", exportCountry, (i) => i.country, (i) => `${i.country} - ${i.port_code} - ${i.port_name}`)}
+                {/* {renderSelect("country", "Country", exportCountry, (i) => i.country, (i) => `${i.country} - ${i.port_code} - ${i.port_name}`)} */}
+                <div className='w-full'>
+                    <h1 className="flex items-center gap-1  text-[12px] font-normal text-[#626973] pb-3">
+                        {"Select Country Code"}
+                    </h1>
+                    <SearchSelectComponent
+                        setData={(value) => handleSelectChange(value ?? "", "country")}
+                        data={formData?.port_code ?? ""}
+                        getLabel={(item) => `${item.country} - ${item.port_code} - ${item.port_name}`}
+                        getValue={(item) => item?.port_code}
+                        dropdown={exportCountry}
+                        setDropdown={setExportCountry}
+                        searchApi={fetchExportCountry}
+                        placeholder='Select Country'
+                    // disabled={formData?.is_submitted}
+                    />
+                </div>
                 {renderInput("destination_port", "Destination Port", "text", true)}
                 {renderInput("port_code", "Port Code", "text", true)}
                 {renderSelect("port_of_loading", "Port of Loading", Dropdown?.port_of_loading, (i) => i.name, (i) => i.name)}
