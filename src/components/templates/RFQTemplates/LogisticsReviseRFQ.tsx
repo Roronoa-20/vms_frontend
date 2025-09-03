@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { LogisticsExportRFQFormFields } from './LogisticsExportRFQFormFields';
 import LogisticsImportRFQFormFields from './LogisticsImportRFQFormFields';
 import { PurchaseRequestDropdown } from '@/src/types/PurchaseRequestType';
-import { ExportPort, RFQDetails, VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
+import { RFQDetails, VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
@@ -32,17 +32,14 @@ const sanitizeData = (data: RFQDetails): Record<string, string> => {
     return result;
 };
 const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
-
-    // const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<Record<string, string>>(sanitizeData(RFQData));
     const [vendorSearchName, setVendorSearchName] = useState('')
     const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
     const [VendorList, setVendorList] = useState<VendorApiResponse>();
-    const [loading, setLoading] = useState(true);
+    const [loading] = useState(true);
     const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
     const [isDialog, setIsDialog] = useState<boolean>(false);
     const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([])
-    const [exportCountry, setExportCountry] = useState<ExportPort[]>([])
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     useEffect(() => {
         const fetchVendorTableData = async (rfq_type: string) => {
@@ -72,18 +69,6 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
         setVendorCurrentPage(1)
         setVendorSearchName(e.target.value);
     }
-    useEffect(() => {
-        const fetchExportCountry = async () => {
-            const url = `${API_END_POINTS?.CountryExportDropdown}`
-            const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
-            if (response?.status == 200) {
-                setExportCountry(response.data.message)
-            } else {
-                alert("error");
-            }
-        }
-        fetchExportCountry();
-    }, []);
     const handleSubmit = async () => {
 
         if (formData?.service_provider == "All Service Provider" || formData?.service_provider == "Select" || formData?.service_provider == "Premium Service Provider") {
@@ -123,7 +108,6 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
                     Dropdown={Dropdown}
                     setUploadedFiles={setUploadedFiles}
                     uploadedFiles={uploadedFiles}
-                    exportCountry={exportCountry ?? []}
                 /> :
                     <LogisticsImportRFQFormFields
                         formData={formData}
