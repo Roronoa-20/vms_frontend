@@ -99,9 +99,19 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
         const formdata = new FormData();
         const fullData = {
             ...formData,
-            logistic_type: "Export", non_onboarded_vendors: newVendorTable, vendors: selectedRows.vendors
+            logistic_type: "Export",
+            non_onboarded_vendors: newVendorTable,
+            vendors: selectedRows.vendors,
         };
-        formdata.append('data', JSON.stringify(fullData));
+        
+        // loop through keys
+        Object.entries(fullData).forEach(([key, value]) => {
+            if (typeof value === "object") {
+                formdata.append(key, JSON.stringify(value));
+            } else {
+                formdata.append(key, value);
+            }
+        });
         // Append file only if exists
         if (uploadedFiles) {
             uploadedFiles?.forEach((file) => {

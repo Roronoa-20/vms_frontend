@@ -19,10 +19,13 @@ interface Props {
   reconciliationAccount:string
   isBankProofByPurchaseTeam:boolean
   isAccountTeam:number
+  country:string
+  isBeneficieryBankProofByPurchaseTeam:boolean,
+  isIntermediateBankProofByPurchaseTeam:boolean,
 }
 
 
-const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown,reconciliationAccount,isBankProofByPurchaseTeam,isAccountTeam }: Props) => {
+const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown,reconciliationAccount,isBankProofByPurchaseTeam,isAccountTeam,country,isBeneficieryBankProofByPurchaseTeam,isIntermediateBankProofByPurchaseTeam }: Props) => {
   const [isCommentBox, setIsCommentBox] = useState<boolean>(false);
   const [comments, setComments] = useState<string>("");
   const [isApprove, setIsApprove] = useState<boolean>(false);
@@ -73,8 +76,11 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
       return;
     }
     if(designation == "Purchase Team"){
-      if(!isBankProofByPurchaseTeam && isApprove){
+      if(! isBankProofByPurchaseTeam && isApprove && country == "India"){
         alert("Please Upload bank Proof By Purchase Team");
+        return
+      }else if(!isBeneficieryBankProofByPurchaseTeam && isApprove && country != "India"){
+         alert("Please Upload Beneficiary bank Proof By Purchase Team");
         return
       }
       const purchaseTeamData = {

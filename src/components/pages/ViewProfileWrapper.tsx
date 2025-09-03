@@ -5,6 +5,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { VendorCompanyResponse, MultipleCompanyData } from "@/src/types/VendorsViewProfiletypes";
 import { useAuth } from "@/src/context/AuthContext";
+import { usePathname } from "next/navigation";
 
 const ViewProfileWrapper = () => {
   const [loading, setLoading] = useState(true);
@@ -12,6 +13,13 @@ const ViewProfileWrapper = () => {
   const [selectedCompany, setSelectedCompany] = useState<MultipleCompanyData | null>(null);
   const [vendorOnboardingId, setVendorOnboardingId] = useState<string | null>(null);
   const { user_email } = useAuth();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    localStorage.clear();
+    setSelectedCompany(null);
+    setVendorOnboardingId(null);
+  }, [pathname]);
 
   useEffect(() => {
     const storedCompany = localStorage.getItem("selectedCompany");

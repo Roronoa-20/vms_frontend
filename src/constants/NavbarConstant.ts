@@ -20,7 +20,8 @@ export const NavbarConstant:Record<string,string> = {
     "/view-dispatch": "Dispatch Details",
     "/all-vendors": "List of Approved Vendors",
     "/qa-dashboard": "Dashboard",
-    "/view-profile": "Vendor Profile"
+    "/view-profile": "Vendor Profile",
+    "/view-rfq": "Request for Quotations (RFQ)"
 
 
 }
