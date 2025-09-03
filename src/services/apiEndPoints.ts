@@ -1,7 +1,6 @@
 import { verify } from "crypto";
 import { User } from "lucide-react";
 import Dispatch from "../components/pages/Dispatch";
-import Dispatch from "../components/pages/Dispatch";
 
 const url = process.env.NEXT_PUBLIC_BACKEND_END;
 const API_END_POINTS = {
@@ -186,7 +185,7 @@ const API_END_POINTS = {
   bankProofByPurchaseTeam:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`,
   DispatchStateAndPlant:`${url}/api/method/vms.APIs.dispatch.vehicle_details.get_state_and_plant_data`,
 
-  bankProofByPurchaseTeam:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`,
+  // bankProofByPurchaseTeam:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`,
 
   // QA Dashboard APIs
   TotalQMSDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_dashboard.total_qms_onboarding_details`,
