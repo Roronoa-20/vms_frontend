@@ -268,7 +268,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                     <Button
                       variant={"outline"}
                       // onClick={() => downloadPoDetails(item?.name)}
-                      onClick={() => router.push(`/view-po?po_name=${item?.name}`)}
+                      onClick={() => router.push(`/view-po?po_name=${item?.name}&email_to=${item?.email}`)}
                     >
                       view
                     </Button>
