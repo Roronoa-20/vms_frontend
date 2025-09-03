@@ -15,24 +15,24 @@ interface Props {
   tabtype: string;
   ref_no: string;
   onboardingRefno: string;
-  reconsiliationDrodown?:TReconsiliationDropdown["message"]["data"]
-  reconciliationAccount:string
-  isBankProofByPurchaseTeam:boolean
-  isAccountTeam:number
-  country:string
-  isBeneficieryBankProofByPurchaseTeam:boolean,
-  isIntermediateBankProofByPurchaseTeam:boolean,
+  reconsiliationDrodown?: TReconsiliationDropdown["message"]["data"]
+  reconciliationAccount: string
+  isBankProofByPurchaseTeam: boolean
+  isAccountTeam: number
+  country: string
+  isBeneficieryBankProofByPurchaseTeam: boolean,
+  isIntermediateBankProofByPurchaseTeam: boolean,
 }
 
 
-const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown,reconciliationAccount,isBankProofByPurchaseTeam,isAccountTeam,country,isBeneficieryBankProofByPurchaseTeam,isIntermediateBankProofByPurchaseTeam }: Props) => {
+const ApprovalButton = ({ tabtype, ref_no, onboardingRefno, reconsiliationDrodown, reconciliationAccount, isBankProofByPurchaseTeam, isAccountTeam, country, isBeneficieryBankProofByPurchaseTeam, isIntermediateBankProofByPurchaseTeam }: Props) => {
   const [isCommentBox, setIsCommentBox] = useState<boolean>(false);
   const [comments, setComments] = useState<string>("");
   const [isApprove, setIsApprove] = useState<boolean>(false);
   const [isReject, setIsReject] = useState<boolean>(false);
   const [isAccountBox, setIsAccountBox] = useState<boolean>(false);
   // const [reconsiliation, setReconsiliation] = useState<string>("");
-  const {bank_proof,is_file_uploaded} = UsePurchaseTeamApprovalStore();
+  const { bank_proof, is_file_uploaded } = UsePurchaseTeamApprovalStore();
   const router = useRouter();
   const { designation, user_email } = useAuth() as {
     designation: "Purchase Team" | "Accounts Team" | "Purchase Head";
@@ -41,10 +41,8 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
   if (!designation) {
     return <div>Loading</div>;
   }
-  
 
-  
-  console.log(bank_proof,"this is bank proof")
+  console.log(bank_proof, "this is bank proof")
 
   const approval = async () => {
     const url = {
@@ -60,103 +58,96 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
     //   return;
     // }
 
-    if(!comments){
+    if (!comments) {
       alert("Please Enter Comments");
       return
     }
 
     const submitButton = document?.getElementById("submitButton") as HTMLButtonElement | null;
-    if(submitButton){
+    if (submitButton) {
       submitButton.disabled = true;
     }
 
     const formData = new FormData();
-    if(designation == "Accounts Team" && isAccountTeam == 1 && isApprove){
+    if (designation == "Accounts Team" && isAccountTeam == 1 && isApprove) {
       alert("please Upload Bank Proof")
       return;
     }
-    if(designation == "Purchase Team"){
-      if(! isBankProofByPurchaseTeam && isApprove && country == "India"){
+    if (designation == "Purchase Team") {
+      if (!isBankProofByPurchaseTeam && isApprove && country == "India") {
         alert("Please Upload bank Proof By Purchase Team");
         return
-      }else if(!isBeneficieryBankProofByPurchaseTeam && isApprove && country != "India"){
-         alert("Please Upload Beneficiary bank Proof By Purchase Team");
+      } else if (!isBeneficieryBankProofByPurchaseTeam && isApprove && country != "India") {
+        alert("Please Upload Beneficiary bank Proof By Purchase Team");
         return
       }
       const purchaseTeamData = {
-         onboard_id: onboardingRefno,
-            user: user_email,
-            approve: isApprove,
-            reject: isReject,
-            rejected_reason: isReject ? comments : "",
-            comments: isApprove ? comments : "",
-            reconciliation_account:reconciliationAccount?reconciliationAccount:"",
-      } 
-      formData?.append("data",JSON.stringify(purchaseTeamData));
-      formData?.append("bank_proof_by_purchase_team",bank_proof?.[0])
-      const Response: AxiosResponse = await requestWrapper({
-      url: geturl,
-      method: "POST",
-      data: 
-       formData
-      ,
-    });
-    if (Response?.status == 200) {
-      if (isApprove && !isReject) {
-        alert("Approved Successfully");
-      } else {
-        alert("Rejected Successfully");
-      }
-    }
-    if (Response?.status == 200) {
-    if (isApprove && !isReject) {
-      alert("Approved Successfully");
-    } else {
-      alert("Rejected Successfully");
-    }
-    setIsApprove(false);
-    setIsReject(false);
-    setComments("");
-    setIsCommentBox(false);
-    // setReconsiliation("");
-    if(submitButton){
-      submitButton.disabled = false;
-    }
-    router.push("/dashboard");
-  }
-  }else{
-  const Response: AxiosResponse = await requestWrapper({
-    url: geturl,
-    method: "POST",
-    data: {
-      data: {
         onboard_id: onboardingRefno,
         user: user_email,
         approve: isApprove,
         reject: isReject,
         rejected_reason: isReject ? comments : "",
         comments: isApprove ? comments : "",
-        reconciliation_account:reconciliationAccount?reconciliationAccount:"",
-      },
-    },
-  });
-  if (Response?.status == 200) {
-    if (isApprove && !isReject) {
-      alert("Approved Successfully");
+        reconciliation_account: reconciliationAccount ? reconciliationAccount : "",
+      }
+      formData?.append("data", JSON.stringify(purchaseTeamData));
+      formData?.append("bank_proof_by_purchase_team", bank_proof?.[0])
+      const Response: AxiosResponse = await requestWrapper({
+        url: geturl,
+        method: "POST",
+        data:
+          formData
+        ,
+      });
+      if (Response?.status == 200) {
+        if (isApprove && !isReject) {
+          alert("Approved Successfully");
+        } else {
+          alert("Rejected Successfully");
+        }
+        setIsApprove(false);
+        setIsReject(false);
+        setComments("");
+        setIsCommentBox(false);
+        // setReconsiliation("");
+        if (submitButton) {
+          submitButton.disabled = false;
+        }
+        router.push("/dashboard");
+      }
     } else {
-      alert("Rejected Successfully");
+      const Response: AxiosResponse = await requestWrapper({
+        url: geturl,
+        method: "POST",
+        data: {
+          data: {
+            onboard_id: onboardingRefno,
+            user: user_email,
+            approve: isApprove,
+            reject: isReject,
+            rejected_reason: isReject ? comments : "",
+            comments: isApprove ? comments : "",
+            reconciliation_account: reconciliationAccount ? reconciliationAccount : "",
+          },
+        },
+      });
+      if (Response?.status == 200) {
+        if (isApprove && !isReject) {
+          alert("Approved Successfully");
+        } else {
+          alert("Rejected Successfully");
+        }
+        setIsApprove(false);
+        setIsReject(false);
+        setComments("");
+        setIsCommentBox(false);
+        // setReconsiliation("");
+        if (submitButton) {
+          submitButton.disabled = false;
+        }
+        router.push("/dashboard");
+      }
     }
-    setIsApprove(false);
-    setIsReject(false);
-    setComments("");
-    setIsCommentBox(false);
-    // setReconsiliation("");
-    if(submitButton){
-      submitButton.disabled = false;
-    }
-    router.push("/dashboard");
-  }
-}
   }
 
   const handleClose = () => {
@@ -172,10 +163,10 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno,reconsiliationDrodown
     setIsReject(false);
     setComments("");
     // setReconsiliation("");
-    
+
   };
-  
-  
+
+
   return (
     <>
       <div className="w-full flex justify-end gap-5 px-5 pt-4">
