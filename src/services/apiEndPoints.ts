@@ -1,6 +1,7 @@
 import { verify } from "crypto";
 import { User } from "lucide-react";
 import Dispatch from "../components/pages/Dispatch";
+import Dispatch from "../components/pages/Dispatch";
 
 const url = process.env.NEXT_PUBLIC_BACKEND_END;
 const API_END_POINTS = {
@@ -155,7 +156,9 @@ const API_END_POINTS = {
   asaonboardedvendorlist: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.approved_vendor_list`,
 
   // All Approved Vendors Speicfy Detail API
-  allvendorsdetails: `${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.vendors_brief_details`,
+  allvendorsdetails: `${url}/api/method/vms.APIs.dashboard_api.vendor_brief.get_vendors_with_pagination`,
+  allvendorscompanycodedetails: `${url}/api/method/vms.APIs.dashboard_api.vendor_code_brief.get_comp_ven_code`,
+  allvendorsspecificdetails: `${url}/api/method/vms.APIs.dashboard_api.vendor_specific_data.get_vendor_complete_ecosystem`,
 
   // Company Filter API for Purchase Enquiry and Purchase Requisition
   filterpurchasegroup: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.filter_purchase_group`,

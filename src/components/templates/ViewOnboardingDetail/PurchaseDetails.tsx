@@ -29,10 +29,13 @@ interface Props {
   tabType: string
   validation_check: IvalidationChecks
   isPurchaseTeamBankFile?:string
-  isAmendment:number
+  isPurchaseTeamBeneficiaryFile?:string
+  isPurchaseTeamIntermediateFile?:string
+  isAmendment:number,
+  country:string
 }
 
-const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconciliationDropdown, tabType, validation_check,isPurchaseTeamBankFile,isAmendment }: Props) => {
+const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconciliationDropdown, tabType, validation_check,isPurchaseTeamBankFile,isAmendment,country,isPurchaseTeamBeneficiaryFile,isPurchaseTeamIntermediateFile }: Props) => {
   const [reconciliationAccount, setReconciliationAccountt] = useState<string>(OnboardingDetail?.reconciliation_account as string);
   const { designation } = useAuth();
   console.log(OnboardingDetail, "htis is data")
@@ -133,19 +136,19 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
         {/* <Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`}>Next</Button> */}
         {
           designation == "Purchase Team" && validation_check?.is_purchase_approve == 1 &&
-          <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile?true:false} isAccountTeam={validation_check?.register_by_account_team == 1?1:0} />
+          <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile?true:false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile?true:false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile?true:false} isAccountTeam={validation_check?.register_by_account_team == 1?1:0} />
         }
         {
           designation == "Purchase Head" && validation_check?.is_purchase_head_approve &&
-          <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile?true:false} isAccountTeam={validation_check?.register_by_account_team == 1?1:0}/>
+          <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile?true:false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile?true:false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile?true:false} isAccountTeam={validation_check?.register_by_account_team == 1?1:0}/>
         }
         {
           designation == "Accounts Team" && validation_check?.is_accounts_team_approve &&
-          <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile?true:false} isAccountTeam={validation_check?.register_by_account_team == 1?1:0}/>
+          <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile?true:false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile?true:false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile?true:false} isAccountTeam={validation_check?.register_by_account_team == 1?1:0}/>
         }
         {
           designation == "Accounts Head" && validation_check?.is_accounts_head_approve &&
-          <ApprovalButton tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile?true:false} isAccountTeam={validation_check?.register_by_account_team == 1?1:0}/>
+          <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile?true:false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile?true:false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile?true:false} isAccountTeam={validation_check?.register_by_account_team == 1?1:0}/>
         }
       </div>
     </div>

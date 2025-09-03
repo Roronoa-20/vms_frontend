@@ -131,7 +131,7 @@ const ViewOnboardingDetails = async({ vendor_onboarding, tabtype, refno }: Props
         ) : tabType == "Certificate" ? (
           <Certificate certificateCodeDropdown={certificateCodeDropdown?.certificate_names} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.certificate_details_tab} isAmendment={OnboardingDetail?.validation_check?.is_amendment}/>
         ) : tabType == "Purchase Detail"?(
-          <PurchaseDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.purchasing_details?.[0]} reconciliationDropdown={reconciliationDropdown} tabType={tabType} validation_check={OnboardingDetail?.validation_check} isPurchaseTeamBankFile={OnboardingDetail?.payment_details_tab?.bank_proof_by_purchase_team?.url} isAmendment={OnboardingDetail?.validation_check?.is_amendment}/>
+          <PurchaseDetails country={OnboardingDetail?.payment_details_tab?.address?.country}  ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.purchasing_details?.[0]} reconciliationDropdown={reconciliationDropdown} tabType={tabType} validation_check={OnboardingDetail?.validation_check} isPurchaseTeamBankFile={OnboardingDetail?.payment_details_tab?.bank_proof_by_purchase_team?.url} isAmendment={OnboardingDetail?.validation_check?.is_amendment} isPurchaseTeamBeneficiaryFile={OnboardingDetail?.payment_details_tab?.international_bank_details[0]?.international_bank_proof_by_purchase_team?.name} isPurchaseTeamIntermediateFile={OnboardingDetail?.payment_details_tab?.intermediate_bank_details?.[0]?.intermediate_bank_proof_by_purchase_team?.url}/>
         )
         : (
           ""

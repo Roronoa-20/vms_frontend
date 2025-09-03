@@ -174,7 +174,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
     const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.bankProofByPurchaseTeam,method:"POST",data:formdata});
     if(response?.status == 200){
       alert("Uploaded Successfully");
-      // location?.reload();
+      location?.reload();
     }else{
       alert("Error in Uploading");
     }
@@ -182,7 +182,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
   return (
     <div className="flex flex-col bg-white rounded-lg p-3 w-full">
       <div className="flex justify-between items-center border-b-2">
-        <div className="flex justify-between items-center border-b-2">
+        <div className="flex justify-between items-center border-b-2 w-full">
                 <h1 className="font-semibold text-[18px]">Bank Details</h1>
                 <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
               </div>

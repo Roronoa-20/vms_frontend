@@ -9,6 +9,7 @@ interface Props {
 }
 
 const RFQBasicDetails = ({ RFQData }: Props) => {
+  console.log( RFQData?.logistic_type," RFQData?.logistic_type")
   return (
     <>
       <div className="bg-white">
@@ -22,9 +23,8 @@ const RFQBasicDetails = ({ RFQData }: Props) => {
                 </div>
               ))}
             {
-              <div>
               RFQData?.logistic_type === "Import" &&
-              <RFQDatas RFQData={RFQData} item={{ label:"Remarks :", key:"remarks" }} /></div>
+              <RFQDatas RFQData={RFQData} item={{ label:"Remarks :", key:"remarks" }} />
             }
           </div>
 
