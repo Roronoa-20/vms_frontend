@@ -72,7 +72,6 @@ const CompanyAddress = ({
   
 
   const handleRowDelete = (index: number) => {
-    // keeping table read-only for now
     console.log("Row delete clicked:", index);
   };
 

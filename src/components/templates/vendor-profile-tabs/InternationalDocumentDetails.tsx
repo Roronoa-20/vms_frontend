@@ -297,7 +297,7 @@ const DocumentDetails = ({
         </div>
         <div className="flex justify-end items-center space-x-3 mt-3">
           <Button
-            onClick={handleBack}
+            onClick={onBackTab}
             variant="backbtn"
             size="backbtnsize"
           >
@@ -305,7 +305,7 @@ const DocumentDetails = ({
           </Button>
 
           <Button
-            onClick={handleSubmit}
+            onClick={onNextTab}
             variant="nextbtn"
             size="nextbtnsize"
           >

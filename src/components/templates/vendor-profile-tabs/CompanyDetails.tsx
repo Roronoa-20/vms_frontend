@@ -73,14 +73,14 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
     <div className="flex flex-col bg-white rounded-lg p-4 w-full">
       <div className="flex justify-between items-center border-b-2 pb-2">
         <h1 className="font-semibold text-lg">Company Detail</h1>
-        <button
+        <Button
           type="button"
           onClick={() => setIsEditing(!isEditing)}
-          className="flex items-center text-blue-500 hover:text-blue-700"
+          className="flex items-center text-blue-500 hover:text-blue-700 bg-white hover:bg-white"
         >
           <Pencil className="w-4 h-4 mr-1" />
           {isEditing ? "Cancel" : "Edit"}
-        </button>
+        </Button>
       </div>
 
       <form onSubmit={handleSubmit}>

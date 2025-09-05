@@ -1,5 +1,3 @@
-// types.tsx
-
 export interface ApiResponse {
   message: {
     success: boolean;
@@ -158,7 +156,6 @@ export interface VendorOnboardingRecord {
   created_by_accounts_team: number;
 }
 
-// types.tsx (append these)
 
 export interface AllVendorsCompanyCodeResponse {
   message: {

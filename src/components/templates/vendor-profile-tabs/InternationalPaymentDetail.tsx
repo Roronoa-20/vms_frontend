@@ -60,7 +60,7 @@ interface IformData {
 }
 
 
-const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_name }: Props) => {
+const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_name, onBackTab, onNextTab }: Props) => {
   // const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
   const [formData, setFormData] = useState<IformData>();
   // const [bankProofFile,setBankProofFile] = useState<FileList | null>(null);
@@ -384,7 +384,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
       }
       <div className="flex justify-end items-center space-x-3 mt-3">
         <Button
-          onClick={handleBack}
+          onClick={onBackTab}
           variant="backbtn"
           size="backbtnsize"
         >
@@ -392,7 +392,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
         </Button>
 
         <Button
-          onClick={handleSubmit}
+          onClick={onNextTab}
           variant="nextbtn"
           size="nextbtnsize"
         >
