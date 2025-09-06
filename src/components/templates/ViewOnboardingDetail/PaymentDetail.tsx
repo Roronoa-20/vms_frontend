@@ -166,7 +166,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,i
     });
     setTimeout(()=>{
       location.reload();
-    },1000)
+    },2000)
   }
 
 
