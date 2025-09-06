@@ -788,6 +788,10 @@ type PaymentDetailsTab = {
   ift: number;
   bank_proof: FileAttachment;
   bank_proof_by_purchase_team: FileAttachment
+
+  bank_proofs_by_purchase_team:FileAttachment[]
+  international_bank_proofs_by_purchase_team:FileAttachment[]
+  intermediate_bank_proofs_by_purchase_team:FileAttachment[]
   international_bank_details: {
     name: string
     beneficiary_name: string,
