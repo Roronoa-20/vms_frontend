@@ -374,8 +374,8 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,i
         </div>
 
           {/* file preview */}
-          {
-              OnboardingDetail?.bank_proof_by_purchase_team?.url && (
+          
+              
                 <div className="flex gap-2 items-center flex-col">
                   {
                     OnboardingDetail?.bank_proofs_by_purchase_team?.map((item,index)=>(
@@ -396,7 +396,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,i
                     }}
                     /> */}
                 </div>
-              )}
+              
               </div>
         </div>
         {/* <div className="flex justify-start items-end">
