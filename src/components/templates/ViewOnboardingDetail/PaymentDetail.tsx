@@ -137,12 +137,10 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,i
           // setDocumentType('');
           setFiles([]);
           setUploadedFiles(null);
-          throw new Error('file upload request failed');
+          console.error('file upload request failed');
         }
-        console.log(response,"this is response")
 
         const data = await response.json();
-        console.log(data,"this is repsonse data")
         resolve(data); // Resolve with the response data
       } catch (error) {
         // setDocumentType('');
@@ -151,27 +149,28 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,i
         reject(error); // Reject with the error
       }
     });
-    toast.promise(apiCallPromise, {
-      loading: 'Submitting  details...',
-      success: () => {
-        // setTimeout(() => {
-        //   // PreviewData();
-        // }, 500);
-        // setDocumentType('')
-        setFiles([])
-        setUploadedFiles(null)
-        return 'Documents added successfully!';
-      },
-      error: (error) => `Failed : ${error.message || error}`,
-    });
-    setTimeout(()=>{
-      location.reload();
-    },2000)
+    // toast.promise(apiCallPromise, {
+    //   loading: 'Submitting  details...',
+    //   success: () => {
+    //     // setTimeout(() => {
+    //     //   // PreviewData();
+    //     // }, 500);
+    //     // setDocumentType('')
+    //     setFiles([])
+    //     setUploadedFiles(null)
+    //     return 'Documents added successfully!';
+    //   },
+    //   error: (error) => `Failed : ${error.message || error}`,
+    // });
+    // setTimeout(()=>{
+    //   location.reload();
+    // },2000)
   }
 
 
-  const handleNext = () => {
-
+  const handleNext = async() => {
+     const response = await FileUpload();
+     location.reload()
   }
 
   const handleSubmit = async()=>{
@@ -348,12 +347,12 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,i
             </label>
             <SimpleFileUpload files={files} setFiles={setFiles} setUploadedFiles={setUploadedFiles} onNext={handleNext} buttonText={'Upload Here'} />
           </div>
-          <Button
+          {/* <Button
             className="bg-white text-black border text-md font-normal"
             onClick={() => FileUpload()}
           >
             Add
-          </Button>
+          </Button> */}
         </div>
 
             {/* Accounts Team */}
