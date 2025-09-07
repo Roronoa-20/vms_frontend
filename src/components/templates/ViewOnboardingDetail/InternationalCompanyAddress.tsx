@@ -25,14 +25,15 @@ import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
 import FilePreview from "../../molecules/FilePreview";
 import Link from "next/link";
-import { CropIcon, Cross, CrossIcon, Trash2, X } from "lucide-react";
+import { CropIcon, Cross, CrossIcon, Trash2, X, Pencil, Lock, Paperclip } from "lucide-react";
 
 interface Props {
   companyAddressDropdown?: TCompanyAddressDropdown["message"]["data"];
   ref_no: string;
   onboarding_ref_no: string;
   OnboardingDetail: VendorOnboardingResponse["message"]["company_address_tab"];
-  isAmendment:number
+  isAmendment: number;
+  re_release: number
 }
 
 
@@ -75,7 +76,7 @@ const CompanyAddress = ({
   ref_no,
   onboarding_ref_no,
   OnboardingDetail,
-  isAmendment
+  isAmendment, re_release
 }: Props) => {
 
   const router = useRouter();
@@ -150,11 +151,9 @@ const CompanyAddress = ({
       formData.append("file", file[0])
     }
     const submitResponse: AxiosResponse = await requestWrapper({ url: submitUrl, method: "POST", data: formData });
-    if (submitResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Document%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
-  };
-
-  const handleBack = () => {
-    router.push(`/vendor-details-form?tabtype=Company%20Details&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    if (submitResponse?.status == 200)
+      alert("International Company Address Updated Successfully!!!");
+      router.push(`/view-onboarding-details?tabtype=Document%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   };
 
   const handleRowDelete = (index: number) => {
@@ -194,16 +193,34 @@ const CompanyAddress = ({
         <h1 className="font-semibold text-[18px]">
           Company Address
         </h1>
-        <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+        {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
+        {(isAmendment == 1 || re_release == 1) && (
+          <div
+            onClick={() => setIsDisabled(prev => !prev)}
+            className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
+          >
+            {isDisabled ? (
+              <>
+                <Lock className="w-5 h-5 text-red-500" />
+                <span className="text-[14px] font-medium text-white hover:text-black">Enable Edit</span>
+              </>
+            ) : (
+              <>
+                <Pencil className="w-5 h-5 text-green-600" />
+                <span className="text-[14px] font-medium text-white hover:text-black">Disable Edit</span>
+              </>
+            )}
+          </div>
+        )}
       </div>
-      <h1 className="pl-2">Office Address</h1>
-      <div className="grid grid-cols-4 gap-6 p-3">
+      <h1 className="p-1">Office Address</h1>
+      <div className="grid grid-cols-4 gap-6 p-1">
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Street Line 1 <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
-            disabled
+            disabled={isDisabled}
             maxLength={40}
             placeholder=""
             name="address_line_1"
@@ -220,7 +237,7 @@ const CompanyAddress = ({
           </h1>
           <Input
             maxLength={40}
-            disabled
+            disabled={isDisabled}
             placeholder=""
             name="address_line_2"
             onChange={(e) => {
@@ -236,7 +253,7 @@ const CompanyAddress = ({
             Pincode/Zipcode <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
-            disabled
+            disabled={isDisabled}
             placeholder=""
             type="number"
             name="international_zipcode"
@@ -253,7 +270,7 @@ const CompanyAddress = ({
             City <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
-            disabled
+            disabled={isDisabled}
             placeholder=""
             name="international_city"
             onChange={(e) => { handleFieldChange(e, "billing_address") }}
@@ -265,7 +282,7 @@ const CompanyAddress = ({
             State <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
-            disabled
+            disabled={isDisabled}
             placeholder=""
             name="international_state"
             onChange={(e) => { handleFieldChange(e, "billing_address") }}
@@ -278,7 +295,7 @@ const CompanyAddress = ({
             Country <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
-            disabled
+            disabled={isDisabled}
             placeholder=""
             name="international_country"
             onChange={(e) => { handleFieldChange(e, "billing_address") }}
@@ -291,15 +308,14 @@ const CompanyAddress = ({
         <h1 className="pl-2 ">Manufacturing Address</h1>
         <div className="flex items-center gap-1">
           <Input
-            disabled
+            disabled={isDisabled}
             type="checkbox"
             className="w-4"
             onChange={(e) => {
               setformdata((prev: any) => ({ ...prev, same_as_above: e.target.checked }));
             }}
-            value={formdata?.same_as_above ? 1 : 0}
-
-            checked={formdata?.same_as_above ?? OnboardingDetail?.same_as_above}
+            // value={formdata?.same_as_above ? 1 : 0}
+            checked={Boolean(formdata?.same_as_above ?? OnboardingDetail?.same_as_above)}
           />
           <h1 className="font-normal">Same as above</h1>
         </div>
@@ -314,7 +330,7 @@ const CompanyAddress = ({
             // placeholder={shippingData?.address1}
             name="street_1"
             value={formdata?.shipping_address?.street_1 ?? OnboardingDetail?.shipping_address?.street_1 ?? ""}
-            disabled
+            disabled={isDisabled}
             onChange={(e) => {
               handleFieldChange(e, "shipping_address");
             }}
@@ -328,7 +344,7 @@ const CompanyAddress = ({
             maxLength={40}
             name="street_2"
             value={formdata?.shipping_address?.street_2 ?? OnboardingDetail?.shipping_address?.street_2 ?? ""}
-            disabled
+            disabled={isDisabled}
             onChange={(e) => {
               handleFieldChange(e, "shipping_address");
             }}
@@ -341,7 +357,7 @@ const CompanyAddress = ({
           <Input
             name="inter_manufacture_zipcode"
             value={formdata?.shipping_address?.inter_manufacture_zipcode ?? OnboardingDetail?.shipping_address?.inter_manufacture_zipcode ?? ""}
-            disabled
+            disabled={isDisabled}
             onChange={(e) => {
               handleFieldChange(e, "shipping_address");
             }}
@@ -355,7 +371,7 @@ const CompanyAddress = ({
             // placeholder={shippingData?.city}
             name="inter_manufacture_city"
             value={formdata?.shipping_address?.inter_manufacture_city ?? OnboardingDetail?.shipping_address?.inter_manufacture_city ?? ""}
-            disabled
+            disabled={isDisabled}
             onChange={(e) => { handleFieldChange(e, "shipping_address") }}
           />
         </div>
@@ -367,7 +383,7 @@ const CompanyAddress = ({
             // placeholder={shippingData?.state}
             name="inter_manufacture_state"
             value={formdata?.shipping_address?.inter_manufacture_state ?? OnboardingDetail?.shipping_address?.inter_manufacture_state ?? ""}
-            disabled
+            disabled={isDisabled}
             onChange={(e) => { handleFieldChange(e, "shipping_address") }}
           />
         </div>
@@ -378,20 +394,21 @@ const CompanyAddress = ({
           <Input
             name="inter_manufacture_country"
             value={formdata?.shipping_address?.inter_manufacture_country ?? OnboardingDetail?.shipping_address?.inter_manufacture_country ?? ""}
-            disabled
+            disabled={isDisabled}
             onChange={(e) => { handleFieldChange(e, "shipping_address") }}
           />
         </div>
       </div>
       <div className="pl-4 flex gap-4 items-center">
         <Input
-          disabled
+          disabled={isDisabled}
           type="checkbox"
           className="w-4"
           onChange={(e) => {
             setformdata((prev: any) => ({ ...prev, multiple_locations: e.target.checked }));
           }}
-          checked={formdata?.multiple_locations ?? OnboardingDetail?.multiple_locations == 1}
+          checked={Boolean(formdata?.multiple_locations ?? OnboardingDetail?.multiple_locations)}
+
         />
         <h1>Do you have multiple locations?</h1>
       </div>
@@ -403,7 +420,7 @@ const CompanyAddress = ({
                 Address 1
               </h1>
               <Input
-                disabled
+                disabled={isDisabled}
                 maxLength={40}
                 onChange={(e) => {
                   setSingleRow((prev: any) => ({ ...prev, address_line_1: e.target.value }))
@@ -416,7 +433,7 @@ const CompanyAddress = ({
                 Address 2
               </h1>
               <Input
-                disabled
+                disabled={isDisabled}
                 maxLength={40}
                 onChange={(e) => {
                   setSingleRow((prev: any) => ({ ...prev, address_line_2: e.target.value }))
@@ -429,7 +446,7 @@ const CompanyAddress = ({
                 Pincode/Zipcode
               </h1>
               <Input
-                disabled
+                disabled={isDisabled}
                 onChange={(e) => {
                   setSingleRow((prev: any) => ({ ...prev, zipcode: e.target.value }))
                 }}
@@ -443,7 +460,7 @@ const CompanyAddress = ({
                 </h1>
                 <Input
                   value={singlerow?.city ?? ""}
-                  disabled
+                  disabled={isDisabled}
                   onChange={(e) => {
                     setSingleRow((prev: any) => ({ ...prev, city: e.target.value }))
                   }}
@@ -455,7 +472,7 @@ const CompanyAddress = ({
                 </h1>
                 <Input
                   value={singlerow?.state ?? ""}
-                  disabled
+                  disabled={isDisabled}
                   onChange={
                     (e) => {
                       setSingleRow((prev: any) => ({ ...prev, state: e.target.value }))
@@ -468,15 +485,16 @@ const CompanyAddress = ({
                   Country
                 </h1>
                 <Input
-                  disabled
+                  disabled={isDisabled}
                   onChange={(e) => {
                     setSingleRow((prev: any) => ({ ...prev, country: e.target.value }))
                   }}
                   value={singlerow?.country ?? ""}
                 />
               </div>
-              {/* <div className={``}>
+              <div className={``}>
                 <Button
+                  disabled={isDisabled}
                   className="bg-blue-400 hover:bg-blue-400 rounded-3xl"
                   onClick={() => {
                     handleMultipleAdd();
@@ -484,11 +502,9 @@ const CompanyAddress = ({
                 >
                   Add
                 </Button>
-              </div> */}
+              </div>
             </div>
           </div>
-
-          {/* // table */}
 
           <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
             <div className="flex w-full justify-between pb-4">
@@ -497,7 +513,6 @@ const CompanyAddress = ({
               </h1>
             </div>
             <Table>
-              {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                   <TableHead className="w-[100px]">Sr No.</TableHead>
@@ -520,7 +535,14 @@ const CompanyAddress = ({
                     <TableCell>{item?.city}</TableCell>
                     <TableCell>{item?.state}</TableCell>
                     <TableCell>{item?.country}</TableCell>
-                    {/* <TableCell className="flex justify-center"><Trash2 className="text-red-400 cursor-pointer" onClick={()=>{handleRowDelete(index)}}/></TableCell> */}
+                    <TableCell className="flex justify-center">
+                      {!isDisabled && (
+                        <Trash2
+                          className="text-red-400 cursor-pointer"
+                          onClick={() => handleRowDelete(index)}
+                        />
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -534,35 +556,66 @@ const CompanyAddress = ({
         <h1 className="text-[12px] font-normal text-[#626973]">
           Upload Address Proof (Light Bill, Telephone Bill, etc.)
         </h1>
-        {/* <Input type="file" className="w-fit" onChange={(e) => { setFile(e.target.files) }} /> */}
-        {/* file preview */}
-        {
-          isFilePreview && !file && OnboardingDetail?.address_proofattachment?.url &&
-          <div className="flex gap-2">
-            <Link target="blank" href={OnboardingDetail?.address_proofattachment?.url} className="underline text-blue-300 max-w-44 truncate">
-              <span>{OnboardingDetail?.address_proofattachment?.file_name}</span>
-            </Link>
-            {/* <X className="cursor-pointer" onClick={() => { setIsFilePreview((prev) => !prev) }} /> */}
-          </div>
-        }
-      </div>
-      {/* <div className="flex justify-end items-center space-x-3">
-        <Button
-          onClick={handleBack}
-          variant="backbtn"
-          size="backbtnsize"
-        >
-          Back
-        </Button>
 
+        {/* Hidden file input with label trigger */}
+        <div className="flex items-center gap-3">
+          <label
+            htmlFor="file-upload"
+            className={`flex items-center gap-2 cursor-pointer text-blue-600 hover:text-blue-800 ${isDisabled ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+          >
+            <Paperclip className="w-5 h-5" />
+            <span className="text-sm">Attach File</span>
+          </label>
+          <input
+            id="file-upload"
+            type="file"
+            className="hidden"
+            disabled={isDisabled}
+            onChange={(e) => setFile(e.target.files)}
+          />
+        </div>
+
+        {/* Show preview if a new file is selected */}
+        {file && file[0] && (
+          <div className="flex gap-2 items-center mt-1">
+            <span className="text-blue-500 max-w-44 truncate">{file[0].name}</span>
+            {!isDisabled && (
+              <X className="cursor-pointer" onClick={() => setFile(null)} />
+            )}
+          </div>
+        )}
+
+        {/* Show existing preview if no new file is chosen */}
+        {!file && isFilePreview && OnboardingDetail?.address_proofattachment?.url && (
+          <div className="flex gap-2 items-center mt-1">
+            <Link
+              target="_blank"
+              href={OnboardingDetail.address_proofattachment.url}
+              className="underline text-blue-500 max-w-44 truncate"
+            >
+              {OnboardingDetail.address_proofattachment.file_name}
+            </Link>
+            {!isDisabled && (
+              <X
+                className="cursor-pointer"
+                onClick={() => setIsFilePreview(false)}
+              />
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="flex justify-end pr-4 pb-4">
         <Button
           onClick={handleSubmit}
           variant="nextbtn"
           size="nextbtnsize"
+          className={`${isDisabled ? "hidden" : ""}`}
         >
           Next
         </Button>
-      </div> */}
+      </div>
     </div>
   );
 };

@@ -52,7 +52,7 @@ const useDebounce = (value: any, delay: any) => {
 };
 
 const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
-
+console.log(dashboardTableData, "this is dashboardTableData");
   const [table, setTable] = useState<DashboardTableType["pending_vendor_onboarding"]>(dashboardTableData?.pending_vendor_onboarding);
   const [selectedCompany, setSelectedCompany] = useState<string>("")
   const [search, setSearch] = useState<string>("");
@@ -147,16 +147,17 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
               <TableHead className="w-[100px]">Sr No.</TableHead>
-              <TableHead>Ref No.</TableHead>
-              <TableHead>Vendor Name</TableHead>
-              <TableHead className="text-center">Company Name</TableHead>
+              <TableHead className="text-center">Ref No.</TableHead>
+              <TableHead className="text-center">Vendor Name</TableHead>
+              <TableHead className="text-center">Company Code</TableHead>
               <TableHead className="text-center">Status</TableHead>
-              <TableHead className="text-center">Purchase Team</TableHead>
-              <TableHead className="text-center">Purchase Head</TableHead>
-              <TableHead className="text-center">Account Team</TableHead>
-              <TableHead className="text-center">View Details</TableHead>
+              <TableHead className="text-center whitespace-nowrap">Registered By</TableHead>
+              <TableHead className="text-center whitespace-nowrap">Purchase Team</TableHead>
+              <TableHead className="text-center whitespace-nowrap">Purchase Head</TableHead>
+              <TableHead className="text-center whitespace-nowrap">Account Team</TableHead>
+              <TableHead className="text-center whitespace-nowrap">View Details</TableHead>
               {!isAccountsUser && (
-                <TableHead className="text-center">QMS Form</TableHead>
+                <TableHead className="text-center whitespace-nowrap">QMS Form</TableHead>
               )}
             </TableRow>
           </TableHeader>
@@ -180,9 +181,10 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
                       {item?.onboarding_form_status}
                     </div>
                   </TableCell>
-                  <TableCell>{item?.purchase_t_approval}</TableCell>
-                  <TableCell>{item?.purchase_h_approval}</TableCell>
-                  <TableCell>{item?.accounts_t_approval}</TableCell>
+                  <TableCell>{item?.registered_by_full_name}</TableCell>
+                  <TableCell>{item?.purchase_t_approval_full_name}</TableCell>
+                  <TableCell>{item?.purchase_h_approval_full_name}</TableCell>
+                  <TableCell>{item?.accounts_t_approval_full_name}</TableCell>
                   {/* <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell> */}
                   <TableCell><Button onClick={()=>{item?.form_fully_submitted_by_vendor == 1?handleView(item?.ref_no,item?.name):alert("Vendor Form is not fully subitted")}} variant={"outline"}>View</Button></TableCell>
                   {/* <TableCell className="text-right">{item?.qms_form}</TableCell> */}

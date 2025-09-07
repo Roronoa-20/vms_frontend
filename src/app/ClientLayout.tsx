@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams  } from "next/navigation";
 import NProgress from "nprogress";
 import "@/styles/nprogress.css";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     NProgress.start();
@@ -15,7 +16,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [pathname]);
+  }, [pathname, searchParams]);
 
   return <>{children}</>;
 }

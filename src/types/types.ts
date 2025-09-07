@@ -145,7 +145,7 @@ type VendorTypeGroup = {
 };
 
 export type VendorOnboarding = {
-  accounts_head_approval:string,
+  accounts_head_approval: string,
   registered_by: string
   vendor_country: string
   company_vendor_codes: {
@@ -168,6 +168,10 @@ export type VendorOnboarding = {
   onboarding_form_status: string | null;
   rejection_comment: string | null;
   purchase_t_approval: string | null;
+  registered_by_full_name: string | null;
+  purchase_t_approval_full_name: string | null;
+  purchase_h_approval_full_name: string | null;
+  accounts_t_approval_full_name: string | null;
   purchase_team_undertaking: number;
   accounts_t_approval: string | null;
   accounts_team_undertaking: number;
@@ -176,6 +180,7 @@ export type VendorOnboarding = {
   form_fully_submitted_by_vendor: number;
   rejected: number;
   rejected_by: string | null;
+  rejected_by_full_name: string;
   reason_for_rejection: string | null;
   rejected_by_designation: string | null;
   payment_detail: string;
@@ -268,6 +273,7 @@ type VendorMaster = {
   qa_required: string;
   send_welcome_email: number;
   registered_by: string | null;
+  registered_by_full_name: string;
   purchase_team_approval: string | null;
   purchase_team_second: string | null;
   purchase_head_approval: string | null;
@@ -465,7 +471,7 @@ export type TCurrencyDropdown = {
 }
 
 export type TPurchaseDetails = {
-  account_head_remarks:string
+  account_head_remarks: string
   account_group: string,
   company_name: string,
   incoterms: string,
@@ -532,8 +538,9 @@ interface IvalidationChecks {
   is_purchase_head_approve: number,
   is_accounts_team_approve: number,
   is_accounts_head_approve: number,
-  register_by_account_team:number,
-  is_amendment:number
+  register_by_account_team: number,
+  is_amendment: number,
+  re_release: number
 }
 
 type CompanyAddressDetails = {
@@ -776,7 +783,7 @@ type DocumentDetailsTab = {
 };
 
 type PaymentDetailsTab = {
-  bank_proof_upload_status:number,
+  bank_proof_upload_status: number,
   bank_name: string;
   ifsc_code: string;
   account_number: string;
@@ -801,7 +808,7 @@ type PaymentDetailsTab = {
     beneficiary_routing_no: string,
     beneficiary_currency: string,
     bank_proof_for_beneficiary_bank: FileAttachment,
-    international_bank_proof_by_purchase_team:FileAttachment
+    international_bank_proof_by_purchase_team: FileAttachment
   }[]
   intermediate_bank_details: {
     name: string
@@ -816,7 +823,7 @@ type PaymentDetailsTab = {
     intermediate_routing_no: string,
     intermediate_currency: string
     bank_proof_for_intermediate_bank: FileAttachment
-    intermediate_bank_proof_by_purchase_team:FileAttachment
+    intermediate_bank_proof_by_purchase_team: FileAttachment
   }[]
   address: { country: string }
 };
@@ -928,10 +935,10 @@ export type dashboardCardData = {
   cart_count: number,
   overall_total_rfq: number,
   sap_error_vendor_count: number
-  sap_error_vendor_count_by_accounts_team:number,
-  rejected_vendor_count_by_accounts_team:number,
-  approved_vendor_count_by_accounts_team:number,
-  pending_vendor_count_by_accounts_team:number
+  sap_error_vendor_count_by_accounts_team: number,
+  rejected_vendor_count_by_accounts_team: number,
+  approved_vendor_count_by_accounts_team: number,
+  pending_vendor_count_by_accounts_team: number
 }
 
 export interface DashboardPOTableItem {
@@ -1282,7 +1289,7 @@ export interface DashboardTableType {
 
 
 type SapErrorVendorOnboarding = {
-  accounts_head_approval:string
+  accounts_head_approval: string
   name: string;
   ref_no: string;
   company_name: string;
@@ -1309,14 +1316,16 @@ type SapErrorVendorOnboarding = {
   qms_form_filled: 0 | 1;
   sent_qms_form_link: 0 | 1;
   registered_by: string;
+  registered_by_full_name: string;
   register_by_account_team: 0 | 1;
   vendor_country: string;
   rejected_by: string;
+  rejected_by_full_name: string;
   rejected_by_designation: string;
   reason_for_rejection: string;
   sap_error_message: string;
   sap_error_mail_sent: 0 | 1;
-  
+
 };
 
 type SapErrorVendorOnboardingResponse = {
@@ -1396,6 +1405,7 @@ export type TPRInquiryTable = {
     reason_for_rejection: string | null;
     rejected: number;
     rejected_by: string | null;
+    rejected_by_full_name: string;
     rejection_reason: string | null;
     remarks: string | null;
     representative_head_status: string; // e.g., "Pending"
@@ -1444,6 +1454,7 @@ export type CartDetails = {
   reason_for_rejection: string | null;
   rejected: number;
   rejected_by: string | null;
+  rejected_by_full_name: string;
   rejection_reason: string | null;
   remarks: string | null;
   representative_head_status: string; // e.g., "Pending"
@@ -1489,6 +1500,7 @@ export interface PurchaseRequisition {
   purchase_head_status: string | null;
   purchase_head_approval_remarks: string | null;
   rejected_by: string | null;
+  rejected_by_full_name: string;
   reason_for_rejection: string | null;
   rejected: number;
   hod_approved: number;
