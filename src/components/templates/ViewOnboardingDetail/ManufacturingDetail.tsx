@@ -42,6 +42,7 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAm
   const { designation } = useAuth();
 
   const router = useRouter();
+
   const handleSubmit = async () => {
     const manufacturingUrl = API_END_POINTS?.manufacturingDetailSubmit;
     const updatedData = { ...ManufacturingDetail, materials_supplied: [{ hsnsac_code: ManufacturingDetail?.hsnsac_code, annual_capacity: ManufacturingDetail?.annual_capacity, material_description: ManufacturingDetail?.material_description }], ref_no: ref_no, vendor_onboarding: onboarding_ref_no }
@@ -58,8 +59,9 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAm
     }
     const manufacturingDetailResponse: AxiosResponse = await requestWrapper({ url: manufacturingUrl, data: formData, method: "POST" });
     if (manufacturingDetailResponse?.status == 200) {
-      alert("updated successfully")
-      location.reload();
+      alert("Manufacturing Details Updated Successfully")
+      router.push(`/view-onboarding-details?tabtype=Employee%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+      // location.reload();
     }
   }
   return (

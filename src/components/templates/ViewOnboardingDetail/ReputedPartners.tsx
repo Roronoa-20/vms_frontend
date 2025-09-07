@@ -39,8 +39,9 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendm
     const updateData = { reputed_partners: reputedPartnersDetails }
     const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...updateData, ref_no: ref_no, vendor_onboarding: onboarding_ref_no } }, method: "POST" })
     if (response?.status == 200) {
-      alert("updated successfully");
-      location.reload();
+      alert("Reputed Partners Details Updated Successfully!!!");
+      router.push(`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+      // location.reload();
     }
   };
 

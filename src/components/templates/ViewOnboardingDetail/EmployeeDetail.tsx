@@ -39,7 +39,8 @@ const EmployeeDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendme
     const updatedData = { data: { number_of_employee: [...employeeDetail], ref_no: ref_no, vendor_onboarding: onboarding_ref_no } }
     const employeeDetailResponse: AxiosResponse = await requestWrapper({ url: employeeSubmitUrl, data: updatedData, method: "POST" });
     if (employeeDetailResponse?.status == 200) {
-      alert("updated successfully")
+      alert("Employee Details Updated Successfully!!!")
+      router.push(`/view-onboarding-details?tabtype=Machinery%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
       location.reload();
     }
   }

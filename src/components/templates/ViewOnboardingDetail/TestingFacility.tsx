@@ -40,8 +40,9 @@ const TestingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendmen
     const machineDetailResponse: AxiosResponse = await requestWrapper({ url: submitUrl, data: { data: updatedData }, method: "POST" });
 
     if (machineDetailResponse?.status == 200) {
-      alert("updated successfully");
-      location.reload();
+      alert("Testing Facility Details Updated Successfully!!!");
+      router.push(`/view-onboarding-details?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+      // location.reload();
     }
   }
 

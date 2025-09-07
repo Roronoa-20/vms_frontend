@@ -39,7 +39,8 @@ const MachineryDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendm
     const machineDetailResponse: AxiosResponse = await requestWrapper({ url: submitUrl, data: { data: updatedData }, method: "POST" });
 
     if (machineDetailResponse?.status == 200) {
-      alert("updated successfully");
+      alert("Machinery Details Updated Successfully!!!");
+      router.push(`/view-onboarding-details?tabtype=Testing%20Facility&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
       location.reload();
     }
   }

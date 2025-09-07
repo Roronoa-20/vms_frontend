@@ -79,7 +79,8 @@ const Certificate = ({
       alert("Upload At Least 1 Certificate");
       return;
     }
-    location.reload();
+    router.push(`/view-onboarding-details?tabtype=Purchase%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    // location.reload();
   };
 
   // ---- Add Certificate
@@ -103,13 +104,19 @@ const Certificate = ({
       data: formData,
       method: "POST",
     });
-    if (certificateSubmit?.status == 200) {
-      console.log("Successfully submit");
+    if (certificateSubmit?.status === 200) {
+      setMultipleCertificateData((prev) => [...prev, certificateData as certificateData]);
+      setCertificateData({});
+      if (fileInput?.current) fileInput.current.value = "";
     }
-    setCertificateData({});
-    if (fileInput?.current) fileInput.current.value = "";
-    location.reload();
+    // if (certificateSubmit?.status == 200) {
+    //   console.log("Successfully submit");
+    // }
+    // setCertificateData({});
+    // if (fileInput?.current) fileInput.current.value = "";
+    // location.reload();
   };
+
 
   // ---- Delete Row
   const deleteRow = async (certificate_code: string) => {
@@ -119,8 +126,11 @@ const Certificate = ({
       method: "POST",
     });
     if (deleteResponse?.status == 200) {
-      setMultipleCertificateData([]);
-      location.reload();
+      setMultipleCertificateData((prev) =>
+        prev.filter((row) => row.certificate_code !== certificate_code)
+      );
+      // setMultipleCertificateData([]);
+      // location.reload();
     }
   };
 
@@ -265,11 +275,11 @@ const Certificate = ({
         <Table>
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px]">
-              <TableHead>Sr No.</TableHead>
-              <TableHead>Certificate</TableHead>
-              <TableHead>Valid Till</TableHead>
-              <TableHead>File</TableHead>
-              <TableHead>Action</TableHead>
+              <TableHead className="text-center text-black">Sr No.</TableHead>
+              <TableHead className="text-center text-black">Certificate</TableHead>
+              <TableHead className="text-center text-black">Valid Till</TableHead>
+              <TableHead className="text-center text-black">File</TableHead>
+              <TableHead className="text-center text-black">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

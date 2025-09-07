@@ -297,7 +297,7 @@ const CompanyAddress = ({
     const submitResponse: AxiosResponse = await requestWrapper({ url: submitUrl, method: "POST", data: formData });
     if (submitResponse?.status == 200) {
       alert("Company Address Updated Successfully!!!");
-      router.push(`/view-onboarding-details?tabtype=Document%20Details&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+      router.push(`/view-onboarding-details?tabtype=Document%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
 
       location.reload();
     }
