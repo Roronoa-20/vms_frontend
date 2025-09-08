@@ -140,6 +140,10 @@ const NewVendorRegistration = ({ ...Props }: Props) => {
     }
   };
 
+  const handleCancel = async () => {
+    router.push("/dashboard");
+  };
+
   return (
     <div className="p-3">
       {/* Vendor Type Section */}
@@ -175,6 +179,7 @@ const NewVendorRegistration = ({ ...Props }: Props) => {
         tableData={tableData}
         setTableData={setTableData}
         handleSubmit={handleSubmit}
+        handleCancel={handleCancel}
         multiVendor={multiVendor}
       />
     </div>
