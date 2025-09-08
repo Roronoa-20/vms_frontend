@@ -47,6 +47,20 @@ export interface TDisptachDetails {
     coa_document_upload:File,
     msds_document_upload:File
   }[]
+  vehicle_details:{
+    name:string
+    vehicle_no:string,
+  loading_state:string,
+  loading_location:string,
+  driver_name:string,
+  transporter_name:string,
+  driver_phone:string,
+  driver_license:string,
+  lr_number:string,
+  lr_date:string,
+  destination_plant:string,
+  attachment:FileAttachment,
+  }[]
 }
 
 

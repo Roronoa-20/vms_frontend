@@ -17,6 +17,7 @@ import { DispatchStateAndPlant, TDisptachDetails } from '../pages/Dispatch'
 import Link from 'next/link'
 import { updateQueryParam } from './PRRequestForm'
 import PopUp from '../molecules/PopUp'
+import { ApiError } from 'next/dist/server/api-utils'
 
 interface TPoDropdown{
     name:string
@@ -57,7 +58,7 @@ interface formData{
 }
 
 interface Props {
-  DispatchDetails:TDisptachDetails | null,
+  DispatchDetails:TDisptachDetails  | null,
   refno?:string
   StateAndPlant:DispatchStateAndPlant
 }
@@ -91,8 +92,8 @@ interface tablerow  {
     pending_qty:number,
 }[]
 
-type vehicalForm = {
-  vehical_number:string,
+interface vehicalForm {
+  vehicle_no:string,
   loading_state:string,
   loading_location:string,
   driver_name:string,
@@ -102,7 +103,7 @@ type vehicalForm = {
   lr_number:string,
   lr_date:string,
   destination_plant:string,
-  upload_attachment:File,
+  attachment:File, 
 }
 
 
@@ -140,6 +141,8 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
       console.log(DispatchDetails?.purchase_number,"this is po")
 
     },[])
+
+    console.log(DispatchDetails?.vehicle_details,"this is dispatch details")
 
     const handleVendorCodeChange = async(value:string)=>{
         setFormData((prev:any)=>({...prev,vendor_code:value}))
@@ -229,8 +232,24 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
     })
   }
 
-  const handleVehicalAdd = ()=>{
-    setVehicalTable((prev:any)=>([...prev,vehicalForm]));
+  const handleVehicalAdd = async()=>{
+    // setVehicalTable((prev:any)=>([...prev,vehicalForm]));
+    const formdata = new FormData();
+
+    for(const key in vehicalForm){
+      if(vehicalForm.hasOwnProperty(key)){
+        formdata.append(key,vehicalForm[key as keyof(vehicalForm)])
+      }
+    }
+
+    formdata.append("dispatch_item_id",refno as string)
+
+    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.submitVehicalDispatchForm,method:"POST",data:formdata});
+    if(response?.status == 200){
+      alert("submited successfully");
+      location.reload();
+    }
+
     handleclose();
   }
 
@@ -297,6 +316,14 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
   const handleclose = ()=>{
     setIsDialog(false);
     setVehicalForm(null)
+  }
+  
+  const deleteVehicalRow = async(vehical_ref_no:string)=>{
+    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.deleteDispatchVehicalItem,method:"POST",params:{dispatch_item_id:refno,vehicle_details_id:vehical_ref_no}});
+    if(response?.status == 200){
+      alert("deleted successfully");
+      location?.reload();
+    }
   }
 
   console.log(vehicalForm, "this is vehical form Data")
@@ -411,12 +438,12 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
         </div>
         <div className='col-span-1 flex items-end gap-4'>
         <Button className={`bg-blue-400 hover:bg-blue-400 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{handleAdd()}} >Add</Button>
-        <Button className={`bg-blue-400 hover:bg-blue-400 `} onClick={()=>{setIsDialog(true)}} >Add Vehical Pass</Button>
+        <Button className={`bg-blue-400 hover:bg-blue-400 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{setIsDialog(true)}} >Add Vehical Pass</Button>
         </div>
       </div>
       
 
-          <div className={`shadow- bg-[#f6f6f7] mb-8 p-4 rounded-2xl mt-4 ${Vehicaltable?.length > 0?"":"hidden"}`}>
+          <div className={`shadow- bg-[#f6f6f7] mb-8 p-4 rounded-2xl mt-4 ${DispatchDetails?.vehicle_details && DispatchDetails?.vehicle_details?.length > 0?"":"hidden"}`}>
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
               Vehicle Pass
@@ -434,12 +461,13 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
                 <TableHead className="text-center">Driver License</TableHead>
                 <TableHead className="text-center">LR Number</TableHead>
                 <TableHead className="text-center">Attachment</TableHead>
+                <TableHead className="text-center">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="text-center">
-              {Vehicaltable?.map((item, index) => (
+              {DispatchDetails?.vehicle_details?.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell>{item?.vehical_number}</TableCell>
+                  <TableCell>{item?.vehicle_no}</TableCell>
                   <TableCell>{item?.loading_state}</TableCell>
                   <TableCell>{item?.loading_location}</TableCell>
                   <TableCell>{item?.driver_name}</TableCell>
@@ -447,8 +475,8 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
                   <TableCell>{item?.driver_phone}</TableCell>
                   <TableCell>{item?.driver_license}</TableCell>
                   <TableCell>{item?.lr_number}</TableCell>
-                  <TableCell>{item?.upload_attachment?.name}</TableCell>
-                    {/* <TableCell><Button className={`bg-blue-400 hover:bg-blue-300 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{handleTableRowUpdate(item)}}>Update</Button></TableCell> */}
+                  <TableCell><Link href={item?.attachment?.url} target='blank'>{item?.attachment?.file_name}</Link></TableCell>
+                    <TableCell><Button className={`bg-blue-400 hover:bg-blue-300 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{deleteVehicalRow(item?.name)}}>Delete</Button></TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -521,7 +549,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
         <div className='grid grid-cols-3 gap-5 w-full'>
           <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Vehical Number</h1>
-          <Input placeholder="" name='vehical_number' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,vehical_number:e.target.value}))}} />
+          <Input placeholder="" name='vehical_number' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,vehicle_no:e.target.value}))}} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
@@ -592,7 +620,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload Attachment</h1>
-          <Input placeholder="" name='upload_attachment' type='file' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,upload_attachment:e.target.files?.[0]}))}} />
+          <Input placeholder="" name='upload_attachment' type='file' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,attachment:e.target.files?.[0]}))}} />
         </div>
         </div>
         </PopUp>
