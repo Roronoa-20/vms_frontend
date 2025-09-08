@@ -364,12 +364,12 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,i
             </label>
             <SimpleFileUpload files={files} setFiles={setFiles} setUploadedFiles={setUploadedFiles} onNext={handleNext} buttonText={'Upload Here'} />
           </div>
-          <Button
+          {/* <Button
             className="bg-white text-black border text-md font-normal"
             onClick={() => FileUpload()}
           >
             Add
-          </Button>
+          </Button> */}
         </div>
 
           {/* file preview */}
