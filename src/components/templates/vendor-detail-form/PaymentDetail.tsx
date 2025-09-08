@@ -184,7 +184,7 @@ const PaymentDetail = ({
               <SelectGroup>
                 {bankNameDropown?.map((item, index) => (
                   <SelectItem key={index} value={item?.name}>
-                    {item?.bank_name}
+                    {item?.bank_code} - {item?.bank_name}
                   </SelectItem>
                 ))}
               </SelectGroup>
@@ -223,7 +223,8 @@ const PaymentDetail = ({
               ""
             }
             onChange={(e) => {
-              updatePaymentDetail("account_number", e.target.value);
+              const sanitizedValue = e.target.value.replace(/[-,/@]/g, "");
+              updatePaymentDetail("account_number", sanitizedValue);
             }}
           />
           {errors?.account_number && !paymentDetail?.account_number && (
