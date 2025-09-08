@@ -456,7 +456,8 @@ export type TbankNameDropdown = {
   message: {
     data: {
       name: string,
-      bank_name: string
+      bank_name: string,
+      bank_code: string
     }[]
   }
 }
