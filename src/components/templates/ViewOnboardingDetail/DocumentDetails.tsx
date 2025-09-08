@@ -51,7 +51,8 @@ interface Props {
   onboarding_ref_no: string;
   OnboardingDetail: VendorOnboardingResponse["message"]["document_details_tab"];
   documentDetailDropdown: TdocumentDetailDropdown["message"]["data"];
-  isAmendment: number
+  isAmendment: number;
+  re_release: number;
 }
 
 interface gstRow {
@@ -86,7 +87,8 @@ const DocumentDetails = ({
   onboarding_ref_no,
   OnboardingDetail,
   documentDetailDropdown,
-  isAmendment
+  isAmendment,
+  re_release
 }: Props) => {
   const [BusinessType, setBusinessType] = useState<string>(
     OnboardingDetail?.gst_table[0]?.gst_ven_type
@@ -191,9 +193,6 @@ const DocumentDetails = ({
     if (str == null) {
       return false;
     }
-
-    // Return true if the GST_CODE
-    // matched the ReGex
     if (regex.test(str) == true) {
       return true;
     }
@@ -208,7 +207,6 @@ const DocumentDetails = ({
       return false;
     }
 
-    // Return true if the PAN matches the regex
     if (regex.test(str) == true) {
       return true;
     }
@@ -262,7 +260,8 @@ const DocumentDetails = ({
     if (Response?.status == 200) {
       setDocumentDetail({})
       alert("successfully Updated the Records");
-      location.reload();
+      router.push(`/view-onboarding-details?tabtype=Payment%20Detail%20%2F%20Bank%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+      // location.reload();
     }
   };
 
@@ -283,7 +282,7 @@ const DocumentDetails = ({
     }
     const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" })
     if (response?.status == 200) {
-      alert("submittes successfully");
+      alert("Submitted Successfully!!!");
       fetchGstTable();
       setSingleRow(null);
       if (fileInput?.current) {

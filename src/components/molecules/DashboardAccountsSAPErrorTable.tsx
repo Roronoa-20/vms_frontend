@@ -1,5 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -62,6 +63,8 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [remarks, setRemark] = useState("");
   const debouncedSearchName = useDebounce(searchVendor, 300);
+  const router = useRouter();
+
 
   useEffect(() => {
     fetchTable();
@@ -114,6 +117,10 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
       alert("failed to send email");
     }
   };
+
+  const handleView = async(refno:string,vendor_Onboarding:string)=>{
+    router.push(`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${vendor_Onboarding}&refno=${refno}`)
+  }
 
   return (
     <>
@@ -176,6 +183,7 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
                         </Button>
                       )}
                     </TableCell>
+                    <TableCell><Button onClick={()=>{item?.form_fully_submitted_by_vendor == 1?handleView(item?.ref_no,item?.name):alert("Vendor Form is not fully subitted")}} variant={"outline"}>View</Button></TableCell>
                   </TableRow>
                 ))
               ) : (
@@ -209,7 +217,7 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
+
       <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
     </>
   );

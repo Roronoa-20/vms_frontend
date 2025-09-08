@@ -25,14 +25,15 @@ import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
 import FilePreview from "../../molecules/FilePreview";
 import Link from "next/link";
-import { CropIcon, Cross, CrossIcon, X } from "lucide-react";
+import { CropIcon, Cross, CrossIcon, X, Pencil, Lock, Paperclip, Trash2 } from "lucide-react";
 
 interface Props {
   companyAddressDropdown?: TCompanyAddressDropdown["message"]["data"];
   ref_no: string;
   onboarding_ref_no: string;
   OnboardingDetail: VendorOnboardingResponse["message"]["company_address_tab"];
-  isAmendment:number
+  isAmendment: number
+  re_release: number
 }
 
 interface pincodeFetchData {
@@ -66,7 +67,7 @@ const CompanyAddress = ({
   ref_no,
   onboarding_ref_no,
   OnboardingDetail,
-  isAmendment
+  isAmendment, re_release
 }: Props) => {
 
   const router = useRouter();
@@ -109,11 +110,7 @@ const CompanyAddress = ({
     })
   }, [])
 
-
-
   console.log(OnboardingDetail, "htis is onboarding data")
-
-
 
   const handlePincodeChange = async (value: string) => {
     updatebillingAddress("pincode", value);
@@ -211,6 +208,13 @@ const CompanyAddress = ({
     setMultipleAddress({});
   };
 
+  const handleRowDelete = (index: number) => {
+    const updatedLocations = multiple_location_table.filter((_, i) => i !== index);
+    resetMultiple();
+    updatedLocations.forEach((item) => addMultipleLocation(item));
+  };
+
+
   const handleShippingCheck = (e: boolean) => {
     console.log(e, "this is check")
     setIsShippingSame(e);
@@ -292,20 +296,36 @@ const CompanyAddress = ({
     }
     const submitResponse: AxiosResponse = await requestWrapper({ url: submitUrl, method: "POST", data: formData });
     if (submitResponse?.status == 200) {
-      alert("successfully updated the record");
+      alert("Company Address Updated Successfully!!!");
+      router.push(`/view-onboarding-details?tabtype=Document%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+
       location.reload();
     }
   };
 
-
-
-
-
   return (
     <div className="flex flex-col bg-white rounded-lg p-3 w-full">
       <div className="flex justify-between items-center border-b-2">
-        <h1 className="font-semibold text-[18px]">Company</h1>
-        <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+        <h1 className="font-semibold text-[18px]">Company Address</h1>
+        {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
+        {(isAmendment == 1 || re_release == 1) && (
+          <div
+            onClick={() => setIsDisabled(prev => !prev)}
+            className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
+          >
+            {isDisabled ? (
+              <>
+                <Lock className="w-5 h-5 text-red-500" />
+                <span className="text-[14px] font-medium text-white hover:text-black">Enable Edit</span>
+              </>
+            ) : (
+              <>
+                <Pencil className="w-5 h-5 text-green-600" />
+                <span className="text-[14px] font-medium text-white hover:text-black">Disable Edit</span>
+              </>
+            )}
+          </div>
+        )}
       </div>
       <h1 className="pl-2">Office Address</h1>
       <div className="grid grid-cols-4 gap-6 p-3">
@@ -642,7 +662,6 @@ const CompanyAddress = ({
               </h1>
             </div>
             <Table>
-              {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                   <TableHead className="w-[100px]">Sr No.</TableHead>
@@ -653,6 +672,7 @@ const CompanyAddress = ({
                   <TableHead className="text-center">City</TableHead>
                   <TableHead className="text-center">State</TableHead>
                   <TableHead className="text-center">Country</TableHead>
+                  <TableHead className="text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
@@ -668,6 +688,14 @@ const CompanyAddress = ({
                     <TableCell>{item?.ma_city?.city_name}</TableCell>
                     <TableCell>{item?.ma_state?.state_name}</TableCell>
                     <TableCell>{item?.ma_country?.country_name}</TableCell>
+                    <TableCell className="flex justify-center">
+                      {!isDisabled && (
+                        <Trash2
+                          className="text-red-400 cursor-pointer"
+                          onClick={() => handleRowDelete(index)}
+                        />
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -681,22 +709,59 @@ const CompanyAddress = ({
         <h1 className="text-[12px] font-normal text-[#626973]">
           Upload Address Proof (Light Bill, Telephone Bill, etc.)
         </h1>
-        <Input disabled={isDisabled} type="file" className="w-fit disabled:opacity-100" onChange={(e) => { setFile(e.target.files) }} />
-        {/* file preview */}
-        {
-          isFilePreview && !file && OnboardingDetail?.address_proofattachment?.url &&
-          <div className="flex gap-2">
-            <Link target="blank" href={OnboardingDetail?.address_proofattachment?.url} className="underline text-blue-300 max-w-44 truncate">
-              <span>{OnboardingDetail?.address_proofattachment?.file_name}</span>
-            </Link>
-            <X className={`cursor-pointer disabled:opacity-100 ${isDisabled ? "hidden" : ""}`} onClick={() => { setIsFilePreview((prev) => !prev) }} />
+
+        {/* Paperclip upload */}
+        <label
+          htmlFor="addressProofUpload"
+          className={`flex items-center gap-2 w-fit cursor-pointer text-blue-500 hover:text-blue-700 ${isDisabled ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+        >
+          <Paperclip size={18} />
+          <span className="text-sm">Attach File</span>
+        </label>
+        <input
+          id="addressProofUpload"
+          type="file"
+          className="hidden"
+          disabled={isDisabled}
+          onChange={(e) => setFile(e.target.files)}
+        />
+
+        {/* File preview (newly uploaded) */}
+        {file && file[0] && (
+          <div className="flex gap-2 items-center">
+            <span className="text-blue-500 max-w-44 truncate">{file[0].name}</span>
+            <X className="cursor-pointer" onClick={() => setFile(null)} />
           </div>
-        }
+        )}
+
+        {/* Existing file preview (backend data) */}
+        {!file &&
+          isFilePreview &&
+          OnboardingDetail?.address_proofattachment?.url && (
+            <div className="flex gap-2 items-center">
+              <Link
+                target="_blank"
+                href={OnboardingDetail.address_proofattachment.url}
+                className="underline text-blue-500 max-w-44 truncate"
+              >
+                {OnboardingDetail.address_proofattachment.file_name}
+              </Link>
+              {!isDisabled && (
+                <X
+                  className="cursor-pointer"
+                  onClick={() => setIsFilePreview(false)}
+                />
+              )}
+            </div>
+          )}
       </div>
+
       <div className={`flex justify-end gap-4`}>
         <Button
-          // disabled={isDisabled}
-          className={`bg-blue-400 hover:bg-blue-400 disabled:opacity-100 ${isDisabled ? "hidden" : ""}`}
+          variant={"nextbtn"}
+          size={"nextbtnsize"}
+          className={`py-2 ${isDisabled ? "hidden" : ""}`}
           onClick={() => {
             handleSubmit();
           }}

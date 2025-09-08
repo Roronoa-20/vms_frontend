@@ -152,36 +152,31 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
           </div>
         </div>
         <Table>
-          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-              <TableHead>Sr. No.</TableHead>
-              <TableHead>Ref No.</TableHead>
-              <TableHead>Vendor Name</TableHead>
-              <TableHead className="text-center">Company Name</TableHead>
+              <TableHead className="text-center">Sr. No.</TableHead>
+              <TableHead className="text-center">Ref No.</TableHead>
+              <TableHead className="text-center">Vendor Name</TableHead>
+              <TableHead className="text-center">Company Code</TableHead>
               <TableHead className="text-center">Status</TableHead>
               <TableHead className="text-center">Rejected By Designation</TableHead>
-              {/* <TableHead className="text-center">Purchase Team</TableHead> */}
-              {/* <TableHead className="text-center">Purchase Head</TableHead> */}
-              {/* <TableHead className="text-center">Account Team</TableHead> */}
-              <TableHead className="text-center">Rejected By</TableHead>
-              <TableHead className="text-center">Rejection Reason</TableHead>
-              <TableHead className="text-center">View Details</TableHead>
-              <TableHead className="text-center">Amend Email</TableHead>
-              {/* <TableHead className="text-center">QMS Form</TableHead> */}
+              <TableHead className="text-center whitespace-nowrap">Rejected By</TableHead>
+              <TableHead className="text-center whitespace-nowrap">View Rejection Reason</TableHead>
+              <TableHead className="text-center whitespace-nowrap">View Details</TableHead>
+              <TableHead className="text-center whitespace-nowrap">Amend Email</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="text-center">
             {Array.isArray(table) && table.length > 0 ? (
               table.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
-                  <TableCell className="text-nowrap">{item?.name}</TableCell>
-                  <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
-                  <TableCell className="text-nowrap">{item?.company_name}</TableCell>
+                  <TableCell className="text-center font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
+                  <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
+                  <TableCell className="text-nowrap text-center">{item?.vendor_name}</TableCell>
+                  <TableCell className="text-nowrap text-center">{item?.company_name}</TableCell>
                   <TableCell>
                     <div
-                      className={`px-2 py-3 rounded-xl ${item?.onboarding_form_status === "Pending"
+                      className={`text-center px-2 py-3 rounded-xl ${item?.onboarding_form_status === "Pending"
                         ? "bg-yellow-100 text-yellow-800"
                         : item?.onboarding_form_status === "Approved"
                           ? "bg-green-100 text-green-800"
@@ -191,9 +186,8 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                       {item?.onboarding_form_status}
                     </div>
                   </TableCell>
-                  {/* <TableCell>{item?.rejected_by_designation}</TableCell> */}
                   <TableCell
-                    className="max-w-[180px] truncate whitespace-nowrap text-sm"
+                    className="max-w-[180px] truncate whitespace-nowrap text-sm text-center"
                     title={item?.rejected_by_designation ?? ""}
                   >
                     {(() => {
@@ -203,21 +197,18 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                       return parts.length > 1 ? parts.pop()?.trim() : designation;
                     })()}
                   </TableCell>
-                  {/* <TableCell>{item?.purchase_t_approval}</TableCell> */}
-                  {/* <TableCell>{item?.purchase_h_approval}</TableCell> */}
-                  {/* <TableCell>{item?.accounts_t_approval}</TableCell> */}
-                  <TableCell>{item?.rejected_by}</TableCell>
+                  <TableCell className="text-center whitespace-nowrap">{item?.rejected_by_full_name}</TableCell>
                   <TableCell>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleReasonClick(item?.reason_for_rejection || "No reason provided")}
                     >
-                      <Eye className="h-8 w-8 text-black" />
+                      <Eye className="!h-6 !w-6 text-black text-center" />
                     </Button>
                   </TableCell>
-                  <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                  <TableCell><Button onClick={() => handleAmendClick(item?.name)} className="bg-blue-400 hover:bg-blue-300">Amend</Button></TableCell>
+                  <TableCell className="text-center"><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
+                  <TableCell className="text-center"><Button onClick={() => handleAmendClick(item?.name)} className="bg-blue-400 hover:bg-blue-300">Amend</Button></TableCell>
                 </TableRow>
               ))
             ) : (
