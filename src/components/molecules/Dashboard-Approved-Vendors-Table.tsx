@@ -113,7 +113,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Total OnBoarded Vendors
+            Total Onboarded Vendors
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e)=>{handlesearchname(e)}} />
@@ -151,17 +151,17 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
           {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-              <TableHead className="w-[100px]">Sr No.</TableHead>
-              <TableHead className="text-center">Ref No.</TableHead>
-              <TableHead className="text-center">Vendor Name</TableHead>
-              <TableHead className="text-center">Company Code</TableHead>
-              <TableHead className="text-center">Status</TableHead>
-              <TableHead className="text-center">Vendor Code</TableHead>
-              <TableHead className="text-center">Country</TableHead>
-              <TableHead className="text-center">Register By</TableHead>
-              <TableHead className="text-center">View Details</TableHead>
+              <TableHead className="text-center text-black">Sr No.</TableHead>
+              <TableHead className="text-center text-black">Ref No.</TableHead>
+              <TableHead className="text-center text-black">Vendor Name</TableHead>
+              <TableHead className="text-center text-black">Company Code</TableHead>
+              <TableHead className="text-center text-black">Status</TableHead>
+              <TableHead className="text-center text-black">Vendor Code</TableHead>
+              <TableHead className="text-center text-black">Country</TableHead>
+              <TableHead className="text-center text-black">Register By</TableHead>
+              <TableHead className="text-center text-black">View Details</TableHead>
               {!isAccountsUser && (
-                <TableHead className="text-center">QMS Form</TableHead>
+                <TableHead className="text-center text-black">QMS Form</TableHead>
               )}
             </TableRow>
           </TableHeader>
@@ -169,10 +169,10 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
             {table ? (
               table?.map((item, index) => (
                 <TableRow key={index}>
-                   <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
-                  <TableCell className="text-nowrap">{item?.name}</TableCell>
-                  <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
-                  <TableCell className="text-nowrap">{item?.company_name}</TableCell>
+                   <TableCell className="text-center font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.name}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.vendor_name}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.company_name}</TableCell>
                   <TableCell>
                     <div
                       className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "Pending"
@@ -186,8 +186,8 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                     </div>
                   </TableCell>
                   <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
-                  <TableCell>{item?.vendor_country}</TableCell>
-                  <TableCell>{item?.registered_by_full_name}</TableCell>
+                  <TableCell className="text-center">{item?.vendor_country}</TableCell>
+                  <TableCell className="text-center whitespace-nowrap">{item?.registered_by_full_name}</TableCell>
                   <TableCell><Link href={`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-blue-400 hover:bg-blue-300">View</Button></Link></TableCell>
                   {!isAccountsUser && (
                     <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>

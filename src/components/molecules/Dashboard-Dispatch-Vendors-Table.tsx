@@ -27,127 +27,97 @@ import { useRouter } from "next/navigation";
 
 
 type Props = {
-  dashboardTableData:dispatchTable["dispatches"]
+  dashboardTableData: dispatchTable["dispatches"]
 }
 
 const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
-  console.log(dashboardTableData,"this is table data")
-  const [isPrDialog,setIsPrDialog] = useState<boolean>(false);
-  const [selectedPrTable,setSelectedPRTable] = useState<string[]>();
+  console.log(dashboardTableData, "this is table data")
+  const [isPODialog, setIsPODialog] = useState<boolean>(false);
+  const [selectedPOTable, setSelectedPOTable] = useState<string[]>();
   const router = useRouter();
-  const handleClose = ()=>{
-    setIsPrDialog(false);
+  const handleClose = () => {
+    setIsPODialog(false);
   }
 
-  const handlePrClick = (table:string[])=>{
-    setSelectedPRTable(table);
-    setIsPrDialog(true);
+  const handlePOClick = (table: string[]) => {
+    setSelectedPOTable(table);
+    setIsPODialog(true);
   }
 
   return (
     <>
-    <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
-      <div className="flex w-full justify-between pb-4">
-        <h1 className="text-[20px] text-[#03111F] font-semibold">
-          Total Dispatch Vendors
-        </h1>
-        {/* <div className="flex gap-4">
-          <Input placeholder="Search..." />
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Company" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup className="w-full">
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div> */}
-      </div>
-      <Table>
-        {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-        <TableHeader className="text-center">
-          <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-            <TableHead className="text-center">Ref No.</TableHead>
-            <TableHead className="text-center">Owner</TableHead>
-            <TableHead className="text-center">Invoice Amount</TableHead>
-            <TableHead className="text-center">Invoice Date</TableHead>
-            <TableHead className="text-center">Invoice Number</TableHead>
-            <TableHead className="text-center">status</TableHead>
-            <TableHead className="text-center">Purchase Number</TableHead>
-            <TableHead className="text-center">View</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody className="text-center">
-          {dashboardTableData ? (dashboardTableData ?.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell>{item?.name}</TableCell>
-                <TableCell>{item?.owner}</TableCell>
-                <TableCell>{item?.invoice_amount}</TableCell>
-                <TableCell>{item?.invoice_date}</TableCell>
-                <TableCell>{item?.invoice_number}</TableCell>
-                <TableCell>{item?.status}</TableCell>
-                <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={()=>{handlePrClick(item?.purchase_numbers)}}>View Pr</Button></TableCell>
-                <TableCell><Button onClick={()=>{router.push(`/dispatch?refno=${item?.name}`)}} className="bg-blue-400 hover:bg-blue-300" >View</Button></TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={9} className="text-center text-gray-500 py-4">
-                No results found
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-
-      </Table>
-    </div>
-    {/* Below is the Multiple PR PopUp----------------------------------------------------------------------------------------------- */}
-    { isPrDialog &&
-      <PopUp handleClose={handleClose} headerText="PR List">
+      <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
+        <div className="flex w-full justify-between pb-4">
+          <h1 className="text-[20px] text-[#03111F] font-semibold">
+            Total Dispatch Orders
+          </h1>
+        </div>
         <Table>
-        <TableHeader className="text-center">
-          <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-            <TableHead className="text-center">PR No.</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody className="text-center">
-          {selectedPrTable ? (selectedPrTable?.map((item, index) => (
+          <TableHeader className="text-center">
+            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
+              <TableHead className="text-center text-black">Sr. No.</TableHead>
+              <TableHead className="text-center text-black">Ref No.</TableHead>
+              <TableHead className="text-center text-black">Owner</TableHead>
+              <TableHead className="text-center text-black">Invoice Amount</TableHead>
+              <TableHead className="text-center text-black">Invoice Date</TableHead>
+              <TableHead className="text-center text-black">Invoice Number</TableHead>
+              <TableHead className="text-center text-black">status</TableHead>
+              <TableHead className="text-center text-black">PO Number</TableHead>
+              <TableHead className="text-center text-black">View</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="text-center">
+            {dashboardTableData ? (dashboardTableData?.map((item, index) => (
               <TableRow key={index}>
-                <TableCell>{item}</TableCell>
-                
+                <TableCell className="text-center font-medium">{index + 1}</TableCell>
+                <TableCell className="text-center whitespace-nowrap">{item?.name}</TableCell>
+                <TableCell className="text-center whitespace-nowrap">{item?.owner}</TableCell>
+                <TableCell className="text-center whitespace-nowrap">{item?.invoice_amount}</TableCell>
+                <TableCell className="text-center whitespace-nowrap">{item?.invoice_date}</TableCell>
+                <TableCell className="text-center whitespace-nowrap">{item?.invoice_number}</TableCell>
+                <TableCell className="text-center whitespace-nowrap">{item?.status}</TableCell>
+                <TableCell><Button className="py-2" variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handlePOClick(item?.purchase_numbers) }}>View PO</Button></TableCell>
+                <TableCell><Button onClick={() => { router.push(`/dispatch?refno=${item?.name}`) }} className="bg-blue-400 hover:bg-blue-300" >View</Button></TableCell>
               </TableRow>
             ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={9} className="text-center text-gray-500 py-4">
-                No results found
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-      </PopUp>
-    }
+            ) : (
+              <TableRow>
+                <TableCell colSpan={9} className="text-center text-gray-500 py-4">
+                  No results found
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+
+        </Table>
+      </div>
+      {/* Below is the Multiple PR PopUp----------------------------------------------------------------------------------------------- */}
+      {isPODialog &&
+        <PopUp handleClose={handleClose} headerText="Purchase Order List">
+          <Table>
+            <TableHeader className="text-center">
+              <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
+                <TableHead className="text-center">PO No.</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="text-center">
+              {selectedPOTable ? (selectedPOTable?.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell>{item}</TableCell>
+
+                </TableRow>
+              ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={9} className="text-center text-gray-500 py-4">
+                    No results found
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </PopUp>
+      }
     </>
   );
 };

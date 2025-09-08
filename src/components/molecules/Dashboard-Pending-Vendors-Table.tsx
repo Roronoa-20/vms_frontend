@@ -146,18 +146,18 @@ console.log(dashboardTableData, "this is dashboardTableData");
           {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-              <TableHead className="w-[100px]">Sr No.</TableHead>
-              <TableHead className="text-center">Ref No.</TableHead>
-              <TableHead className="text-center">Vendor Name</TableHead>
-              <TableHead className="text-center">Company Code</TableHead>
-              <TableHead className="text-center">Status</TableHead>
-              <TableHead className="text-center whitespace-nowrap">Registered By</TableHead>
-              <TableHead className="text-center whitespace-nowrap">Purchase Team</TableHead>
-              <TableHead className="text-center whitespace-nowrap">Purchase Head</TableHead>
-              <TableHead className="text-center whitespace-nowrap">Account Team</TableHead>
-              <TableHead className="text-center whitespace-nowrap">View Details</TableHead>
+              <TableHead className="text-center text-black">Sr No.</TableHead>
+              <TableHead className="text-center text-black">Ref No.</TableHead>
+              <TableHead className="text-center text-black">Vendor Name</TableHead>
+              <TableHead className="text-center text-black">Company Code</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">Registered By</TableHead>
+              <TableHead className="text-center text-black">Status</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">Purchase Team</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">Purchase Head</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">Account Team</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">View Details</TableHead>
               {!isAccountsUser && (
-                <TableHead className="text-center whitespace-nowrap">QMS Form</TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">QMS Form</TableHead>
               )}
             </TableRow>
           </TableHeader>
@@ -169,6 +169,7 @@ console.log(dashboardTableData, "this is dashboardTableData");
                   <TableCell className="text-nowrap">{item?.ref_no}</TableCell>
                   <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
                   <TableCell className="text-nowrap">{item?.company_name}</TableCell>
+                  <TableCell>{item?.registered_by_full_name}</TableCell>
                   <TableCell>
                     <div
                       className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "Pending"
@@ -181,12 +182,11 @@ console.log(dashboardTableData, "this is dashboardTableData");
                       {item?.onboarding_form_status}
                     </div>
                   </TableCell>
-                  <TableCell>{item?.registered_by_full_name}</TableCell>
                   <TableCell>{item?.purchase_t_approval_full_name}</TableCell>
                   <TableCell>{item?.purchase_h_approval_full_name}</TableCell>
                   <TableCell>{item?.accounts_t_approval_full_name}</TableCell>
                   {/* <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell> */}
-                  <TableCell><Button onClick={()=>{item?.form_fully_submitted_by_vendor == 1?handleView(item?.ref_no,item?.name):alert("Vendor Form is not fully subitted")}} variant={"outline"}>View</Button></TableCell>
+                  <TableCell><Button onClick={()=>{item?.form_fully_submitted_by_vendor == 1?handleView(item?.ref_no,item?.name):alert("Vendor Form is not Fully Submitted!!!")}} variant={"outline"}>View</Button></TableCell>
                   {/* <TableCell className="text-right">{item?.qms_form}</TableCell> */}
                   {!isAccountsUser && (
                     <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>

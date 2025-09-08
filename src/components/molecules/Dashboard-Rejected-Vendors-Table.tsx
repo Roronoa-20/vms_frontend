@@ -154,16 +154,16 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
         <Table>
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-              <TableHead className="text-center">Sr. No.</TableHead>
-              <TableHead className="text-center">Ref No.</TableHead>
-              <TableHead className="text-center">Vendor Name</TableHead>
-              <TableHead className="text-center">Company Code</TableHead>
-              <TableHead className="text-center">Status</TableHead>
-              <TableHead className="text-center">Rejected By Designation</TableHead>
-              <TableHead className="text-center whitespace-nowrap">Rejected By</TableHead>
-              <TableHead className="text-center whitespace-nowrap">View Rejection Reason</TableHead>
-              <TableHead className="text-center whitespace-nowrap">View Details</TableHead>
-              <TableHead className="text-center whitespace-nowrap">Amend Email</TableHead>
+              <TableHead className="text-center text-black">Sr. No.</TableHead>
+              <TableHead className="text-center text-black">Ref No.</TableHead>
+              <TableHead className="text-center text-black">Vendor Name</TableHead>
+              <TableHead className="text-center text-black">Company Code</TableHead>
+              <TableHead className="text-center text-black">Status</TableHead>
+              <TableHead className="text-center text-black">Rejected By Designation</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">Rejected By</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">View Rejection Reason</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">View Details</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">Amend Email</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="text-center">
