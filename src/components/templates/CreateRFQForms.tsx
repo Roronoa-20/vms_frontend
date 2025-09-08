@@ -1,13 +1,8 @@
 
 "use client"
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Input } from '../atoms/input'
-import { Button } from '../atoms/button'
 import { PurchaseRequestDropdown } from '@/src/types/PurchaseRequestType'
-import API_END_POINTS from '@/src/services/apiEndPoints'
-import { AxiosResponse } from 'axios'
-import requestWrapper from '@/src/services/apiCall'
 import { Tabs, TabsContent, TabsList, TabsTrigger, } from "@/components/ui/tabs";
 import LogisticsExportRFQ from './RFQTemplates/LogisticsExportRFQ'
 import LogisticsImportRFQ from './RFQTemplates/LogisticsImportRFQ'

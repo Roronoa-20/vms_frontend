@@ -16,7 +16,7 @@ type Props = {
     selectedRows: VendorSelectType
     handleVendorSearch: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
 }
-const VendorTable = ({ VendorList, loading, setSelectedRows, selectedRows, handleVendorSearch }: Props) => {
+const VendorTable = ({ VendorList, setSelectedRows, selectedRows, handleVendorSearch }: Props) => {
     const handleCheckboxChange = (item: VendorDataRFQ) => {
         setSelectedRows((prevSelectedRows) => {
             const currentVendors = prevSelectedRows?.vendors ?? [];
@@ -72,7 +72,7 @@ const VendorTable = ({ VendorList, loading, setSelectedRows, selectedRows, handl
                                 </TableCell>
                                 <TableCell className="text-nowrap">{item?.refno ?? "-"}</TableCell>
                                 <TableCell>{item?.vendor_name ? item?.vendor_name : '-'}</TableCell>
-                                <TableCell>{item?.vendor_code ?? "-"}</TableCell>
+                                <TableCell>{item?.vendor_code?.length > 0 ? item.vendor_code.join(", ") : "-"}</TableCell>
                                 <TableCell>{item?.service_provider_type ?? "-"}</TableCell>
                                 <TableCell>{item?.office_email_primary ?? "-"}</TableCell>
                                 <TableCell>{item?.mobile_number ?? "-"}</TableCell>
