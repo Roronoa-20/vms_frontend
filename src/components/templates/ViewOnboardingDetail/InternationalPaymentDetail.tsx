@@ -20,6 +20,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { X } from "lucide-react";
 import { UsePurchaseTeamApprovalStore } from "@/src/store/PurchaseTeamApprovalStore";
+import { Toaster, toast } from 'sonner'
+import SimpleFileUpload from "../../molecules/multiple_file_upload";
 
 interface Props {
   ref_no: string,
@@ -68,17 +70,19 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
   const [bankProofBeneficiaryFile, setBankProofBeneficiaryFile] = useState<FileList | null>(null);
   const [bankProofIntermediateFile, setBankProofIntermediateFile] = useState<FileList | null>(null);
   const [isBankFileBeneficiaryPreview, setIsBankFileBeneficiaryPreview] = useState<boolean>(true);
-  const [isBankFileIntermediatePreview, setIsBankFileIntermediatePreview] = useState<boolean>(true);
+  // const [isBankFileIntermediatePreview, setIsBankFileIntermediatePreview] = useState<boolean>(true);
   const [isIntermediateCheck, setIsIntermediateCheck] = useState<boolean>(OnboardingDetail?.international_bank_details?.[0] ? true : false);
   // const [isBankFilePreview, setIsBankFilePreview] = useState<boolean>(true);
-  const [isPurchaseBeneficiaryBankFilePreview, setPurchaseBeneficiaryIsBankFilePreview] = useState<boolean>(true);
-  const [isPurchaseIntermediateBankFilePreview, setPurchaseIntermediateIsBankFilePreview] = useState<boolean>(true);
+  // const [isPurchaseBeneficiaryBankFilePreview, setPurchaseBeneficiaryIsBankFilePreview] = useState<boolean>(true);
+  // const [isPurchaseIntermediateBankFilePreview, setPurchaseIntermediateIsBankFilePreview] = useState<boolean>(true);
   const [bankNameDropown, setBankNameDropown] = useState<TbankNameDropdown["message"]["data"]>([])
   const [currencyDropdown, setCurrencyDropdown] = useState<TCurrencyDropdown["message"]["data"]>([])
   const { designation } = useAuth();
-  const [PurchaseTeambankProof,setPurchaseTeamBankProof] = useState<File>();
+  // const [PurchaseTeambankProof,setPurchaseTeamBankProof] = useState<File>();
   const [PurchaseTeamBeneficiaryProof,setPurchaseTeamBeneficiaryProof] = useState<File>();
   const [PurchaseTeamIntermediateProof,setPurchaseTeamIntermideateProof] = useState<File>();
+  const [files, setFiles] = useState<File[]>([]);
+    const [uploadedFiles, setUploadedFiles] = useState<FileList | null>(null)
     const [isDisabled, setIsDisabled] = useState<boolean>(true);
   // if(!designation){
   //   return(
@@ -149,6 +153,80 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
     }
 
   }
+
+  const FileUpload = async (bankType:"Beneficiary" | "Intermediate") => {
+    const formdata = new FormData();
+
+    if (uploadedFiles && uploadedFiles.length > 0) {
+      for (let i = 0; i < uploadedFiles.length; i++) {
+        if(bankType == "Beneficiary"){
+
+          formdata.append("international_bank_proofs_by_purchase_team", uploadedFiles[i]);
+        }else if(bankType == "Intermediate"){
+          formdata.append("intermediate_bank_proofs_by_purchase_team", uploadedFiles[i]);
+        }
+      }
+    } else {
+      toast.warning("No file to Upload");
+      console.log("No file to upload");
+    }
+    formdata?.append("data",JSON.stringify({ref_no:ref_no,vendor_onboarding:onboarding_ref_no}))
+    
+    const apiCallPromise = new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`, {
+          method: "POST",
+          credentials: 'include',
+          body: formdata,
+        });
+
+        if (!response.ok) {
+          // setDocumentType('');
+          setFiles([]);
+          setUploadedFiles(null);
+          console.error('file upload request failed');
+        }
+
+        const data = await response.json();
+        resolve(data); // Resolve with the response data
+      } catch (error) {
+        // setDocumentType('');
+        setFiles([]);
+        setUploadedFiles(null);
+        reject(error); // Reject with the error
+      }
+    });
+    // toast.promise(apiCallPromise, {
+    //   loading: 'Submitting  details...',
+    //   success: () => {
+    //     // setTimeout(() => {
+    //     //   // PreviewData();
+    //     // }, 500);
+    //     // setDocumentType('')
+    //     setFiles([])
+    //     setUploadedFiles(null)
+    //     return 'Documents added successfully!';
+    //   },
+    //   error: (error) => `Failed : ${error.message || error}`,
+    // });
+    // setTimeout(()=>{
+    //   location.reload();
+    // },2000)
+  }
+
+
+  const handleNextBeneficiary = async() => {
+     const response = await FileUpload("Beneficiary");
+     location.reload()
+  }
+
+
+  const handleNextIntermediate = async() => {
+     const response = await FileUpload("Intermediate");
+     location.reload()
+  }
+
+
   const handleFieldChange = (e: React.ChangeEvent<
     HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
   >, bankType: string) => {
@@ -163,10 +241,10 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
   const uploadBankProofByPurchaseTeam = async()=>{
     const formdata = new FormData();
     if(PurchaseTeamBeneficiaryProof != null){
-      formdata?.append("international_bank_proof_by_purchase_team",PurchaseTeamBeneficiaryProof)
+      formdata?.append("international_bank_proofs_by_purchase_team",PurchaseTeamBeneficiaryProof)
     }
     if(PurchaseTeamIntermediateProof != null){
-      formdata?.append("intermediate_bank_proof_by_purchase_team",PurchaseTeamIntermediateProof)
+      formdata?.append("intermediate_bank_proofs_by_purchase_team",PurchaseTeamIntermediateProof)
     }
 
     formdata?.append("data",JSON.stringify({ref_no:ref_no,vendor_onboarding:onboarding_ref_no}));
@@ -273,8 +351,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
           <div className="flex gap-4">
             <Input placeholder=""  disabled={isDisabled}  type="file" onChange={(e)=>{setBankProofBeneficiaryFile(e.target.files)}} />
             {/* file preview */}
-            {isBankFileBeneficiaryPreview &&
-              !bankProofBeneficiaryFile &&
+            {
               OnboardingDetail?.international_bank_details?.[0]?.bank_proof_for_beneficiary_bank?.url && (
                 <div className="flex gap-2">
                   <Link
@@ -298,38 +375,81 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
           </div>
         </div>
         <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          {/* <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Bank Proof By Purchase Team <span className="font-semibold">(2-Way)</span> <span className="pl-2 text-red-400 text-2xl">*</span>
-          </h1>
+          </h1> */}
           <div className="flex gap-4">
-           <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation == "Purchase Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBeneficiaryProof(e?.target?.files?.[0])}} />
-          <Input className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBeneficiaryProof(e?.target?.files?.[0])}} />
+           {/* <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation == "Purchase Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBeneficiaryProof(e?.target?.files?.[0])}} />
+          <Input className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBeneficiaryProof(e?.target?.files?.[0])}} /> */}
+
+            {/* Purchase Team */}
+            
+                      <div className={`flex items-end gap-6 col-span-1 text-nowrap ${isAccountTeam == 0 && designation == "Purchase Team" && isBankProof == 1?"":"hidden"}`}>
+                      <div className="flex flex-col gap-3">
+                        <label className="text-black text-sm font-normal capitalize">
+                          Upload Files<span className="text-[#e60000]">*</span>
+                        </label>
+                        <SimpleFileUpload files={files} setFiles={setFiles} setUploadedFiles={setUploadedFiles} onNext={handleNextBeneficiary} buttonText={'Upload Here'} />
+                      </div>
+                      {/* <Button
+                        className="bg-white text-black border text-md font-normal"
+                        onClick={() => FileUpload()}
+                      >
+                        Add
+                      </Button> */}
+                    </div>
+            
+                        {/* Accounts Team */}
+            
+                        <div className={`flex items-end gap-6 col-span-1 text-nowrap ${isAccountTeam == 1 && designation == "Accounts Team" && isBankProof == 1?"":"hidden"}`}>
+                      <div className="flex flex-col gap-3">
+                        <label className="text-black text-sm font-normal capitalize">
+                          Upload Files<span className="text-[#e60000]">*</span>
+                        </label>
+                        <SimpleFileUpload files={files} setFiles={setFiles} setUploadedFiles={setUploadedFiles} onNext={handleNextBeneficiary} buttonText={'Upload Here'} />
+                      </div>
+                      {/* <Button
+                        className="bg-white text-black border text-md font-normal"
+                        onClick={() => FileUpload()}
+                      >
+                        Add
+                      </Button> */}
+                    </div>
+
+
                      {/* file preview */}
           {/* file preview */}
-          {isPurchaseBeneficiaryBankFilePreview &&
-              !PurchaseTeamBeneficiaryProof &&
-              OnboardingDetail?.international_bank_details[0]?.international_bank_proof_by_purchase_team?.name && (
-                <div className="flex gap-2">
+          {
+            <div className="flex gap-2 items-center flex-col">
+
+              {
+                OnboardingDetail?.international_bank_proofs_by_purchase_team?.map((item,index)=>(
+
+                  <div className="flex gap-2" key={index}>
                   <Link
                   target="blank"
-                  href={OnboardingDetail?.international_bank_details[0]?.international_bank_proof_by_purchase_team?.url}
+                  href={item?.url}
                   className="underline text-blue-300 max-w-44 truncate"
                   >
-                    <span>{OnboardingDetail?.international_bank_details[0]?.international_bank_proof_by_purchase_team?.file_name}</span>
+                    <span>{item?.file_name}</span>
                   </Link>
                   {/* <X
                     className={`cursor-pointer ${isDisabled?"hidden":""}`}
                     onClick={() => {
                       setPurchaseIsBankFilePreview((prev) => !prev);
-                    }}
-                    /> */}
+                      }}
+                      /> */}
                 </div>
-              )}
+              
+            ))
+          }
+                      </div>
+              }
               </div>
-        <div className="flex justify-start items-end pt-4">
+        {/* <div className="flex justify-start items-end pt-4">
               <Button className={designation == "Purchase Team" && isAccountTeam == 0?"":"hidden"} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
               <Button className={designation == "Accounts Team" && isAccountTeam == 1?"":"hidden"} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
-        </div>
+        </div> */}
         </div>
       </div>
       <div className="w-full flex justify-start items-center gap-4 pl-10"><Input className="w-4" disabled onChange={(e) => { setIsIntermediateCheck((prev) => (!prev)) }} checked={isIntermediateCheck} type="checkbox" /><h1 className="text-[15px] font-semibold">
@@ -420,7 +540,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
             <div className="flex gap-4">
               <Input placeholder="" disabled={isDisabled}  type="file" onChange={(e)=>{setBankProofIntermediateFile(e.target.files)}} />
               {/* file preview */}
-              {isBankFileIntermediatePreview &&
+              {/* {isBankFileIntermediatePreview &&
                 !bankProofBeneficiaryFile &&
                 OnboardingDetail?.intermediate_bank_details?.[0]?.bank_proof_for_intermediate_bank?.url && (
                   <div className="flex gap-2">
@@ -441,42 +561,111 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
                       />
                     }
                   </div>
-                )}
+                )} */}
+                {
+            <div className="flex gap-2 items-center flex-col">
+
+              {
+              OnboardingDetail?.intermediate_bank_details?.[0]?.bank_proof_for_intermediate_bank?.url && (
+                <div className="flex gap-2">
+                  <Link
+                    target="blank"
+                    href={OnboardingDetail?.intermediate_bank_details?.[0]?.bank_proof_for_intermediate_bank?.url}
+                    className="underline text-blue-300 max-w-44 truncate"
+                  >
+                    <span>{OnboardingDetail?.intermediate_bank_details?.[0]?.bank_proof_for_intermediate_bank?.file_name}</span>
+                  </Link>
+                  {
+                    !isDisabled && 
+                    <X
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setIsBankFileBeneficiaryPreview((prev) => !prev);
+                    }}
+                    />
+                  }
+                </div>
+              )}
+                      </div>
+              }
             </div>
           </div>
            <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          {/* <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Bank Proof By Purchase Team <span className="font-semibold">(2-Way)</span> <span className="pl-2 text-red-400 text-2xl">*</span>
-          </h1>
+          </h1> */}
           <div className="flex gap-4">
-          <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation != "Purchase Team"?"hidden":""}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamIntermideateProof(e?.target?.files?.[0])}} />
-                    <Input className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team"?"":"hidden"}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamIntermideateProof(e?.target?.files?.[0])}} />
+          {/* <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation != "Purchase Team"?"hidden":""}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamIntermideateProof(e?.target?.files?.[0])}} />
+                    <Input className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team"?"":"hidden"}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamIntermideateProof(e?.target?.files?.[0])}} /> */}
+                    
+
+            {/* Purchase Team */}
+            
+                      <div className={`flex items-end gap-6 col-span-1 text-nowrap ${isAccountTeam == 0 && designation == "Purchase Team" && isBankProof == 1?"":"hidden"}`}>
+                      <div className="flex flex-col gap-3">
+                        <label className="text-black text-sm font-normal capitalize">
+                          Upload Files<span className="text-[#e60000]">*</span>
+                        </label>
+                        <SimpleFileUpload files={files} setFiles={setFiles} setUploadedFiles={setUploadedFiles} onNext={handleNextIntermediate} buttonText={'Upload Here'} />
+                      </div>
+                      {/* <Button
+                        className="bg-white text-black border text-md font-normal"
+                        onClick={() => FileUpload()}
+                      >
+                        Add
+                      </Button> */}
+                    </div>
+            
+                        {/* Accounts Team */}
+            
+                        <div className={`flex items-end gap-6 col-span-1 text-nowrap ${isAccountTeam == 1 && designation == "Accounts Team" && isBankProof == 1?"":"hidden"}`}>
+                      <div className="flex flex-col gap-3">
+                        <label className="text-black text-sm font-normal capitalize">
+                          Upload Files<span className="text-[#e60000]">*</span>
+                        </label>
+                        <SimpleFileUpload files={files} setFiles={setFiles} setUploadedFiles={setUploadedFiles} onNext={handleNextIntermediate} buttonText={'Upload Here'} />
+                      </div>
+                      {/* <Button
+                        className="bg-white text-black border text-md font-normal"
+                        onClick={() => FileUpload()}
+                      >
+                        Add
+                      </Button> */}
+                    </div>
+
           {/* file preview */}
-          {isBankFileIntermediatePreview &&
-              !PurchaseTeamIntermediateProof &&
-              OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_bank_proof_by_purchase_team?.name && (
-                <div className="flex gap-2">
+          {
+            <div className="flex gap-2 items-center flex-col">
+
+              {
+                OnboardingDetail?.intermediate_bank_proofs_by_purchase_team?.map((item,index)=>(
+
+                  <div className="flex gap-2" key={index}>
                   <Link
                   target="blank"
-                  href={OnboardingDetail?.intermediate_bank_details[0]?.intermediate_bank_proof_by_purchase_team?.url}
+                  href={item?.url}
                   className="underline text-blue-300 max-w-44 truncate"
                   >
-                    <span>{OnboardingDetail?.intermediate_bank_details[0]?.intermediate_bank_proof_by_purchase_team?.file_name}</span>
+                    <span>{item?.file_name}</span>
                   </Link>
                   {/* <X
                     className={`cursor-pointer ${isDisabled?"hidden":""}`}
                     onClick={() => {
                       setPurchaseIsBankFilePreview((prev) => !prev);
-                    }}
-                    /> */}
+                      }}
+                      /> */}
                 </div>
-              )}
+              
+            ))
+          }
+                      </div>
+              }
               </div>
         </div>
-        <div className="flex justify-start items-end">
+        {/* <div className="flex justify-start items-end">
                <Button className={`disabled:opacity-100 ${isAccountTeam == 0 && designation == "Purchase Team"?"":"hidden"}`} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
                             <Button className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team"?"":"hidden"}`} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
-        </div>
+        </div> */}
         </div>
       }
       <div className={`flex justify-end pr-4 ${isDisabled?"hidden":""} `}><Button className="bg-blue-400 hover:to-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
