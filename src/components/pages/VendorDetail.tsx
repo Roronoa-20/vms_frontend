@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import CompanyDetailForm from "../templates/vendor-detail-form/CompanyDetails";
 import VMSLogo from "../atoms/vms-logo";
 import CompanyAddress from "../templates/vendor-detail-form/CompanyAddress";
@@ -83,7 +83,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
   console.log(OnboardingDetail,"this is data")
   return (
     <AuthProvider>
-
+      <Suspense>
     <div className="h-screen flex flex-col bg-gray-200 relative">
       {/* navbar */}
       <div className="bg-white py-4 px-10 flex gap-5 items-center mb-6 sticky top-0">
@@ -146,6 +146,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
         )}
       </div>
     </div>
+    </Suspense>
         </AuthProvider>
   );
 };
