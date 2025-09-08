@@ -132,6 +132,8 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
     const handleClose = () => {
         setIsDialog(false);
     }
+
+    console.log(VendorList?.data,"VendorList?.data------------------------------------------0000000000086543")
     return (
         <div className='bg-white h-full w-full pb-6'>
             <div className='flex justify-between items-center pr-2'>
