@@ -6,7 +6,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import useDebounce from '@/src/hooks/useDebounce';
-import {VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
+import { VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
 import Pagination from '../../molecules/Pagination';
 import SingleSelectVendorTable from '../../molecules/rfq/SingleSelectVendorTable';
 import NewVendorTable from '../../molecules/rfq/NewVendorTable';
@@ -58,7 +58,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
     const [vendorSearchName, setVendorSearchName] = useState('')
     const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
     const [VendorList, setVendorList] = useState<VendorApiResponse>();
-    const [loading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
     const [isDialog, setIsDialog] = useState<boolean>(false);
     const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([])
@@ -67,7 +67,6 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
     useEffect(() => {
         const fetchVendorTableData = async (rfq_type: string) => {
             setSelectedRows({ vendors: [] })
-            console.log(rfq_type,formData?.service_provider, "rfq_type in table code")
             const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&service_provider=${formData?.service_provider}&company=${formData?.company_name_logistic}`
             const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
             if (response?.status == 200) {
@@ -92,7 +91,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
         setVendorSearchName(e.target.value);
     }
     const handleSubmit = async () => {
-
+        setLoading(true)
         if (formData?.service_provider == "All Service Provider" || formData?.service_provider == "Select" || formData?.service_provider == "Premium Service Provider") {
             setSelectedRows({ vendors: [] })
         }
@@ -103,15 +102,8 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
             non_onboarded_vendors: newVendorTable,
             vendors: selectedRows.vendors,
         };
-        
-        // loop through keys
-        Object.entries(fullData).forEach(([key, value]) => {
-            if (typeof value === "object") {
-                formdata.append(key, JSON.stringify(value));
-            } else {
-                formdata.append(key, value);
-            }
-        });
+        formdata.append('data', JSON.stringify(fullData));
+
         // Append file only if exists
         if (uploadedFiles) {
             uploadedFiles?.forEach((file) => {
@@ -124,8 +116,10 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
         if (response?.status == 200) {
             alert("Submit Successfull");
             router.push("/dashboard")
+            setLoading(false)
         } else {
             alert("error");
+            setLoading(false)
         }
     }
 
@@ -136,7 +130,6 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
     const handleClose = () => {
         setIsDialog(false);
     }
-    console.log(formData,"fromdata")
     return (
         <div className='bg-white h-full w-full pb-6'>
             <div className='flex justify-between items-center pr-4'>
@@ -159,7 +152,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
                 <NewVendorTable newVendorTable={newVendorTable} />
             </div>
             <div className='flex justify-end pt-10 px-4'>
-                <Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium' onClick={() => { handleSubmit() }}>Submit RFQ</Button>
+                <Button type='button' className={`flex bg-blue-400 hover:bg-blue-400 px-10 font-medium ${loading?"cursor-not-allowed":"cursor-pointer"}`}  onClick={() => { handleSubmit() }} disabled={loading?true:false}>{loading?"Submit RFQ...":"Submit RFQ"}</Button>
             </div>
             {
                 isDialog &&

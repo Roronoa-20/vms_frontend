@@ -40,14 +40,15 @@ export const LogisticsExportRFQFormFields = ({
 
     const handleSelectChange = (value: string, name: string) => {
         if (name === "country") {
-            const selected = exportCountry.find((p) => p.port_code === value);
+            const selected = exportCountry.find((p) => p.name === value);
             if (selected) {
                 setFormData((prev) => ({
                     ...prev,
                     country: selected.country,
-                    destination_port: selected.port_name,
-                    port_code: selected.port_code,
+                    export_destination_port: selected.port_name,
+                    port_code: selected.name,
                 }));
+                return;
             }
         } else {
             setFormData((prev) => ({
@@ -121,45 +122,42 @@ export const LogisticsExportRFQFormFields = ({
         </div>
     );
     const fetchExportCountry = async (query?: string) => {
-        console.log(query, "query")
         let url = `${API_END_POINTS?.CountryExportDropdown}`;
         if (query && query.trim() !== "") {
             url += `?search_term=${encodeURIComponent(query)}`;
         }
         const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
         if (response?.status == 200) {
-            console.log(response.data.message.data, "response.data.message in export country")
             setExportCountry(response.data.message.data)
             return response.data.message.data
         } else {
             alert("error");
         }
     }
+    // useEffect(() => {
+    //     if (formData.country) {
+    //         const selected = exportCountry.find(
+    //             (p) => p.name === formData.country
+    //         );
+    //         if (selected) {
+    //             setFormData((prev) => ({
+    //                 ...prev,
+    //                 country: selected.country,
+    //                 export_destination_port: selected.port_name,
+    //                 port_code: selected.name,
+    //             }));
+    //         }
+    //     }
+    // }, [formData.country, exportCountry]);
     useEffect(() => {
-        if (formData.country) {
-            const selected = exportCountry.find(
-                (p) => p.country === formData.country
-            );
-            if (selected) {
-                setFormData((prev) => ({
-                    ...prev,
-                    country: selected.country,
-                    destination_port: selected.port_name,
-                    port_code: selected.port_code,
-                }));
-            }
-        }
-    }, [formData.country, exportCountry]);
-    useEffect(() => {
-        const fetchDestinationPort = async (company_name_logistic: string) => {
+        const fetchSerialNumberPort = async (company_name_logistic: string) => {
             setFormData((prev) => ({
                 ...prev,
-                destination_port: "",
+                sr_no: "",
             }));
             const url = `${API_END_POINTS?.fetchSerialNumber}?company=${company_name_logistic}&rfq_type=Export`
             const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
             if (response?.status == 200) {
-                console.log(response, "response of destination port data")
                 setFormData((prev) => ({
                     ...prev,
                     sr_no: response.data.message.serial_number,
@@ -169,7 +167,7 @@ export const LogisticsExportRFQFormFields = ({
             }
         }
         if (formData.company_name_logistic) {
-            fetchDestinationPort(formData.company_name_logistic);
+            fetchSerialNumberPort(formData.company_name_logistic);
         }
     }, [formData.company_name_logistic]);
     useEffect(() => {
@@ -178,8 +176,6 @@ export const LogisticsExportRFQFormFields = ({
     useEffect(() => {
         setFormData((prev) => ({ ...prev, rfq_date_logistic: formData?.rfq_date_logistic ? formData?.rfq_date_logistic : today }));
     }, [today, formData?.rfq_date_logistic]);
-
-    console.log(formData?.company_name_logistic,"formData?.company_name_logistic")
     return (
         <div>
             <div className="grid grid-cols-3 gap-6 p-5">
@@ -228,7 +224,7 @@ export const LogisticsExportRFQFormFields = ({
                         setData={(value) => handleSelectChange(value ?? "", "country")}
                         data={formData?.port_code ?? ""}
                         getLabel={(item) => `${item.country} - ${item.port_code} - ${item.port_name}`}
-                        getValue={(item) => item?.port_code}
+                        getValue={(item) => item?.name}
                         dropdown={exportCountry}
                         setDropdown={setExportCountry}
                         searchApi={fetchExportCountry}
@@ -236,7 +232,7 @@ export const LogisticsExportRFQFormFields = ({
                     // disabled={formData?.is_submitted}
                     />
                 </div>
-                {renderInput("destination_port", "Destination Port", "text", true)}
+                {renderInput("export_destination_port", "Destination Port", "text", true)}
                 {renderInput("port_code", "Port Code", "text", true)}
                 {renderSelect("port_of_loading", "Port of Loading", Dropdown?.port_of_loading, (i) => i.name, (i) => i.name)}
                 {renderSelect("inco_terms", "Inco Terms", Dropdown?.incoterm_master, (i) => i.name, (i) => i.incoterm_name)}

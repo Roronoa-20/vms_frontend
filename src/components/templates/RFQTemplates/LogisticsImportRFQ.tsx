@@ -58,7 +58,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
     const [vendorSearchName, setVendorSearchName] = useState('')
     const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
     const [VendorList, setVendorList] = useState<VendorApiResponse>();
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const [selectedRows, setSelectedRows] = useState<VendorSelectType>(
         {
@@ -91,6 +91,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
         setVendorSearchName(e.target.value);
     }
     const handleSubmit = async () => {
+        setLoading(true)
         if (formData?.service_provider == "All Service Provider" || formData?.service_provider == "Select" || formData?.service_provider == "Premium Service Provider") {
             setSelectedRows({ vendors: [] })
         }
@@ -103,13 +104,13 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
         };
 
         // loop through keys
-        Object.entries(fullData).forEach(([key, value]) => {
-            if (typeof value === "object") {
-                formdata.append(key, JSON.stringify(value));
-            } else {
-                formdata.append(key, value);
-            }
-        });
+        // Object.entries(fullData).forEach(([key, value]) => {
+        //     if (typeof value === "object") {
+        //         formdata.append(key, JSON.stringify(value));
+        //     } else {
+        //         formdata.append(key, value);
+        //     }
+        // });
         formdata.append('data', JSON.stringify(fullData));
         // Append file only if exists
         if (uploadedFiles) {
@@ -122,8 +123,10 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
         if (response?.status == 200) {
             alert("Submit Successfull");
             router.push("/dashboard");
+            setLoading(false)
         } else {
             alert("error");
+            setLoading(false)
         }
     }
     const handleOpen = () => {
@@ -132,8 +135,6 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
     const handleClose = () => {
         setIsDialog(false);
     }
-
-    console.log(VendorList?.data,"VendorList?.data------------------------------------------0000000000086543")
     return (
         <div className='bg-white h-full w-full pb-6'>
             <div className='flex justify-between items-center pr-2'>
@@ -156,7 +157,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
                 <NewVendorTable newVendorTable={newVendorTable} />
             </div>
             <div className='flex justify-end pt-10 px-4'>
-                <Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium mb-4' onClick={() => { handleSubmit() }}>Submit RFQ</Button>
+                <Button type='button' className={`flex bg-blue-400 hover:bg-blue-400 px-10 font-medium ${loading?"cursor-not-allowed":"cursor-pointer"}`}  onClick={() => { handleSubmit() }} disabled={loading?true:false}>{loading?"Submit RFQ...":"Submit RFQ"}</Button>
             </div>
             {
                 isDialog &&

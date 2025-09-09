@@ -170,5 +170,6 @@ export interface ExportPort {
   country: string;
   port_code: string;
   port_name: string;
+  name:string;
 }
 
