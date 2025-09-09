@@ -32,16 +32,15 @@ const sanitizeData = (data: RFQDetails): Record<string, string> => {
     return result;
 };
 const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
-
-    // const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<Record<string, string>>(sanitizeData(RFQData));
     const [vendorSearchName, setVendorSearchName] = useState('')
     const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
     const [VendorList, setVendorList] = useState<VendorApiResponse>();
-    const [loading, setLoading] = useState(true);
+    const [loading] = useState(true);
     const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
     const [isDialog, setIsDialog] = useState<boolean>(false);
     const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([])
+    const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     useEffect(() => {
         const fetchVendorTableData = async (rfq_type: string) => {
             setSelectedRows({ vendors: [] })
@@ -59,7 +58,7 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
         }
     }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider]);
 
-    
+
     const [selectedRows, setSelectedRows] = useState<VendorSelectType>(
         {
             vendors: []
@@ -107,11 +106,15 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
                     formData={formData}
                     setFormData={setFormData}
                     Dropdown={Dropdown}
+                    setUploadedFiles={setUploadedFiles}
+                    uploadedFiles={uploadedFiles}
                 /> :
                     <LogisticsImportRFQFormFields
                         formData={formData}
                         setFormData={setFormData}
                         Dropdown={Dropdown}
+                        setUploadedFiles={setUploadedFiles}
+                        uploadedFiles={uploadedFiles}
                     />}
 
                 {formData?.service_provider === "Adhoc Service Provider" && <VendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />}

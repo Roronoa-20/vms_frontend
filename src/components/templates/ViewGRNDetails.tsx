@@ -54,7 +54,7 @@ const ViewGRNDetails = ({ grn }: { grn: GRNForm }) => {
                             <TableHead>PO Date</TableHead>
                             <TableHead>Invoice No</TableHead>
                             <TableHead>GRN Status</TableHead>
-                            <TableHead>Action</TableHead>
+                            <TableHead>View GRN Details</TableHead>
                             <TableHead>View PO</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -75,7 +75,7 @@ const ViewGRNDetails = ({ grn }: { grn: GRNForm }) => {
                                         {item?.grn_status || '-'}
                                     </span>
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className='text-center'>
                                     <Button
                                         variant="outline"
                                         className="text-blue-600 border-blue-400"

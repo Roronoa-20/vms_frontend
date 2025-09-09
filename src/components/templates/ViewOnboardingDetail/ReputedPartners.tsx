@@ -10,15 +10,17 @@ import { VendorOnboardingResponse } from "@/src/types/types";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { TReputedPartner, useReputedPartnerStore } from "@/src/store/ReputedPartnerStore";
+import { Lock, Pencil, Trash2 } from "lucide-react";
 
 type Props = {
   ref_no: string,
   onboarding_ref_no: string,
   OnboardingDetail: VendorOnboardingResponse["message"]["reputed_partners_details_tab"]
-  isAmendment:number
+  isAmendment: number;
+  re_release: number;
 }
 
-const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail,isAmendment }: Props) => {
+const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendment, re_release }: Props) => {
   const [reputedPartnersDetails, setReputedPartnersDetails] = useState<Partial<TReputedPartner>>();
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const { reputedPartners, updateReputedPartner, reset } = useReputedPartnerStore();
@@ -32,20 +34,14 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail,isAmendme
     })
   }, [])
 
-  // if(!designation){
-  //   return(
-  //     <div>Loading...</div>
-  //   )
-  // }
-
-
   const handleSubmit = async () => {
     const url = API_END_POINTS?.reputedDetailSubmit;
     const updateData = { reputed_partners: reputedPartnersDetails }
     const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...updateData, ref_no: ref_no, vendor_onboarding: onboarding_ref_no } }, method: "POST" })
     if (response?.status == 200) {
-      alert("updated successfully");
-      location.reload();
+      alert("Reputed Partners Details Updated Successfully!!!");
+      router.push(`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+      // location.reload();
     }
   };
 
@@ -55,7 +51,6 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail,isAmendme
   };
 
   const handleRowDelete = (index: number) => {
-    // Remove the testing facility at the given index from the testingDetail store
     const updateReputedPartners = reputedPartners.filter((_, itemIndex) => itemIndex !== index);
     reset();
     updateReputedPartners.forEach(item => updateReputedPartner(item));
@@ -63,13 +58,32 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail,isAmendme
 
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-3 w-full">
+    <div className="flex flex-col bg-white rounded-lg p-2 w-full">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">
           Reputed Partners
-        </h1><Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button><Button onClick={() => { setIsDisabled(prev => !prev) }} className="mb-2">{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+        </h1>
+        {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button><Button onClick={() => { setIsDisabled(prev => !prev) }} className="mb-2">{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
+        {(isAmendment == 1 || re_release == 1) && (
+          <div
+            onClick={() => setIsDisabled(prev => !prev)}
+            className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
+          >
+            {isDisabled ? (
+              <>
+                <Lock className="w-5 h-5 text-red-500" />
+                <span className="text-[14px] font-medium text-white hover:text-black">Enable Edit</span>
+              </>
+            ) : (
+              <>
+                <Pencil className="w-5 h-5 text-green-600" />
+                <span className="text-[14px] font-medium text-white hover:text-black">Disable Edit</span>
+              </>
+            )}
+          </div>
+        )}
       </div>
-      <div className={`grid grid-cols-3 gap-6 p-3 ${isDisabled ? "hidden" : ""}`}>
+      <div className={`grid grid-cols-3 gap-6 p-2 ${isDisabled ? "hidden" : ""}`}>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Company Name
@@ -89,11 +103,11 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail,isAmendme
           <Input placeholder="" disabled={isDisabled} className="disabled:opacity-100" value={reputedPartnersDetails?.remarks ?? ""} onChange={(e) => { setReputedPartnersDetails((prev: any) => ({ ...prev, remarks: e.target.value })) }} />
         </div>
         <div className="col-span-1 flex items-end">
-          <Button className={`bg-blue-400 hover:bg-blue-300 ${isDisabled ? "hidden" : ""}`} onClick={() => { handleAdd() }}>Add</Button>
+          <Button className={`py-2 ${isDisabled ? "hidden" : ""}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleAdd() }}>Add</Button>
         </div>
       </div>
 
-      <div className="shadow- bg-[#f6f6f7] p-4 mb-4 mt-4 rounded-2xl">
+      <div className="shadow- bg-[#f6f6f7] p-4 mb-4 mt-2 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
             Reputed Partners
@@ -116,15 +130,20 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail,isAmendme
                 <TableCell>{item?.company_name}</TableCell>
                 <TableCell>{item?.supplied_qtyyear}</TableCell>
                 <TableCell>{item?.remarks}</TableCell>
-                <TableCell>
-                  <Button className={`${isDisabled ? "hidden" : ""}`} onClick={() => { handleRowDelete(index) }}>Delete</Button>
-                </TableCell>
+                <TableCell className="flex justify-center">
+                  {!isDisabled && (
+                    <Trash2
+                      className="text-red-400 cursor-pointer"
+                      onClick={() => handleRowDelete(index)}
+                    />
+                  )}
+                </TableCell>s
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
-      <div className={`flex justify-end pr-4 ${isDisabled ? "hidden" : ""}`}><Button onClick={() => { handleSubmit() }}>Next</Button></div>
+      <div className={`flex justify-end ${isDisabled ? "hidden" : ""}`}><Button onClick={() => { handleSubmit() }} variant={"nextbtn"} size={"nextbtnsize"}>Next</Button></div>
     </div>
   );
 };

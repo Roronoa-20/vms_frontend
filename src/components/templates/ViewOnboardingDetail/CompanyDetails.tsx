@@ -17,6 +17,7 @@ import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/context/AuthContext";
+import { Pencil, Lock } from "lucide-react";
 
 interface Props {
   companyDetailDropdown: TcompanyDetailDropdown["message"]["data"]
@@ -25,10 +26,11 @@ interface Props {
   OnboardingDetail: VendorOnboardingResponse["message"]["company_details_tab"]
   multipleCompany: { company: string }[]
   ismulticompany: boolean,
-  isAmendment:number
+  isAmendment: number
+  re_release: number
 }
 
-const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, OnboardingDetail, multipleCompany, ismulticompany, isAmendment }: Props) => {
+const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, OnboardingDetail, multipleCompany, ismulticompany, isAmendment, re_release }: Props) => {
   const router = useRouter();
 
 
@@ -55,6 +57,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
   };
 
   console.log(OnboardingDetail, "this is onboarding detail")
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const validationErrors = validate();
@@ -69,22 +72,41 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
     try {
       const resposne: AxiosResponse = await requestWrapper({ url: companyDetailSubmitUrl, method: "POST", data: { data: updatedData } });
       if (resposne?.status == 200) {
-        alert("update successfully");
-        location.reload();
+        alert("Company Details Updated Successfully!!!");
+        router.push(`/view-onboarding-details?tabtype=Company%20Address&vendor_onboarding=${onboarding_refno}&refno=${refno}`);
+        // location.reload();
       };
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-3 w-full">
+    <div className="flex flex-col bg-white rounded-lg p-2 w-full">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Company Detail</h1>
-        <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+        {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1 || re_release == 1 ? "" : "hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
+        {(isAmendment == 1 || re_release == 1) && (
+          <div
+            onClick={() => setIsDisabled(prev => !prev)}
+            className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
+          >
+            {isDisabled ? (
+              <>
+                <Lock className="w-5 h-5 text-red-500" />
+                <span className="text-[14px] font-medium text-white hover:text-black">Enable Edit</span>
+              </>
+            ) : (
+              <>
+                <Pencil className="w-5 h-5 text-green-600" />
+                <span className="text-[14px] font-medium text-white hover:text-black">Disable Edit</span>
+              </>
+            )}
+          </div>
+        )}
       </div>
       <form onSubmit={(e) => { handleSubmit(e) }}>
-        <div className="grid grid-cols-3 gap-6 p-3 overflow-y-scroll max-h-[70vh]">
+        <div className="grid grid-cols-3 gap-6 p-2 overflow-y-scroll max-h-[70vh]">
           <div>
             <div className="grid grid-cols-4 gap-1">
               <div className="flex flex-col col-span-1">
@@ -125,26 +147,15 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Size of Company
             </h1>
-            {/* <Select disabled={isDisabled} onValueChange={(value) => { updateField("size_of_company", value) }} value={data?.size_of_company ?? OnboardingDetail?.size_of_company}>
-              <SelectTrigger className="disabled:opacity-100">
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="apple">50-100</SelectItem>
-                  <SelectItem value="banana">100-200</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select> */}
             <Input
-            className="disabled:opacity-100"
-            disabled={isDisabled}
-                          placeholder=""
-                          onChange={(e) => {
-                            updateField("size_of_company", e.target.value);
-                          }}
-                          value={data?.size_of_company ?? OnboardingDetail?.size_of_company ?? ""}
-                        />
+              className="disabled:opacity-100"
+              disabled={isDisabled}
+              placeholder=""
+              onChange={(e) => {
+                updateField("size_of_company", e.target.value);
+              }}
+              value={data?.size_of_company ?? OnboardingDetail?.size_of_company ?? ""}
+            />
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -153,7 +164,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
             <Input className="disabled:opacity-100" disabled={isDisabled} placeholder="" onChange={(e) => { updateField("website", e.target.value) }} value={data?.website ?? OnboardingDetail?.website ?? ""} />
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] flex">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Reg No.
               {/* <span className="pl-2 text-red-400 text-xl">*</span> */}
             </h1>
@@ -248,20 +259,20 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
             </h1>
             {
               ismulticompany ?
-                <textarea className="col-span-2 disabled:opacity-100 w-full border rounded-lg p-2" placeholder="Enter Company Name" defaultValue={multipleCompany.map((item, index) => (item?.company)) ?? ""} disabled={isDisabled} />
+                <textarea className="col-span-2 disabled:opacity-100 w-full border rounded-lg p-2" placeholder="Enter Company Name" defaultValue={multipleCompany.map((item, index) => (item?.company)) ?? ""} disabled/>
                 :
-                <Input placeholder="" className="disabled:opacity-100" defaultValue={OnboardingDetail?.company_name_description ?? ""} disabled={isDisabled} />
+                <Input placeholder="" className="disabled:opacity-100" defaultValue={OnboardingDetail?.company_name_description ?? ""} disabled />
             }
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Vendor Type
             </h1>
-            <textarea className="col-span-2 w-full border rounded-lg p-2 disabled:opacity-100" placeholder="" defaultValue={OnboardingDetail?.vendor_type_list_from_master?.map((item) => (item))} disabled={isDisabled} />
+            <textarea className="col-span-2 w-full border rounded-lg p-2 disabled:opacity-100" placeholder="" defaultValue={OnboardingDetail?.vendor_type_list_from_master?.map((item) => (item))} disabled/>
           </div>
         </div>
-        <div className="flex justify-end pr-6 pb-10">
-          <Button className={`bg-blue-400 hover:bg-blue-400 ${isDisabled ? "hidden" : ""}`}>Next</Button>
+        <div className="flex justify-end pr-4 pb-4">
+          <Button className={`py-2 ${isDisabled ? "hidden" : ""}`} variant={"nextbtn"} size={"nextbtnsize"}>Next</Button>
         </div>
       </form>
     </div>

@@ -21,6 +21,8 @@ import { handleSubmit } from "./utility";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
 import { EyeIcon, Trash2 } from "lucide-react";
 import { TtableData } from "../../pages/VendorRegistration";
+import MultiSelect from 'react-select';
+import { multiSelectStyles } from "../../common/sharedStyles";
 
 interface Props {
   incoTermsDropdown: TvendorRegistrationDropdown["message"]["data"]["incoterm_master"]
@@ -33,19 +35,24 @@ interface Props {
   tableData: TtableData[]
   setTableData: React.Dispatch<React.SetStateAction<TtableData[]>>
   handleSubmit: () => void
+  handleCancel: () => void
   multiVendor: any
 }
 
 
-const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropdown, formData, handlefieldChange, handleSelectChange, setTableData, tableData, handleSubmit, multiVendor }: Props) => {
+const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropdown, formData, handlefieldChange, handleSelectChange, setTableData, tableData, handleSubmit, multiVendor, handleCancel }: Props) => {
   // const { data, updateField,updateVendorTypes, resetForm } = useVendorStore();
   const [companyBasedDropdown, setCompanyBasedDropdown] = useState<TcompanyNameBasedDropdown["message"]["data"]>();
   const [incotermsDropdown, setIncotermsDropdown] = useState<TcompanyNameBasedDropdown["message"]["data"]["incoterms"]>();
   const [purchaseOrganizationBasedDropdown, setPurchaseOrganizationBasedDropdown] = useState<TpurchaseOrganizationBasedDropdown["message"]["all_account_groups"]>()
-  const [reconciliationDropdown, setReconciliationDropdown] = useState<TReconsiliationDropdown["message"]["data"]>([])
+  const [reconciliationDropdown, setReconciliationDropdown] = useState<any>([])
+  const [termsOfPaymentDropdown, setTermsOfPaymentDropdown] = useState<any>([]);
+  const [purchaseGroupDropdown, setPurchaseGroupDropdown] = useState<any>([]);
   const [singleTableData, setSingleTableData] = useState<TtableData | null>(null);
   const [showTable, setShowTable] = useState(false);
-  const router = useRouter();
+  const [reconciliation, setReconciliation] = useState<{ label: string, value: string } | null>(null);
+  const [termsOfPayment, setTermsOfPayment] = useState<{ label: string, value: string } | null>();
+  const [purchaseGroup, setPurchaseGroup] = useState<{ label: string, value: string } | null>();
   const handleCompanyDropdownChange = async (value: string) => {
     // handleSelectChange(value,'company_name');
     setSingleTableData((prev: any) => ({ ...prev, company_name: value }));
@@ -53,13 +60,31 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
     const response = await requestWrapper({ url: url, method: "GET", params: { company_name: value } })
     const data: TcompanyNameBasedDropdown = response?.status == 200 ? response?.data : "";
     setCompanyBasedDropdown(data?.message?.data);
+    const newArray = await Promise.all(
+      data?.message?.data?.terms_of_payment?.map((item) => {
+        return ({
+          label: item?.description,
+          value: item?.name
+        }
+        )
+      }))
+
+    const newArray2 = await Promise.all(
+      data?.message?.data?.purchase_groups?.map((item) => {
+        return ({
+          label: item?.description,
+          value: item?.name
+        }
+        )
+      }))
+
+    setTermsOfPaymentDropdown(newArray);
+    setPurchaseGroupDropdown(newArray2);
     fetchReconciliationAccount(value);
-    console.log(response?.data?.message?.data?.incoterms, "this is incotersms")
     setIncotermsDropdown(response?.data?.message?.data?.incoterms)
   }
 
   const handlePurchaseOrganizationDropdownChange = async (value: string) => {
-    // handleSelectChange(value,'purchase_organization');
     setSingleTableData((prev: any) => ({ ...prev, purchase_organization: value }));
     const url = API_END_POINTS?.purchaseGroupBasedDropdown;
     const response = await requestWrapper({ url: url, method: "POST", data: { data: { purchase_organization: value, vendor_types: multiVendor } } })
@@ -76,7 +101,15 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
     const reconsiliationUrl = API_END_POINTS?.reconsiliationDropdown;
     const ReconciliationdropDownApi: AxiosResponse = await requestWrapper({ url: reconsiliationUrl, method: "POST", data: { data: { company: value } } });
     const reconciliationDropdown: TReconsiliationDropdown["message"]["data"] = ReconciliationdropDownApi?.status == 200 ? ReconciliationdropDownApi?.data?.message?.data : ""
-    setReconciliationDropdown(reconciliationDropdown);
+    const newArray = await Promise.all(
+      reconciliationDropdown?.map((item) => {
+        return ({
+          label: item?.reconcil_description,
+          value: item?.name
+        }
+        )
+      }))
+    setReconciliationDropdown(newArray);
   }
 
   const validateFields = () => {
@@ -107,13 +140,27 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
     const multiVendorType = await Promise.all(multiVendor?.map((item: any) => ({
       vendor_type: item
     })))
-    setTableData((prev: any) => ([...prev, { ...singleTableData, vendor_types: [...multiVendorType] }]))
+    if (!reconciliation) {
+      alert(`Please Select Reconciliation Account`);
+      return;
+    }
+    if (!termsOfPayment) {
+      alert(`Please Select Terms Of Payment`);
+      return;
+    }
+    if (!purchaseGroup) {
+      alert("Please Select Purchase Group");
+      return;
+    }
+    setTableData((prev: any) => ([...prev, { ...singleTableData, vendor_types: [...multiVendorType], reconciliation_account: reconciliation?.value, terms_of_payment: termsOfPayment?.value, purchase_group: purchaseGroup?.value }]))
+    setReconciliation(null);
+    setTermsOfPayment(null);
+    setPurchaseGroup(null);
     setSingleTableData(null);
     setShowTable(true);
   }
 
   const handleRowDelete = (index: number) => {
-    // Remove the contact at the given index from the contactDetail store
     const updatedContacts = tableData.filter((_, itemIndex) => itemIndex !== index);
     setTableData([]);
     updatedContacts.forEach((item: any) => setTableData(item));
@@ -121,38 +168,44 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
 
   return (
     <div>
-      <h1 className="text-[18px] font-semibold pb-1 leading-[24px] text-[#03111F] border-b border-slate-500">
-        Purchase Team Details
+      <h1 className="text-[18px] font-semibold pb-2 leading-[24px] text-[#03111F] border-b border-slate-300">
+        Purchase Details
       </h1>
-      <div className="px-2 pb-2 grid grid-cols-4">
-        <div className="flex items-center pt-3">
-          <h1 className="text-[15px] text-nowrap font-normal text-[#626973]">
-            Check Double Invoice
-          </h1>
-          <Input type="checkbox" disabled checked={true} className="h-5" />
-        </div>
-        <div className="flex items-center pt-3">
-          <h1 className="text-[15px] text-nowrap font-normal text-[#626973]">
-            Check Double Invoice
-          </h1>
-          <Input type="checkbox" disabled checked={true} className="h-5" />
-        </div>
-        <div className="flex items-center pt-3">
-          <h1 className="text-[15px] text-nowrap font-normal text-[#626973]">
-            Check Double Invoice
-          </h1>
-          <Input type="checkbox" disabled checked={true} className="h-5" />
-        </div>
-        <div className="flex items-center pt-3">
-          <h1 className="text-[15px] text-nowrap font-normal text-[#626973]">
-            Check Double Invoice
-          </h1>
-          <Input type="checkbox" disabled checked={true} className="h-5" />
-        </div>
+
+      {/* Checkbox section */}
+      <div className="grid grid-cols-4 gap-4 px-2 py-3">
+        {["Check Double Invoice", "Payee in Document", "GR Based Inv Ver", "Service Based Inv Ver"].map(
+          (label, idx) => (
+            <label key={idx} className="flex items-center gap-2 cursor-not-allowed relative">
+              <input
+                type="checkbox"
+                checked
+                disabled
+                className="peer h-5 w-5 appearance-none rounded bg-blue-500 border border-blue-500 cursor-not-allowed"
+              />
+              {/* White checkmark */}
+              <svg
+                className="absolute left-0 top-0 h-5 w-5 text-white pointer-events-none"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <span className="text-[14px] font-normal text-black">{label}</span>
+            </label>
+          )
+        )}
       </div>
-      <div className="grid grid-cols-3 gap-6 p-2">
+
+
+
+      <div className="grid grid-cols-3 gap-5 p-2">
         <div className="flex flex-col">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[14px] font-normal text-black pb-2">
             Company Name
           </h1>
           <Select required={true} onValueChange={(value) => { handleCompanyDropdownChange(value) }} value={singleTableData?.company_name ?? ""}>
@@ -172,10 +225,9 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
             </SelectContent>
           </Select>
         </div>
-        {
-          multiVendor?.includes("Material Vendor") && (singleTableData?.company_name?.includes("2000") || singleTableData?.company_name?.includes("7000")) &&
+        {multiVendor?.includes("Material Vendor") && (singleTableData?.company_name?.includes("2000") || singleTableData?.company_name?.includes("7000")) &&
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[14px] font-normal text-black pb-2">
               QA Required
             </h1>
             <Select onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, qms_required: value })) }} value={singleTableData?.qms_required ?? ""}>
@@ -191,8 +243,9 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
             </Select>
           </div>
         }
+
         <div className="flex flex-col">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[14px] font-normal text-black pb-2">
             Purchase Organization
           </h1>
           <Select required onValueChange={(value) => { handlePurchaseOrganizationDropdownChange(value) }} value={singleTableData?.purchase_organization ?? ""}>
@@ -212,8 +265,9 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
             </SelectContent>
           </Select>
         </div>
+
         <div className="flex flex-col">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[14px] font-normal text-black pb-2">
             Account Group
           </h1>
           <Select required value={singleTableData?.account_group ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, account_group: value })); }}>
@@ -234,11 +288,12 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
             </SelectContent>
           </Select>
         </div>
+
         <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[14px] font-normal text-black pb-2">
             Purchase Group
           </h1>
-          <Select required value={singleTableData?.purchase_group ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, purchase_group: value })) }}>
+          {/* <Select required value={singleTableData?.purchase_group ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, purchase_group: value })) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select Purchase Group" />
             </SelectTrigger>
@@ -253,13 +308,24 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
                 }
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
+          <MultiSelect
+            options={purchaseGroupDropdown}
+            value={purchaseGroup}
+            onChange={(value: any) => setPurchaseGroup(value)}
+            instanceId="purchase-group"
+            required
+            className="text-[12px] text-black"
+            menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+            styles={multiSelectStyles}
+          />
         </div>
-        <div className="flex flex-col">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+
+        <div className="flex flex-col relative">
+          <h1 className="text-[14px] font-normal text-black pb-2">
             Terms Of Payment
           </h1>
-          <Select required value={singleTableData?.terms_of_payment ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, terms_of_payment: value })) }}>
+          {/* <Select required value={singleTableData?.terms_of_payment ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, terms_of_payment: value })) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select Terms Of Payment" />
             </SelectTrigger>
@@ -274,10 +340,22 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
                 }
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
+          {/* <MultiSelect options={termsOfPaymentDropdown} value={termsOfPayment} onChange={(value: any) => { setTermsOfPayment(value) }} instanceId="multiselect" required={true} className="relative z-50 text-sm text-black" /> */}
+          <MultiSelect
+            options={termsOfPaymentDropdown}
+            value={termsOfPayment}
+            onChange={(value: any) => setTermsOfPayment(value)}
+            instanceId="terms-of-payment"
+            required
+            className="text-[12px] text-black"
+            menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+            styles={multiSelectStyles}
+          />
         </div>
+
         <div className="flex flex-col">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[14px] font-normal text-black pb-2">
             Order Currency
           </h1>
           <Select required value={singleTableData?.order_currency ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, order_currency: value })) }}>
@@ -297,8 +375,9 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
             </SelectContent>
           </Select>
         </div>
+
         <div className="flex flex-col">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[14px] font-normal text-black pb-2">
             Inco Terms
           </h1>
           <Select required value={singleTableData?.incoterms ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, incoterms: value })) }}>
@@ -312,18 +391,19 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
                     incotermsDropdown?.map((item, index) => (
                       <SelectItem value={item?.name} key={index}>{item?.name}</SelectItem>
                     )) :
-                    <div className="text-center">No Value</div>
+                    <div className="text-center text-sm">No Value</div>
                 }
               </SelectGroup>
             </SelectContent>
           </Select>
         </div>
-        <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+
+        <div className="flex flex-col relative">
+          <h1 className="text-[14px] font-normal text-black pb-2">
             Reconciliation Account
           </h1>
           {/* <Input placeholder="" disabled defaultValue={OnboardingDetail?.reconciliation_account}/> */}
-          <Select value={singleTableData?.reconciliation_account ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, reconciliation_account: value })) }} required={true}>
+          {/* <Select value={singleTableData?.reconciliation_account ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, reconciliation_account: value })) }} required={true}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -336,10 +416,22 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
                 }
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
+          {/* <MultiSelect options={reconciliationDropdown} value={reconciliation} onChange={(value: any) => { setReconciliation(value) }} instanceId="multiselect" required={true} className="relative z-50 text-sm text-black" /> */}
+          <MultiSelect
+            options={reconciliationDropdown}
+            value={reconciliation}
+            onChange={(value: any) => setReconciliation(value)}
+            instanceId="reconciliation-account"
+            required
+            className="text-[12px] text-black"
+            menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+            styles={multiSelectStyles}
+          />
         </div>
+
         <div className="flex mt-7">
-          <Button className="bg-blue-700 hover:bg-blue-400 rounded-[24px] py-2" variant="nextbtn" size="nextbtnsize" onClick={() => { handleAdd() }}>Add</Button>
+          <Button className="rounded-[24px] py-2" variant="nextbtn" size="nextbtnsize" onClick={() => { handleAdd() }}>Add</Button>
         </div>
       </div>
 
@@ -347,11 +439,10 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
         <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
-
+              Meril Details
             </h1>
           </div>
           <Table className=" max-h-40 overflow-y-scroll">
-            {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
                 <TableHead className="w-[100px]">Sr No.</TableHead>
@@ -381,10 +472,6 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
                   <TableCell>{item?.incoterms}</TableCell>
                   <TableCell>{item?.reconciliation_account}</TableCell>
                   <TableCell><Trash2 className="text-red-400 cursor-pointer" onClick={() => { handleRowDelete(index) }}></Trash2></TableCell>
-                  {/* <TableCell><div className='flex gap-4 justify-center items-center'>
-                        <EyeIcon className='cursor-pointer'/>
-                        </div>
-                        </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
@@ -392,7 +479,7 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
         </div>
       )}
       <div className="flex justify-end gap-3 mb-3">
-        <Button className="py-2.5" variant="backbtn" size="backbtnsize">Cancel</Button>
+        <Button className="py-2.5" variant="backbtn" size="backbtnsize" onClick={() => { handleCancel() }}>Cancel</Button>
         <Button id="submitButton" type="submit" className="py-2.5" variant="nextbtn" size="nextbtnsize" onClick={() => { handleSubmit() }}>Submit</Button>
       </div>
     </div>

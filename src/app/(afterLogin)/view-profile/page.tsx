@@ -1,10 +1,19 @@
-import ViewProfile from '@/src/components/pages/ViewProfile'
-import React from 'react'
+import React from "react";
+import ViewProfileWrapper from "@/src/components/pages/ViewProfileWrapper";
 
-const page = () => {
-  return (
-    <ViewProfile refno='' vendor_onboarding='' tabtype='' />
-  )
-}
+const Page = () => {
+  return <ViewProfileWrapper />;
+};
 
-export default page
+export default Page;
+
+// import ViewProfile from '@/src/components/pages/ViewProfile'
+// import React from 'react'
+
+// const page = () => {
+//   return (
+//     <ViewProfile refno='' vendor_onboarding='' tabtype='' />
+//   )
+// }
+
+// export default page

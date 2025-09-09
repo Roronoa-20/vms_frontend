@@ -1,9 +1,9 @@
 export const sidebarTabs = [
   "Company Detail",
   "Company Address",
-  "Contact Detail",
   "Document Detail",
   "Payment Detail / Bank Detail",
+  "Contact Detail",
   "Manufacturing Detail",
   "Employee Detail",
   "Machinery Detail",

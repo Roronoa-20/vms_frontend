@@ -80,21 +80,7 @@ const Dashboard = async () => {
   });
   const dashboardRejectedVendorTableData: DashboardTableType["rejected_vendor_onboarding"] =
     dashboardRejectedVendorTableDataApi?.status == 200 ? dashboardRejectedVendorTableDataApi?.data?.message : "";
-  // const dashboardTableDataApi: AxiosResponse = await requestWrapper({
-  //   url: `${API_END_POINTS?.dashboardTableURL}?usr=${user}`,
-  //   method: "GET",
-  //   headers: {
-  //     cookie: cookieHeaderString
-  //   }
-  // });
-  // const dashboardTableData: dashboardCardData["message"] =
-  //   dashboardTableDataApi?.status == 200 ? dashboardTableDataApi?.data?.message : "";
-  // console.log(dashboardTableData, "dashboardTableData")
-
-
-  // const companyDropdownUrl = API_END_POINTS?.companyDropdown
-  //             const companyDropdownResponse:AxiosResponse = await requestWrapper({url:companyDropdownUrl,method:"GET"});
-  //             const companyDropdown:{name:string}[] =  companyDropdownResponse?.status == 200?companyDropdownResponse?.data?.data : ""; 
+  
   const dropdownUrl = API_END_POINTS?.vendorRegistrationDropdown;
   const dropDownApi: AxiosResponse = await requestWrapper({
     url: dropdownUrl,

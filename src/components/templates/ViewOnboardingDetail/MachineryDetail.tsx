@@ -10,15 +10,17 @@ import requestWrapper from "@/src/services/apiCall";
 import { VendorOnboardingResponse } from "@/src/types/types";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { Lock, Pencil, Trash2 } from "lucide-react";
 
 interface Props {
   ref_no: string,
   onboarding_ref_no: string
   OnboardingDetail: VendorOnboardingResponse["message"]["machinery_details_tab"]
-  isAmendment:number
+  isAmendment: number;
+  re_release: number;
 }
 
-const MachineryDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,isAmendment }: Props) => {
+const MachineryDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendment, re_release }: Props) => {
   const { machineDetail, updateMachineDetail, resetMachineDetail } = useMachineDetailStore();
   const [multipleMachineDetail, setMultipleMachineDetail] = useState<TMachineDetail | null>(null);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
@@ -31,15 +33,14 @@ const MachineryDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,isAmendme
     })
   }, [])
 
-
-
   const handleSubmit = async () => {
     const submitUrl = API_END_POINTS?.machineDetailSubmit;
     const updatedData = { machinery_detail: machineDetail, ref_no: ref_no, vendor_onboarding: onboarding_ref_no }
     const machineDetailResponse: AxiosResponse = await requestWrapper({ url: submitUrl, data: { data: updatedData }, method: "POST" });
 
     if (machineDetailResponse?.status == 200) {
-      alert("updated successfully");
+      alert("Machinery Details Updated Successfully!!!");
+      router.push(`/view-onboarding-details?tabtype=Testing%20Facility&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
       location.reload();
     }
   }
@@ -49,7 +50,6 @@ const MachineryDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,isAmendme
     setMultipleMachineDetail(null);
   }
 
-
   const handleRowDelete = (index: number) => {
     // Remove the machine at the given index from the machineDetail store
     const updatedMachines = machineDetail.filter((_, itemIndex) => itemIndex !== index);
@@ -58,12 +58,30 @@ const MachineryDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,isAmendme
   }
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-3 w-full">
+    <div className="flex flex-col bg-white rounded-lg p-2 w-full">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Details Of Machinary & Other Equipments</h1>
-        <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+        {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
+        {(isAmendment == 1 || re_release == 1) && (
+          <div
+            onClick={() => setIsDisabled(prev => !prev)}
+            className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
+          >
+            {isDisabled ? (
+              <>
+                <Lock className="w-5 h-5 text-red-500" />
+                <span className="text-[14px] font-medium text-white hover:text-black">Enable Edit</span>
+              </>
+            ) : (
+              <>
+                <Pencil className="w-5 h-5 text-green-600" />
+                <span className="text-[14px] font-medium text-white hover:text-black">Disable Edit</span>
+              </>
+            )}
+          </div>
+        )}
       </div>
-      <div className={`grid grid-cols-3 gap-6 p-3 ${isDisabled ? "hidden" : ""}`}>
+      <div className={`grid grid-cols-3 gap-6 p-2 ${isDisabled ? "hidden" : ""}`}>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Equipment Name
@@ -89,7 +107,7 @@ const MachineryDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,isAmendme
           <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={multipleMachineDetail?.remarks ?? ""} onChange={(e) => { setMultipleMachineDetail((prev: any) => ({ ...prev, remarks: e.target.value })) }} />
         </div>
         <div className={`col-span-1 flex items-end`}>
-          <Button className={`bg-blue-400 hover:bg-blue-300 ${isDisabled ? "hidden" : ""}`} onClick={() => { handleAdd() }}>Add</Button>
+          <Button className={`py-2 ${isDisabled ? "hidden" : ""}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleAdd() }}>Add</Button>
         </div>
       </div>
       <div className="shadow- bg-[#f6f6f7] p-4 mb-4 mt-4 rounded-2xl">
@@ -120,15 +138,20 @@ const MachineryDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,isAmendme
                 <TableCell>
                   {item?.remarks}
                 </TableCell>
-                <TableCell>
-                  <Button className={`${isDisabled ? "hidden" : ""}`} onClick={() => { handleRowDelete(index) }}>Delete</Button>
+                <TableCell className="flex justify-center">
+                  {!isDisabled && (
+                    <Trash2
+                      className="text-red-400 cursor-pointer"
+                      onClick={() => handleRowDelete(index)}
+                    />
+                  )}
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
-      <div className={`flex justify-end pr-4`}><Button className={`bg-blue-400 hover:bg-blue-400 ${isDisabled ? "hidden" : ""}`} onClick={() => { handleSubmit() }}>Next</Button></div>
+      <div className={`flex justify-end pb-2`}><Button className={`py-2 ${isDisabled ? "hidden" : ""}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }}>Next</Button></div>
     </div>
   );
 };

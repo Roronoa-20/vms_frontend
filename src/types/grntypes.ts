@@ -2,8 +2,13 @@
 
 export interface GRNForm {
   naming_series?: string;
+  grn_company?: string;
   grn_no?: string;
   grn_date?: string;
+  sap_booking_id?: string;
+  sap_status?: string;
+  invoice_url?: string;
+  inoice_date?: string;
   plant?: string;
   grn_items?: string;
   movement_type?: string;

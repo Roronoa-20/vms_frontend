@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from '@/components/ui/button';
 
 type props = {
   currentPage: number,
@@ -38,12 +39,12 @@ export default function Pagination({ ...Props }: props) {
         {/* <p className="text-gray-500 text-xs font-normal">Showing {(Props.currentPage - 1) * 10 + 1} to {(Props.currentPage -1 ) *(10) + Props?.record_per_page} of {Props.total_event_list} entries</p> */}
       </div>
       <div className="flex items-center space-x-2 pt-4">
-        <button onClick={handlePrev} className={`bg-white border border-[#e5e7eb] rounded-md py-2 px-4 hover:bg-gray-50 disabled:bg-gray-100 ${Props.currentPage == 1 ? 'cursor-not-allowed disabled bg-opacity-50' : ''}`} disabled={Props.currentPage == 1 ? true : false}>
+        <Button onClick={handlePrev} variant="backbtn" size="backbtnsize" className={`py-2 ${Props.currentPage == 1 ? 'cursor-not-allowed disabled bg-opacity-50' : ''}`} disabled={Props.currentPage == 1 ? true : false}>
           Previous
-        </button>
-        <button onClick={handleNext} className={`bg-white border border-[#e5e7eb] rounded-md py-2 px-4 hover:bg-gray-50 disabled:bg-gray-100 ${Props.currentPage == total_pages || (Props.total_event_list == 0) ? 'cursor-not-allowed' : ''}`} disabled={Props.currentPage == total_pages || (Props.total_event_list == 0) ? true : false}>
+        </Button>
+        <Button onClick={handleNext} variant="nextbtn" size="nextbtnsize" className={`py-2 ${Props.currentPage == total_pages || (Props.total_event_list == 0) ? 'cursor-not-allowed' : ''}`} disabled={Props.currentPage == total_pages || (Props.total_event_list == 0) ? true : false}>
           Next
-        </button>
+        </Button>
       </div>
     </div>
   )

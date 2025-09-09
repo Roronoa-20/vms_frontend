@@ -1,5 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -31,6 +32,14 @@ import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "./Pagination";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Mail, CheckCircle } from "lucide-react";
+
 
 type Props = {
   dashboardTableData?: DashboardTableType["sapErrorDashboardData"]
@@ -63,6 +72,8 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [remarks, setRemark] = useState("");
   const debouncedSearchName = useDebounce(searchVendor, 300);
+  const router = useRouter();
+
 
   useEffect(() => {
     fetchTable();
@@ -115,6 +126,10 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
     }
   };
 
+  const handleView = async (refno: string, vendor_Onboarding: string) => {
+    router.push(`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${vendor_Onboarding}&refno=${refno}`)
+  }
+
   return (
     <>
 
@@ -149,8 +164,10 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
                 <TableHead className="text-center">Ref No.</TableHead>
                 <TableHead className="text-center">Vendor Name</TableHead>
                 <TableHead className="text-center">Company</TableHead>
+                <TableHead className="text-center whitespace-nowrap">Register By</TableHead>
                 <TableHead className="text-center">SAP Error Message</TableHead>
                 <TableHead className={`text-center`}>Action</TableHead>
+                <TableHead className="text-center">View Details</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="text-center">
@@ -161,21 +178,40 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
                     <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.vendor_name}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.company_name}</TableCell>
+                    <TableCell className="text-nowrap text-center">{item?.registered_by_full_name}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.sap_error_message}</TableCell>
                     <TableCell className="text-nowrap text-center">
                       {item?.sap_error_mail_sent === 1 ? (
-                        <span className="text-green-600 font-semibold">Email Sent to IT Team</span>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <CheckCircle className="text-green-600 w-6 h-6 mx-auto" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Email Sent to IT Team</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       ) : (
-                        <Button
-                          onClick={() => {
-                            setSelectedId(item?.name);
-                            setOpenDialog(true);
-                          }}
-                        >
-                          Send Email
-                        </Button>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Mail
+                                className="text-blue-600 w-6 h-6 mx-auto cursor-pointer hover:text-blue-800"
+                                onClick={() => {
+                                  setSelectedId(item?.name);
+                                  setOpenDialog(true);
+                                }}
+                              />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Send Email</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       )}
                     </TableCell>
+                    <TableCell><Button onClick={() => { item?.form_fully_submitted_by_vendor == 1 ? handleView(item?.ref_no, item?.name) : alert("Vendor Form is not fully subitted") }} variant={"outline"}>View</Button></TableCell>
                   </TableRow>
                 ))
               ) : (

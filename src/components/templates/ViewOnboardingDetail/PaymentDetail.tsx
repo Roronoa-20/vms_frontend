@@ -18,65 +18,70 @@ import requestWrapper from "@/src/services/apiCall";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { X } from "lucide-react";
+import { X, Lock, Pencil } from "lucide-react";
 import { UsePurchaseTeamApprovalStore } from "@/src/store/PurchaseTeamApprovalStore";
+import SimpleFileUpload from "../../molecules/multiple_file_upload";
+import { Toaster, toast } from 'sonner'
 
 interface Props {
-  ref_no:string,
-  onboarding_ref_no:string,
-  OnboardingDetail:VendorOnboardingResponse["message"]["payment_details_tab"],
-  company_name?:string
-  isAccountTeam:number,
-  isAmendment:number
-  isBankProof:number
+  ref_no: string,
+  onboarding_ref_no: string,
+  OnboardingDetail: VendorOnboardingResponse["message"]["payment_details_tab"],
+  company_name?: string
+  isAccountTeam: number,
+  isAmendment: number
+  isBankProof: number
+  re_release: number
 }
 
 
-const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,isAccountTeam,isAmendment,isBankProof}:Props) => {
-  const {paymentDetail,updatePaymentDetail} = usePaymentDetailStore()
-  const [isDisabled,setIsDisabled] = useState<boolean>(true);
-  const [bankProofFile,setBankProofFile] = useState<FileList | null>(null);
+const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_name, isAccountTeam, isAmendment, isBankProof, re_release }: Props) => {
+  const { paymentDetail, updatePaymentDetail } = usePaymentDetailStore()
+  const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const [bankProofFile, setBankProofFile] = useState<FileList | null>(null);
   const [isBankFilePreview, setIsBankFilePreview] = useState<boolean>(true);
   const [isPurchaseBankFilePreview, setPurchaseIsBankFilePreview] = useState<boolean>(true);
-  const [bankNameDropown,setBankNameDropown] = useState<TbankNameDropdown["message"]["data"]>([])
-  const [currencyDropdown,setCurrencyDropdown] = useState<TCurrencyDropdown["message"]["data"]>([])
-  const {designation} = useAuth();
-  const [PurchaseTeambankProof,setPurchaseTeamBankProof] = useState<File>();
-  const {setBankProof,bank_proof} = UsePurchaseTeamApprovalStore();
+  const [bankNameDropown, setBankNameDropown] = useState<TbankNameDropdown["message"]["data"]>([])
+  const [currencyDropdown, setCurrencyDropdown] = useState<TCurrencyDropdown["message"]["data"]>([])
+  const { designation } = useAuth();
+  const [PurchaseTeambankProof, setPurchaseTeamBankProof] = useState<File>();
+  const { setBankProof, bank_proof } = UsePurchaseTeamApprovalStore();
+  const [files, setFiles] = useState<File[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<FileList | null>(null)
   // if(!designation){
   //   return(
   //     <div>Loading...</div>
   //   )
   // }
   const router = useRouter()
-  console.log(isAccountTeam,"this is account team")
-  console.log(OnboardingDetail,"this is country");
-  useEffect(()=>{
-    const fetchBank = async ()=>{
+  console.log(isAccountTeam, "this is account team")
+  console.log(OnboardingDetail, "this is country");
+  useEffect(() => {
+    const fetchBank = async () => {
 
       const bankNameDropdownUrl = `${API_END_POINTS?.bankNameDropdown}`;
-      const bankNameResponse:AxiosResponse = await requestWrapper({url:bankNameDropdownUrl,method:"GET"});
-      if(bankNameResponse?.status == 200){
+      const bankNameResponse: AxiosResponse = await requestWrapper({ url: bankNameDropdownUrl, method: "GET" });
+      if (bankNameResponse?.status == 200) {
         setBankNameDropown(bankNameResponse?.data?.message?.data)
       }
     }
-    console.log(OnboardingDetail,"payment details data")
-    const fetchCurrency = async ()=>{
+    console.log(OnboardingDetail, "payment details data")
+    const fetchCurrency = async () => {
 
       const currencyUrl = `${API_END_POINTS?.currencyDropdown}`;
-      const currencyResponse:AxiosResponse = await requestWrapper({url:currencyUrl,method:"GET"});
-      if(currencyResponse?.status == 200){
+      const currencyResponse: AxiosResponse = await requestWrapper({ url: currencyUrl, method: "GET" });
+      if (currencyResponse?.status == 200) {
         setCurrencyDropdown(currencyResponse?.data?.message?.data)
       }
     }
 
     fetchBank();
     fetchCurrency();
-  },[])
+  }, [])
 
   const [errors, setErrors] = useState<any>({});
   const validate = () => {
-    const errors:any = {};
+    const errors: any = {};
     // if (!paymentDetail?.bank_name) {
     //   errors.bank_name = "Please Enter Bank Name";
     // }
@@ -107,7 +112,69 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,i
     return errors;
   };
 
-  const handleSubmit = async()=>{
+
+  const FileUpload = async () => {
+    const formdata = new FormData();
+
+    if (uploadedFiles && uploadedFiles.length > 0) {
+      for (let i = 0; i < uploadedFiles.length; i++) {
+        formdata.append("bank_proofs_by_purchase_team", uploadedFiles[i]);
+      }
+    } else {
+      toast.warning("No file to Upload");
+      console.log("No file to upload");
+    }
+    formdata?.append("data", JSON.stringify({ ref_no: ref_no, vendor_onboarding: onboarding_ref_no }))
+
+    const apiCallPromise = new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`, {
+          method: "POST",
+          credentials: 'include',
+          body: formdata,
+        });
+
+        if (!response.ok) {
+          // setDocumentType('');
+          setFiles([]);
+          setUploadedFiles(null);
+          console.error('file upload request failed');
+        }
+
+        const data = await response.json();
+        resolve(data); // Resolve with the response data
+      } catch (error) {
+        // setDocumentType('');
+        setFiles([]);
+        setUploadedFiles(null);
+        reject(error); // Reject with the error
+      }
+    });
+    // toast.promise(apiCallPromise, {
+    //   loading: 'Submitting  details...',
+    //   success: () => {
+    //     // setTimeout(() => {
+    //     //   // PreviewData();
+    //     // }, 500);
+    //     // setDocumentType('')
+    //     setFiles([])
+    //     setUploadedFiles(null)
+    //     return 'Documents added successfully!';
+    //   },
+    //   error: (error) => `Failed : ${error.message || error}`,
+    // });
+    // setTimeout(()=>{
+    //   location.reload();
+    // },2000)
+  }
+
+
+  const handleNext = async () => {
+    const response = await FileUpload();
+    location.reload()
+  }
+
+  const handleSubmit = async () => {
     const validationErrors = validate();
 
     if (Object.keys(validationErrors).length > 0) {
@@ -116,85 +183,110 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,i
     }
 
     const submitUrl = API_END_POINTS?.bankSubmit;
-    const updatedData = {...paymentDetail,ref_no:ref_no,vendor_onboarding:onboarding_ref_no}
+    const updatedData = { ...paymentDetail, ref_no: ref_no, vendor_onboarding: onboarding_ref_no }
     const formData = new FormData()
-    formData.append("data",JSON.stringify(updatedData));
-    if(bankProofFile){
-      formData.append("bank_proof",bankProofFile[0])
+    formData.append("data", JSON.stringify(updatedData));
+    if (bankProofFile) {
+      formData.append("bank_proof", bankProofFile[0])
     }
-    const response:AxiosResponse = await requestWrapper({url:submitUrl,method:"POST",data:formData})
-    
-      if(response?.status == 200){
-        alert("updated successfully");
-        location.reload();
-      }
+    const response: AxiosResponse = await requestWrapper({ url: submitUrl, method: "POST", data: formData })
+
+    if (response?.status == 200) {
+      alert("updated successfully");
+      location.reload();
+    }
   }
 
-  const uploadBankProofByPurchaseTeam = async()=>{
+  const uploadBankProofByPurchaseTeam = async () => {
     const formdata = new FormData();
-    if(PurchaseTeambankProof != null){
-      formdata?.append("bank_proof_by_purchase_team",PurchaseTeambankProof)
+    if (PurchaseTeambankProof != null) {
+      formdata?.append("bank_proof_by_purchase_team", PurchaseTeambankProof)
     }
 
-    formdata?.append("data",JSON.stringify({ref_no:ref_no,vendor_onboarding:onboarding_ref_no}));
+    formdata?.append("data", JSON.stringify({ ref_no: ref_no, vendor_onboarding: onboarding_ref_no }));
 
-    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.bankProofByPurchaseTeam,method:"POST",data:formdata});
-    if(response?.status == 200){
+    const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.bankProofByPurchaseTeam, method: "POST", data: formdata });
+    if (response?.status == 200) {
       alert("Uploaded Successfully");
       location?.reload();
-    }else{
+    } else {
       alert("Error in Uploading");
     }
   }
-  console.log(OnboardingDetail?.bank_proof?.file_name,"thiskjdvb")
+  console.log(OnboardingDetail?.bank_proof?.file_name, "thiskjdvb")
   return (
     <div className="flex flex-col bg-white rounded-lg p-3 w-full">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Bank Details</h1>
-      <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+        {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}{(isAmendment == 1 || re_release == 1) && (
+          <div
+            onClick={() => setIsDisabled((prev) => !prev)}
+            className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
+          >
+            {isDisabled ? (
+              <>
+                <Lock className="w-5 h-5 text-red-500" />
+                <span className="text-[14px] font-medium text-white hover:text-black">
+                  Enable Edit
+                </span>
+              </>
+            ) : (
+              <>
+                <Pencil className="w-5 h-5 text-green-600" />
+                <span className="text-[14px] font-medium text-white hover:text-black">
+                  Disable Edit
+                </span>
+              </>
+            )}
+          </div>
+        )}
+
       </div>
       <div className="grid grid-cols-3 gap-6 p-3">
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Bank Name <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
-          <Select disabled={isDisabled} value={paymentDetail?.bank_name ?? OnboardingDetail?.bank_name ?? ""} onValueChange={(value)=>{updatePaymentDetail("bank_name",value)}}>
+          <Select disabled={isDisabled} value={paymentDetail?.bank_name ?? OnboardingDetail?.bank_name ?? ""} onValueChange={(value) => { updatePaymentDetail("bank_name", value) }}>
             <SelectTrigger className="disabled:opacity-100">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 {
-                  bankNameDropown?.map((item,index)=>(
-                    <SelectItem key={index} value={item?.name}>{item?.bank_name}</SelectItem>
+                  bankNameDropown?.map((item, index) => (
+                    <SelectItem key={index} value={item?.name}>{item?.bank_code} - {item?.bank_name}</SelectItem>
                   ))
                 }
               </SelectGroup>
             </SelectContent>
           </Select>
-                      {errors?.bank_name && !paymentDetail?.bank_name && <span style={{ color: 'red' }}>{errors?.bank_name}</span>}
+          {errors?.bank_name && !paymentDetail?.bank_name && <span style={{ color: 'red' }}>{errors?.bank_name}</span>}
 
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             IFSC Code <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
-          <Input className="disabled:opacity-100" disabled={isDisabled} placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e)=>{updatePaymentDetail("ifsc_code",e.target.value)}}/>
-                      {errors?.ifsc_code && !paymentDetail?.ifsc_code && <span style={{ color: 'red' }}>{errors?.ifsc_code}</span>}
+          <Input className="disabled:opacity-100" disabled={isDisabled} placeholder="" value={paymentDetail?.ifsc_code ?? OnboardingDetail?.ifsc_code ?? ""} onChange={(e) => { updatePaymentDetail("ifsc_code", e.target.value) }} />
+          {errors?.ifsc_code && !paymentDetail?.ifsc_code && <span style={{ color: 'red' }}>{errors?.ifsc_code}</span>}
 
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Account Number <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
-          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={paymentDetail?.account_number ?? OnboardingDetail?.account_number ?? ""} onChange={(e)=>{updatePaymentDetail("account_number",e.target.value)}}/>
+          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={paymentDetail?.account_number ?? OnboardingDetail?.account_number ?? ""} onChange={(e) => {
+            const sanitizedValue = e.target.value.replace(/[-,/@]/g, "");
+            updatePaymentDetail("account_number", sanitizedValue);
+          }} />
           {errors?.account_number && !paymentDetail?.account_number && <span style={{ color: 'red' }}>{errors?.account_number}</span>}
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Name of Account Holder <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
-          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={paymentDetail?.name_of_account_holder ?? OnboardingDetail?.name_of_account_holder ?? ""} onChange={(e)=>{updatePaymentDetail("name_of_account_holder",e.target.value)}}/>
+          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={paymentDetail?.name_of_account_holder ?? OnboardingDetail?.name_of_account_holder ?? ""} onChange={(e) => { updatePaymentDetail("name_of_account_holder", e.target.value) }} />
           {errors?.name_of_account_holder && !paymentDetail?.name_of_account_holder && <span style={{ color: 'red' }}>{errors?.name_of_account_holder}</span>}
         </div>
 
@@ -202,7 +294,7 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,i
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Type of Account <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
-          <Select disabled={isDisabled} value={paymentDetail?.type_of_account ?? OnboardingDetail?.type_of_account ?? ""} onValueChange={(value)=>{updatePaymentDetail("type_of_account",value)}}>
+          <Select disabled={isDisabled} value={paymentDetail?.type_of_account ?? OnboardingDetail?.type_of_account ?? ""} onValueChange={(value) => { updatePaymentDetail("type_of_account", value) }}>
             <SelectTrigger className="disabled:opacity-100">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -217,16 +309,16 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,i
         </div>
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-6">
-            Currency 
+            Currency
           </h1>
-          <Select disabled={isDisabled} value={paymentDetail?.currency ?? OnboardingDetail?.currency ?? ""} onValueChange={(value)=>{updatePaymentDetail("currency",value)}}>
+          <Select disabled={isDisabled} value={paymentDetail?.currency ?? OnboardingDetail?.currency ?? ""} onValueChange={(value) => { updatePaymentDetail("currency", value) }}>
             <SelectTrigger className="disabled:opacity-100">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 {
-                  currencyDropdown?.map((item,index)=>(
+                  currencyDropdown?.map((item, index) => (
                     <SelectItem value={item?.name} key={index}>{item?.name}</SelectItem>
                   ))
                 }
@@ -239,64 +331,103 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,i
             Bank Proof (Upload Passbook Leaf/Cancelled Cheque) <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <div className="flex gap-4">
-          <Input className="disabled:opacity-100" disabled={isDisabled} placeholder=""  type="file" onChange={(e)=>{setBankProofFile(e.target.files)}} />
-          {/* file preview */}
-          {isBankFilePreview &&
+            <Input className="disabled:opacity-100" disabled={isDisabled} placeholder="" type="file" onChange={(e) => { setBankProofFile(e.target.files) }} />
+            {/* file preview */}
+            {isBankFilePreview &&
               !bankProofFile &&
               OnboardingDetail?.bank_proof?.url && (
                 <div className="flex gap-2">
                   <Link
-                  target="blank"
-                  href={OnboardingDetail?.bank_proof?.url}
-                  className="underline text-blue-300 max-w-44 truncate"
+                    target="blank"
+                    href={OnboardingDetail?.bank_proof?.url}
+                    className="underline text-blue-300 max-w-44 truncate"
                   >
                     <span>{OnboardingDetail?.bank_proof?.file_name}</span>
                   </Link>
                   <X
-                    className={`cursor-pointer ${isDisabled?"hidden":""}`}
+                    className={`cursor-pointer ${isDisabled ? "hidden" : ""}`}
                     onClick={() => {
                       setIsBankFilePreview((prev) => !prev);
                     }}
-                    />
-                    {errors?.bank_proof && !bankProofFile && <span style={{ color: 'red' }}>{errors?.bank_proof}</span>}
+                  />
+                  {errors?.bank_proof && !bankProofFile && <span style={{ color: 'red' }}>{errors?.bank_proof}</span>}
                 </div>
               )}
-              </div>
+          </div>
         </div>
 
-              <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+        <div className="flex items-end">
+          {/* <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Bank Proof By Purchase Team <span className="font-semibold">(2-Way)</span> <span className="pl-2 text-red-400 text-2xl">*</span>
-          </h1>
+          </h1> */}
           <div className="flex gap-4">
-          <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation == "Purchase Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
-          <Input className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
-          {/* file preview */}
-          {isPurchaseBankFilePreview &&
-              !PurchaseTeambankProof &&
-              OnboardingDetail?.bank_proof_by_purchase_team?.url && (
-                <div className="flex gap-2">
+            {/* <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation == "Purchase Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
+          <Input className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} /> */}
+
+            {/* Purchase Team */}
+
+            <div className={`flex items-end gap-6 col-span-1 text-nowrap ${isAccountTeam == 0 && designation == "Purchase Team" && isBankProof == 1 ? "" : "hidden"}`}>
+              <div className="flex flex-col gap-3">
+                <label className="text-black text-sm font-normal capitalize">
+                  Upload Files<span className="text-[#e60000]">*</span>
+                </label>
+                <SimpleFileUpload files={files} setFiles={setFiles} setUploadedFiles={setUploadedFiles} onNext={handleNext} buttonText={'Upload Here'} />
+              </div>
+              {/* <Button
+            className="bg-white text-black border text-md font-normal"
+            onClick={() => FileUpload()}
+          >
+            Add
+          </Button> */}
+            </div>
+
+            {/* Accounts Team */}
+
+            <div className={`flex items-end gap-6 col-span-1 text-nowrap ${isAccountTeam == 1 && designation == "Accounts Team" && isBankProof == 1 ? "" : "hidden"}`}>
+              <div className="flex flex-col gap-3">
+                <label className="text-black text-sm font-normal capitalize">
+                  Upload Files<span className="text-[#e60000]">*</span>
+                </label>
+                <SimpleFileUpload files={files} setFiles={setFiles} setUploadedFiles={setUploadedFiles} onNext={handleNext} buttonText={'Upload Here'} />
+              </div>
+              {/* <Button
+            className="bg-white text-black border text-md font-normal"
+            onClick={() => FileUpload()}
+          >
+            Add
+          </Button> */}
+            </div>
+
+            {/* file preview */}
+
+
+            <div className="flex gap-2 items-center flex-col">
+              {
+                OnboardingDetail?.bank_proofs_by_purchase_team?.map((item, index) => (
                   <Link
-                  target="blank"
-                  href={OnboardingDetail?.bank_proof_by_purchase_team?.url}
-                  className="underline text-blue-300 max-w-44 truncate"
+                    key={index}
+                    target="blank"
+                    href={item?.url}
+                    className="underline text-blue-300 max-w-44 truncate"
                   >
-                    <span>{OnboardingDetail?.bank_proof_by_purchase_team?.file_name}</span>
+                    <span>{item?.file_name}</span>
                   </Link>
-                  {/* <X
+                ))
+              }
+              {/* <X
                     className={`cursor-pointer ${isDisabled?"hidden":""}`}
                     onClick={() => {
                       setPurchaseIsBankFilePreview((prev) => !prev);
                     }}
                     /> */}
-                </div>
-              )}
-              </div>
+            </div>
+
+          </div>
         </div>
-        <div className="flex justify-start items-end">
+        {/* <div className="flex justify-start items-end">
               <Button className={`disabled:opacity-100 ${isAccountTeam == 0 && designation == "Purchase Team"?"":"hidden"}`} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
               <Button className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team"?"":"hidden"}`} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
-        </div>
+        </div> */}
 
         {/* <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -317,9 +448,11 @@ const PaymentDetail = ({ref_no,onboarding_ref_no,OnboardingDetail,company_name,i
             </div>
           </div>
         </div> */}
-        <div></div>
+        <div>
+        </div>
       </div>
-      <div className={`flex justify-end pr-4 ${isDisabled?"hidden":""} `}><Button className="bg-blue-400 hover:to-blue-400" onClick={()=>{handleSubmit()}}>Next</Button></div>
+      <div className={`flex justify-end pr-4 pb-4 ${isDisabled ? "hidden" : ""} `}><Button className="py-2" variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }}>Next</Button></div>
+      <Toaster richColors position="top-right" />
     </div>
   );
 };

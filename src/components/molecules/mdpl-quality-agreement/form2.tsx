@@ -9,7 +9,7 @@ const form1 = () => {
         <div className="bg-white text-black px-4 pb-8 pt-4 mx-auto border border-gray-300">
 
           <Header />
-          <section className='px-8 mt-6 space-y-2 z-[50] relative text-justify text-[16px]'>
+          <section className='px-8 mt-6 space-y-2 z-[50] text-justify text-[16px]'>
             <div className='ml-4 space-y-3'>
               <div className='space-x-3 flex'>
                 <span className='text-bold text-center'>b.</span>
@@ -42,7 +42,7 @@ const form1 = () => {
             </div>
           </section>
 
-          <section className='px-8 mt-6 space-y-2 z-[50] relative text-justify text-[16px]'>
+          <section className='px-8 mt-6 space-y-2 z-[50] text-justify text-[16px]'>
             <h1 className='font-bold border-b border-black w-fit'>4. Terms and Termination</h1>
             <div className='ml-4 space-y-3'>
               <div className='space-x-3 flex'>

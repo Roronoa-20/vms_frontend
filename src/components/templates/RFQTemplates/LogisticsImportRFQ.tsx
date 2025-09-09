@@ -97,8 +97,19 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
         const formdata = new FormData();
         const fullData = {
             ...formData,
-          logistic_type: "Import", non_onboarded_vendors: newVendorTable, vendors: selectedRows.vendors
+            logistic_type: "Import",
+            non_onboarded_vendors: newVendorTable,
+            vendors: selectedRows.vendors,
         };
+
+        // loop through keys
+        Object.entries(fullData).forEach(([key, value]) => {
+            if (typeof value === "object") {
+                formdata.append(key, JSON.stringify(value));
+            } else {
+                formdata.append(key, value);
+            }
+        });
         formdata.append('data', JSON.stringify(fullData));
         // Append file only if exists
         if (uploadedFiles) {
@@ -107,7 +118,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
             });
         }
         const url = `${API_END_POINTS?.CreateImportRFQ}`;
-        const response: AxiosResponse = await requestWrapper({ url: url, data:formdata, method: "POST" });
+        const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" });
         if (response?.status == 200) {
             alert("Submit Successfull");
             router.push("/dashboard");

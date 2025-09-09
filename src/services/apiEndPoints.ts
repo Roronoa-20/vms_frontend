@@ -1,5 +1,6 @@
 import { verify } from "crypto";
 import { User } from "lucide-react";
+import Dispatch from "../components/pages/Dispatch";
 
 const url = process.env.NEXT_PUBLIC_BACKEND_END;
 const API_END_POINTS = {
@@ -105,13 +106,16 @@ const API_END_POINTS = {
   ReviseRFQ: `${url}/api/method/vms.APIs.req_for_quotation.rfq.send_revised_rfq`,
   CountryExportDropdown: `${url}/api/method/vms.APIs.req_for_quotation.rfq.get_countries_with_ports`,
   fetchDestinationPortBasedonShipmentType: `${url}/api/method/vms.APIs.req_for_quotation.rfq.get_ports_by_mode_of_shipment_simple`,
-  
+  fetchSerialNumber: `${url}/api/method/vms.APIs.req_for_quotation.rfq.get_next_rfq_serial_number`,
+  fetchPortNumber: `${url}/api/method/vms.APIs.master_apis.port_master.get_port_master`,
+  fetchCountry: `${url}/api/method/vms.APIs.master_apis.get_country.get_country_master`,
+
   //Quatataion apis
   SubmitQuatation: `${url}/api/method/vms.APIs.quotation.create_quotation.create_or_update_quotation`,
   getRFQData: `${url}/api/method/vms.APIs.req_for_quotation.rfq.get_full_rfq_data`,
   fetchQuatationVendorList: `${url}/api/method/vms.APIs.quotation.quotation.get_quotations_by_rfq`,
   ApproveQuotation: `${url}/api/method/vms.APIs.quotation.quotation.approve_quotation`,
-  quotationTracking:`${url}/api/method/vms.APIs.quotation.create_quotation.get_quotation_details_by_token`,
+  quotationTracking: `${url}/api/method/vms.APIs.quotation.create_quotation.get_quotation_details_by_token`,
   NegotiateQuotation: `${url}/api/method/vms.APIs.quotation.quotation.update_final_negotiated_rate`,
   //Public apis
   ProcessToken: `${url}/api/method/vms.purchase.doctype.request_for_quotation.request_for_quotation.process_token`,
@@ -124,7 +128,7 @@ const API_END_POINTS = {
   SingleGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_grn_details_of_grn_number`,
   UserDetails: `${url}/api/method/vms.APIs.authentication_api.get_user_details.get_user_details`,
   AllPRDetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.filtering_pr_details`,
-  // getPrintFormatData:`${url}/api/method/vms.APIs.dashboard_api.po_data.get_po_details`,
+  // getPrintFormatData:`${ url } /api/method / vms.APIs.dashboard_api.po_data.get_po_details`,
   getPrintFormatData: `${url}/api/method/vms.APIs.dashboard_api.po_data.get_po_details_withformat`,
   addGSTTAbleData: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.update_vendor_onboarding_gst_details`,
   deleteGSTRow: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.delete_vendor_onboarding_gst_row`,
@@ -144,14 +148,16 @@ const API_END_POINTS = {
   asasocialformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_social_asa_form`,
   asaenvformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_env_asa_form`,
   asavendorListdashboard: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.asa_dashboard`,
-  asaonboardedvendorcount: `${url}//api/method/vms.APIs.assessment_apis.asa_dashboard.approved_vendor_count`,
+  asaonboardedvendorcount: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.approved_vendor_count`,
   asapendingVendorcount: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.pending_asa_count`,
   asapendingVendorList: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.pending_asa_vendor_list`,
   asasendremindermail: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.send_asa_reminder_email`,
   asaonboardedvendorlist: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.approved_vendor_list`,
 
   // All Approved Vendors Speicfy Detail API
-  allvendorsdetails: `${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.vendors_brief_details`,
+  allvendorsdetails: `${url}/api/method/vms.APIs.dashboard_api.vendor_brief.get_vendors_with_pagination`,
+  allvendorscompanycodedetails: `${url}/api/method/vms.APIs.dashboard_api.vendor_code_brief.get_comp_ven_code`,
+  allvendorsspecificdetails: `${url}/api/method/vms.APIs.dashboard_api.vendor_specific_data.get_vendor_complete_ecosystem`,
 
   // Company Filter API for Purchase Enquiry and Purchase Requisition
   filterpurchasegroup: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.filter_purchase_group`,
@@ -176,7 +182,22 @@ const API_END_POINTS = {
   dashboardOnboardedVendorsAccounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.approved_vendor_details_by_accounts`,
   dashboardRejectedVendorsAccounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.rejected_vendor_details_by_accounts`,
   dashboardSapErrorAcounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.sap_error_vendor_details_by_accounts`,
-  bankProofByPurchaseTeam:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`
+  bankProofByPurchaseTeam:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`,
+  DispatchStateAndPlant:`${url}/api/method/vms.APIs.dispatch.vehicle_details.get_state_and_plant_data`,
+
+  // bankProofByPurchaseTeam:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`,
+
+  // QA Dashboard APIs
+  TotalQMSDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_dashboard.total_qms_onboarding_details`,
+  PendingQMDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_dashboard.pending_qms_onboarding_details`,
+  FullyFilledQMSDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_dashboard.completed_qms_onboarding_details`,
+  DraftQMSDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_doc_dashboard.draft_qms_details`,
+  ApprovedQMSDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_doc_dashboard.approved_qms_details`,
+  RejectedQMSDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_doc_dashboard.rejected_qms_details`,
+
+  // View Vendor Profile APIs
+  getvendorsmerilcompany: `${url}/api/method/vms.APIs.vendors_dashboards_api.vendor_data.get_vendor_multi_company`,
+  getvendorsonboardingidandstatus: `${url}/api/method/vms.APIs.vendors_dashboards_api.vendor_data.get_vendor_onb_via_company`,
 };
 
 export default API_END_POINTS;

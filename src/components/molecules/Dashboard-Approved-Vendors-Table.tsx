@@ -152,9 +152,9 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
               <TableHead className="w-[100px]">Sr No.</TableHead>
-              <TableHead>Ref No.</TableHead>
-              <TableHead>Vendor Name</TableHead>
-              <TableHead className="text-center">Company Name</TableHead>
+              <TableHead className="text-center">Ref No.</TableHead>
+              <TableHead className="text-center">Vendor Name</TableHead>
+              <TableHead className="text-center">Company Code</TableHead>
               <TableHead className="text-center">Status</TableHead>
               <TableHead className="text-center">Vendor Code</TableHead>
               <TableHead className="text-center">Country</TableHead>
@@ -187,7 +187,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                   </TableCell>
                   <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
                   <TableCell>{item?.vendor_country}</TableCell>
-                  <TableCell>{item?.registered_by}</TableCell>
+                  <TableCell>{item?.registered_by_full_name}</TableCell>
                   <TableCell><Link href={`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-blue-400 hover:bg-blue-300">View</Button></Link></TableCell>
                   {!isAccountsUser && (
                     <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>

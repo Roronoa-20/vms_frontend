@@ -612,7 +612,7 @@ const DocumentDetails = ({
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                Company <span className="pl-2 text-red-400 text-2xl">*</span>
+                Meril Company <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Select
                 onValueChange={(value) => {
@@ -843,7 +843,7 @@ const DocumentDetails = ({
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                   <TableHead className="text-center">GST Type</TableHead>
-                  <TableHead className="text-center">Company</TableHead>
+                  <TableHead className="text-center">Meril Company</TableHead>
                   <TableHead className="text-center">GST State</TableHead>
                   <TableHead className="text-center">GST Pincode</TableHead>
                   <TableHead className="text-center">GST Number</TableHead>

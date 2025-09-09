@@ -17,7 +17,7 @@ type Props = {
   dashboardPOTableData?: VendorDashboardPOTableData["message"]
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
   dispatchTableData:dispatchTable["dispatches"]
-  dispatchCardCount:string
+  dispatchCardCount:string | number;
 }
 
 const VendorDashboardCards = ({ ...Props }: Props) => {

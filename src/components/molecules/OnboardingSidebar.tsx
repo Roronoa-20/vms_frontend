@@ -5,23 +5,23 @@ import React from "react";
 import OnboardingTab from "./OnboardingTab";
 
 interface Props {
-  onboarding_refno?:string,
-  refno:string,
-  isAccountsTeam?:number,
-  vendor_type?:string[]
+  onboarding_refno?: string,
+  refno: string,
+  isAccountsTeam?: number,
+  vendor_type?: string[]
 }
 
 
-const OnboardingSidebar = ({onboarding_refno,refno,isAccountsTeam,vendor_type}:Props) => {
+const OnboardingSidebar = ({ onboarding_refno, refno, isAccountsTeam, vendor_type }: Props) => {
   const param = useSearchParams();
   const tabType = param?.get("tabtype");
   const router = useRouter();
-  const isMaterialType =vendor_type && vendor_type.includes("Material Vendor")?true:false;
+  const isMaterialType = vendor_type && vendor_type.includes("Material Vendor") ? true : false;
   let tabs;
-  if(isAccountsTeam == 1){
+  if (isAccountsTeam == 1) {
     tabs = AccountsTeamOnboardingSidebar;
-  } else{
-    tabs = !isMaterialType?sidebarTabsWithoutMaterialType:OnboardingTabs
+  } else {
+    tabs = !isMaterialType ? sidebarTabsWithoutMaterialType : OnboardingTabs
   }
   return (
     <div className="p-3 flex flex-col bg-white rounded-xl gap-3 h-fit max-h-[80vh] overflow-y-scroll no-scrollbar">

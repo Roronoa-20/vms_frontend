@@ -23,7 +23,7 @@ import {
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Trash2, X } from "lucide-react";
+import { Trash2, X, Lock, Pencil } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
 import { Blob } from "buffer";
 
@@ -51,7 +51,8 @@ interface Props {
   onboarding_ref_no: string;
   OnboardingDetail: VendorOnboardingResponse["message"]["document_details_tab"];
   documentDetailDropdown: TdocumentDetailDropdown["message"]["data"];
-  isAmendment:number
+  isAmendment: number;
+  re_release: number;
 }
 
 interface gstRow {
@@ -86,7 +87,8 @@ const DocumentDetails = ({
   onboarding_ref_no,
   OnboardingDetail,
   documentDetailDropdown,
-  isAmendment
+  isAmendment,
+  re_release
 }: Props) => {
   const [BusinessType, setBusinessType] = useState<string>(
     OnboardingDetail?.gst_table[0]?.gst_ven_type
@@ -191,9 +193,6 @@ const DocumentDetails = ({
     if (str == null) {
       return false;
     }
-
-    // Return true if the GST_CODE
-    // matched the ReGex
     if (regex.test(str) == true) {
       return true;
     }
@@ -208,7 +207,6 @@ const DocumentDetails = ({
       return false;
     }
 
-    // Return true if the PAN matches the regex
     if (regex.test(str) == true) {
       return true;
     }
@@ -259,10 +257,11 @@ const DocumentDetails = ({
       data: formData,
       method: "POST",
     });
-    if (Response?.status == 200){
+    if (Response?.status == 200) {
       setDocumentDetail({})
-      alert("successfully Updated the Records");
-      location.reload();
+      alert("Documents Details Updated Successfully!!!");
+      router.push(`/view-onboarding-details?tabtype=Payment%20Detail%20%2F%20Bank%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+      // location.reload();
     }
   };
 
@@ -283,7 +282,7 @@ const DocumentDetails = ({
     }
     const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" })
     if (response?.status == 200) {
-      alert("submittes successfully");
+      alert("Submitted Successfully!!!");
       fetchGstTable();
       setSingleRow(null);
       if (fileInput?.current) {
@@ -314,7 +313,29 @@ const DocumentDetails = ({
     <div className="flex flex-col bg-white rounded-lg p-3 w-full max-h-[80vh]">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Document Details</h1>
-        <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button>
+        {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1 ? "" : "hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
+        {(isAmendment == 1 || re_release == 1) && (
+          <div
+            onClick={() => setIsDisabled((prev) => !prev)}
+            className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
+          >
+            {isDisabled ? (
+              <>
+                <Lock className="w-5 h-5 text-red-500" />
+                <span className="text-[14px] font-medium text-white hover:text-black">
+                  Enable Edit
+                </span>
+              </>
+            ) : (
+              <>
+                <Pencil className="w-5 h-5 text-green-600" />
+                <span className="text-[14px] font-medium text-white hover:text-black">
+                  Disable Edit
+                </span>
+              </>
+            )}
+          </div>
+        )}
       </div>
       <div className="overflow-y-scroll">
         <div className="grid grid-cols-3 gap-6 p-3">
@@ -403,7 +424,7 @@ const DocumentDetails = ({
               {errors?.panDocument && !documentDetails?.panDocument && <span style={{ color: 'red' }}>{errors?.panDocument}</span>}
             </div>
           </div>
-          <div className={`col-span-3 grid grid-cols-3 gap-6 ${isDisabled?"hidden":""}`}>
+          <div className={`col-span-3 grid grid-cols-3 gap-6 ${isDisabled ? "hidden" : ""}`}>
             <div className="flex flex-col">
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 GST Vendor Type <span className="pl-2 text-red-400 text-2xl">*</span>
@@ -443,30 +464,30 @@ const DocumentDetails = ({
               {errors?.gst_ven_type && !documentDetails?.gst_ven_type && <span style={{ color: 'red' }}>{errors?.gst_ven_type}</span>}
             </div>
             <div>
-                          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                            Company <span className="pl-2 text-red-400 text-2xl">*</span>
-                          </h1>
-                          <Select
-                          disabled={isDisabled}
-                            onValueChange={(value) => {
-                              setSingleRow((prev: any) => ({ ...prev, company: value }));
-                            }}
-                            value={singlerow?.company ?? ""}
-                          >
-                            <SelectTrigger className="disabled:opacity-100">
-                              <SelectValue placeholder="Select Company" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                {gstStateDropdown?.company?.map((item, index) => (
-                                  <SelectItem key={index} value={item?.name}>
-                                    {item?.description}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        </div>
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                Meril Company <span className="pl-2 text-red-400 text-2xl">*</span>
+              </h1>
+              <Select
+                disabled={isDisabled}
+                onValueChange={(value) => {
+                  setSingleRow((prev: any) => ({ ...prev, company: value }));
+                }}
+                value={singlerow?.company ?? ""}
+              >
+                <SelectTrigger className="disabled:opacity-100">
+                  <SelectValue placeholder="Select Company" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {gstStateDropdown?.company?.map((item, index) => (
+                      <SelectItem key={index} value={item?.name}>
+                        {item?.description}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 State <span className="pl-2 text-red-400 text-2xl">*</span>
@@ -528,7 +549,7 @@ const DocumentDetails = ({
             </div>
           </div>
           <div
-            className={`col-span-3 grid grid-cols-3 gap-6 ${isDisabled?"hidden":""}`}
+            className={`col-span-3 grid grid-cols-3 gap-6 ${isDisabled ? "hidden" : ""}`}
           >
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -637,10 +658,12 @@ const DocumentDetails = ({
         </div>
         <div className={`flex justify-end pr-6 mb-4`}>
           <Button
-            className={`bg-blue-400 hover:bg-blue-400 ${isDisabled ? "hidden" : ""}`}
+            variant={"nextbtn"}
+            className={`py-2 ${isDisabled ? "hidden" : ""}`}
             onClick={() => {
               handleGSTTableAdd();
             }}
+            size={"nextbtnsize"}
           >
             Add
           </Button>
@@ -656,7 +679,7 @@ const DocumentDetails = ({
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                 <TableHead className="text-center">GST Type</TableHead>
-                <TableHead className="text-center">Company</TableHead>
+                <TableHead className="text-center">Meril Company</TableHead>
                 <TableHead className="text-center">GST State</TableHead>
                 <TableHead className="text-center">GST Pincode</TableHead>
                 <TableHead className="text-center">GST Number</TableHead>

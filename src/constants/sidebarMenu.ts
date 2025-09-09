@@ -320,6 +320,19 @@ export const ASASideBarMenu = [
   },
 ];
 
+export const QASideBarMenu = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/qa-dashboard"
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "QMS Form List",
+    href:"/all-qms-forms"
+  },
+];
+
 export const AccountSideBarMenu = [
   {
     logo: "/sidebar-assests/home-logo.svg",
