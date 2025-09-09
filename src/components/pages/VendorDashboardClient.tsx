@@ -2,7 +2,7 @@
 
 import React from 'react';
 import VendorDashboardCardCounter from "../molecules/Vendor-Dashboard-Card-Count";
-import { dashboardCardData, VendorDashboardPOTableData } from '@/src/types/types';
+import { dashboardCardData, VendorDashboardPOTableData, RFQTable} from '@/src/types/types';
 
 interface VendorDashboardClientProps {
   companyDropdown: any[];
@@ -10,6 +10,7 @@ interface VendorDashboardClientProps {
   dashboardPOTableData: VendorDashboardPOTableData["message"];
   dispatchTableData: any[];
   dispatchCardCount: number;
+  rfqData: RFQTable
 }
 
 const VendorDashboardClient: React.FC<VendorDashboardClientProps> = ({
@@ -18,6 +19,7 @@ const VendorDashboardClient: React.FC<VendorDashboardClientProps> = ({
   dashboardPOTableData,
   dispatchTableData,
   dispatchCardCount,
+  rfqData
 }) => {
   return (
     <div className="p-4">
@@ -27,6 +29,7 @@ const VendorDashboardClient: React.FC<VendorDashboardClientProps> = ({
         dashboardPOTableData={dashboardPOTableData}
         dispatchTableData={dispatchTableData}
         dispatchCardCount={dispatchCardCount}
+        rfqData={rfqData}
       />
     </div>
   );

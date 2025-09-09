@@ -4,14 +4,14 @@ import { AxiosResponse } from 'axios';
 import requestWrapper from '@/src/services/apiCall';
 import { cookies } from 'next/headers';
 import { RFQDetails } from '@/src/types/RFQtype';
-import ViewLogisticsRFQDetailsPage from '../templates/ViewRFQDetails/ViewLogisticsRFQDetailsPage';
+import ViewVendorRFQDetail from '@/src/components/templates/ViewRFQDetails/ViewVendorRFQDetail';
 
 
 interface PageProps {
     refno?: string
 }
 
-export const ViewRFQ = async ({refno}: PageProps) => {
+export const ViewQuotation = async ({refno}: PageProps) => {
     const cookieStore = await cookies();
     const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");  
     console.log(refno,"refno-----------------") 
@@ -28,7 +28,7 @@ export const ViewRFQ = async ({refno}: PageProps) => {
 
     console.log(RFQData,"RFQData")
     return (
-        <ViewLogisticsRFQDetailsPage  RFQData={RFQData} refno={refno} Dropdown={Dropdown}/>
+        <ViewVendorRFQDetail  RFQData={RFQData} refno={refno} Dropdown={Dropdown}/>
         
         
     )

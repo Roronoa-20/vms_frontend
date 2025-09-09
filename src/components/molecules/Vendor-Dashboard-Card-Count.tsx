@@ -1,6 +1,6 @@
 "use client"
 import Image from "next/image";
-import { dashboardCardData, DashboardPOTableData, DashboardPOTableItem, DashboardTableType, TvendorRegistrationDropdown, VendorDashboardPOTableData } from "@/src/types/types";
+import { dashboardCardData, DashboardPOTableData, DashboardPOTableItem, DashboardTableType, TvendorRegistrationDropdown, VendorDashboardPOTableData, RFQTable } from "@/src/types/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import PurchaseAndOngoingOrders from "./VendorPurchase-and-Ongoing-Orders";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../atoms/select";
@@ -12,6 +12,7 @@ import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { dispatchTable } from "@/src/types/dispatchTableType";
 import DashboardDispatchVendorsTable from "./Dashboard-Dispatch-Vendors-Table";
+import DashboardRFQTable from "./ViewRFQ/Dashboard-Vendor-RFQ-Table";
 
 type Props = {
   cardData: dashboardCardData
