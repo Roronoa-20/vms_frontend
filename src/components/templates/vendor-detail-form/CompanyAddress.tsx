@@ -107,10 +107,7 @@ const CompanyAddress = ({
   }, [])
 
 
-
   console.log(OnboardingDetail, "htis is onboarding data")
-
-
 
   const handlePincodeChange = async (value: string) => {
     updatebillingAddress("pincode", value);
@@ -299,7 +296,7 @@ const CompanyAddress = ({
     const updatedContacts = multiple_location_table.filter((_, itemIndex) => itemIndex !== index);
     // addMultipleLocation({});
     resetMultiple();
-    updatedContacts.forEach((item:any) => addMultipleLocation(item));
+    updatedContacts.forEach((item: any) => addMultipleLocation(item));
   }
 
   return (
@@ -314,7 +311,7 @@ const CompanyAddress = ({
             Address 1 <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
-          maxLength={40}
+            maxLength={40}
             placeholder=""
             onChange={(e) => {
               updatebillingAddress("address_line_1", e.target.value);
@@ -328,7 +325,7 @@ const CompanyAddress = ({
             Address 2 <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
-          maxLength={40}
+            maxLength={40}
             placeholder=""
             onChange={(e) => {
               updatebillingAddress("address_line_2", e.target.value);
@@ -348,10 +345,18 @@ const CompanyAddress = ({
               handlePincodeChange(e.target.value);
             }}
             value={billingAddress?.pincode ?? OnboardingDetail?.billing_address?.pincode ?? ""}
-          // defaultValue={}
           />
-          {errors?.pincode && !billingAddress?.pincode && <span style={{ color: 'red' }}>{errors?.pincode}</span>}
+          {/* Helper note */}
+          <p className="text-xs text-gray-500 pt-2">
+            Enter the Pincode/Postal Code/ZipCode in the global format for your state or country. <br/>
+            <span className="underline text-black font-medium">(For Eg.- Country: <span className="underline text-blue-500 font-medium">Sweden</span>, ZipCode: <span className="underline text-blue-500 font-medium">123 45</span>)</span>
+          </p>
+
+          {errors?.pincode && !billingAddress?.pincode && (
+            <span style={{ color: "red" }}>{errors?.pincode}</span>
+          )}
         </div>
+
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-7">
             District
@@ -421,7 +426,7 @@ const CompanyAddress = ({
             Address 1
           </h1>
           <Input
-          maxLength={40}
+            maxLength={40}
             // placeholder={shippingData?.address1}
             value={shippingAddress?.address_line_1 ?? OnboardingDetail?.shipping_address?.street_1 ?? ""}
             disabled={isShippingSame ? true : false}
@@ -435,7 +440,7 @@ const CompanyAddress = ({
             Address 2
           </h1>
           <Input
-          maxLength={40}
+            maxLength={40}
             // placeholder={shippingData?.address2}
             value={shippingAddress?.address_line_2 ?? OnboardingDetail?.shipping_address?.street_2 ?? ""}
             disabled={isShippingSame ? true : false}
@@ -523,7 +528,7 @@ const CompanyAddress = ({
                 Address 1
               </h1>
               <Input
-              maxLength={40}
+                maxLength={40}
                 onChange={(e) => {
                   setMultipleAddress((prev) => ({
                     ...prev,
@@ -538,7 +543,7 @@ const CompanyAddress = ({
                 Address 2
               </h1>
               <Input
-              maxLength={40}
+                maxLength={40}
                 onChange={(e) => {
                   setMultipleAddress((prev) => ({
                     ...prev,
@@ -645,7 +650,7 @@ const CompanyAddress = ({
                     <TableCell>{item?.ma_city?.city_name}</TableCell>
                     <TableCell>{item?.ma_state?.state_name}</TableCell>
                     <TableCell>{item?.ma_country?.country_name}</TableCell>
-                    <TableCell className="flex justify-center"><Trash2 className="text-red-400 cursor-pointer" onClick={()=>{handleRowDelete(index)}}/></TableCell>
+                    <TableCell className="flex justify-center"><Trash2 className="text-red-400 cursor-pointer" onClick={() => { handleRowDelete(index) }} /></TableCell>
                   </TableRow>
                 ))}
               </TableBody>

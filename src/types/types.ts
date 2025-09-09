@@ -541,7 +541,8 @@ interface IvalidationChecks {
   is_accounts_head_approve: number,
   register_by_account_team: number,
   is_amendment: number,
-  re_release: number
+  re_release: number,
+  change_pur_detail_req_mail_to_it_head: number,
 }
 
 type CompanyAddressDetails = {
@@ -1427,6 +1428,7 @@ export type TPRInquiryTable = {
     hod: string,
     purchase_team: string,
     purchase_type: string,
+    created_by_user_name:string
   }[]
 }
 
@@ -1469,6 +1471,7 @@ export type CartDetails = {
   transfer_reason: string | null;
   transfer_status: string; // e.g., "Not Transferred"
   user: string; // email
+  created_by_user_name: string | null,
   _assign: string | null;
   _comments: string | null;
   _liked_by: string | null;

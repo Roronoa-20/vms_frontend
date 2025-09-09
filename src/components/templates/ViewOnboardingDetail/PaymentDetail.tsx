@@ -215,7 +215,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
   }
   console.log(OnboardingDetail?.bank_proof?.file_name, "thiskjdvb")
   return (
-    <div className="flex flex-col bg-white rounded-lg p-3 w-full">
+    <div className="flex flex-col bg-white rounded-lg p-2 w-full">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Bank Details</h1>
         {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}{(isAmendment == 1 || re_release == 1) && (
@@ -242,7 +242,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
         )}
 
       </div>
-      <div className="grid grid-cols-3 gap-6 p-3">
+      <div className="grid grid-cols-3 gap-6 p-2">
         <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Bank Name <span className="pl-2 text-red-400 text-2xl">*</span>

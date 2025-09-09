@@ -4,9 +4,9 @@ import { dashboardCardData, DashboardPOTableData, DashboardPOTableItem, Dashboar
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import PurchaseAndOngoingOrders from "./VendorPurchase-and-Ongoing-Orders";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../atoms/select";
-import { Command, CommandInput, CommandItem, CommandList,CommandGroup, CommandEmpty, } from "@/components/ui/command";
+import { Command, CommandInput, CommandItem, CommandList, CommandGroup, CommandEmpty, } from "@/components/ui/command";
 import { useMultipleVendorCodeStore } from "@/src/store/MultipleVendorCodeStore";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
@@ -26,6 +26,20 @@ const VendorDashboardCards = ({ ...Props }: Props) => {
 
   const [open, setOpen] = useState(false);
   const [cardCount, setCardCount] = useState(Props?.cardData);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const fetchCardCount = async () => {
@@ -94,8 +108,8 @@ const VendorDashboardCards = ({ ...Props }: Props) => {
           </SelectContent>
         </Select>
       </div> */}
-      {/* 🔥 Vendor Selector */}
-      <div className="flex justify-start pb-4 gap-6 relative w-[280px]">
+      {/* Vendor Selector */}
+      <div className="flex justify-start pb-4 gap-6 relative w-[280px]" ref={dropdownRef}>
         <button
           onClick={() => setOpen((o) => !o)}
           className="w-full flex justify-between items-center rounded-xl border px-3 py-2 shadow-sm text-sm text-gray-700 bg-white hover:border-blue-400 focus:ring-2 focus:ring-blue-500 transition-all relative"

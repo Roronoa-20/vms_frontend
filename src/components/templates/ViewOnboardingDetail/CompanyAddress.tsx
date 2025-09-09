@@ -374,6 +374,12 @@ const CompanyAddress = ({
             value={billingAddress?.pincode ?? OnboardingDetail?.billing_address?.pincode ?? ""}
           // defaultValue={}
           />
+          {!isDisabled && (
+            <p className="text-xs text-gray-500 pt-2">
+              Enter the Pincode/Postal Code/ZipCode in the global format for your state or country. <br />
+              <span className="underline text-black font-medium">(For Eg.- Country: <span className="underline text-blue-500 font-medium">Sweden</span>, ZipCode: <span className="underline text-blue-500 font-medium">123 45</span>)</span>
+            </p>
+          )}
           {errors?.pincode && !billingAddress?.pincode && <span style={{ color: 'red' }}>{errors?.pincode}</span>}
         </div>
         <div className="col-span-2">

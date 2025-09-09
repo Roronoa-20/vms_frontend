@@ -200,6 +200,12 @@ const API_END_POINTS = {
   getvendorsonboardingidandstatus: `${url}/api/method/vms.APIs.vendors_dashboards_api.vendor_data.get_vendor_onb_via_company`,
   submitVehicalDispatchForm:`${url}/api/method/vms.APIs.dispatch.vehicle_details.create_vehicle_details`,
   deleteDispatchVehicalItem:`${url}/api/method/vms.APIs.dispatch.vehicle_details.remove_vehicle_from_dispatch`,
+
+  // Notifications APIs
+  notificationlist: `${url}/api/method/vms.APIs.notification_chatroom.get_notification.get_notifications`,
+  detailednotification: `${url}/api/method/vms.APIs.notification_chatroom.get_notification.get_notification_detail`,
+  markallnotificationread: `${url}/api/method/vms.APIs.notification_chatroom.get_notification.mark_all_notifications_read`,
+  purchasingdetailschangeemail: `${url}/api/method/vms.APIs.vendor_onboarding.vendors_doc_changes_req_email.email_to_change_pur_detail`,
 }
 
 export default API_END_POINTS;

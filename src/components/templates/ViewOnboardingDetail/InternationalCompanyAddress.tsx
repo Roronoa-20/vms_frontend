@@ -153,7 +153,7 @@ const CompanyAddress = ({
     const submitResponse: AxiosResponse = await requestWrapper({ url: submitUrl, method: "POST", data: formData });
     if (submitResponse?.status == 200)
       alert("International Company Address Updated Successfully!!!");
-      router.push(`/view-onboarding-details?tabtype=Document%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    router.push(`/view-onboarding-details?tabtype=Document%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   };
 
   const handleRowDelete = (index: number) => {
@@ -262,6 +262,12 @@ const CompanyAddress = ({
             }}
             value={formdata?.billing_address?.international_zipcode ?? OnboardingDetail?.billing_address?.international_zipcode ?? ""}
           />
+          {!isDisabled && (
+          <p className="text-xs text-gray-500 pt-2">
+            Enter the Pincode/Postal Code/ZipCode in the global format for your state or country. <br/>
+            <span className="underline text-black font-medium">(For Eg.- Country: <span className="underline text-blue-500 font-medium">Sweden</span>, ZipCode: <span className="underline text-blue-500 font-medium">123 45</span>)</span>
+          </p>
+          )}
           {errors?.international_zipcode && <span style={{ color: 'red' }}>{errors?.international_zipcode}</span>}
         </div>
 

@@ -30,7 +30,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 
 type Props = {
   dashboardTableData?: TPRInquiryTable["cart_details"]
-  companyDropdown: { name: string }[]
+  companyDropdown: { description: string; name: string; }[]
   // dashboardTableDatawithpagination?: TPRInquiryTable[]
 }
 
@@ -98,29 +98,22 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Purchase Inquiry
+            Purchase Enquiry
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." />
             <Select>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup className="w-full">
                   {
                     companyDropdown?.map((item, index) => (
-                      <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                      <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
                     ))
                   }
                 </SelectGroup>
-              </SelectContent>
-            </Select>
-            <Select>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
               </SelectContent>
             </Select>
           </div>
@@ -129,41 +122,52 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
           <Table className="">
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                <TableHead className="">Sr No.</TableHead>
-                <TableHead className="text-center">Ref No.</TableHead>
-                <TableHead className="text-center">Cart Date</TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">Sr No.</TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">Ref No.</TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">Cart Date</TableHead>
                 {designation !== "Enquirer" && (
-                  <TableHead className="text-center">Created By</TableHead>
+                  <TableHead className="text-center text-black whitespace-nowrap">Created By</TableHead>
                 )}
 
-                <TableHead className="text-center">Transfer Status</TableHead>
-                <TableHead className="text-center">Category Type</TableHead>
-                <TableHead className="text-center">Purchase Request Type</TableHead>
-                <TableHead className="text-center">Purchase Team Status</TableHead>
-                <TableHead className="text-center">HOD Status</TableHead>
-                <TableHead className="text-center">Actions</TableHead>
-                <TableHead className={`text-center`}></TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">Transfer Status</TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">Category Type</TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">Purchase Request Type</TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">Purchase Team Status</TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">HOD Status</TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">Actions</TableHead>
+                <TableHead className={`text-center text-black whitespace-nowrap`}>Raise PR</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody className="text-center">
+            <TableBody className="text-center text-black">
               {table ? (
                 table?.map((item, index) => {
                   const url = item?.asked_to_modify ? `/pr-inquiry?refno=${item?.name}` : `/view-pr-inquiry?refno=${item?.name}`;
                   return (
                     <TableRow key={index}>
-                      <TableCell className="font-medium text-center">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
-                      <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
-                      <TableCell className="text-nowrap text-center">{item?.cart_date ? formatDate(new Date(item.cart_date)) : "-"}</TableCell>
+                      <TableCell className="font-medium text-center whitespace-nowrap">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
+                      <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.name}</TableCell>
+                      <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.cart_date ? formatDate(new Date(item.cart_date)) : "-"}</TableCell>
                       {designation !== "Enquirer" && (
-                        <TableCell className="text-nowrap text-center">{item?.user}</TableCell>
+                        <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.created_by_user_name}</TableCell>
                       )}
-                      <TableCell className="text-nowrap text-center">{item?.transfer_status}</TableCell>
-                      <TableCell className="text-nowrap text-center">{item?.category_type}</TableCell>
-                      <TableCell className="text-nowrap text-center">{item?.purchase_type}</TableCell>
-                      <TableCell className="text-nowrap text-center">{item?.purchase_team_approval_status}</TableCell>
-                      <TableCell className="text-nowrap text-center">{item?.hod_approval_status}</TableCell>
-                      <TableCell className="text-nowrap text-center"><Link href={url}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
-                      <TableCell className={`text-nowrap text-center ${item?.hod_approved && item?.purchase_team_approved && item?.user == user ? "" : "hidden"}`}><Link href={`/pr-request?cart_Id=${item?.name}`}><Button className="bg-blue-400 hover:bg-blue-400">PR</Button></Link></TableCell>
+                      <TableCell className="text-center whitespace-nowrap">
+                        <div
+                          className={`px-2 py-3 rounded-xl uppercase ${item?.transfer_status === "Not Transferred"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : item?.transfer_status === "Transferred"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                            }`}
+                        >
+                          {item?.transfer_status}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.category_type}</TableCell>
+                      <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.purchase_type}</TableCell>
+                      <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.purchase_team_approval_status}</TableCell>
+                      <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.hod_approval_status}</TableCell>
+                      <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={url}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
+                      <TableCell className={`text-nowrap text-center whitespace-nowrap ${item?.hod_approved && item?.purchase_team_approved && item?.user == user ? "" : "hidden"}`}><Link href={`/pr-request?cart_Id=${item?.name}`}><Button className="bg-blue-400 hover:bg-blue-400">PR</Button></Link></TableCell>
                       {/* <TableCell>
                   <div
                     className={`px-2 py-3 rounded-xl ${item?.status === "pending"
