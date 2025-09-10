@@ -312,7 +312,10 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
           <MultiSelect
             options={purchaseGroupDropdown}
             value={purchaseGroup}
-            onChange={(value: any) => setPurchaseGroup(value)}
+            onChange={(value: any) => {
+              setPurchaseGroup(value);
+              setSingleTableData((prev: any) => ({ ...prev, purchase_group: value?.value }));
+            }}
             instanceId="purchase-group"
             required
             className="text-[12px] text-black"
@@ -345,7 +348,10 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
           <MultiSelect
             options={termsOfPaymentDropdown}
             value={termsOfPayment}
-            onChange={(value: any) => setTermsOfPayment(value)}
+            onChange={(value: any) => {
+              setTermsOfPayment(value);
+              setSingleTableData((prev: any) => ({ ...prev, terms_of_payment: value?.value }));
+            }}
             instanceId="terms-of-payment"
             required
             className="text-[12px] text-black"
@@ -421,7 +427,10 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
           <MultiSelect
             options={reconciliationDropdown}
             value={reconciliation}
-            onChange={(value: any) => setReconciliation(value)}
+            onChange={(value: any) => {
+              setReconciliation(value);
+              setSingleTableData((prev: any) => ({ ...prev, reconciliation_account: value?.value }));
+            }}
             instanceId="reconciliation-account"
             required
             className="text-[12px] text-black"
