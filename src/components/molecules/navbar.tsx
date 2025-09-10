@@ -97,7 +97,7 @@ const Navbar = () => {
   }
 
   return (
-    <div className="bg-white w-full shadow-sm flex justify-between p-3 items-center sticky top-0 z-50">
+    <div className="bg-white w-full shadow-sm flex justify-between p-2 items-center sticky top-0 z-50">
       <h1
         className={`${pathname === "/view-asa-form"
           ? "text-[20px] font-medium"
@@ -107,7 +107,7 @@ const Navbar = () => {
         {heading}
       </h1>
 
-      <div className="flex items-center gap-5 relative">
+      <div className="flex items-center gap-3 relative">
         {/* Notification Bell */}
         <div
           ref={bellRef}
@@ -168,9 +168,9 @@ const Navbar = () => {
         )}
 
         {/* User Info */}
-        <div className="flex flex-col gap-1 justify-center items-end">
-          <h1 className="text-sm font-semibold">{name}</h1>
-          <h1 className="text-gray-500 text-xs">{designation}</h1>
+        <div className="flex flex-col justify-center items-end">
+          <h1 className="text-[16px] font-semibold">{name}</h1>
+          <h1 className="text-gray-500 text-[15px]">{designation}</h1>
         </div>
 
         {/* Profile Icon */}

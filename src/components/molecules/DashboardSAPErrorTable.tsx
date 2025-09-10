@@ -80,7 +80,7 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
   }, [debouncedSearchName, currentPage])
 
   const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
+    const {name, value } = e.target;
     console.log(value, "this is search name")
     setSearchVendor(value);
   };
@@ -160,14 +160,14 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
           <Table className="">
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                <TableHead className="">Sr No.</TableHead>
-                <TableHead className="text-center">Ref No.</TableHead>
-                <TableHead className="text-center">Vendor Name</TableHead>
-                <TableHead className="text-center">Company</TableHead>
-                <TableHead className="text-center whitespace-nowrap">Register By</TableHead>
-                <TableHead className="text-center">SAP Error Message</TableHead>
-                <TableHead className={`text-center`}>Action</TableHead>
-                <TableHead className="text-center">View Details</TableHead>
+                <TableHead className="text-center text-black">Sr No.</TableHead>
+                <TableHead className="text-center text-black">Ref No.</TableHead>
+                <TableHead className="text-center text-black">Vendor Name</TableHead>
+                <TableHead className="text-center text-black">Company</TableHead>
+                <TableHead className="text-center whitespace-nowrap text-black">Register By</TableHead>
+                <TableHead className="text-center text-black">SAP Error Message</TableHead>
+                <TableHead className={`text-center text-black`}>Action</TableHead>
+                <TableHead className="text-center text-black">View Details</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="text-center">

@@ -28,7 +28,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "../Pagination";
 type Props = {
   dashboardTableData?: RFQTable["data"]
-  companyDropdown: { name: string }[]
+  companyDropdown: { description:string; name: string }[]
 }
 
 
@@ -58,13 +58,13 @@ const DashboardRFQTable = ({ dashboardTableData, companyDropdown }: Props) => {
 
   useEffect(() => {
     fetchTable();
-  }, [debouncedSearchName,currentPage])
+  }, [debouncedSearchName, currentPage])
 
   const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-      const { name, value } = e.target;
-      console.log(value, "this is search name")
-      setSearch(value);
-    }
+    const { name, value } = e.target;
+    console.log(value, "this is search name")
+    setSearch(value);
+  }
 
 
   const fetchTable = async () => {
@@ -89,35 +89,21 @@ const DashboardRFQTable = ({ dashboardTableData, companyDropdown }: Props) => {
             RFQ List
           </h1>
           <div className="flex gap-4">
-            <Input placeholder="Search..." onChange={(e)=>{handlesearchname(e)}}/>
-            {/* <Select>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Select Company" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup className="w-full">
-            {
-              companyDropdown?.map((item,index)=>(
-                <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-              ))
-            }
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-      <Select>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Status" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectItem value="apple">Apple</SelectItem>
-            <SelectItem value="banana">Banana</SelectItem>
-            <SelectItem value="blueberry">Blueberry</SelectItem>
-            <SelectItem value="grapes">Grapes</SelectItem>
-            <SelectItem value="pineapple">Pineapple</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select> */}
+            <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
+            <Select>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select Company" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup className="w-full">
+                  {
+                    companyDropdown?.map((item, index) => (
+                      <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                    ))
+                  }
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <div className="overflow-y-scroll max-h-[55vh]">

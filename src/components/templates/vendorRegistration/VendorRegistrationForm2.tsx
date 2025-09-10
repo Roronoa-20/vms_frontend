@@ -478,7 +478,7 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
           </Table>
         </div>
       )}
-      <div className="flex justify-end gap-3 mb-3">
+      <div className="flex justify-end gap-3">
         <Button className="py-2.5" variant="backbtn" size="backbtnsize" onClick={() => { handleCancel() }}>Cancel</Button>
         <Button id="submitButton" type="submit" className="py-2.5" variant="nextbtn" size="nextbtnsize" onClick={() => { handleSubmit() }}>Submit</Button>
       </div>

@@ -227,19 +227,19 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
           {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-              <TableHead className="w-[100px]">Sr No.</TableHead>
-              <TableHead>PO No</TableHead>
-              <TableHead>Vendor Name</TableHead>
-              <TableHead className="text-center">PO Date</TableHead>
-              <TableHead className="text-center">Delivery Date</TableHead>
-              <TableHead className="text-center">PO Amount</TableHead>
-              <TableHead className="text-center">Status</TableHead>
-              <TableHead className="text-center">Early Delivery</TableHead>
-              <TableHead className="text-center">View details</TableHead>
-              <TableHead className="text-center">Send Email</TableHead>
+              <TableHead className="text-center text-black">Sr No.</TableHead>
+              <TableHead className="text-center text-black">PO No</TableHead>
+              <TableHead className="text-center text-black">Vendor Name</TableHead>
+              <TableHead className="text-center text-black">PO Date</TableHead>
+              <TableHead className="text-center text-black">Delivery Date</TableHead>
+              <TableHead className="text-center text-black">PO Amount</TableHead>
+              <TableHead className="text-center text-black">Status</TableHead>
+              <TableHead className="text-center text-black">Early Delivery</TableHead>
+              <TableHead className="text-center text-black">View details</TableHead>
+              <TableHead className="text-center text-black">Send Email</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className="text-center">
+          <TableBody className="text-center text-black">
             {tableData ? (
               tableData?.map((item, index) => (
                 <TableRow key={index}>
@@ -267,10 +267,11 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                   <TableCell>
                     <Button
                       variant={"outline"}
+                      className="bg-blue-400 hover:bg-blue-300 text-white font-medium"
                       // onClick={() => downloadPoDetails(item?.name)}
                       onClick={() => router.push(`/view-po?po_name=${item?.name}&email_to=${item?.email}`)}
                     >
-                      view
+                      View
                     </Button>
                   </TableCell>
                   <TableCell><Button onClick={() => { setIsEmailDialog(true); setEmail((prev: any) => ({ ...prev, to: item?.email })) }} className="bg-blue-400 hover:bg-blue-300">Send</Button></TableCell>

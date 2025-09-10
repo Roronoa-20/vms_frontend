@@ -31,12 +31,12 @@ const PopUp = ({ handleClose,children,headerText,isSubmit,Submitbutton, classnam
       </div>
       {children}
       <div className="flex justify-end pt-2 gap-4 w-full">
-        <Button className="bg-white text-black border text-xs font-normal px-8 rounded-md hover:bg-white" onClick={handleClose}>
+        <Button className="py-2" variant={"backbtn"} size={"backbtnsize"} onClick={handleClose}>
           Back
         </Button>
         {
           isSubmit &&
-          <Button className={`text-white text-sm font-normal border px-4`} onClick={() => {Submitbutton && Submitbutton()}}>
+          <Button className={`py-2`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => {Submitbutton && Submitbutton()}}>
           Submit
         </Button>
         }

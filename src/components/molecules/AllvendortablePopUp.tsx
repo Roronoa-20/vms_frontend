@@ -43,7 +43,7 @@ const PopUp = ({ handleClose, children, headerText, isSubmit, Submitbutton, clas
         {/* Footer */}
         <div className="flex justify-end pt-4 gap-3 border-t mt-4">
           <Button
-            className="bg-white text-gray-700 border text-sm px-5 rounded-md hover:bg-gray-100"
+            className="py-2"
             onClick={handleClose}
             variant="backbtn"
             size="backbtnsize"

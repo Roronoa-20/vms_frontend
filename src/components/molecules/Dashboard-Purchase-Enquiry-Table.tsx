@@ -164,8 +164,32 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                       </TableCell>
                       <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.category_type}</TableCell>
                       <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.purchase_type}</TableCell>
-                      <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.purchase_team_approval_status}</TableCell>
-                      <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.hod_approval_status}</TableCell>
+                      {/* <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.purchase_team_approval_status}</TableCell> */}
+                      <TableCell className="text-center whitespace-nowrap">
+                        <div
+                          className={`px-2 py-3 rounded-xl uppercase ${item?.purchase_team_approval_status === "Pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : item?.purchase_team_approval_status === "Approved"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                            }`}
+                        >
+                          {item?.purchase_team_approval_status}
+                        </div>
+                      </TableCell>
+                      {/* <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.hod_approval_status}</TableCell> */}
+                      <TableCell className="text-center whitespace-nowrap">
+                        <div
+                          className={`px-2 py-3 rounded-xl uppercase ${item?.hod_approval_status === "Pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : item?.hod_approval_status === "Approved"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                            }`}
+                        >
+                          {item?.hod_approval_status}
+                        </div>
+                      </TableCell>
                       <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={url}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
                       <TableCell className={`text-nowrap text-center whitespace-nowrap ${item?.hod_approved && item?.purchase_team_approved && item?.user == user ? "" : "hidden"}`}><Link href={`/pr-request?cart_Id=${item?.name}`}><Button className="bg-blue-400 hover:bg-blue-400">PR</Button></Link></TableCell>
                       {/* <TableCell>

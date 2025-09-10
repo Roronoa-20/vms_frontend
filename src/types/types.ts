@@ -222,7 +222,8 @@ export type VendorOnboarding = {
   accounts_team: string,
   company: string,
   sent_qms_form_link: boolean,
-  qms_form_filled: boolean
+  qms_form_filled: boolean,
+  time_diff: string
 };
 
 type MultipleCompanyData = {

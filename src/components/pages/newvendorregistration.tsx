@@ -14,6 +14,7 @@ interface Props {
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"];
   incoTermsDropdown: TvendorRegistrationDropdown["message"]["data"]["incoterm_master"];
   currencyDropdown: TvendorRegistrationDropdown["message"]["data"]["currency_master"];
+  handleCancel?: () => void;
 }
 
 export interface NewVendorFormData {
@@ -38,7 +39,7 @@ type OptionType = {
   label: string;
 };
 
-const NewVendorRegistration = ({ ...Props }: Props) => {
+const NewVendorRegistration = ({ handleCancel, ...Props }: Props) => {
   const [formData, setFormData] = useState<Partial<NewVendorFormData>>({});
   const [multiVendor, setMultiVendor] = useState<string[]>([]);
   const [tableData, setTableData] = useState<TtableData[]>([]);
@@ -140,8 +141,10 @@ const NewVendorRegistration = ({ ...Props }: Props) => {
     }
   };
 
-  const handleCancel = async () => {
-    router.push("/dashboard");
+  const onCancel = () => {
+    if (handleCancel) {
+      handleCancel();
+    }
   };
 
   return (
@@ -179,7 +182,7 @@ const NewVendorRegistration = ({ ...Props }: Props) => {
         tableData={tableData}
         setTableData={setTableData}
         handleSubmit={handleSubmit}
-        handleCancel={handleCancel}
+        handleCancel={onCancel}
         multiVendor={multiVendor}
       />
     </div>

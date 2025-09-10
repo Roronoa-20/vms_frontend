@@ -32,14 +32,15 @@ interface RowData {
     state: string;
     country: string;
     pincode: string;
-    trc_certificate_no: string;
-    msme_type: string;
-    udyam_no: string;
-    enterprise_reg_no: string;
-    iec_code: string;
+    // trc_certificate_no: string;
+    // msme_type: string;
+    // udyam_no: string;
+    // enterprise_reg_no: string;
+    // iec_code: string;
     bank_name: string;
     ifsc_code: string;
     bank_file: string;
+    sap_client_code: string;
 }
 
 const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
@@ -47,14 +48,14 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
     const [isVendorCodeDialog, setIsVendorCodeDialog] = React.useState(false);
     const [selectedVendorCodes, setSelectedVendorCodes] = React.useState<CompanyVendorCodeRecord[] | null>(null);
     const [copiedRow, setCopiedRow] = React.useState<RowData | null>(null);
-
+    const [isExtendDialogOpen, setIsExtendDialogOpen] = React.useState(false);
     const [currentPage, setCurrentPage] = React.useState(1);
     const recordPerPage = 10;
 
     const rows: RowData[] = vendors.flatMap((vendor) => {
         const companyData = vendor.multiple_company_data?.length
             ? vendor.multiple_company_data.filter((c) => c.company_name === activeTab)
-            : [{ company_name: activeTab, company_display_name: activeTab, company_vendor_code: "N.A." }];
+            : [{ company_name: activeTab, company_display_name: activeTab, company_vendor_code: "N.A.", sap_client_code: "N.A." }];
 
         return companyData.map((c) => {
             const approvedRecord = vendor.vendor_onb_records?.find(
@@ -76,14 +77,15 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                 state: c.company_display_name || "N.A.",
                 country: vendor.country || "N.A.",
                 pincode: vendor.mobile_number || "N.A.",
-                trc_certificate_no: "",
-                msme_type: "",
-                udyam_no: "",
-                enterprise_reg_no: "",
-                iec_code: "",
+                // trc_certificate_no: "",
+                // msme_type: "",
+                // udyam_no: "",
+                // enterprise_reg_no: "",
+                // iec_code: "",
                 bank_name: vendor.bank_details?.bank_name || "N.A.",
                 ifsc_code: vendor.bank_details?.ifsc_code || "N.A.",
                 bank_file: vendor.bank_details?.bank_proof || "",
+                sap_client_code: c.sap_client_code || "N.A.",
             };
         });
     });
@@ -100,19 +102,19 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
         // { key: "ref_no", label: "Ref No" },
         // { key: "vendor_code", label: "Vendor Code" },
         { key: "vendor_name", label: "Vendor Name" },
+        { key: "country", label: "Country" },
         { key: "office_email_primary", label: "Official Email" },
         { key: "pan_number", label: "PAN Number" },
         { key: "pan_file", label: "PAN File", type: "file" },
         { key: "gst_no", label: "GST Number" },
         { key: "gst_file", label: "GST File", type: "file" },
         { key: "state", label: "State" },
-        { key: "country", label: "Country" },
         { key: "pincode", label: "Pincode/ZipCode" },
-        { key: "trc_certificate_no", label: "TRC Certificate No." },
-        { key: "msme_type", label: "MSME Type" },
-        { key: "udyam_no", label: "Udyam No." },
-        { key: "enterprise_reg_no", label: "Entity Registration No." },
-        { key: "iec_code", label: "IEC Code" },
+        // { key: "trc_certificate_no", label: "TRC Certificate No." },
+        // { key: "msme_type", label: "MSME Type" },
+        // { key: "udyam_no", label: "Udyam No." },
+        // { key: "enterprise_reg_no", label: "Entity Registration No." },
+        // { key: "iec_code", label: "IEC Code" },
         { key: "bank_name", label: "Bank Name" },
         { key: "ifsc_code", label: "IFSC Code" },
         { key: "bank_file", label: "Bank File", type: "file" },
@@ -181,13 +183,24 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
         fetchDropdownData();
     }, [dropdownUrl]);
 
-    const vendorTitleDropdown = dropdownData?.vendor_title;
     const vendorTypeDropdown = dropdownData?.vendor_type;
-    const countryDropdown = dropdownData?.country_master;
     const companyDropdown = dropdownData?.company_master;
     const incoTermsDropdown = dropdownData?.incoterm_master;
     const currencyDropdown = dropdownData?.currency_master;
 
+    const handleCopy = (row: RowData) => {
+        const allowedCompanyNames = ["1012", "1022", "1000", "1025", "1030"];
+
+        if (
+            row.company_code &&
+            row.sap_client_code === "100" &&
+            allowedCompanyNames.includes(row.company_code)
+        ) {
+            setCopiedRow(row);
+        } else {
+            setCopiedRow(row);
+        }
+    };
 
 
     return (
@@ -196,74 +209,6 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">Vendors List</h2>
 
             <div className="overflow-x-auto rounded-xl shadow-md border">
-                {/* <Table className="min-w-full text-sm">
-                    <TableHeader className="sticky top-0 z-10 bg-blue-100">
-                        <TableRow>
-                            <TableHead className="text-black text-center">Sr. No.</TableHead>
-                            {columns.map((col, index) => (
-                                <React.Fragment key={col.key}>
-                                    <TableHead className="text-black text-center whitespace-nowrap">
-                                        {col.label}
-                                    </TableHead>
-                                    {index === 2 && (
-                                        <TableHead className="text-black text-center whitespace-nowrap">
-                                            Vendor Codes
-                                        </TableHead>
-                                    )}
-                                </React.Fragment>
-                            ))}
-                            <TableHead className="text-black text-center whitespace-nowrap">
-                                View Details
-                            </TableHead>
-                        </TableRow>
-                    </TableHeader>
-
-                    <TableBody>
-                        {paginatedRows.map((row, idx) => (
-                            <TableRow
-                                key={`${row.name}-${row.company_code}-${idx}`}
-                                className={`${idx % 2 === 0 ? "bg-gray-50" : "bg-white"} ${copiedRow?.name === row.name && copiedRow?.company_code === row.company_code ? "bg-yellow-100 border-2 border-yellow-400" : "hover:bg-blue-50"}`}
-                            >
-                                <TableCell className="text-center whitespace-nowrap">
-                                    {startIdx + idx + 1}
-                                </TableCell>
-                                {columns.map((col, index) => (
-                                    <React.Fragment key={col.key}>
-                                        <TableCell className="text-center whitespace-nowrap">
-                                            {renderCell(row, col)}
-                                        </TableCell>
-                                        {index === 2 && (
-                                            <TableCell className="text-center">
-                                                <Button
-                                                    variant="outline"
-                                                    onClick={() => fetchVendorCodes(row.name, row.company_code)}
-                                                    className="whitespace-nowrap bg-[#5291CD] text-white text-sm rounded-[12px]"
-                                                >
-                                                    View
-                                                </Button>
-                                            </TableCell>
-                                        )}
-                                    </React.Fragment>
-                                ))}
-                                <TableCell className="text-center">
-                                    <Button
-                                        onClick={() => handleView(row.ref_no, row.name)}
-                                        className="whitespace-nowrap bg-[#5291CD] text-white text-xs rounded-[12px]"
-                                    >
-                                        View
-                                    </Button>
-                                </TableCell>
-                                <Button
-                                    onClick={() => setCopiedRow(row)}
-                                    className="whitespace-nowrap bg-green-600 text-white text-xs rounded-[12px]"
-                                >
-                                    Copy
-                                </Button>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table> */}
-
                 <Table className="min-w-full text-sm border-collapse">
                     <TableHeader className="sticky top-0 z-10 bg-blue-100">
                         <TableRow>
@@ -288,9 +233,10 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                             </TableHead>
                         </TableRow>
                     </TableHeader>
-
+                    {/* Table Body */}
                     <TableBody>
-                        {paginatedRows.map((row, idx) => (
+                        {/* {paginatedRows.map((row, idx) => ( */}
+                        {(copiedRow ? [copiedRow] : paginatedRows).map((row, idx) => (
                             <TableRow
                                 key={`${row.name}-${row.company_code}-${idx}`}
                                 className={`${idx % 2 === 0 ? "bg-gray-50" : "bg-white"} ${copiedRow?.name === row.name && copiedRow?.company_code === row.company_code
@@ -330,14 +276,40 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                         View
                                     </Button>
                                 </TableCell>
-                                <TableCell className="text-center">
+                                {/* <TableCell className="text-center">
                                     <Button
                                         onClick={() => setCopiedRow(row)}
                                         className="whitespace-nowrap bg-green-600 text-white text-sm rounded-xl px-3 py-1"
                                     >
                                         Copy
                                     </Button>
+                                </TableCell> */}
+                                <TableCell className="text-center">
+                                    {["1012", "1022", "1000", "1025", "1030"].includes(row.company_code) ? (
+                                        <div className="flex gap-2 justify-center">
+                                            <Button
+                                                onClick={() => setIsExtendDialogOpen(true)}
+                                                className="bg-blue-600 text-white text-sm rounded-xl px-3 py-1"
+                                            >
+                                                Extend
+                                            </Button>
+                                            <Button
+                                                onClick={() => handleCopy(row)}
+                                                className="bg-green-600 text-white text-sm rounded-xl px-3 py-1"
+                                            >
+                                                Copy
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <Button
+                                            onClick={() => handleCopy(row)}
+                                            className="bg-green-600 text-white text-sm rounded-xl px-3 py-1"
+                                        >
+                                            Copy
+                                        </Button>
+                                    )}
                                 </TableCell>
+
                             </TableRow>
                         ))}
                     </TableBody>
@@ -356,15 +328,16 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
             </div>
 
             {copiedRow && (
-                <div className="mt-6 p-4 border rounded-lg shadow bg-gray-50">
-                    <h3 className="text-lg font-semibold mb-4 text-green-700">
-                        Copy Vendor Registration for: {copiedRow.vendor_name} ({copiedRow.company_code})
+                <div className="mt-6 border rounded-lg shadow bg-gray-50">
+                    <h3 className="text-lg text-center font-medium pl-2 pt-2">
+                        Extend Vendor Registration for: <span className="text-green-700 font-semibold underline italic">{copiedRow.vendor_name}</span>
                     </h3>
                     <NewVendorRegistration
-                        vendorTypeDropdown={vendorTypeDropdown || []}   // pass real props here
-                        companyDropdown={companyDropdown || []}      // pass real props here
-                        incoTermsDropdown={incoTermsDropdown || []}    // pass real props here
-                        currencyDropdown={currencyDropdown || []}     // pass real props her
+                        vendorTypeDropdown={vendorTypeDropdown || []}
+                        companyDropdown={companyDropdown || []}
+                        incoTermsDropdown={incoTermsDropdown || []}
+                        currencyDropdown={currencyDropdown || []}
+                        handleCancel={() => setCopiedRow(null)}
                     />
                 </div>
             )}
@@ -382,11 +355,11 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                 {selectedVendorCodes.map((company) => (
                                     <React.Fragment key={company.company_info.company_code}>
                                         <TableRow className="bg-[#5291CD] text-white font-semibold sticky top-0">
-                                            <TableCell colSpan={3}>
+                                            <TableCell colSpan={3} className="hover:bg-[#5291CD]">
                                                 Company Code: {company.company_info.company_code}
                                             </TableCell>
                                         </TableRow>
-                                        <TableRow className="bg-gray-200 font-semibold">
+                                        <TableRow className="bg-gray-200 hover:bg-gray-200 font-semibold">
                                             <TableHead>State</TableHead>
                                             <TableHead>GST No</TableHead>
                                             <TableHead>Vendor Code</TableHead>
@@ -405,6 +378,50 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                 ))}
                             </TableBody>
                         </Table>
+                    </div>
+                </PopUp>
+            )}
+            {isExtendDialogOpen && (
+                <PopUp
+                    handleClose={() => setIsExtendDialogOpen(false)}
+                    headerText="Extend Vendor"
+                    classname="overflow-y-auto md:max-w-lg"
+                >
+                    <div className="space-y-4 p-4">
+                        <div>
+                            <label className="block text-sm font-medium">Field 1</label>
+                            <input
+                                type="text"
+                                className="w-full border rounded px-2 py-1"
+                                placeholder="Enter first value"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium">Field 2</label>
+                            <input
+                                type="text"
+                                className="w-full border rounded px-2 py-1"
+                                placeholder="Enter second value"
+                            />
+                        </div>
+                        <div className="flex justify-end gap-2">
+                            <Button
+                                variant="outline"
+                                onClick={() => setIsExtendDialogOpen(false)}
+                                className="bg-gray-400 text-white"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    // 🔹 Save / API call for Extend
+                                    setIsExtendDialogOpen(false);
+                                }}
+                                className="bg-blue-600 text-white"
+                            >
+                                Save
+                            </Button>
+                        </div>
                     </div>
                 </PopUp>
             )}

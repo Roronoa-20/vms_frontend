@@ -58,13 +58,13 @@ const DashboardRFQTable = ({ dashboardTableData, companyDropdown }: Props) => {
 
   useEffect(() => {
     fetchTable();
-  }, [debouncedSearchName,currentPage])
+  }, [debouncedSearchName, currentPage])
 
   const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-      const { name, value } = e.target;
-      console.log(value, "this is search name")
-      setSearch(value);
-    }
+    const { name, value } = e.target;
+    console.log(value, "this is search name")
+    setSearch(value);
+  }
 
 
   const fetchTable = async () => {
@@ -89,7 +89,7 @@ const DashboardRFQTable = ({ dashboardTableData, companyDropdown }: Props) => {
             RFQ Comparision
           </h1>
           <div className="flex gap-4">
-            <Input placeholder="Search..." onChange={(e)=>{handlesearchname(e)}}/>
+            <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
             {/* <Select>
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Select Company" />
@@ -125,19 +125,19 @@ const DashboardRFQTable = ({ dashboardTableData, companyDropdown }: Props) => {
             {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                <TableHead className="">Sr No.</TableHead>
-                <TableHead className="text-center">Ref No.</TableHead>
-                {/* <TableHead className="text-center">Cart</TableHead> */}
-                {/* <TableHead className="text-center">Plant</TableHead> */}
-                <TableHead className="text-center">Company</TableHead>
-                <TableHead className="text-center">RFQ Type</TableHead>
-                <TableHead className="text-center">RFQ Date</TableHead>
-                <TableHead className="text-center">Logistic Type</TableHead>
-                <TableHead className="text-center">Status</TableHead>
-                <TableHead className={`text-center`}>Action</TableHead>
+                <TableHead className="text-center text-black">Sr No.</TableHead>
+                <TableHead className="text-center text-black">Ref No.</TableHead>
+                {/* <TableHead className="text-center text-black">Cart</TableHead> */}
+                {/* <TableHead className="text-center text-black">Plant</TableHead> */}
+                <TableHead className="text-center text-black">Company</TableHead>
+                <TableHead className="text-center text-black">RFQ Type</TableHead>
+                <TableHead className="text-center text-black">RFQ Date</TableHead>
+                <TableHead className="text-center text-black">Logistic Type</TableHead>
+                <TableHead className="text-center text-black">Status</TableHead>
+                <TableHead className={`text-center text-black`}>Action</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody className="text-center">
+            <TableBody className="text-center text-black">
               {table ? (
                 table?.map((item, index) => (
                   <TableRow key={index}>
@@ -147,8 +147,21 @@ const DashboardRFQTable = ({ dashboardTableData, companyDropdown }: Props) => {
                     <TableCell className="text-nowrap text-center">{item?.rfq_type}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.creation}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.logistic_type}</TableCell>
-                    <TableCell className="text-nowrap text-center">{item?.status}</TableCell>
-                    <TableCell className="text-nowrap text-center"><Link href={`/view-rfq?refno=${item?.unique_id}`}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
+                    {/* <TableCell className="text-nowrap text-center">{item?.status}</TableCell>
+                     */}
+                    <TableCell>
+                      <div
+                        className={`px-2 py-3 rounded-xl ${item?.status === "Pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : item?.status === "Approved"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                          }`}
+                      >
+                        {item?.status}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-nowrap text-center"><Link href={`/view-rfq?refno=${item?.unique_id}`}><Button className="bg-blue-400 hover:bg-blue-300 text-white">View</Button></Link></TableCell>
                     {/* <TableCell>
               <div
                 className={`px-2 py-3 rounded-xl ${item?.status === "pending"

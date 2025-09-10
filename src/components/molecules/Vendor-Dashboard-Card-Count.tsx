@@ -20,6 +20,7 @@ type Props = {
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
   dispatchTableData: dispatchTable["dispatches"]
   dispatchCardCount: string | number;
+  rfqData: RFQTable
 }
 
 const VendorDashboardCards = ({ ...Props }: Props) => {
@@ -67,7 +68,7 @@ const VendorDashboardCards = ({ ...Props }: Props) => {
     },
     {
       name: "Quotation",
-      count: Props.cardData?.total_vendor_count ?? 0,
+      count: Props.rfqData?.overall_total_rfq ?? 0,
       icon: "/dashboard-assests/cards_icon/doc.svg",
       text_color: "text-blue-800",
       bg_color: "bg-blue-100",
@@ -208,7 +209,7 @@ const VendorDashboardCards = ({ ...Props }: Props) => {
 
             <TabsContent key={item.name || index} value={item.name}>
               {item.name === "Purchase & Ongoing Orders" && <PurchaseAndOngoingOrders dashboardPOTableData={Props?.dashboardPOTableData} companyDropdown={Props?.companyDropdown} />}
-              {/* {item.name === "Quotation" && <DashboardTotalVendorsTable dashboardTableData={Props.dashboardTotalVendorTableData} companyDropdown={Props?.companyDropdown} />} */}
+              {item.name === "Quotation" && <DashboardRFQTable dashboardTableData={Props?.rfqData?.data} companyDropdown={Props?.companyDropdown} />}
               {/* {item.name === "Dispatch Details" && <DashboardApprovedVendorsTable dashboardTableData={Props.dashboardApprovedVendorTableData} companyDropdown={Props?.companyDropdown}/>} */}
               {item.name === "Dispatch Details" && <DashboardDispatchVendorsTable dashboardTableData={Props?.dispatchTableData} />}
               {/* {item.name === "Payment History" && <PurchaseAndOngoingOrders dashboardPOTableData={Props.dashboardPOTableData} />} */}

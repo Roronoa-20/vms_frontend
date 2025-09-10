@@ -21,7 +21,9 @@ export const NavbarConstant:Record<string,string> = {
     "/all-vendors": "List of Approved Vendors",
     "/qa-dashboard": "Dashboard",
     "/view-profile": "Vendor Profile",
-    "/view-rfq": "Request for Quotations (RFQ)"
+    "/view-rfq": "Request for Quotations (RFQ)",
+    "/view-quotation": "Quotation",
+    "/view-all-po-changes": "Changed PO Details"
 
 
 }

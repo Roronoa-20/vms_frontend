@@ -28,7 +28,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 
 type Props = {
   dashboardTableData?: PurchaseRequisition[]
-  companyDropdown: { name: string }[]
+  companyDropdown: { description: string; name: string }[]
 }
 
 const useDebounce = (value: any, delay: any) => {
@@ -54,7 +54,7 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
   const [total_event_list, settotalEventList] = useState(0);
   const [record_per_page, setRecordPerPage] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
-   const user = Cookies?.get("user_id");
+  const user = Cookies?.get("user_id");
   console.log(user, "this is user");
 
   const debouncedSearchName = useDebounce(search, 300);
@@ -94,33 +94,19 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
             Purchase Requisition
           </h1>
           <div className="flex gap-4">
-            <Input placeholder="Search..." onChange={(e)=>{handlesearchname(e)}} />
+            <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
             <Select>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup className="w-full">
                   {
                     companyDropdown?.map((item, index) => (
-                      <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                      <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
                     ))
                   }
                 </SelectGroup>
-              </SelectContent>
-            </Select>
-            <Select>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                {/* <SelectGroup>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
-              </SelectGroup> */}
               </SelectContent>
             </Select>
           </div>
@@ -130,17 +116,17 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
             {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                <TableHead className="">Sr No.</TableHead>
-                <TableHead className="text-center">Ref No.</TableHead>
-                <TableHead className="text-center">Cart</TableHead>
-                <TableHead className="text-center">Plant</TableHead>
-                <TableHead className="text-center">Company</TableHead>
-                <TableHead className="text-center">Purchase Group</TableHead>
-                <TableHead className="text-center">Requisitioner</TableHead>
-                <TableHead className="text-center">Purchase Head</TableHead>
-                <TableHead className="text-center">HOD</TableHead>
-                <TableHead className="text-center">Actions</TableHead>
-                <TableHead className={`text-center`}></TableHead>
+                <TableHead className="text-center text-black">Sr No.</TableHead>
+                <TableHead className="text-center text-black">Ref No.</TableHead>
+                <TableHead className="text-center text-black">Cart</TableHead>
+                <TableHead className="text-center text-black">Plant</TableHead>
+                <TableHead className="text-center text-black">Company</TableHead>
+                <TableHead className="text-center text-black text-nowrap">Purchase Group</TableHead>
+                <TableHead className="text-center text-black">Requisitioner</TableHead>
+                <TableHead className="text-center text-black text-nowrap">Purchase Head</TableHead>
+                <TableHead className="text-center text-black">HOD</TableHead>
+                <TableHead className="text-center text-black">Actions</TableHead>
+                <TableHead className={`text-center text-black`}></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="text-center">
@@ -154,8 +140,32 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
                     <TableCell className="text-nowrap text-center">{item?.company}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.purchase_group}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.requisitioner}</TableCell>
-                    <TableCell className="text-nowrap text-center">{item?.purchase_head_status}</TableCell>
-                    <TableCell className="text-nowrap text-center">{item?.hod_approval_status}</TableCell>
+                    {/* <TableCell className="text-nowrap text-center">{item?.purchase_head_status}</TableCell> */}
+                    <TableCell>
+                      <div
+                        className={`text-center px-2 py-3 rounded-xl ${item?.purchase_head_status === "Pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : item?.purchase_head_status === "Approved"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                          }`}
+                      >
+                        {item?.purchase_head_status || "--"}
+                      </div>
+                    </TableCell>
+                    {/* <TableCell className="text-nowrap text-center">{item?.hod_approval_status}</TableCell> */}
+                    <TableCell>
+                      <div
+                        className={`text-center px-2 py-3 rounded-xl ${item?.hod_approval_status === "Pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : item?.hod_approval_status === "Approved"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                          }`}
+                      >
+                        {item?.hod_approval_status || "--"}
+                      </div>
+                    </TableCell>
                     <TableCell className="text-nowrap text-center"><Link href={`/view-pr?pur_req=${item?.name}`}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
                     {/* <TableCell>
                   <div
