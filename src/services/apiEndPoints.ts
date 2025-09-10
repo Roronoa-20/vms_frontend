@@ -200,6 +200,7 @@ const API_END_POINTS = {
   getvendorsonboardingidandstatus: `${url}/api/method/vms.APIs.vendors_dashboards_api.vendor_data.get_vendor_onb_via_company`,
   submitVehicalDispatchForm:`${url}/api/method/vms.APIs.dispatch.vehicle_details.create_vehicle_details`,
   deleteDispatchVehicalItem:`${url}/api/method/vms.APIs.dispatch.vehicle_details.remove_vehicle_from_dispatch`,
+  deleteTwoWayBankFile:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.delete_bank_proof_attachment`
 }
 
 export default API_END_POINTS;

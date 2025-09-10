@@ -190,6 +190,9 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
 
         const data = await response.json();
         resolve(data); // Resolve with the response data
+        if(response.ok){
+          location.reload();
+        }
       } catch (error) {
         // setDocumentType('');
         setFiles([]);
@@ -218,13 +221,17 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
 
   const handleNextBeneficiary = async () => {
     const response = await FileUpload("Beneficiary");
-    location.reload()
+    // setTimeout(()=>{
+    //   location.reload()
+    // },1500)
   }
 
 
   const handleNextIntermediate = async () => {
     const response = await FileUpload("Intermediate");
-    location.reload()
+    // setTimeout(()=>{
+    //   location.reload()
+    // },1500)
   }
 
 
@@ -239,25 +246,40 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
     }
   }
 
-  const uploadBankProofByPurchaseTeam = async () => {
-    const formdata = new FormData();
-    if (PurchaseTeamBeneficiaryProof != null) {
-      formdata?.append("international_bank_proofs_by_purchase_team", PurchaseTeamBeneficiaryProof)
-    }
-    if (PurchaseTeamIntermediateProof != null) {
-      formdata?.append("intermediate_bank_proofs_by_purchase_team", PurchaseTeamIntermediateProof)
-    }
+  // const uploadBankProofByPurchaseTeam = async () => {
+  //   const formdata = new FormData();
+  //   if (PurchaseTeamBeneficiaryProof != null) {
+  //     formdata?.append("international_bank_proofs_by_purchase_team", PurchaseTeamBeneficiaryProof)
+  //   }
+  //   if (PurchaseTeamIntermediateProof != null) {
+  //     formdata?.append("intermediate_bank_proofs_by_purchase_team", PurchaseTeamIntermediateProof)
+  //   }
 
-    formdata?.append("data", JSON.stringify({ ref_no: ref_no, vendor_onboarding: onboarding_ref_no }));
+  //   formdata?.append("data", JSON.stringify({ ref_no: ref_no, vendor_onboarding: onboarding_ref_no }));
 
-    const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.bankProofByPurchaseTeam, method: "POST", data: formdata });
-    if (response?.status == 200) {
-      alert("Uploaded Successfully");
-      location?.reload();
-    } else {
-      alert("Error in Uploading");
+  //   const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.bankProofByPurchaseTeam, method: "POST", data: formdata });
+  //   if (response?.status == 200) {
+  //     alert("Uploaded Successfully");
+  //     location?.reload();
+  //   } else {
+  //     alert("Error in Uploading");
+  //   }
+  // }
+
+  const handleTwoWayFileDelete = async(attachment_table_name:string,attachment_name:string)=>{
+    const data = {
+      ref_no:ref_no,
+      vendor_onboarding:onboarding_ref_no,
+      attachment_table_name:attachment_table_name,
+      attachment_name:attachment_name
+    }
+    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.deleteTwoWayBankFile,data:{data:data},method:"POST"});
+    if(response?.status == 200){
+      alert("Deleted Successfully");
+      location.reload();
     }
   }
+
   return (
     <div className="flex flex-col bg-white rounded-lg p-3 w-full">
       <div className="flex justify-between items-center border-b-2">
@@ -456,12 +478,12 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
                       >
                         <span>{item?.file_name}</span>
                       </Link>
-                      {/* <X
-                    className={`cursor-pointer ${isDisabled?"hidden":""}`}
+                      <X
+                    className={`cursor-pointer`}
                     onClick={() => {
-                      setPurchaseIsBankFilePreview((prev) => !prev);
+                      handleTwoWayFileDelete("international_bank_proofs_by_purchase_team",item?.name)
                       }}
-                      /> */}
+                      />
                     </div>
 
                   ))
@@ -671,12 +693,12 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
                         >
                           <span>{item?.file_name}</span>
                         </Link>
-                        {/* <X
-                    className={`cursor-pointer ${isDisabled?"hidden":""}`}
+                        <X
+                    className={`cursor-pointer`}
                     onClick={() => {
-                      setPurchaseIsBankFilePreview((prev) => !prev);
+                      handleTwoWayFileDelete("intermediate_bank_proofs_by_purchase_team",item?.name)
                       }}
-                      /> */}
+                      />
                       </div>
 
                     ))
