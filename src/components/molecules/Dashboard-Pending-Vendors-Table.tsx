@@ -175,9 +175,9 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
                       {item?.onboarding_form_status || "--"}
                     </div>
                   </TableCell>
-                  <TableCell>{item?.purchase_t_approval_full_name || "--"}</TableCell>
-                  <TableCell>{item?.purchase_h_approval_full_name || "--"}</TableCell>
-                  <TableCell>{item?.accounts_t_approval_full_name || "--"}</TableCell>
+                  <TableCell className="text-nowrap">{item?.purchase_t_approval_full_name || "--"}</TableCell>
+                  <TableCell className="text-nowrap">{item?.purchase_h_approval_full_name || "--"}</TableCell>
+                  <TableCell className="text-nowrap">{item?.accounts_t_approval_full_name || "--"}</TableCell>
                   <TableCell><Button onClick={() => { item?.form_fully_submitted_by_vendor == 1 ? handleView(item?.ref_no, item?.name) : alert("Vendor Form is not Fully Submitted!!!") }} variant={"outline"}>View</Button></TableCell>
                   {!isAccountsUser && (
                     <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>

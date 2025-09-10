@@ -106,21 +106,21 @@ const DashboardRFQTable = ({ dashboardTableData, companyDropdown }: Props) => {
             </Select>
           </div>
         </div>
-        <div className="overflow-y-scroll max-h-[55vh]">
+        <div className="max-h-[55vh]">
           <Table className="">
             {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                <TableHead className="">Sr No.</TableHead>
-                <TableHead className="text-center">Ref No.</TableHead>
+                <TableHead className="text-center text-black">Sr No.</TableHead>
+                <TableHead className="text-center text-black">Ref No.</TableHead>
                 {/* <TableHead className="text-center">Cart</TableHead> */}
                 {/* <TableHead className="text-center">Plant</TableHead> */}
-                <TableHead className="text-center">Company</TableHead>
-                <TableHead className="text-center">RFQ Type</TableHead>
-                <TableHead className="text-center">RFQ Date</TableHead>
-                <TableHead className="text-center">Logistic Type</TableHead>
-                <TableHead className="text-center">Status</TableHead>
-                <TableHead className={`text-center`}>Action</TableHead>
+                <TableHead className="text-center text-black">Company</TableHead>
+                <TableHead className="text-center text-black">RFQ Type</TableHead>
+                <TableHead className="text-center text-black">RFQ Date</TableHead>
+                <TableHead className="text-center text-black">Logistic Type</TableHead>
+                <TableHead className="text-center text-black">Status</TableHead>
+                <TableHead className={`text-center text-black`}>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="text-center">
