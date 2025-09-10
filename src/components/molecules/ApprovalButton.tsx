@@ -77,10 +77,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno, reconsiliationDrodow
       if (!isBankProofByPurchaseTeam && isApprove && country == "India") {
         alert("Please Upload bank Proof By Purchase Team");
         return
-      } else if (!isBeneficieryBankProofByPurchaseTeam && isApprove && country != "India") {
-        alert("Please Upload Beneficiary bank Proof By Purchase Team");
-        return
-      }
+      } 
       const purchaseTeamData = {
         onboard_id: onboardingRefno,
         user: user_email,

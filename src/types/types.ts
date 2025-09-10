@@ -761,7 +761,7 @@ type CompanyDetailsTab = {
 export type FileAttachment = {
   url: string;
   name: string;
-  file_name?: string;
+  file_name: string;
 };
 
 type DocumentDetailsTab = {
