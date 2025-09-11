@@ -158,9 +158,10 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
         const fetchDropdownData = async () => {
             try {
                 const dropDownApi: AxiosResponse = await requestWrapper({
-                    url: dropdownUrl,
+                    url: `${dropdownUrl}?sap_client_code=${activeTab}`,
                     method: "GET",
                 });
+
                 setDropdownData(
                     dropDownApi?.status === 200 ? dropDownApi?.data?.message?.data : null
                 );
@@ -170,7 +171,8 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
         };
 
         fetchDropdownData();
-    }, [dropdownUrl]);
+    }, [dropdownUrl, activeTab]);
+
 
     const vendorTypeDropdown = dropdownData?.vendor_type;
     const companyDropdown = dropdownData?.company_master;
@@ -496,7 +498,6 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                         <SelectGroup>
                                             {companyDropdown && companyDropdown.length > 0 ? (
                                                 companyDropdown
-                                                    .filter((item: any) => item.sap_client_code === "100")
                                                     .map((item: any) => (
                                                         <SelectItem value={item.name} key={item.name}>
                                                             {item.description}

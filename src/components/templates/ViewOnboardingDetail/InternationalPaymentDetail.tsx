@@ -579,7 +579,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
               }
             </div>
           </div>
-          {OnboardingDetail?.intermediate_bank_details[0].intermediate_bank_proof_by_purchase_team?.url && (
+          {OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_bank_proof_by_purchase_team?.url && (
             <div className="flex flex-col col-span-1">
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Bank Proof By Purchase Team <span className="font-semibold">(2-Way)(old)</span>
@@ -589,11 +589,11 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
                   (isAccountTeam === 1 && designation === "Accounts Team") ? (
                   <div className="flex flex-col col-span-1">
                     <a
-                      href={OnboardingDetail.intermediate_bank_details[0].intermediate_bank_proof_by_purchase_team.url}
+                      href={OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_bank_proof_by_purchase_team?.url}
                       target="_blank"
                       className="text-blue-500 underline text-sm"
                     >
-                      {OnboardingDetail.intermediate_bank_details[0].intermediate_bank_proof_by_purchase_team.file_name || "View File"}
+                      {OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_bank_proof_by_purchase_team?.file_name || "View File"}
                     </a>
                   </div>
                 ) : null}
