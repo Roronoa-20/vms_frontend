@@ -440,28 +440,40 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
                 />
               </div>
             ) : null}
-            {/* file preview */}
-            {<div className="flex gap-2 flex-wrap items-center">
-              {
-                OnboardingDetail?.international_bank_proofs_by_purchase_team?.map((item, index) => (
-                  <div className="flex items-center gap-2" key={index}>
-                    <Link
-                      target="blank"
-                      href={item?.url}
-                      className="underline text-blue-300 max-w-44 truncate"
-                    >
-                      <span>{item?.file_name}</span>
-                    </Link>
-                    <X
-                      className={`cursor-pointer`}
-                      onClick={() => {
-                        const rowName = rowNamesMapping[item?.url] || (item as any)?.row_name || item?.name;
-                        handleTwoWayFileDelete("international_bank_proofs_by_purchase_team", rowName);
-                      }}
-                    />
-                  </div>
-                ))}
-            </div>}
+            {/* File Preview */}
+            {OnboardingDetail?.international_bank_proofs_by_purchase_team &&
+              OnboardingDetail.international_bank_proofs_by_purchase_team.length > 0 && (
+                <div className="flex gap-2 items-center flex-col">
+                  {OnboardingDetail.international_bank_proofs_by_purchase_team.map((item, index) => (
+                    <div className="flex gap-2" key={index}>
+                      <Link
+                        target="_blank"
+                        href={item?.url}
+                        className="underline text-blue-300 max-w-44 truncate"
+                      >
+                        <span>{item?.file_name}</span>
+                      </Link>
+
+                      {/* Show delete only for uploader */}
+                      {((isAccountTeam === 0 && designation === "Purchase Team") ||
+                        (isAccountTeam === 1 && designation === "Accounts Team")) && (
+                          <X
+                            className="cursor-pointer"
+                            onClick={() => {
+                              const rowName =
+                                rowNamesMapping[item?.url] || (item as any)?.row_name || item?.name;
+                              handleTwoWayFileDelete(
+                                "international_bank_proofs_by_purchase_team",
+                                rowName
+                              );
+                            }}
+                          />
+                        )}
+                    </div>
+                  ))}
+                </div>
+              )}
+
           </div>
         </div>
       </div>
@@ -640,32 +652,39 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
                   />
                 </div>
               ) : null}
-              {/* file preview */}
-              {
-                <div className="flex gap-2 items-center flex-col">
-                  {OnboardingDetail?.intermediate_bank_proofs_by_purchase_team?.map((item, index) => (
-
+              {/* File Preview */}
+              {OnboardingDetail?.intermediate_bank_proofs_by_purchase_team &&
+                OnboardingDetail.intermediate_bank_proofs_by_purchase_team.length > 0 && (
+                  <div className="flex gap-2 items-center flex-col">
+                    {OnboardingDetail.intermediate_bank_proofs_by_purchase_team.map((item, index) => (
                       <div className="flex gap-2" key={index}>
                         <Link
-                          target="blank"
+                          target="_blank"
                           href={item?.url}
                           className="underline text-blue-300 max-w-44 truncate"
                         >
                           <span>{item?.file_name}</span>
                         </Link>
-                        <X
-                          className={`cursor-pointer`}
-                          onClick={() => {
-                            const rowName = rowNamesMapping[item?.url] || (item as any)?.row_name || item?.name;
-                            handleTwoWayFileDelete("intermediate_bank_proofs_by_purchase_team", rowName)
-                          }}
-                        />
-                      </div>
 
-                    ))
-                  }
-                </div>
-              }
+                        {/* Show delete only for uploader */}
+                        {((isAccountTeam === 0 && designation === "Purchase Team") ||
+                          (isAccountTeam === 1 && designation === "Accounts Team")) && (
+                            <X
+                              className="cursor-pointer"
+                              onClick={() => {
+                                const rowName =
+                                  rowNamesMapping[item?.url] || (item as any)?.row_name || item?.name;
+                                handleTwoWayFileDelete(
+                                  "intermediate_bank_proofs_by_purchase_team",
+                                  rowName
+                                );
+                              }}
+                            />
+                          )}
+                      </div>
+                    ))}
+                  </div>
+                )}
             </div>
           </div>
         </div>

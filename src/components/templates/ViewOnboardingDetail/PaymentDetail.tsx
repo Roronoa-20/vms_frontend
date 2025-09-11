@@ -366,28 +366,28 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
           </div>
         </div>
         {OnboardingDetail?.bank_proof_by_purchase_team?.url && (
-        <div className="flex flex-col col-span-1 mt-3.5">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Bank Proof By Purchase Team <span className="font-semibold">(2-Way)(Old)</span>
-          </h1>
+          <div className="flex flex-col col-span-1 mt-3.5">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+              Bank Proof By Purchase Team <span className="font-semibold">(2-Way)(Old)</span>
+            </h1>
 
-          <div className="flex gap-6 items-start flex-wrap">
-            {/* Old File Preview */}
-            <div className="flex flex-col gap-2">
-              {OnboardingDetail?.bank_proof_by_purchase_team?.url ? (
-                <a
-                  href={OnboardingDetail.bank_proof_by_purchase_team?.url}
-                  target="_blank"
-                  className="text-blue-500 underline text-sm max-w-[200px] truncate"
-                >
-                  {OnboardingDetail.bank_proof_by_purchase_team?.file_name || "View File"}
-                </a>
-              ) : (
-                <span className="text-gray-400 text-sm">No file uploaded</span>
-              )}
+            <div className="flex gap-6 items-start flex-wrap">
+              {/* Old File Preview */}
+              <div className="flex flex-col gap-2">
+                {OnboardingDetail?.bank_proof_by_purchase_team?.url ? (
+                  <a
+                    href={OnboardingDetail.bank_proof_by_purchase_team?.url}
+                    target="_blank"
+                    className="text-blue-500 underline text-sm max-w-[200px] truncate"
+                  >
+                    {OnboardingDetail.bank_proof_by_purchase_team?.file_name || "View File"}
+                  </a>
+                ) : (
+                  <span className="text-gray-400 text-sm">No file uploaded</span>
+                )}
+              </div>
             </div>
           </div>
-        </div>
         )}
 
         <div className="flex flex-col col-span-1">
@@ -411,29 +411,36 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
               </div>
             ) : null}
 
-            {/* Existing Files Preview Inline */}
-            {OnboardingDetail?.bank_proofs_by_purchase_team?.length > 0 && (
-              <div className="flex gap-2 flex-wrap items-center">
-                {OnboardingDetail.bank_proofs_by_purchase_team.map((item, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <Link
-                      href={item?.url}
-                      target="_blank"
-                      className="underline text-blue-300 max-w-[150px] truncate text-sm"
-                    >
-                      {item?.file_name}
-                    </Link>
-                    <X
-                      className="cursor-pointer mt-1"
-                      onClick={() => {
-                        const rowName = rowNamesMapping[item?.url] || (item as any)?.row_name || item?.name;
-                        handleTwoWayFileDelete("bank_proofs_by_purchase_team", rowName);
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
+            {/* Existing Files Preview */}
+            {OnboardingDetail?.bank_proofs_by_purchase_team &&
+              OnboardingDetail.bank_proofs_by_purchase_team.length > 0 && (
+                <div className="flex gap-2 flex-wrap items-center">
+                  {OnboardingDetail.bank_proofs_by_purchase_team.map((item, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <Link
+                        href={item?.url}
+                        target="_blank"
+                        className="underline text-blue-300 max-w-[150px] truncate text-sm"
+                      >
+                        {item?.file_name}
+                      </Link>
+
+                      {/* Show delete only for Purchase/Accounts team */}
+                      {((isAccountTeam === 0 && designation === "Purchase Team") ||
+                        (isAccountTeam === 1 && designation === "Accounts Team")) && (
+                          <X
+                            className="cursor-pointer mt-1"
+                            onClick={() => {
+                              const rowName =
+                                rowNamesMapping[item?.url] || (item as any)?.row_name || item?.name;
+                              handleTwoWayFileDelete("bank_proofs_by_purchase_team", rowName);
+                            }}
+                          />
+                        )}
+                    </div>
+                  ))}
+                </div>
+              )}
           </div>
         </div>
 
