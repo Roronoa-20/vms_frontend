@@ -365,7 +365,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
               )}
           </div>
         </div>
-
+        {OnboardingDetail?.bank_proof_by_purchase_team?.url && (
         <div className="flex flex-col col-span-1 mt-3.5">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Bank Proof By Purchase Team <span className="font-semibold">(2-Way)(Old)</span>
@@ -388,6 +388,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
             </div>
           </div>
         </div>
+        )}
 
         <div className="flex flex-col col-span-1">
           {/* Header */}
@@ -397,7 +398,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
 
           <div className="flex gap-6 items-start flex-wrap">
             {/* Upload Section */}
-            {(isAccountTeam === 0 && designation === "Purchase Team" && isBankProof === 1) ||
+            {(isAccountTeam === 0 && designation === "Purchase Team" && isBankProof === 0) ||
               (isAccountTeam === 1 && designation === "Accounts Team" && isBankProof === 1) ? (
               <div className="flex flex-col gap-2">
                 <SimpleFileUpload

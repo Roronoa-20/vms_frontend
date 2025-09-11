@@ -397,57 +397,54 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
               )}
           </div>
         </div>
-        <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Bank Proof By Purchase Team <span className="font-semibold">(2-Way)(old)</span> <span className="pl-2 text-red-400 text-2xl">*</span>
-          </h1>
-          <div className="flex gap-4">
-            {(isAccountTeam == 0 && designation == "Purchase Team") ||
-              (isAccountTeam == 1 && designation == "Accounts Team") ? (
-              <div className="flex flex-col col-span-1">
-                {OnboardingDetail?.international_bank_details?.[0]?.international_bank_proof_by_purchase_team?.url ? (
+        {OnboardingDetail?.international_bank_details?.[0]?.international_bank_proof_by_purchase_team?.url && (
+          <div className="flex flex-col col-span-1">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+              Bank Proof By Purchase Team <span className="font-semibold">(2-Way)(old)</span>
+              <span className="pl-2 text-red-400 text-2xl">*</span>
+            </h1>
+            <div className="flex gap-4">
+              {(isAccountTeam === 0 && designation === "Purchase Team") ||
+                (isAccountTeam === 1 && designation === "Accounts Team") ? (
+                <div className="flex flex-col col-span-1">
                   <a
-                    href={OnboardingDetail.international_bank_details[0].international_bank_proof_by_purchase_team?.url}
+                    href={OnboardingDetail.international_bank_details[0].international_bank_proof_by_purchase_team.url}
                     target="_blank"
                     className="text-blue-500 underline text-sm"
                   >
-                    {OnboardingDetail.international_bank_details[0].international_bank_proof_by_purchase_team?.file_name || "View File"}
+                    {OnboardingDetail.international_bank_details[0].international_bank_proof_by_purchase_team.file_name || "View File"}
                   </a>
-                ) : (
-                  <span className="text-gray-400 text-sm">No file uploaded</span>
-                )}
-              </div>
-            ) : null}
+                </div>
+              ) : null}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="flex flex-col col-span-1">
-          <div className="flex gap-4">
-            {/* Purchase Team */}
+          {/* Header */}
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            For 2-Way Verification
+          </h1>
 
-            <div className={`flex items-end gap-6 col-span-1 text-nowrap ${isAccountTeam == 0 && designation == "Purchase Team" && isBankProof == 1 ? "" : "hidden"}`}>
-              <div className="flex flex-col gap-3">
-                <h1 className="text-[12px] font-normal text-[#626973]">
-                  For 2-way Verification<span className="text-[#e60000]">*</span>
-                </h1>
-                <SimpleFileUpload files={files} setFiles={setFiles} setUploadedFiles={setUploadedFiles} onNext={handleNextBeneficiary} buttonText={'Upload Here'} />
+          <div className="flex gap-6 items-start flex-wrap">
+            {/* Upload Section */}
+            {(isAccountTeam === 0 && designation === "Purchase Team" && isBankProof === 0) ||
+              (isAccountTeam === 1 && designation === "Accounts Team" && isBankProof === 1) ? (
+              <div className="flex flex-col gap-2">
+                <SimpleFileUpload
+                  files={files}
+                  setFiles={setFiles}
+                  setUploadedFiles={setUploadedFiles}
+                  onNext={handleNextBeneficiary}
+                  buttonText={'Upload Here'}
+                />
               </div>
-            </div>
-
-            {/* Accounts Team */}
-            <div className={`flex items-end gap-6 col-span-1 text-nowrap ${isAccountTeam == 1 && designation == "Accounts Team" && isBankProof == 1 ? "" : "hidden"}`}>
-              <div className="flex flex-col gap-3">
-                <h1 className="text-[12px] font-normal text-[#626973]">
-                  For 2-way Verification<span className="text-[#e60000]">*</span>
-                </h1>
-                <SimpleFileUpload files={files} setFiles={setFiles} setUploadedFiles={setUploadedFiles} onNext={handleNextBeneficiary} buttonText={'Upload Here'} />
-              </div>
-            </div>
+            ) : null}
             {/* file preview */}
-            {<div className="flex gap-2 items-center flex-col">
+            {<div className="flex gap-2 flex-wrap items-center">
               {
                 OnboardingDetail?.international_bank_proofs_by_purchase_team?.map((item, index) => (
-                  <div className="flex gap-2" key={index}>
+                  <div className="flex items-center gap-2" key={index}>
                     <Link
                       target="blank"
                       href={item?.url}
@@ -582,33 +579,30 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
               }
             </div>
           </div>
-          <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Bank Proof By Purchase Team <span className="font-semibold">(2-Way)(Old)</span> <span className="pl-2 text-red-400 text-2xl">*</span>
-            </h1>
-            <div className="flex gap-4">
-              {(isAccountTeam == 0 && designation == "Purchase Team") ||
-                (isAccountTeam == 1 && designation == "Accounts Team") ? (
-                <div className="flex flex-col col-span-1">
-                  {OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_bank_proof_by_purchase_team?.url ? (
+          {OnboardingDetail?.intermediate_bank_details[0].intermediate_bank_proof_by_purchase_team?.url && (
+            <div className="flex flex-col col-span-1">
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                Bank Proof By Purchase Team <span className="font-semibold">(2-Way)(old)</span>
+              </h1>
+              <div className="flex gap-4">
+                {(isAccountTeam === 0 && designation === "Purchase Team") ||
+                  (isAccountTeam === 1 && designation === "Accounts Team") ? (
+                  <div className="flex flex-col col-span-1">
                     <a
-                      href={OnboardingDetail.intermediate_bank_details[0].intermediate_bank_proof_by_purchase_team?.url}
+                      href={OnboardingDetail.intermediate_bank_details[0].intermediate_bank_proof_by_purchase_team.url}
                       target="_blank"
                       className="text-blue-500 underline text-sm"
                     >
-                      {OnboardingDetail.intermediate_bank_details[0].intermediate_bank_proof_by_purchase_team?.file_name || "View File"}
+                      {OnboardingDetail.intermediate_bank_details[0].intermediate_bank_proof_by_purchase_team.file_name || "View File"}
                     </a>
-                  ) : (
-                    <span className="text-gray-400 text-sm">No file uploaded</span>
-                  )}
-                </div>
-              ) : null}
-
+                  </div>
+                ) : null}
+              </div>
             </div>
-          </div>
-          <div>
+          )}
+
+          {/* <div>
             <div>
-              {/* Purchase Team */}
               <div className={`flex items-end gap-6 col-span-1 text-nowrap ${isAccountTeam == 0 && designation == "Purchase Team" && isBankProof == 1 ? "" : "hidden"}`}>
                 <div className="flex flex-col gap-3">
                   <h1 className="text-[12px] font-normal text-[#626973]">
@@ -617,7 +611,6 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
                   <SimpleFileUpload files={files} setFiles={setFiles} setUploadedFiles={setUploadedFiles} onNext={handleNextIntermediate} buttonText={'Upload Here'} />
                 </div>
               </div>
-              {/* Accounts Team */}
               <div className={`flex items-end gap-6 col-span-1 text-nowrap ${isAccountTeam == 1 && designation == "Accounts Team" && isBankProof == 1 ? "" : "hidden"}`}>
                 <div className="flex flex-col gap-3">
                   <h1 className="text-[12px] font-normal text-[#626973]">
@@ -625,13 +618,32 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
                   </h1>
                   <SimpleFileUpload files={files} setFiles={setFiles} setUploadedFiles={setUploadedFiles} onNext={handleNextIntermediate} buttonText={'Upload Here'} />
                 </div>
-              </div>
+              </div> */}
+
+          <div className="flex flex-col col-span-1">
+            {/* Header */}
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+              For 2-Way Verification
+            </h1>
+
+            <div className="flex gap-6 items-start flex-wrap">
+              {/* Upload Section */}
+              {(isAccountTeam === 0 && designation === "Purchase Team" && isBankProof === 0) ||
+                (isAccountTeam === 1 && designation === "Accounts Team" && isBankProof === 1) ? (
+                <div className="flex flex-col gap-2">
+                  <SimpleFileUpload
+                    files={files}
+                    setFiles={setFiles}
+                    setUploadedFiles={setUploadedFiles}
+                    onNext={handleNextIntermediate}
+                    buttonText={'Upload Here'}
+                  />
+                </div>
+              ) : null}
               {/* file preview */}
               {
                 <div className="flex gap-2 items-center flex-col">
-
-                  {
-                    OnboardingDetail?.intermediate_bank_proofs_by_purchase_team?.map((item, index) => (
+                  {OnboardingDetail?.intermediate_bank_proofs_by_purchase_team?.map((item, index) => (
 
                       <div className="flex gap-2" key={index}>
                         <Link
