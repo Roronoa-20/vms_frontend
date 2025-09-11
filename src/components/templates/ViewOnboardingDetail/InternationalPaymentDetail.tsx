@@ -63,14 +63,6 @@ interface IformData {
   }
 }
 
-type UploadedRow = {
-  name: string;
-  row_name: string;
-  attachment_name: string;
-  bankType: "Beneficiary" | "Intermediate";
-};
-
-
 const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_name, isAccountTeam, isAmendment, isBankProof, re_release }: Props) => {
   const [formData, setFormData] = useState<IformData>();
   const [bankProofBeneficiaryFile, setBankProofBeneficiaryFile] = useState<FileList | null>(null);
@@ -248,7 +240,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
       ref_no: ref_no,
       vendor_onboarding: onboarding_ref_no,
       attachment_table_name: attachment_table_name,
-      attachment_name: row_name // This is now the row_name
+      attachment_name: row_name
     }
 
     const response: AxiosResponse = await requestWrapper({
@@ -429,7 +421,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
           </div>
         </div>
 
-        <div>
+        <div className="flex flex-col col-span-1">
           <div className="flex gap-4">
             {/* Purchase Team */}
 
@@ -443,7 +435,6 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
             </div>
 
             {/* Accounts Team */}
-
             <div className={`flex items-end gap-6 col-span-1 text-nowrap ${isAccountTeam == 1 && designation == "Accounts Team" && isBankProof == 1 ? "" : "hidden"}`}>
               <div className="flex flex-col gap-3">
                 <h1 className="text-[12px] font-normal text-[#626973]">
@@ -453,34 +444,31 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
               </div>
             </div>
             {/* file preview */}
-            {
-              <div className="flex gap-2 items-center flex-col">
-                {
-                  OnboardingDetail?.international_bank_proofs_by_purchase_team?.map((item, index) => (
-                    <div className="flex gap-2" key={index}>
-                      <Link
-                        target="blank"
-                        href={item?.url}
-                        className="underline text-blue-300 max-w-44 truncate"
-                      >
-                        <span>{item?.file_name}</span>
-                      </Link>
-                      <X
-                        className={`cursor-pointer`}
-                        onClick={() => {
-                          // Use row name from mapping or fallback to item.name
-                          const rowName = rowNamesMapping[item?.url] || (item as any)?.row_name || item?.name;
-                          handleTwoWayFileDelete("international_bank_proofs_by_purchase_team", rowName);
-                        }}
-                      />
-                    </div>
-                  ))
-                }
-              </div>
-            }
+            {<div className="flex gap-2 items-center flex-col">
+              {
+                OnboardingDetail?.international_bank_proofs_by_purchase_team?.map((item, index) => (
+                  <div className="flex gap-2" key={index}>
+                    <Link
+                      target="blank"
+                      href={item?.url}
+                      className="underline text-blue-300 max-w-44 truncate"
+                    >
+                      <span>{item?.file_name}</span>
+                    </Link>
+                    <X
+                      className={`cursor-pointer`}
+                      onClick={() => {
+                        const rowName = rowNamesMapping[item?.url] || (item as any)?.row_name || item?.name;
+                        handleTwoWayFileDelete("international_bank_proofs_by_purchase_team", rowName);
+                      }}
+                    />
+                  </div>
+                ))}
+            </div>}
           </div>
         </div>
       </div>
+
       <div className="w-full flex justify-start items-center gap-4 pl-4 pt-4"><Input className="w-4" disabled onChange={(e) => { setIsIntermediateCheck((prev) => (!prev)) }} checked={isIntermediateCheck} type="checkbox" /><h1 className="text-[15px] font-semibold">
         Add Intermediate Bank Details
       </h1></div>

@@ -48,14 +48,9 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
   const { setBankProof, bank_proof } = UsePurchaseTeamApprovalStore();
   const [files, setFiles] = useState<File[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<FileList | null>(null)
-  // if(!designation){
-  //   return(
-  //     <div>Loading...</div>
-  //   )
-  // }
+  const [rowNamesMapping, setRowNamesMapping] = useState<{ [key: string]: string }>({});
+
   const router = useRouter()
-  console.log(isAccountTeam, "this is account team")
-  console.log(OnboardingDetail, "this is country");
   useEffect(() => {
     const fetchBank = async () => {
 
@@ -126,47 +121,40 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
     }
     formdata?.append("data", JSON.stringify({ ref_no: ref_no, vendor_onboarding: onboarding_ref_no }))
 
-    const apiCallPromise = new Promise(async (resolve, reject) => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`, {
-          method: "POST",
-          credentials: 'include',
-          body: formdata,
-        });
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`, {
+        method: "POST",
+        credentials: 'include',
+        body: formdata,
+      });
 
-        if (!response.ok) {
-          // setDocumentType('');
-          setFiles([]);
-          setUploadedFiles(null);
-          console.error('file upload request failed');
-        }
-
-        const data = await response.json();
-        resolve(data); // Resolve with the response data
-      } catch (error) {
-        // setDocumentType('');
+      if (!response.ok) {
         setFiles([]);
         setUploadedFiles(null);
-        reject(error); // Reject with the error
+        console.error('file upload request failed');
+        return;
       }
-    });
-    // toast.promise(apiCallPromise, {
-    //   loading: 'Submitting  details...',
-    //   success: () => {
-    //     // setTimeout(() => {
-    //     //   // PreviewData();
-    //     // }, 500);
-    //     // setDocumentType('')
-    //     setFiles([])
-    //     setUploadedFiles(null)
-    //     return 'Documents added successfully!';
-    //   },
-    //   error: (error) => `Failed : ${error.message || error}`,
-    // });
-    // setTimeout(()=>{
-    //   location.reload();
-    // },2000)
-  }
+
+      const data = await response.json();
+
+      const newMapping = { ...rowNamesMapping };
+
+      if (data.message.new_rows.bank_proofs_by_purchase_team) {
+        data.message.new_rows.bank_proofs_by_purchase_team.forEach((row: any) => {
+          newMapping[row.attachment_name] = row.row_name;
+        });
+      }
+      setRowNamesMapping(newMapping);
+
+      if (response.ok) {
+        location.reload();
+      }
+    } catch (error) {
+      setFiles([]);
+      setUploadedFiles(null);
+      console.error('Error uploading file:', error);
+    }
+  };
 
 
   const handleNext = async () => {
@@ -212,8 +200,30 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
     } else {
       alert("Error in Uploading");
     }
-  }
-  console.log(OnboardingDetail?.bank_proof?.file_name, "thiskjdvb")
+  };
+
+  const handleTwoWayFileDelete = async (attachment_table_name: string, row_name: string) => {
+    const data = {
+      ref_no: ref_no,
+      vendor_onboarding: onboarding_ref_no,
+      attachment_table_name: attachment_table_name,
+      attachment_name: row_name
+    }
+
+    const response: AxiosResponse = await requestWrapper({
+      url: API_END_POINTS?.deleteTwoWayBankFile,
+      data: { data: data },
+      method: "POST"
+    });
+
+    if (response?.status == 200) {
+      alert("Deleted Successfully");
+      location.reload();
+    }
+  };
+
+
+
   return (
     <div className="flex flex-col bg-white rounded-lg p-2 w-full">
       <div className="flex justify-between items-center border-b-2">
@@ -326,7 +336,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
             </SelectContent>
           </Select>
         </div>
-        <div>
+        <div className="flex flex-col col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Bank Proof (Upload Passbook Leaf/Cancelled Cheque) <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
@@ -356,78 +366,75 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
           </div>
         </div>
 
-        <div className="flex items-end">
-          {/* <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Bank Proof By Purchase Team <span className="font-semibold">(2-Way)</span> <span className="pl-2 text-red-400 text-2xl">*</span>
-          </h1> */}
-          <div className="flex gap-4">
-            {/* <Input className={`disabled:opacity-100 ${isAccountTeam == 0 && designation == "Purchase Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Purchase Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} />
-          <Input className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team" && isBankProof == 1?"":"hidden"}`} disabled={designation != "Accounts Team"?true:false} placeholder=""  type="file" onChange={(e)=>{setPurchaseTeamBankProof(e?.target?.files?.[0])}} /> */}
+        <div className="flex flex-col col-span-1 mt-3.5">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Bank Proof By Purchase Team <span className="font-semibold">(2-Way)(Old)</span>
+          </h1>
 
-            {/* Purchase Team */}
-
-            <div className={`flex items-end gap-6 col-span-1 text-nowrap ${isAccountTeam == 0 && designation == "Purchase Team" && isBankProof == 1 ? "" : "hidden"}`}>
-              <div className="flex flex-col gap-3">
-                <label className="text-black text-sm font-normal capitalize">
-                  Upload Files<span className="text-[#e60000]">*</span>
-                </label>
-                <SimpleFileUpload files={files} setFiles={setFiles} setUploadedFiles={setUploadedFiles} onNext={handleNext} buttonText={'Upload Here'} />
-              </div>
-              {/* <Button
-            className="bg-white text-black border text-md font-normal"
-            onClick={() => FileUpload()}
-          >
-            Add
-          </Button> */}
+          <div className="flex gap-6 items-start flex-wrap">
+            {/* Old File Preview */}
+            <div className="flex flex-col gap-2">
+              {OnboardingDetail?.bank_proof_by_purchase_team?.url ? (
+                <a
+                  href={OnboardingDetail.bank_proof_by_purchase_team?.url}
+                  target="_blank"
+                  className="text-blue-500 underline text-sm max-w-[200px] truncate"
+                >
+                  {OnboardingDetail.bank_proof_by_purchase_team?.file_name || "View File"}
+                </a>
+              ) : (
+                <span className="text-gray-400 text-sm">No file uploaded</span>
+              )}
             </div>
-
-            {/* Accounts Team */}
-
-            <div className={`flex items-end gap-6 col-span-1 text-nowrap ${isAccountTeam == 1 && designation == "Accounts Team" && isBankProof == 1 ? "" : "hidden"}`}>
-              <div className="flex flex-col gap-3">
-                <label className="text-black text-sm font-normal capitalize">
-                  Upload Files<span className="text-[#e60000]">*</span>
-                </label>
-                <SimpleFileUpload files={files} setFiles={setFiles} setUploadedFiles={setUploadedFiles} onNext={handleNext} buttonText={'Upload Here'} />
-              </div>
-              {/* <Button
-            className="bg-white text-black border text-md font-normal"
-            onClick={() => FileUpload()}
-          >
-            Add
-          </Button> */}
-            </div>
-
-            {/* file preview */}
-
-
-            <div className="flex gap-2 items-center flex-col">
-              {
-                OnboardingDetail?.bank_proofs_by_purchase_team?.map((item, index) => (
-                  <Link
-                    key={index}
-                    target="blank"
-                    href={item?.url}
-                    className="underline text-blue-300 max-w-44 truncate"
-                  >
-                    <span>{item?.file_name}</span>
-                  </Link>
-                ))
-              }
-              {/* <X
-                    className={`cursor-pointer ${isDisabled?"hidden":""}`}
-                    onClick={() => {
-                      setPurchaseIsBankFilePreview((prev) => !prev);
-                    }}
-                    /> */}
-            </div>
-
           </div>
         </div>
-        {/* <div className="flex justify-start items-end">
-              <Button className={`disabled:opacity-100 ${isAccountTeam == 0 && designation == "Purchase Team"?"":"hidden"}`} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
-              <Button className={`disabled:opacity-100 ${isAccountTeam == 1 && designation == "Accounts Team"?"":"hidden"}`} onClick={()=>{uploadBankProofByPurchaseTeam()}}>Upload</Button>
-        </div> */}
+
+        <div className="flex flex-col col-span-1">
+          {/* Header */}
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            For 2-Way Verification <span className="pl-2 text-red-400 text-2xl">*</span>
+          </h1>
+
+          <div className="flex gap-6 items-start flex-wrap">
+            {/* Upload Section */}
+            {(isAccountTeam === 0 && designation === "Purchase Team" && isBankProof === 1) ||
+              (isAccountTeam === 1 && designation === "Accounts Team" && isBankProof === 1) ? (
+              <div className="flex flex-col gap-2">
+                <SimpleFileUpload
+                  files={files}
+                  setFiles={setFiles}
+                  setUploadedFiles={setUploadedFiles}
+                  onNext={handleNext}
+                  buttonText={'Upload Here'}
+                />
+              </div>
+            ) : null}
+
+            {/* Existing Files Preview Inline */}
+            {OnboardingDetail?.bank_proofs_by_purchase_team?.length > 0 && (
+              <div className="flex gap-2 flex-wrap items-center">
+                {OnboardingDetail.bank_proofs_by_purchase_team.map((item, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Link
+                      href={item?.url}
+                      target="_blank"
+                      className="underline text-blue-300 max-w-[150px] truncate text-sm"
+                    >
+                      {item?.file_name}
+                    </Link>
+                    <X
+                      className="cursor-pointer mt-1"
+                      onClick={() => {
+                        const rowName = rowNamesMapping[item?.url] || (item as any)?.row_name || item?.name;
+                        handleTwoWayFileDelete("bank_proofs_by_purchase_team", rowName);
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* <div className="flex flex-col">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">

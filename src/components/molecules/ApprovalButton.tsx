@@ -77,7 +77,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno, reconsiliationDrodow
       if (!isBankProofByPurchaseTeam && isApprove && country == "India") {
         alert("Please Upload bank Proof By Purchase Team");
         return
-      } 
+      }
       const purchaseTeamData = {
         onboard_id: onboardingRefno,
         user: user_email,
@@ -167,17 +167,11 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno, reconsiliationDrodow
   return (
     <>
       <div className="w-full flex justify-end gap-5 px-5 pt-4">
+
         <Button
-          className={`submitButton bg-blue-400 hover:bg-blue-400 ${designation != "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
-          onClick={() => {
-            setIsCommentBox((prev) => !prev);
-            setIsApprove(true);
-          }}
-        >
-          Approve
-        </Button>
-        <Button
-          className={`submitButton bg-blue-400 hover:bg-blue-400 ${designation != "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
+          variant={"backbtn"}
+          size={"backbtnsize"}
+          className={`submitButton py-2 ${designation != "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
           onClick={() => {
             setIsCommentBox((prev) => !prev);
             setIsReject(true);
@@ -186,22 +180,38 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno, reconsiliationDrodow
           Reject
         </Button>
         <Button
-          className={`submitButton bg-blue-400 hover:bg-blue-400 ${designation == "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
+          variant={"nextbtn"}
+          size={"nextbtnsize"}
+          className={`submitButton py-2 ${designation != "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
           onClick={() => {
-            setIsAccountBox((prev) => !prev);
+            setIsCommentBox((prev) => !prev);
             setIsApprove(true);
           }}
         >
           Approve
         </Button>
+
         <Button
-          className={`submitButton bg-blue-400 hover:bg-blue-400 ${designation == "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
+          variant={"backbtn"}
+          size={"backbtnsize"}
+          className={`submitButton py-2 ${designation == "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
           onClick={() => {
             setIsAccountBox((prev) => !prev);
             setIsReject(true);
           }}
         >
           Reject
+        </Button>
+        <Button
+          variant={"nextbtn"}
+          size={"nextbtnsize"}
+          className={`submitButton py-2 ${designation == "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
+          onClick={() => {
+            setIsAccountBox((prev) => !prev);
+            setIsApprove(true);
+          }}
+        >
+          Approve
         </Button>
       </div>
       {isCommentBox && (

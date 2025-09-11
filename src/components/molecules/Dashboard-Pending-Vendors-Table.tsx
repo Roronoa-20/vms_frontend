@@ -102,7 +102,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
   const AgingCell = ({ timeDiff }: { timeDiff?: string }) => {
     const aging = useAgingTimer(timeDiff || "");
     return (
-      <div className="px-2 py-3 rounded-xl bg-orange-200 text-orange-800">
+      <div>
         {timeDiff ? aging : "--"}
       </div>
     );
@@ -142,8 +142,8 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
               <TableHead className="text-center text-black">Vendor Name</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">Company Code</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">Registered By</TableHead>
-              <TableHead className="text-center text-black whitespace-nowrap">Aging</TableHead>
               <TableHead className="text-center text-black">Status</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">Aging</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">Purchase Team</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">Purchase Head</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">Account Team</TableHead>
@@ -162,7 +162,6 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
                   <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
                   <TableCell className="text-nowrap">{item?.company_name}</TableCell>
                   <TableCell className="text-nowrap">{item?.registered_by_full_name}</TableCell>
-                  <TableCell className="text-nowrap"><div className={`rounded-xl bg-orange-200 text-orange-800`}> <AgingCell timeDiff={item?.time_diff} /></div></TableCell>
                   <TableCell>
                     <div
                       className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "Pending"
@@ -175,12 +174,13 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
                       {item?.onboarding_form_status || "--"}
                     </div>
                   </TableCell>
+                  <TableCell className="text-nowrap"><div className="px-2 py-3 rounded-[20px] bg-blue-200 text-orange-800 text-[14px] font-medium"> <AgingCell timeDiff={item?.time_diff} /></div></TableCell>
                   <TableCell className="text-nowrap">{item?.purchase_t_approval_full_name || "--"}</TableCell>
                   <TableCell className="text-nowrap">{item?.purchase_h_approval_full_name || "--"}</TableCell>
                   <TableCell className="text-nowrap">{item?.accounts_t_approval_full_name || "--"}</TableCell>
-                  <TableCell><Button onClick={() => { item?.form_fully_submitted_by_vendor == 1 ? handleView(item?.ref_no, item?.name) : alert("Vendor Form is not Fully Submitted!!!") }} variant={"outline"}>View</Button></TableCell>
+                  <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={() => { item?.form_fully_submitted_by_vendor == 1 ? handleView(item?.ref_no, item?.name) : alert("Vendor Form is not Fully Submitted!!!") }}>View</Button></TableCell>
                   {!isAccountsUser && (
-                    <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
+                    <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button className="bg-blue-400 hover:bg-blue-300">View</Button></Link></div></TableCell>
                   )}
                 </TableRow>
               ))

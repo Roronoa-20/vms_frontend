@@ -76,7 +76,7 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
 
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-2 w-full">
+    <div className="flex flex-col bg-white rounded-lg p-2 w-full h-screen max-h-[75vh]">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Purchasing Details</h1>
 
@@ -127,7 +127,7 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
           </DialogContent>
         </Dialog>
       </div>
-      <div className="grid grid-cols-3 gap-6 p-2 overflow-y-scroll max-h-[70vh] disabled:opacity-100">
+       <div className="grid grid-cols-3 gap-6 p-2">
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Company Name
@@ -156,13 +156,13 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Purchase Group
           </h1>
-          <Input required placeholder="Enter Reg No." disabled defaultValue={OnboardingDetail?.pur_group_details?.description} />
+          <Input required placeholder="" disabled defaultValue={OnboardingDetail?.pur_group_details?.description} />
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Incoterms
           </h1>
-          <Input required placeholder="Enter Reg No." disabled defaultValue={OnboardingDetail?.incoterms} />
+          <Input required placeholder="" disabled defaultValue={OnboardingDetail?.incoterms} />
         </div>
         <div className={`${validation_check?.register_by_account_team == 0 ? "" : "hidden"}`}>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -215,7 +215,7 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
           </Select>
         </div>
       </div>
-      <div className={`flex justify-end pr-6`}>
+      <div className={`flex justify-end`}>
         {validation_check?.change_pur_detail_req_mail_to_it_head !== 1 && (
           <>
             {/* <Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`}>Next</Button> */}

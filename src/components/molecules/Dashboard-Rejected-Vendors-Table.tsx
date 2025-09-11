@@ -16,6 +16,8 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "./Pagination";
 import { useAuth } from "@/src/context/AuthContext";
 import { Eye } from "lucide-react";
+import { useAgingTimer } from "@/src/hooks/useAgingTimer";
+
 
 type Props = {
   dashboardTableData: DashboardTableType["rejected_vendor_onboarding"],
@@ -124,7 +126,15 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
   };
 
 
-  console.log(table, "this is table");
+  const AgingCell = ({ timeDiff }: { timeDiff?: string }) => {
+    const aging = useAgingTimer(timeDiff || "");
+    return (
+      <div>
+        {timeDiff ? aging : "--"}
+      </div>
+    );
+  };
+
 
   return (
     <>
@@ -159,6 +169,7 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
               <TableHead className="text-center text-black">Vendor Name</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">Company Code</TableHead>
               <TableHead className="text-center text-black">Status</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">Aging</TableHead>
               <TableHead className="text-center text-black">Rejected By Designation</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">Rejected By</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">View Rejection Reason</TableHead>
@@ -186,6 +197,7 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                       {item?.onboarding_form_status}
                     </div>
                   </TableCell>
+                  <TableCell className="text-nowrap"><div className="px-2 py-3 rounded-[20px] bg-blue-200 text-orange-800 text-[14px] font-medium"> <AgingCell timeDiff={item?.time_diff} /></div></TableCell>
                   <TableCell
                     className="max-w-[180px] truncate whitespace-nowrap text-sm text-center"
                     title={item?.rejected_by_designation ?? ""}
