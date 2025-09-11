@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import VendorRegistration2 from "../templates/vendorRegistration/VendorRegistrationForm2";
+import VendorRegistration2 from "../templates/vendorRegistration/AllVendorsVendorRegistration";
 import { TvendorRegistrationDropdown } from "@/src/types/types";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
@@ -15,6 +15,7 @@ interface Props {
   incoTermsDropdown: TvendorRegistrationDropdown["message"]["data"]["incoterm_master"];
   currencyDropdown: TvendorRegistrationDropdown["message"]["data"]["currency_master"];
   handleCancel?: () => void;
+  handleSubmit?: () => void;
 }
 
 export interface NewVendorFormData {
@@ -39,7 +40,7 @@ type OptionType = {
   label: string;
 };
 
-const NewVendorRegistration = ({ handleCancel, ...Props }: Props) => {
+const NewVendorRegistration = ({ handleSubmit, handleCancel, ...Props }: Props) => {
   const [formData, setFormData] = useState<Partial<NewVendorFormData>>({});
   const [multiVendor, setMultiVendor] = useState<string[]>([]);
   const [tableData, setTableData] = useState<TtableData[]>([]);
@@ -72,78 +73,84 @@ const NewVendorRegistration = ({ handleCancel, ...Props }: Props) => {
   };
 
   // --- Submit logic: only checks vendor type + table data ---
-  const handleSubmit = async () => {
-    if (!formData?.vendor_types || formData?.vendor_types?.length === 0) {
-      alert("Please Select Vendor Type");
-      return;
-    }
+  // const handleSubmit = async () => {
+  //   if (!formData?.vendor_types || formData?.vendor_types?.length === 0) {
+  //     alert("Please Select Vendor Type");
+  //     return;
+  //   }
 
-    if (tableData?.length == 0) {
-      alert("Please Add at least 1 Row");
-      return;
-    }
+  //   if (tableData?.length == 0) {
+  //     alert("Please Add at least 1 Row");
+  //     return;
+  //   }
 
-    const submitButton = document.getElementById("submitButton") as HTMLButtonElement | null;
-    if (submitButton) {
-      submitButton.disabled = true;
-    }
+  //   const submitButton = document.getElementById("submitButton") as HTMLButtonElement | null;
+  //   if (submitButton) {
+  //     submitButton.disabled = true;
+  //   }
 
-    const url = API_END_POINTS?.vendorRegistrationSubmit;
-    let updateFormData;
+  //   const url = API_END_POINTS?.vendorRegistrationSubmit;
+  //   let updateFormData;
 
-    if (tableData?.length > 1) {
-      updateFormData = {
-        ...formData,
-        purchase_details: tableData,
-        for_multiple_company: 1,
-      };
-    } else {
-      updateFormData = {
-        ...formData,
-        company_name: tableData?.[0]?.company_name,
-        purchase_organization: tableData?.[0]?.purchase_organization,
-        account_group: tableData?.[0]?.account_group,
-        terms_of_payment: tableData?.[0]?.terms_of_payment,
-        purchase_group: tableData?.[0]?.purchase_group,
-        order_currency: tableData?.[0]?.order_currency,
-        reconciliation_account: tableData?.[0]?.reconciliation_account,
-        incoterms: tableData?.[0]?.incoterms,
-        qms_required: tableData?.[0]?.qms_required,
-        for_multiple_company: 0,
-      };
-    }
+  //   if (tableData?.length > 1) {
+  //     updateFormData = {
+  //       ...formData,
+  //       purchase_details: tableData,
+  //       for_multiple_company: 1,
+  //     };
+  //   } else {
+  //     updateFormData = {
+  //       ...formData,
+  //       company_name: tableData?.[0]?.company_name,
+  //       purchase_organization: tableData?.[0]?.purchase_organization,
+  //       account_group: tableData?.[0]?.account_group,
+  //       terms_of_payment: tableData?.[0]?.terms_of_payment,
+  //       purchase_group: tableData?.[0]?.purchase_group,
+  //       order_currency: tableData?.[0]?.order_currency,
+  //       reconciliation_account: tableData?.[0]?.reconciliation_account,
+  //       incoterms: tableData?.[0]?.incoterms,
+  //       qms_required: tableData?.[0]?.qms_required,
+  //       for_multiple_company: 0,
+  //     };
+  //   }
 
-    const response: AxiosResponse = await requestWrapper({
-      url: url,
-      method: "POST",
-      data: { data: updateFormData },
-    });
+  //   const response: AxiosResponse = await requestWrapper({
+  //     url: url,
+  //     method: "POST",
+  //     data: { data: updateFormData },
+  //   });
 
-    if (response?.status == 500) {
-      console.log("error in submitting this form");
-      return;
-    }
+  //   if (response?.status == 500) {
+  //     console.log("error in submitting this form");
+  //     return;
+  //   }
 
-    if (response?.status == 200) {
-      if (response?.data?.message?.status == "duplicate") {
-        alert(response?.data?.message?.message);
-        if (submitButton) {
-          submitButton.disabled = false;
-        }
-        return;
-      }
-      alert("Submit Successfully");
-      router.push("/dashboard");
-    } else {
-      if (submitButton) {
-        submitButton.disabled = false;
-      }
-    }
-  };
+  //   if (response?.status == 200) {
+  //     if (response?.data?.message?.status == "duplicate") {
+  //       alert(response?.data?.message?.message);
+  //       if (submitButton) {
+  //         submitButton.disabled = false;
+  //       }
+  //       return;
+  //     }
+  //     alert("Submit Successfully");
+  //     router.push("/dashboard");
+  //   } else {
+  //     if (submitButton) {
+  //       submitButton.disabled = false;
+  //     }
+  //   }
+  // };
 
   const onCancel = () => {
     if (handleCancel) {
       handleCancel();
+    }
+  };
+
+  const onSubmit = () => {
+    if (handleSubmit)  {
+      handleSubmit();
     }
   };
 
@@ -181,7 +188,7 @@ const NewVendorRegistration = ({ handleCancel, ...Props }: Props) => {
         handleSelectChange={handleSelectChange}
         tableData={tableData}
         setTableData={setTableData}
-        handleSubmit={handleSubmit}
+        handleSubmit={onSubmit}
         handleCancel={onCancel}
         multiVendor={multiVendor}
       />

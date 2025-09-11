@@ -206,7 +206,13 @@ const API_END_POINTS = {
   detailednotification: `${url}/api/method/vms.APIs.notification_chatroom.get_notification.get_notification_detail`,
   markallnotificationread: `${url}/api/method/vms.APIs.notification_chatroom.get_notification.mark_all_notifications_read`,
   purchasingdetailschangeemail: `${url}/api/method/vms.APIs.vendor_onboarding.vendors_doc_changes_req_email.email_to_change_pur_detail`,
-  deleteTwoWayBankFile:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.delete_bank_proof_attachment`
+
+  // Delete Uploaded File API Payment Details
+  deleteTwoWayBankFile:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.delete_bank_proof_attachment`,
+
+  // All VEndors Copy and Extend APIs
+  copyexistingvendors: `${url}/api/method/vms.APIs.vendor_onboarding.extend_vendor_code_in_sap.create_vendor_data_from_existing_onboarding`,
+  extendexistingvendors: `${url}/api/method/vms.APIs.vendor_onboarding.extend_vendor_code_in_sap.send_vendor_code_extend_mail`,
 }
 
 export default API_END_POINTS;

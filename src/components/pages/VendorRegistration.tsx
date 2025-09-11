@@ -60,15 +60,15 @@ const VendorRegistration = ({ ...Props }: Props) => {
 
   const handleSubmit = async () => {
 
-    // if (formData?.vendor_type && formData?.vendor_type?.length < 0) {
-    //   alert("Please Select Vendor Type");
-    //   return;
-    // }
-
-    if (!formData?.vendor_type || formData?.vendor_type?.length === 0) {
+    if (formData?.vendor_type && formData?.vendor_type?.length < 0) {
       alert("Please Select Vendor Type");
       return;
     }
+
+    // if (!formData?.vendor_type || formData?.vendor_type?.length === 0) {
+    //   alert("Please Select Vendor Type");
+    //   return;
+    // }
 
     if (!formData?.vendor_name) {
       alert("please Enter Vendor Name");

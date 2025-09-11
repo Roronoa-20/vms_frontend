@@ -17,7 +17,7 @@ export type TvendorRegistrationDropdown = {
       vendor_type: { name: string }[],
       vendor_title: { name: string }[],
       country_master: { name: string, mobile_code: string }[],
-      company_master: { name: string, description: string }[],
+      company_master: { name: string, description: string , sap_client_code: string}[],
       incoterm_master: { name: string }[],
       currency_master: { name: string }[]
     }
@@ -762,6 +762,8 @@ export type FileAttachment = {
   url: string;
   name: string;
   file_name: string;
+  attachment_name: string;
+  row_name: string;
 };
 
 type DocumentDetailsTab = {

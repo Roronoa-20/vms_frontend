@@ -11,6 +11,9 @@ import requestWrapper from "@/src/services/apiCall";
 import Pagination from "@/src/components/molecules/Pagination";
 import NewVendorRegistration from "@/src/components/pages/newvendorregistration";
 import { TvendorRegistrationDropdown } from "@/src/types/types";
+import { Label } from "@/components/ui/label";
+import { Select, SelectGroup, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/src/components/atoms/select";
+
 
 interface Props {
     vendors: Vendor[];
@@ -32,15 +35,11 @@ interface RowData {
     state: string;
     country: string;
     pincode: string;
-    // trc_certificate_no: string;
-    // msme_type: string;
-    // udyam_no: string;
-    // enterprise_reg_no: string;
-    // iec_code: string;
     bank_name: string;
     ifsc_code: string;
     bank_file: string;
     sap_client_code: string;
+    purchase_org: string
 }
 
 const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
@@ -49,13 +48,14 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
     const [selectedVendorCodes, setSelectedVendorCodes] = React.useState<CompanyVendorCodeRecord[] | null>(null);
     const [copiedRow, setCopiedRow] = React.useState<RowData | null>(null);
     const [isExtendDialogOpen, setIsExtendDialogOpen] = React.useState(false);
+    const [extendRow, setExtendRow] = React.useState<RowData | null>(null);
     const [currentPage, setCurrentPage] = React.useState(1);
     const recordPerPage = 10;
 
     const rows: RowData[] = vendors.flatMap((vendor) => {
         const companyData = vendor.multiple_company_data?.length
             ? vendor.multiple_company_data.filter((c) => c.company_name === activeTab)
-            : [{ company_name: activeTab, company_display_name: activeTab, company_vendor_code: "N.A.", sap_client_code: "N.A." }];
+            : [{ company_name: activeTab, company_display_name: activeTab, company_vendor_code: "N.A.", sap_client_code: "N.A.", purchase_organization: "N.A." }];
 
         return companyData.map((c) => {
             const approvedRecord = vendor.vendor_onb_records?.find(
@@ -77,15 +77,11 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                 state: c.company_display_name || "N.A.",
                 country: vendor.country || "N.A.",
                 pincode: vendor.mobile_number || "N.A.",
-                // trc_certificate_no: "",
-                // msme_type: "",
-                // udyam_no: "",
-                // enterprise_reg_no: "",
-                // iec_code: "",
                 bank_name: vendor.bank_details?.bank_name || "N.A.",
                 ifsc_code: vendor.bank_details?.ifsc_code || "N.A.",
                 bank_file: vendor.bank_details?.bank_proof || "",
                 sap_client_code: c.sap_client_code || "N.A.",
+                purchase_org: c.purchase_organization || "N.A.",
             };
         });
     });
@@ -99,8 +95,6 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
     const columns: { key: keyof RowData; label: string; type?: "text" | "file" | "boolean" }[] = [
         { key: "multiple_company", label: "Multi-Company?", type: "boolean" },
         { key: "company_code", label: "Company Code" },
-        // { key: "ref_no", label: "Ref No" },
-        // { key: "vendor_code", label: "Vendor Code" },
         { key: "vendor_name", label: "Vendor Name" },
         { key: "country", label: "Country" },
         { key: "office_email_primary", label: "Official Email" },
@@ -110,11 +104,6 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
         { key: "gst_file", label: "GST File", type: "file" },
         { key: "state", label: "State" },
         { key: "pincode", label: "Pincode/ZipCode" },
-        // { key: "trc_certificate_no", label: "TRC Certificate No." },
-        // { key: "msme_type", label: "MSME Type" },
-        // { key: "udyam_no", label: "Udyam No." },
-        // { key: "enterprise_reg_no", label: "Entity Registration No." },
-        // { key: "iec_code", label: "IEC Code" },
         { key: "bank_name", label: "Bank Name" },
         { key: "ifsc_code", label: "IFSC Code" },
         { key: "bank_file", label: "Bank File", type: "file" },
@@ -188,17 +177,127 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
     const incoTermsDropdown = dropdownData?.incoterm_master;
     const currencyDropdown = dropdownData?.currency_master;
 
-    const handleCopy = (row: RowData) => {
-        const allowedCompanyNames = ["1012", "1022", "1000", "1025", "1030"];
 
-        if (
-            row.company_code &&
-            row.sap_client_code === "100" &&
-            allowedCompanyNames.includes(row.company_code)
-        ) {
-            setCopiedRow(row);
-        } else {
-            setCopiedRow(row);
+    const handleCopy = (row: RowData) => {
+        if (copiedRow?.name === row.name && copiedRow?.company_code === row.company_code) {
+            setCopiedRow(null);
+            return;
+        }
+        if (isExtendDialogOpen) {
+            setIsExtendDialogOpen(false);
+            setExtendRow(null);
+        }
+        setCopiedRow(row);
+    };
+
+    const handleExtend = (row: RowData) => {
+        if (extendRow?.name === row.name && extendRow?.company_code === row.company_code) {
+            setIsExtendDialogOpen(false);
+            setExtendRow(null);
+            return;
+        }
+        if (copiedRow) {
+            setCopiedRow(null);
+        }
+        setExtendRow(row);
+        setIsExtendDialogOpen(true);
+    };
+
+
+    const [purchaseOrganizations, setPurchaseOrganizations] = React.useState<any[]>([]);
+
+    const handleCompanyDropdownChange = async (value: string) => {
+        if (!companyDropdown) return;
+
+        const filteredCompanies = companyDropdown.filter((c) => c.sap_client_code === "100");
+        const selectedCompany = filteredCompanies.find((c) => c.name === value);
+
+        if (selectedCompany) {
+            setExtendRow((prev) =>
+                prev
+                    ? { ...prev, company_code: selectedCompany.name, purchase_org: "" }
+                    : { company_code: selectedCompany.name, purchase_org: "" } as RowData
+            );
+
+            try {
+                const response = await requestWrapper({
+                    url: API_END_POINTS.companyBasedDropdown,
+                    method: "POST",
+                    data: { company_name: selectedCompany.name },
+                });
+                if (response?.data?.message?.status === "success") {
+                    setPurchaseOrganizations(
+                        response.data.message.data.purchase_organizations || []
+                    );
+                } else {
+                    console.warn("API did not return success:", response?.data);
+                    setPurchaseOrganizations([]);
+                }
+            } catch (err) {
+                console.error("Error fetching purchase organizations:", err);
+                setPurchaseOrganizations([]);
+            }
+        }
+    };
+
+    const handlePurchaseOrganizationDropdownChange = (value: string) => {
+        setExtendRow((prev) =>
+            prev ? { ...prev, purchase_org: value } : prev
+        );
+    };
+
+    const handleExtendSubmit = async () => {
+        if (!extendRow) return;
+        try {
+            const response = await requestWrapper({
+                url: API_END_POINTS?.extendexistingvendors,
+                method: "POST",
+                data: {
+                    ref_no: extendRow.ref_no ?? null,
+                    prev_company: extendRow.company_code ?? null,
+                    extend_company: extendRow.company_code ?? null,
+                    purchase_org: extendRow.purchase_org ?? null,
+                },
+            });
+
+            console.log("Extend Vendor Response:", response);
+
+            if (response?.status === 200) {
+                alert("Vendor copied successfully");
+            }
+
+            setIsExtendDialogOpen(false);
+        } catch (err) {
+            console.error("Error extending vendor:", err);
+            alert("Failed to extend vendor. Check console for details.");
+        }
+    };
+
+    const handleCopySubmit = async () => {
+        if (!copiedRow) return;
+        try {
+            const response = await requestWrapper({
+                url: API_END_POINTS?.copyexistingvendors,
+                method: "POST",
+                data: {
+                    ref_no: copiedRow.ref_no ?? null,
+                    prev_company: copiedRow.company_code ?? null,
+                    extend_company: copiedRow.company_code ?? null,
+                    purchase_org: copiedRow.purchase_org ?? null,
+                },
+            });
+
+            console.log("Copy Vendor Response:", response);
+
+            if (response?.status === 200) {
+                alert("Vendor copied successfully");
+            }
+
+
+            setCopiedRow(null);
+        } catch (err) {
+            console.error("Error copying vendor:", err);
+            alert("Failed to copy vendor. Check console for details.");
         }
     };
 
@@ -276,19 +375,11 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                         View
                                     </Button>
                                 </TableCell>
-                                {/* <TableCell className="text-center">
-                                    <Button
-                                        onClick={() => setCopiedRow(row)}
-                                        className="whitespace-nowrap bg-green-600 text-white text-sm rounded-xl px-3 py-1"
-                                    >
-                                        Copy
-                                    </Button>
-                                </TableCell> */}
                                 <TableCell className="text-center">
                                     {["1012", "1022", "1000", "1025", "1030"].includes(row.company_code) ? (
                                         <div className="flex gap-2 justify-center">
                                             <Button
-                                                onClick={() => setIsExtendDialogOpen(true)}
+                                                onClick={() => handleExtend(row)}
                                                 className="bg-blue-600 text-white text-sm rounded-xl px-3 py-1"
                                             >
                                                 Extend
@@ -330,7 +421,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
             {copiedRow && (
                 <div className="mt-6 border rounded-lg shadow bg-gray-50">
                     <h3 className="text-lg text-center font-medium pl-2 pt-2">
-                        Extend Vendor Registration for: <span className="text-green-700 font-semibold underline italic">{copiedRow.vendor_name}</span>
+                        Copy Vendor Registration for: <span className="text-green-700 font-semibold underline italic">{copiedRow.vendor_name}</span>
                     </h3>
                     <NewVendorRegistration
                         vendorTypeDropdown={vendorTypeDropdown || []}
@@ -338,6 +429,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                         incoTermsDropdown={incoTermsDropdown || []}
                         currencyDropdown={currencyDropdown || []}
                         handleCancel={() => setCopiedRow(null)}
+                        handleSubmit={handleCopySubmit}
                     />
                 </div>
             )}
@@ -381,49 +473,91 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                     </div>
                 </PopUp>
             )}
-            {isExtendDialogOpen && (
-                <PopUp
-                    handleClose={() => setIsExtendDialogOpen(false)}
-                    headerText="Extend Vendor"
-                    classname="overflow-y-auto md:max-w-lg"
-                >
-                    <div className="space-y-4 p-4">
-                        <div>
-                            <label className="block text-sm font-medium">Field 1</label>
-                            <input
-                                type="text"
-                                className="w-full border rounded px-2 py-1"
-                                placeholder="Enter first value"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium">Field 2</label>
-                            <input
-                                type="text"
-                                className="w-full border rounded px-2 py-1"
-                                placeholder="Enter second value"
-                            />
+            {/* 🔹 Extend Vendor Inline Form */}
+            {isExtendDialogOpen && extendRow && (
+                <div className="mt-6 border rounded-lg shadow bg-gray-50 p-4">
+                    <h3 className="text-lg text-center font-medium pl-2 pt-2">
+                        Extend Vendor Registration for: <span className="text-green-700 font-semibold underline italic">{extendRow.vendor_name}</span>
+                    </h3>
+                    <div className="space-y-4">
+                        <div className="flex gap-4 p-4">
+                            {/* Company Name */}
+                            <div className="flex-1">
+                                <h1 className="text-[14px] font-normal text-black pb-2">Company Name</h1>
+                                <Select
+                                    required
+                                    onValueChange={(value) => handleCompanyDropdownChange(value)}
+                                    value={extendRow?.company_code ?? ""}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Company Name" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            {companyDropdown && companyDropdown.length > 0 ? (
+                                                companyDropdown
+                                                    .filter((item: any) => item.sap_client_code === "100")
+                                                    .map((item: any) => (
+                                                        <SelectItem value={item.name} key={item.name}>
+                                                            {item.description}
+                                                        </SelectItem>
+                                                    ))
+                                            ) : (
+                                                <div className="text-center">No Value</div>
+                                            )}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* Purchase Organization */}
+                            <div className="flex-1">
+                                <h1 className="text-[14px] font-normal text-black pb-2">Purchase Organization</h1>
+                                <Select
+                                    required
+                                    onValueChange={(value) => handlePurchaseOrganizationDropdownChange(value)}
+                                    value={extendRow?.purchase_org ?? ""}
+                                    disabled={!extendRow?.company_code} // disable until company is chosen
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Purchase Organization" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            {purchaseOrganizations && purchaseOrganizations.length > 0 ? (
+                                                purchaseOrganizations.map((item) => (
+                                                    <SelectItem value={item.name} key={item.name}>
+                                                        {item.description}
+                                                    </SelectItem>
+                                                ))
+                                            ) : (
+                                                <div className="text-center">No Value</div>
+                                            )}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
                         <div className="flex justify-end gap-2">
                             <Button
-                                variant="outline"
+                                variant={"backbtn"}
+                                size={"backbtnsize"}
                                 onClick={() => setIsExtendDialogOpen(false)}
-                                className="bg-gray-400 text-white"
+                                className="py-2"
                             >
                                 Cancel
                             </Button>
                             <Button
-                                onClick={() => {
-                                    // 🔹 Save / API call for Extend
-                                    setIsExtendDialogOpen(false);
-                                }}
-                                className="bg-blue-600 text-white"
+                                onClick={handleExtendSubmit}
+                                variant={"nextbtn"}
+                                size={"nextbtnsize"}
+                                className="py-2"
                             >
                                 Save
                             </Button>
                         </div>
-                    </div>
-                </PopUp>
+                    </div >
+                </div >
             )}
         </>
     );
