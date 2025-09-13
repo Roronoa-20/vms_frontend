@@ -159,15 +159,14 @@ const PaymentDetail = ({
   console.log(OnboardingDetail?.bank_proof?.file_name, "thiskjdvb");
 
   return (
-    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
+    <div className="flex flex-col bg-white px-4 pb-4 rounded-lg max-h-[80vh] overflow-y-scroll w-full">
+      <h1 className="border-b-2 pb-1 sticky top-0 bg-white py-2 text-lg font font-semibold z-50">
         Bank Details
       </h1>
-      {/* <h1 className="pl-2 ">Billing Address</h1> */}
-      <div className="grid grid-cols-3 gap-6 p-5">
+      <div className="grid grid-cols-3 gap-4 p-1">
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Bank Name <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            Bank Name<span className="pl-1 text-red-400 text-2xl">*</span>
           </h1>
           <Select
             value={
@@ -195,8 +194,8 @@ const PaymentDetail = ({
           )}
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            IFSC Code <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            IFSC Code<span className="pl-1 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -212,8 +211,8 @@ const PaymentDetail = ({
           )}
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Account Number <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            Account Number<span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -232,9 +231,9 @@ const PaymentDetail = ({
           )}
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Name of Account Holder{" "}
-            <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            Name of Account Holder
+            <span className="pl-1 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -256,9 +255,9 @@ const PaymentDetail = ({
         </div>
 
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Type of Account{" "}
-            <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            Type of Account
+            <span className="pl-1 text-red-400 text-2xl">*</span>
           </h1>
           <Select
             value={
@@ -285,8 +284,9 @@ const PaymentDetail = ({
           )}
         </div>
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-6">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Currency
+            <span className="pl-1 text-red-400 text-2xl">*</span>
           </h1>
           <Select
             value={paymentDetail?.currency ?? OnboardingDetail?.currency ?? ""}
@@ -309,9 +309,9 @@ const PaymentDetail = ({
           </Select>
         </div>
         <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Bank Proof (Upload Passbook Leaf/Cancelled Cheque){" "}
-            <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            Bank Proof (Upload Passbook Leaf/Cancelled Cheque)
+            <span className="pl-1 text-red-400 text-2xl">*</span>
           </h1>
           <div className="flex gap-4">
             <Input

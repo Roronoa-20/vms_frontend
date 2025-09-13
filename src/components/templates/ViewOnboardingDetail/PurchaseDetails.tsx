@@ -64,13 +64,13 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
           remarks: remark,
         },
       });
-      console.log("Email Sent ✅:", res);
-      alert("Email Sent Successfully ✅");
+      console.log("Email Sent:", res);
+      alert("Email Sent Successfully");
       setOpenDialog(false);
       setRemark("");
-      location.reload();
+      // location.reload();
     } catch (err) {
-      console.error("Failed to send email ❌", err);
+      console.error("Failed to send email", err);
     }
   };
 
@@ -81,7 +81,7 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
         <h1 className="font-semibold text-[18px]">Purchasing Details</h1>
 
         {/* Send Email Button */}
-        {(isAmendment == 1 || re_release == 1) && (validation_check?.change_pur_detail_req_mail_to_it_head !== 1) && (
+        {(isAmendment == 1 || re_release == 1) || (validation_check?.change_pur_detail_req_mail_to_it_head !== 1) && (
           <Button
             className="mb-2 inline-flex items-center gap-2 rounded-[28px] border px-4 py-2 shadow-sm bg-[#5e90c0] text-white hover:bg-[#46709c] transition"
             onClick={() => setOpenDialog(true)}

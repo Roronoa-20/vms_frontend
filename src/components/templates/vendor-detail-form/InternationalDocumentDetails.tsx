@@ -99,15 +99,15 @@ const DocumentDetails = ({
 
   return (
     <div className="flex flex-col bg-white rounded-lg p-4 w-full max-h-[80vh]">
-      <h1 className="border-b-2 pb-2 text-lg">Document Details</h1>
+      <h1 className="border-b-2 pb-1 font-semibold text-lg">Document Details</h1>
       <div className="overflow-y-scroll">
-        <div className="grid grid-cols-2 gap-6 p-5 ">
+        <div className="grid grid-cols-2 gap-4 p-2">
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Import/Export Code
             </h1>
             <Input
-              placeholder="Enter Company Pan Number"
+              placeholder="Enter Import/Export Code"
               // value={
               //   documentDetails?.company_pan_number ??
               //   OnboardingDetail?.company_pan_number ??
@@ -121,7 +121,7 @@ const DocumentDetails = ({
             />
           </div>
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Upload IEC Proof
             </h1>
             <div className="flex gap-4">
@@ -156,11 +156,11 @@ const DocumentDetails = ({
             </div>
           </div>
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               TRC Number
             </h1>
             <Input
-              placeholder="Enter Company Pan Number"
+              placeholder="Enter TRC Number"
               // value={
               //   // documentDetails?.company_pan_number ??
               //   OnboardingDetail?.company_pan_number ??
@@ -174,7 +174,7 @@ const DocumentDetails = ({
             />
           </div>
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               TRC Certificate Proof
             </h1>
             <div className="flex gap-4">
@@ -209,7 +209,7 @@ const DocumentDetails = ({
             </div>
           </div>
           <div className="col-span-1">
-            <h1 className="text-[12px] font-semibold  pb-3">
+            <h1 className="text-[14px] font-semibold pb-2">
               Digital Form 10F
             </h1>
             <ul className="pl-4"><Link href={""} target="blank"><li className="text-blue-400 text-sm underline list-disc">View Sample form 10F Document</li></Link>
@@ -218,7 +218,7 @@ const DocumentDetails = ({
             </ul>
           </div>
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Digital Form 10F Proof
             </h1>
             <div className="flex gap-4">
@@ -253,7 +253,7 @@ const DocumentDetails = ({
             </div>
           </div>
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Permanent Establishment Certificate
             </h1>
             <Link className="text-blue-400 text-sm underline" href={""}>Download PE Certificate Format File</Link>

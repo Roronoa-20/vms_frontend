@@ -20,11 +20,11 @@ type Props = {
   ref_no: string,
   onboarding_ref_no: string,
   OnboardingDetail: VendorOnboardingResponse["message"]["reputed_partners_details_tab"]
-  isAccountsTeam?:number,
-  VendorType?:string[]
+  isAccountsTeam?: number,
+  VendorType?: string[]
 }
 
-const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail,isAccountsTeam,VendorType }: Props) => {
+const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAccountsTeam, VendorType }: Props) => {
   const [reputedPartnersDetails, setReputedPartnersDetails] = useState<Partial<TReputedPartnerDetails[]>>([]);
   const [reputedPartners, setReputedPartners] = useState<Partial<TReputedPartnerDetails>>()
 
@@ -54,15 +54,15 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail,isAccount
 
   const handleBack = () => {
 
-    if(isAccountsTeam == 1){
-        router.push(`/vendor-details-form?Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`)
-      }else if(VendorType && !VendorType.includes("Material Vendor")){
-        router.push(
-          `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
-        );
-      }else{
-        router.push(`/vendor-details-form?tabtype=Testing%20Facility&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
-      }
+    if (isAccountsTeam == 1) {
+      router.push(`/vendor-details-form?Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`)
+    } else if (VendorType && !VendorType.includes("Material Vendor")) {
+      router.push(
+        `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
+      );
+    } else {
+      router.push(`/vendor-details-form?tabtype=Testing%20Facility&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    }
 
     // router.push(`/vendor-details-form?tabtype=Testing%20Facility&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   };
@@ -81,31 +81,31 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail,isAccount
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
+      <h1 className="border-b-2 pb-1 font-semibold sticky top-0 bg-white py-2 text-lg">
         Reputed Partners
       </h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
+      <div className="grid grid-cols-3 gap-4 p-2">
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Company Name
           </h1>
           <Input placeholder="" value={reputedPartners?.company_name ?? ""} onChange={(e) => { setReputedPartners((prev) => ({ ...prev, company_name: e.target.value })) }} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Supplied Qty./ Year
           </h1>
           <Input placeholder="" value={reputedPartners?.supplied_qtyyear ?? ""} onChange={(e) => { setReputedPartners((prev) => ({ ...prev, supplied_qtyyear: e.target.value })) }} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Remarks
           </h1>
           <Input placeholder="" value={reputedPartners?.remark ?? ""} onChange={(e) => { setReputedPartners((prev) => ({ ...prev, remark: e.target.value })) }} />
         </div>
-        <div className="col-span-1 flex items-end">
-          <Button className={`bg-blue-400 hover:bg-blue-300 `} onClick={() => { handleAdd() }}>Add</Button>
-        </div>
+      </div>
+      <div className="flex justify-end">
+        <Button className={`py-2`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleAdd() }}>Add</Button>
       </div>
       {reputedPartnersDetails.length > 0 && (
         <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
@@ -132,14 +132,14 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail,isAccount
                   <TableCell>{item?.company_name}</TableCell>
                   <TableCell>{item?.supplied_qtyyear}</TableCell>
                   <TableCell>{item?.remark}</TableCell>
-                  <TableCell className="flex justify-center"><Trash2 onClick={() => { handleRowDelete(index) }} className="text-red-400 cursor-pointer"/></TableCell>
+                  <TableCell className="flex justify-center"><Trash2 onClick={() => { handleRowDelete(index) }} className="text-red-400 cursor-pointer" /></TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </div>
       )}
-      <div className="flex justify-end items-center space-x-3 mt-3">
+      <div className="flex justify-end items-center space-x-3 mt-20">
         <Button
           onClick={handleBack}
           variant="backbtn"

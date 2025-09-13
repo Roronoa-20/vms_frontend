@@ -86,13 +86,13 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
       <Suspense>
     <div className="h-screen flex flex-col bg-gray-200 relative">
       {/* navbar */}
-      <div className="bg-white py-4 px-10 flex gap-5 items-center mb-6 sticky top-0">
+      <div className="bg-white py-4 px-6 flex gap-5 items-center mb-6 sticky top-0">
         <div className="w-6">
           <VMSLogo />
         </div>
         <h1 className="text-[24px] font-semibold">Vendor Onboarding</h1>
       </div>
-      <div className="flex px-10 justify-between gap-5">
+      <div className="flex px-6 justify-between gap-5">
         {/* sidebar */}
         <OnboardingSidebar onboarding_refno={vendorOnboardingRefno} refno={refno} vendor_type={OnboardingDetail?.company_details_tab?.vendor_types} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} />
         {/* form */}

@@ -101,18 +101,18 @@ const CompanyDetailForm = ({
   };
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-4 w-full">
-      <h1 className="border-b-2 pb-2">Company Detail</h1>
+    <div className="flex flex-col bg-white rounded-lg p-4 w-full overflow-y-scroll max-h-[80vh]">
+      <h1 className="border-b-2 font-semibold pb-1">Company Detail</h1>
       <form
         onSubmit={(e) => {
           handleSubmit(e);
         }}
       >
-        <div className="grid grid-cols-3 gap-6 p-5 overflow-y-scroll max-h-[70vh]">
+        <div className="grid grid-cols-3 gap-6 p-2">
           <div>
             <div className="grid grid-cols-4 gap-1">
               <div className="flex flex-col col-span-1">
-                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                <h1 className="text-[12px] font-normal text-[#626973] pb-2">
                   Vendor Title
                 </h1>
                 <Input
@@ -123,7 +123,7 @@ const CompanyDetailForm = ({
                 />
               </div>
               <div className="col-span-3">
-                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                <h1 className="text-[12px] font-normal text-[#626973] pb-2">
                   Company Name
                 </h1>
                 <Input
@@ -137,8 +137,7 @@ const CompanyDetailForm = ({
           </div>
           <div className="flex flex-col">
             <h1 className="text-[12px] font-normal text-[#626973] flex">
-              Type Of Business (Please select any one){" "}
-              <span className="pl-2 text-red-400 text-xl">*</span>
+              Type Of Business (Please select any one)<span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Select
               required={true}
@@ -169,25 +168,9 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Size of Company
             </h1>
-            {/* <Select
-              onValueChange={(value) => {
-                updateField("size_of_company", value);
-              }}
-              value={data?.size_of_company ?? OnboardingDetail?.size_of_company}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="apple">50-100</SelectItem>
-                  <SelectItem value="banana">100-200</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select> */}
             <Input
               placeholder=""
               onChange={(e) => {
@@ -197,7 +180,7 @@ const CompanyDetailForm = ({
             />
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Website
             </h1>
             <Input
@@ -209,9 +192,8 @@ const CompanyDetailForm = ({
             />
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] flex">
+            <h1 className="text-[12px] font-normal text-[#626973] flex pb-2">
               Reg No.
-              {/* <span className="pl-2 text-red-400 text-xl">*</span> */}
             </h1>
             <Input
               placeholder="Enter Reg No."
@@ -232,7 +214,7 @@ const CompanyDetailForm = ({
               )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Mobile Number
             </h1>
             <Input
@@ -249,7 +231,7 @@ const CompanyDetailForm = ({
             />
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               WhatsApp Number (If applicable)
             </h1>
             <Input
@@ -263,7 +245,7 @@ const CompanyDetailForm = ({
             />
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Established Year
             </h1>
             <Input
@@ -279,7 +261,7 @@ const CompanyDetailForm = ({
             />
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Office Email Primary
             </h1>
             <Input
@@ -296,7 +278,7 @@ const CompanyDetailForm = ({
             />
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Office Email (Secondary)
             </h1>
             <Input
@@ -352,7 +334,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Nature of Company(Please select anyone)
             </h1>
             <Select
@@ -382,7 +364,7 @@ const CompanyDetailForm = ({
             </Select>
           </div>
           <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Nature of Business (Please Select anyone)
             </h1>
             <Select
@@ -410,7 +392,7 @@ const CompanyDetailForm = ({
             </Select>
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Meril Associated Companies
             </h1>
             {ismulticompany ? (
@@ -431,7 +413,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Vendor Type
             </h1>
             <textarea
@@ -444,9 +426,9 @@ const CompanyDetailForm = ({
             />
           </div>
         </div>
-        <div className="flex justify-end pr-6">
+        <div className="flex justify-end pr-2">
           <Button
-            className={`bg-blue-400 hover:bg-blue-400`}
+            className={`py-2`}
             variant="nextbtn"
             size="nextbtnsize"
           >

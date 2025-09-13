@@ -1,0 +1,26 @@
+export interface RowData {
+  name: string;
+  ref_no: string;
+  multiple_company: number;
+  company_code: string;
+  vendor_code: string;
+  vendor_name: string;
+  office_email_primary: string;
+  pan_number: string;
+  pan_file?: string;
+  gst_no?: string;
+  gst_file?: string;
+  state?: string;
+  country?: string;
+  pincode?: string;
+  bank_name?: string;
+  ifsc_code?: string;
+  bank_file?: string;
+  sap_client_code?: string;
+  purchase_org?: string;
+}
+
+export interface ExtendRowData extends RowData {
+  prev_company: string;
+  extend_company: string;
+}

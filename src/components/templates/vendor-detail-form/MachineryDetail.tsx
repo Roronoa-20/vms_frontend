@@ -86,12 +86,12 @@ const MachineryDetail = ({
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
-        Details of Machinery & Other Equipment
+      <h1 className="border-b-2 pb-1 font-semibold sticky top-0 bg-white py-4 text-lg">
+        Details of Machinery & Other Equipment <span className="font-normal">(Machine Details)</span>
       </h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
+      <div className="grid grid-cols-3 gap-4 p-2">
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Equipment Name
           </h1>
           <Input
@@ -106,7 +106,7 @@ const MachineryDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Equipment Qty.
           </h1>
           <Input
@@ -121,7 +121,7 @@ const MachineryDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Capacity
           </h1>
           <Input
@@ -136,7 +136,7 @@ const MachineryDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Remarks
           </h1>
           <Input
@@ -152,10 +152,12 @@ const MachineryDetail = ({
         </div>
         <div className={`col-span-1 flex items-end`}>
           <Button
-            className="bg-blue-400 hover:bg-blue-300"
+            className="py-2"
             onClick={() => {
               handleAdd();
             }}
+            variant={"nextbtn"}
+            size={"nextbtnsize"}
           >
             Add
           </Button>

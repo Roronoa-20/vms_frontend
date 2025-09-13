@@ -8,6 +8,7 @@ import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { useRouter } from "next/navigation";
 import MultiSelect, { MultiValue } from "react-select";
+import { RowData, ExtendRowData } from "@/src/types/rowdata";
 
 interface Props {
   vendorTypeDropdown: TvendorRegistrationDropdown["message"]["data"]["vendor_type"];
@@ -15,7 +16,7 @@ interface Props {
   incoTermsDropdown: TvendorRegistrationDropdown["message"]["data"]["incoterm_master"];
   currencyDropdown: TvendorRegistrationDropdown["message"]["data"]["currency_master"];
   handleCancel?: () => void;
-  handleSubmit?: () => void;
+  initialData?: RowData;
 }
 
 export interface NewVendorFormData {
@@ -40,12 +41,12 @@ type OptionType = {
   label: string;
 };
 
-const NewVendorRegistration = ({ handleSubmit, handleCancel, ...Props }: Props) => {
+const NewVendorRegistration = ({ handleCancel, ...Props }: Props) => {
   const [formData, setFormData] = useState<Partial<NewVendorFormData>>({});
   const [multiVendor, setMultiVendor] = useState<string[]>([]);
   const [tableData, setTableData] = useState<TtableData[]>([]);
   const [vendorTypeOptions, setVendorTypeOptions] = useState<OptionType[]>([]);
-
+  console.log("Initial Data---->", Props.initialData);
   const router = useRouter();
 
   // Prepare vendor type dropdown
@@ -142,17 +143,96 @@ const NewVendorRegistration = ({ handleSubmit, handleCancel, ...Props }: Props) 
   //   }
   // };
 
+  const handleSubmit = async () => {
+    if (!formData?.vendor_types || formData?.vendor_types?.length === 0) {
+      alert("Please Select Vendor Type");
+      return;
+    }
+
+    if (tableData?.length == 0) {
+      alert("Please Add at least 1 Row");
+      return;
+    }
+
+    if (tableData?.[0]?.company_name === Props?.initialData?.company_code) {
+      alert("Error: Company Name cannot be the same as the initial data company.");
+      return;
+    }
+
+    const submitButton = document.getElementById("submitButton") as HTMLButtonElement | null;
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+
+    const url = API_END_POINTS?.vendorRegistrationSubmit;
+    let updateFormData;
+
+    if (tableData?.length > 1) {
+      updateFormData = {
+        ...formData,
+        purchase_details: tableData,
+        for_multiple_company: 1,
+        vendor_name: Props?.initialData?.vendor_name,
+        office_email_primary: Props?.initialData?.office_email_primary,
+      };
+    } else {
+      updateFormData = {
+        ...formData,
+        company_name: tableData?.[0]?.company_name,
+        purchase_organization: tableData?.[0]?.purchase_organization,
+        account_group: tableData?.[0]?.account_group,
+        terms_of_payment: tableData?.[0]?.terms_of_payment,
+        purchase_group: tableData?.[0]?.purchase_group,
+        order_currency: tableData?.[0]?.order_currency,
+        reconciliation_account: tableData?.[0]?.reconciliation_account,
+        incoterms: tableData?.[0]?.incoterms,
+        qms_required: tableData?.[0]?.qms_required,
+        for_multiple_company: 0,
+        vendor_name: Props?.initialData?.vendor_name,
+        office_email_primary: Props?.initialData?.office_email_primary,
+      };
+    }
+
+    const response: AxiosResponse = await requestWrapper({
+      url: url,
+      method: "POST",
+      data: { data: updateFormData },
+    });
+
+    if (response?.status == 500) {
+      console.log("error in submitting this form");
+      return;
+    }
+
+    if (response?.status == 200) {
+      if (response?.data?.message?.status == "duplicate") {
+        alert(response?.data?.message?.message);
+        if (submitButton) {
+          submitButton.disabled = false;
+        }
+        return;
+      }
+      alert("Submit Successfully");
+      router.push("/dashboard");
+    } else {
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
+    }
+  };
+
+
   const onCancel = () => {
     if (handleCancel) {
       handleCancel();
     }
   };
 
-  const onSubmit = () => {
-    if (handleSubmit)  {
-      handleSubmit();
-    }
-  };
+  // const onSubmit = () => {
+  //   if (handleSubmit)  {
+  //     handleSubmit();
+  //   }
+  // };
 
   return (
     <div className="p-3">
@@ -184,11 +264,11 @@ const NewVendorRegistration = ({ handleSubmit, handleCancel, ...Props }: Props) 
           ...formData,
           vendor_types: formData.vendor_types?.map((item) => item.vendor_type),
         }}
-        handlefieldChange={() => {}}
+        handlefieldChange={() => { }}
         handleSelectChange={handleSelectChange}
         tableData={tableData}
         setTableData={setTableData}
-        handleSubmit={onSubmit}
+        handleSubmit={handleSubmit}
         handleCancel={onCancel}
         multiVendor={multiVendor}
       />

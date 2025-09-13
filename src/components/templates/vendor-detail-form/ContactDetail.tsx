@@ -110,13 +110,13 @@ const ContactDetail = ({
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
-        Contact Detail
+      <h1 className="border-b-2 pb-1 sticky top-0 bg-white py-2 text-lg font-semibold">
+        Contact Detail<span className="pl-1 text-red-400 text-2xl">*</span>
       </h1>
-      <h1 className="pl-5">Contact Person</h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
+      {/* <h1 className="pl-1 pt-1 font-medium">Contact Person</h1> */}
+      <div className="grid grid-cols-3 gap-4 p-2">
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             First Name
           </h1>
           <Input
@@ -131,7 +131,7 @@ const ContactDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Last Name
           </h1>
           <Input
@@ -146,7 +146,7 @@ const ContactDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Designation
           </h1>
           <Input
@@ -161,7 +161,7 @@ const ContactDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">Email</h1>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">Email</h1>
           <Input
             placeholder=""
             onChange={(e) => {
@@ -171,7 +171,7 @@ const ContactDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Contact Number
           </h1>
           <Input
@@ -186,7 +186,7 @@ const ContactDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Department Name
           </h1>
           <Input
@@ -201,9 +201,11 @@ const ContactDetail = ({
           />
         </div>
       </div>
-      <div className={`flex justify-end pb-4`}>
+      <div className={`flex justify-end pb-2`}>
         <Button
-          className="bg-blue-400 hover:bg-blue-400"
+          className="py-2"
+          variant={"nextbtn"}
+          size={"nextbtnsize"}
           onClick={() => {
             handleAdd();
           }}
@@ -222,26 +224,26 @@ const ContactDetail = ({
             {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                <TableHead className="w-[100px]">Sr No.</TableHead>
-                <TableHead className="text-center">First Name</TableHead>
-                <TableHead className="text-center">Last Name</TableHead>
-                <TableHead className="text-center">Designation</TableHead>
-                <TableHead className="text-center">Email</TableHead>
-                <TableHead className="text-center">Contact Number</TableHead>
-                <TableHead className="text-center">Department Name</TableHead>
-                <TableHead className="text-center">Delete</TableHead>
+                <TableHead className="text-center text-black">Sr No.</TableHead>
+                <TableHead className="text-center text-black">First Name</TableHead>
+                <TableHead className="text-center text-black">Last Name</TableHead>
+                <TableHead className="text-center text-black">Designation</TableHead>
+                <TableHead className="text-center text-black">Email</TableHead>
+                <TableHead className="text-center text-black">Contact Number</TableHead>
+                <TableHead className="text-center text-black">Department Name</TableHead>
+                <TableHead className="text-center text-black">Delete</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="text-center">
               {contactDetail?.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell className="font-medium">{index + 1}</TableCell>
-                  <TableCell>{item?.first_name}</TableCell>
-                  <TableCell>{item?.last_name}</TableCell>
-                  <TableCell>{item?.designation}</TableCell>
-                  <TableCell>{item?.email}</TableCell>
-                  <TableCell>{item?.contact_number}</TableCell>
-                  <TableCell>{item?.department_name}</TableCell>
+                  <TableCell className="text-center">{index + 1}</TableCell>
+                  <TableCell className="text-center">{item?.first_name}</TableCell>
+                  <TableCell className="text-center">{item?.last_name}</TableCell>
+                  <TableCell className="text-center">{item?.designation}</TableCell>
+                  <TableCell className="text-center">{item?.email}</TableCell>
+                  <TableCell className="text-center">{item?.contact_number}</TableCell>
+                  <TableCell className="text-center">{item?.department_name}</TableCell>
                   <TableCell className="flex justify-center">
                     <Trash2
                       className="text-red-400 cursor-pointer"

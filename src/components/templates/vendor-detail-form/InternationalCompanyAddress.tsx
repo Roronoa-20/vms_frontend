@@ -187,14 +187,14 @@ const CompanyAddress = ({
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg z-50">
+      <h1 className="border-b-2 pb-1 font-semibold sticky top-0 bg-white py-2 text-lg z-50">
         Company Address
       </h1>
-      <h1 className="pl-2 ">Office Address</h1>
-      <div className="grid grid-cols-4 gap-6 p-5">
+      <h1 className="pl-1 pt-1">Office Address</h1>
+      <div className="grid grid-cols-4 gap-4 p-2">
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Street Line 1 <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            Street Line 1<span className="pl-1 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             maxLength={40}
@@ -208,8 +208,8 @@ const CompanyAddress = ({
           {errors?.address_line_1 && <span style={{ color: 'red' }}>{errors?.address_line_1}</span>}
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Street Line 2 <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            Street Line 2<span className="pl-1 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             maxLength={40}
@@ -224,8 +224,8 @@ const CompanyAddress = ({
           {errors?.address_line_2 && <span style={{ color: 'red' }}>{errors?.address_line_2}</span>}
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Pincode/Zipcode <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            Pincode/Zipcode<span className="pl-1 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -237,15 +237,15 @@ const CompanyAddress = ({
             value={formdata?.billing_address?.international_zipcode ?? OnboardingDetail?.billing_address?.international_zipcode ?? ""}
           />
           <p className="text-xs text-gray-500 pt-2">
-            Enter the Pincode/Postal Code/ZipCode in the global format for your state or country. <br/>
+            Enter the Pincode/Postal Code/ZipCode in the global format for your state or country.<br/>
             <span className="underline text-black font-medium">(For Eg.- Country: <span className="underline text-blue-500 font-medium">Sweden</span>, ZipCode: <span className="underline text-blue-500 font-medium">123 45</span>)</span>
           </p>
           {errors?.international_zipcode && <span style={{ color: 'red' }}>{errors?.international_zipcode}</span>}
         </div>
 
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            City <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            City<span className="pl-1 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -255,8 +255,8 @@ const CompanyAddress = ({
           />
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            State <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            State<span className="pl-1 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -267,8 +267,8 @@ const CompanyAddress = ({
           />
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Country <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            Country <span className="pl-1 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -279,9 +279,9 @@ const CompanyAddress = ({
         </div>
 
       </div>
-      <div className="flex justify-start gap-6 items-center">
-        <h1 className="pl-2 ">Manufacturing Address</h1>
-        <div className="flex items-center gap-1">
+      <div className="flex justify-start gap-4 items-center">
+        <h1 className="pl-1 pt-2 font-medium">Manufacturing Address</h1>
+        <div className="flex items-center gap-1 pt-2">
           <Input
             type="checkbox"
             className="w-4"
@@ -295,9 +295,9 @@ const CompanyAddress = ({
           <h1 className="font-normal">Same as above</h1>
         </div>
       </div>
-      <div className={`grid grid-cols-4 gap-6 p-5 ${formdata?.same_as_above ? "hidden" : ""}`}>
+      <div className={`grid grid-cols-4 gap-4 p-2 ${formdata?.same_as_above ? "hidden" : ""}`}>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Address 1
           </h1>
           <Input
@@ -312,7 +312,7 @@ const CompanyAddress = ({
           />
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Address 2
           </h1>
           <Input
@@ -326,7 +326,7 @@ const CompanyAddress = ({
           />
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Pincode/Zipcode
           </h1>
           <Input
@@ -339,7 +339,7 @@ const CompanyAddress = ({
           />
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             City
           </h1>
           <Input
@@ -351,7 +351,7 @@ const CompanyAddress = ({
           />
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             State
           </h1>
           <Input
@@ -363,7 +363,7 @@ const CompanyAddress = ({
           />
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Country
           </h1>
           <Input
@@ -374,7 +374,7 @@ const CompanyAddress = ({
           />
         </div>
       </div>
-      <div className="pl-4 flex gap-4 items-center">
+      <div className="pl-2 flex gap-4 items-center">
         <Input
           type="checkbox"
           className="w-4"
@@ -387,7 +387,7 @@ const CompanyAddress = ({
       </div>
       {formdata?.multiple_locations && (
         <>
-          <div className="grid grid-cols-4 gap-6 p-5">
+          <div className="grid grid-cols-4 gap-4 p-2">
             <div className="col-span-2">
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Address 1
@@ -484,26 +484,26 @@ const CompanyAddress = ({
               {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                  <TableHead className="w-[100px]">Sr No.</TableHead>
-                  <TableHead>Address1</TableHead>
-                  <TableHead>Address2</TableHead>
-                  <TableHead className="text-center">Pincode</TableHead>
-                  <TableHead className="text-center">City</TableHead>
-                  <TableHead className="text-center">State</TableHead>
-                  <TableHead className="text-center">Country</TableHead>
-                  <TableHead className="text-center">Action</TableHead>
+                  <TableHead className="text-center text-black">Sr No.</TableHead>
+                  <TableHead className="text-center text-black">Address1</TableHead>
+                  <TableHead className="text-center text-black">Address2</TableHead>
+                  <TableHead className="text-center text-black">Pincode</TableHead>
+                  <TableHead className="text-center text-black">City</TableHead>
+                  <TableHead className="text-center text-black">State</TableHead>
+                  <TableHead className="text-center text-black">Country</TableHead>
+                  <TableHead className="text-center text-black">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
                 {multipleTable?.map((item: any, index: any) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">{index + 1}</TableCell>
-                    <TableCell>{item?.address_line_1}</TableCell>
-                    <TableCell>{item?.address_line_2}</TableCell>
-                    <TableCell>{item?.zipcode}</TableCell>
-                    <TableCell>{item?.city}</TableCell>
-                    <TableCell>{item?.state}</TableCell>
-                    <TableCell>{item?.country}</TableCell>
+                    <TableCell className="text-center">{index + 1}</TableCell>
+                    <TableCell className="text-center" >{item?.address_line_1}</TableCell>
+                    <TableCell className="text-center">{item?.address_line_2}</TableCell>
+                    <TableCell className="text-center">{item?.zipcode}</TableCell>
+                    <TableCell className="text-center" >{item?.city}</TableCell>
+                    <TableCell className="text-center">{item?.state}</TableCell>
+                    <TableCell className="text-center">{item?.country}</TableCell>
                     <TableCell className="flex justify-center"><Trash2 className="text-red-400 cursor-pointer" onClick={() => { handleRowDelete(index) }} /></TableCell>
                   </TableRow>
                 ))}
@@ -513,10 +513,10 @@ const CompanyAddress = ({
         </>
       )}
 
-      <div className="flex flex-col gap-2 justify-center pl-4 pt-2">
-        <h1 className="font-medium">Main Office Address Proof</h1>
-        <h1 className="text-[12px] font-normal text-[#626973]">
-          Upload Address Proof (Light Bill, Telephone Bill, etc.)
+      <div className="flex flex-col gap-2 justify-center pl-2 pt-2">
+        {/* <h1 className="font-medium">Main Office Address Proof</h1> */}
+        <h1 className="font-normal">
+          Upload Main Office Address Proof (Light Bill, Telephone Bill, etc.)
         </h1>
         <Input type="file" className="w-fit" onChange={(e) => { setFile(e.target.files) }} />
         {/* file preview */}

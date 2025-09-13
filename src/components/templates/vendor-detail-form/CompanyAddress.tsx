@@ -25,7 +25,7 @@ import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
 import FilePreview from "../../molecules/FilePreview";
 import Link from "next/link";
-import { CropIcon, Cross, CrossIcon, Trash2, X } from "lucide-react";
+import { CropIcon, Cross, CrossIcon, Trash2, X , Paperclip} from "lucide-react";
 
 interface Props {
   companyAddressDropdown?: TCompanyAddressDropdown["message"]["data"];
@@ -301,14 +301,14 @@ const CompanyAddress = ({
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg z-50">
+      <h1 className="border-b-2 pb-1 sticky top-0 bg-white py-2 text-lg font font-semibold z-50">
         Company Address
       </h1>
-      <h1 className="pl-2 ">Office Address</h1>
-      <div className="grid grid-cols-4 gap-6 p-5">
+      <h1 className="pt-1 font-semibold">Office Address:</h1>
+      <div className="grid grid-cols-4 gap-4">
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Address 1 <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            Address 1<span className="pl-1 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             maxLength={40}
@@ -321,8 +321,8 @@ const CompanyAddress = ({
           {errors?.address_line_1 && !billingAddress?.address_line_1 && <span style={{ color: 'red' }}>{errors?.address_line_1}</span>}
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Address 2 <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            Address 2<span className="pl-1 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             maxLength={40}
@@ -336,8 +336,8 @@ const CompanyAddress = ({
           {errors?.address_line_2 && !billingAddress?.address_line_2 && <span style={{ color: 'red' }}>{errors?.address_line_2}</span>}
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Pincode/Zipcode <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            Pincode/Zipcode<span className="pl-1 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -348,7 +348,7 @@ const CompanyAddress = ({
           />
           {/* Helper note */}
           <p className="text-xs text-gray-500 pt-2">
-            Enter the Pincode/Postal Code/ZipCode in the global format for your state or country. <br/>
+            Enter the Pincode/Postal Code/ZipCode in the global format for your state or country. <br />
             <span className="underline text-black font-medium">(For Eg.- Country: <span className="underline text-blue-500 font-medium">Sweden</span>, ZipCode: <span className="underline text-blue-500 font-medium">123 45</span>)</span>
           </p>
 
@@ -358,8 +358,8 @@ const CompanyAddress = ({
         </div>
 
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-7">
-            District
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            District<span className="pl-1 text-red-400 text-2xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -371,7 +371,7 @@ const CompanyAddress = ({
         <div className="grid grid-cols-3 col-span-4 gap-4">
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              City
+              City<span className="pl-1 text-red-400 text-2xl">*</span>
             </h1>
             <Input
               placeholder=""
@@ -382,7 +382,7 @@ const CompanyAddress = ({
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              State
+              State<span className="pl-1 text-red-400 text-2xl">*</span>
             </h1>
             <Input
               placeholder=""
@@ -393,7 +393,7 @@ const CompanyAddress = ({
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Country
+              Country<span className="pl-1 text-red-400 text-2xl">*</span>
             </h1>
             <Input
               placeholder=""
@@ -405,8 +405,8 @@ const CompanyAddress = ({
         </div>
       </div>
       <div className="flex justify-start gap-6 items-center">
-        <h1 className="pl-2 ">Manufacturing Address</h1>
-        <div className="flex items-center gap-1">
+        <h1 className="pt-4 font-semibold">Manufacturing Address:</h1>
+        <div className="flex items-center gap-1 pt-4">
           <Input
             type="checkbox"
             className="w-4"
@@ -420,9 +420,9 @@ const CompanyAddress = ({
           <h1 className="font-normal">Same as above</h1>
         </div>
       </div>
-      <div className={`grid grid-cols-4 gap-6 p-5 ${isShippingSame ? "hidden" : ""}`}>
+      <div className={`grid grid-cols-4 gap-4 p-1 ${isShippingSame ? "hidden" : ""}`}>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Address 1
           </h1>
           <Input
@@ -436,7 +436,7 @@ const CompanyAddress = ({
           />
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Address 2
           </h1>
           <Input
@@ -450,7 +450,7 @@ const CompanyAddress = ({
           />
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Pincode/Zipcode
           </h1>
           <Input
@@ -463,7 +463,7 @@ const CompanyAddress = ({
           />
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             District
           </h1>
           <Input
@@ -475,7 +475,7 @@ const CompanyAddress = ({
         </div>
         <div className="grid grid-cols-3 col-span-4 gap-4">
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               City
             </h1>
             <Input
@@ -486,18 +486,18 @@ const CompanyAddress = ({
             />
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               State
             </h1>
             <Input
-              // placeholder={shippingData?.state}
+              // placeholder={shippingData?.state
               value={shippingAddress?.state?.state_name ?? ""}
               disabled={isShippingSame ? true : false}
               onChange={() => { }}
             />
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Country
             </h1>
             <Input
@@ -509,7 +509,7 @@ const CompanyAddress = ({
           </div>
         </div>
       </div>
-      <div className="pl-4 flex gap-4 items-center">
+      <div className="pl-1 pt-4 flex gap-4 items-center">
         <Input
           type="checkbox"
           className="w-4"
@@ -626,30 +626,30 @@ const CompanyAddress = ({
               {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                  <TableHead className="w-[100px]">Sr No.</TableHead>
-                  <TableHead>Address1</TableHead>
-                  <TableHead>Address2</TableHead>
-                  <TableHead className="text-center">Pincode</TableHead>
-                  <TableHead className="text-center">District</TableHead>
-                  <TableHead className="text-center">City</TableHead>
-                  <TableHead className="text-center">State</TableHead>
-                  <TableHead className="text-center">Country</TableHead>
-                  <TableHead className="text-center">Action</TableHead>
+                  <TableHead className="text-center text-black">Sr No.</TableHead>
+                  <TableHead className="text-center text-black">Address1</TableHead>
+                  <TableHead className="text-center text-black">Address2</TableHead>
+                  <TableHead className="text-center text-black">Pincode</TableHead>
+                  <TableHead className="text-center text-black">District</TableHead>
+                  <TableHead className="text-center text-black">City</TableHead>
+                  <TableHead className="text-center text-black">State</TableHead>
+                  <TableHead className="text-center text-black">Country</TableHead>
+                  <TableHead className="text-center text-black">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
                 {multiple_location_table?.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">{index + 1}</TableCell>
-                    <TableCell>{item?.address_line_1}</TableCell>
-                    <TableCell>{item?.address_line_2}</TableCell>
-                    <TableCell>{item?.ma_pincode}</TableCell>
-                    <TableCell>
+                    <TableCell className="text-center">{index + 1}</TableCell>
+                    <TableCell className="text-center">{item?.address_line_1}</TableCell>
+                    <TableCell className="text-center">{item?.address_line_2}</TableCell>
+                    <TableCell className="text-center">{item?.ma_pincode}</TableCell>
+                    <TableCell className="text-center">
                       <div>{item?.ma_district?.district_name}</div>
                     </TableCell>
-                    <TableCell>{item?.ma_city?.city_name}</TableCell>
-                    <TableCell>{item?.ma_state?.state_name}</TableCell>
-                    <TableCell>{item?.ma_country?.country_name}</TableCell>
+                    <TableCell className="text-center">{item?.ma_city?.city_name}</TableCell>
+                    <TableCell className="text-center">{item?.ma_state?.state_name}</TableCell>
+                    <TableCell className="text-center">{item?.ma_country?.country_name}</TableCell>
                     <TableCell className="flex justify-center"><Trash2 className="text-red-400 cursor-pointer" onClick={() => { handleRowDelete(index) }} /></TableCell>
                   </TableRow>
                 ))}
@@ -659,13 +659,12 @@ const CompanyAddress = ({
         </>
       )}
 
-      <div className="flex flex-col gap-2 justify-center pl-4 pt-2">
-        <h1 className="font-medium">Main Office Address Proof</h1>
-        <h1 className="text-[12px] font-normal text-[#626973]">
-          Upload Address Proof (Light Bill, Telephone Bill, etc.)
+      <div className="flex flex-col gap-2 justify-center pl-1 pt-2">
+        {/* <h1 className="font-medium">Main Office Address Proof</h1> */}
+        <h1 className="text-[14px] font-medium">
+          Upload Main Office Address Proof (Light Bill, Telephone Bill, etc.)
         </h1>
-        <Input type="file" className="w-fit" onChange={(e) => { setFile(e.target.files) }} />
-        {/* file preview */}
+        {/* <Input type="file" className="w-fit" onChange={(e) => { setFile(e.target.files) }} />
         {
           isFilePreview && !file && OnboardingDetail?.address_proofattachment?.url &&
           <div className="flex gap-2">
@@ -674,7 +673,45 @@ const CompanyAddress = ({
             </Link>
             <X className="cursor-pointer" onClick={() => { setIsFilePreview((prev) => !prev) }} />
           </div>
+        } */}
+        <div className="mt-4">
+          <label
+            htmlFor="file-upload"
+            className="flex items-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-colors w-fit"
+          >
+            <Paperclip className="w-5 h-5 text-blue-500" />
+            <span className="text-sm text-gray-600">Attach File</span>
+          </label>
+          <input
+            id="file-upload"
+            type="file"
+            className="hidden"
+            onChange={(e) => setFile(e.target.files)}
+          />
+
+          {file && (
+            <div className="mt-2 flex items-center gap-2 text-sm text-gray-700">
+              <Paperclip className="w-4 h-4 text-green-600" />
+              {file[0].name}
+              <button
+                onClick={() => setFile(null)}
+                className="ml-2 text-red-500 hover:text-red-700"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+
+          {isFilePreview && !file && OnboardingDetail?.address_proofattachment?.url &&
+          <div className="flex gap-2">
+            <Link target="blank" href={OnboardingDetail?.address_proofattachment?.url} className="underline text-blue-300 max-w-44 truncate">
+              <span>{OnboardingDetail?.address_proofattachment?.file_name}</span>
+            </Link>
+            <X className="cursor-pointer" onClick={() => { setIsFilePreview((prev) => !prev) }} />
+          </div>
         }
+        </div>
+
       </div>
       <div className="flex justify-end items-center space-x-3">
         <Button

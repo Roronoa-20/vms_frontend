@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Vendor, AllVendorsCompanyCodeResponse, CompanyVendorCodeRecord } from "@/src/types/allvendorstypes";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/src/components/atoms/table";
 import { Button } from "@/components/ui/button";
@@ -13,33 +13,12 @@ import NewVendorRegistration from "@/src/components/pages/newvendorregistration"
 import { TvendorRegistrationDropdown } from "@/src/types/types";
 import { Label } from "@/components/ui/label";
 import { Select, SelectGroup, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/src/components/atoms/select";
+import { RowData, ExtendRowData } from "@/src/types/rowdata";
 
 
 interface Props {
     vendors: Vendor[];
     activeTab: string;
-}
-
-interface RowData {
-    name: string;
-    ref_no: string;
-    multiple_company: number;
-    company_code: string;
-    vendor_code: string;
-    vendor_name: string;
-    office_email_primary: string;
-    pan_number: string;
-    pan_file: string;
-    gst_no: string;
-    gst_file: string;
-    state: string;
-    country: string;
-    pincode: string;
-    bank_name: string;
-    ifsc_code: string;
-    bank_file: string;
-    sap_client_code: string;
-    purchase_org: string
 }
 
 const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
@@ -48,7 +27,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
     const [selectedVendorCodes, setSelectedVendorCodes] = React.useState<CompanyVendorCodeRecord[] | null>(null);
     const [copiedRow, setCopiedRow] = React.useState<RowData | null>(null);
     const [isExtendDialogOpen, setIsExtendDialogOpen] = React.useState(false);
-    const [extendRow, setExtendRow] = React.useState<RowData | null>(null);
+    const [extendRow, setExtendRow] = React.useState<ExtendRowData  | null>(null);
     const [currentPage, setCurrentPage] = React.useState(1);
     const recordPerPage = 10;
 
@@ -157,28 +136,38 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
     React.useEffect(() => {
         const fetchDropdownData = async () => {
             try {
+                if (!dropdownUrl || !activeTab) return;
+
+                const selectedCompany = vendors
+                    ?.flatMap((vendor) => vendor.multiple_company_data || [])
+                    .find((c) => c.company_name === activeTab);
+
+                const sapCode = selectedCompany?.sap_client_code;
+                if (!sapCode || sapCode === "N.A.") {
+                    console.warn(`No sap_client_code found for activeTab: ${activeTab}`);
+                    return;
+                }
+
                 const dropDownApi: AxiosResponse = await requestWrapper({
-                    url: `${dropdownUrl}?sap_client_code=${activeTab}`,
+                    url: `${dropdownUrl}?sap_client_code=${sapCode}`,
                     method: "GET",
                 });
 
-                setDropdownData(
-                    dropDownApi?.status === 200 ? dropDownApi?.data?.message?.data : null
-                );
+                setDropdownData(dropDownApi?.status === 200 ? dropDownApi.data?.message?.data ?? null : null);
             } catch (error) {
                 console.error("Error fetching dropdown data:", error);
+                setDropdownData(null);
             }
         };
 
         fetchDropdownData();
-    }, [dropdownUrl, activeTab]);
+    }, [activeTab]);
 
 
     const vendorTypeDropdown = dropdownData?.vendor_type;
     const companyDropdown = dropdownData?.company_master;
     const incoTermsDropdown = dropdownData?.incoterm_master;
     const currencyDropdown = dropdownData?.currency_master;
-
 
     const handleCopy = (row: RowData) => {
         if (copiedRow?.name === row.name && copiedRow?.company_code === row.company_code) {
@@ -198,49 +187,43 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
             setExtendRow(null);
             return;
         }
-        if (copiedRow) {
-            setCopiedRow(null);
-        }
-        setExtendRow(row);
+        if (copiedRow) setCopiedRow(null);
+        setExtendRow({
+            ...row,
+            prev_company: row.company_code,
+            extend_company: "",
+        } as any);
         setIsExtendDialogOpen(true);
     };
 
-
     const [purchaseOrganizations, setPurchaseOrganizations] = React.useState<any[]>([]);
-
     const handleCompanyDropdownChange = async (value: string) => {
         if (!companyDropdown) return;
 
-        const filteredCompanies = companyDropdown.filter((c) => c.sap_client_code === "100");
-        const selectedCompany = filteredCompanies.find((c) => c.name === value);
+        const selectedCompany = companyDropdown.find((c) => c.name === value);
+        if (!selectedCompany) return;
 
-        if (selectedCompany) {
-            setExtendRow((prev) =>
-                prev
-                    ? { ...prev, company_code: selectedCompany.name, purchase_org: "" }
-                    : { company_code: selectedCompany.name, purchase_org: "" } as RowData
-            );
-
-            try {
-                const response = await requestWrapper({
-                    url: API_END_POINTS.companyBasedDropdown,
-                    method: "POST",
-                    data: { company_name: selectedCompany.name },
-                });
-                if (response?.data?.message?.status === "success") {
-                    setPurchaseOrganizations(
-                        response.data.message.data.purchase_organizations || []
-                    );
-                } else {
-                    console.warn("API did not return success:", response?.data);
-                    setPurchaseOrganizations([]);
-                }
-            } catch (err) {
-                console.error("Error fetching purchase organizations:", err);
+        setExtendRow((prev: any) =>
+            prev
+                ? { ...prev, extend_company: selectedCompany.name, purchase_org: "" }
+                : { extend_company: selectedCompany.name, purchase_org: "" }
+        );
+        try {
+            const response = await requestWrapper({
+                url: API_END_POINTS.companyBasedDropdown,
+                method: "POST",
+                data: { company_name: selectedCompany.name },
+            });
+            if (response?.data?.message?.status === "success") {
+                setPurchaseOrganizations(response.data.message.data.purchase_organizations || []);
+            } else {
                 setPurchaseOrganizations([]);
             }
+        } catch {
+            setPurchaseOrganizations([]);
         }
     };
+
 
     const handlePurchaseOrganizationDropdownChange = (value: string) => {
         setExtendRow((prev) =>
@@ -250,24 +233,27 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
 
     const handleExtendSubmit = async () => {
         if (!extendRow) return;
+
+        if (extendRow.prev_company === extendRow.extend_company) {
+            alert("Cannot extend vendor in the same company.");
+            return;
+        }
+
         try {
             const response = await requestWrapper({
                 url: API_END_POINTS?.extendexistingvendors,
                 method: "POST",
                 data: {
-                    ref_no: extendRow.ref_no ?? null,
-                    prev_company: extendRow.company_code ?? null,
-                    extend_company: extendRow.company_code ?? null,
-                    purchase_org: extendRow.purchase_org ?? null,
+                    ref_no: extendRow.name,
+                    prev_company: extendRow.prev_company,
+                    extend_company: extendRow.extend_company,
+                    purchase_org: extendRow.purchase_org,
                 },
             });
 
-            console.log("Extend Vendor Response:", response);
-
             if (response?.status === 200) {
-                alert("Vendor copied successfully");
+                alert("Vendor extended successfully");
             }
-
             setIsExtendDialogOpen(false);
         } catch (err) {
             console.error("Error extending vendor:", err);
@@ -275,38 +261,8 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
         }
     };
 
-    const handleCopySubmit = async () => {
-        if (!copiedRow) return;
-        try {
-            const response = await requestWrapper({
-                url: API_END_POINTS?.copyexistingvendors,
-                method: "POST",
-                data: {
-                    ref_no: copiedRow.ref_no ?? null,
-                    prev_company: copiedRow.company_code ?? null,
-                    extend_company: copiedRow.company_code ?? null,
-                    purchase_org: copiedRow.purchase_org ?? null,
-                },
-            });
-
-            console.log("Copy Vendor Response:", response);
-
-            if (response?.status === 200) {
-                alert("Vendor copied successfully");
-            }
-
-
-            setCopiedRow(null);
-        } catch (err) {
-            console.error("Error copying vendor:", err);
-            alert("Failed to copy vendor. Check console for details.");
-        }
-    };
-
-
     return (
         <>
-            {/* 🔹 Vendors List Heading */}
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">Vendors List</h2>
 
             <div className="overflow-x-auto rounded-xl shadow-md border">
@@ -431,7 +387,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                         incoTermsDropdown={incoTermsDropdown || []}
                         currencyDropdown={currencyDropdown || []}
                         handleCancel={() => setCopiedRow(null)}
-                        handleSubmit={handleCopySubmit}
+                        initialData={copiedRow}
                     />
                 </div>
             )}
@@ -489,7 +445,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                 <Select
                                     required
                                     onValueChange={(value) => handleCompanyDropdownChange(value)}
-                                    value={extendRow?.company_code ?? ""}
+                                    value={extendRow?.extend_company ?? ""}
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select Company Name" />

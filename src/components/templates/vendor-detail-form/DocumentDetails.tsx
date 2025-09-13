@@ -95,7 +95,7 @@ const DocumentDetails = ({
   }, []);
 
   interface gstDropdown {
-    states:{
+    states: {
       state_name: string;
       name: string;
       pincode: string;
@@ -428,7 +428,7 @@ const DocumentDetails = ({
     const OnboardingDetail: VendorOnboardingResponse["message"]["document_details_tab"]["gst_table"] =
       fetchOnboardingDetailResponse?.status == 200
         ? fetchOnboardingDetailResponse?.data?.message?.document_details_tab
-            ?.gst_table
+          ?.gst_table
         : "";
     setGSTTable(OnboardingDetail);
   };
@@ -454,17 +454,17 @@ const DocumentDetails = ({
     }
   };
 
-  const validateGSTDate = (date:string)=>{
+  const validateGSTDate = (date: string) => {
     const todayDate = new Date();
     const inputDate = new Date(date);
-    if(inputDate > todayDate){
+    if (inputDate > todayDate) {
       alert("Selected Date Cannot be Greater Than Today's Date");
       return;
-    }else{
+    } else {
       setSingleRow((prev: any) => ({
-                    ...prev,
-                    gst_registration_date: date,
-                  }));
+        ...prev,
+        gst_registration_date: date,
+      }));
     }
   }
 
@@ -472,14 +472,14 @@ const DocumentDetails = ({
   console.log(gstStateDropdown, "this is dropown");
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-4 w-full max-h-[80vh]">
-      <h1 className="border-b-2 pb-2 text-lg">Document Details</h1>
-      <div className="overflow-y-scroll">
-        <div className="grid grid-cols-3 gap-6 p-5 ">
+    <div className="flex flex-col bg-white rounded-lg p-4 w-full overflow-y-scroll max-h-[80vh]">
+      <h1 className="border-b-2 font-semibold text-lg">Document Details</h1>
+      <div className="">
+        <div className="grid grid-cols-3 gap-4 p-2">
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Company PAN Number{" "}
-              <span className="pl-2 text-red-400 text-2xl">*</span>
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              Company PAN Number
+              <span className="pl-1 text-red-400 text-2xl">*</span>
             </h1>
             <Input
               placeholder="Enter Company Pan Number"
@@ -503,9 +503,9 @@ const DocumentDetails = ({
               )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Name of Company on PAN Card{" "}
-              <span className="pl-2 text-red-400 text-2xl">*</span>
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              Name of Company on PAN Card
+              <span className="pl-1 text-red-400 text-2xl">*</span>
             </h1>
             <Input
               placeholder="Enter Pan Card"
@@ -529,9 +529,9 @@ const DocumentDetails = ({
               )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Upload PAN Document{" "}
-              <span className="pl-2 text-red-400 text-2xl">*</span>
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              Upload PAN Document
+              <span className="pl-1 text-red-400 text-2xl">*</span>
             </h1>
             <div className="flex gap-4">
               <Input
@@ -569,11 +569,11 @@ const DocumentDetails = ({
               )}
             </div>
           </div>
-          <div className="col-span-3 grid grid-cols-3 gap-6">
+          <div className="col-span-3 grid grid-cols-3 gap-4">
             <div className="flex flex-col">
-              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                GST Vendor Type{" "}
-                <span className="pl-2 text-red-400 text-2xl">*</span>
+              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+                GST Vendor Type
+                <span className="pl-1 text-red-400 text-2xl">*</span>
               </h1>
               <Select
                 // onValueChange={(value) => {
@@ -611,8 +611,8 @@ const DocumentDetails = ({
               )}
             </div>
             <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                Meril Company <span className="pl-2 text-red-400 text-2xl">*</span>
+              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+                Meril Company<span className="pl-1 text-red-400 text-2xl">*</span>
               </h1>
               <Select
                 onValueChange={(value) => {
@@ -638,8 +638,8 @@ const DocumentDetails = ({
               )}
             </div>
             <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                Pincode <span className="pl-2 text-red-400 text-2xl">*</span>
+              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+                Pincode<span className="pl-1 text-red-400 text-2xl">*</span>
               </h1>
               {/* <Input
                 className="disabled:opacity-100"
@@ -686,8 +686,8 @@ const DocumentDetails = ({
               )}
             </div>
             <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                State <span className="pl-2 text-red-400 text-2xl">*</span>
+              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+                GST State<span className="pl-1 text-red-400 text-2xl">*</span>
               </h1>
               {/* <Input placeholder="Enter State" value={documentDetails?.gst_state ?? OnboardingDetail?.gst_table[0]?.gst_state} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,gst_state:e.target.value}))}}/> */}
               <Select
@@ -717,88 +717,88 @@ const DocumentDetails = ({
                 <span style={{ color: "red" }}>{errors?.gst_state}</span>
               )}
             </div>
-          </div>
-          <div
-            className={`col-span-3 grid grid-cols-3 gap-6 ${singlerow?.gst_ven_type == "Not-Registered" ? "hidden" : ""}`}
-          >
-            <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                GST Number <span className="pl-2 text-red-400 text-2xl">*</span>
-              </h1>
-              <Input
-                placeholder="Enter GST Number"
-                value={singlerow?.gst_number ?? ""}
-                // onChange={(e) => {
-                //   setDocumentDetail((prev) => ({
-                //     ...prev,
-                //     gst_number: e.target.value,
-                //   }));
-                // }}
-                onChange={(e) => {
-                  setSingleRow((prev: any) => ({
-                    ...prev,
-                    gst_number: e.target.value,
-                  }));
-                }}
-              />
-              {errors?.gst_number && !singlerow?.gst_number && (
-                <span style={{ color: "red" }}>{errors?.gst_number}</span>
-              )}
-            </div>
-            <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                GST Registration Date{" "}
-                <span className="pl-2 text-red-400 text-2xl">*</span>
-              </h1>
-              <Input
-              
-                placeholder="Enter Registration Date"
-                value={singlerow?.gst_registration_date ?? ""}
-                type="date"
-                // onChange={(e) => {
-                //   setDocumentDetail((prev) => ({
-                //     ...prev,
-                //     gst_registration_date: e.target.value,
-                //   }));
-                // }}
-                onChange={(e) => {
-                  validateGSTDate(e.target.value);
-                }}
-              />
-              {errors?.gst_registration_date &&
-                !singlerow?.gst_registration_date && (
-                  <span style={{ color: "red" }}>
-                    {errors?.gst_registration_date}
-                  </span>
-                )}
-            </div>
-            <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                Upload GST Document{" "}
-                <span className="pl-2 text-red-400 text-2xl">*</span>
-              </h1>
-              <div className="flex gap-4">
-                <Input
-                  ref={fileInput}
-                  type="file"
-                  // onChange={(e) => {
-                  //   setDocumentDetail((prev: any) => ({
-                  //     ...prev,
-                  //     gstDocument: e.target.files,
-                  //   }));
-                  // }}
-                  onChange={(e) => {
-                    setSingleRow((prev: any) => ({
-                      ...prev,
-                      gst_document_upload: e.target.files,
-                    }));
-                  }}
-                />
-                {errors?.gstDocument && !singlerow?.gst_document_upload && (
-                  <span style={{ color: "red" }}>{errors?.gstDocument}</span>
-                )}
-                {/* file preview */}
-                {/* {isGstFilePreview &&
+
+            {/* <div className={`${singlerow?.gst_ven_type == "Not-Registered" ? "hidden" : ""}`}> */}
+            {singlerow?.gst_ven_type !== "Not-Registered" && (
+              <>
+                <div>
+                  <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                    GST Number<span className="pl-1 text-red-400 text-2xl">*</span>
+                  </h1>
+                  <Input
+                    placeholder="Enter GST Number"
+                    value={singlerow?.gst_number ?? ""}
+                    // onChange={(e) => {
+                    //   setDocumentDetail((prev) => ({
+                    //     ...prev,
+                    //     gst_number: e.target.value,
+                    //   }));
+                    // }}
+                    onChange={(e) => {
+                      setSingleRow((prev: any) => ({
+                        ...prev,
+                        gst_number: e.target.value,
+                      }));
+                    }}
+                  />
+                  {errors?.gst_number && !singlerow?.gst_number && (
+                    <span style={{ color: "red" }}>{errors?.gst_number}</span>
+                  )}
+                </div>
+                <div>
+                  <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+                    GST Registration Date
+                    <span className="pl-1 text-red-400 text-2xl">*</span>
+                  </h1>
+                  <Input
+
+                    placeholder="Enter Registration Date"
+                    value={singlerow?.gst_registration_date ?? ""}
+                    type="date"
+                    // onChange={(e) => {
+                    //   setDocumentDetail((prev) => ({
+                    //     ...prev,
+                    //     gst_registration_date: e.target.value,
+                    //   }));
+                    // }}
+                    onChange={(e) => {
+                      validateGSTDate(e.target.value);
+                    }}
+                  />
+                  {errors?.gst_registration_date &&
+                    !singlerow?.gst_registration_date && (
+                      <span style={{ color: "red" }}>
+                        {errors?.gst_registration_date}
+                      </span>
+                    )}
+                </div>
+                <div>
+                  <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+                    Upload GST Document
+                    <span className="pl-1 text-red-400 text-2xl">*</span>
+                  </h1>
+                  <div className="flex gap-4">
+                    <Input
+                      ref={fileInput}
+                      type="file"
+                      // onChange={(e) => {
+                      //   setDocumentDetail((prev: any) => ({
+                      //     ...prev,
+                      //     gstDocument: e.target.files,
+                      //   }));
+                      // }}
+                      onChange={(e) => {
+                        setSingleRow((prev: any) => ({
+                          ...prev,
+                          gst_document_upload: e.target.files,
+                        }));
+                      }}
+                    />
+                    {errors?.gstDocument && !singlerow?.gst_document_upload && (
+                      <span style={{ color: "red" }}>{errors?.gstDocument}</span>
+                    )}
+                    {/* file preview */}
+                    {/* {isGstFilePreview &&
               !documentDetails?.gstDocument &&
               OnboardingDetail?.gst_table[0]?.gst_document?.url && (
                 <div className="flex gap-2">
@@ -817,44 +817,53 @@ const DocumentDetails = ({
                     />
                 </div>
               )} */}
-              </div>
+                  </div>
+                </div>
+              </>
+            )}
+            {/* </div> */}
+
+            <div className="mt-[44px]">
+              <Button
+                className="py-2"
+                variant={"nextbtn"}
+                size={"nextbtnsize"}
+                onClick={() => {
+                  handleGSTTableAdd();
+                }}
+              >
+                Add
+              </Button>
             </div>
           </div>
         </div>
-        <div className={`flex justify-end pr-6 mb-4`}>
-          <Button
-            className={`bg-blue-400 hover:bg-blue-400`}
-            onClick={() => {
-              handleGSTTableAdd();
-            }}
-          >
-            Add
-          </Button>
-        </div>
+
+
         {showGSTTable && (
-          <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
+          <div className="shadow- bg-[#f6f6f7] p-4 mb-4 mt-2 rounded-2xl">
             <div className="flex w-full justify-between pb-4">
               <h1 className="text-[20px] text-[#03111F] font-semibold">
                 Multiple GST Certificates
               </h1>
             </div>
             <Table className=" max-h-40 overflow-y-scroll">
-              {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                  <TableHead className="text-center">GST Type</TableHead>
-                  <TableHead className="text-center">Meril Company</TableHead>
-                  <TableHead className="text-center">GST State</TableHead>
-                  <TableHead className="text-center">GST Pincode</TableHead>
-                  <TableHead className="text-center">GST Number</TableHead>
-                  <TableHead className="text-center">GST Date</TableHead>
-                  <TableHead className="text-center">File</TableHead>
-                  <TableHead className="text-center">Action</TableHead>
+                  <TableHead className="text-center text-black">Sr.No.</TableHead>
+                  <TableHead className="text-center text-black">GST Type</TableHead>
+                  <TableHead className="text-center text-black">Meril Company</TableHead>
+                  <TableHead className="text-center text-black">GST State</TableHead>
+                  <TableHead className="text-center text-black">GST Pincode</TableHead>
+                  <TableHead className="text-center text-black">GST Number</TableHead>
+                  <TableHead className="text-center text-black">GST Date</TableHead>
+                  <TableHead className="text-center text-black">File</TableHead>
+                  <TableHead className="text-center text-black">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {GSTTable?.map((item, index) => (
                   <TableRow key={item?.name ? item?.name : ""}>
+                    <TableCell className="text-center">{index + 1}</TableCell>
                     <TableCell className="text-center">
                       {item?.gst_ven_type}
                     </TableCell>
@@ -892,10 +901,11 @@ const DocumentDetails = ({
             </Table>
           </div>
         )}
-        <div className="grid grid-cols-3 p-5 gap-6">
+
+        <div className="grid grid-cols-3 p-2 gap-4">
           <div className="flex flex-col col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-[26px]">
-              MSME Registered?
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              MSME Registered?<span className="pl-1 text-red-400 text-2xl">*</span>
             </h1>
             <Select
               onValueChange={(value) => {
@@ -921,9 +931,9 @@ const DocumentDetails = ({
           <div
             className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}
           >
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              MSME Enterprise Type{" "}
-              <span className="pl-2 text-red-400 text-2xl">*</span>
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              MSME Enterprise Type
+              <span className="pl-1 text-red-400 text-2xl">*</span>
             </h1>
             <Select
               value={
@@ -958,9 +968,9 @@ const DocumentDetails = ({
           <div
             className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}
           >
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Udyam Registration No.{" "}
-              <span className="pl-2 text-red-400 text-2xl">*</span>
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              Udyam Registration No.
+              <span className="pl-1 text-red-400 text-2xl">*</span>
             </h1>
             <Input
               placeholder=" Enter Udyam Registration No"
@@ -983,9 +993,9 @@ const DocumentDetails = ({
           <div
             className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}
           >
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Name of Company in Udyam Certificate{" "}
-              <span className="pl-2 text-red-400 text-2xl">*</span>
+            <h1 className="text-[12px] font-normal text-[#626973] pb-1">
+              Name of Company in Udyam Certificate
+              <span className="pl-1 text-red-400 text-2xl">*</span>
             </h1>
             <Input
               placeholder=""
@@ -1011,9 +1021,9 @@ const DocumentDetails = ({
           <div
             className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}
           >
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Upload Udyam Certificate{" "}
-              <span className="pl-2 text-red-400 text-2xl">*</span>
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              Upload Udyam Certificate
+              <span className="pl-1 text-red-400 text-2xl">*</span>
             </h1>
             <div className="flex gap-4">
               <Input
@@ -1054,8 +1064,8 @@ const DocumentDetails = ({
                 )}
             </div>
           </div>
-          <div className={`flex flex-col col-span-1`} title="Type NA for if you don't have the Number">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <div className={`flex-col col-span-1`} title="Type NA for if you don't have the Number">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Enterprise Registration Number{" "}
               <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
@@ -1082,8 +1092,8 @@ const DocumentDetails = ({
           </div>
           <div className={`flex flex-col col-span-1`}>
             <h1 className="text-[12px] font-normal text-[#626973] pb-6">
-              Upload Enterprise Registration Document{" "}
-              {/* <span className="pl-2 text-red-400 text-2xl">*</span> */}
+              Upload Enterprise Registration Document
+              <span className="pl-2 text-red-400 text-2xl hidden">*</span>
             </h1>
             <div className="flex gap-4 w-full">
               <Input

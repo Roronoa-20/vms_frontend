@@ -160,68 +160,67 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
   console.log(OnboardingDetail?.bank_proof?.file_name, "thiskjdvb")
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
+      <h1 className="border-b-2 pb-1 font-semibold sticky top-0 bg-white py-4 text-lg">
         Bank Details
       </h1>
-      {/* <h1 className="pl-2 ">Billing Address</h1> */}
-      <div className="grid grid-cols-3 gap-6 p-5">
+      <div className="grid grid-cols-3 gap-4 p-2">
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Beneficiary Name
           </h1>
           <Input placeholder="" name="beneficiary_name" value={formData?.international_bank_details?.beneficiary_name ?? OnboardingDetail?.international_bank_details?.[0]?.beneficiary_name ?? ""} onChange={(e) => { handleFieldChange(e, "beneficiary_details") }} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Beneficiary Bank Name
           </h1>
           <Input placeholder="" name="beneficiary_bank_name" value={formData?.international_bank_details?.beneficiary_bank_name ?? OnboardingDetail?.international_bank_details?.[0]?.beneficiary_bank_name ?? ""} onChange={(e) => { handleFieldChange(e, "beneficiary_details") }} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Beneficiary Account No.
           </h1>
           <Input placeholder="" name="beneficiary_account_no" value={formData?.international_bank_details?.beneficiary_account_no ?? OnboardingDetail?.international_bank_details?.[0]?.beneficiary_account_no ?? ""} onChange={(e) => { handleFieldChange(e, "beneficiary_details") }} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Beneficiary IBAN No.
           </h1>
           <Input placeholder="" name="beneficiary_iban_no" value={formData?.international_bank_details?.beneficiary_iban_no ?? OnboardingDetail?.international_bank_details?.[0]?.beneficiary_iban_no ?? ""} onChange={(e) => { handleFieldChange(e, "beneficiary_details") }} />
         </div>
 
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Beneficiary Bank Address
           </h1>
           <Input placeholder="" name="beneficiary_bank_address" value={formData?.international_bank_details?.beneficiary_bank_address ?? OnboardingDetail?.international_bank_details?.[0]?.beneficiary_bank_address ?? ""} onChange={(e) => { handleFieldChange(e, "beneficiary_details") }} />
         </div>
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Beneficiary Bank Swift Code
           </h1>
           <Input placeholder="" name="beneficiary_swift_code" value={formData?.international_bank_details?.beneficiary_swift_code ?? OnboardingDetail?.international_bank_details?.[0]?.beneficiary_swift_code ?? ""} onChange={(e) => { handleFieldChange(e, "beneficiary_details") }} />
         </div>
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Beneficiary ABA No.
           </h1>
           <Input placeholder="" name="beneficiary_aba_no" value={formData?.international_bank_details?.beneficiary_aba_no ?? OnboardingDetail?.international_bank_details?.[0]?.beneficiary_aba_no ?? ""} onChange={(e) => { handleFieldChange(e, "beneficiary_details") }} />
         </div>
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Beneficiary ACH No.
           </h1>
           <Input placeholder="" name="beneficiary_ach_no" value={formData?.international_bank_details?.beneficiary_ach_no ?? OnboardingDetail?.international_bank_details?.[0]?.beneficiary_ach_no ?? ""} onChange={(e) => { handleFieldChange(e, "beneficiary_details") }} />
         </div>
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Beneficiary Routing No.
           </h1>
           <Input placeholder="" name="beneficiary_routing_no" value={formData?.international_bank_details?.beneficiary_routing_no ?? OnboardingDetail?.international_bank_details?.[0]?.beneficiary_routing_no ?? ""} onChange={(e) => { handleFieldChange(e, "beneficiary_details") }} />
         </div>
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Beneficiary Currency
           </h1>
           <Select onValueChange={(value) => { setFormData((prev: any) => ({ ...prev, international_bank_details: { ...prev?.international_bank_details, beneficiary_currency: value } })) }} value={formData?.international_bank_details?.beneficiary_currency ?? OnboardingDetail?.international_bank_details?.[0]?.beneficiary_currency ?? ""}>
@@ -241,7 +240,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
           {/* <Input placeholder="" name="beneficiary_currency" value={formData?.beneficiary_currency ?? OnboardingDetail?.beneficiary_currency ?? ""} onChange={(e)=>{handleFieldChange(e)}}/> */}
         </div>
         <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Bank Proof (Upload Passbook Leaf/Cancelled Cheque)
           </h1>
           <div className="flex gap-4">
@@ -269,70 +268,70 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
           </div>
         </div>
       </div>
-      <div className="w-full flex justify-start items-center gap-4 pl-10"><Input className="w-4" onChange={(e) => { setIsIntermediateCheck((prev) => (!prev)) }} checked={isIntermediateCheck} type="checkbox" /><h1 className="text-[15px] font-semibold">
+      <div className="w-full flex justify-start items-center gap-4 pl-2 pt-2"><Input className="w-4" onChange={(e) => { setIsIntermediateCheck((prev) => (!prev)) }} checked={isIntermediateCheck} type="checkbox" /><h1 className="text-[15px] font-semibold">
         Add Intermediate Bank Details
       </h1></div>
       {
         isIntermediateCheck &&
-        <div className="grid grid-cols-3 gap-6 p-5">
+        <div className="grid grid-cols-3 gap-4 p-2">
           <div className="flex flex-col col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              intermediate Name
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              Intermediate Name
             </h1>
             <Input placeholder="" name="intermediate_name" value={formData?.intermediate_bank_details?.intermediate_name ?? OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_name ?? ""} onChange={(e) => { handleFieldChange(e, "") }} />
           </div>
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              intermediate Bank Name
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              Intermediate Bank Name
             </h1>
             <Input placeholder="" name="intermediate_bank_name" value={formData?.intermediate_bank_details?.intermediate_bank_name ?? OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_bank_name ?? ""} onChange={(e) => { handleFieldChange(e, "") }} />
           </div>
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              intermediate Account No.
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              Intermediate Account No.
             </h1>
             <Input placeholder="" name="intermediate_account_no" value={formData?.intermediate_bank_details?.intermediate_account_no ?? OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_account_no ?? ""} onChange={(e) => { handleFieldChange(e, "") }} />
           </div>
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              intermediate IBAN No.
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              Intermediate IBAN No.
             </h1>
             <Input placeholder="" name="intermediate_iban_no" value={formData?.intermediate_bank_details?.intermediate_iban_no ?? OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_iban_no ?? ""} onChange={(e) => { handleFieldChange(e, "") }} />
           </div>
 
           <div className="flex flex-col col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              intermediate Bank Address
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              Intermediate Bank Address
             </h1>
             <Input placeholder="" name="intermediate_bank_address" value={formData?.intermediate_bank_details?.intermediate_bank_address ?? OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_bank_address ?? ""} onChange={(e) => { handleFieldChange(e, "") }} />
           </div>
           <div className="flex flex-col col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              intermediate Bank Swift Code
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              Intermediate Bank Swift Code
             </h1>
             <Input placeholder="" name="intermediate_swift_code" value={formData?.intermediate_bank_details?.intermediate_swift_code ?? OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_swift_code ?? ""} onChange={(e) => { handleFieldChange(e, "") }} />
           </div>
           <div className="flex flex-col col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              intermediate ABA No.
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              Intermediate ABA No.
             </h1>
             <Input placeholder="" name="intermediate_aba_no" value={formData?.intermediate_bank_details?.intermediate_aba_no ?? OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_aba_no ?? ""} onChange={(e) => { handleFieldChange(e, "") }} />
           </div>
           <div className="flex flex-col col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              intermediate ACH No.
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              Intermediate ACH No.
             </h1>
             <Input placeholder="" name="intermediate_ach_no" value={formData?.intermediate_bank_details?.intermediate_ach_no ?? OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_ach_no ?? ""} onChange={(e) => { handleFieldChange(e, "") }} />
           </div>
           <div className="flex flex-col col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              intermediate Routing No.
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              Intermediate Routing No.
             </h1>
             <Input placeholder="" name="intermediate_routing_no" value={formData?.intermediate_bank_details?.intermediate_routing_no ?? OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_routing_no ?? ""} onChange={(e) => { handleFieldChange(e, "") }} />
           </div>
           <div className="flex flex-col col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              intermediate Currency
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              Intermediate Currency
             </h1>
             <Select onValueChange={(value) => { setFormData((prev: any) => ({ ...prev, intermediate_bank_details: { ...prev?.intermediate_bank_details, intermediate_currency: value } })) }} value={formData?.intermediate_bank_details?.intermediate_currency ?? OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_currency ?? ""}>
               <SelectTrigger>
@@ -351,8 +350,8 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
             {/* <Input placeholder="" name="intermediate_currency" value={formData?.intermediate_currency ?? OnboardingDetail?.intermediate_currency ?? ""} onChange={(e)=>{handleFieldChange(e)}}/> */}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Bank Proof (Upload Passbook Leaf/Cancelled Cheque)
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              Intermediate Bank Proof <span className="text-[10px]">(Upload Passbook Leaf/Cancelled Cheque)</span>
             </h1>
             <div className="flex gap-4">
               <Input placeholder="" type="file" onChange={(e) => { setBankProofIntermediateFile(e.target.files) }} />

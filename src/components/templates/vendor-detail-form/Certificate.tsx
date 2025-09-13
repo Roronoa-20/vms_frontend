@@ -121,12 +121,12 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
+      <h1 className="border-b-2 pb-1 font-semibold sticky top-0 bg-white py-4 text-lg">
         Certificate Details
       </h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
+      <div className="grid grid-cols-3 gap-4 p-2">
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Certificate Name
           </h1>
           <Select
@@ -154,20 +154,20 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
           </Select>
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Valid Till
           </h1>
           <Input value={certificateData?.valid_till ?? ""} placeholder="" type="date" onChange={(e) => { setCertificateData((prev: any) => ({ ...prev, valid_till: e.target.value })) }} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Upload Certificate File
           </h1>
           <Input ref={fileInput} placeholder="" type="file" onChange={(e) => { setCertificateData((prev: any) => ({ ...prev, file: e?.target?.files, fileDetail: { file_name: e?.target?.files != null ? e.target.files[0].name : "" } })) }} />
         </div>
         {certificateData?.certificate_code == "Others" &&
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Others
             </h1>
             <Input value={certificateData?.others ?? ""} onChange={(e) => { setCertificateData((prev: any) => ({ ...prev, others: e.target.value })) }} />
@@ -175,7 +175,7 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
         }
       </div>
 
-      <div className={`flex justify-end pr-6 pb-6`}><Button className="bg-blue-400 hover:bg-blue-400" onClick={() => { handleAdd() }}>Add</Button></div>
+      <div className={`flex justify-end`}><Button className="py-2" variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleAdd() }}>Add</Button></div>
       {multipleCertificateData?.length > 0 && (
         <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
           <div className="flex w-full justify-between pb-4">
@@ -210,7 +210,7 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
           </Table>
         </div>
       )}
-      <div className="flex justify-end items-center space-x-3 p-2">
+      <div className="flex justify-end items-center space-x-3 mt-10">
         <Button
           onClick={handleBack}
           variant="backbtn"
