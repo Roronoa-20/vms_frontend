@@ -7,7 +7,6 @@ import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import useDebounce from '@/src/hooks/useDebounce';
 import { VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
-import { VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
 import Pagination from '../../molecules/Pagination';
 import SingleSelectVendorTable from '../../molecules/rfq/SingleSelectVendorTable';
 import NewVendorTable from '../../molecules/rfq/NewVendorTable';

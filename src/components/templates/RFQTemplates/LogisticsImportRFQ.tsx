@@ -157,7 +157,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
             {formData?.service_provider === "Courier Service Provider" || formData?.service_provider === "Adhoc Service Provider" && <div className='px-4'>
                 <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
             </div>}
-            <div className='flex justify-end items-center pr-5'>
+            <div className='flex justify-end items-center pr-3 pt-3'>
                 <Button
                     className='bg-[#5291CD] font-medium text-[14px] inline-flex items-center gap-2'
                     onClick={() => handleOpen()}
@@ -170,7 +170,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
                 <NewVendorTable newVendorTable={newVendorTable} />
             </div>
             <div className='flex justify-end pt-10 px-4'>
-                <Button type='button' className='bg-[#5291CD] py-2' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }}>Submit RFQ</Button>
+                <Button type='button' className={`bg-[#5291CD] py-2`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }}>Submit RFQ</Button>
             </div>
             {
                 isDialog &&
