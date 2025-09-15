@@ -7,6 +7,7 @@ import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import useDebounce from '@/src/hooks/useDebounce';
 import { VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
+import { VendorApiResponse, VendorSelectType } from '@/src/types/RFQtype';
 import Pagination from '../../molecules/Pagination';
 import SingleSelectVendorTable from '../../molecules/rfq/SingleSelectVendorTable';
 import NewVendorTable from '../../molecules/rfq/NewVendorTable';
@@ -60,7 +61,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
     const [vendorSearchName, setVendorSearchName] = useState('')
     const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
     const [VendorList, setVendorList] = useState<VendorApiResponse>();
-    const [loading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
     const [isDialog, setIsDialog] = useState<boolean>(false);
     const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([])
@@ -94,7 +95,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
         setVendorSearchName(e.target.value);
     }
     const handleSubmit = async () => {
-
+        setLoading(true)
         if (formData?.service_provider == "All Service Provider" || formData?.service_provider == "Select" || formData?.service_provider == "Premium Service Provider") {
             setSelectedRows({ vendors: [] })
         }
@@ -126,8 +127,10 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
         if (response?.status == 200) {
             alert("Submit Successfull");
             router.push("/dashboard")
+            setLoading(false)
         } else {
             alert("error");
+            setLoading(false)
         }
     }
 

@@ -203,6 +203,7 @@ export interface Country {
   country_code: string;
   country_name: string;
   description: string | null;
+  display_text:string;
 }
 export interface PortCode {
   name: string;

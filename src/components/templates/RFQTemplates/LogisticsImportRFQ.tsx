@@ -60,7 +60,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
     const [vendorSearchName, setVendorSearchName] = useState('')
     const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
     const [VendorList, setVendorList] = useState<VendorApiResponse>();
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const [selectedRows, setSelectedRows] = useState<VendorSelectType>(
         {
@@ -93,6 +93,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
         setVendorSearchName(e.target.value);
     }
     const handleSubmit = async () => {
+        setLoading(true)
         if (formData?.service_provider == "All Service Provider" || formData?.service_provider == "Select" || formData?.service_provider == "Premium Service Provider") {
             setSelectedRows({ vendors: [] })
         }
@@ -105,13 +106,13 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
         };
 
         // loop through keys
-        Object.entries(fullData).forEach(([key, value]) => {
-            if (typeof value === "object") {
-                formdata.append(key, JSON.stringify(value));
-            } else {
-                formdata.append(key, value);
-            }
-        });
+        // Object.entries(fullData).forEach(([key, value]) => {
+        //     if (typeof value === "object") {
+        //         formdata.append(key, JSON.stringify(value));
+        //     } else {
+        //         formdata.append(key, value);
+        //     }
+        // });
         formdata.append('data', JSON.stringify(fullData));
         // Append file only if exists
         if (uploadedFiles) {
@@ -124,8 +125,10 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
         if (response?.status == 200) {
             alert("Submit Successfull");
             router.push("/dashboard");
+            setLoading(false)
         } else {
             alert("error");
+            setLoading(false)
         }
     }
     const handleOpen = () => {
