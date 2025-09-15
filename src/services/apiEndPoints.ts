@@ -213,6 +213,19 @@ const API_END_POINTS = {
   // All VEndors Copy and Extend APIs
   copyexistingvendors: `${url}/api/method/vms.APIs.vendor_onboarding.extend_vendor_code_in_sap.create_vendor_data_from_existing_onboarding`,
   extendexistingvendors: `${url}/api/method/vms.APIs.vendor_onboarding.extend_vendor_code_in_sap.send_vendor_code_extend_mail`,
+
+  // Admin Head Dashboard APIs
+  PurchaseTeamFilter: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.team_filter_options`,
+  PurchaseTeamSAPError: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.sap_error_vendor_details_by_purchase`,
+  PurchaseTeamRejectedVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.rejected_vendor_details_by_purchase`,
+  PurchaseTeamApprovedVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.approved_vendor_details_by_purchase`,
+  PurchaseTeamPedningVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.pending_vendor_details_by_purchase`,
+  AccountsTeamSAPError: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.sap_error_vendor_details_by_accounts`,
+  AccountsTeamPedningVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.pending_vendor_details_by_accounts`,
+  AccountsTeamRejectedVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.rejected_vendor_details_by_accounts`,
+  AccountsTeamApprovedVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.approved_vendor_details_by_accounts`,
+
+  
 }
 
 export default API_END_POINTS;

@@ -61,7 +61,7 @@ const VendorTable = ({ VendorList, setSelectedRows, selectedRows, handleVendorSe
                     {VendorList?.length > 0 ? (
                         VendorList.map((item, index) => (
                             <TableRow key={index}>
-                                <TableCell className="font-medium">
+                                <TableCell className="text-center font-medium">
                                     <input
                                         type="checkbox"
                                         id={`checkbox-${item.refno}`}
