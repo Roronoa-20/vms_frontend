@@ -13,7 +13,7 @@ const Sidebar = () => {
   const sideBar = designation === "Vendor" ? VendorsidebarMenu : designation === "Enquirer" ? EnquirysidebarMenu : designation === "ASA" ? ASASideBarMenu : designation === "Accounts Team" ? AccountSideBarMenu: designation === "Accounts Head"?AccountHeadSideBarMenu : designation === "Purchase Head" ? PurchaseHeadsidebarMenu: designation === "QA Team"? QASideBarMenu : sidebarMenu;
 
   return (
-    <div className="w-[110px] bg-[#0C2741] flex flex-col items-center gap-3 overflow-y-scroll overflow-x-hidden no-scrollbar sticky left-0">
+    <div className="w-[110px] bg-[#0C2741] md:flex hidden flex-col items-center gap-3 overflow-y-scroll overflow-x-hidden no-scrollbar sticky left-0">
       <div className="w-3 h-3 pb-6 pt-5">
         <Logo />
       </div>
