@@ -1,8 +1,10 @@
+"use client"
 import React from 'react'
 import { Input } from '../atoms/input'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../atoms/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '../atoms/button'
+import QRScanner from '../molecules/QRScanner'
 
 const GateEntryForm = () => {
   return (
@@ -29,7 +31,9 @@ const GateEntryForm = () => {
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Scan Barcode</h1>
-          <Input placeholder="" name='user' />
+          {/* <Input placeholder="" name='user' /> */}
+          {/* <Button className='bg-blue-500 hover:bg-blue-400'>Scan BarCode</Button> */}
+          <QRScanner/>
         </div>
         <div className="col-span-1">
           {/* <h1 className="text-[14px] font-normal text-[#000000] pb-3">Docket No</h1>
