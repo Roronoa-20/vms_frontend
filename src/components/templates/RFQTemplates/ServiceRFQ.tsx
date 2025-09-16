@@ -13,7 +13,6 @@ import NewVendorTable from '../../molecules/rfq/NewVendorTable';
 import AddNewVendorRFQDialog from '../../molecules/AddNewVendorRFQDialog';
 import { useRouter } from 'next/navigation';
 import ServiceRFQFormFields from './ServiceRFQFormFields';
-import { Plus } from 'lucide-react';
 
 export interface DropdownDataService {
   account_assignment_category: AccountAssignmentCategory[];
@@ -180,7 +179,7 @@ const ServiceRFQ = ({ Dropdown }: Props) => {
         <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
       </div>
 
-      <div className='flex justify-end items-center pr-5'>
+      {/* <div className='flex justify-end items-center pr-5'>
         <Button
           className='bg-[#5291CD] font-medium text-[14px] inline-flex items-center gap-2'
           onClick={() => handleOpen()}
@@ -188,10 +187,10 @@ const ServiceRFQ = ({ Dropdown }: Props) => {
           <Plus className="w-4 h-4" />
           Add New Vendor
         </Button>
-      </div>
+      </div> */}
 
       <div className='py-6'>
-        <NewVendorTable newVendorTable={newVendorTable} />
+        <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen}/>
       </div>
       {
         isDialog &&

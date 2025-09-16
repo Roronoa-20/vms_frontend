@@ -1,15 +1,6 @@
 
 import React, { useState, useEffect } from 'react'
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { AccountAssignmentCategory, Company, CostCenter, Country, Currency, DestinationPort, GLAccountNumber, IncoTerms, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ModeOfShipment, PackageType, PortCode, PortOfLoading, ProductCategory, ProfitCenter, PurchaseGroup, PurchaseOrganisation, RFQType, ShipmentType, StoreLocation, UOMMaster, ValuationArea } from '@/src/types/PurchaseRequestType';
 import VendorTable from '../../molecules/rfq/VendorTable';
 import API_END_POINTS from '@/src/services/apiEndPoints'
@@ -23,8 +14,6 @@ import NewVendorTable from '../../molecules/rfq/NewVendorTable';
 import AddNewVendorRFQDialog from '../../molecules/AddNewVendorRFQDialog';
 import { useRouter } from 'next/navigation';
 import MaterialRFQFormFields from './MaterialRFQFormFields';
-import { Plus } from 'lucide-react';
-
 
 export interface DropdownDataMaterial {
   account_assignment_category: AccountAssignmentCategory[];
@@ -193,7 +182,7 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
       <div className='px-4 pb-5'>
         <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
       </div>
-      <div className='flex justify-end items-center pr-5'>
+      {/* <div className='flex justify-end items-center pr-5'>
         <Button
           className='bg-[#5291CD] font-medium text-[14px] inline-flex items-center gap-2'
           onClick={() => handleOpen()}
@@ -201,9 +190,9 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
           <Plus className="w-4 h-4" />
           Add New Vendor
         </Button>
-      </div>
+      </div> */}
       <div className='py-6'>
-        <NewVendorTable newVendorTable={newVendorTable} />
+        <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen}/>
       </div>
       {
         isDialog &&
