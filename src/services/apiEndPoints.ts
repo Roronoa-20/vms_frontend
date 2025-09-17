@@ -213,6 +213,9 @@ const API_END_POINTS = {
   // All VEndors Copy and Extend APIs
   copyexistingvendors: `${url}/api/method/vms.APIs.vendor_onboarding.extend_vendor_code_in_sap.create_vendor_data_from_existing_onboarding`,
   extendexistingvendors: `${url}/api/method/vms.APIs.vendor_onboarding.extend_vendor_code_in_sap.send_vendor_code_extend_mail`,
+
+  //gate Entry
+  sendQRData:`${url}/api/method/vms.APIs.dispatch.dispatch.get_dispatch_data`
 }
 
 export default API_END_POINTS;

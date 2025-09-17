@@ -1,11 +1,15 @@
 // components/QRScanner.tsx
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { SetStateAction, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { Button } from '../atoms/button';
 
-const QRScanner = () => {
+type Props = {
+    setScannedQRData:React.Dispatch<React.SetStateAction<string | null>>
+}
+
+const QRScanner = ({setScannedQRData}:Props) => {
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const scannerRef = useRef<HTMLDivElement>(null);
@@ -27,6 +31,7 @@ const QRScanner = () => {
             },
             (decodedText, decodedResult) => {
               setResult(decodedText);
+              setScannedQRData(decodedText);
               html5QrCode.stop();
               setScanning(false);
             },
@@ -54,7 +59,7 @@ const QRScanner = () => {
 
       {result && (
         <div style={{ marginTop: '20px' }}>
-          <strong>Scanned QR:</strong> {result}
+          <strong>Scanned QR:{result?"Fetched Successfully":"Data Fetching Failed"}</strong>
         </div>
       )}
     </div>
