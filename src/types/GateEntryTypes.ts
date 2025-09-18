@@ -10,7 +10,7 @@ export type TFetchedQRData = {
     vendor_address:string,
     owner:string,
     vehical_details:TVehicalDetails[],
-    purchase_number:TPurchaseDetailTable[]
+    items:TPurchaseDetailTable[]
     creation:string,
     bill_of_entry_no:string,
     bill_of_entry_date:string,
@@ -31,18 +31,31 @@ export type TVehicalDetails = {
   lr_number: string;
   lr_date: string;
   attachment: string;
+  vehicle_type:string
 }
 
 export type TPurchaseDetailTable = {
-  name: string;
+name: string;
   owner: string;
   creation: string;
   modified: string;
   modified_by: string;
   docstatus: number;
   idx: number;
-  purchase_number: string;
-  date_time: string;
+  row_id: string | null;
+  po_number: string;
+  product_code: string;
+  product_name: string;
+  description: string;
+  quantity: string;
+  hsnsac: string;
+  uom: string;
+  rate: string;
+  amount: string;
+  dispatch_qty: string | null;
+  pending_qty: string;
+  coa_document: string | null;
+  msds_document: string | null;
   parent: string;
   parentfield: string;
   parenttype: string;

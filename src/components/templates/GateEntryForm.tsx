@@ -9,6 +9,7 @@ import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { TFetchedQRData } from '@/src/types/GateEntryTypes'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
 
 const GateEntryForm = () => {
     const [ScannedQRData,setScannedQRData] = useState<string | null>(null);
@@ -106,15 +107,16 @@ const GateEntryForm = () => {
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">E-way Bill No.</h1>
-          <Input placeholder="" name='user' defaultValue={fetchedData?.bill_of_entry_no ?? ""} />
+          <Input placeholder="" name='user' defaultValue={fetchedData?.e_way_bill_no ?? ""} />
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">E-way Bill Date</h1>
-          <Input placeholder="" name='user' defaultValue={fetchedData?.bill_of_entry_date ?? ""}/>
+          <Input placeholder="" name='user' defaultValue={fetchedData?.e_way_bill_date ?? ""}/>
         </div>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Transport/Courier</h1>
           <Input placeholder="" name='user' defaultValue={fetchedData?.courier_name ?? ""}/>
+        </div>
         </div>
         {/* <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Purchase Order Number</h1>
@@ -132,7 +134,100 @@ const GateEntryForm = () => {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Qty as per Invoice/Challan</h1>
           <Input placeholder="" name='user' />
         </div> */}
-        <div className="col-span-1">
+         <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl mt-5">
+          <div className="flex w-full justify-between pb-4">
+            <h1 className="text-[20px] text-[#03111F] font-semibold">
+              Purchase Order Items
+            </h1>
+          </div>
+          <Table className=" max-h-40 overflow-y-scroll">
+            <TableHeader className="text-center">
+              <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
+                <TableHead className="w-[100px]">Sr No.</TableHead>
+                <TableHead className="text-center">Purchase Order No</TableHead>
+                <TableHead className="text-center">Order Date</TableHead>
+                <TableHead className="text-center">Material Description</TableHead>
+                <TableHead className="text-center">Qty as per Invoice/Challan</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="text-center">
+              {
+                fetchedData?.items?.map((item,index)=>(
+                  <TableRow key={index}>
+                    <TableCell>
+                      {index+1}
+                    </TableCell>
+                    <TableCell>
+                      {item?.po_number}
+                    </TableCell>
+                    <TableCell>
+                      {item?.creation}
+                    </TableCell>
+                    <TableCell>
+                      {item?.description}
+                    </TableCell>
+                    <TableCell>
+                      {item?.quantity}
+                    </TableCell>
+                  </TableRow>
+                ))
+              }
+            </TableBody>
+          </Table>
+        </div>
+
+          <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl mt-5">
+          <div className="flex w-full justify-between pb-4">
+            <h1 className="text-[20px] text-[#03111F] font-semibold">
+              Vehical List
+            </h1>
+          </div>
+          <Table className=" max-h-40 overflow-y-scroll">
+            <TableHeader className="text-center">
+              <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
+                <TableHead className="w-[100px]">Sr No.</TableHead>
+                <TableHead className="text-center">Vehical Type</TableHead>
+                <TableHead className="text-center">Vehical No</TableHead>
+                <TableHead className="text-center">Driver Name</TableHead>
+                <TableHead className="text-center">Driver Mobile No</TableHead>
+                <TableHead className="text-center">LR/Airway Bill No.</TableHead>
+                <TableHead className="text-center">LR/Airway Bill Date</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="text-center">
+             {
+                fetchedData?.vehical_details?.map((item,index)=>(
+                  <TableRow key={index}>
+                    <TableCell>
+                      {index+1}
+                    </TableCell>
+                    <TableCell>
+                      {item?.vehicle_type}
+                    </TableCell>
+                    <TableCell>
+                      {item?.vehicle_no}
+                    </TableCell>
+                    <TableCell>
+                      {item?.driver_name}
+                    </TableCell>
+                    <TableCell>
+                      {item?.driver_phone}
+                    </TableCell>
+                    <TableCell>
+                      {item?.lr_number}
+                    </TableCell>
+                    <TableCell>
+                      {item?.lr_date}
+                    </TableCell>
+                  </TableRow>
+                ))
+              }
+            </TableBody>
+          </Table>
+        </div>
+
+        <div className='grid md:grid-cols-3 sm-grid-cols-3 gap-6'>
+        {/* <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">LR/Airway Bill No.</h1>
           <Input placeholder="" name='user' />
         </div>
@@ -155,7 +250,7 @@ const GateEntryForm = () => {
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Driver Mobile No.</h1>
           <Input placeholder="" name='user' />
-        </div>
+        </div> */}
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Created By</h1>
           <Input placeholder="" name='user' defaultValue={fetchedData?.owner ?? ""}/>
