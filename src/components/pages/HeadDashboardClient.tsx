@@ -1,36 +1,26 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 import HeadDashboardCardCounter from "../molecules/Head-Dashboard-Card-Count";
-import { dashboardCardData, VendorDashboardPOTableData, RFQTable} from '@/src/types/types';
 
-interface VendorDashboardClientProps {
-  companyDropdown: any[];
-  cardData: dashboardCardData;
-  dashboardPOTableData: VendorDashboardPOTableData["message"];
-  dispatchTableData: any[];
-  dispatchCardCount: number;
-  rfqData: RFQTable
+interface VendorData {
+  total_count: number;
+  vendors: any[];
 }
 
-const HeadDashboardClient: React.FC<VendorDashboardClientProps> = ({
-  companyDropdown,
-  cardData,
-  dashboardPOTableData,
-  dispatchTableData,
-  dispatchCardCount,
-  rfqData
-}) => {
+interface HeadDashboardClientProps {
+  apiResults: {
+    accountsSAPError: VendorData;
+    accountsPending: VendorData;
+    accountsRejected: VendorData;
+    accountsApproved: VendorData;
+  };
+}
+
+const HeadDashboardClient: React.FC<HeadDashboardClientProps> = ({ apiResults }) => {
   return (
     <div className="p-4">
-      <HeadDashboardCardCounter
-        companyDropdown={companyDropdown}
-        cardData={cardData}
-        dashboardPOTableData={dashboardPOTableData}
-        dispatchTableData={dispatchTableData}
-        dispatchCardCount={dispatchCardCount}
-        rfqData={rfqData}
-      />
+      <HeadDashboardCardCounter apiResults={apiResults} />
     </div>
   );
 };

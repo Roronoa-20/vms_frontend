@@ -121,13 +121,16 @@ const API_END_POINTS = {
   ProcessToken: `${url}/api/method/vms.purchase.doctype.request_for_quotation.request_for_quotation.process_token`,
   SubmitPublicQuatation: `${url}/api/method/vms.APIs.quotation.create_quotation.create_or_update_quotation_non_onboarded`,
 
-  // Amend API
+  // Amend APIs
   AmendAPI: `${url}/api/method/vms.APIs.vendor_onboarding.onboarding_amendment.create_vendor_onboarding_amendment`,
-
+  
+  // GRN APIs
   AllGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_all_grn_details`,
   SingleGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_grn_details_of_grn_number`,
   UserDetails: `${url}/api/method/vms.APIs.authentication_api.get_user_details.get_user_details`,
   AllPRDetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.filtering_pr_details`,
+  GRNUpdateDetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.update_grn_with_data`,
+
   // getPrintFormatData:`${ url } /api/method / vms.APIs.dashboard_api.po_data.get_po_details`,
   getPrintFormatData: `${url}/api/method/vms.APIs.dashboard_api.po_data.get_po_details_withformat`,
   addGSTTAbleData: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.update_vendor_onboarding_gst_details`,
@@ -176,30 +179,30 @@ const API_END_POINTS = {
   sendPOEmailVendor: `${url}/api/method/vms.APIs.purchase_api.send_po_to_pr.send_po_to_pr`,
   verifyNewVendor: `${url}/api/method/vms.APIs.req_for_quotation.rfq.check_duplicate_vendor`,
 
-  sapApiDashboardDetails:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.sap_error_vendor_details`,
-  sapErrorSendEmail:`${url}/api/method/vms.APIs.sap.send_sap_error_email.send_sap_error_email`,
-  dashboardPendingVendorsAccounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.pending_vendor_details_by_accounts`,
-  dashboardOnboardedVendorsAccounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.approved_vendor_details_by_accounts`,
-  dashboardRejectedVendorsAccounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.rejected_vendor_details_by_accounts`,
-  dashboardSapErrorAcounts:`${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.sap_error_vendor_details_by_accounts`,
-  bankProofByPurchaseTeam:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`,
-  DispatchStateAndPlant:`${url}/api/method/vms.APIs.dispatch.vehicle_details.get_state_and_plant_data`,
+  sapApiDashboardDetails: `${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.sap_error_vendor_details`,
+  sapErrorSendEmail: `${url}/api/method/vms.APIs.sap.send_sap_error_email.send_sap_error_email`,
+  dashboardPendingVendorsAccounts: `${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.pending_vendor_details_by_accounts`,
+  dashboardOnboardedVendorsAccounts: `${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.approved_vendor_details_by_accounts`,
+  dashboardRejectedVendorsAccounts: `${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.rejected_vendor_details_by_accounts`,
+  dashboardSapErrorAcounts: `${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.sap_error_vendor_details_by_accounts`,
+  bankProofByPurchaseTeam: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`,
+  DispatchStateAndPlant: `${url}/api/method/vms.APIs.dispatch.vehicle_details.get_state_and_plant_data`,
 
   // bankProofByPurchaseTeam:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`,
 
   // QA Dashboard APIs
-  TotalQMSDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_dashboard.total_qms_onboarding_details`,
-  PendingQMDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_dashboard.pending_qms_onboarding_details`,
-  FullyFilledQMSDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_dashboard.completed_qms_onboarding_details`,
-  DraftQMSDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_doc_dashboard.draft_qms_details`,
-  ApprovedQMSDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_doc_dashboard.approved_qms_details`,
-  RejectedQMSDocs:`${url}/api/method/vms.APIs.qms_dashboard.qms_doc_dashboard.rejected_qms_details`,
+  TotalQMSDocs: `${url}/api/method/vms.APIs.qms_dashboard.qms_dashboard.total_qms_onboarding_details`,
+  PendingQMDocs: `${url}/api/method/vms.APIs.qms_dashboard.qms_dashboard.pending_qms_onboarding_details`,
+  FullyFilledQMSDocs: `${url}/api/method/vms.APIs.qms_dashboard.qms_dashboard.completed_qms_onboarding_details`,
+  DraftQMSDocs: `${url}/api/method/vms.APIs.qms_dashboard.qms_doc_dashboard.draft_qms_details`,
+  ApprovedQMSDocs: `${url}/api/method/vms.APIs.qms_dashboard.qms_doc_dashboard.approved_qms_details`,
+  RejectedQMSDocs: `${url}/api/method/vms.APIs.qms_dashboard.qms_doc_dashboard.rejected_qms_details`,
 
   // View Vendor Profile APIs
   getvendorsmerilcompany: `${url}/api/method/vms.APIs.vendors_dashboards_api.vendor_data.get_vendor_multi_company`,
   getvendorsonboardingidandstatus: `${url}/api/method/vms.APIs.vendors_dashboards_api.vendor_data.get_vendor_onb_via_company`,
-  submitVehicalDispatchForm:`${url}/api/method/vms.APIs.dispatch.vehicle_details.create_vehicle_details`,
-  deleteDispatchVehicalItem:`${url}/api/method/vms.APIs.dispatch.vehicle_details.remove_vehicle_from_dispatch`,
+  submitVehicalDispatchForm: `${url}/api/method/vms.APIs.dispatch.vehicle_details.create_vehicle_details`,
+  deleteDispatchVehicalItem: `${url}/api/method/vms.APIs.dispatch.vehicle_details.remove_vehicle_from_dispatch`,
 
   // Notifications APIs
   notificationlist: `${url}/api/method/vms.APIs.notification_chatroom.get_notification.get_notifications`,
@@ -208,7 +211,7 @@ const API_END_POINTS = {
   purchasingdetailschangeemail: `${url}/api/method/vms.APIs.vendor_onboarding.vendors_doc_changes_req_email.email_to_change_pur_detail`,
 
   // Delete Uploaded File API Payment Details
-  deleteTwoWayBankFile:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.delete_bank_proof_attachment`,
+  deleteTwoWayBankFile: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.delete_bank_proof_attachment`,
 
   // All VEndors Copy and Extend APIs
   copyexistingvendors: `${url}/api/method/vms.APIs.vendor_onboarding.extend_vendor_code_in_sap.create_vendor_data_from_existing_onboarding`,
@@ -219,13 +222,15 @@ const API_END_POINTS = {
   PurchaseTeamSAPError: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.sap_error_vendor_details_by_purchase`,
   PurchaseTeamRejectedVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.rejected_vendor_details_by_purchase`,
   PurchaseTeamApprovedVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.approved_vendor_details_by_purchase`,
-  PurchaseTeamPedningVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.pending_vendor_details_by_purchase`,
+  PurchaseTeamPendingVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.pending_vendor_details_by_purchase`,
+  PurchaseTeamPODetailsList: `${url}`,
+  PurchaseTeamRFQList: `${url}`,
   AccountsTeamSAPError: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.sap_error_vendor_details_by_accounts`,
-  AccountsTeamPedningVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.pending_vendor_details_by_accounts`,
+  AccountsTeamPendingVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.pending_vendor_details_by_accounts`,
   AccountsTeamRejectedVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.rejected_vendor_details_by_accounts`,
   AccountsTeamApprovedVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.approved_vendor_details_by_accounts`,
 
-  
+
 }
 
 export default API_END_POINTS;

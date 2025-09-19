@@ -160,7 +160,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
                 <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen}/>
             </div>
             <div className='flex justify-end pt-10 px-4'>
-                <Button type='button' className='bg-[#5291CD] py-2' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }}>Submit RFQ</Button>
+                <Button type='button' className={`bg-[#5291CD] py-2`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }}>Submit RFQ</Button>
             </div>
             {
                 isDialog &&

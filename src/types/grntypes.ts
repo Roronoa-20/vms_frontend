@@ -1,9 +1,8 @@
-// grntypes.tsx
 
 export interface GRNForm {
   naming_series?: string;
   grn_company?: string;
-  grn_no?: string;
+  grn_no: string;
   grn_date?: string;
   sap_booking_id?: string;
   sap_status?: string;
@@ -53,7 +52,20 @@ export interface GRNForm {
   vehicle_no?: string;
   gate_entry_description?: string;
   account_doc_year?: string;
+  company_code?: string;
+  miro_no?: string;
+  attachments: FileList[];
+
 }
+
+export type FileList = {
+  actual_file_name: string;
+  file_doc_name: string;
+  file_name: string;
+  full_url: string;
+  row_name: string;
+}
+
 export type TGRNFormDetail = {
   message: {
     data: GRNForm;

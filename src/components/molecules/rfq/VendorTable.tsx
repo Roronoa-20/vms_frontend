@@ -47,14 +47,14 @@ const VendorTable = ({ VendorList, setSelectedRows, selectedRows, handleVendorSe
             <Table>
                 <TableHeader className="text-center">
                     <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px]  hover:bg-[#DDE8FE] text-center">
-                        <TableHead className="w-[100px] text-center">Select</TableHead>
-                        <TableHead className="text-center">Ref No.</TableHead>
-                        <TableHead className="text-center">Vendor Name</TableHead>
-                        <TableHead className="text-center">Vendor Code</TableHead>
-                        <TableHead className="text-center">Service Type</TableHead>
-                        <TableHead className="text-center">Email</TableHead>
-                        <TableHead className="text-center">Mobile</TableHead>
-                        <TableHead className="text-center">Country</TableHead>
+                        <TableHead className="text-center text-black">Select</TableHead>
+                        <TableHead className="text-center text-black">Ref No.</TableHead>
+                        <TableHead className="text-center text-black">Vendor Name</TableHead>
+                        <TableHead className="text-center text-black">Vendor Code</TableHead>
+                        <TableHead className="text-center text-black">Service Type</TableHead>
+                        <TableHead className="text-center text-black">Email</TableHead>
+                        <TableHead className="text-center text-black">Mobile</TableHead>
+                        <TableHead className="text-center text-black">Country</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody className="text-center text-black">
