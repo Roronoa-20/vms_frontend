@@ -4,9 +4,9 @@ import React from 'react'
 
 const page = () => {
   return (
-    <div className="font-sans h-screen overflow-hidden  bg-white p-10">
+    <div className="font-sans h-screen overflow-hidden  bg-white p-10 overflow-y-scroll">
     {/* <!-- Header Logos --> */}
-    <div className="flex justify-center items-center relative p-4">
+    <div className="flex justify-center items-center p-4">
       <div className="">
         <Image src="/vms_logo.png" alt="MerilLogo" width="420" height="83" />
       </div>
