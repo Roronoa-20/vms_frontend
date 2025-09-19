@@ -27,11 +27,11 @@ export default function MaintenancePage() {
 
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                <Clock className="h-4 w-4 flex-shrink-0" />
-                <span>Expected downtime: 2-4 hours</span>
+                {/* <Clock className="h-4 w-4 flex-shrink-0" /> */}
+                {/* <span>Expected downtime: 2-4 hours</span> */}
               </div>
 
-              <div className="text-sm text-muted-foreground">
+              {/* <div className="text-sm text-muted-foreground">
                 Started:{" "}
                 {new Date().toLocaleDateString("en-US", {
                   month: "long",
@@ -39,7 +39,7 @@ export default function MaintenancePage() {
                   hour: "2-digit",
                   minute: "2-digit",
                 })}
-              </div>
+              </div> */}
             </div>
 
             <div className="pt-4 border-t">
