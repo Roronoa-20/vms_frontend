@@ -17,7 +17,7 @@ interface Props {
 }
 // RFQ current date
 const today = new Date().toISOString().split("T")[0];
-
+const prev = new Date().toISOString().slice(0, 16)
 const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFiles, uploadedFiles }: Props) => {
     const [destinationPort, setDestinationPort] = useState<PortCode[]>([])
     const [portNumberData, setPortNumberData] = useState<PortCode[]>([])
@@ -29,7 +29,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
     const handleSelectChange = (value: string, field: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
-    const renderInput = (name: string, label: string, type = 'text', isdisabled?: boolean) => (
+    const renderInput = (name: string, label: string, type = 'text', isdisabled?: boolean,min?:string) => (
         <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 {label}
@@ -43,6 +43,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                 value={formData[name] || ''}
                 onChange={handleFieldChange}
                 disabled={isdisabled}
+                min={min}
             />
         </div>
     );
@@ -220,7 +221,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                     </Select>
                 </div>
                 {renderInput("sr_no", "Sr No.", "text", true)}
-                {renderInput('rfq_cutoff_date_logistic', 'RFQ CutOff', 'datetime-local')}
+                {renderInput('rfq_cutoff_date_logistic', 'RFQ CutOff', 'datetime-local',false,prev)}
                 {renderInput('rfq_date_logistic', 'RFQ Date', 'date', true)}
                 {renderSelect(
                     'mode_of_shipment',

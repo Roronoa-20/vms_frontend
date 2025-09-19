@@ -32,6 +32,7 @@ export const LogisticsExportRFQFormFields = ({
     uploadedFiles
 }: Props) => {
     const today = new Date().toISOString().split("T")[0];
+    const prev = new Date().toISOString().slice(0, 16)
     const [exportCountry, setExportCountry] = useState<ExportPort[]>([])
     const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -57,20 +58,28 @@ export const LogisticsExportRFQFormFields = ({
             }));
         }
     };
-
-    const renderInput = (name: string, label: string, type = "text", isdisabled?: boolean) => (
-        <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">{label}</h1>
-            <Input
-                name={name}
-                type={type}
-                className="border-neutral-200"
-                value={formData[name] || ""}
-                onChange={handleFieldChange}
-                disabled={isdisabled ? isdisabled : false}
-            />
-        </div>
-    );
+    const renderInput = (
+        name: string,
+        label: string,
+        type: string = "text",
+        isdisabled?: boolean,
+        min?: string
+    ) => {
+        return (
+            <div className="col-span-1">
+                <h1 className="text-[12px] font-normal text-[#626973] pb-3">{label}</h1>
+                <Input
+                    name={name}
+                    type={type}
+                    className="border-neutral-200"
+                    value={formData[name] || ""}
+                    onChange={handleFieldChange}
+                    disabled={isdisabled ?? false}
+                    min={min}
+                />
+            </div>
+        );
+    };
 
     const renderTextarea = (name: string, label: string, rows = 4) => (
         <div className="col-span-1">
@@ -134,21 +143,6 @@ export const LogisticsExportRFQFormFields = ({
             alert("error");
         }
     }
-    // useEffect(() => {
-    //     if (formData.country) {
-    //         const selected = exportCountry.find(
-    //             (p) => p.name === formData.country
-    //         );
-    //         if (selected) {
-    //             setFormData((prev) => ({
-    //                 ...prev,
-    //                 country: selected.country,
-    //                 export_destination_port: selected.port_name,
-    //                 port_code: selected.name,
-    //             }));
-    //         }
-    //     }
-    // }, [formData.country, exportCountry]);
     useEffect(() => {
         const fetchSerialNumberPort = async (company_name_logistic: string) => {
             setFormData((prev) => ({
@@ -180,7 +174,7 @@ export const LogisticsExportRFQFormFields = ({
         <div>
             <div className="grid grid-cols-3 gap-6 p-5">
                 {renderSelect("rfq_type", "RFQ Type", Dropdown?.rfq_type, (i) => i.name, (i) => i.vendor_type_name, true)}
-                 {renderSelect(
+                {renderSelect(
                     "company_name_logistic",
                     "Company Name",
                     Dropdown?.company,
@@ -192,7 +186,7 @@ export const LogisticsExportRFQFormFields = ({
                     <Select
                         value={formData?.service_provider ?? ""}
                         onValueChange={(val) => handleSelectChange(val, "service_provider")}
-                        disabled={formData?.company_name_logistic?false:true}
+                        disabled={formData?.company_name_logistic ? false : true}
                     >
                         <SelectTrigger>
                             <SelectValue placeholder="Select" />
@@ -208,11 +202,8 @@ export const LogisticsExportRFQFormFields = ({
                         </SelectContent>
                     </Select>
                 </div>
-               
-                {/* {renderInput("sr_no", "Sr No.")}
-                 */}
-                 {renderInput("sr_no", "Sr No.", "text", true)}
-                {renderInput("rfq_cutoff_date_logistic", "RFQ CutOff", "datetime-local")}
+                {renderInput("sr_no", "Sr No.", "text", true)}
+                {renderInput("rfq_cutoff_date_logistic", "RFQ CutOff", "datetime-local", false, prev)}
                 {renderInput("rfq_date_logistic", "RFQ Date", "date", true)}
                 {renderSelect("mode_of_shipment", "Mode of Shipment", Dropdown?.mode_of_shipment, (i) => i.name, (i) => i.name)}
                 {/* {renderSelect("country", "Country", exportCountry, (i) => i.country, (i) => `${i.country} - ${i.port_code} - ${i.port_name}`)} */}

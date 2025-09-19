@@ -144,7 +144,6 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
         <div className='bg-white h-full w-full pb-6'>
             <div className='flex justify-between items-center pr-4'>
                 <h1 className='font-bold text-[24px] p-5'>RFQ Data for Export</h1>
-                {/* <Button onClick={handleOpen}>Add New Vendor</Button> */}
             </div>
             <LogisticsExportRFQFormFields
                 formData={formData}
@@ -158,15 +157,6 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
             {formData?.service_provider === "Courier Service Provider" || formData?.service_provider === "Adhoc Service Provider" && <div className='px-4'>
                 <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
             </div>}
-            {/* <div className='flex justify-end items-center pr-5'>
-                <Button
-                    className='bg-[#5291CD] font-medium text-[14px] inline-flex items-center gap-2'
-                    onClick={() => handleOpen()}
-                >
-                    <Plus className="w-4 h-4" />
-                    Add New Vendor
-                </Button>
-            </div> */}
             <div className='py-6'>
                 <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen}/>
             </div>
