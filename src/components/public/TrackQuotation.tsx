@@ -40,7 +40,7 @@ const TrackQuotation = async({token}:Props) => {
         { label: "Total Freight FCR", key: "total_freight" },
         { label: "Expected Delivery in No of Days", key: "expected_delivery_in_no_of_days" },
         { label: "Remarks", key: "remarks" },
-        { label: "Attachments", key: "attachments" },
+        // { label: "Attachments", key: "attachments" },
     ];
 
     const importColumns: ColumnConfig[] = [
@@ -69,7 +69,7 @@ const TrackQuotation = async({token}:Props) => {
         { label: "Landing Price", key: "total_landing_price" },
         { label: "Transit Days", key: "transit_days" },
         { label: "Remarks", key: "remarks" },
-        { label: "Attachments", key: "attachments" },
+        // { label: "Attachments", key: "attachments" },
     ];
 
 
@@ -83,6 +83,7 @@ const TrackQuotation = async({token}:Props) => {
     });
 
     const data = resposne?.status == 200?resposne?.data?.message?.data : "";
+    console.log(data,"data")
   return (
     <div className='bg-white p-4'>
       <h1 className='p-2 pl-10 flex gap-5 items-center'>RFQ No : {data?.name} <span className='bg-green-100 text-green-500 rounded-md px-2 py-1'>{data?.rank}</span></h1>

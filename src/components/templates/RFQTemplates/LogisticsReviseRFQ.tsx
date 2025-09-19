@@ -125,7 +125,6 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
                 <div className='py-6'>
                     <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen}/>
                 </div>
-
                 {
                     isDialog &&
                     <AddNewVendorRFQDialog Dropdown={Dropdown} setNewVendorTable={setNewVendorTable} handleClose={handleClose} />
@@ -134,12 +133,7 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
                     <Button variant="outline" onClick={onClose}>
                         Cancel
                     </Button>
-                    {/* <Button onClick={onApprove} disabled={loading}>
-                        {loading ? 'Approving...' : 'Approve'}
-                    </Button> */}
-                    {/* <div className='flex justify-end pt-10 px-4'> */}
                     <Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium' onClick={() => { handleSubmit() }}>Submit RFQ</Button>
-                    {/* </div> */}
                 </DialogFooter>
             </DialogContent>
         </Dialog>
