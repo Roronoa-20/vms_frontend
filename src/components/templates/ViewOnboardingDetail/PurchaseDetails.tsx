@@ -86,8 +86,8 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
             className="mb-2 inline-flex items-center gap-2 rounded-[28px] border px-4 py-2 shadow-sm bg-[#5e90c0] text-white hover:bg-[#46709c] transition"
             onClick={() => setOpenDialog(true)}
           >
-            <Mail className="w-4 h-4" /> {/* icon size can be adjusted */}
-            Send Email
+            <Mail className="w-4 h-4" />
+            Send Email to Change Purchasing Details
           </Button>
         )}
 
@@ -216,11 +216,11 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
         </div>
       </div>
       <div className={`flex justify-end`}>
-        {/* {validation_check?.change_pur_detail_req_mail_to_it_head !== 1 && (
-          <> */}
+        {validation_check?.change_pur_detail_req_mail_to_it_head !== 1 && (
+          <>
             {/* <Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`}>Next</Button> */}
             {
-              designation == "Purchase Team" && validation_check?.is_purchase_approve == 1 && validation_check?.change_pur_detail_req_mail_to_it_head !== 1 &&
+              designation == "Purchase Team" && validation_check?.is_purchase_approve == 1 &&
               <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile ? true : false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile ? true : false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile ? true : false} isAccountTeam={validation_check?.register_by_account_team == 1 ? 1 : 0} />
             }
             {
@@ -228,15 +228,15 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
               <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile ? true : false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile ? true : false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile ? true : false} isAccountTeam={validation_check?.register_by_account_team == 1 ? 1 : 0} />
             }
             {
-              designation == "Accounts Team" && validation_check?.is_accounts_team_approve && validation_check?.change_pur_detail_req_mail_to_it_head !== 1 &&
+              designation == "Accounts Team" && validation_check?.is_accounts_team_approve &&
               <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile ? true : false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile ? true : false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile ? true : false} isAccountTeam={validation_check?.register_by_account_team == 1 ? 1 : 0} />
             }
             {
               designation == "Accounts Head" && validation_check?.is_accounts_head_approve &&
               <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile ? true : false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile ? true : false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile ? true : false} isAccountTeam={validation_check?.register_by_account_team == 1 ? 1 : 0} />
             }
-          {/* </>
-        )} */}
+          </>
+        )}
       </div>
     </div>
   )

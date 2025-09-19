@@ -1,7 +1,7 @@
 "use client"
 import React from "react";
 import Logo from "@/src/components/atoms/vms-logo";
-import { sidebarMenu, VendorsidebarMenu, EnquirysidebarMenu, ASASideBarMenu, AccountSideBarMenu, AccountHeadSideBarMenu,PurchaseHeadsidebarMenu, QASideBarMenu } from "@/src/constants/sidebarMenu";
+import { sidebarMenu, VendorsidebarMenu, EnquirysidebarMenu, ASASideBarMenu, AccountSideBarMenu, AccountHeadSideBarMenu,PurchaseHeadsidebarMenu, QASideBarMenu, SuperHeadSidebarMenu } from "@/src/constants/sidebarMenu";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/context/AuthContext";
@@ -10,7 +10,7 @@ const Sidebar = () => {
   const { designation } = useAuth();
   const { vendorRef } = useAuth();
 
-  const sideBar = designation === "Vendor" ? VendorsidebarMenu : designation === "Enquirer" ? EnquirysidebarMenu : designation === "ASA" ? ASASideBarMenu : designation === "Accounts Team" ? AccountSideBarMenu: designation === "Accounts Head"?AccountHeadSideBarMenu : designation === "Purchase Head" ? PurchaseHeadsidebarMenu: designation === "QA Team"? QASideBarMenu : sidebarMenu;
+  const sideBar = designation === "Vendor" ? VendorsidebarMenu : designation === "Enquirer" ? EnquirysidebarMenu : designation === "ASA" ? ASASideBarMenu : designation === "Accounts Team" ? AccountSideBarMenu: designation === "Accounts Head"?AccountHeadSideBarMenu : designation === "Purchase Head" ? PurchaseHeadsidebarMenu: designation === "QA Team"? QASideBarMenu : designation === "Super Head" ? SuperHeadSidebarMenu : sidebarMenu;
 
   return (
     <div className="w-[110px] bg-[#0C2741] flex flex-col items-center gap-3 overflow-y-scroll overflow-x-hidden no-scrollbar sticky left-0">

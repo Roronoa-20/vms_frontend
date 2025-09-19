@@ -90,8 +90,6 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
     const startIdx = (currentPage - 1) * recordPerPage;
     const paginatedRows = rows.slice(startIdx, startIdx + recordPerPage);
 
-    if (!rows.length) return <p>No vendors found for company code {activeTab}.</p>;
-
     const columns: { key: keyof RowData; label: string; type?: "text" | "file" | "boolean"; sticky?: boolean; }[] = [
         // { key: "multiple_company", label: "Multi-Company?", type: "boolean" },
         { key: "company_code", label: "Company Code", sticky: true },
@@ -151,39 +149,6 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
         }
     };
 
-    // const dropdownUrl = API_END_POINTS?.vendorRegistrationDropdown;
-    // const [dropdownData, setDropdownData] = React.useState<TvendorRegistrationDropdown["message"]["data"] | null>(null);
-
-    // React.useEffect(() => {
-    //     const fetchDropdownData = async () => {
-    //         try {
-    //             if (!dropdownUrl || !activeTab) return;
-
-    //             const selectedCompany = vendors
-    //                 ?.flatMap((vendor) => vendor.multiple_company_data || [])
-    //                 .find((c) => c.company_name === activeTab);
-
-    //             const sapCode = selectedCompany?.sap_client_code;
-    //             if (!sapCode || sapCode === "N.A.") {
-    //                 console.warn(`No sap_client_code found for activeTab: ${activeTab}`);
-    //                 return;
-    //             }
-
-    //             const dropDownApi: AxiosResponse = await requestWrapper({
-    //                 url: `${dropdownUrl}?sap_client_code=${sapCode}`,
-    //                 method: "GET",
-    //             });
-
-    //             setDropdownData(dropDownApi?.status === 200 ? dropDownApi.data?.message?.data ?? null : null);
-    //         } catch (error) {
-    //             console.error("Error fetching dropdown data:", error);
-    //             setDropdownData(null);
-    //         }
-    //     };
-
-    //     fetchDropdownData();
-    // }, [activeTab]);
-
     const dropdownUrl = API_END_POINTS?.vendorRegistrationDropdown;
     const [dropdownData, setDropdownData] = React.useState<TvendorRegistrationDropdown["message"]["data"] | null>(null);
     const [unfilteredDropdownData, setUnfilteredDropdownData] = React.useState<TvendorRegistrationDropdown["message"]["data"] | null>(null);
@@ -193,14 +158,14 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
             try {
                 if (!dropdownUrl) return;
 
-                // 1. Unfiltered call (no sap_client_code)
+                // Unfiltered call (no sap_client_code)
                 const allDropDownApi: AxiosResponse = await requestWrapper({
                     url: dropdownUrl,
                     method: "GET",
                 });
                 setUnfilteredDropdownData(allDropDownApi?.status === 200 ? allDropDownApi.data?.message?.data ?? null : null);
 
-                // 2. Filtered call (sap_client_code specific)
+                // Filtered call (sap_client_code specific)
                 if (!activeTab) return;
                 const selectedCompany = vendors
                     ?.flatMap((vendor) => vendor.multiple_company_data || [])
@@ -330,134 +295,143 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
         }
     };
 
+    const noVendors = rows.length === 0;
+
     return (
         <>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Vendors List</h2>
-
-            <div className="overflow-x-auto rounded-xl shadow-md border">
-                <Table className="min-w-full text-sm border-collapse">
-                    <TableHeader className="sticky top-0 z-10 bg-blue-100">
-                        <TableRow>
-                            <TableHead
-                                ref={(el) => {
-                                    headerRefs.current["srno"] = el;
-                                }}
-                                className="sticky left-0 z-20 bg-blue-100 text-center px-4 py-2"
-                                style={{ left: getStickyLeft("srno") }}
-                            >
-                                Sr. No.
-                            </TableHead>
-                            {columns.map((col, index) => (
-                                <React.Fragment key={`${col.key}-${index}`}>
+            {noVendors ? (
+                <p className="text-gray-500">
+                    No vendors found for company code <b>{activeTab}</b>.
+                </p>
+            ) : (
+                <div>
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">Vendors List</h2>
+                    <div className="overflow-x-auto rounded-xl shadow-md border">
+                        <Table className="min-w-full text-sm border-collapse">
+                            <TableHeader className="sticky top-0 z-10 bg-blue-100">
+                                <TableRow>
                                     <TableHead
-                                        key={col.key}
-                                        ref={(el) => { headerRefs.current[col.key] = el; }}
-                                        className={`text-black text-center px-4 py-2 whitespace-nowrap ${col.sticky ? "sticky left-0 bg-blue-100 z-20" : ""}`}
-                                        style={stickyKeys.includes(col.key) ? { left: getStickyLeft(col.key) } : {}}
+                                        ref={(el) => {
+                                            headerRefs.current["srno"] = el;
+                                        }}
+                                        className="sticky left-0 z-20 bg-blue-100 text-center px-4 py-2"
+                                        style={{ left: getStickyLeft("srno") }}
                                     >
-                                        {col.label}
+                                        Sr. No.
                                     </TableHead>
-                                    {index === 2 && (
-                                        <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
-                                            Vendor Codes
-                                        </TableHead>
-                                    )}
-                                </React.Fragment>
-                            ))}
-                            <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
-                                View Details
-                            </TableHead>
-                            <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
-                                Extend Vendor
-                            </TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    {/* Table Body */}
-                    <TableBody>
-                        {/* {paginatedRows.map((row, idx) => ( */}
-                        {/* {(copiedRow ? [copiedRow] : paginatedRows).map((row, idx) => ( */}
-                        {(copiedRow || extendRow
-                            ? paginatedRows.filter(
-                                (row) =>
-                                    (copiedRow && row.name === copiedRow.name && row.company_code === copiedRow.company_code) ||
-                                    (extendRow && row.name === extendRow.name && row.company_code === extendRow.company_code)
-                            )
-                            : paginatedRows
-                        ).map((row, idx) => (
-                            < TableRow key={`${row.name}-${row.company_code}-${idx}`}
-                                className={copiedRow?.name === row.name && copiedRow?.company_code === row.company_code
-                                    ? "bg-yellow-100 border-2 border-yellow-400"
-                                    : idx % 2 === 0 ? "bg-gray-50" : "bg-white"}>
-                                <TableCell
-                                    className={`text-center px-4 py-2 whitespace-nowrap ${stickyKeys.includes("srno") ? "sticky bg-white z-10" : ""}`}
-                                    style={{ left: getStickyLeft("srno") }}
-                                >
-                                    {startIdx + idx + 1}
-                                </TableCell>
-
-                                {columns.map((col, index) => (
-                                    <React.Fragment key={`${row.name}-${col.key}-${index}`}>
+                                    {columns.map((col, index) => (
+                                        <React.Fragment key={`${col.key}-${index}`}>
+                                            <TableHead
+                                                key={col.key}
+                                                ref={(el) => { headerRefs.current[col.key] = el; }}
+                                                className={`text-black text-center px-4 py-2 whitespace-nowrap ${col.sticky ? "sticky left-0 bg-blue-100 z-20" : ""}`}
+                                                style={stickyKeys.includes(col.key) ? { left: getStickyLeft(col.key) } : {}}
+                                            >
+                                                {col.label}
+                                            </TableHead>
+                                            {index === 2 && (
+                                                <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
+                                                    Vendor Codes
+                                                </TableHead>
+                                            )}
+                                        </React.Fragment>
+                                    ))}
+                                    <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
+                                        View Details
+                                    </TableHead>
+                                    <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
+                                        Extend Vendor
+                                    </TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            {/* Table Body */}
+                            <TableBody>
+                                {/* {paginatedRows.map((row, idx) => ( */}
+                                {/* {(copiedRow ? [copiedRow] : paginatedRows).map((row, idx) => ( */}
+                                {(copiedRow || extendRow
+                                    ? paginatedRows.filter(
+                                        (row) =>
+                                            (copiedRow && row.name === copiedRow.name && row.company_code === copiedRow.company_code) ||
+                                            (extendRow && row.name === extendRow.name && row.company_code === extendRow.company_code)
+                                    )
+                                    : paginatedRows
+                                ).map((row, idx) => (
+                                    < TableRow key={`${row.name}-${row.company_code}-${idx}`}
+                                        className={copiedRow?.name === row.name && copiedRow?.company_code === row.company_code
+                                            ? "bg-yellow-100 border-2 border-yellow-400"
+                                            : idx % 2 === 0 ? "bg-gray-50" : "bg-white"}>
                                         <TableCell
-                                            className={`text-center px-4 py-2 whitespace-nowrap ${stickyKeys.includes(col.key) ? "sticky bg-white z-10" : ""}`}
-                                            style={stickyKeys.includes(col.key) ? { left: getStickyLeft(col.key) } : {}}
+                                            className={`text-center px-4 py-2 whitespace-nowrap ${stickyKeys.includes("srno") ? "sticky bg-white z-10" : ""}`}
+                                            style={{ left: getStickyLeft("srno") }}
                                         >
-                                            {renderCell(row, col)}
+                                            {startIdx + idx + 1}
                                         </TableCell>
-                                        {index === 2 && (
-                                            <TableCell className="text-center px-4 py-2">
-                                                <Button
-                                                    variant="outline"
-                                                    onClick={() => fetchVendorCodes(row.name, row.company_code)}
-                                                    className="whitespace-nowrap bg-[#5291CD] text-white text-sm rounded-xl px-3 py-1"
+
+                                        {columns.map((col, index) => (
+                                            <React.Fragment key={`${row.name}-${col.key}-${index}`}>
+                                                <TableCell
+                                                    className={`text-center px-4 py-2 whitespace-nowrap ${stickyKeys.includes(col.key) ? "sticky bg-white z-10" : ""}`}
+                                                    style={stickyKeys.includes(col.key) ? { left: getStickyLeft(col.key) } : {}}
                                                 >
-                                                    View
+                                                    {renderCell(row, col)}
+                                                </TableCell>
+                                                {index === 2 && (
+                                                    <TableCell className="text-center px-4 py-2">
+                                                        <Button
+                                                            variant="outline"
+                                                            onClick={() => fetchVendorCodes(row.name, row.company_code)}
+                                                            className="whitespace-nowrap bg-[#5291CD] text-white text-sm rounded-xl px-3 py-1"
+                                                        >
+                                                            View
+                                                        </Button>
+                                                    </TableCell>
+                                                )}
+                                            </React.Fragment>
+                                        ))}
+
+                                        {/* Actions */}
+                                        <TableCell className="text-center">
+                                            <Button
+                                                onClick={() => handleView(row.ref_no, row.name)}
+                                                className="whitespace-nowrap bg-[#5291CD] text-white text-sm rounded-xl px-3 py-1"
+                                            >
+                                                View
+                                            </Button>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            {["1012", "1022", "1000", "1025", "1030"].includes(row.company_code) ? (
+                                                <div className="flex gap-2 justify-center">
+                                                    <Button
+                                                        onClick={() => handleExtend(row)}
+                                                        className="bg-blue-600 text-white text-sm rounded-xl px-3 py-1"
+                                                    >
+                                                        Extend
+                                                    </Button>
+                                                    <Button
+                                                        onClick={() => handleCopy(row)}
+                                                        className="bg-green-600 text-white text-sm rounded-xl px-3 py-1"
+                                                    >
+                                                        Copy
+                                                    </Button>
+                                                </div>
+                                            ) : (
+                                                <Button
+                                                    onClick={() => handleCopy(row)}
+                                                    className="bg-green-600 text-white text-sm rounded-xl px-3 py-1"
+                                                >
+                                                    Copy
                                                 </Button>
-                                            </TableCell>
-                                        )}
-                                    </React.Fragment>
+                                            )}
+                                        </TableCell>
+
+                                    </TableRow>
                                 ))}
+                            </TableBody>
+                        </Table>
 
-                                {/* Actions */}
-                                <TableCell className="text-center">
-                                    <Button
-                                        onClick={() => handleView(row.ref_no, row.name)}
-                                        className="whitespace-nowrap bg-[#5291CD] text-white text-sm rounded-xl px-3 py-1"
-                                    >
-                                        View
-                                    </Button>
-                                </TableCell>
-                                <TableCell className="text-center">
-                                    {["1012", "1022", "1000", "1025", "1030"].includes(row.company_code) ? (
-                                        <div className="flex gap-2 justify-center">
-                                            <Button
-                                                onClick={() => handleExtend(row)}
-                                                className="bg-blue-600 text-white text-sm rounded-xl px-3 py-1"
-                                            >
-                                                Extend
-                                            </Button>
-                                            <Button
-                                                onClick={() => handleCopy(row)}
-                                                className="bg-green-600 text-white text-sm rounded-xl px-3 py-1"
-                                            >
-                                                Copy
-                                            </Button>
-                                        </div>
-                                    ) : (
-                                        <Button
-                                            onClick={() => handleCopy(row)}
-                                            className="bg-green-600 text-white text-sm rounded-xl px-3 py-1"
-                                        >
-                                            Copy
-                                        </Button>
-                                    )}
-                                </TableCell>
-
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-
-            </div >
+                    </div >
+                </div>
+            )}
 
             {/* 🔹 Pagination */}
             < div className="mt-4" >
