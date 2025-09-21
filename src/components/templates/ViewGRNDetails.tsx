@@ -24,6 +24,7 @@ const ViewGRNDetails = ({ grn }: { grn: GRNForm }) => {
     };
 
     console.log("View GRN Data--->",grn);
+    console.log("Attachments on render:", grn.attachments);
 
 
     return (

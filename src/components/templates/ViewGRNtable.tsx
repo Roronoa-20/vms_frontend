@@ -25,6 +25,8 @@ import { FileText, Save } from "lucide-react";
 import API_END_POINTS from '@/src/services/apiEndPoints';
 import requestWrapper from '@/src/services/apiCall';
 import { AxiosResponse } from 'axios';
+import SimpleFileUpload from "@/src/components/molecules/multiple_file_upload";
+
 
 type Props = {
     GRNData?: GRNForm[];
@@ -38,7 +40,7 @@ const ViewGRNEntry = ({ GRNData, companyDropdown }: Props) => {
     const [companyFilter, setCompanyFilter] = useState("");
     const [editValues, setEditValues] = useState<Record<
         string,
-        { account_document_no: string; miro_no: string }
+        { account_document_no: string; miro_no: string; files: File[] }
     >>({});
     const [tableData, setTableData] = useState<GRNForm[]>(GRNData || []);
 
@@ -74,7 +76,7 @@ const ViewGRNEntry = ({ GRNData, companyDropdown }: Props) => {
 
         if (searchTerm.trim()) {
             data = data.filter((item) =>
-                item?.grn_no?.toLowerCase().includes(searchTerm.toLowerCase())
+                item?.grn_number?.toLowerCase().includes(searchTerm.toLowerCase())
             );
         }
         if (companyFilter && companyFilter !== "--Select--") {
@@ -83,8 +85,8 @@ const ViewGRNEntry = ({ GRNData, companyDropdown }: Props) => {
         return data;
     }, [tableData, searchTerm, companyFilter]);
 
-    console.log("1st table--->",GRNData);
-    console.log("2nd table--->",tableData);
+    console.log("1st table--->", GRNData);
+    console.log("2nd table--->", tableData);
 
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,40 +94,54 @@ const ViewGRNEntry = ({ GRNData, companyDropdown }: Props) => {
     };
 
     const handleInputChange = (
-        grn_no: string,
+        grn_number: string,
         field: "account_document_no" | "miro_no",
         value: string
     ) => {
         setEditValues((prev) => ({
             ...prev,
-            [grn_no]: {
-                ...prev[grn_no],
+            [grn_number]: {
+                ...prev[grn_number],
                 [field]: value,
             },
         }));
     };
 
-    const handleSave = async (grn_no: string) => {
-        const payload = {
-            grn_number: grn_no,
-            sap_booking_id: editValues[grn_no]?.account_document_no || "",
-            miro_no: editValues[grn_no]?.miro_no || "",
-        };
-
+    const handleSave = async (grn_number: string) => {
         try {
+            const formData = new FormData();
+            formData.append("grn_number", grn_number);
+
+            if (editValues[grn_number]?.account_document_no) {
+                formData.append("sap_booking_id", editValues[grn_number].account_document_no);
+            }
+            if (editValues[grn_number]?.miro_no) {
+                formData.append("miro_no", editValues[grn_number].miro_no);
+            }
+
+            if (editValues[grn_number]?.files?.length) {
+                editValues[grn_number].files.forEach((file: File) => {
+                    formData.append("attachment", file);
+                });
+            }
+
             const response: AxiosResponse = await requestWrapper({
                 url: API_END_POINTS.GRNUpdateDetails,
                 method: "POST",
-                data: payload,
+                data: formData,
+                headers: { "Content-Type": "multipart/form-data" },
             });
 
             if (response?.data?.message?.status === "success") {
-                alert(`Saved GRN ${grn_no} successfully!`);
+                alert(`GRN ${grn_number} updated successfully ✅`);
                 await fetchGRNData();
+
+                // Reset input & files after successful save
                 setEditValues((prev) => ({
                     ...prev,
-                    [grn_no]: { account_document_no: "", miro_no: "" },
+                    [grn_number]: { account_document_no: "", miro_no: "", files: [] },
                 }));
+                location.reload();
             } else {
                 alert(response?.data?.message || "Failed to save. Please try again.");
             }
@@ -134,6 +150,18 @@ const ViewGRNEntry = ({ GRNData, companyDropdown }: Props) => {
             alert("Failed to save. Please try again.");
         }
     };
+
+
+    const canSave = (grn_number: string) => {
+        const values = editValues[grn_number];
+        return (
+            (values?.account_document_no?.trim() ||
+                values?.miro_no?.trim() ||
+                (values?.files && values.files.length > 0)) &&
+            tableData.find((item) => item.grn_number === grn_number)?.sap_status !== "Closed"
+        );
+    };
+
 
     return (
         <div className="p-3 bg-gray-300 min-h-screen">
@@ -181,9 +209,10 @@ const ViewGRNEntry = ({ GRNData, companyDropdown }: Props) => {
                             <TableHead className="text-black text-center">Account Document No.</TableHead>
                             <TableHead className="text-black text-center">MIRO No.</TableHead>
                             <TableHead className="text-black text-center text-nowrap">SAP Status</TableHead>
-                            <TableHead className="text-black text-center">View GRN</TableHead>
                             <TableHead className="text-black text-center">Upload Invoice</TableHead>
                             <TableHead className="text-black text-center">Action</TableHead>
+                            <TableHead className="text-black text-center">View GRN</TableHead>
+
                         </TableRow>
                     </TableHeader>
 
@@ -193,30 +222,29 @@ const ViewGRNEntry = ({ GRNData, companyDropdown }: Props) => {
                                 <TableRow key={index}>
                                     <TableCell className="text-center">{index + 1}</TableCell>
                                     <TableCell className="text-center">{item?.company_code}</TableCell>
-                                    <TableCell className="text-center">{item?.grn_no}</TableCell>
+                                    <TableCell className="text-center">{item?.grn_number}</TableCell>
                                     <TableCell className="text-center text-nowrap">{formatDate(item?.grn_date)}</TableCell>
                                     <TableCell className="text-center">
-                                        {item?.sap_booking_id ? (
+                                        {item.sap_booking_id ? (
                                             <span>{item.sap_booking_id}</span>
                                         ) : (
                                             <Input
-                                                value={editValues[item.grn_no]?.account_document_no || ""}
+                                                value={editValues[item.grn_number]?.account_document_no || ""}
                                                 onChange={(e) =>
-                                                    handleInputChange(item.grn_no, "account_document_no", e.target.value)
+                                                    handleInputChange(item.grn_number, "account_document_no", e.target.value)
                                                 }
                                                 placeholder="Enter Account Doc No"
                                             />
                                         )}
                                     </TableCell>
-
                                     <TableCell className="text-center">
                                         {item?.miro_no ? (
                                             <span>{item.miro_no}</span>
                                         ) : (
                                             <Input
-                                                value={editValues[item.grn_no]?.miro_no || ""}
+                                                value={editValues[item.grn_number]?.miro_no || ""}
                                                 onChange={(e) =>
-                                                    handleInputChange(item.grn_no, "miro_no", e.target.value)
+                                                    handleInputChange(item.grn_number, "miro_no", e.target.value)
                                                 }
                                                 placeholder="Enter MIRO No"
                                             />
@@ -234,38 +262,47 @@ const ViewGRNEntry = ({ GRNData, companyDropdown }: Props) => {
                                             {item?.sap_status}
                                         </div>
                                     </TableCell>
+
                                     <TableCell className="text-center">
-                                        <Link href={`/view-grn-details?grn_ref=${item?.grn_no}`}>
+                                        <SimpleFileUpload
+                                            buttonText="Upload Invoice"
+                                            files={editValues[item.grn_number]?.files || []}
+                                            setFiles={(newFiles) =>
+                                                setEditValues((prev) => {
+                                                    const files =
+                                                        typeof newFiles === "function" ? newFiles(prev[item.grn_number]?.files || []) : newFiles;
+                                                    return {
+                                                        ...prev,
+                                                        [item.grn_number]: {
+                                                            ...prev[item.grn_number],
+                                                            files,
+                                                        },
+                                                    };
+                                                })
+                                            }
+                                            setUploadedFiles={() => { }}
+                                            onNext={() => handleSave(item.grn_number)}
+                                        />
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <Button
+                                            size="sm"
+                                            variant="default"
+                                            onClick={() => handleSave(item.grn_number)}
+                                            disabled={!canSave(item.grn_number)}
+                                            className={`px-3 py-1 rounded-[28px] text-sm font-medium 
+      ${!canSave(item.grn_number) ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-green-600 text-white hover:bg-green-700"}`}
+                                        >
+                                            Save
+                                        </Button>
+                                    </TableCell>
+
+                                    <TableCell className="text-center">
+                                        <Link href={`/view-grn-details?grn_ref=${item?.grn_number}`}>
                                             <Button variant={"nextbtn"} size={"nextbtnsize"} className="py-2">
                                                 View
                                             </Button>
                                         </Link>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        {item?.invoice_url ? (
-                                            <Link
-                                                href={item.invoice_url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex justify-center text-blue-600"
-                                            >
-                                                <FileText className="w-5 h-5" />
-                                            </Link>
-                                        ) : (
-                                            "--"
-                                        )}
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <Button
-                                            variant="ghost"
-                                            onClick={() => handleSave(item.grn_no)}
-                                            disabled={item?.sap_status === "Closed"}
-                                            className={item?.sap_status === "Closed" ? "cursor-not-allowed" : ""}
-                                        >
-                                            <Save
-                                                className={`w-5 h-5 ${item?.sap_status === "Closed" ? "text-gray-400" : "text-green-600"}`}
-                                            />
-                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))

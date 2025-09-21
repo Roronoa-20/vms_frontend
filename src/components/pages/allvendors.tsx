@@ -75,7 +75,7 @@ const AllVendors = () => {
                     url: url,
                     method: "GET",
                 });
-
+                console.log("Response of All Vendors-------->",res);
                 const apiData = res.data.message.data;
 
                 setVendors(apiData?.vendors || []);
@@ -156,6 +156,8 @@ const AllVendors = () => {
             setCurrentSlide(1);
         }
     }, [companyAnalytics, defaultTab]);
+
+    console.log("Filtered Vendors-------->",vendors);
 
 
     return (

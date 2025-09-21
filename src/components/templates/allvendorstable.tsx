@@ -22,6 +22,7 @@ interface Props {
 }
 
 const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
+    console.log("Vendors-------->",vendors);
     const router = useRouter();
     const [isVendorCodeDialog, setIsVendorCodeDialog] = React.useState(false);
     const [selectedVendorCodes, setSelectedVendorCodes] = React.useState<CompanyVendorCodeRecord[] | null>(null);

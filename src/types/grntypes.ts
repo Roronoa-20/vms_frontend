@@ -30,7 +30,7 @@ export interface GRNForm {
   pending_days?: number;
   account_doc_no?: string;
   ref_invoice_no?: string;
-  grn_number?: string;
+  grn_number: string;
   grn_date_2?: string;
   pr_no?: string;
   pr_date?: string;
