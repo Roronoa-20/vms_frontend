@@ -428,8 +428,8 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
 
           <div className="flex gap-6 items-start flex-wrap">
             {/* Upload Section */}
-            {(isAccountTeam === 0 && designation === "Purchase Team" && isBankProof === 1) ||
-              (isAccountTeam === 1 && designation === "Accounts Team" && isBankProof === 1) ? (
+            {(isAccountTeam === 0 && designation === "Purchase Team" ) ||
+              (isAccountTeam === 1 && designation === "Accounts Team") ? (
               <div className="flex flex-col gap-2">
                 <SimpleFileUpload
                   files={files}
@@ -640,8 +640,8 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
 
             <div className="flex gap-6 items-start flex-wrap">
               {/* Upload Section */}
-              {(isAccountTeam === 0 && designation === "Purchase Team" && isBankProof === 1) ||
-                (isAccountTeam === 1 && designation === "Accounts Team" && isBankProof === 1) ? (
+              {(isAccountTeam === 0 && designation === "Purchase Team") ||
+                (isAccountTeam === 1 && designation === "Accounts Team") ? (
                 <div className="flex flex-col gap-2">
                   <SimpleFileUpload
                     files={files}
