@@ -60,6 +60,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
   const [tableData, setTableData] = useState<DashboardPOTableItem[]>(dashboardPOTableData?.total_po ?? []);
   const { MultipleVendorCode, addMultipleVendorCode, reset, selectedVendorCode } = useMultipleVendorCodeStore();
   const [search, setSearch] = useState<string>("");
+  const [selectedCompany, setSelectedCompany] = useState<string>("");
 
   const [total_event_list, settotalEventList] = useState(0);
   const [record_per_page, setRecordPerPage] = useState<number>(0);
@@ -179,6 +180,18 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
     }
   }
 
+  const handleSelectChange = (
+  value: string,
+  setter: (val: string) => void
+  ) => {
+  if (value === "--Select--") {
+    setter(""); // reset filter
+  } else {
+    setter(value);
+  }
+};
+
+
   return (
     <>
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
@@ -188,12 +201,16 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
-            <Select>
+            <Select
+              value={selectedCompany}
+              onValueChange={(value) => handleSelectChange(value, setSelectedCompany)}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup className="w-full">
+                  <SelectItem value="--Select--">--Select--</SelectItem>
                   {
                     companyDropdown?.map((item, index) => (
                       <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>

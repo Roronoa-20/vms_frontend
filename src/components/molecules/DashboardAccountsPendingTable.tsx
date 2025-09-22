@@ -35,7 +35,6 @@ type Props = {
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
 }
 
-
 const useDebounce = (value: any, delay: any) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
 
@@ -54,7 +53,7 @@ const useDebounce = (value: any, delay: any) => {
 const DashboardAccountsPendingVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
 
   const [table, setTable] = useState<DashboardTableType["pending_vendor_onboarding"]>(dashboardTableData?.pending_vendor_onboarding);
-  const [selectedCompany, setSelectedCompany] = useState<string>("")
+  const [selectedCompany, setSelectedCompany] = useState("")
   const [search, setSearch] = useState<string>("");
 
   const [total_event_list, settotalEventList] = useState(0);
@@ -102,6 +101,17 @@ const DashboardAccountsPendingVendorsTable = ({ dashboardTableData, companyDropd
   const { designation } = useAuth();
   const isAccountsUser = designation?.toLowerCase().includes("account");
 
+  const handleSelectChange = (
+  value: string,
+  setter: (val: string) => void
+  ) => {
+  if (value === "--Select--") {
+    setter(""); // reset filter
+  } else {
+    setter(value);
+  }
+};
+
 
   return (
     <>
@@ -112,12 +122,20 @@ const DashboardAccountsPendingVendorsTable = ({ dashboardTableData, companyDropd
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
-            <Select onValueChange={(value) => { setSelectedCompany(value) }}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Company" />
-              </SelectTrigger>
+            <Select
+              value={selectedCompany}
+              onValueChange={(value) => handleSelectChange(value, setSelectedCompany)}
+            >
+              
+            <SelectTrigger>
+              <SelectValue placeholder="Select Company" />
+            </SelectTrigger>
+            
               <SelectContent>
                 <SelectGroup className="w-full">
+                  <SelectItem value="--Select--">
+                                        --Select--
+                                    </SelectItem>
                   {
                     companyDropdown?.map((item, index) => (
                       <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
