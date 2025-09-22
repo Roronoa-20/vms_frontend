@@ -462,7 +462,7 @@ const CompanyAddress = ({
           <Input
             // placeholder={shippingData?.address1}
             value={shippingAddress?.address_line_1 ?? OnboardingDetail?.shipping_address?.street_1 ?? ""}
-            disabled={isShippingSame ? true : false}
+            disabled={isDisabled}
             onChange={(e) => {
               updateshippingAddress("address_line_1", e.target.value);
             }}
@@ -475,7 +475,7 @@ const CompanyAddress = ({
           <Input
             // placeholder={shippingData?.address2}
             value={shippingAddress?.address_line_2 ?? OnboardingDetail?.shipping_address?.street_2 ?? ""}
-            disabled={isShippingSame ? true : false}
+            disabled={isDisabled}
             onChange={(e) => {
               updateshippingAddress("address_line_2", e.target.value);
             }}
@@ -488,7 +488,7 @@ const CompanyAddress = ({
           <Input
             // placeholder={shippingData?.pincode}
             value={shippingAddress?.pincode ?? OnboardingDetail?.shipping_address?.manufacturing_pincode ?? ""}
-            disabled={isShippingSame ? true : false}
+            disabled={isDisabled}
             onChange={(e) => {
               handleShippingPincodeChange(e.target.value);
             }}
@@ -501,7 +501,7 @@ const CompanyAddress = ({
           <Input
             // placeholder={shippingData?.district}
             value={shippingAddress?.district?.district_name ?? ""}
-            disabled={isShippingSame ? true : false}
+            disabled={isDisabled}
             onChange={() => { }}
           />
         </div>
@@ -513,7 +513,7 @@ const CompanyAddress = ({
             <Input
               // placeholder={shippingData?.city}
               value={shippingAddress?.city?.city_name ?? ""}
-              disabled={isShippingSame ? true : false}
+              disabled={isDisabled}
               onChange={() => { }}
             />
           </div>
@@ -524,7 +524,7 @@ const CompanyAddress = ({
             <Input
               // placeholder={shippingData?.state}
               value={shippingAddress?.state?.state_name ?? ""}
-              disabled={isShippingSame ? true : false}
+              disabled={isDisabled}
               onChange={() => { }}
             />
           </div>
@@ -535,7 +535,7 @@ const CompanyAddress = ({
             <Input
               // placeholder={shippingData?.country}
               value={shippingAddress?.country?.country_name ?? ""}
-              disabled={isShippingSame ? true : false}
+              disabled={isDisabled}
               onChange={() => { }}
             />
           </div>
