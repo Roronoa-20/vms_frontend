@@ -34,6 +34,17 @@ type Props = {
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
 }
 
+const handleSelectChange = (
+  value: string,
+  setter: (val: string) => void
+  ) => {
+  if (value === "--Select--") {
+    setter(""); // reset filter
+  } else {
+    setter(value);
+  }
+};
+
 const useDebounce = (value: any, delay: any) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
 
@@ -118,12 +129,18 @@ const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDrop
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e)=>{handlesearchname(e)}} />
-            <Select>
+                <Select
+                    value={selectedCompany}
+                    onValueChange={(value) => handleSelectChange(value, setSelectedCompany)}
+                >
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup className="w-full">
+                  <SelectItem value="--Select--">
+                                      --Select--
+                          </SelectItem>
                   {
                     companyDropdown?.map((item, index) => (
                       <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>

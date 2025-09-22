@@ -24,6 +24,9 @@ const ViewGRNDetailPage = ({ grn_ref }: { grn_ref: string }) => {
 
         const result: GRNForm = response?.data?.message;
         setData(result);
+        console.log("API message:", response?.data?.message);
+        console.log("Attachments inside result:", result?.attachments);
+
       } catch (err) {
         console.error('Failed to fetch GRN details:', err);
       }

@@ -76,21 +76,21 @@ export default function MultipleFileUpload({
 
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-center text-[30px] font-normal font-['Poppins'] text-black">
+          <DialogTitle className="text-center text-[30px] font-normal text-black">
             Upload Document
           </DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4">
           <div
-            className="flex-col cursor-pointer px-4 py-2 rounded-md transition-colors text-black flex items-center gap-2 border-2 border-dashed border-blue-400/30"
+            className="flex-col cursor-pointer px-4 py-2 rounded-md transition-colors text-black flex items-center gap-2 border-2 border-dashed border-[#5291CD]/30"
             onDrop={handleDrop}
             onDragOver={handleDragOver}
           >
             {/* <UploadFileIcon /> */}
             <Image src={"/uploadfilesvg.svg"} alt="upload-icon" width={100} height={100}/>
             <span>Drag & Drop Files or</span>
-            <label htmlFor="file-upload" className="cursor-pointer text-blue-600 underline">
+            <label htmlFor="file-upload" className="cursor-pointer text-[#5291CD] underline">
               Choose Files
             </label>
             <Input
@@ -108,7 +108,7 @@ export default function MultipleFileUpload({
               {files.map((file, index) => (
                 <div key={index} className="flex items-center justify-between bg-gray-100 p-2 mb-2 rounded">
                   <div className="flex items-center gap-2">
-                    <FileText size={20} className="text-blue-600" />
+                    <FileText size={20} className="text-[#5291CD]" />
                     <div className="flex flex-col">
                       <span className="font-medium truncate max-w-[200px]">{file.name}</span>
                       <span className="text-xs text-gray-500">{(file.size / 1024).toFixed(2)} KB</span>
@@ -124,7 +124,7 @@ export default function MultipleFileUpload({
         </div>
 
         <Button
-          className="border border-blue-600 text-[#FFF] px-6 bg-blue-600 hover:bg-blue-700 text-[16px]"
+          className="border border-[#5291CD] text-[#FFF] px-6 bg-[#5291CD] rounded-[20px] font-semibold text-[16px] hover:bg-white hover:text-black"
           disabled={files.length === 0}
           onClick={handleNext}
         >

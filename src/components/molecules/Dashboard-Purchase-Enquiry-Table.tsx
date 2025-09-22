@@ -91,6 +91,17 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
       setRecordPerPage(5);
     }
   };
+  
+   const handleSelectChange = (
+  value: string,
+  setter: (val: string) => void
+  ) => {
+  if (value === "--Select--") {
+    setter(""); // reset filter
+  } else {
+    setter(value);
+  }
+};
 
 
   return (
@@ -102,12 +113,17 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." />
-            <Select>
+            <Select
+                value={selectedCompany}
+                onValueChange={(value) => handleSelectChange(value, setSelectedCompany)
+                }
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup className="w-full">
+                  <SelectItem value="--Select--">--Select--</SelectItem>
                   {
                     companyDropdown?.map((item, index) => (
                       <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
