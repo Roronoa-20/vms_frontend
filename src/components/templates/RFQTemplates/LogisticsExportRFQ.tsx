@@ -81,7 +81,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
         if (formData?.service_provider != "Select" && formData?.service_provider && formData?.company_name_logistic) {
             fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Logistics Vendor");
         }
-    }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider,formData?.company_name_logistic]);
+    }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider, formData?.company_name_logistic]);
 
     const [selectedRows, setSelectedRows] = useState<VendorSelectType>(
         {
@@ -104,15 +104,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
             non_onboarded_vendors: newVendorTable,
             vendors: selectedRows.vendors,
         };
-
-        // loop through keys
-        Object.entries(fullData).forEach(([key, value]) => {
-            if (typeof value === "object") {
-                formdata.append(key, JSON.stringify(value));
-            } else {
-                formdata.append(key, value);
-            }
-        });
+        formdata.append('data', JSON.stringify(fullData));
         // Append file only if exists
         if (uploadedFiles) {
             uploadedFiles?.forEach((file) => {
@@ -123,7 +115,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
         const url = `${API_END_POINTS?.CreateExportRFQ}`;
         const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" });
         if (response?.status == 200) {
-            alert("Submit Successfull");
+            alert(`Request for Quotation(${formData?.logistic_type}) Raised Successfully`);
             router.push("/dashboard")
             setLoading(false)
         } else {
@@ -139,7 +131,6 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
     const handleClose = () => {
         setIsDialog(false);
     }
-    console.log(formData, "fromdata")
     return (
         <div className='bg-white h-full w-full pb-6'>
             <div className='flex justify-between items-center pr-4'>
@@ -158,10 +149,17 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
                 <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
             </div>}
             <div className='py-6'>
-                <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen}/>
+                <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen} />
             </div>
             <div className='flex justify-end pt-10 px-4'>
-                <Button type='button' className='bg-[#5291CD] py-2' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }}>Submit RFQ</Button>
+                <Button type='button' className='bg-[#5291CD] py-2  disabled:opacity-50 disabled:cursor-not-allowed' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }}
+                    disabled={
+                        formData?.service_provider !== "Premium Service Provider" &&
+                        formData?.service_provider !== "All Service Provider" &&
+                        (newVendorTable?.length ?? 0) === 0 &&
+                        (selectedRows?.vendors?.length ?? 0) === 0
+                    }
+                >Submit RFQ</Button>
             </div>
             {
                 isDialog &&

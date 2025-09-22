@@ -235,7 +235,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                     'Destination Port',
                     destinationPort,
                     (item) => item.name,
-                    (item) => `${item.port_name}`
+                    (item) => `${item.name}`
                 )}
                 {/* {renderSelect(
                     'country',
@@ -295,7 +295,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                     'Inco Terms',
                     Dropdown?.incoterm_master,
                     (item) => item.name,
-                    (item) => `${item.incoterm_name}`
+                    (item) => `${item.incoterm_name} - ${item.incoterm_code}`
                 )}
                 {renderInput('shipper_name', 'Shipper Name')}
                 {renderSelect(
