@@ -5,14 +5,17 @@ import { Button } from '../atoms/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../atoms/select'
 import { PurchaseRequestData, PurchaseRequestDropdown } from '@/src/types/PurchaseRequestType'
-import { EyeIcon } from 'lucide-react';
+import { EyeIcon, Trash2 } from 'lucide-react';
 import { PencilIcon } from 'lucide-react'
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import Cookies from 'js-cookie'
 import { purchaseInquiryDropdown, TableData, TPRInquiry } from '../pages/Pr-Inquiry';
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+import PopUp from '../molecules/PopUp'
 
 
 interface Props {
@@ -40,12 +43,15 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
   const [singleTableRow, setSingleTableRow] = useState<TableData | null>(null);
   const [tableData, setTableData] = useState<TableData[]>(PRInquiryData?.cart_product ?? []);
   const [productNameDropdown, setProductNameDropdown] = useState<ProductNameDropdown[]>([]);
+  const [isDialog,setIsDialog] = useState<boolean>(false);
   const [index, setIndex] = useState<number>(-1);
   const [showTable, setShowTable] = useState(PRInquiryData?.cart_product.length && PRInquiryData?.cart_product.length > 0 ? true : false);
   const [plantDropdown, setPlantDropdown] = useState<{ name: string, plant_name: string, description: string }[]>();
   const [purchaseGroupDropdown, setPurchaseGroupDropdown] = useState<{ name: string, purchase_group_code: string, purchase_group_name: string, description: string }[]>();
+  const [toEmail,setToEmail] = useState<string>("");
   const router = useRouter();
-
+  const param = useSearchParams();
+  const refno = param.get("cart_Id");
   useEffect(() => {
     if (PRInquiryData?.company) {
       handleCompanyChange(PRInquiryData?.company);
@@ -76,19 +82,51 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     }
   }
 
-  const handleTableAdd = () => {
+  const handleTableAdd = async() => {
     if (!singleTableRow) return;
 
-    setTableData(prev => {
-      const rows = [...prev];
-      if (index !== -1) {
-        rows[index] = { ...singleTableRow };
-      } else {
-        rows.push({ ...singleTableRow });
-      }
-      return rows;
-    });
-    setShowTable(true);
+    // setTableData(prev => {
+    //   const rows = [...prev];
+    //   if (index !== -1) {
+    //     rows[index] = { ...singleTableRow };
+    //   } else {
+    //     rows.push({ ...singleTableRow });
+    //   }
+    //   return rows;
+    // });
+    // setShowTable(true);
+
+  //   let assetCodeLine = 0;
+
+  // if (PRInquiryData?.asked_to_modify == Boolean(1)) {
+  //   for (let i = 0; i < tableData.length; i++) {
+  //     const item = tableData[i];
+  //     if (item?.need_asset_code == Boolean(1) && !item?.assest_code) {
+  //       assetCodeLine = i + 1; // Line number is usually 1-based
+  //       break;
+  //     }
+  //   }
+  // }
+
+// if (assetCodeLine !== 0) {
+//   alert(`Please enter Asset Code for line ${assetCodeLine}`);
+//   return;
+// }
+const formdata = new FormData();
+for(const key of Object.keys(singleTableRow) as (keyof TableData)[]){
+  const value = singleTableRow[key];
+  if(typeof(value) == "string"){
+    formdata.append(key,value);
+  }
+}
+formdata.append("attachment",singleTableRow?.file);
+ formdata.append("purchase_inquiry_id",refno as string);
+const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.addProductInquiryProducts,method:"POST",data:formdata});
+  if(response?.status == 200){
+    alert("added successfully");
+    router.push(`pr-inquiry?cart_Id=${refno}`);
+  }
+
     setSingleTableRow(null);
     setIndex(-1);
   };
@@ -125,7 +163,7 @@ if (assetCodeLine !== 0) {
 }
 
 
-    const response: AxiosResponse = await requestWrapper({ url: url, data: { data: payload }, method: "POST" });
+    const response: AxiosResponse = await requestWrapper({ url: url, data: { data: payload }, method: "POST", params:{purchase_inquiry_id:refno} });
     if (response?.status == 200) {
       setFormData(null);
       alert("submission successfull");
@@ -211,6 +249,22 @@ if (assetCodeLine !== 0) {
       handleSelectChange(selectedProduct.lead_time?.toString() || "", "lead_time", true);
     }
   };
+
+  const handleNext = async()=>{
+    const response:AxiosResponse = await  requestWrapper({url:API_END_POINTS?.submitPrInquiryNextButton,data:{data:{...formData,cart_date: formData?.cart_date ?? formatDateISO(new Date()),user: user,}},method:"POST"});
+    if(response?.status == 200){
+      router.push(`/pr-inquiry?cart_Id=${response?.data?.message?.name}`);
+    }
+  }
+
+  const deleteProductItem = async(row_id:string)=>{
+    const respone:AxiosResponse = await requestWrapper({url:API_END_POINTS?.deleteInquiryProductItem,method:"GET",params:{purchase_inquiry_id:refno,row_name:row_id}});
+    if(respone?.status == 200){
+      alert("deleted successfully");
+      router.push(`pr-inquiry?cart_Id=${refno}`);
+    }
+  }
+
   const formatINRCurrencyRange = (value: string | null): string => {
     if (!value) return "";
 
@@ -222,7 +276,11 @@ if (assetCodeLine !== 0) {
 
 
 
+
+
   return (
+    <>
+    
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       {/* <h1 className="border-b-2 border-gray-400 top-0 bg-white text-[#000000] text-lg">
         Purchase Inquiry
@@ -337,7 +395,13 @@ if (assetCodeLine !== 0) {
             </SelectContent>
           </Select>
         </div>
+        <div className='col-span-1 flex items-end gap-4'>
+                <Button className={`bg-blue-400 hover:bg-blue-300 ${refno?"hidden":""}`} onClick={(e)=>{handleNext()}}>Next</Button>
+        </div>
       </div>
+      {
+        refno && 
+      <>
       <h1 className="border-b-2 border-gray-400 font-bold text-[18px]">
         Purchase Inquiry Items
       </h1>
@@ -415,12 +479,20 @@ if (assetCodeLine !== 0) {
           </h1>
           <Input placeholder="" name='user_specifications' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.user_specifications ?? ""} />
         </div>
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
+            Attachment
+          </h1>
+          <Input type='file' onChange={(e) => {setSingleTableRow((prev:any)=>({...prev,file:e.target?.files?.[0]}))}}/>
+        </div>
         <div className="col-span-1 mt-8">
           <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.asked_to_modify ? "" : "hidden"}`} onClick={() => handleTableAdd()}>Add</Button>
-          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData ? "hidden" : ""}`} onClick={() => handleTableAdd()}>Add</Button>
+          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.is_submited ? "hidden" : ""}`} onClick={() => handleTableAdd()}>Add</Button>
         </div>
       </div>
-      {showTable && (
+      </>
+      }
+      { PRInquiryData && PRInquiryData?.cart_product?.length>0 && (
         <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
@@ -438,6 +510,7 @@ if (assetCodeLine !== 0) {
                 <TableHead className="text-center">Lead Time</TableHead>
                 <TableHead className="text-center">Product Quantity</TableHead>
                 <TableHead className="text-center">User Specification</TableHead>
+                <TableHead className="text-center">Attachment</TableHead>
                 <TableHead className="text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -471,8 +544,10 @@ if (assetCodeLine !== 0) {
                   <TableCell>{item?.lead_time}</TableCell>
                   <TableCell>{item?.product_quantity}</TableCell>
                   <TableCell>{item?.user_specifications}</TableCell>
+                  <TableCell><Link href={item?.attachment?.url ?? ""} target='blank'>{item?.attachment?.file_name}</Link></TableCell>
                   <TableCell><div className='flex gap-4 justify-center items-center'>
-                    <PencilIcon className='cursor-pointer' onClick={() => { handleEdit(item, index) }} />
+                    {/* <PencilIcon className='cursor-pointer' onClick={() => { handleEdit(item, index) }} /> */}
+                    <Trash2 className={`text-red-400 cursor-pointer ${PRInquiryData?.is_submited?"hidden":""}`} onClick={()=>{deleteProductItem(item?.name ?? "")}}/>
                   </div>
                   </TableCell>
                 </TableRow>
@@ -481,8 +556,9 @@ if (assetCodeLine !== 0) {
           </Table>
         </div>
       )}
-      <div className={`flex justify-end pr-4`}><Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { handleSubmit() }}>Submit</Button></div>
+      <div className={`flex justify-end pr-4 ${refno?"":"hidden"}`}><Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { handleSubmit() }}>Submit</Button></div>
     </div>
+    </>
   )
 }
 
