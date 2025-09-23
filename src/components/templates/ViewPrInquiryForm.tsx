@@ -16,6 +16,8 @@ import { Value } from '@radix-ui/react-select'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/src/context/AuthContext'
 import { TvendorRegistrationDropdown } from '@/src/types/types'
+import Link from 'next/link'
+import PopUp from '../molecules/PopUp'
 
 interface Props {
   Dropdown?: PurchaseRequestDropdown["message"]
@@ -51,6 +53,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
   const [isModifyDialog, setIsModifyDialog] = useState<boolean>(false);
   const [plantDropdown, setPlantDropdown] = useState<{ name: string, plant_name: string, description: string }[]>();
   const [purchaseGroupDropdown, setPurchaseGroupDropdown] = useState<{ name: string, purchase_group_code: string, purchase_group_name: string, description: string }[]>();
+  const [toEmail,setToEmail] = useState<string>("");
+  const [isEmailDialog,setIsEmailDialog] = useState<boolean>(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -145,7 +149,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
     }
   }
 
-  const handleClose = () => {
+  const handleEmailClose = () => {
     setIsDialog(false);
     setIsModifyDialog(false);
     setIsAcknowledgeDialog(false);
@@ -197,6 +201,20 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
       return updated;
     });
   }
+
+    const handleClose = ()=>{
+    setIsDialog(false);
+    setToEmail("");
+  }
+
+  const handleAddionalFlow = async()=>{
+    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.InquiryAddtionalApproval,method:"GET",params:{email_id:toEmail,purchase_enquiry_id:refno}});
+    if(response?.status == 200){
+      alert("Added additional approval successfully");
+      handleClose();
+    }
+  }
+
   console.log(PRInquiryData)
   console.log(productNameDropdown,"this is dropdown");
 
@@ -325,6 +343,9 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
             <Input placeholder="" value={PRInquiryData?.acknowledged_date} disabled />
           </div>
         )}
+        <div className='flex items-end'>
+      <Button className={`bg-blue-400 hover:bg-blue-300`} onClick={(e)=>{setIsEmailDialog(true)}}>Additional Approval</Button>
+        </div>
       </div>
       <h1 className="pl-5">Purchase Inquiry Items</h1>
       <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
@@ -340,6 +361,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
               <TableHead className="text-center">Lead Time</TableHead>
               <TableHead className="text-center">Product Quantity</TableHead>
               <TableHead className="text-center">User Specification</TableHead>
+              <TableHead className="text-center">Attachment</TableHead>
               <TableHead className="text-center">Final Price</TableHead>
             </TableRow>
           </TableHeader>
@@ -374,6 +396,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
                 <TableCell>{item?.lead_time}</TableCell>
                 <TableCell>{item?.product_quantity}</TableCell>
                 <TableCell>{item?.user_specifications}</TableCell>
+                <TableCell><Link href={item?.attachment?.url ?? ""}>{item?.attachment?.file_name}</Link></TableCell>
                 <TableCell className='flex justify-center'>
                   <Input disabled={PRInquiryData?.purchase_team_approved == Boolean(0) && PRInquiryData?.purchase_team == Boolean(1)  ? false : true} value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e) => { handleTableInput(index, e) }} className={`text-center w-28 ${PRInquiryData?.purchase_team_acknowledgement ? "" : "hidden"}`} type='number' />
                 </TableCell>
@@ -417,6 +440,17 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
           </Comment_box>
         </div>
       }
+      {
+      isEmailDialog && 
+      <PopUp handleClose={handleEmailClose} headerText='Additional Flow' isSubmit={true} Submitbutton={handleAddionalFlow}>
+        <div className="col-span-1 py-4 ">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
+            To Email
+          </h1>
+          <Input onChange={(e)=>{setToEmail(e.target.value)}} value={toEmail ?? ""}/>
+        </div>
+      </PopUp>
+    }
     </div>
   )
 }
