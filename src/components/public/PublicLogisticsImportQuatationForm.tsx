@@ -14,7 +14,7 @@ interface Props {
     RFQData:RFQDetails
 }
 const PublicLogisticsImportQuatationForm = ({ Dropdown, token,RFQData }: Props) => {
-    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Logistics Vendor",mode_of_shipment:RFQData.mode_of_shipment });
+    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Logistics Vendor",mode_of_shipment:RFQData.mode_of_shipment,logistic_type:"Import" });
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const router = useRouter()
 
@@ -44,6 +44,7 @@ const PublicLogisticsImportQuatationForm = ({ Dropdown, token,RFQData }: Props) 
             location.reload();
         }
     }
+    console.log(formData,"formData")
     return (
         <div>
             <h1 className='text-lg py-2 font-semibold'>Fill Quatation Details</h1>

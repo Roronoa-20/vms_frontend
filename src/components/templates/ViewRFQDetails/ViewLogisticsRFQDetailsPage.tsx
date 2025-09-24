@@ -181,7 +181,7 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
 
             <ViewLogisticsQuatationVendors QuatationData={QuatationVendorList} handleVendorSearch={handleVendorSearch} logistic_type={RFQData?.logistic_type ? RFQData?.logistic_type : "Export"} selectedVendorName={selectedVendorName ? selectedVendorName : ""} setSelectedVendorName={setSelectedVendorName} RFQData={RFQData} />
             {/* <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={QuatationVendorList?.length ? QuatationVendorList?.length : 0} total_event_list={QuatationVendorList?.total_count ? QuatationVendorList?.total_count : 0} /> */}
-            {(RFQData?.is_approved && (RFQData?.rfq_type != "Service Vendor" && RFQData?.rfq_type != "Material Vendor")) &&
+            {Boolean(RFQData?.is_approved && (RFQData?.rfq_type != "Service Vendor" && RFQData?.rfq_type != "Material Vendor")) &&
                 <>
                     <FinalNegotiatedRateFormLogistics logisticType={RFQData.logistic_type ? RFQData.logistic_type : "Export"} formData={formData} setFormData={setFormData} mode_of_shipment={RFQData?.final_mode_of_shipment} />
                     {!RFQData?.is_negotiated && <div className='flex justify-end py-4'><Button type='button' className={`flex bg-blue-400 hover:bg-blue-400 px-10 font-medium`} onClick={() => setFinalNegotation(true)}>Submit</Button></div>}

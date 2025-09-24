@@ -45,7 +45,7 @@ const ViewRFQVendors = ({ RFQData, handleVendorSearch }: Props) => {
                                 <TableRow key={index}>
                                     <TableCell className="font-medium text-center">{index + 1}</TableCell>
                                     <TableCell className="text-nowrap text-center">{item?.vendor_name}</TableCell>
-                                    <TableCell className="text-nowrap text-center">{item?.vendor_code}</TableCell>
+                                    <TableCell className="text-nowrap text-center">{item?.vendor_code?.length > 0 ? item.vendor_code.join(", ") : "-"}</TableCell>
                                     <TableCell className="text-nowrap text-center">{item?.mobile_number}</TableCell>
                                     <TableCell className="text-nowrap text-center">{item?.office_email_primary}</TableCell>
                                     <TableCell className="text-nowrap text-center">{item?.service_provider_type}</TableCell>
