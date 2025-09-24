@@ -56,7 +56,7 @@ const API_END_POINTS = {
   getPRData: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pr_w_details`,
   getInquiryDropdown: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.cart_details_masters`,
   fetchProductNameBasedOnCategory: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.filter_product_name`,
-  submitPrInquiry: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.create_purchase_inquiry`,
+  submitPrInquiryNextButton: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.create_purchase_inquiry`,
   prInquiryCount: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.dashboard_card`,
   prInquiryDashboardTable: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pi`,
   prInquiryData: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pi_details`,
@@ -231,6 +231,10 @@ const API_END_POINTS = {
   AccountsTeamApprovedVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.approved_vendor_details_by_accounts`,
 
 
+  addProductInquiryProducts:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.update_cart_products`,
+  deleteInquiryProductItem:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.delete_cart_product`,
+  InquiryAddtionalApproval:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.send_purchase_enquiry_approval_mail`,
+  submitPrInquiry:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.submit_purchase_inquiry`
 }
 
 export default API_END_POINTS;

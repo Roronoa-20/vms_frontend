@@ -4,6 +4,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios';
 import requestWrapper from '@/src/services/apiCall';
 import { cookies } from 'next/headers';
+import { FileAttachment } from '@/src/types/types';
 
 export interface purchaseInquiryDropdown {
     message: {
@@ -34,6 +35,8 @@ export type TableData = {
       user_specifications:string
       final_price_by_purchase_team?:number,
       name?:string
+      file:File
+      attachment?:FileAttachment
 }
 
 export type TPRInquiry = {
@@ -51,7 +54,8 @@ export type TPRInquiry = {
     plant:string,
     asked_to_modify:boolean,
     purchase_team_approved:boolean,
-    acknowledged_date:string
+    acknowledged_date:string,
+    is_submited:number
 }
 
 const PrInquiryPage = async ({ refno }: Props) => {
@@ -86,6 +90,7 @@ if (refno) {
         cookie:cookieHeaderString
     }});
     const purchaseTypeDropdown = purchaseTypeResponse?.status == 200? purchaseTypeResponse?.data?.message?.data : ""
+
 return (
     <PrInquiryForm companyDropdown={companyDropdown} PRInquiryData={PRInquiryData} dropdown={dropdown} purchaseTypeDropdown={purchaseTypeDropdown} />
 )
