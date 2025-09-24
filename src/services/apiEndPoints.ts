@@ -117,6 +117,7 @@ const API_END_POINTS = {
   ApproveQuotation: `${url}/api/method/vms.APIs.quotation.quotation.approve_quotation`,
   quotationTracking: `${url}/api/method/vms.APIs.quotation.create_quotation.get_quotation_details_by_token`,
   NegotiateQuotation: `${url}/api/method/vms.APIs.quotation.quotation.update_final_negotiated_rate`,
+
   //Public apis
   ProcessToken: `${url}/api/method/vms.purchase.doctype.request_for_quotation.request_for_quotation.process_token`,
   SubmitPublicQuatation: `${url}/api/method/vms.APIs.quotation.create_quotation.create_or_update_quotation_non_onboarded`,
@@ -229,7 +230,6 @@ const API_END_POINTS = {
   AccountsTeamPendingVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.pending_vendor_details_by_accounts`,
   AccountsTeamRejectedVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.rejected_vendor_details_by_accounts`,
   AccountsTeamApprovedVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.approved_vendor_details_by_accounts`,
-
 
   addProductInquiryProducts:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.update_cart_products`,
   deleteInquiryProductItem:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.delete_cart_product`,
