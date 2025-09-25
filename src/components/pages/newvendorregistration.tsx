@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import VendorRegistration2 from "../templates/vendorRegistration/AllVendorsVendorRegistration";
+import VendorRegistration2 from "../templates/vendorRegistration/CopyVendorRegistration";
 import { TvendorRegistrationDropdown } from "@/src/types/types";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
@@ -46,10 +46,8 @@ const NewVendorRegistration = ({ handleCancel, ...Props }: Props) => {
   const [multiVendor, setMultiVendor] = useState<string[]>([]);
   const [tableData, setTableData] = useState<TtableData[]>([]);
   const [vendorTypeOptions, setVendorTypeOptions] = useState<OptionType[]>([]);
-  console.log("Initial Data---->", Props.initialData);
   const router = useRouter();
 
-  // Prepare vendor type dropdown
   useEffect(() => {
     if (Props?.vendorTypeDropdown) {
       const mapped = Props.vendorTypeDropdown.map((item) => ({
@@ -64,7 +62,6 @@ const NewVendorRegistration = ({ handleCancel, ...Props }: Props) => {
     setFormData((prev) => ({ ...prev, [name]: value } as NewVendorFormData));
   };
 
-  // Vendor type change logic
   const handleVendorTypeChange = async (value: MultiValue<OptionType>) => {
     const newArray = value.map((item) => item.value);
     const newArray2 = value.map((item) => ({ vendor_type: item.value }));

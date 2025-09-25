@@ -7,7 +7,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { Input } from "@/components/ui/input";
-import { Users, CheckCircle, Upload } from "lucide-react";
+import { Users, CheckCircle, Upload, IdCard } from "lucide-react";
 import CountUp from "react-countup";
 
 interface ApiResponse {
@@ -20,6 +20,7 @@ interface ApiResponse {
                 total_vendors: number;
                 vms_registered: number;
                 imported_vendors: number;
+                total_vc_code: number;
             };
             company_analytics: {
                 company_wise_analytics: {
@@ -49,10 +50,12 @@ const AllVendors = () => {
         total_vendors: number;
         vms_registered: number;
         imported_vendors: number;
+        total_vc_code: number;
     }>({
         total_vendors: 0,
         vms_registered: 0,
         imported_vendors: 0,
+        total_vc_code: 0,
     });
 
     const [defaultTab, setDefaultTab] = useState("");
@@ -72,13 +75,13 @@ const AllVendors = () => {
                     url: url,
                     method: "GET",
                 });
-
+                console.log("Response of All Vendors-------->",res);
                 const apiData = res.data.message.data;
 
                 setVendors(apiData?.vendors || []);
                 setSearchedVendors(apiData?.vendors || []);
                 setCompanyAnalytics(apiData?.company_analytics?.company_wise_analytics || []);
-                setAnalytics(apiData?.analytics || { total_vendors: 0, vms_registred: 0, imported_vendors: 0 });
+                setAnalytics(apiData?.analytics || { total_vendors: 0, vms_registred: 0, imported_vendors: 0, total_vc_code: 0 });
             } catch (err) {
                 console.error("Error fetching vendors:", err);
             } finally {
@@ -154,6 +157,8 @@ const AllVendors = () => {
         }
     }, [companyAnalytics, defaultTab]);
 
+    console.log("Filtered Vendors-------->",vendors);
+
 
     return (
         <div className="min-h-screen bg-gray-50 p-2">
@@ -197,6 +202,19 @@ const AllVendors = () => {
                         </h3>
                     </div>
                 </div>
+
+                <div className="bg-white rounded-2xl shadow-sm p-5 flex items-center gap-4">
+                    <div className="bg-indigo-100 p-3 rounded-xl">
+                        <IdCard className="h-6 w-6 text-indigo-600" />
+                    </div>
+                    <div>
+                        <p className="text-sm text-gray-500">Vendor Code Count</p>
+                        <h3 className="text-xl font-bold text-gray-800">
+                            <CountUp end={analytics.total_vc_code} duration={1.5} separator="," />
+                        </h3>
+                    </div>
+                </div>
+
             </div>
 
             {/* 🔹 Search Section */}
@@ -221,9 +239,8 @@ const AllVendors = () => {
             </div>
 
             {/* 🔹 Company Tabs */}
-            {/* 🔹 Company Tabs */}
             <div className="bg-white rounded-2xl shadow-sm h-40 p-5 mb-6">
-                <h2 className="text-lg font-semibold text-gray-700 mb-4">Companies</h2>
+                <h2 className="text-lg font-semibold text-gray-700 mb-4">Meril Verticals</h2>
                 <Tabs value={defaultTab} onValueChange={setDefaultTab} className="w-full">
                     <TabsList className="flex flex-wrap gap-3 justify-start items-start w-full bg-transparent p-0 border-0">
                         {companyAnalytics.map((company, index) => {

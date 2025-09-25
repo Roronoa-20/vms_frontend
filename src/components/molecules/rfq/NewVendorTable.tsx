@@ -8,16 +8,26 @@ import {
     TableRow,
 } from "@/src/components/atoms/table";
 import {newVendorTable } from "../../templates/RFQTemplates/LogisticsImportRFQ";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 type Props = {
-    newVendorTable:newVendorTable[] | null
+    newVendorTable:newVendorTable[] | null;
+    handleOpen:()=>void;
 }
-const NewVendorTable = ({newVendorTable}:Props) => {
+const NewVendorTable = ({newVendorTable,handleOpen}:Props) => {
     return (
         <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
-            <div className="flex w-full justify-between pb-4">
+            <div className="flex w-full justify-between items-center pb-4">
                 <h1 className="text-[20px] text-[#03111F] font-semibold text-nowrap">
                     New Vendors
                 </h1>
+                <Button
+                    className='bg-[#5291CD] font-medium text-[14px] inline-flex items-center gap-2'
+                    onClick={() => handleOpen()}
+                >
+                    <Plus className="w-4 h-4" />
+                    Add New Vendor
+                </Button>
             </div>
             <Table>
                 <TableHeader className="text-center">

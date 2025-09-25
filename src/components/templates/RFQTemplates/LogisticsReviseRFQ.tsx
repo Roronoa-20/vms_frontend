@@ -98,7 +98,7 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
                     <DialogTitle>
                         <div className='flex justify-between items-center pr-4'>
                             <h1 className='font-bold text-[24px] p-4 '>Revise RFQ</h1>
-                            <Button onClick={handleOpen}>Add New Vendor</Button>
+                            {/* <Button onClick={handleOpen}>Add New Vendor</Button> */}
                         </div>
                     </DialogTitle>
                 </DialogHeader>
@@ -123,9 +123,8 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
                     <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
                 </div>}
                 <div className='py-6'>
-                    <NewVendorTable newVendorTable={newVendorTable} />
+                    <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen}/>
                 </div>
-
                 {
                     isDialog &&
                     <AddNewVendorRFQDialog Dropdown={Dropdown} setNewVendorTable={setNewVendorTable} handleClose={handleClose} />
@@ -134,12 +133,7 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
                     <Button variant="outline" onClick={onClose}>
                         Cancel
                     </Button>
-                    {/* <Button onClick={onApprove} disabled={loading}>
-                        {loading ? 'Approving...' : 'Approve'}
-                    </Button> */}
-                    {/* <div className='flex justify-end pt-10 px-4'> */}
                     <Button type='button' className='flex bg-blue-400 hover:bg-blue-400 px-10 font-medium' onClick={() => { handleSubmit() }}>Submit RFQ</Button>
-                    {/* </div> */}
                 </DialogFooter>
             </DialogContent>
         </Dialog>

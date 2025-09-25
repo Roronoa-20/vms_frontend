@@ -60,7 +60,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
     const [vendorSearchName, setVendorSearchName] = useState('')
     const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
     const [VendorList, setVendorList] = useState<VendorApiResponse>();
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const [selectedRows, setSelectedRows] = useState<VendorSelectType>(
         {
@@ -86,13 +86,14 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
         if (formData?.service_provider != "Select" && formData?.service_provider && formData?.company_name_logistic) {
             fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Logistics Vendor");
         }
-    }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider]);
+    }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider,formData?.company_name_logistic]);
 
     const handleVendorSearch = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         setVendorCurrentPage(1)
         setVendorSearchName(e.target.value);
     }
     const handleSubmit = async () => {
+        setLoading(true)
         if (formData?.service_provider == "All Service Provider" || formData?.service_provider == "Select" || formData?.service_provider == "Premium Service Provider") {
             setSelectedRows({ vendors: [] })
         }
@@ -103,17 +104,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
             non_onboarded_vendors: newVendorTable,
             vendors: selectedRows.vendors,
         };
-
-        // loop through keys
-        Object.entries(fullData).forEach(([key, value]) => {
-            if (typeof value === "object") {
-                formdata.append(key, JSON.stringify(value));
-            } else {
-                formdata.append(key, value);
-            }
-        });
         formdata.append('data', JSON.stringify(fullData));
-        // Append file only if exists
         if (uploadedFiles) {
             uploadedFiles?.forEach((file) => {
                 formdata.append("file", file);
@@ -124,8 +115,10 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
         if (response?.status == 200) {
             alert("Submit Successfull");
             router.push("/dashboard");
+            setLoading(false)
         } else {
             alert("error");
+            setLoading(false)
         }
     }
     const handleOpen = () => {
@@ -154,7 +147,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
             {formData?.service_provider === "Courier Service Provider" || formData?.service_provider === "Adhoc Service Provider" && <div className='px-4'>
                 <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
             </div>}
-            <div className='flex justify-end items-center pr-5'>
+            {/* <div className='flex justify-end items-center pr-5 pt-2'>
                 <Button
                     className='bg-[#5291CD] font-medium text-[14px] inline-flex items-center gap-2'
                     onClick={() => handleOpen()}
@@ -162,12 +155,12 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
                     <Plus className="w-4 h-4" />
                     Add New Vendor
                 </Button>
-            </div>
-            <div className='py-6'>
-                <NewVendorTable newVendorTable={newVendorTable} />
+            </div> */}
+            <div className='py-4'>
+                <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen}/>
             </div>
             <div className='flex justify-end pt-10 px-4'>
-                <Button type='button' className='bg-[#5291CD] py-2' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }}>Submit RFQ</Button>
+                <Button type='button' className={`bg-[#5291CD] py-2`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }}>Submit RFQ</Button>
             </div>
             {
                 isDialog &&

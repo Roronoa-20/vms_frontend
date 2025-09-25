@@ -53,6 +53,7 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
   const [reconciliation, setReconciliation] = useState<{ label: string, value: string } | null>(null);
   const [termsOfPayment, setTermsOfPayment] = useState<{ label: string, value: string } | null>();
   const [purchaseGroup, setPurchaseGroup] = useState<{ label: string, value: string } | null>();
+  
   const handleCompanyDropdownChange = async (value: string) => {
     // handleSelectChange(value,'company_name');
     setSingleTableData((prev: any) => ({ ...prev, company_name: value }));

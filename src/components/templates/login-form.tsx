@@ -70,6 +70,10 @@ export default function LoginForm() {
         router.push("/qa-dashboard");
         return;
       }
+      if (designation === "Super Head"){
+        router.push("/head-dashboard");
+        return;
+      }
       router.push("/dashboard");
     }
   };

@@ -2,15 +2,15 @@ import React from "react";
 
 
 interface Props {
-    poDetails:any
+  poDetails: any
 }
 
 
 
-const POPrintFormat = ({poDetails}:Props) => {
+const POPrintFormat = ({ poDetails }: Props) => {
 
 
-     const VendorInfoList = [
+  const VendorInfoList = [
     ["VENDOR GSTIN NO:", poDetails?.vendor_gst_no],
     ["Contact Person :", poDetails?.contact_person],
     ["Phone/Mobile No :", poDetails?.phone_no],
@@ -22,7 +22,7 @@ const POPrintFormat = ({poDetails}:Props) => {
   ];
 
 
-   const rightColumnAddressConst1 = [
+  const rightColumnAddressConst1 = [
     ["P.O. No.", poDetails?.name, "Date", poDetails?.po_date],
     ["Amd. Ver No.", "0", "Date", ""],
     ["Purchase Grp.", poDetails?.purchase_group, "", ""],
@@ -32,7 +32,7 @@ const POPrintFormat = ({poDetails}:Props) => {
   ];
 
 
- const rightColumnAddressConst2 = [
+  const rightColumnAddressConst2 = [
     ["E-mail", poDetails?.email2],
     ["D/L No", poDetails?.dl_no],
     ["GSTIN No.", poDetails?.gstin_no],
@@ -40,7 +40,7 @@ const POPrintFormat = ({poDetails}:Props) => {
   ];
 
 
- const Header = [
+  const Header = [
     "Sr No.",
     "Material Code",
     "Description",
@@ -54,7 +54,7 @@ const POPrintFormat = ({poDetails}:Props) => {
   ];
 
 
- const amountLabel = [
+  const amountLabel = [
     ["Total Gross Amount", poDetails?.total_gross_amount],
     ["Total Discount on Gross Amount", ""],
     ["Total INPUT CGST", poDetails?.total_input_cgst],
@@ -63,12 +63,13 @@ const POPrintFormat = ({poDetails}:Props) => {
   ];
 
 
-    const companyLogo = {
-        "Meril Diagnostics Private Limited":"/printFormatLogo/Meril-Diagnostics.svg",
-        "Meril Endo Surgery Private LImited":"/printFormatLogo/Meril-Endo-surgery.svg",
-        "Meril Health Care Private Limited":"/printFormatLogo/Meril-Healthcare-Logo.svg",
-        "Meril Life Scinces Private Limited":"/printFormatLogo/Meril-life-sciences-logo.svg"
-    }
+  const companyLogo = {
+    "Meril Diagnostics Private Limited": "/printFormatLogo/Meril-Diagnostics.svg",
+    "Meril Endo Surgery Private LImited": "/printFormatLogo/Meril-Endo-surgery.svg",
+    "Meril Health Care Private Limited": "/printFormatLogo/Meril-Healthcare-Logo.svg",
+    "Meril Life Scinces Private Limited": "/printFormatLogo/Meril-life-sciences-logo.svg"
+  }
+  
   return (
     <div className="bg-white border border-gray-300 rounded-md p-4 space-y-6 overflow-x-auto">
       {/* Grid with 2 Columns */}
@@ -80,7 +81,7 @@ const POPrintFormat = ({poDetails}:Props) => {
               <img
                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNeWQPPw3D0A-4GbBqyuGJa6KHFOa6cO3giQ&s"
                 alt="Meril Logo"
-                className="h-25 w-25 mx-auto mb-1"
+                className="h-18 w-18 mx-auto mb-1"
               />
               <div className="text-gray-700 text-sm">More to Life</div>
             </div>
@@ -172,20 +173,20 @@ const POPrintFormat = ({poDetails}:Props) => {
             </tr>
           </thead>
           <tbody>
-            {poDetails?.po_items?.map((item:any, index:any) => (
-  <tr key={index} className={index % 2 ? "bg-gray-50" : ""}>
-    <td className="border border-black px-2 py-1 text-center">{index + 1}</td>
-    <td className="border border-black px-2 py-1">{item?.material_code}</td>
-    <td className="border border-black px-2 py-1">{item?.description}</td>
-    <td className="border border-black px-2 py-1">{item?.hsnsac}</td>
-    <td className="border border-black px-2 py-1">{item?.uom}</td>
-    <td className="border border-black px-2 py-1">{item?.quantity}</td>
-    <td className="border border-black px-2 py-1">{item?.rate}</td>
-    <td className="border border-black px-2 py-1">{item?.base_amount}</td>
-    <td className="border border-black px-2 py-1">{item?.schedule_date}</td>
-    <td className="border border-black px-2 py-1">{item?.quantity}</td>
-  </tr>
-))}
+            {poDetails?.po_items?.map((item: any, index: any) => (
+              <tr key={index} className={index % 2 ? "bg-gray-50" : ""}>
+                <td className="border border-black px-2 py-1 text-center">{index + 1}</td>
+                <td className="border border-black px-2 py-1">{item?.material_code}</td>
+                <td className="border border-black px-2 py-1">{item?.description}</td>
+                <td className="border border-black px-2 py-1">{item?.hsnsac}</td>
+                <td className="border border-black px-2 py-1">{item?.uom}</td>
+                <td className="border border-black px-2 py-1">{item?.quantity}</td>
+                <td className="border border-black px-2 py-1">{item?.rate}</td>
+                <td className="border border-black px-2 py-1">{item?.base_amount}</td>
+                <td className="border border-black px-2 py-1">{item?.schedule_date}</td>
+                <td className="border border-black px-2 py-1">{item?.quantity}</td>
+              </tr>
+            ))}
 
             {amountLabel?.map(([label, value], idx) => (
               <tr key={idx} className={idx % 2 ? "bg-gray-50" : ""}>
