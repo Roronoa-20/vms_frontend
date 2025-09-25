@@ -54,6 +54,18 @@ export const sidebarMenu = [
     name: "View GRN",
     href: "/view-grn"
   },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "Shipment Status",
+    href: "/shipment-status-tables"
+    // href: "/shipment-status"
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "Service bill",
+    //href: "/service-bill"
+    href: "/view-service-bill"
+  },
   // {
   //   logo: "/sidebar-assests/dispatch-logo.svg",
   //   name: "View Dispatch",
