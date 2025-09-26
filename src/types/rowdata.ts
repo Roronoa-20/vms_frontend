@@ -18,6 +18,7 @@ export interface RowData {
   bank_file?: string;
   sap_client_code?: string;
   purchase_org?: string;
+  via_data_import: string | number;
 }
 
 export interface ExtendRowData extends RowData {

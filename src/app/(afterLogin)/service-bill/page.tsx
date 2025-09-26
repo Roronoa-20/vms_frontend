@@ -1,13 +1,13 @@
 export const dynamic = "force-dynamic";
 
 import React from 'react'
-import ServiceBill from '@/src/components/molecules/ServiceBill';
+import ServiceBill from '@/src/components/molecules/Service-Bill';
 
-const ShipmentStatu = () => {
+const ServiceBills = () => {
   return (
-        <ServiceBill/>
+        <ServiceBill />
   )
 }
 
-export default ShipmentStatu;
+export default ServiceBills;
 

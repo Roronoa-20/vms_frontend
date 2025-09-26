@@ -22,7 +22,7 @@ interface Props {
 }
 
 const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
-    console.log("Vendors-------->",vendors);
+    console.log("Vendors-------->", vendors);
     const router = useRouter();
     const [isVendorCodeDialog, setIsVendorCodeDialog] = React.useState(false);
     const [selectedVendorCodes, setSelectedVendorCodes] = React.useState<CompanyVendorCodeRecord[] | null>(null);
@@ -72,17 +72,15 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                 vendor_name: vendor.vendor_name || "N.A.",
                 office_email_primary: vendor.office_email_primary || "N.A.",
                 pan_number: vendor.bank_details?.company_pan_number || "N.A.",
-                pan_file: vendor.bank_details?.bank_proof || "",
                 gst_no: vendor.document_details || "N.A.",
-                gst_file: "",
                 state: c.company_display_name || "N.A.",
                 country: vendor.country || "N.A.",
                 pincode: vendor.mobile_number || "N.A.",
                 bank_name: vendor.bank_details?.bank_name || "N.A.",
                 ifsc_code: vendor.bank_details?.ifsc_code || "N.A.",
-                bank_file: vendor.bank_details?.bank_proof || "",
                 sap_client_code: c.sap_client_code || "N.A.",
                 purchase_org: c.purchase_organization || "N.A.",
+                via_data_import: vendor.via_data_import || "0",
             };
         });
     });
@@ -98,14 +96,11 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
         { key: "country", label: "Country" },
         { key: "office_email_primary", label: "Official Email" },
         { key: "pan_number", label: "PAN Number" },
-        { key: "pan_file", label: "PAN File", type: "file" },
-        { key: "gst_no", label: "GST Number" },
-        { key: "gst_file", label: "GST File", type: "file" },
-        { key: "state", label: "State" },
-        { key: "pincode", label: "Pincode/ZipCode" },
+        // { key: "gst_no", label: "GST Number" },
+        // { key: "state", label: "State" },
+        // { key: "pincode", label: "Pincode/ZipCode" },
         { key: "bank_name", label: "Bank Name" },
         { key: "ifsc_code", label: "IFSC Code" },
-        { key: "bank_file", label: "Bank File", type: "file" },
     ];
 
     const renderCell = (row: RowData, col: typeof columns[0]) => {
@@ -135,9 +130,12 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
         }
     };
 
-    const handleView = (refno: string, vendorId: string) => {
-        router.push(`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${vendorId}&refno=${refno}`);
+    const handleView = (refno: string, vendorId: string, via_data_import: string | number) => {
+        router.push(
+            `/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${refno}&refno=${vendorId}&via_data_import=${via_data_import}`
+        );
     };
+
 
     const fetchVendorCodes = async (vendorId: string, company: string) => {
         try {
@@ -306,7 +304,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                 </p>
             ) : (
                 <div>
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">Vendors List</h2>
+                    <h2 className="text-xl font-semibold text-gray-800 mb-2">Vendors List</h2>
                     <div className="overflow-x-auto rounded-xl shadow-md border">
                         <Table className="min-w-full text-sm border-collapse">
                             <TableHeader className="sticky top-0 z-10 bg-blue-100">
@@ -315,7 +313,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                         ref={(el) => {
                                             headerRefs.current["srno"] = el;
                                         }}
-                                        className="sticky left-0 z-20 bg-blue-100 text-center px-4 py-2"
+                                        className="sticky left-0 z-20 bg-blue-100 text-center text-black text-nowrap px-4 py-2"
                                         style={{ left: getStickyLeft("srno") }}
                                     >
                                         Sr. No.
@@ -332,7 +330,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                             </TableHead>
                                             {index === 2 && (
                                                 <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
-                                                    Vendor Codes
+                                                    Vendor Codes <br/>& GST
                                                 </TableHead>
                                             )}
                                         </React.Fragment>
@@ -393,7 +391,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                         {/* Actions */}
                                         <TableCell className="text-center">
                                             <Button
-                                                onClick={() => handleView(row.ref_no, row.name)}
+                                                onClick={() => handleView(row.ref_no, row.name, row.via_data_import)}
                                                 className="whitespace-nowrap bg-[#5291CD] text-white text-sm rounded-xl px-3 py-1"
                                             >
                                                 View
@@ -424,17 +422,15 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                                 </Button>
                                             )}
                                         </TableCell>
-
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
-
                     </div >
                 </div>
             )}
 
-            {/* 🔹 Pagination */}
+            {/*Pagination */}
             < div className="mt-4" >
                 <Pagination
                     currentPage={currentPage}
@@ -460,7 +456,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                 </div>
             )}
 
-            {/* 🔹 Vendor Codes PopUp */}
+            {/*Vendor Codes PopUp */}
             {isVendorCodeDialog && selectedVendorCodes && (
                 <PopUp
                     handleClose={() => setIsVendorCodeDialog(false)}
@@ -498,9 +494,9 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                         </Table>
                     </div>
                 </PopUp>
-            )
-            }
-            {/* 🔹 Extend Vendor Inline Form */}
+            )}
+
+            {/*Extend Vendor Inline Form */}
             {isExtendDialogOpen && extendRow && (
                 <div ref={extendFormRef} className="mt-6 border rounded-lg shadow bg-gray-50 p-4">
                     <h3 className="text-lg text-center font-medium pl-2 pt-2">
@@ -584,8 +580,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                         </div>
                     </div >
                 </div >
-            )
-            }
+            )}
         </>
     );
 

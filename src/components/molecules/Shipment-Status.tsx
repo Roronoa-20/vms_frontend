@@ -1,20 +1,27 @@
- 
+type Field = {
+  label: string;
+  type: "text" | "date" | "select" | "text-date" | "textarea";
+  placeholder?: string;
+  rows?: number;
+};
+
+
 export default function ShipmentStatus() {
-  const topFields = [
+  const topFields: Field[] = [
     { label: "Enter Document No", type: "select", placeholder: "Search By" },
   ];
 
-  const secondRow = [
+  const secondRow: Field[] = [
     { label: "RFQ Number & Date", type: "text-date", placeholder: "RFQ Number" },
     { label: "JRN & Date", type: "text-date", placeholder: "JRN Number" },
   ];
 
-  const thirdRow = [
+  const thirdRow: Field[] = [
     { label: "Consignee Name (RFQ)", type: "text" },
     { label: "Consignor Name (JRN)", type: "text" },
   ];
 
-  const remainingFields = [
+  const remainingFields: Field[] = [
     { label: "Port Of Loading", type: "text" },
     { label: "Port Of Discharge", type: "text" },
     { label: "INCOTERMS", type: "text" },
@@ -40,11 +47,11 @@ export default function ShipmentStatus() {
     { label: "Month/Year", type: "text" },
   ];
 
-  const remarkField = [
+  const remarkField: Field[] = [
     { label: "Remark", type: "textarea", rows: 3, placeholder: "Enter remarks here..." },
   ];
 
-  const renderField = (field, index) => (
+  const renderField = (field: Field, index: number) => (
     <div
       key={index}
       className={`flex flex-col ${field.label === "Remark" ? "col-span-1 md:col-span-3" : ""}`}
@@ -103,8 +110,8 @@ export default function ShipmentStatus() {
   );
 
   return (
-    <div className="container mx-auto p-4 w-full bg-slate-400">
-      <div className="bg-white p-6 rounded shadow space-y-6">
+    <div className="container mx-auto p-2 w-full bg-gray-100">
+      <div className="bg-white p-4 rounded shadow space-y-6">
         {/* Top field */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {topFields.map(renderField)}

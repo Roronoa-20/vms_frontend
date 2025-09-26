@@ -240,14 +240,14 @@ const AllVendors = () => {
                   ].join(" ")}
                 >
                   <span>{company.company_id} - {company.company_short_form}</span>
-                  <span
+                  {/* <span
                     className={`text-sm font-semibold px-2 py-0.5 rounded-full ${currentSlide === index + 1
                       ? "bg-white text-blue-700"
                       : "bg-[#5291CD] text-white"
                       }`}
                   >
                     <CountUp end={count} duration={1.2} separator="," />
-                  </span>
+                  </span> */}
                 </TabsTrigger>
               );
             })}
@@ -256,7 +256,7 @@ const AllVendors = () => {
       </div>
 
       {/* 🔹 Vendors Table */}
-      <div className="bg-white rounded-2xl shadow-sm p-6">
+      <div className="bg-white rounded-2xl shadow-sm p-4">
         <Tabs value={defaultTab} onValueChange={setDefaultTab}>
           {companyAnalytics.map((company) => {
             const { vendors: filteredVendors } = getVendorsForCompany(searchedVendors, company.company_id, company);

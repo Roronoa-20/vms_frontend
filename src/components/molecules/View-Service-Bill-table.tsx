@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button"; 
 import Link from "next/link";
-import { FileText } from "lucide-react"; 
+import { FileText, Plus } from "lucide-react"; 
 
 interface shipmentItem {
   grn_no: string;
@@ -40,9 +40,9 @@ const sampleData: shipmentItem[] = [
   },
 ];
 
-<ShipmentStatusTable shipmentData={sampleData} />;
+<ViewServiceBilltable shipmentData={sampleData} />;
 
-interface ShipmentStatusTableProps {
+interface ViewServiceBilltableProps {
   shipmentData?: shipmentItem[];
   onNewShipment?: () => void;  
 }
@@ -60,7 +60,7 @@ const formatDate = (dateString: string): string => {
   }
 };
 
-export default function ShipmentStatusTable({ shipmentData = [] }: ShipmentStatusTableProps) {
+export default function ViewServiceBilltable({ shipmentData = [] }: ViewServiceBilltableProps) {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const router = useRouter();
@@ -76,23 +76,29 @@ export default function ShipmentStatusTable({ shipmentData = [] }: ShipmentStatu
   }, [shipmentData, searchTerm]);
 
   const onNewShipment = () => {
-    router.push('/shipment-status'); 
+    router.push("/service-bill");
   };
+
 
   return (
     <div className="p-3 bg-gray-300 min-h-screen">
       <div className="shadow bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Shipment Status
+            Service Bill (SB) List
           </h1>
           
-          <button
-            className="bg-blue-600 text-white py-2 px-3 rounded-md"
+          <Button
+            type="button"
+            variant={"nextbtn"}
+            size={"nextbtnsize"}
+            className="py-2 px-4"
             onClick={onNewShipment}
-          >
-            New Shipment
-          </button>
+            >
+            <Plus className="w-8 h-8" />
+            New Service
+          </Button>
+
         </div>
 
         <Table>
@@ -161,7 +167,7 @@ export default function ShipmentStatusTable({ shipmentData = [] }: ShipmentStatu
             ) : (
               <TableRow>
                 <TableCell colSpan={8} className="text-center text-gray-500 py-4">
-                  No Shipment entries found.
+                  No Service Bill found.
                 </TableCell>
               </TableRow>
             )}

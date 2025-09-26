@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button"; 
 import Link from "next/link";
-import { FileText } from "lucide-react"; 
+import { FileText, Plus } from "lucide-react"; 
 
 interface shipmentItem {
   grn_no: string;
@@ -40,9 +40,9 @@ const sampleData: shipmentItem[] = [
   },
 ];
 
-<ViewServiceBilltable shipmentData={sampleData} />;
+<ShipmentStatusTable shipmentData={sampleData} />;
 
-interface ViewServiceBilltableProps {
+interface ShipmentStatusTableProps {
   shipmentData?: shipmentItem[];
   onNewShipment?: () => void;  
 }
@@ -60,7 +60,7 @@ const formatDate = (dateString: string): string => {
   }
 };
 
-export default function ViewServiceBilltable({ shipmentData = [] }: ViewServiceBilltableProps) {
+export default function ShipmentStatusTable({ shipmentData = [] }: ShipmentStatusTableProps) {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const router = useRouter();
@@ -76,26 +76,27 @@ export default function ViewServiceBilltable({ shipmentData = [] }: ViewServiceB
   }, [shipmentData, searchTerm]);
 
   const onNewShipment = () => {
-    router.push("/service-bill");
+    router.push('/shipment-status'); 
   };
 
-
   return (
-    <div className="p-3 bg-gray-300 min-h-screen">
+    <div className="p-3 bg-gray-200 min-h-screen">
       <div className="shadow bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Service Bill 
+            Shipment Status (DSR) List
           </h1>
           
-          <button
+          <Button
             type="button"
-            className="bg-blue-600 text-white py-2 px-3 rounded-md"
+            variant={"nextbtn"}
+            size={"nextbtnsize"}
+            className="py-2 px-4"
             onClick={onNewShipment}
-            >
-            New Service
-          </button>
-
+          >
+            <Plus />
+            New Shipment
+          </Button>
         </div>
 
         <Table>
