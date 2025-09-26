@@ -209,12 +209,23 @@ const DocumentDetails = ({
             </div>
           </div>
           <div className="col-span-1">
-            <h1 className="text-[14px] font-semibold pb-2">
-              Digital Form 10F
-            </h1>
-            <ul className="pl-4"><Link href={""} target="blank"><li className="text-blue-400 text-sm underline list-disc">View Sample form 10F Document</li></Link>
-              <Link href={""} target="blank"><li className="text-blue-400 underline text-sm list-disc">Step-By-Step-Guide to generate Form 10F</li></Link>
-              <Link href={""} target="blank"><li className="text-blue-400 underline text-sm list-disc">Click Here to Generate Form 10F</li></Link>
+            <h1 className="text-[12px] font-semibold  pb-3">Digital Form 10F</h1>
+            <ul className="pl-4">
+              <Link href={"/InternationalDocument/Form-10F-Online-Sample.pdf"} target="blank">
+                <li className="text-blue-400 text-sm underline list-disc">
+                  View Sample form 10F Document
+                </li>
+              </Link>
+              <Link href={"/InternationalDocument/step-by-step-guide-to-download-form-10F.pdf"} target="blank">
+                <li className="text-blue-400 underline text-sm list-disc">
+                  Step-By-Step-Guide to generate Form 10F
+                </li>
+              </Link>
+              <Link href={"https://eportal.incometax.gov.in/iec/foservices/#/pre-login/register"} target="blank">
+                <li className="text-blue-400 underline text-sm list-disc">
+                  Click Here to Generate Form 10F
+                </li>
+              </Link>
             </ul>
           </div>
           <div className="col-span-1">
@@ -253,10 +264,19 @@ const DocumentDetails = ({
             </div>
           </div>
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+           {/* PE Certificate with sample download */}
+          <div className="col-span-1">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Permanent Establishment Certificate
             </h1>
-            <Link className="text-blue-400 text-sm underline" href={""}>Download PE Certificate Format File</Link>
+            <Link
+              className="text-blue-400 text-sm underline"
+              href={"/InternationalDocument/sample-pe-certificate.doc"}
+              target="blank"
+            >
+              Download PE Certificate Format File
+            </Link>
+          </div>
             <div className="flex gap-4 pt-2">
 
               <Input
