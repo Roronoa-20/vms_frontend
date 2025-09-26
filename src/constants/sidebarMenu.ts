@@ -27,6 +27,12 @@ export const sidebarMenu: SidebarItem[] = [
     href: "/pr-request",
     children: []
   },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "MPR",
+    href: "/view-pickup-request",
+    children: []
+  },
   // {
   //   logo: "/sidebar-assests/raise-rfq-logo.svg",
   //   name: "Raise RFQ",
@@ -64,6 +70,12 @@ export const sidebarMenu: SidebarItem[] = [
     logo: "/sidebar-assests/view-grn.svg",
     name: "View GRN",
     href: "/view-grn",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "GR Waiver",
+    href: "/view-gr-waiver",
     children: []
   },
   // {
