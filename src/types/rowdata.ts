@@ -19,6 +19,8 @@ export interface RowData {
   sap_client_code?: string;
   purchase_org?: string;
   via_data_import: string | number;
+  created_from_registration: string | number;
+  multiple_company_data: string;
 }
 
 export interface ExtendRowData extends RowData {

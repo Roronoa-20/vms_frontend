@@ -289,7 +289,7 @@ const Certificate = ({
                 <TableCell className="text-center">{item?.certificate_code}</TableCell>
                 <TableCell className="text-center">{item?.valid_till}</TableCell>
                 <TableCell className="text-center">
-                  <Link href={item?.fileDetail?.url || ""} target="_blank">
+                  <Link href={item?.certificate_attach?.url || ""} target="_blank">
                     {item?.certificate_attach?.file_name}
                   </Link>
                 </TableCell>

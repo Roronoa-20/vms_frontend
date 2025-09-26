@@ -81,6 +81,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                 sap_client_code: c.sap_client_code || "N.A.",
                 purchase_org: c.purchase_organization || "N.A.",
                 via_data_import: vendor.via_data_import || "0",
+                created_from_registration: vendor.created_from_registration || "0",
             };
         });
     });
@@ -130,10 +131,39 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
         }
     };
 
-    const handleView = (refno: string, vendorId: string, via_data_import: string | number) => {
-        router.push(
-            `/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${refno}&refno=${vendorId}&via_data_import=${via_data_import}`
+    // const handleView = (refno: string, vendorId: string, via_data_import: string | number) => {
+    //     router.push(
+    //         `/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${refno}&refno=${vendorId}&via_data_import=${via_data_import}`
+    //     );
+    // };
+
+    const handleView = (row: RowData) => {
+        // Find the multiple_company_data record for this active company
+        const companyData = row.multiple_company_data?.find(
+            (c) => c.company_name === row.company_code
         );
+
+        const isImported = companyData?.imported === "1";
+        const isViaImport = String(row.via_data_import) === "1";
+        const isFromRegistration = String(row.created_from_registration) === "1";
+        const refNoAvailable = row.ref_no && row.ref_no !== "N.A.";
+
+        if (isViaImport && isImported) {
+            // Data import + multi-company imported
+            router.push(
+                `/view-onboarding-details?tabtype=Company%20Detail&refno=${row.name}&company_code=${row.company_code}&via_data_import=1`
+            );
+        } else if (isFromRegistration && !isImported) {
+            // Registered vendor, not imported
+            router.push(
+                `/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${row.ref_no}&refno=${row.name}`
+            );
+        } else {
+            // fallback
+            router.push(
+                `/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${row.ref_no}&refno=${row.name}`
+            );
+        }
     };
 
 
@@ -330,7 +360,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                             </TableHead>
                                             {index === 2 && (
                                                 <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
-                                                    Vendor Codes <br/>& GST
+                                                    Vendor Codes <br />& GST
                                                 </TableHead>
                                             )}
                                         </React.Fragment>
@@ -391,7 +421,8 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                         {/* Actions */}
                                         <TableCell className="text-center">
                                             <Button
-                                                onClick={() => handleView(row.ref_no, row.name, row.via_data_import)}
+                                                // onClick={() => handleView(row.ref_no, row.name, row.via_data_import)}
+                                                onClick={() => handleView(row)}
                                                 className="whitespace-nowrap bg-[#5291CD] text-white text-sm rounded-xl px-3 py-1"
                                             >
                                                 View
