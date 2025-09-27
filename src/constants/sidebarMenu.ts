@@ -78,6 +78,12 @@ export const sidebarMenu: SidebarItem[] = [
     href: "/view-gr-waiver",
     children: []
   },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "Payment",
+    href: "/view-payment-requisition",
+    children: []
+  },
   // {
   //   logo: "/sidebar-assests/view-grn.svg",
   //   name: "Shipment Status",
