@@ -96,7 +96,7 @@ export default function ViewGrWaiver({ pickupData = [] }: ViewGrWaiverProps) {
             onClick={onNewShipment}
             >
             <Plus className="w-8 h-8" />
-            New Request
+            New GR Waiver
           </Button>
 
         </div>
@@ -167,7 +167,7 @@ export default function ViewGrWaiver({ pickupData = [] }: ViewGrWaiverProps) {
             ) : (
               <TableRow>
                 <TableCell colSpan={8} className="text-center text-gray-500 py-4">
-                  No Pickup Request found.
+                  No GR Waiver found.
                 </TableCell>
               </TableRow>
             )}
