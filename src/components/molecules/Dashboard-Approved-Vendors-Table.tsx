@@ -54,6 +54,8 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
 
   const { designation } = useAuth();
   const isAccountsUser = designation?.toLowerCase().includes("account");
+  const isTreasuryUser = designation?.toLowerCase() === "treasury";
+
   const handleClose = () => {
     setIsVendorCodeDialog(false);
     setSelectedVendorcodes([]);
@@ -108,15 +110,15 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
   if (!dashboardTableData) { return <div>Loading...</div>; }
 
   const handleSelectChange = (
-  value: string,
-  setter: (val: string) => void
+    value: string,
+    setter: (val: string) => void
   ) => {
-  if (value === "--Select--") {
-    setter(""); // reset filter
-  } else {
-    setter(value);
-  }
-};
+    if (value === "--Select--") {
+      setter(""); // reset filter
+    } else {
+      setter(value);
+    }
+  };
 
 
   return (
@@ -127,7 +129,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
             Total Onboarded Vendors
           </h1>
           <div className="flex gap-4">
-            <Input placeholder="Search..." onChange={(e)=>{handlesearchname(e)}} />
+            <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
             <Select
               value={selectedCompany}
               onValueChange={(value) => handleSelectChange(value, setSelectedCompany)}
@@ -146,24 +148,9 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {/* <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select> */}
           </div>
         </div>
         <Table>
-          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
               <TableHead className="text-center text-black">Sr No.</TableHead>
@@ -175,7 +162,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
               <TableHead className="text-center text-black">Country</TableHead>
               <TableHead className="text-center text-black">Register By</TableHead>
               <TableHead className="text-center text-black">View Details</TableHead>
-              {!isAccountsUser && (
+              {!isAccountsUser && !isTreasuryUser && (
                 <TableHead className="text-center text-black">QMS Form</TableHead>
               )}
             </TableRow>
@@ -184,7 +171,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
             {table ? (
               table?.map((item, index) => (
                 <TableRow key={index}>
-                   <TableCell className="text-center font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
+                  <TableCell className="text-center font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                   <TableCell className="text-center text-nowrap">{item?.name}</TableCell>
                   <TableCell className="text-center text-nowrap">{item?.vendor_name}</TableCell>
                   <TableCell className="text-center text-nowrap">{item?.company_name}</TableCell>
@@ -203,8 +190,16 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                   <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
                   <TableCell className="text-center">{item?.vendor_country}</TableCell>
                   <TableCell className="text-center whitespace-nowrap">{item?.registered_by_full_name}</TableCell>
-                  <TableCell><Link href={`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-blue-400 hover:bg-blue-300">View</Button></Link></TableCell>
-                  {!isAccountsUser && (
+                  <TableCell>
+                    <Link
+                      href={`/view-onboarding-details?tabtype=${isTreasuryUser ? "Document Detail" : "Company Detail"
+                        }&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}
+                    >
+                      <Button className="bg-blue-400 hover:bg-blue-300">View</Button>
+                    </Link>
+                  </TableCell>
+                  {/* <TableCell><Link href={`/view-onboarding-details?tabtype=Company Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-blue-400 hover:bg-blue-300">View</Button></Link></TableCell> */}
+                  {!isAccountsUser && !isTreasuryUser && (
                     <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
                   )}
                 </TableRow>
@@ -232,11 +227,11 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                   <TableRow className="bg-gray-700 hover:bg-gray-700 text-white font-semibold">
                     <TableCell colSpan={3}>Company Code: {company.company_code}</TableCell>
                   </TableRow>
-              <TableRow>
-                <TableHead>State</TableHead>
-                <TableHead>GST No</TableHead>
-                <TableHead>Vendor Code</TableHead>
-              </TableRow>
+                  <TableRow>
+                    <TableHead>State</TableHead>
+                    <TableHead>GST No</TableHead>
+                    <TableHead>Vendor Code</TableHead>
+                  </TableRow>
                   {company.vendor_codes.map((vendor, vIdx) => (
                     <TableRow
                       key={vIdx}

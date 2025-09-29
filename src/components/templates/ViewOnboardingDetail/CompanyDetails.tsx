@@ -32,8 +32,6 @@ interface Props {
 
 const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, OnboardingDetail, multipleCompany, ismulticompany, isAmendment, re_release }: Props) => {
   const router = useRouter();
-
-
   const [errors, setErrors] = useState<any>({});
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const { data, updateField, resetForm } = useCompanyDetailFormStore();

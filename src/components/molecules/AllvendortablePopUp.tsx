@@ -16,16 +16,16 @@ type props = {
 const PopUp = ({ handleClose, children, headerText, isSubmit, Submitbutton, classname, disableRef }: props) => {
   const DialogRef = useOutsideClick<HTMLDivElement>(handleClose)
   return (
-    <div className="absolute z-50 inset-0 flex items-center justify-center bg-black bg-opacity-30 p-4">
+    <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-10 p-4">
       <div
         ref={!disableRef ? null : DialogRef}
         className={cn(
-          `bg-white rounded-xl shadow-lg border p-6 md:max-w-3xl w-full max-h-[85vh] flex flex-col`,
+          `bg-white rounded-xl shadow-lg border p-6 md:max-w-lg w-full max-h-[80vh] flex flex-col overflow-hidden`,
           classname
         )}
       >
         {/* Header */}
-        <div className="flex justify-between items-center border-b pb-3 mb-4">
+        <div className="flex-shrink-0 flex justify-between items-center border-b pb-3 mb-4">
           <h1 className="text-xl font-semibold text-gray-800">{headerText}</h1>
           <Button
             variant="ghost"
@@ -37,11 +37,11 @@ const PopUp = ({ handleClose, children, headerText, isSubmit, Submitbutton, clas
           </Button>
         </div>
 
-        {/* Content */}
+        {/* Content (scrollable only here) */}
         <div className="flex-1 overflow-y-auto">{children}</div>
 
         {/* Footer */}
-        <div className="flex justify-end pt-4 gap-3 border-t mt-4">
+        <div className="flex-shrink-0 flex justify-end pt-4 gap-3 border-t mt-4">
           <Button
             className="py-2"
             onClick={handleClose}
@@ -63,7 +63,6 @@ const PopUp = ({ handleClose, children, headerText, isSubmit, Submitbutton, clas
         </div>
       </div>
     </div>
-
   );
 };
 

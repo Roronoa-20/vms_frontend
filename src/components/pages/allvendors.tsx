@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Vendor } from "@/src/types/allvendorstypes";
+import { Vendor, VendorRow, CompanyData } from "@/src/types/allvendorstypes";
 import VendorTable from "@/src/components/templates/allvendorstable";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
@@ -56,7 +56,6 @@ const AllVendors = () => {
   const [defaultTab, setDefaultTab] = useState<string>("");
   const [currentSlide, setCurrentSlide] = useState(1);
 
-  // 🔹 Active vendor tab controlled via analytics cards
   const [activeVendorTab, setActiveVendorTab] = useState<"vms_registered" | "imported_vendors">("vms_registered");
 
   const fetchVendors = async () => {
@@ -83,7 +82,6 @@ const AllVendors = () => {
         total_vc_code: 0,
       });
 
-      // Default company tab
       if (apiData.company_analytics?.company_wise_analytics?.length) {
         setDefaultTab(apiData.company_analytics.company_wise_analytics[0].company_id);
         setCurrentSlide(1);
@@ -99,7 +97,6 @@ const AllVendors = () => {
     fetchVendors();
   }, [activeVendorTab]);
 
-  // 🔹 Search filtering
   useEffect(() => {
     if (!searchTerm && !searchCountry) {
       setSearchedVendors(vendors);
@@ -127,21 +124,41 @@ const AllVendors = () => {
   }, [searchTerm, searchCountry, vendors]);
 
   const getVendorsForCompany = (vendorList: Vendor[], companyId: string, companyData: any) => {
-    const filtered = vendorList.filter(vendor =>
-      vendor.multiple_company_data?.some(
-        c => c.company_name === companyId && c.company_vendor_code?.trim() !== ""
-      )
-    );
-    const count = activeVendorTab === "vms_registered"
-      ? companyData.registration_breakdown?.vms_registered || 0
-      : companyData.registration_breakdown?.imported_vendors || 0;
+    const filtered: VendorRow[] = [];
 
-    return { vendors: filtered, count: searchTerm || searchCountry ? filtered.length : count };
+    vendorList.forEach(vendor => {
+      vendor.multiple_company_data?.forEach(companyRecord => {
+        if (companyRecord.company_name !== companyId) return;
+
+        if (activeVendorTab === "vms_registered") {
+          const isApproved = vendor.vendor_onb_records?.some(
+            record => record.onboarding_form_status === "Approved"
+          );
+
+          if (isApproved && companyRecord.via_import !== 1) {
+            filtered.push({ ...vendor, company: companyRecord as CompanyData });
+          }
+        } else if (activeVendorTab === "imported_vendors") {
+          if (companyRecord.via_import === 1) {
+            filtered.push({ ...vendor, company: companyRecord as CompanyData });
+          }
+        }
+      });
+    });
+
+    const count = searchTerm || searchCountry ? filtered.length : (
+      activeVendorTab === "vms_registered"
+        ? companyData.registration_breakdown?.vms_registered || 0
+        : companyData.registration_breakdown?.imported_vendors || 0
+    );
+
+    return { vendors: filtered, count };
   };
+
+
 
   return (
     <div className="min-h-screen bg-gray-50 p-2">
-      {/* 🔹 Analytics Cards (clickable to switch activeVendorTab) */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <div className="bg-white rounded-2xl shadow-sm p-5 flex items-center gap-4">
           <div className="bg-indigo-100 p-3 rounded-xl"><Users className="h-6 w-6 text-blue-600" /></div>
@@ -190,7 +207,6 @@ const AllVendors = () => {
         </div>
       </div>
 
-      {/* 🔹 Search Section */}
       <div className="bg-white rounded-2xl shadow-sm p-5 mb-6">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">Search Vendors</h2>
         <div className="flex flex-wrap gap-4">
@@ -211,7 +227,6 @@ const AllVendors = () => {
         </div>
       </div>
 
-      {/* 🔹 Company Tabs */}
       <div className="bg-white rounded-2xl shadow-sm h-40 p-5 mb-6">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">Meril Verticals</h2>
         <Tabs value={defaultTab} onValueChange={setDefaultTab} className="w-full">
@@ -240,14 +255,14 @@ const AllVendors = () => {
                   ].join(" ")}
                 >
                   <span>{company.company_id} - {company.company_short_form}</span>
-                  <span
+                  {/* <span
                     className={`text-sm font-semibold px-2 py-0.5 rounded-full ${currentSlide === index + 1
                       ? "bg-white text-blue-700"
                       : "bg-[#5291CD] text-white"
                       }`}
                   >
                     <CountUp end={count} duration={1.2} separator="," />
-                  </span>
+                  </span> */}
                 </TabsTrigger>
               );
             })}
@@ -255,8 +270,7 @@ const AllVendors = () => {
         </Tabs>
       </div>
 
-      {/* 🔹 Vendors Table */}
-      <div className="bg-white rounded-2xl shadow-sm p-6">
+      <div className="bg-white rounded-2xl shadow-sm p-4">
         <Tabs value={defaultTab} onValueChange={setDefaultTab}>
           {companyAnalytics.map((company) => {
             const { vendors: filteredVendors } = getVendorsForCompany(searchedVendors, company.company_id, company);

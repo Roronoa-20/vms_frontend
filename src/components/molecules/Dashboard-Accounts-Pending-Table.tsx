@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -18,32 +18,22 @@ import {
 } from "@/src/components/atoms/select";
 import { tableData } from "@/src/constants/dashboardTableData";
 import { Input } from "../atoms/input";
-import { DashboardTableType, TvendorRegistrationDropdown, VendorOnboarding } from "@/src/types/types";
-import { Button } from "@/components/ui/button";
+import { DashboardTableType, TvendorRegistrationDropdown } from "@/src/types/types";
 import Link from "next/link";
-import PopUp from "./PopUp";
-import { useAuth } from "@/src/context/AuthContext";
+import { Button } from "@/components/ui/button";
 import Cookies from "js-cookie";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "./Pagination";
+import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
+
 
 type Props = {
-  dashboardTableData?: DashboardTableType
+  dashboardTableData: DashboardTableType,
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
 }
-
-const handleSelectChange = (
-  value: string,
-  setter: (val: string) => void
-  ) => {
-  if (value === "--Select--") {
-    setter(""); // reset filter
-  } else {
-    setter(value);
-  }
-};
 
 const useDebounce = (value: any, delay: any) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -60,30 +50,17 @@ const useDebounce = (value: any, delay: any) => {
   return debouncedValue;
 };
 
-const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
-  console.log(dashboardTableData, "this is approved table onboarded")
+const DashboardAccountsPendingVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
 
-  const { designation } = useAuth();
-  const isAccountsUser = designation?.toLowerCase().includes("account");
-  const handleClose = () => {
-    setIsVendorCodeDialog(false);
-    setSelectedVendorcodes([]);
-  }
-  const [isVendorCodeDialog, setIsVendorCodeDialog] = useState<boolean>();
-  const [selectedVendorCodes, setSelectedVendorcodes] = useState<VendorOnboarding["company_vendor_codes"]>([]);
-
-  const openVendorCodes = (data: any) => {
-    setSelectedVendorcodes(data);
-    setIsVendorCodeDialog(true);
-  };
-
-  const [table, setTable] = useState<any>(dashboardTableData?.approved_vendor_onboarding || []);
-  const [selectedCompany, setSelectedCompany] = useState<string>("")
+  const [table, setTable] = useState<DashboardTableType["pending_vendor_onboarding"]>(dashboardTableData?.pending_vendor_onboarding);
+  const [selectedCompany, setSelectedCompany] = useState("")
   const [search, setSearch] = useState<string>("");
 
   const [total_event_list, settotalEventList] = useState(0);
   const [record_per_page, setRecordPerPage] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const router = useRouter();
 
   const user = Cookies?.get("user_id");
   console.log(user, "this is user");
@@ -102,22 +79,42 @@ const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDrop
   }
 
   const fetchTable = async () => {
-    const dashboardApprovedVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.dashboardOnboardedVendorsAccounts}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
+    const dashboardPendingVendorTableDataApi: AxiosResponse = await requestWrapper({
+      url: `${API_END_POINTS?.dashboardPendingVendorsAccounts}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}`,
       method: "GET",
     });
-    if (dashboardApprovedVendorTableDataApi?.status == 200) {
-      setTable(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding
+    if (dashboardPendingVendorTableDataApi?.status == 200) {
+      setTable(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding
       );
-      // settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count);
-      settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count)
-      // setRecordPerPage(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding?.length)
+      // settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count);
+      settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count)
+      // setRecordPerPage(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding?.length)
       setRecordPerPage(5);
-      console.log(dashboardApprovedVendorTableDataApi,"this is onboarded")
     }
   };
 
-  if (!dashboardTableData) { return <div>Loading...</div>; }
+  const handleView = async (refno: string, vendor_Onboarding: string) => {
+    router.push(
+      `/view-onboarding-details?tabtype=${isTreasuryUser ? "Document Detail" : "Company Detail"
+      }&vendor_onboarding=${vendor_Onboarding}&refno=${refno}`
+    );
+  };
+
+  console.log(table, "this is table");
+  const { designation } = useAuth();
+  const isAccountsUser = designation?.toLowerCase().includes("account");
+  const isTreasuryUser = designation?.toLowerCase() === "treasury";
+
+  const handleSelectChange = (
+    value: string,
+    setter: (val: string) => void
+  ) => {
+    if (value === "--Select--") {
+      setter(""); // reset filter
+    } else {
+      setter(value);
+    }
+  };
 
 
   return (
@@ -125,22 +122,24 @@ const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDrop
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Total Accounts OnBoarded Vendors
+            Total Accounts Pending Vendors
           </h1>
           <div className="flex gap-4">
-            <Input placeholder="Search..." onChange={(e)=>{handlesearchname(e)}} />
-                <Select
-                    value={selectedCompany}
-                    onValueChange={(value) => handleSelectChange(value, setSelectedCompany)}
-                >
+            <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
+            <Select
+              value={selectedCompany}
+              onValueChange={(value) => handleSelectChange(value, setSelectedCompany)}
+            >
+
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
+
               <SelectContent>
                 <SelectGroup className="w-full">
                   <SelectItem value="--Select--">
-                                      --Select--
-                          </SelectItem>
+                    --Select--
+                  </SelectItem>
                   {
                     companyDropdown?.map((item, index) => (
                       <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
@@ -174,21 +173,20 @@ const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDrop
               <TableHead>Vendor Name</TableHead>
               <TableHead className="text-center">Company Name</TableHead>
               <TableHead className="text-center">Status</TableHead>
-              <TableHead className="text-center">Vendor Code</TableHead>
-              <TableHead className="text-center">Country</TableHead>
-              <TableHead className="text-center">Register By</TableHead>
+              <TableHead className="text-center">Account Team</TableHead>
+              <TableHead className="text-center">Account Head</TableHead>
               <TableHead className="text-center">View Details</TableHead>
-              {!isAccountsUser && (
+              {!isAccountsUser && !isTreasuryUser && (
                 <TableHead className="text-center">QMS Form</TableHead>
               )}
             </TableRow>
           </TableHeader>
           <TableBody className="text-center">
             {table ? (
-              table?.map((item:any, index:any) => (
+              table?.map((item, index) => (
                 <TableRow key={index}>
-                   <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
-                  <TableCell className="text-nowrap">{item?.name}</TableCell>
+                  <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
+                  <TableCell className="text-nowrap">{item?.ref_no}</TableCell>
                   <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
                   <TableCell className="text-nowrap">{item?.company_name}</TableCell>
                   <TableCell>
@@ -203,11 +201,12 @@ const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDrop
                       {item?.onboarding_form_status}
                     </div>
                   </TableCell>
-                  <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
-                  <TableCell>{item?.vendor_country}</TableCell>
-                  <TableCell>{item?.registered_by}</TableCell>
-                  <TableCell><Link href={`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-blue-400 hover:bg-blue-300">View</Button></Link></TableCell>
-                  {!isAccountsUser && (
+                  <TableCell>{item?.accounts_t_approval}</TableCell>
+                  <TableCell>{item?.accounts_head_approval}</TableCell>
+                  {/* <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell> */}
+                  {/* <TableCell className="text-right">{item?.qms_form}</TableCell> */}
+                  <TableCell><Button onClick={() => { item?.form_fully_submitted_by_vendor == 1 ? handleView(item?.ref_no, item?.name) : alert("Vendor Form is not fully subitted") }} variant={"outline"}>View</Button></TableCell>
+                  {!isAccountsUser && !isTreasuryUser && (
                     <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
                   )}
                 </TableRow>
@@ -223,42 +222,9 @@ const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDrop
 
         </Table>
       </div>
-      {
-        isVendorCodeDialog &&
-        <PopUp handleClose={handleClose}>
-          <Table>
-            <TableHeader>
-            </TableHeader>
-            <TableBody>
-              {selectedVendorCodes?.map((company) => (
-                <React.Fragment key={company.company_code}>
-                  <TableRow className="bg-gray-700 hover:bg-gray-700 text-white font-semibold">
-                    <TableCell colSpan={3}>Company Code: {company.company_code}</TableCell>
-                  </TableRow>
-              <TableRow>
-                <TableHead>State</TableHead>
-                <TableHead>GST No</TableHead>
-                <TableHead>Vendor Code</TableHead>
-              </TableRow>
-                  {company.vendor_codes.map((vendor, vIdx) => (
-                    <TableRow
-                      key={vIdx}
-                      className={vIdx % 2 === 0 ? "bg-gray-100" : ""}
-                    >
-                      <TableCell>{vendor.state}</TableCell>
-                      <TableCell>{vendor.gst_no}</TableCell>
-                      <TableCell>{vendor.vendor_code || "-"}</TableCell>
-                    </TableRow>
-                  ))}
-                </React.Fragment>
-              ))}
-            </TableBody>
-          </Table>
-        </PopUp>
-      }
       <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
     </>
   );
 };
 
-export default DashboardAccountsApprovedVendorsTable;
+export default DashboardAccountsPendingVendorsTable;
