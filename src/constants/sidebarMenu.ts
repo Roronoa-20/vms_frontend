@@ -555,3 +555,31 @@ export const AccountHeadSideBarMenu: SidebarItem[] = [
     children: []
   }
 ];
+
+export const TreasurySideBarMenu: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/dashboard",
+    defaultActive: true,
+    children: []
+  },
+   {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "All Vendors",
+    href:"/all-vendors",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/po-details.svg",
+    name: "View PO",
+    href: "/view-po",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "View GRN",
+    href: "/view-grn",
+    children: []
+  },
+];

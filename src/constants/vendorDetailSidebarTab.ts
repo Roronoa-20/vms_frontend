@@ -46,6 +46,13 @@ export const sidebarAccountsTabs = [
   "Purchase Detail"
 ];
 
+export const TreasuryTabs = [
+  "Document Detail",
+  "Payment Detail / Bank Detail",
+  "Contact Detail",
+  "Purchase Detail"
+];
+
 
 export const OnboardingTabs = [
   "Company Detail",

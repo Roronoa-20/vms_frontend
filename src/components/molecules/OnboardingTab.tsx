@@ -1,5 +1,5 @@
 "use client"
-import { sidebarAccountsTabs, sidebarTabs } from "@/src/constants/vendorDetailSidebarTab";
+import { sidebarAccountsTabs, sidebarTabs, TreasuryTabs } from "@/src/constants/vendorDetailSidebarTab";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
@@ -16,7 +16,7 @@ const OnboardingTab = ({ onboarding_refno, refno, company }: Props) => {
   const tabType = param?.get("tabtype");
   const viaDataImport = param?.get("via_data_import");
   const router = useRouter();
-  const data = designation == "Accounts Team" || designation == "Accounts Head" ? sidebarAccountsTabs : sidebarTabs;
+  const data = designation == "Accounts Team" || designation == "Accounts Head" ? sidebarAccountsTabs : designation == "Treasury" ? TreasuryTabs : sidebarTabs;
 
   return (
     <div className="p-2 flex overflow-x-scroll bg-[#DDE8FE] rounded-xl gap-3 h-fit max-h-[80vh] text-sm">

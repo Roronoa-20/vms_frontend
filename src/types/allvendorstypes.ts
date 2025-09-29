@@ -124,6 +124,8 @@ export interface CompanyData {
   parentfield: string;
   parenttype: string;
   company_display_name: string;
+  via_import?: number | boolean | string;
+
 }
 
 export interface VendorOnboardingRecord {
@@ -245,3 +247,9 @@ export interface Metadata {
   modified_by: string;
   total_vendor_codes: number;
 }
+
+export interface VendorRow extends Vendor {
+  company?: CompanyData;
+}
+
+
