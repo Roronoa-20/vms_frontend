@@ -132,7 +132,9 @@ const AllVendors = () => {
 
         if (activeVendorTab === "vms_registered") {
           const isApproved = vendor.vendor_onb_records?.some(
-            record => record.onboarding_form_status === "Approved"
+            record =>
+              record.onboarding_form_status === "Approved" &&
+              record.company_id === companyRecord.company_id
           );
 
           if (isApproved && companyRecord.via_import !== 1) {
@@ -154,8 +156,6 @@ const AllVendors = () => {
 
     return { vendors: filtered, count };
   };
-
-
 
   return (
     <div className="min-h-screen bg-gray-50 p-2">
