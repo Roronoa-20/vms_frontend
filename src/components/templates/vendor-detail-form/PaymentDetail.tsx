@@ -88,26 +88,26 @@ const PaymentDetail = ({
   const [errors, setErrors] = useState<any>({});
   const validate = () => {
     const errors: any = {};
-    if (!paymentDetail?.bank_name) {
+    if (!paymentDetail?.bank_name && !OnboardingDetail?.bank_name) {
       errors.bank_name = "Please Enter Bank Name";
     }
-    if (!paymentDetail?.ifsc_code) {
+    if (!paymentDetail?.ifsc_code && !OnboardingDetail?.ifsc_code) {
       errors.ifsc_code = "Please Enter ifsc code";
     }
 
-    if (!paymentDetail?.account_number) {
+    if (!paymentDetail?.account_number && !OnboardingDetail?.account_number) {
       errors.account_number = "Please Enter Account Number ";
     }
 
-    if (!paymentDetail?.name_of_account_holder) {
+    if (!paymentDetail?.name_of_account_holder && !OnboardingDetail?.name_of_account_holder) {
       errors.name_of_account_holder = "Please Enter Account Holder ";
     }
 
-    if (!paymentDetail?.type_of_account) {
+    if (!paymentDetail?.type_of_account && !OnboardingDetail?.type_of_account) {
       errors.type_of_account = "Please Enter Type Of Account";
     }
 
-    if (!bankProofFile) {
+    if (!bankProofFile && !OnboardingDetail?.bank_proof?.url) {
       errors.bank_proof = "Please Upload Bank Proof";
     }
 
@@ -117,7 +117,7 @@ const PaymentDetail = ({
   const handleSubmit = async () => {
     const validationErrors = validate();
 
-    if (!bankProofFile) {
+    if (!bankProofFile && !OnboardingDetail?.bank_proof?.url) {
       alert("Please upload bank proof");
       return;
     }
