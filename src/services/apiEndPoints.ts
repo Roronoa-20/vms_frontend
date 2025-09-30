@@ -215,7 +215,12 @@ const API_END_POINTS = {
   extendexistingvendors: `${url}/api/method/vms.APIs.vendor_onboarding.extend_vendor_code_in_sap.send_vendor_code_extend_mail`,
 
   //gate Entry
-  sendQRData:`${url}/api/method/vms.APIs.dispatch.dispatch.get_dispatch_data`
+  sendQRData:`${url}/api/method/vms.APIs.dispatch.dispatch.get_dispatch_data`,
+  sendGateEntry:`${url}/api/method/vms.APIs.dispatch.gate_entry.create_gate_entry`,
+  fetchGateEntry:`${url}/api/method/vms.APIs.dispatch.get_gate_entry.gate_entry_get`,
+  inwardLocationDropdown:`${url}/api/method/vms.APIs.dispatch.gate_entry.get_inward_location`,
+  handoverPersonDropdown:`${url}/api/method/vms.APIs.dispatch.gate_entry.get_handover_person`,
+  handover_submit:`${url}/api/method/vms.APIs.dispatch.gate_entry.handover_gate_entry`
 }
 
 export default API_END_POINTS;

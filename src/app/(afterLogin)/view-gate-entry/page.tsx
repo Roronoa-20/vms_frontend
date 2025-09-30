@@ -1,4 +1,4 @@
-import GateEntry from '@/src/components/pages/GateEntry'
+import GateEntry from '@/src/components/pages/ViewGateEntry'
 import React from 'react'
 
 const Page = async ({ searchParams }: { searchParams: Promise<{ refno?: string; }> }): Promise<React.ReactElement> => {

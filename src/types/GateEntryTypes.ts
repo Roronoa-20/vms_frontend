@@ -1,21 +1,46 @@
 export type TFetchedQRData = {
+    // name:string
+    // company_name:string,
+    // vendor_name:string,
+    // supplier_gst:string,
+    // invoice_number:string,
+    // invoice_date:string,
+    // courier_name:string,
+    // invoice_amount:string,
+    // vendor_address:string,
+    // owner:string,
+    // vehicle_details_item:TVehicalDetails[],
+    // gate_entry_details:TPurchaseDetailTable[]
+    // creation:string,
+    // bill_of_entry_no:string,
+    // bill_of_entry_date:string,
+    // e_way_bill_no:string,
+    // e_way_bill_date:string,
+    // inward_location:string
+    handover_remark:string
+    handover_to_person:string
+    status:string
+    received_remark:string
+    is_submitted:number
     name:string
-    company_name:string,
-    vendor_name:string,
-    supplier_gst:string,
-    invoice_number:string,
-    invoice_date:string,
-    courier_name:string,
-    invoice_amount:string,
-    vendor_address:string,
-    owner:string,
-    vehical_details:TVehicalDetails[],
-    items:TPurchaseDetailTable[]
-    creation:string,
-    bill_of_entry_no:string,
-    bill_of_entry_date:string,
-    e_way_bill_no:string,
-    e_way_bill_date:string
+    inward_location:string
+        name_of_company:string
+        name_of_vendor:string
+        vendor_address:string
+        vendor_gst:string
+        challan_no:string
+        challan_date:string
+        bill_of_entry_no:string
+        bill_of_entry_date:string
+        eway_bill_no:string
+        eway_bill_date:string
+        transport:string
+        created_by:string
+        created_date:string
+        invoice_value:string
+        gate_entry_details:TPurchaseDetailTable[]
+        vehicle_details_item:TVehicalDetails[],
+        remarks:string
 }
 
 export type TVehicalDetails = {
@@ -60,5 +85,7 @@ name: string;
   parentfield: string;
   parenttype: string;
   doctype: string;
+  received_qty:string;
+  purchase_order:string
 }
 

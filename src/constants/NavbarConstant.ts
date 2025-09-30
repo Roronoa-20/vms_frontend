@@ -24,6 +24,7 @@ export const NavbarConstant:Record<string,string> = {
     "/view-rfq": "Request for Quotations (RFQ)",
     "/view-quotation": "Quotation",
     "/view-all-po-changes": "Changed PO Details",
-    "/gate-entry":"Gate Entry"
-
+    "/gate-entry":"Gate Entry",
+    "/view-gate-entry":"View Gate Entry",
+    "/gate-entry-dashboard":"Dashboard"
 }
