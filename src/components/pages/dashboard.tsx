@@ -23,6 +23,8 @@ const Dashboard = async () => {
   const CardData: dashboardCardData =
     dashboardCardApi?.status == 200 ? dashboardCardApi?.data?.message : "";
 
+  console.log(CardData, "CardData-------------------------")
+
   //po table 
   const dashboardPOTableDataApi: AxiosResponse = await requestWrapper({
     url: `${API_END_POINTS?.poTable}`,

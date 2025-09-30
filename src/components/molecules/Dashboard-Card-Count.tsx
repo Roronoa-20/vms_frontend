@@ -24,13 +24,13 @@ import { useAuth } from "@/src/context/AuthContext";
 import DashboardPurchaseEnquiryTable from "./Dashboard-Purchase-Enquiry-Table";
 import DashboardPurchaseRequisitionTable from "./Dashboard-Purchase-Requisition-Table";
 import { FileSearch } from "lucide-react";
-import DashboardRFQTable from "./DashboardRFQTable";
+import DashboardRFQTable from "./Dashboard-RFQ-Table";
 import ASAVendorMonthWiseChart from "./ASAVendorMonthWiseChart";
-import DashboardSAPErrorTable from "./DashboardSAPErrorTable";
-import DashboardAccountsPendingTable from "./DashboardAccountsPendingTable";
-import DashboardAccountsOnboardedTable from "./DashboardAccountsOnboardedTable";
-import DashboardAccountsRejectedTable from "./DashboardAccountsRejectedTable";
-import DashboardAccountsSAPErrorTable from "./DashboardAccountsSAPErrorTable";
+import DashboardSAPErrorTable from "./Dashboard-SAPError-Table";
+import DashboardAccountsPendingTable from "./Dashboard-Accounts-Pending-Table";
+import DashboardAccountsOnboardedTable from "./Dashboard-Accounts-Onboarded-Table";
+import DashboardAccountsRejectedTable from "./Dashboard-Accounts-Rejected-Table";
+import DashboardAccountsSAPErrorTable from "./Dashboard-Accounts-SAPError-Table";
 
 type Props = {
   cardData: dashboardCardData
@@ -48,10 +48,10 @@ type Props = {
   dashboardASAPendingVendorListTableData: DashboardTableType["asa_form_data"]
   ASAdashboardOnboardedVendorcountTableData: DashboardTableType["asa_form_data"]
   sapErrorDashboardData: DashboardTableType["sapErrorDashboardData"]
-  dashboardAccountsPending:any
-  dashboardAccountsOnboarded:any
-  dashboardAccountsRejected:any
-  dashboardAccountsSapErrors:any
+  dashboardAccountsPending: any
+  dashboardAccountsOnboarded: any
+  dashboardAccountsRejected: any
+  dashboardAccountsSapErrors: any
   ASAdashboardOnboardedVendorListTableData: DashboardTableType["asa_form_data"]
 }
 
@@ -195,6 +195,41 @@ const DashboardCards = ({ ...Props }: Props) => {
         hover: "hover:border-violet-400",
       },
     ];
+  } else if (designation === "Treasury") {
+    allCardData = [
+      {
+        name: "Pending Vendors",
+        count: Props.cardData?.pending_vendor_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/doc.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-rose-100",
+        hover: "hover:border-rose-400",
+      },
+      {
+        name: "Accounts Pending Vendors",
+        count: Props?.cardData?.pending_vendor_count_by_accounts_team ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
+      {
+        name: "Onboarded Vendors",
+        count: Props.cardData?.approved_vendor_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/tick.svg",
+        text_color: "text-emerald-800",
+        bg_color: "bg-emerald-100",
+        hover: "hover:border-emerald-400",
+      },
+      {
+        name: "Accounts Onboarded Vendors",
+        count: Props?.cardData?.approved_vendor_count_by_accounts_team ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-violet-800",
+        bg_color: "bg-violet-100",
+        hover: "hover:border-violet-400",
+      },
+    ];
   } else {
     allCardData = [
       {
@@ -265,26 +300,25 @@ const DashboardCards = ({ ...Props }: Props) => {
   }
 
   let EnquirerCard = [
-   {
-        name: "Purchase Inquiry",
-        count: Props.cardData?.cart_count ?? 0,
-        icon: "/dashboard-assests/cards_icon/doc.svg",
-        text_color: "text-rose-800",
-        bg_color: "bg-rose-100",
-        hover: "hover:border-rose-400",
-      },
-      {
-        name: "Purchase Requisition",
-        count: Props.cardData?.pr_count ?? 0,
-        icon: "/dashboard-assests/cards_icon/file-search.svg",
-        text_color: "text-rose-800",
-        bg_color: "bg-green-200",
-        hover: "hover:border-rose-400",
-      },
-  ]
+    {
+      name: "Purchase Inquiry",
+      count: Props.cardData?.cart_count ?? 0,
+      icon: "/dashboard-assests/cards_icon/doc.svg",
+      text_color: "text-rose-800",
+      bg_color: "bg-rose-100",
+      hover: "hover:border-rose-400",
+    },
+    {
+      name: "Purchase Requisition",
+      count: Props.cardData?.pr_count ?? 0,
+      icon: "/dashboard-assests/cards_icon/file-search.svg",
+      text_color: "text-rose-800",
+      bg_color: "bg-green-200",
+      hover: "hover:border-rose-400",
+    },
+  ];  
 
-  let cardData = user === "Enquirer"
-    ?EnquirerCard : allCardData;
+  let cardData = user === "Enquirer" ? EnquirerCard : allCardData;
 
   useEffect(() => {
     if (user) {

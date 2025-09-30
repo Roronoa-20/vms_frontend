@@ -65,14 +65,9 @@ const handleSelectChange = (
 };
 
 
-const DashboardPendingVendorsTable = ({
-  dashboardTableData,
-  companyDropdown,
-}: Props) => {
+const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
   console.log(dashboardTableData, "this is dashboardTableData");
-  const [table, setTable] = useState<
-    DashboardTableType["pending_vendor_onboarding"]
-  >(dashboardTableData?.pending_vendor_onboarding);
+  const [table, setTable] = useState<DashboardTableType["pending_vendor_onboarding"]>(dashboardTableData?.pending_vendor_onboarding);
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [search, setSearch] = useState<string>("");
   const [total_event_list, settotalEventList] = useState(0);
@@ -121,10 +116,12 @@ const DashboardPendingVendorsTable = ({
   console.log(table, "this is table");
   const { designation } = useAuth();
   const isAccountsUser = designation?.toLowerCase().includes("account");
+  const isTreasuryUser = designation?.toLowerCase() === "treasury";
 
   const handleView = async (refno: string, vendor_Onboarding: string) => {
     router.push(
-      `/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${vendor_Onboarding}&refno=${refno}`
+      `/view-onboarding-details?tabtype=${isTreasuryUser ? "Document Detail" : "Company Detail"
+      }&vendor_onboarding=${vendor_Onboarding}&refno=${refno}`
     );
   };
 
@@ -148,11 +145,10 @@ const DashboardPendingVendorsTable = ({
               }}
             />
             <Select
-                value={selectedCompany}
-                onValueChange={(value) => handleSelectChange(value, setSelectedCompany)
-                }
-              >
-            
+              value={selectedCompany}
+              onValueChange={(value) => handleSelectChange(value, setSelectedCompany)
+              }
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
@@ -199,7 +195,7 @@ const DashboardPendingVendorsTable = ({
               <TableHead className="text-center text-black whitespace-nowrap">
                 View Details
               </TableHead>
-              {!isAccountsUser && (
+              {!isAccountsUser && !isTreasuryUser && (
                 <TableHead className="text-center text-black whitespace-nowrap">
                   QMS Form
                 </TableHead>
@@ -225,13 +221,12 @@ const DashboardPendingVendorsTable = ({
                   </TableCell>
                   <TableCell>
                     <div
-                      className={`px-2 py-3 rounded-xl uppercase ${
-                        item?.onboarding_form_status === "Pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : item?.onboarding_form_status === "Approved"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                      }`}
+                      className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "Pending"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : item?.onboarding_form_status === "Approved"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                        }`}
                     >
                       {item?.onboarding_form_status || "--"}
                     </div>
@@ -263,7 +258,7 @@ const DashboardPendingVendorsTable = ({
                       View
                     </Button>
                   </TableCell>
-                  {!isAccountsUser && (
+                  {!isAccountsUser && !isTreasuryUser && (
                     <TableCell>
                       <div
                         className={`${item?.qms_form_filled && item?.sent_qms_form_link && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}

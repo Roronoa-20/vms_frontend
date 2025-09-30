@@ -46,6 +46,7 @@ interface Props {
 const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconciliationDropdown, tabType, validation_check, isPurchaseTeamBankFile, isAmendment, country, isPurchaseTeamBeneficiaryFile, isPurchaseTeamIntermediateFile, re_release }: Props) => {
   const [reconciliationAccount, setReconciliationAccountt] = useState<string>(OnboardingDetail?.reconciliation_account as string);
   const { designation } = useAuth();
+  const isTreasuryUser = designation?.toLowerCase() === "treasury";
   console.log(OnboardingDetail, "htis is data")
   console.log(reconciliationDropdown, "this is dropdown")
   console.log(OnboardingDetail?.reconciliation_account, "this is reconsiliation");
@@ -81,7 +82,7 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
         <h1 className="font-semibold text-[18px]">Purchasing Details</h1>
 
         {/* Send Email Button */}
-        {(isAmendment == 1 || re_release == 1) || (validation_check?.change_pur_detail_req_mail_to_it_head !== 1) && (
+        {!isTreasuryUser && (isAmendment == 1 || re_release == 1) || (validation_check?.change_pur_detail_req_mail_to_it_head !== 1) && (
           <Button
             className="mb-2 inline-flex items-center gap-2 rounded-[28px] border px-4 py-2 shadow-sm bg-[#5e90c0] text-white hover:bg-[#46709c] transition"
             onClick={() => setOpenDialog(true)}
@@ -127,7 +128,7 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
           </DialogContent>
         </Dialog>
       </div>
-       <div className="grid grid-cols-3 gap-6 p-2">
+      <div className="grid grid-cols-3 gap-6 p-2">
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Company Name
@@ -217,10 +218,11 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
       </div>
       <div className={`flex justify-end`}>
         {/* {validation_check?.change_pur_detail_req_mail_to_it_head !== 1 && ( */}
+        {!isTreasuryUser && (
           <>
             {/* <Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`}>Next</Button> */}
             {
-              designation == "Purchase Team" && validation_check?.is_purchase_approve == 1 && validation_check?.change_pur_detail_req_mail_to_it_head !== 1 && 
+              designation == "Purchase Team" && validation_check?.is_purchase_approve == 1 && validation_check?.change_pur_detail_req_mail_to_it_head !== 1 &&
               <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile ? true : false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile ? true : false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile ? true : false} isAccountTeam={validation_check?.register_by_account_team == 1 ? 1 : 0} />
             }
             {
@@ -236,7 +238,7 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
               <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile ? true : false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile ? true : false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile ? true : false} isAccountTeam={validation_check?.register_by_account_team == 1 ? 1 : 0} />
             }
           </>
-        {/* )} */}
+        )}
       </div>
     </div>
   )

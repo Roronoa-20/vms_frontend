@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Vendor, AllVendorsCompanyCodeResponse, CompanyVendorCodeRecord } from "@/src/types/allvendorstypes";
+import { Vendor, AllVendorsCompanyCodeResponse, CompanyVendorCodeRecord, VendorRow, CompanyData } from "@/src/types/allvendorstypes";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/src/components/atoms/table";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -13,11 +13,11 @@ import NewVendorRegistration from "@/src/components/pages/newvendorregistration"
 import { TvendorRegistrationDropdown } from "@/src/types/types";
 import { Label } from "@/components/ui/label";
 import { Select, SelectGroup, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/src/components/atoms/select";
-import { RowData, ExtendRowData } from "@/src/types/rowdata";
+import { RowData, ExtendRowData, MultipleCompanyData } from "@/src/types/rowdata";
 
 
 interface Props {
-    vendors: Vendor[];
+    vendors: VendorRow[];
     activeTab: string;
 }
 
@@ -53,52 +53,126 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
             .reduce((sum, k) => sum + (colWidths[k] || 0), 0);
     };
 
-    const rows: RowData[] = vendors.flatMap((vendor) => {
-        const companyData = vendor.multiple_company_data?.length
-            ? vendor.multiple_company_data.filter((c) => c.company_name === activeTab)
-            : [{ company_name: activeTab, company_display_name: activeTab, company_vendor_code: "N.A.", sap_client_code: "N.A.", purchase_organization: "N.A." }];
+    // const rows: RowData[] = vendors.flatMap((vendor) => {
+    //     const companyData = vendor.multiple_company_data?.length
+    //         ? vendor.multiple_company_data.filter((c) => c.company_name === activeTab)
+    //         : [{ company_name: activeTab, company_display_name: activeTab, company_vendor_code: "N.A.", sap_client_code: "N.A.", purchase_organization: "N.A.", via_import: 0 }];
 
-        return companyData.map((c) => {
+    //     return companyData.map((c) => {
+    //         const approvedRecord = vendor.vendor_onb_records?.find(
+    //             (record) => record.onboarding_form_status === "Approved"
+    //         );
+
+    //         return {
+    //             multiple_company_data: [c],
+    //             name: vendor.name,
+    //             ref_no: approvedRecord?.vendor_onboarding_no || "N.A.",
+    //             multiple_company: vendor.bank_details?.registered_for_multi_companies ?? 0,
+    //             company_code: c.company_name,
+    //             vendor_code: c.company_vendor_code || "N.A.",
+    //             vendor_name: vendor.vendor_name || "N.A.",
+    //             office_email_primary: vendor.office_email_primary || "N.A.",
+    //             pan_number: vendor.bank_details?.company_pan_number || "N.A.",
+    //             gst_no: vendor.document_details || "N.A.",
+    //             state: c.company_display_name || "N.A.",
+    //             country: vendor.country || "N.A.",
+    //             pincode: vendor.mobile_number || "N.A.",
+    //             bank_name: vendor.bank_details?.bank_name || "N.A.",
+    //             ifsc_code: vendor.bank_details?.ifsc_code || "N.A.",
+    //             sap_client_code: c.sap_client_code || "N.A.",
+    //             purchase_org: c.purchase_organization || "N.A.",
+    //             via_data_import: vendor.via_data_import || "0",
+    //             created_from_registration: vendor.created_from_registration || "0",
+    //         };
+    //     });
+    // });
+
+    const normalizeCompanyData = (c: Partial<CompanyData> | any): MultipleCompanyData => ({
+        company_name: c.company_name ?? "N.A.",
+        purchase_organization: c.purchase_organization ?? "N.A.",
+        account_group: c.account_group ?? undefined,
+        terms_of_payment: c.terms_of_payment ?? undefined,
+        sap_client_code: c.sap_client_code ?? "N.A.",
+        purchase_group: c.purchase_group ?? undefined,
+        order_currency: c.order_currency ?? undefined,
+        incoterm: c.incoterm ?? undefined,
+        reconciliation_account: c.reconciliation_account ?? undefined,
+        company_vendor_code: c.company_vendor_code ?? "N.A.",
+        company_display_name: c.company_display_name ?? "N.A.",
+        via_import: c.via_import != null ? Number(c.via_import) : 0,
+    });
+
+    const rows: RowData[] = vendors.flatMap((vendor) => {
+        // Always have at least one company entry for the active tab
+        const companyDataList: Partial<CompanyData>[] = vendor.multiple_company_data?.length
+            ? vendor.multiple_company_data.filter((c) => c.company_name === activeTab)
+            : [{
+                name: "",
+                creation: "",
+                modified: "",
+                modified_by: "",
+                owner: "",
+                docstatus: 0,
+                idx: 0,
+                company_name: activeTab,
+                purchase_organization: "N.A.",
+                account_group: undefined,
+                terms_of_payment: undefined,
+                sap_client_code: "N.A.",
+                purchase_group: undefined,
+                order_currency: undefined,
+                incoterm: undefined,
+                reconciliation_account: undefined,
+                company_vendor_code: "N.A.",
+                company_display_name: activeTab,
+                parent: "",
+                parentfield: "",
+                parenttype: "",
+                via_import: 0,
+            }];
+
+        return companyDataList.map((company) => {
             const approvedRecord = vendor.vendor_onb_records?.find(
                 (record) => record.onboarding_form_status === "Approved"
             );
 
+            const normalizedCompany = normalizeCompanyData(company);
+
             return {
-                name: vendor.name,
-                ref_no: approvedRecord?.vendor_onboarding_no || "N.A.",
+                multiple_company_data: [normalizedCompany],
+                name: vendor.name ?? "N.A.",
+                ref_no: approvedRecord?.vendor_onboarding_no ?? "N.A.",
                 multiple_company: vendor.bank_details?.registered_for_multi_companies ?? 0,
-                company_code: c.company_name,
-                vendor_code: c.company_vendor_code || "N.A.",
-                vendor_name: vendor.vendor_name || "N.A.",
-                office_email_primary: vendor.office_email_primary || "N.A.",
-                pan_number: vendor.bank_details?.company_pan_number || "N.A.",
-                gst_no: vendor.document_details || "N.A.",
-                state: c.company_display_name || "N.A.",
-                country: vendor.country || "N.A.",
-                pincode: vendor.mobile_number || "N.A.",
-                bank_name: vendor.bank_details?.bank_name || "N.A.",
-                ifsc_code: vendor.bank_details?.ifsc_code || "N.A.",
-                sap_client_code: c.sap_client_code || "N.A.",
-                purchase_org: c.purchase_organization || "N.A.",
-                via_data_import: vendor.via_data_import || "0",
-            };
+                company_code: normalizedCompany.company_name,
+                vendor_code: normalizedCompany.company_vendor_code,
+                vendor_name: vendor.vendor_name ?? "N.A.",
+                office_email_primary: vendor.office_email_primary ?? "N.A.",
+                pan_number: vendor.bank_details?.company_pan_number ?? "N.A.",
+                gst_no: vendor.document_details ?? "N.A.",
+                state: normalizedCompany.company_display_name,
+                country: vendor.country ?? "N.A.",
+                pincode: vendor.mobile_number ?? "N.A.",
+                bank_name: vendor.bank_details?.bank_name ?? "N.A.",
+                ifsc_code: vendor.bank_details?.ifsc_code ?? "N.A.",
+                sap_client_code: normalizedCompany.sap_client_code,
+                purchase_org: normalizedCompany.purchase_organization,
+                via_data_import: vendor.via_data_import != null ? Number(vendor.via_data_import) : 0,
+                created_from_registration: vendor.created_from_registration != null ? Number(vendor.created_from_registration) : 0,
+            } as RowData;
         });
     });
+    console.log("Normalized Rows----->", rows);
 
     const totalRecords = rows.length;
     const startIdx = (currentPage - 1) * recordPerPage;
     const paginatedRows = rows.slice(startIdx, startIdx + recordPerPage);
 
     const columns: { key: keyof RowData; label: string; type?: "text" | "file" | "boolean"; sticky?: boolean; }[] = [
-        // { key: "multiple_company", label: "Multi-Company?", type: "boolean" },
         { key: "company_code", label: "Company Code", sticky: true },
         { key: "vendor_name", label: "Vendor Name", sticky: true },
         { key: "country", label: "Country" },
         { key: "office_email_primary", label: "Official Email" },
         { key: "pan_number", label: "PAN Number" },
-        // { key: "gst_no", label: "GST Number" },
-        // { key: "state", label: "State" },
-        // { key: "pincode", label: "Pincode/ZipCode" },
         { key: "bank_name", label: "Bank Name" },
         { key: "ifsc_code", label: "IFSC Code" },
     ];
@@ -130,10 +204,30 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
         }
     };
 
-    const handleView = (refno: string, vendorId: string, via_data_import: string | number) => {
-        router.push(
-            `/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${refno}&refno=${vendorId}&via_data_import=${via_data_import}`
-        );
+    // const handleView = (refno: string, vendorId: string, via_data_import: string | number) => {
+    //     router.push(
+    //         `/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${refno}&refno=${vendorId}&via_data_import=${via_data_import}`
+    //     );
+    // };
+
+    const handleView = (row: RowData) => {
+        const isImported = row.multiple_company_data?.some(c => String(c.via_import) === "1");
+        const isViaImport = String(row.via_data_import) === "1";
+        const isFromRegistration = String(row.created_from_registration) === "1";
+
+        if (isViaImport && isImported) {
+            router.push(
+                `/view-onboarding-details?tabtype=Company%20Detail&refno=${row.name}&company_code=${row.company_code}&via_data_import=1`
+            );
+        } else if (isFromRegistration && !isImported) {
+            router.push(
+                `/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${row.ref_no}&refno=${row.name}`
+            );
+        } else {
+            router.push(
+                `/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${row.ref_no}&refno=${row.name}`
+            );
+        }
     };
 
 
@@ -157,14 +251,12 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
             try {
                 if (!dropdownUrl) return;
 
-                // Unfiltered call (no sap_client_code)
                 const allDropDownApi: AxiosResponse = await requestWrapper({
                     url: dropdownUrl,
                     method: "GET",
                 });
                 setUnfilteredDropdownData(allDropDownApi?.status === 200 ? allDropDownApi.data?.message?.data ?? null : null);
 
-                // Filtered call (sap_client_code specific)
                 if (!activeTab) return;
                 const selectedCompany = vendors
                     ?.flatMap((vendor) => vendor.multiple_company_data || [])
@@ -310,9 +402,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                             <TableHeader className="sticky top-0 z-10 bg-blue-100">
                                 <TableRow>
                                     <TableHead
-                                        ref={(el) => {
-                                            headerRefs.current["srno"] = el;
-                                        }}
+                                        ref={(el) => { headerRefs.current["srno"] = el; }}
                                         className="sticky left-0 z-20 bg-blue-100 text-center text-black text-nowrap px-4 py-2"
                                         style={{ left: getStickyLeft("srno") }}
                                     >
@@ -330,7 +420,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                             </TableHead>
                                             {index === 2 && (
                                                 <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
-                                                    Vendor Codes <br/>& GST
+                                                    Vendor Codes <br />& GST
                                                 </TableHead>
                                             )}
                                         </React.Fragment>
@@ -360,7 +450,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                             ? "bg-yellow-100 border-2 border-yellow-400"
                                             : idx % 2 === 0 ? "bg-gray-50" : "bg-white"}>
                                         <TableCell
-                                            className={`text-center px-4 py-2 whitespace-nowrap ${stickyKeys.includes("srno") ? "sticky bg-white z-10" : ""}`}
+                                            className={`text-center px-4 py-2 whitespace-nowrap sticky z-10 ${stickyKeys.includes("srno") ? "bg-white" : "bg-[#f7f7f7]"}`}
                                             style={{ left: getStickyLeft("srno") }}
                                         >
                                             {startIdx + idx + 1}
@@ -369,13 +459,13 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                         {columns.map((col, index) => (
                                             <React.Fragment key={`${row.name}-${col.key}-${index}`}>
                                                 <TableCell
-                                                    className={`text-center px-4 py-2 whitespace-nowrap ${stickyKeys.includes(col.key) ? "sticky bg-white z-10" : ""}`}
+                                                    className={`text-center px-4 py-2 whitespace-nowrap ${stickyKeys.includes(col.key) ? "sticky bg-white z-10" : "bg-[#f7f7f7]"}`}
                                                     style={stickyKeys.includes(col.key) ? { left: getStickyLeft(col.key) } : {}}
                                                 >
                                                     {renderCell(row, col)}
                                                 </TableCell>
                                                 {index === 2 && (
-                                                    <TableCell className="text-center px-4 py-2">
+                                                    <TableCell className="text-center px-4 py-2 bg-[#f7f7f7]">
                                                         <Button
                                                             variant="outline"
                                                             onClick={() => fetchVendorCodes(row.name, row.company_code)}
@@ -389,15 +479,16 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                         ))}
 
                                         {/* Actions */}
-                                        <TableCell className="text-center">
+                                        <TableCell className="text-center bg-[#f7f7f7]">
                                             <Button
-                                                onClick={() => handleView(row.ref_no, row.name, row.via_data_import)}
+                                                // onClick={() => handleView(row.ref_no, row.name, row.via_data_import)}
+                                                onClick={() => handleView(row)}
                                                 className="whitespace-nowrap bg-[#5291CD] text-white text-sm rounded-xl px-3 py-1"
                                             >
                                                 View
                                             </Button>
                                         </TableCell>
-                                        <TableCell className="text-center">
+                                        <TableCell className="text-center bg-[#f7f7f7]">
                                             {["1012", "1022", "1000", "1025", "1030"].includes(row.company_code) ? (
                                                 <div className="flex gap-2 justify-center">
                                                     <Button
@@ -461,37 +552,39 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                 <PopUp
                     handleClose={() => setIsVendorCodeDialog(false)}
                     headerText="Vendor Codes"
-                    classname="overflow-y-auto md:max-w-3xl md:max-h-[80vh]"
+                    classname="relative"
                 >
-                    <div className="overflow-x-auto mt-3">
-                        <Table className="min-w-full text-sm">
-                            <TableBody>
-                                {selectedVendorCodes.map((company) => (
-                                    <React.Fragment key={company.company_info.company_code}>
-                                        <TableRow className="bg-[#5291CD] text-white font-semibold sticky top-0">
-                                            <TableCell colSpan={3} className="hover:bg-[#5291CD]">
-                                                Company Code: {company.company_info.company_code}
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow className="bg-gray-200 hover:bg-gray-200 font-semibold">
-                                            <TableHead>State</TableHead>
-                                            <TableHead>GST No</TableHead>
-                                            <TableHead>Vendor Code</TableHead>
-                                        </TableRow>
-                                        {company.vendor_code_table.map((vendor, vIdx) => (
-                                            <TableRow
-                                                key={vIdx}
-                                                className={vIdx % 2 === 0 ? "bg-gray-50" : "bg-white"}
-                                            >
-                                                <TableCell>{vendor.state}</TableCell>
-                                                <TableCell>{vendor.gst_no}</TableCell>
-                                                <TableCell>{vendor.vendor_code || "-"}</TableCell>
+                    <div className="overflow-y-auto md:max-w-3xl md:max-h-[80vh] relative">
+                        <div className="overflow-x-auto">
+                            <Table className="min-w-full text-sm">
+                                <TableBody>
+                                    {selectedVendorCodes.map((company) => (
+                                        <React.Fragment key={company.company_info.company_code}>
+                                            <TableRow className="bg-[#5291CD] text-white font-semibold sticky top-0 z-10">
+                                                <TableCell colSpan={3} className="hover:bg-[#5291CD]">
+                                                    Company Code: {company.company_info.company_code}
+                                                </TableCell>
                                             </TableRow>
-                                        ))}
-                                    </React.Fragment>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                            <TableRow className="bg-gray-200 hover:bg-gray-200 font-semibold sticky top-[36px] z-10">
+                                                <TableHead>State</TableHead>
+                                                <TableHead>GST No</TableHead>
+                                                <TableHead>Vendor Code</TableHead>
+                                            </TableRow>
+                                            {company.vendor_code_table.map((vendor, vIdx) => (
+                                                <TableRow
+                                                    key={vIdx}
+                                                    className={vIdx % 2 === 0 ? "bg-gray-50" : "bg-white"}
+                                                >
+                                                    <TableCell>{vendor.state}</TableCell>
+                                                    <TableCell>{vendor.gst_no}</TableCell>
+                                                    <TableCell>{vendor.vendor_code || "-"}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </React.Fragment>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
                     </div>
                 </PopUp>
             )}
@@ -575,7 +668,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                 size={"nextbtnsize"}
                                 className="py-2"
                             >
-                                Save
+                                Extend
                             </Button>
                         </div>
                     </div >
