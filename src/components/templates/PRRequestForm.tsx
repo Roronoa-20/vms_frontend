@@ -217,7 +217,8 @@ const   PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropd
   }, [pur_req])
 
   console.log(!(pur_req),"pur_req")
-  console.log(mainItems?.['Form Status'],"mainItems?.['Form Status']")
+  console.log(mainItems)
+  console.log(mainItems?.docname && mainItems?.docname,"mainItems?.docname && mainItems?.docname")
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <div className="grid grid-cols-3 gap-6 p-5">
@@ -318,6 +319,8 @@ const   PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropd
         </div>
       </div>
       {!(mainItems?.docname && mainItems?.docname)  && <div className={`flex justify-end p-4`}><Button type='button' className='bg-blue-400 hover:bg-blue-400' onClick={() => handleNext()}>Next</Button></div>}
+
+
       {mainItems && mainItems?.data?.length > 0 && (
         <Card>
           <CardHeader>

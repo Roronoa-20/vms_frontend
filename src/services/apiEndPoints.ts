@@ -120,7 +120,7 @@ const API_END_POINTS = {
   //Public apis
   ProcessToken: `${url}/api/method/vms.purchase.doctype.request_for_quotation.request_for_quotation.process_token`,
   SubmitPublicQuatation: `${url}/api/method/vms.APIs.quotation.create_quotation.create_or_update_quotation_non_onboarded`,
-
+   QuotationDetail:`${url}/api/method/vms.APIs.quotation.quotation.get_quotation_details`,
   // Amend APIs
   AmendAPI: `${url}/api/method/vms.APIs.vendor_onboarding.onboarding_amendment.create_vendor_onboarding_amendment`,
   
