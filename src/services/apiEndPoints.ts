@@ -235,7 +235,10 @@ const API_END_POINTS = {
   addProductInquiryProducts:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.update_cart_products`,
   deleteInquiryProductItem:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.delete_cart_product`,
   InquiryAddtionalApproval:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.send_purchase_enquiry_approval_mail`,
-  submitPrInquiry:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.submit_purchase_inquiry`
+  submitPrInquiry:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.submit_purchase_inquiry`,
+
+  // Dashboard Regustered by API
+  filterregisteredby: `${url}api/method/vms.APIs.vendor_onboarding.vendor_registration_masters.vendor_registration_dropdown_masters`,
 }
 
 export default API_END_POINTS;
