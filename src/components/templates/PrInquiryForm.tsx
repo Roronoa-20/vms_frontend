@@ -124,7 +124,8 @@ formdata.append("attachment",singleTableRow?.file);
 const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.addProductInquiryProducts,method:"POST",data:formdata});
   if(response?.status == 200){
     alert("added successfully");
-    router.push(`pr-inquiry?cart_Id=${refno}`);
+    // router.push(`pr-inquiry?cart_Id=${refno}`);
+    location.reload();
   }
 
     setSingleTableRow(null);
@@ -254,7 +255,6 @@ if (assetCodeLine !== 0) {
     const response:AxiosResponse = await  requestWrapper({url:API_END_POINTS?.submitPrInquiryNextButton,data:{data:{...formData,cart_date: formData?.cart_date ?? formatDateISO(new Date()),user: user,}},method:"POST"});
     if(response?.status == 200){
       router.push(`/pr-inquiry?cart_Id=${response?.data?.message?.name}`);
-      location.reload();
     }
   }
 
