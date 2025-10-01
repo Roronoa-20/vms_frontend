@@ -254,6 +254,7 @@ if (assetCodeLine !== 0) {
     const response:AxiosResponse = await  requestWrapper({url:API_END_POINTS?.submitPrInquiryNextButton,data:{data:{...formData,cart_date: formData?.cart_date ?? formatDateISO(new Date()),user: user,}},method:"POST"});
     if(response?.status == 200){
       router.push(`/pr-inquiry?cart_Id=${response?.data?.message?.name}`);
+      location.reload();
     }
   }
 
@@ -261,7 +262,8 @@ if (assetCodeLine !== 0) {
     const respone:AxiosResponse = await requestWrapper({url:API_END_POINTS?.deleteInquiryProductItem,method:"GET",params:{purchase_inquiry_id:refno,row_name:row_id}});
     if(respone?.status == 200){
       alert("deleted successfully");
-      router.push(`pr-inquiry?cart_Id=${refno}`);
+      // router.push(`pr-inquiry?cart_Id=${refno}`);
+      location.reload();
     }
   }
 
