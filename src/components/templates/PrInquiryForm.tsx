@@ -514,6 +514,7 @@ if (assetCodeLine !== 0) {
                 <TableHead className="text-center">User Specification</TableHead>
                 <TableHead className="text-center">Attachment</TableHead>
                 <TableHead className="text-center">Actions</TableHead>
+                <TableHead className="text-center">Edit</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="text-center">
@@ -548,9 +549,16 @@ if (assetCodeLine !== 0) {
                   <TableCell>{item?.user_specifications}</TableCell>
                   <TableCell><Link href={item?.attachment?.url ?? ""} target='blank'>{item?.attachment?.file_name}</Link></TableCell>
                   <TableCell><div className='flex gap-4 justify-center items-center'>
-                    {/* <PencilIcon className='cursor-pointer' onClick={() => { handleEdit(item, index) }} /> */}
                     <Trash2 className={`text-red-400 cursor-pointer ${PRInquiryData?.is_submited?"hidden":""}`} onClick={()=>{deleteProductItem(item?.name ?? "")}}/>
                   </div>
+                  </TableCell>
+                  <TableCell>
+                    <>
+                    {
+                      PRInquiryData?.asked_to_modify?
+                    <PencilIcon className='cursor-pointer' onClick={() => { handleEdit(item, index) }} />:null
+                    }
+                    </>
                   </TableCell>
                 </TableRow>
               ))}

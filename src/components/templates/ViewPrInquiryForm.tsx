@@ -150,7 +150,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
   }
 
   const handleEmailClose = () => {
-    setIsDialog(false);
+    setIsEmailDialog(false);
     setIsModifyDialog(false);
     setIsAcknowledgeDialog(false);
   }
