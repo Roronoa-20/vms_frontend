@@ -7,12 +7,15 @@ import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import { useRouter } from 'next/navigation';
 import LogisticsExportQuatationFormFields from './LogisticsExportQuatationFormFields';
+import { QuotationDetail } from '@/src/types/QuatationTypes';
 interface Props {
     Dropdown: PurchaseRequestDropdown["message"];
     refno: string;
 }
 const LogisticsExportQuatationForm = ({ Dropdown, refno }: Props) => {
-    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Logistics Vendor", rfq_number: refno });
+    const QuotationData = {}
+    // const [formData, setFormData] = useState<QuotationDetail>({ rfq_type: "Logistics Vendor", rfq_number: refno });
+    const [formData, setFormData] = useState<QuotationDetail>({ rfq_type: "Logistics Vendor",logistic_type:"Export" } as QuotationDetail);
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const router = useRouter()
     const handleSubmit = async () => {
