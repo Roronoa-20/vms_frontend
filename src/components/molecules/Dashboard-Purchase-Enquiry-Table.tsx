@@ -157,7 +157,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
             <TableBody className="text-center text-black">
               {table ? (
                 table?.map((item, index) => {
-                  const url = item?.asked_to_modify ? `/pr-inquiry?refno=${item?.name}` : `/view-pr-inquiry?refno=${item?.name}`;
+                  const url = item?.asked_to_modify ? `/pr-inquiry?refno=${item?.name}` : `/view-pr-inquiry?cart_Id=${item?.name}`;
                   return (
                     <TableRow key={index}>
                       <TableCell className="font-medium text-center whitespace-nowrap">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
