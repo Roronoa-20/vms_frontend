@@ -39,6 +39,7 @@ export type QuotationDetail = {
   negotiation:boolean;
   quotation_item_list: PurchaseRequisitionRow[]
   rfq_type:string;
+  logistic_type:string;
 };
 export type DocumentAttachment = {
   document_name: string;

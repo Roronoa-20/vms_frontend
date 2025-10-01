@@ -192,7 +192,7 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
         </Button>
       </div> */}
       <div className='py-6'>
-        <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen}/>
+        <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen} setNewVendorTable={setNewVendorTable}/>
       </div>
       {
         isDialog &&

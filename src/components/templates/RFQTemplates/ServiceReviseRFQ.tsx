@@ -154,7 +154,7 @@ const ServiceReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
                     <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
                 </div>
                 <div className='py-6'>
-                    <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen}/>
+                    <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen} setNewVendorTable={setNewVendorTable}/>
                 </div>
                 {
                     isDialog &&
