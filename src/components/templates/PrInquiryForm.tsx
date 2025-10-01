@@ -296,7 +296,7 @@ if (assetCodeLine !== 0) {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Cart Use
           </h1>
-          <Select value={formData?.cart_use ?? ""} onValueChange={(value) => { handleSelectChange(value, "cart_use", false) }}>
+          <Select value={formData?.cart_use ?? ""} onValueChange={(value) => { handleSelectChange(value, "cart_use", false) }} disabled={refno?true:false}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -316,7 +316,7 @@ if (assetCodeLine !== 0) {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Category Type
           </h1>
-          <Select value={formData?.category_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "category_type", false); fetchProductName(value) }}>
+          <Select value={formData?.category_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "category_type", false); fetchProductName(value) }} disabled={refno?true:false}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -333,7 +333,7 @@ if (assetCodeLine !== 0) {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Company
           </h1>
-          <Select value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value); }}>
+          <Select value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value); }} disabled={refno?true:false}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -350,7 +350,7 @@ if (assetCodeLine !== 0) {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Purchase Type
           </h1>
-          <Select value={formData?.purchase_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_type", false) }}>
+          <Select value={formData?.purchase_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_type", false) }} disabled={refno?true:false}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -367,7 +367,7 @@ if (assetCodeLine !== 0) {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Plant
           </h1>
-          <Select value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant", false) }}>
+          <Select value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant", false) }} disabled={refno?true:false}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -384,7 +384,7 @@ if (assetCodeLine !== 0) {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Purchase Group
           </h1>
-          <Select value={formData?.purchase_group ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_group", false) }}>
+          <Select value={formData?.purchase_group ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_group", false) }} disabled={refno?true:false}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
