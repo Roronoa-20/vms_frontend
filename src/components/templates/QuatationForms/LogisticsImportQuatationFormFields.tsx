@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/select";
 import { PurchaseRequestDropdown } from "@/src/types/PurchaseRequestType";
 import MultipleFileUpload from "../../molecules/MultipleFileUpload";
+import { QuotationDetail } from '@/src/types/QuatationTypes';
 
 interface Props {
-    formData: Record<string, string>;
-    setFormData: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    formData: QuotationDetail;
+    setFormData: React.Dispatch<React.SetStateAction<QuotationDetail>>;
     uploadedFiles: File[];
     setUploadedFiles: React.Dispatch<React.SetStateAction<File[]>>;
     Dropdown: PurchaseRequestDropdown["message"];
@@ -116,16 +117,17 @@ const LogisticsImportQuatationFormFields = ({
     const handleSelectChange = (value: string, field: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
-    const renderInput = (name: string, label: string, type = 'text', disabled = false) => (
+    const renderInput = (name: string, label: string, type = 'text', disabled = false,placeholder?:string) => (
         <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">{label}</h1>
             <Input
                 name={name}
                 type={type}
                 className="border-neutral-200"
-                value={formData[name] || ''}
+                value={formData[name as keyof QuotationDetail] as string  || ''}
                 onChange={handleFieldChange}
                 disabled={disabled}
+                placeholder={placeholder?placeholder:""}
             />
         </div>
     );
@@ -136,7 +138,7 @@ const LogisticsImportQuatationFormFields = ({
             <textarea
                 name={name}
                 rows={rows}
-                value={formData[name] || ''}
+                value={formData[name as keyof QuotationDetail] as string  || ''}
                 onChange={(e) => handleFieldChange(e)}
                 className="w-full rounded-md border border-neutral-200 px-3 h-10 py-2 text-sm text-gray-800"
             />
@@ -154,7 +156,7 @@ const LogisticsImportQuatationFormFields = ({
         <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">{label}</h1>
             <Select
-                value={formData[name] ?? ""}
+                value={formData[name as keyof QuotationDetail] as string  || ''}
                 onValueChange={(value) => handleSelectChange(value, name)}
                 disabled={isDisabled}
             >
@@ -210,8 +212,8 @@ const LogisticsImportQuatationFormFields = ({
                 {renderInput('exchange_rate', 'XR(XE.COM)', 'text', true)}
                 {renderInput('total_freightinr', 'Total Freight(INR)', 'text', true)}
                 {renderInput('destination_charge', 'DC(INR)')}
-                {renderInput('shipping_line_charge', 'Shipping Line Charges', 'text', mode === "Air")}
-                {renderInput('cfs_charge', 'CFS Charges', 'text', mode === "Air")}
+                {renderInput('shipping_line_charge', 'Shipping Line Charges', 'text', mode === "Air","NA")}
+                {renderInput('cfs_charge', 'CFS Charges', 'text', mode === "Air","NA")}
                 {renderInput('total_landing_price', 'Total Landing Price(INR)', 'text', true)}
                 {renderInput('transit_days', 'Transit Days')}
                 {renderTextarea('remarks', 'Remarks')}
