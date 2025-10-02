@@ -36,6 +36,7 @@ import { useAgingTimer } from "@/src/hooks/useAgingTimer";
 type Props = {
   dashboardTableData: DashboardTableType;
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"];
+  filterregisteredby: TvendorRegistrationDropdown["message"]["data"]["user_list"];
 };
 
 const useDebounce = (value: any, delay: any) => {
@@ -53,10 +54,7 @@ const useDebounce = (value: any, delay: any) => {
   return debouncedValue;
 };
 
-const handleSelectChange = (
-  value: string,
-  setter: (val: string) => void
-) => {
+const handleSelectChange = (value: string, setter: (val: string) => void) => {
   if (value === "--Select--") {
     setter(""); // reset filter
   } else {
@@ -64,10 +62,15 @@ const handleSelectChange = (
   }
 };
 
-
-const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
+const DashboardPendingVendorsTable = ({
+  dashboardTableData,
+  companyDropdown,
+  filterregisteredby,
+}: Props) => {
   console.log(dashboardTableData, "this is dashboardTableData");
-  const [table, setTable] = useState<DashboardTableType["pending_vendor_onboarding"]>(dashboardTableData?.pending_vendor_onboarding);
+  const [table, setTable] = useState<
+    DashboardTableType["pending_vendor_onboarding"]
+  >(dashboardTableData?.pending_vendor_onboarding);
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [search, setSearch] = useState<string>("");
   const [total_event_list, settotalEventList] = useState(0);
@@ -120,7 +123,8 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
 
   const handleView = async (refno: string, vendor_Onboarding: string) => {
     router.push(
-      `/view-onboarding-details?tabtype=${isTreasuryUser ? "Document Detail" : "Company Detail"
+      `/view-onboarding-details?tabtype=${
+        isTreasuryUser ? "Document Detail" : "Company Detail"
       }&vendor_onboarding=${vendor_Onboarding}&refno=${refno}`
     );
   };
@@ -138,6 +142,24 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
             Total Pending Vendors
           </h1>
           <div className="flex gap-4">
+            <Select
+              onValueChange={(value) => {
+                setSelectedCompany(value);
+              }}
+            >
+              <SelectTrigger className="w-96">
+                <SelectValue placeholder="Select CoPersonmpany" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup className="w-full">
+                  {filterregisteredby?.map((item, index) => (
+                    <SelectItem key={index} value={item?.user_id}>
+                      {item?.full_name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
             <Input
               placeholder="Search..."
               onChange={(e) => {
@@ -146,7 +168,8 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
             />
             <Select
               value={selectedCompany}
-              onValueChange={(value) => handleSelectChange(value, setSelectedCompany)
+              onValueChange={(value) =>
+                handleSelectChange(value, setSelectedCompany)
               }
             >
               <SelectTrigger>
@@ -221,12 +244,13 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown }: P
                   </TableCell>
                   <TableCell>
                     <div
-                      className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "Pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : item?.onboarding_form_status === "Approved"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                        }`}
+                      className={`px-2 py-3 rounded-xl uppercase ${
+                        item?.onboarding_form_status === "Pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : item?.onboarding_form_status === "Approved"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                      }`}
                     >
                       {item?.onboarding_form_status || "--"}
                     </div>
