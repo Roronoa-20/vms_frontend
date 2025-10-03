@@ -139,50 +139,6 @@ const DocumentDetails = ({
 
   const validate = () => {
     const errors: any = {};
-    // if (!documentDetails?.company_pan_number && !OnboardingDetail?.company_pan_number) {
-    //   errors.company_pan_number = "Please Enter Company Pan Number";
-    // }
-    // if (!documentDetails?.name_on_company_pan && !OnboardingDetail?.name_on_company_pan) {
-    //   errors.name_on_company_pan = "Please Enter Name On Company Pan";
-    // }
-
-    // // if ((documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_state) && (!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_state)) {
-    // //   errors.gst_state = "Please Select Gst State";
-
-    // // } 
-    // // // if ((documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_number) && (!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_number)) {
-    // // //   errors.gst_number = "Please Enter Gst Number";
-
-    // // // } 
-    // // if ((documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_registration_date) && ((!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_registration_date))) {
-    // //   errors.gst_registration_date = "Please Select Gst Registration Date";
-
-    // // } 
-    // // if ((documentDetails?.gst_ven_type == "Registered" && documentDetails?.gstDocument?.length && documentDetails?.gstDocument?.length == 0) && (!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_document)) {
-    // //   errors.gst_state = "Please Upload Gst File";
-
-    // // } 
-
-    // if ((documentDetails?.msme_registered == "Yes" && !documentDetails?.msme_enterprise_type) && (OnboardingDetail?.msme_registered == "yes" && !OnboardingDetail?.msme_enterprise_type)) {
-    //   errors.msme_enterprise_type = "Please Select Enterprise Type";
-    // } 
-
-    // if ((documentDetails?.msme_registered == "Yes" && !documentDetails?.udyam_number) && (OnboardingDetail?.msme_registered == "Yes" && !OnboardingDetail?.udyam_number)) {
-    //   errors.udyam_number = "Please Enter Udhyam Registration Number";
-    // } 
-
-    // if ((documentDetails?.msme_registered == "Yes" && !documentDetails?.name_on_udyam_certificate) && (OnboardingDetail?.msme_registered == "Yes" && !OnboardingDetail?.name_on_udyam_certificate)) {
-    //   errors.name_on_udyam_certificate = "Please Enter Name Udhyam Certificate";
-    // } 
-
-    // if ((documentDetails?.msme_registered == "Yes" && documentDetails?.udyamCertificate?.length && documentDetails?.udyamCertificate?.length == 0) && (OnboardingDetail?.msme_registered == "Yes" && !OnboardingDetail?.msme_proof)) {
-    //   errors.udyamCertificate = "Please Upload Udhyam Certificate";
-    // } 
-
-
-    // if (!documentDetails?.enterprise_registration_number && !OnboardingDetail?.enterprise_registration_number) {
-    //   errors.enterprise_registration_number = "Please Enter Enterprice Registration Number";
-    // }
 
     return errors;
   };
@@ -313,7 +269,7 @@ const DocumentDetails = ({
     <div className="flex flex-col bg-white rounded-lg p-3 w-full max-h-[80vh]">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Document Details</h1>
-        {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1 ? "" : "hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
+        {/* <Button className={`mb-2`} onClick={()=>{}}>Amend</Button> */}
         {(isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled((prev) => !prev)}

@@ -29,4 +29,8 @@ export const NavbarConstant:Record<string,string> = {
     "/shipment-status": "Shipment Status (DSR)",
     "/view-service-bill": "Service Bill (SB)",
     "/service-bill": "Service Bill (SB)",
+    // "/view-all-po-changes": "Changed PO Details",
+    "/gate-entry":"Gate Entry",
+    "/view-gate-entry":"View Gate Entry",
+    "/gate-entry-dashboard":"Gate-entry Dashboard"
 }

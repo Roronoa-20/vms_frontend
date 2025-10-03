@@ -278,6 +278,19 @@ export const PurchaseHeadsidebarMenu: SidebarItem[] = [
   // },
 ];
 
+export const StoreSideBar = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/gate-entry-dashboard"
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "Gate Entry",
+    href: "/gate-entry"
+  }
+]
+
 
 export const HeadSidebar: SidebarItem[] = [
   {
