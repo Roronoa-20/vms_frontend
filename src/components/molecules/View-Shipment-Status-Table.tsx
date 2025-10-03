@@ -10,6 +10,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import { ShipmentItem, ShipmentTableResponse } from "@/src/types/shipmentstatusTypes";
 import Pagination from "./Pagination";
 import Link from "next/link";
+import { FileText, Plus } from "lucide-react";
 
 interface Props {
   company: string;

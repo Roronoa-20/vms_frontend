@@ -30,7 +30,7 @@ export const sidebarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/view-pr.svg",
     name: "MPR",
-    href: "/view-pickup-request",
+    href: "/pickup-dashboard",
     children: []
   },
   {
@@ -70,7 +70,7 @@ export const sidebarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/view-grn.svg",
     name: "GR Waiver",
-    href: "/view-gr-waiver",
+    href: "/gr-waiver-dashboard",
     children: []
   },
   {
