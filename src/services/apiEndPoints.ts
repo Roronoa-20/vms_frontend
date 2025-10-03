@@ -220,7 +220,9 @@ const API_END_POINTS = {
   fetchGateEntry:`${url}/api/method/vms.APIs.dispatch.get_gate_entry.gate_entry_get`,
   inwardLocationDropdown:`${url}/api/method/vms.APIs.dispatch.gate_entry.get_inward_location`,
   handoverPersonDropdown:`${url}/api/method/vms.APIs.dispatch.gate_entry.get_handover_person`,
-  handover_submit:`${url}/api/method/vms.APIs.dispatch.gate_entry.handover_gate_entry`
+  handover_submit:`${url}/api/method/vms.APIs.dispatch.gate_entry.handover_gate_entry`,
+  GateEntryDashboardCardCount:`${url}/api/method/vms.APIs.dispatch.get_gate_entry.get_gate_entry_statistics`,
+  GateEntryTableData:`${url}/api/method/vms.APIs.dispatch.get_gate_entry.gate_entry_get`
 }
 
 export default API_END_POINTS;

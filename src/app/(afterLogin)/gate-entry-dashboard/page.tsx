@@ -1,8 +1,9 @@
+import GateEntryDashboard from '@/src/components/pages/GateEntryDashboard'
 import React from 'react'
 
 const page = () => {
   return (
-    <div>page</div>
+    <GateEntryDashboard/>
   )
 }
 

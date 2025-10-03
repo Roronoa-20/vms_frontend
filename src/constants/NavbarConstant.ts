@@ -26,5 +26,5 @@ export const NavbarConstant:Record<string,string> = {
     "/view-all-po-changes": "Changed PO Details",
     "/gate-entry":"Gate Entry",
     "/view-gate-entry":"View Gate Entry",
-    "/gate-entry-dashboard":"Dashboard"
+    "/gate-entry-dashboard":"Gate-entry Dashboard"
 }
