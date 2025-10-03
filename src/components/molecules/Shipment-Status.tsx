@@ -68,7 +68,7 @@ export default function ShipmentStatus() {
           setFormData((prev: any) => ({ ...prev, enter_document_no: data.sr_no }));
         }
 
-        setIsEditable(false); // fields disabled initially
+        setIsEditable(false);
       } catch (err) {
         console.error("Error fetching shipment details", err);
       }
@@ -76,7 +76,6 @@ export default function ShipmentStatus() {
     fetchShipment();
   }, [shipmentName]);
 
-  // 🔹 Fetch all RFQ Sr.No for dropdown (only for new shipment)
   useEffect(() => {
     if (!isEditMode) {
       const fetchRFQSrNos = async () => {
@@ -159,7 +158,6 @@ export default function ShipmentStatus() {
     }
   };
 
-  // 🔹 Render field helper with editable toggle
   const renderField = (field: Field, index: number) => {
     const value = formData[field.name] || "";
 

@@ -2,21 +2,17 @@
 
 import React, { useEffect, useState } from "react";
 import { CheckCircleIcon, Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { ShipmentCountResponse, CompanyWiseCount } from "@/src/types/shipmentstatusTypes";
 import ShipmentStatusTable from "@/src/components/molecules/View-Shipment-Status-Table";
-import { Button } from "@/components/ui/button";
 
 export default function Dashboard() {
-  const router = useRouter();
-
   const [companyCounts, setCompanyCounts] = useState<CompanyWiseCount[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
-  const [selectedCompany, setSelectedCompany] = useState<string | null>("TOTAL");
-  const [showTable, setShowTable] = useState<boolean>(true);
+  const [activeTab, setActiveTab] = useState<string | null>("TOTAL");
+
   const COMPANY_NAME_MAP: Record<string, string> = {
     "1000": "Meril India",
     "2000": "Meril US",
@@ -25,8 +21,9 @@ export default function Dashboard() {
     "9000": "Meril South America",
     "1012": "Meril H03",
     "8000": "Meril Endo",
+    "1022": "Meril Endo",
+    "1025": "Meril Endo",
   };
-
 
   useEffect(() => {
     const fetchCounts = async () => {
@@ -58,85 +55,72 @@ export default function Dashboard() {
     fetchCounts();
   }, []);
 
-  const getStatusIcon = (color: string) => (
-    <CheckCircleIcon className={`w-6 h-6 ${color}`} />
-  );
-
-  const handleCardClick = (companyCode: string | null) => {
-    if (selectedCompany === companyCode) {
-      setShowTable(false);
-      setTimeout(() => setSelectedCompany(null), 300);
-    } else {
-      setSelectedCompany(companyCode);
-      setShowTable(true);
-    }
+  const handleTabClick = (tabKey: string) => {
+    if (activeTab === tabKey) setActiveTab(null);
+    else setActiveTab(tabKey);
   };
 
+  const cardColors = [
+    { bg: "bg-rose-100", text: "text-rose-800", hover: "hover:border-rose-400", icon: "text-rose-600" },
+    { bg: "bg-green-100", text: "text-green-800", hover: "hover:border-green-400", icon: "text-green-600" },
+    { bg: "bg-blue-100", text: "text-blue-800", hover: "hover:border-blue-400", icon: "text-blue-600" },
+    { bg: "bg-yellow-100", text: "text-yellow-800", hover: "hover:border-yellow-400", icon: "text-yellow-600" },
+    { bg: "bg-purple-100", text: "text-purple-800", hover: "hover:border-purple-400", icon: "text-purple-600" },
+    { bg: "bg-pink-100", text: "text-pink-800", hover: "hover:border-pink-400", icon: "text-pink-600" },
+  ];
 
-  const handleNewShipment = () => {
-    router.push("/shipment-status");
-  };
+  const cardsData = [
+    {
+      name: "Total Shipments",
+      key: "TOTAL",
+      count: totalCount,
+      ...cardColors[1],
+    },
+    ...companyCounts.map((c, idx) => ({
+      name: c.company_name ?? "Unknown",
+      key: c.company ?? "",
+      count: c.count,
+      ...cardColors[idx % cardColors.length],
+    })),
+  ];
+
 
   return (
     <div className="p-3 bg-gray-200 min-h-screen">
-
-      {/* New Shipment Status Button */}
-      <div className="flex justify-end mb-4">
-        <Button
-          onClick={handleNewShipment}
-          variant={"nextbtn"}
-          size={"nextbtnsize"}
-          className="py-2 flex items-center gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          New Shipment Status
-        </Button>
-      </div>
-
-      {/* Dashboard Cards */}
       <div className="shadow bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          {/* Total Count Card */}
-          <div
-            className="cursor-pointer rounded-lg p-4 shadow-sm bg-green-100 text-green-800 flex items-center justify-between"
-            onClick={() => handleCardClick("TOTAL")}
-          >
-            <div>
-              <p className="text-md">Total Shipments</p>
-              <h3 className="font-semibold">{totalCount}</h3>
-            </div>
-            <div>{getStatusIcon("text-green-600")}</div>
-          </div>
-
-          {/* Company-wise Cards */}
-          {companyCounts.map((entry, idx) => (
+          {cardsData.map((card) => (
             <div
-              key={idx}
-              className="cursor-pointer rounded-lg p-4 shadow-sm bg-blue-100 text-blue-800 flex items-center justify-between"
-              onClick={() => handleCardClick(entry.company ?? "")}
+              key={card.key}
+              onClick={() => handleTabClick(card.key)}
+              className={`
+                group cursor-pointer w-full h-20 rounded-2xl flex flex-col p-3 justify-between border-2
+                ${card.bg} ${card.text} ${card.hover}
+                hover:scale-105 shadow-md transition duration-300 transform
+                ${activeTab === card.key ? "bg-white text-black shadow-lg border-gray-300" : ""}
+              `}
             >
-              <div>
-                <p className="text-md">{entry.company_name ?? "Unknown"}</p>
-                <h3 className="font-semibold">{entry.count}</h3>
+              <div className="flex w-full justify-between">
+                <h1 className="text-[13px]">{card.name}</h1>
+                <CheckCircleIcon className={`w-6 h-6 ${activeTab === card.key ? card.icon : card.text}`} />
               </div>
-              <div>{getStatusIcon("text-blue-600")}</div>
+              <div className="text-[20px] font-bold">{card.count}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Table for selected company (separate box with gap) */}
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden mt-6 shadow bg-white p-4 rounded-2xl ${showTable ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
-          }`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden mt-6 shadow bg-white p-4 rounded-2xl
+                    ${activeTab ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"}`}
       >
-        {selectedCompany && (
+        {activeTab && (
           <ShipmentStatusTable
-            company={selectedCompany === "TOTAL" ? "" : selectedCompany} // <-- raw code
+            company={activeTab === "TOTAL" ? "" : activeTab}
             tableTitle={
-              selectedCompany === "TOTAL"
+              activeTab === "TOTAL"
                 ? "Total Shipment Status"
-                : COMPANY_NAME_MAP[selectedCompany ?? ""] || selectedCompany
+                : COMPANY_NAME_MAP[activeTab] || activeTab
             }
           />
         )}

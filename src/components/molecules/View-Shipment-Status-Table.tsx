@@ -3,14 +3,14 @@
 import React, { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { FileText } from "lucide-react";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { ShipmentItem, ShipmentTableResponse } from "@/src/types/shipmentstatusTypes";
 import Pagination from "./Pagination";
 import Link from "next/link";
-import { FileText, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Plus } from "lucide-react";
 
 interface Props {
   company: string;
@@ -21,14 +21,20 @@ export default function ShipmentStatusTable({ company, tableTitle }: Props) {
   const [data, setData] = useState<ShipmentItem[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
+  const router = useRouter();
   const limit = 20;
 
   const fetchTableData = async () => {
     try {
+      const filters = company && company !== "" ? { company } : {};
       const res: AxiosResponse<ShipmentTableResponse> = await requestWrapper<ShipmentTableResponse>({
         url: API_END_POINTS.shipmentcompanwisetabledata,
         method: "GET",
-        params: { company, page, limit },
+        params: {
+          filters: JSON.stringify(filters),
+          page,
+          limit,
+        },
       });
       setData(res.data.message.data);
       setTotal(res.data.message.pagination.total_count);
@@ -41,9 +47,26 @@ export default function ShipmentStatusTable({ company, tableTitle }: Props) {
     fetchTableData();
   }, [company, page]);
 
+  const handleNewShipment = () => {
+    router.push("/shipment-status");
+  };
+
   return (
     <div>
-      <h1 className="text-lg font-semibold mb-4">{tableTitle || `Shipment Status Data (${company})`}</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-lg font-semibold mb-4">{tableTitle || `Shipment Status Data (${company})`}</h1>
+        <div className="flex justify-end mb-4">
+          <Button
+            onClick={handleNewShipment}
+            variant={"nextbtn"}
+            size={"nextbtnsize"}
+            className="py-2 flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            New Shipment Status
+          </Button>
+        </div>
+      </div>
       <Table>
         <TableHeader>
           <TableRow className="bg-[#a4c0fb] text-[14px]">
