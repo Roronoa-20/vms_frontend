@@ -33,18 +33,13 @@ export const sidebarMenu: SidebarItem[] = [
     href: "/view-pickup-request",
     children: []
   },
-  // {
-  //   logo: "/sidebar-assests/raise-rfq-logo.svg",
-  //   name: "Raise RFQ",
-  //   href: "/create-rfq"
-  // },
   {
     logo: "/sidebar-assests/raise-rfq-logo.svg",
     name: "Raise RFQ",
     // href: "/create-rfq",
     children: [
       { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Create RFQ", href: "/create-rfq" },
-      { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Shipment Status", href: "/view-shipment-status" },
+      { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Shipment Status", href: "/shipment-status-dashboard" },
       { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Service Bill", href: "/view-service-bill" },
     ],
   },

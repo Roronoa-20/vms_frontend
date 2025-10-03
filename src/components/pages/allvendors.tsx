@@ -39,83 +39,36 @@ const AllVendors = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
 
-  // ---- INITIAL FETCH ----
   useEffect(() => {
-    const fetchInitial = async () => {
+    const fetchVendors = async () => {
       setLoading(true);
       try {
-        // Fetch counts + first company data
-        const res: AxiosResponse<ApiResponse> = await requestWrapper({
-          url: API_END_POINTS.allvendorsdetails,
-          method: "GET",
-          params: { page: 1, page_size: pageSize },
-        });
+        const params: any = { page: currentPage, page_size: pageSize };
 
-        const apiData = res.data.message.data;
-        setAnalytics(apiData.analytics || analytics);
-        setCompanyAnalytics(apiData.company_analytics?.company_wise_analytics || []);
-
-        const firstCompany = apiData.company_analytics?.company_wise_analytics?.[0];
-        if (!firstCompany) return;
-        setDefaultTab(firstCompany.company_id);
-
-        // Fetch first company vendors
-        const params: any = { page: 1, page_size: pageSize };
         if (activeVendorTab === "vms_registered") params.onboarding_form_status = "Approved";
-        else params.via_data_import = 1;
-        params.company_name = firstCompany.company_name;
+        else if (activeVendorTab === "imported_vendors") params.via_data_import = 1;
 
-        const vendorsRes: AxiosResponse<ApiResponse> = await requestWrapper({
+        if (defaultTab) params.company_id = defaultTab;
+
+        const res: AxiosResponse<ApiResponse> = await requestWrapper({
           url: API_END_POINTS.allvendorsdetails,
           method: "GET",
           params,
         });
-        console.log("Raw vendor data:", vendorsRes.data.message.data.vendors);
-        const vendorsData = vendorsRes.data.message.data;
-        setVendors(vendorsData.vendors || []);
-        setSearchedVendors(vendorsData.vendors || []);
-        setTotalPages(vendorsData.pagination?.total_pages || 1);
-        setTotalRecords(vendorsData.pagination?.total_records || 0);
-
-      } catch (err) {
-        console.error("Error fetching initial vendors:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchInitial();
-  }, []);
-
-  // ---- FETCH ON TAB / PAGE CHANGE ----
-  useEffect(() => {
-    const fetchAllVendors = async () => {
-      setLoading(true);
-      try {
-        // Fetch vendors + company analytics in one call
-        const res: AxiosResponse<ApiResponse> = await requestWrapper({
-          url: API_END_POINTS.allvendorsdetails,
-          method: "GET",
-          params: { page: 1, page_size: pageSize }, // fetch first page; you can fetch all if needed
-        });
 
         const apiData = res.data.message.data;
 
-        // Set counts & analytics
         setAnalytics(apiData.analytics || analytics);
         setCompanyAnalytics(apiData.company_analytics?.company_wise_analytics || []);
 
-        // Save all vendors
         setVendors(apiData.vendors || []);
         setSearchedVendors(apiData.vendors || []);
-
-        // Set pagination
         setTotalPages(apiData.pagination?.total_pages || 1);
         setTotalRecords(apiData.pagination?.total_records || 0);
 
-        // Default tab = first company
-        const firstCompany = apiData.company_analytics?.company_wise_analytics?.[0];
-        if (firstCompany) setDefaultTab(firstCompany.company_id);
+        if (!defaultTab && apiData.company_analytics?.company_wise_analytics?.[0]) {
+          setDefaultTab(apiData.company_analytics.company_wise_analytics[0].company_id);
+        }
       } catch (err) {
         console.error("Error fetching vendors:", err);
       } finally {
@@ -123,8 +76,9 @@ const AllVendors = () => {
       }
     };
 
-    fetchAllVendors();
-  }, []);
+    fetchVendors();
+  }, [activeVendorTab, currentPage, defaultTab]);
+
 
 
   // ---- SEARCH LOGIC ----
