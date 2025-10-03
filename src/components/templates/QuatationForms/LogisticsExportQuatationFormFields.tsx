@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/select";
 import { PurchaseRequestDropdown } from "@/src/types/PurchaseRequestType";
 import MultipleFileUpload from "../../molecules/MultipleFileUpload";
+import { QuotationDetail } from "@/src/types/QuatationTypes";
 
 interface Props {
-  formData: Record<string, string>;
-  setFormData: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+  formData: QuotationDetail;
+  setFormData: React.Dispatch<React.SetStateAction<QuotationDetail>>;
   uploadedFiles: File[];
   setUploadedFiles: React.Dispatch<React.SetStateAction<File[]>>;
   Dropdown: PurchaseRequestDropdown["message"];
@@ -77,7 +78,7 @@ const LogisticsExportQuatationFormFields = ({
         name={name}
         type={type}
         className="border-neutral-200"
-        value={formData[name] || ""}
+        value={formData[name as keyof QuotationDetail] as string  || ''}
         onChange={handleFieldChange}
         disabled={disabled}
       />
@@ -90,7 +91,7 @@ const LogisticsExportQuatationFormFields = ({
       <textarea
         name={name}
         rows={rows}
-        value={formData[name] || ""}
+        value={formData[name as keyof QuotationDetail] as string  || ''}
         onChange={handleFieldChange}
         className="w-full rounded-md border border-neutral-200 px-3 h-10 py-2 text-sm text-gray-800"
       />
@@ -108,7 +109,7 @@ const LogisticsExportQuatationFormFields = ({
     <div className="col-span-1">
       <h1 className="text-[12px] font-normal text-[#626973] pb-3">{label}</h1>
       <Select
-        value={formData[name] ?? ""}
+        value={formData[name as keyof QuotationDetail] as string  || ''}
         onValueChange={(value) => handleSelectChange(value, name)}
         disabled={isDisabled}
       >

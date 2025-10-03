@@ -43,7 +43,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
                 value={formData[name] || ''}
                 onChange={handleFieldChange}
                 disabled={isdisabled}
-                min={min}
+                min={min || undefined}
             />
         </div>
     );

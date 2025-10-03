@@ -65,15 +65,43 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
   MaterialGroupDropdown
 }) => {
   const [formData, setFormData] = useState<Record<string, any>>({});
-  const [errors, setErrors] = useState<Record<string, boolean>>({});
+  const [errors, setErrors] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(false);
-
+  const [requiredField, setRequiredField] = useState<Record<string, any>>({});
   useEffect(() => {
     if (isOpen) {
       setFormData(defaultData || {});
       setErrors({});
     }
   }, [isOpen, defaultData]);
+
+
+  const fetchRequiredData = async (company: string, pur_type: string, acct_cate: string) => {
+    console.log(company, pur_type, acct_cate)
+    try {
+      const Data = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.purchase_api.handle_req_field_pr.filter_req_fields?company=${company}&pur_type=${pur_type}&acct_cate=${acct_cate}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: 'include',
+        }
+      );
+      if (Data.ok) {
+        const data = await Data.json();
+        setRequiredField(data?.message)
+        console.log(data, "data in required")
+      }
+    } catch (error) {
+      console.log(error, "something went wrong");
+    }
+  };
+  useEffect(() => {
+    fetchRequiredData(formData?.company_code_area_head, formData?.purchase_requisition_type, formData?.account_assignment_category_head);
+  }, [formData?.company_code_area_head, formData?.purchase_requisition_type, formData?.account_assignment_category_head])
+
 
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -100,38 +128,33 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     </h1>
   );
 
-  const requiredFields = [
-    "account_assignment_category_head",
-    "item_category_head",
-    "short_text_head",
-    "quantity_head",
-    "uom_head",
-    "delivery_date_head",
-    "c_delivery_date_head",
-    "delivery_date_head",
-    "material_group_head",
-    "store_location_head",
-    "tracking_id_head",
-    "desired_vendor_head",
-    "valuation_area_head",
-    "fixed_value_head",
-    "spit_head",
-    "purchase_organisation_head",
-    "agreement_head",
-    "item_of_head",
-    "mpn_number_head",
-  ];
-
   const validate = () => {
-    const newErrors: Record<string, boolean> = {};
-    requiredFields.forEach(field => {
-      if (!formData[field]) newErrors[field] = true;
+    const newErrors: Record<string, string> = {};
+
+    Object.entries(requiredField).forEach(([field, rule]) => {
+      const value = formData[field];
+
+      if (rule.includes("Compulsory")) {
+        if (!value || value.trim() === "") {
+          newErrors[field] = `${field} is required`;
+        }
+      }
+
+      // Special condition for "Compulsory must D"
+      if (rule === "Compulsory must D" && value !== "D") {
+        newErrors[field] = `${field} must be 'D'`;
+      }
     });
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async () => {
+    if (!validate()) {
+      alert(JSON.stringify(errors));
+      return;
+    }
     const updateformdata = { ...formData, name: pur_req };
     const url = API_END_POINTS?.PRTableHeadSubmitData;
     const response: AxiosResponse = await requestWrapper({
@@ -226,8 +249,8 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
   ] as const;
   const disabledFields = ["item_number_of_purchase_requisition_head", "Item Number of Purchase Requisition"];
 
-
-
+  console.log(formData?.company_code_area_head, formData?.purchase_requisition_type, formData?.account_assignment_category_head, "formData?.company, formData?.purchase_requisition_type, formData?.account_assignment_category")
+  console.log(requiredField, "requiredField")
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">

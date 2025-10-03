@@ -141,6 +141,28 @@ export type RFQDetails = {
   second_remainder:string,
   third_remainder:string,
   service_location:string,
+  onboarded_vendors:VendorOnboarded[],
+  quotation_received_by_cutoff:QuotationCutoff[];
+  prev_quotation_id:string;
+};
+
+export type QuotationCutoff = {
+  rfq_name: string;
+  cutoff_date: string;   // ISO datetime string
+  data: VendorOnboarded[];
+};
+
+export type VendorOnboarded = {
+  refno: string;
+  vendor_name: string;
+  vendor_code: string[];
+  office_email_primary: string;
+  mobile_number: string;
+  service_provider_type: string;
+  country: string;
+  bid_won: number;
+  bid_loss: number;
+  quotations: Quotation[]; // array of quotation objects
 };
 
 export interface PurchaseRequisitionRow {

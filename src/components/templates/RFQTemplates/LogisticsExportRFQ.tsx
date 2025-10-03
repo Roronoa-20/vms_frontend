@@ -97,6 +97,10 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
         if (formData?.service_provider == "All Service Provider" || formData?.service_provider == "Select" || formData?.service_provider == "Premium Service Provider") {
             setSelectedRows({ vendors: [] })
         }
+        if(!formData?.rfq_cutoff_date_logistic){
+            alert("Fill RFQ Cutoff Date")
+            return;
+        }
         const formdata = new FormData();
         const fullData = {
             ...formData,
@@ -115,7 +119,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
         const url = `${API_END_POINTS?.CreateExportRFQ}`;
         const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" });
         if (response?.status == 200) {
-            alert(`Request for Quotation(${formData?.logistic_type}) Raised Successfully`);
+            alert(`Request for Quotation(Export) Raised Successfully`);
             router.push("/dashboard")
             setLoading(false)
         } else {
@@ -149,7 +153,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
                 <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
             </div>}
             <div className='py-6'>
-                <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen} />
+                <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen} setNewVendorTable={setNewVendorTable} />
             </div>
             <div className='flex justify-end pt-10 px-4'>
                 <Button type='button' className='bg-[#5291CD] py-2  disabled:opacity-50 disabled:cursor-not-allowed' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }}
