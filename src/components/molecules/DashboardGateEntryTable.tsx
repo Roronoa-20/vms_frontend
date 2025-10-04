@@ -34,6 +34,7 @@ import { TableData } from "./GateentryDashboardCards";
 type Props = {
   dashboardTableData: TableData[],
   companyDropdown?: TvendorRegistrationDropdown["message"]["data"]["company_master"]
+  TableTitle:string
 }
 
 
@@ -52,10 +53,10 @@ const useDebounce = (value: any, delay: any) => {
   return debouncedValue;
 };
 
-const DashboardGateEntryTable = ({ dashboardTableData, companyDropdown }: Props) => {
+const DashboardGateEntryTable = ({ dashboardTableData, companyDropdown,TableTitle }: Props) => {
 
   const [table, setTable] = useState<TableData[]>(dashboardTableData);
-  const [selectedCompany, setSelectedCompany] = useState<string>("")
+//   const [selectedCompany, setSelectedCompany] = useState<string>("")
   const [search, setSearch] = useState<string>("");
 
   const [total_event_list, settotalEventList] = useState(0);
@@ -67,11 +68,11 @@ const DashboardGateEntryTable = ({ dashboardTableData, companyDropdown }: Props)
   const user = Cookies?.get("user_id");
   console.log(user, "this is user");
 
-  const debouncedSearchName = useDebounce(search, 300);
+//   const debouncedSearchName = useDebounce(search, 300);
 
-  useEffect(() => {
-    fetchTable();
-  }, [debouncedSearchName, selectedCompany, currentPage])
+//   useEffect(() => {
+//     fetchTable();
+//   }, [debouncedSearchName, currentPage])
 
 
   const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -80,20 +81,20 @@ const DashboardGateEntryTable = ({ dashboardTableData, companyDropdown }: Props)
     setSearch(value);
   }
 
-  const fetchTable = async () => {
-    const dashboardPendingVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.dashboardPendingVendorsAccounts}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}`,
-      method: "GET",
-    });
-    if (dashboardPendingVendorTableDataApi?.status == 200) {
-      setTable(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding
-      );
-      // settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count);
-      settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count)
-      // setRecordPerPage(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding?.length)
-      setRecordPerPage(5);
-    }
-  };
+//   const fetchTable = async () => {
+//     const dashboardPendingVendorTableDataApi: AxiosResponse = await requestWrapper({
+//       url: `${API_END_POINTS?.dashboardPendingVendorsAccounts}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}`,
+//       method: "GET",
+//     });
+//     if (dashboardPendingVendorTableDataApi?.status == 200) {
+//       setTable(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding
+//       );
+//       // settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count);
+//       settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count)
+//       // setRecordPerPage(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding?.length)
+//       setRecordPerPage(5);
+//     }
+//   };
 
   const handleView = async(refno:string,vendor_Onboarding:string)=>{
     router.push(`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${vendor_Onboarding}&refno=${refno}`)
@@ -109,11 +110,11 @@ const DashboardGateEntryTable = ({ dashboardTableData, companyDropdown }: Props)
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Total Accounts Pending Vendors
+            {TableTitle}
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
-            <Select onValueChange={(value) => { setSelectedCompany(value) }}>
+            {/* <Select onValueChange={(value) => { setSelectedCompany(value) }}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
@@ -126,7 +127,7 @@ const DashboardGateEntryTable = ({ dashboardTableData, companyDropdown }: Props)
                   }
                 </SelectGroup>
               </SelectContent>
-            </Select>
+            </Select> */}
             {/* <Select>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Status" />
@@ -148,13 +149,13 @@ const DashboardGateEntryTable = ({ dashboardTableData, companyDropdown }: Props)
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
               <TableHead className="w-[100px]">Sr No.</TableHead>
-              <TableHead>Ref No.</TableHead>
-              <TableHead>Vendor Name</TableHead>
-              <TableHead className="text-center">Company Name</TableHead>
-              <TableHead className="text-center">Date</TableHead>
-              <TableHead className="text-center">Status</TableHead>
-              <TableHead className="text-center">Rejected By Designation</TableHead>
-              <TableHead className="text-center">Rejected By</TableHead>
+              <TableHead>Gate Entry No.</TableHead>
+              <TableHead>Gate Entry Date</TableHead>
+              <TableHead className="text-center">Supplier Name</TableHead>
+              <TableHead className="text-center">Bill Date</TableHead>
+              <TableHead className="text-center">Purchase No.</TableHead>
+              <TableHead className="text-center">Purchase Date</TableHead>
+              <TableHead className="text-center">View</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="text-center">

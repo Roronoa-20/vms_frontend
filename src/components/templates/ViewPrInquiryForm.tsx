@@ -204,6 +204,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
 
     const handleClose = ()=>{
     setIsDialog(false);
+    setIsAcknowledgeDialog(false);
+    setIsModifyDialog(false);
     setToEmail("");
   }
 
@@ -436,7 +438,10 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
       {isAcknowledgeDialog &&
         <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
           <Comment_box className='' handleClose={handleClose} Submitbutton={handleAcknowledge} handleComment={handleComment}>
-            <Input className='w-44' type='Date' onChange={(e) => { setDate(e.target.value) }} />
+            <div className="">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">Expected Delivery</h1>
+          <Input className='w-44' type='Date' onChange={(e) => { setDate(e.target.value) }} />
+        </div>
           </Comment_box>
         </div>
       }

@@ -17,13 +17,42 @@ import requestWrapper from "@/src/services/apiCall";
 
 
 export type TableData = {
-  ref_no:string,
-  vendor_name:string,
-  company_name:string,
-  date:string,
-  status:string,
-  rejected_by_designation:string,
-  rejected_by:string
+   gate_entry_date: string;
+  eway_bill_date: string;
+  eway_bill_no: string;
+  creation: string;
+  gate_entry_no: string;           // Use empty string if no value
+  remarks: string;
+  handover_to_person: string;
+  invoice_value: string;
+  name: string;
+  vendor: string;
+  received_remark: string;
+  challan_no: string;
+  name_of_vendor: string;
+  airway_bill: string;
+  docstatus: number;
+  idx: number;
+  vendor_address: string;
+  handover_remark: string;
+  owner: string;
+  modified: string;
+  posting_time: string;
+  created_date: string;
+  created_by: string;
+  vendor_gst: string;
+  status: string;
+  challan_date: string;
+  modified_by: string;
+  naming_series: string;
+  scan_barcode: string;
+  inward_location: string;
+  transport: string;
+  currency: string;
+  name_of_company: string;
+  bill_of_entry_date: string;
+  bill_of_entry_no: string;
+  is_submitted: number;
 } 
 
 type Props = {
@@ -44,6 +73,7 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
   const user = designation;
   const [loading, setLoading] = useState<boolean>(true);
   const [tableData,setTableData] = useState<TableData[]>([]);
+  const [tableTitle,setTableTitle] = useState<string>("");
   // const [tableParams,setTableParams] = useState<tableParams | null>({company:"",status:""});
 
   console.log(user, "this is desingation")
@@ -180,16 +210,17 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
   //   }
   // }, [user])
 
-  // useEffect(()=>{
-  //   if(tableParams?.company || tableParams?.status){
-  //     fetchTableData();
-  //   }
-  // },[tableParams])
+  useEffect(()=>{
+   fetchTableData();
+  },[])
 
 
 
-  const fetchTableData = async(company?:string,status?:string)=>{
-    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.GateEntryTableData,method:"GET",params:{company:company,status:status}});
+  const fetchTableData = async(company?:string,status?:string,title?:string)=>{
+    setTableTitle(title?title:"");
+    console.log(status,"this is status inside api calls")
+    const api = `${API_END_POINTS?.GateEntryTableData}?company=${company?company:""}&status=${status?status:""}&fields=["*"]`;
+    const response:AxiosResponse = await requestWrapper({url:api,method:"GET"});
     if(response?.status == 200){
      setTableData(response?.data?.message?.data);
     }
@@ -231,17 +262,24 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
         <div className="">
           <TabsList className="grid grid-cols-4 gap-4 h-full pb-6 bg-white">
             {cardData?.map((item, index) => (
-              <TabsTrigger onClick={()=>{fetchTableData(item?.value,"")}}
+              <TabsTrigger onClick={()=>{
+                if(item?.name == "Material Received"){
+                  fetchTableData("","Received",item?.name)
+                }else if(item?.name == "Material Handover"){
+                  fetchTableData("","HandOver",item?.name);
+                }
+                else{
+                  fetchTableData(item?.value,"",item?.name)
+                }
+              }}
                 key={item.name || index}
                 value={item.name}
-                className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-black text-gray-500 rounded-2xl p-0 transition-all duration-300 ease-in-out"
-              >
+                className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-black text-gray-500 rounded-2xl p-0 transition-all duration-300 ease-in-out">
                 <div
-                  className={`group w-full h-full rounded-2xl ${item.bg_color} flex flex-col p-3 ${item.text_color} h-28 justify-between border-2 ${item.hover} hover:scale-105 transition duration-300 transform cursor-pointer shadow-md`}
-                >
+                  className={`group w-full h-full rounded-2xl ${item.bg_color} flex flex-col p-3 ${item.text_color} h-28 justify-between border-2 ${item.hover} hover:scale-105 transition duration-300 transform cursor-pointer shadow-md`}>
                   <div className="flex w-full justify-between">
                     <h1 className="text-[13px]">{item.name}</h1>
-                    <Image src={item.icon} alt="" width={25} height={30} />
+                    <Image src={item.icon} alt="" width={25} height={30}/>
                   </div>
                   <div className="text-[20px] text-start font-bold">{item.count}</div>
                 </div>
@@ -251,7 +289,7 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
         </div>
         {cardData?.map((item, index) => (
             <TabsContent key={item.name || index} value={item.name} >
-              <DashboardGateEntryTable dashboardTableData={tableData} companyDropdown={Props?.companyDropdown}/>
+              <DashboardGateEntryTable dashboardTableData={tableData} companyDropdown={Props?.companyDropdown} TableTitle={tableTitle} />
             </TabsContent>
           ))}
       </Tabs>
