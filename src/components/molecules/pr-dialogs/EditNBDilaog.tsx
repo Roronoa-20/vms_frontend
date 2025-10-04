@@ -69,16 +69,15 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, MaterialCodeDropdown
 }) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
-  const [errors, setErrors] = useState<Record<string, boolean>>({});
+  const [errors, setErrors] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(false);
-
+  const [requiredField, setRequiredField] = useState<Record<string, any>>({});
   useEffect(() => {
     if (isOpen) {
       setFormData(defaultData || {});
       setErrors({});
     }
   }, [isOpen, defaultData]);
-  console.log(pur_req, defaultData, "pur_req----------------")
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -86,49 +85,93 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       setErrors(prev => ({ ...prev, [name]: false }));
     }
   };
-
+  const renderError = (field: string) =>
+    errors[field] ? (
+      <p className="text-red-500 text-xs mt-1">{errors[field]}</p>
+    ) : null;
   const handleSelectChange = (value: string, field: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: false }));
     }
   };
+  const fetchRequiredData = async (company: string, pur_type: string, acct_cate: string) => {
+    console.log(company, pur_type, acct_cate, "data rrquired before api")
+    try {
+      const Data = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.purchase_api.handle_req_field_pr.filter_req_fields?company=${company}&pur_type=${pur_type}&acct_cate=${acct_cate}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: 'include',
+        }
+      );
+      if (Data.ok) {
+        const data = await Data.json();
+        setRequiredField(data?.message)
+        console.log(data, "data in required-------------------------------------------")
+      }
+    } catch (error) {
+      console.log(error, "something went wrong");
+    }
+  };
+  useEffect(() => {
+    const { company_code_area_head, purchase_requisition_type, account_assignment_category_head } = formData || {};
+    // Only call API if all three are present (non-empty)
+    if (company_code_area_head && purchase_requisition_type && account_assignment_category_head) {
+      fetchRequiredData(
+        company_code_area_head,
+        purchase_requisition_type,
+        account_assignment_category_head
+      );
+    }
+  }, [
+    formData?.company_code_area_head,
+    formData?.purchase_requisition_type,
+    formData?.account_assignment_category_head
+  ]);
 
   const validate = () => {
-    const requiredFields = [
-      'account_assignment_category', 'store_location', 'delivery_date',
-      'item_category', 'material_group', 'uom', 'cost_center',
-      'main_asset_no', 'asset_subnumber', 'profit_ctr', 'short_text',
-      'quantity', 'price_of_purchase_requisition', 'gl_account_number', 'material_code'
-    ];
-    const newErrors: Record<string, boolean> = {};
-    requiredFields.forEach(field => {
-      if (!formData[field]) newErrors[field] = true;
+    const newErrors: Record<string, string> = {};
+
+    // Helper: Convert field name to readable format
+    const formatFieldName = (name: string) => {
+      return name
+        .replace(/_/g, " ") // replace underscores with spaces
+        .replace(/([a-z])([A-Z])/g, "$1 $2") // split camelCase
+        .replace(/\b\w/g, (char) => char.toUpperCase()) // capitalize each word
+        .replace(/\bHead\b/gi, ""); // remove the word 'Head' if present
+    };
+
+    Object.entries(requiredField).forEach(([field, rule]) => {
+      const value = formData[field];
+      const displayName = formatFieldName(field);
+
+      if (rule.includes("Compulsory")) {
+        if (!value || value.trim() === "") {
+          newErrors[field] = `${displayName} is required`;
+        }
+      }
+
+      if (rule === "Compulsory must D" && value !== "D") {
+        newErrors[field] = `${displayName} must be 'D'`;
+      }
     });
+
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return newErrors;
   };
 
   const handleSubmit = async () => {
-    // if (!validate()) return;
-    // setLoading(true);
-    // try {
-    //   const res = await fetch('/api/edit-nb', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(formData),
-    //   });
-    //   if (res.ok) {
-    //     onClose();
-    //     fetchTableData(pur_req?pur_req:"");
-    //   } else {
-    //     console.error("Failed to submit", await res.text());
-    //   }
-    // } catch (err) {
-    //   console.error("Error submitting NB", err);
-    // } finally {
-    //   setLoading(false);
-    // }
+    console.log(errors, "errors before submit")
+    const validationErrors = validate();
+
+    if (Object.keys(validationErrors).length > 0) {
+      alert(JSON.stringify(validationErrors));
+      return;
+    }
 
     const updateformdata = { ...formData, name: pur_req }
     const url = API_END_POINTS?.PRTableHeadSubmitData;
@@ -156,43 +199,9 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
         onChange={handleFieldChange}
         {...inputProps}
       />
+      {renderError(name)}
     </div>
   );
-
-  // const renderSelect = <T,>(
-  //   name: string,
-  //   label: string,
-  //   options: T[],
-  //   getValue: (item: T) => string,
-  //   getLabel: (item: T) => string
-  // ) => (
-  //   <div className="col-span-1">
-  //     <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-  //       {label}
-  //       {errors[name as keyof typeof errors] && (
-  //         <span className="text-red-600 ml-1">*</span>
-  //       )}
-  //     </h1>
-  //     <Select
-  //       value={formData[name] ?? ""}
-  //       onValueChange={(value) => handleSelectChange(value, name)}
-  //     >
-  //       <SelectTrigger className={errors[name as keyof typeof errors] ? 'border border-red-600' : ''}>
-  //         <SelectValue placeholder="Select" />
-  //       </SelectTrigger>
-  //       <SelectContent>
-  //         <SelectGroup>
-  //           {options.map((item, idx) => (
-  //             <SelectItem key={idx} value={getValue(item)}>
-  //               {getLabel(item)}
-  //             </SelectItem>
-  //           ))}
-  //         </SelectGroup>
-  //       </SelectContent>
-  //     </Select>
-  //   </div>
-  // );
-
   const renderSelect = <T,>(
     name: string,
     label: string,
@@ -201,11 +210,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     getLabel: (item: T) => string
   ) => {
     const selectedValue = formData[name] ?? "";
-
-    // Debug: See what's going wrong
-    // console.log(`Selected value for "${name}":`, selectedValue);
-    // console.log("Available option values:", options.map(getValue));
-
     return (
       <div className="col-span-1">
         <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -232,14 +236,13 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
             </SelectGroup>
           </SelectContent>
         </Select>
+        {renderError(name)}
       </div>
     );
   };
-
-
-
-  console.log("UOM MaterialForm", Dropdown.uom_master)
-
+  console.log(formData, "0000000000000000000000000000000000000000000000000000")
+  console.log(errors, "errors")
+  console.log(requiredField, "requiredField")
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
@@ -264,17 +267,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
             (item) => item.name,
             (item) => `${item.account_assignment_category_code} - ${item.account_assignment_category_name}`
           )}
-
-          {/* {renderInput('store_location_head', 'Store Location')} */}
-
-          {/* {renderSelect(
-            'store_location_head',
-            'Store Location',
-            Dropdown.store_location,
-            (item) => item.name,
-            (item) => `${item.store_name} - ${item.store_location_name}`
-          )} */}
-
           {renderSelect(
             'store_location_head',
             'Store Location',
@@ -342,7 +334,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           {renderSelect(
             'gl_account_number_head',
             'GL Account Number',
-           GLAccountDropdwon,
+            GLAccountDropdwon,
             (item) => item.name,
             (item) => `${item.gl_account_code} - ${item.gl_account_name}`
           )}
