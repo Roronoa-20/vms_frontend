@@ -79,6 +79,12 @@ export const sidebarMenu: SidebarItem[] = [
     href: "/view-payment-requisition",
     children: []
   },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "Gate Entry",
+    href: "/gate-entry-dashboard",
+    children: []
+  },
   // {
   //   logo: "/sidebar-assests/view-grn.svg",
   //   name: "Shipment Status",

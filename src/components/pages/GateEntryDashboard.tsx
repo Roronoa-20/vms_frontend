@@ -35,7 +35,6 @@ const GateEntryDashboard = async () => {
   // const cookie = await cookies()
   const cookieStore = await cookies();
   const user = cookieStore.get("user_id")?.value
-  console.log(user, "user")
   const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
   //card data
   const dashboardCardApi: AxiosResponse = await requestWrapper({
@@ -59,8 +58,6 @@ const GateEntryDashboard = async () => {
   const dropdownData: TvendorRegistrationDropdown["message"]["data"] =
     dropDownApi?.status == 200 ? dropDownApi?.data?.message?.data : "";
   const companyDropdown = dropdownData?.company_master
-
-console.log(CardData,"this is new count")
  
 
 

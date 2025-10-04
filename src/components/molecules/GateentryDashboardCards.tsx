@@ -14,6 +14,8 @@ import DashboardGateEntryTable from "./DashboardGateEntryTable";
 import { cardCount } from "../pages/GateEntryDashboard";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
+import { Button } from "../atoms/button";
+import { useRouter } from "next/navigation";
 
 
 export type TableData = {
@@ -53,7 +55,32 @@ export type TableData = {
   bill_of_entry_date: string;
   bill_of_entry_no: string;
   is_submitted: number;
+  gate_entry_details:PurchaseItemsList[]
 } 
+
+export type PurchaseItemsList = {
+   name: string;
+  owner: string;
+  creation: string;            // datetime string
+  modified: string;            // datetime string
+  modified_by: string;
+  docstatus: number;
+  idx: number;
+  purchase_order: string;
+  purchase_order_date: string;  // originally null, use empty string if no value
+  rate: string;                 // originally null, use empty string if no value
+  received_qty: string;
+  po_pending_qty: string;       // originally null, use empty string if no value
+  uom: string;
+  amount: string;
+  product_code: string;
+  product_name: string;
+  description: string;
+  parent: string;
+  parentfield: string;
+  parenttype: string;
+  doctype: string;
+}
 
 type Props = {
   cardData:cardCount
@@ -66,17 +93,15 @@ type tableParams = {
 }
 
 const GateEntryDashboardCards = ({ ...Props }: Props) => {
-  console.log(Props?.cardData, "this is card data")
   const { MultipleVendorCode } = useMultipleVendorCodeStore();
   // const cookieStore = await cookies();
   const { designation } = useAuth();
   const user = designation;
   const [loading, setLoading] = useState<boolean>(true);
   const [tableData,setTableData] = useState<TableData[]>([]);
-  const [tableTitle,setTableTitle] = useState<string>("");
+  const [tableTitle,setTableTitle] = useState<string>("Total Entry");
+  const router = useRouter()
   // const [tableParams,setTableParams] = useState<tableParams | null>({company:"",status:""});
-
-  console.log(user, "this is desingation")
   // const user = cookieStore.get("designation")?.value;
   let allCardData: {
     name:string,
@@ -210,11 +235,11 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
   //   }
   // }, [user])
 
-  useEffect(()=>{
-   fetchTableData();
-  },[])
+  // useEffect(()=>{
+  //  fetchTableData("","","");
+  // },[])
 
-
+console.log(tableTitle,"this is table title")
 
   const fetchTableData = async(company?:string,status?:string,title?:string)=>{
     setTableTitle(title?title:"");
@@ -222,7 +247,12 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
     const api = `${API_END_POINTS?.GateEntryTableData}?company=${company?company:""}&status=${status?status:""}&fields=["*"]`;
     const response:AxiosResponse = await requestWrapper({url:api,method:"GET"});
     if(response?.status == 200){
-     setTableData(response?.data?.message?.data);
+      if(response?.data?.message?.data?.length > 0){
+
+        setTableData(response?.data?.message?.data);
+      }else{
+        setTableData([]);
+      }
     }
   }
 
@@ -287,9 +317,15 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
             ))}
           </TabsList>
         </div>
+        <div className="flex justify-end">
+              <Button onClick={()=>{router.push("gate-entry")}}>Create Gate Entry</Button>
+        </div>
         {cardData?.map((item, index) => (
             <TabsContent key={item.name || index} value={item.name} >
-              <DashboardGateEntryTable dashboardTableData={tableData} companyDropdown={Props?.companyDropdown} TableTitle={tableTitle} />
+              {
+                tableData?.length > 0 && 
+                <DashboardGateEntryTable dashboardTableData={tableData} companyDropdown={Props?.companyDropdown} TableTitle={tableTitle} />
+              }
             </TabsContent>
           ))}
       </Tabs>

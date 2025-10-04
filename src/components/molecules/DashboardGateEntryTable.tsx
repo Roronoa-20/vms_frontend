@@ -28,7 +28,8 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "./Pagination";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
-import { TableData } from "./GateentryDashboardCards";
+import { PurchaseItemsList, TableData } from "./GateentryDashboardCards";
+import PopUp from "./PopUp";
 
 
 type Props = {
@@ -62,12 +63,13 @@ const DashboardGateEntryTable = ({ dashboardTableData, companyDropdown,TableTitl
   const [total_event_list, settotalEventList] = useState(0);
   const [record_per_page, setRecordPerPage] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
-
+  const [isPurchaseNoDialog,setIsPurchaseNoDialog] = useState<boolean>(false);
+  const [poTable,setPoTable] = useState<PurchaseItemsList[]>([]);
   const router = useRouter();
 
   const user = Cookies?.get("user_id");
   console.log(user, "this is user");
-
+  
 //   const debouncedSearchName = useDebounce(search, 300);
 
 //   useEffect(() => {
@@ -103,6 +105,11 @@ const DashboardGateEntryTable = ({ dashboardTableData, companyDropdown,TableTitl
   console.log(table, "this is table");
   const { designation } = useAuth();
   const isAccountsUser = designation?.toLowerCase().includes("account");
+
+  const handleClose = ()=>{
+    setIsPurchaseNoDialog(false);
+    setPoTable([])
+  }
 
 
   return (
@@ -149,37 +156,25 @@ const DashboardGateEntryTable = ({ dashboardTableData, companyDropdown,TableTitl
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
               <TableHead className="w-[100px]">Sr No.</TableHead>
-              <TableHead>Gate Entry No.</TableHead>
-              <TableHead>Gate Entry Date</TableHead>
+              <TableHead className="text-center">Gate Entry No.</TableHead>
+              <TableHead className="text-center">Gate Entry Date</TableHead>
               <TableHead className="text-center">Supplier Name</TableHead>
               <TableHead className="text-center">Bill Date</TableHead>
               <TableHead className="text-center">Purchase No.</TableHead>
-              <TableHead className="text-center">Purchase Date</TableHead>
               <TableHead className="text-center">View</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="text-center">
             {table ? (
-              table?.map((item:any, index) => (
+              table?.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
-                  <TableCell className="text-nowrap">{item?.ref_no}</TableCell>
-                  <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
-                  <TableCell className="text-nowrap">{item?.company_name}</TableCell>
-                  <TableCell>
-                    {/* <div
-                      className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "Pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : item?.onboarding_form_status === "Approved"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                        }`}
-                    >
-                      {item?.onboarding_form_status}
-                    </div> */}
-                  </TableCell>
-                  <TableCell>{item?.rejected_by_designation}</TableCell>
-                  <TableCell>{item?.rejected_by}</TableCell>
+                  <TableCell className="text-nowrap">{item?.gate_entry_no}</TableCell>
+                  <TableCell className="text-nowrap">{item?.gate_entry_date}</TableCell>
+                  <TableCell className="text-nowrap">{item?.vendor}</TableCell>
+                  <TableCell>{item?.bill_of_entry_date}</TableCell>
+                  <TableCell><Button onClick={()=>{setIsPurchaseNoDialog(true); setPoTable(item?.gate_entry_details)}}>Purchase No</Button></TableCell>
+                  <TableCell><Button onClick={()=>{router.push(`gate-entry?refno=${item?.name}`)}}>View</Button></TableCell>
                 </TableRow>
               ))
             ) : (
@@ -194,6 +189,39 @@ const DashboardGateEntryTable = ({ dashboardTableData, companyDropdown,TableTitl
         </Table>
       </div>
       <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
+      {
+        isPurchaseNoDialog && 
+        <PopUp handleClose={handleClose} disableRef={true} headerText="Purchase No">
+          <Table>
+          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+          <TableHeader className="text-center">
+            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
+              <TableHead className="w-[100px]">Sr No.</TableHead>
+              <TableHead className="text-center">Purchase No</TableHead>
+              <TableHead className="text-center">Purchase Date</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="text-center">
+            {poTable ? (
+              poTable?.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
+                  <TableCell className="text-nowrap">{item?.purchase_order}</TableCell>
+                  <TableCell className="text-nowrap">{item?.purchase_order_date}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={9} className="text-center text-gray-500 py-4">
+                  No results found
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+
+        </Table>
+        </PopUp>
+      }
     </>
   );
 };
