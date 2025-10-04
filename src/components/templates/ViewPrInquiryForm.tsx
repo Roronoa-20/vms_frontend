@@ -345,9 +345,13 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
             <Input placeholder="" value={PRInquiryData?.acknowledged_date} disabled />
           </div>
         )}
-        <div className='flex items-end'>
+        {
+          PRInquiryData?.hod_approved ?
+          <div className='flex items-end'>
       <Button className={`bg-blue-400 hover:bg-blue-300`} onClick={(e)=>{setIsEmailDialog(true)}}>Additional Approval</Button>
-        </div>
+        </div>:
+        <div></div>
+        }
       </div>
       <h1 className="pl-5">Purchase Inquiry Items</h1>
       <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
@@ -371,7 +375,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
             {tableData?.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{index + 1}</TableCell>
-                <TableCell className={`flex justify-center`}><Input type='checkbox' onChange={(e) => { handleTableCheckChange(index, e.target.checked) }} disabled={(Boolean(PRInquiryData?.purchase_team) && item?.assest_code == null) ? false : true} checked={item?.need_asset_code} className='w-5' /></TableCell>
+                <TableCell className={`flex justify-center`}><Input type='checkbox' onChange={(e) => { handleTableCheckChange(index, e.target.checked) }} disabled={(PRInquiryData?.purchase_team && item?.assest_code == "") ? false : true} checked={item?.need_asset_code} className='w-5' /></TableCell>
                 <TableCell className='text-center'>{item?.assest_code}</TableCell>
                 <TableCell>
                   {/* {item?.product_name} */}
