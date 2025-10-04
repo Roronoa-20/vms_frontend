@@ -14,7 +14,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage, onPage
     for (let i = 1; i <= totalPages; i++) {
       if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
         if (lastPageAdded && i - lastPageAdded > 1) {
-          range.push(`ellipsis-${i}`); // unique string key for ellipses
+          range.push(`ellipsis-${i}`);
         }
         range.push(i);
         lastPageAdded = i;

@@ -25,7 +25,7 @@ interface ApiResponse {
 
 const AllVendors = () => {
   const [vendors, setVendors] = useState<Vendor[]>([]);
-  const [searchedVendors, setSearchedVendors] = useState<Vendor[]>([]);
+  // const [searchedVendors, setSearchedVendors] = useState<Vendor[]>([]);
   const [companyAnalytics, setCompanyAnalytics] = useState<any[]>([]);
   const [analytics, setAnalytics] = useState({ total_vendors: 0, vms_registered: 0, imported_vendors: 0, total_vc_code: 0, both_imported_and_vms_registered: 0 });
   const [loading, setLoading] = useState(false);
@@ -33,20 +33,28 @@ const AllVendors = () => {
   const [searchCountry, setSearchCountry] = useState("");
   const [defaultTab, setDefaultTab] = useState<string>("");
   const [currentSlide, setCurrentSlide] = useState(1);
-  const [activeVendorTab, setActiveVendorTab] = useState<"vms_registered" | "imported_vendors">("vms_registered");
+  const [activeVendorTab, setActiveVendorTab] = useState<"vms_registered" | "imported_vendors" | "both_registered_and_import">("vms_registered");
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 1000;
-  const [totalPages, setTotalPages] = useState(1);
+  const [tablePage, setTablePage] = useState(1);
+  const pageSize = 10;
   const [totalRecords, setTotalRecords] = useState(0);
 
   useEffect(() => {
     const fetchVendors = async () => {
       setLoading(true);
       try {
-        const params: any = { page: currentPage, page_size: pageSize };
+        const params: any = { page: currentPage, page_size: 1000 };
 
-        if (activeVendorTab === "vms_registered") params.onboarding_form_status = "Approved";
-        else if (activeVendorTab === "imported_vendors") params.via_data_import = 1;
+        if (activeVendorTab === "vms_registered") {
+          params.onboarding_form_status = "Approved";
+          params.via_data_import = 0;
+        } else if (activeVendorTab === "imported_vendors") {
+          params.via_data_import = 1;
+        } else if (activeVendorTab === "both_registered_and_import") {
+          params.onboarding_form_status = "Approved";
+          params.via_data_import = 1;
+          params.search_filter = JSON.stringify({ created_from_registration: 1 });
+        }
 
         if (defaultTab) params.company_id = defaultTab;
 
@@ -62,9 +70,9 @@ const AllVendors = () => {
         setCompanyAnalytics(apiData.company_analytics?.company_wise_analytics || []);
 
         setVendors(apiData.vendors || []);
-        setSearchedVendors(apiData.vendors || []);
-        setTotalPages(apiData.pagination?.total_pages || 1);
-        setTotalRecords(apiData.pagination?.total_records || 0);
+        // setSearchedVendors(apiData.vendors || []);
+        // setTotalPages(apiData.pagination?.total_pages || 1);
+        // setTotalRecords(apiData.pagination?.total_records || 0);
 
         if (!defaultTab && apiData.company_analytics?.company_wise_analytics?.[0]) {
           setDefaultTab(apiData.company_analytics.company_wise_analytics[0].company_id);
@@ -77,30 +85,18 @@ const AllVendors = () => {
     };
 
     fetchVendors();
-  }, [activeVendorTab, currentPage, defaultTab]);
+  }, [activeVendorTab, defaultTab]);
 
-
-
-  // ---- SEARCH LOGIC ----
-  useEffect(() => {
-    if (!searchTerm && !searchCountry) return setSearchedVendors(vendors);
-
-    const results = vendors.filter(vendor => {
+  const searchedVendors = useMemo(() => {
+    return vendors.filter(vendor => {
       const matchesName = searchTerm ? vendor.vendor_name?.toLowerCase().includes(searchTerm.toLowerCase()) : true;
       const matchesCountry = searchCountry ? (vendor.country?.toLowerCase() || "").includes(searchCountry.toLowerCase()) : true;
       return matchesName && matchesCountry;
     });
-
-    setSearchedVendors(results);
   }, [searchTerm, searchCountry, vendors]);
 
-  useEffect(() => {
-    console.log("Vendors from API:", vendors);
-  }, [vendors]);
-
-  // ---- MEMOIZED FILTERED VENDORS PER COMPANY & TAB ----
-  const filteredVendorsByCompany = useMemo(() => {
-    if (!defaultTab || !searchedVendors.length) return [];
+  const filteredVendors = useMemo(() => {
+    if (!defaultTab) return [];
 
     return searchedVendors
       .map(vendor => {
@@ -111,18 +107,33 @@ const AllVendors = () => {
           if (onbRecord) return { ...vendor, onboarding: onbRecord } as VendorRow;
         } else if (activeVendorTab === "imported_vendors") {
           const companyRecord = (vendor.multiple_company_data || []).find(
-            rec => rec.company_id === defaultTab && rec.via_import === 1
+            rec => rec.company_name === defaultTab && rec.via_import === 1
           );
           if (companyRecord) return { ...vendor, company: companyRecord } as VendorRow;
+        } else if (activeVendorTab === "both_registered_and_import") {
+          const onbRecord = (vendor.vendor_onb_records || []).find(
+            rec => rec.onboarding_company_name === defaultTab && rec.onboarding_form_status?.toLowerCase() === "approved"
+          );
+          const companyRecord = (vendor.multiple_company_data || []).find(
+            rec => rec.company_name === defaultTab && rec.via_import === 1
+          );
+          if (onbRecord && companyRecord && vendor.created_from_registration === 1) {
+            return { ...vendor, onboarding: onbRecord, company: companyRecord } as VendorRow;
+          }
         }
         return null;
       })
       .filter(Boolean) as VendorRow[];
   }, [searchedVendors, activeVendorTab, defaultTab]);
 
+  // --- Paginate filtered vendors ---
+  const paginatedVendors = useMemo(() => {
+    const start = (tablePage - 1) * pageSize;
+    return filteredVendors.slice(start, start + pageSize);
+  }, [filteredVendors, tablePage]);
 
-
-
+  // Reset table page if filters or tab changes
+  useEffect(() => setTablePage(1), [filteredVendors]);
 
 
 
@@ -130,8 +141,8 @@ const AllVendors = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-2">
       {/* --- Stats --- */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white rounded-2xl shadow-sm p-5 flex items-center gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6">
+        <div className="bg-white rounded-2xl shadow-sm p-1 flex items-center gap-4 border-l-4 border-blue-500">
           <div className="bg-indigo-100 p-3 rounded-xl"><Users className="h-6 w-6 text-blue-600" /></div>
           <div>
             <p className="text-sm text-gray-500">Total Vendors</p>
@@ -141,7 +152,7 @@ const AllVendors = () => {
           </div>
         </div>
 
-        <div onClick={() => setActiveVendorTab("vms_registered")} className={`cursor-pointer bg-white rounded-2xl shadow-sm p-5 flex items-center gap-4 transition ${activeVendorTab === "vms_registered" ? "ring-2 ring-blue-500" : ""}`}>
+        <div onClick={() => setActiveVendorTab("vms_registered")} className={`cursor-pointer bg-white rounded-2xl shadow-sm p-1 flex items-center gap-4 border-l-4 border-blue-500 transition ${activeVendorTab === "vms_registered" ? "ring-2 ring-blue-500" : ""}`}>
           <div className="bg-green-100 p-3 rounded-xl"><CheckCircle className="h-6 w-6 text-green-600" /></div>
           <div>
             <p className="text-sm text-gray-500">VMS Registered</p>
@@ -151,7 +162,7 @@ const AllVendors = () => {
           </div>
         </div>
 
-        <div onClick={() => setActiveVendorTab("imported_vendors")} className={`cursor-pointer bg-white rounded-2xl shadow-sm p-5 flex items-center gap-4 transition ${activeVendorTab === "imported_vendors" ? "ring-2 ring-blue-500" : ""}`}>
+        <div onClick={() => setActiveVendorTab("imported_vendors")} className={`cursor-pointer bg-white rounded-2xl shadow-sm p-1 flex items-center gap-4 border-l-4 border-blue-500 transition ${activeVendorTab === "imported_vendors" ? "ring-2 ring-blue-500" : ""}`}>
           <div className="bg-indigo-100 p-3 rounded-xl"><Upload className="h-6 w-6 text-indigo-600" /></div>
           <div>
             <p className="text-sm text-gray-500">Imported Vendors</p>
@@ -161,7 +172,17 @@ const AllVendors = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-5 flex items-center gap-4">
+        <div onClick={() => setActiveVendorTab("both_registered_and_import")} className={`cursor-pointer bg-white rounded-2xl shadow-sm p-1 flex items-center gap-4 border-l-4 border-blue-500 transition ${activeVendorTab === "both_registered_and_import" ? "ring-2 ring-blue-500" : ""}`}>
+          <div className="bg-indigo-100 p-3 rounded-xl"><Upload className="h-6 w-6 text-indigo-600" /></div>
+          <div>
+            <p className="text-sm text-gray-500">Vendors Registered & Imported</p>
+            <h3 className="text-xl font-bold text-gray-800">
+              <CountUp end={analytics.both_imported_and_vms_registered} duration={1.5} separator="," />
+            </h3>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-sm p-1 flex items-center gap-4 border-l-4 border-blue-500">
           <div className="bg-indigo-100 p-3 rounded-xl"><IdCard className="h-6 w-6 text-indigo-600" /></div>
           <div>
             <p className="text-sm text-gray-500">Vendor Code Count</p>
@@ -188,16 +209,30 @@ const AllVendors = () => {
           <TabsList className="flex flex-wrap gap-3 justify-start items-start w-full bg-transparent p-0 border-0">
             {companyAnalytics.map((company, index) => {
               const totalCompanies = companyAnalytics.length;
-              const paddingClass = totalCompanies > 15 ? "px-2 py-1 text-sm" : totalCompanies > 10 ? "px-3 py-1 text-sm" : "px-4 py-2 text-sm";
+              const paddingClass =
+                totalCompanies > 15 ? "px-2 py-1 text-sm" :
+                  totalCompanies > 10 ? "px-3 py-1 text-sm" :
+                    "px-4 py-2 text-sm";
+
+              // let tabCount = 0;
+              // if (activeVendorTab === "vms_registered") tabCount = company.registration_breakdown?.vms_registered || 0;
+              // else if (activeVendorTab === "imported_vendors") tabCount = company.registration_breakdown?.imported_vendors || 0;
+              // else if (activeVendorTab === "both_registered_and_import") tabCount = company.registration_breakdown?.both_registered_and_import || 0;
 
               return (
                 <TabsTrigger
                   key={company.company_id}
                   value={company.company_id}
                   onClick={() => setCurrentSlide(index + 1)}
-                  className={`flex items-center gap-2 border rounded-full font-medium transition ${paddingClass} ${currentSlide === index + 1 ? "bg-blue-600 text-white border-blue-600 shadow-md" : "bg-gray-50 text-gray-700 hover:bg-blue-50 border-gray-300"}`}
+                  className={`flex items-center gap-2 border rounded-full font-medium transition ${paddingClass} ${currentSlide === index + 1
+                    ? "bg-blue-600 text-white border-blue-600 shadow-md"
+                    : "bg-gray-50 text-gray-700 hover:bg-blue-50 border-gray-300"
+                    }`}
                 >
-                  {company.company_id} - {company.company_short_form}
+                  <span>{company.company_id}-{company.company_short_form}</span>
+                  {/* <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-semibold ${company.registration_breakdown?.[activeVendorTab] > 0 ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-400"}`}>
+                    {company.registration_breakdown?.[activeVendorTab] ?? 0}
+                  </span> */}
                 </TabsTrigger>
               );
             })}
@@ -208,13 +243,13 @@ const AllVendors = () => {
       {/* --- Vendor Table --- */}
       <div className="bg-white rounded-2xl shadow-sm p-4">
         <VendorTable
-          vendors={filteredVendorsByCompany.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
+          vendors={paginatedVendors}
           activeTab={defaultTab}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
+          currentPage={tablePage}
+          setCurrentPage={setTablePage}
           pageSize={pageSize}
-          totalPages={totalPages}
-          totalRecords={totalRecords}
+          totalPages={Math.ceil(filteredVendors.length / pageSize)}
+          totalRecords={filteredVendors.length}
         />
       </div>
     </div>

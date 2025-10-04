@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Vendor, AllVendorsCompanyCodeResponse, CompanyVendorCodeRecord, VendorRow, CompanyData } from "@/src/types/allvendorstypes";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/src/components/atoms/table";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,8 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
     const stickyKeys: (keyof RowData | "srno")[] = ["srno", "company_code", "vendor_name"];
     const [colWidths, setColWidths] = React.useState<Record<string, number>>({});
     const headerRefs = React.useRef<Record<string, HTMLTableCellElement | null>>({});
+
+    useEffect(() => setCurrentPage(1), [vendors]);
 
     React.useEffect(() => {
         const widths: Record<string, number> = {};
@@ -132,13 +134,13 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
             } as RowData;
         });
     });
-    // console.log("Normalized Rows----->", rows);
+    // console.log("Normalized Rows----->", rows)
 
-    // const totalRecords = rows.length;
-    // const startIdx = (currentPage - 1) * recordPerPage;
-    // const paginatedRows = rows.slice(startIdx, startIdx + recordPerPage);
-    const startIdx = (currentPage - 1) * recordPerPage;
-    const paginatedRows = rows.slice(startIdx, startIdx + recordPerPage);
+    const paginatedRows = useMemo(() => {
+        const start = (currentPage - 1) * pageSize;
+        return rows.slice(start, start + pageSize);
+    }, [rows, currentPage, pageSize]);
+    const startIdx = (currentPage - 1) * pageSize;
 
     const columns: { key: keyof RowData; label: string; type?: "text" | "file" | "boolean"; sticky?: boolean; }[] = [
         { key: "company_code", label: "Company Code", sticky: true },
@@ -495,13 +497,16 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
             )}
 
             {/*Pagination */}
-            < div className="mt-4" >
+            <div className="mt-4 flex justify-between items-center">
+                <p className="text-[12px] text-gray-500">
+                    Showing {paginatedRows.length} of {totalRecords} entries
+                </p>
                 <Pagination
                     currentPage={currentPage}
+                    totalPages={totalPages}
                     onPageChange={setCurrentPage}
-                    totalPages={Math.ceil(totalRecords / recordPerPage)}
                 />
-            </div >
+            </div>
 
             {copiedRow && (
                 <div ref={copyFormRef} className="mt-6 border rounded-lg shadow bg-gray-50">
