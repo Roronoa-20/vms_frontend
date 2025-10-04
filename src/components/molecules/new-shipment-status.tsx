@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import requestWrapper from "@/src/services/apiCall";
@@ -9,6 +9,7 @@ import { AxiosResponse } from "axios";
 import { Pencil } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "../atoms/input";
+import RFQDropdown from "../common/RFQSrNoDropdown";
 
 type Field = {
   label: string;
@@ -26,6 +27,23 @@ export default function ShipmentStatus() {
   const [isEditMode, setIsEditMode] = useState<boolean>(!!shipmentName);
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [rfqOptions, setRfqOptions] = useState<any[]>([]);
+  const [filteredOptions, setFilteredOptions] = useState<any[]>([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+        setHighlightedIndex(-1);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside, true);
+    return () => document.removeEventListener("click", handleClickOutside, true);
+  }, []);
+
 
   const secondRow: Field[] = [
     { label: "RFQ Number & Date", name: "rfq_number", type: "text-date", placeholder: "RFQ Number" },
@@ -42,10 +60,25 @@ export default function ShipmentStatus() {
     { label: "Port Of Discharge", name: "port_of_discharge", type: "text" },
     { label: "IncoTerms", name: "incoterms", type: "text" },
     { label: "Shipment Mode", name: "shipment_mode", type: "select", placeholder: "Search By" },
+    { label: "House Bill #", name: "house_bill", type: "text" },
+    { label: "Master Bill #", name: "master_bill", type: "text", placeholder: "Master Airway Bill Number" },
+    { label: "House Bill Date", name: "house_bill_date", type: "date" },
+    { label: "MAWB Date", name: "mawb_date", type: "date" },
+    { label: "Estimated Arrival", name: "estimated_arrival", type: "date" },
+    { label: "Estimated Departure", name: "estimated_departure", type: "date" },
+    { label: "Actual Dep at Origin", name: "actual_departure_at_origin", type: "date" },
+    { label: "Booking Date", name: "booking_date", type: "date" },
+    { label: "Estimated Pickup", name: "estimated_pickup", type: "date" },
+    { label: "Actual Pickup", name: "actual_pickup", type: "date" },
     { label: "Number of Packs", name: "number_of_packs", type: "text" },
     { label: "Packs Unit", name: "packs_units", type: "text" },
-    { label: "Actual Weight", name: "actual_weight", type: "text" },
-    { label: "Chargeable Weight", name: "chargeable_weight", type: "text" },
+    { label: "Actual Weight", name: "actual_weight", type: "text", placeholder: "Actual Weight/Gross Weight" },
+    { label: "Chargeable Weight", name: "chargeable_weight", type: "text", placeholder: "Actual Chargeable Weight" },
+    { label: "Carrier Name", name: "carrier_name", type: "text" },
+    { label: "CHA Name", name: "cha_name", type: "text" },
+    { label: "Shipment Status", name: "shipment_status", type: "select", placeholder: "Search By" },
+    { label: "Actual Volume", name: "actual_volume", type: "text" },
+    { label: "Month/Year", name: "month_year", type: "text" },
   ];
 
   const remarkField: Field[] = [
@@ -100,8 +133,10 @@ export default function ShipmentStatus() {
   const handleRFQSelect = async (name: string, srNo: string) => {
     if (!name) return;
 
-    handleChange("enter_document_no", srNo);
-    handleChange("enter_document_no_name", name);
+    handleChange("enter_document_no", "By RFQ No");
+
+    handleChange("enter_rfq_no", name);
+    handleChange("rfq_number", srNo);
 
     try {
       const res: AxiosResponse<any> = await requestWrapper({
@@ -118,13 +153,17 @@ export default function ShipmentStatus() {
         rfq_number_date: rfqData.rfq_date_logistic || "",
         jrn: rfqData.jrn_number || "",
         jrn_date: rfqData.jrn_date || "",
-        consignee_name: rfqData.consignee_name || rfqData.consignee_name_rfq || "",
-        consignor_name: rfqData.consignor_name || rfqData.consignee_name_jrn || "",
+        consignee_name:
+          rfqData.consignee_name || rfqData.consignee_name_rfq || "",
+        consignor_name:
+          rfqData.consignor_name || rfqData.consignee_name_jrn || "",
         port_of_loading: rfqData.port_of_loading || "",
-        port_of_discharge: rfqData.port_of_discharge || rfqData.destination_port || "",
+        port_of_discharge:
+          rfqData.port_of_discharge || rfqData.destination_port || "",
         incoterms: rfqData.inco_terms || rfqData.incoterms || "",
         shipment_mode: rfqData.mode_of_shipment || rfqData.shipment_mode || "",
-        number_of_packs: rfqData.no_of_pkg_units || rfqData.number_of_packs || "",
+        number_of_packs:
+          rfqData.no_of_pkg_units || rfqData.number_of_packs || "",
         packs_units: rfqData.packs_unit || "",
         actual_weight: rfqData.actual_weight || "",
         chargeable_weight: rfqData.chargeable_weight || "",
@@ -134,7 +173,6 @@ export default function ShipmentStatus() {
       console.error("Error fetching RFQ data", err);
     }
   };
-
 
   const handleSubmit = async () => {
     try {
@@ -149,7 +187,7 @@ export default function ShipmentStatus() {
         await requestWrapper({
           url: API_END_POINTS.createnewshipmentstatus,
           method: "POST",
-          data: formData,
+          data: { data: JSON.stringify(formData) },
         });
         alert("New shipment created successfully");
       }
@@ -166,7 +204,7 @@ export default function ShipmentStatus() {
     if (field.type === "text") {
       return (
         <div key={index} className={`flex flex-col ${field.label === "Remark" ? "col-span-1 md:col-span-3" : ""}`}>
-          <Label className="text-gray-700 mb-1">{field.label}</Label>
+          <Label className="text-[14px] font-normal text-black pb-2">{field.label}</Label>
           <Input
             type="text"
             value={value}
@@ -182,7 +220,7 @@ export default function ShipmentStatus() {
     if (field.type === "date") {
       return (
         <div key={index} className="flex flex-col">
-          <Label>{field.label}</Label>
+          <Label className="text-[14px] font-normal text-black pb-2">{field.label}</Label>
           <Input
             type="date"
             value={value}
@@ -197,7 +235,7 @@ export default function ShipmentStatus() {
     if (field.type === "select") {
       return (
         <div key={index} className="flex flex-col">
-          <Label>{field.label}</Label>
+          <Label className="text-[14px] font-normal text-black pb-2">{field.label}</Label>
           <select
             value={value}
             onChange={(e) => handleChange(field.name, e.target.value)}
@@ -206,7 +244,7 @@ export default function ShipmentStatus() {
           >
             <option value="">{field.placeholder || "Select"}</option>
             {field.name === "shipment_mode" &&
-              ["Air", "Sea", "Road"].map((mode) => (
+              ["Air", "Ocean"].map((mode) => (
                 <option key={mode} value={mode}>
                   {mode}
                 </option>
@@ -218,22 +256,25 @@ export default function ShipmentStatus() {
 
     if (field.type === "text-date") {
       return (
-        <div key={index} className="flex gap-2">
-          <Input
-            type="text"
-            value={value}
-            onChange={(e) => handleChange(field.name, e.target.value)}
-            placeholder={field.placeholder || ""}
-            className="w-1/2 border border-gray-300 rounded-md px-3 py-2"
-            disabled={isDisabled}
-          />
-          <Input
-            type="date"
-            value={formData[field.name + "_date"] || ""}
-            onChange={(e) => handleChange(field.name + "_date", e.target.value)}
-            className="w-1/2 border border-gray-300 rounded-md px-3 py-2"
-            disabled={isDisabled}
-          />
+        <div key={index} className="flex flex-col">
+          <Label className="text-[14px] font-normal text-black pb-2">{field.label}</Label>
+          <div className="flex gap-2">
+            <Input
+              type="text"
+              value={value}
+              onChange={(e) => handleChange(field.name, e.target.value)}
+              placeholder={field.placeholder || ""}
+              className="w-1/2 border border-gray-300 rounded-md px-3 py-2"
+              disabled={isDisabled}
+            />
+            <Input
+              type="date"
+              value={formData[field.name + "_date"] || ""}
+              onChange={(e) => handleChange(field.name + "_date", e.target.value)}
+              className="w-1/2 border border-gray-300 rounded-md px-3 py-2"
+              disabled={isDisabled}
+            />
+          </div>
         </div>
       );
     }
@@ -241,7 +282,7 @@ export default function ShipmentStatus() {
     if (field.type === "textarea") {
       return (
         <div key={index} className="flex flex-col">
-          <Label>{field.label}</Label>
+          <Label className="text-[14px] font-normal text-black pb-2">{field.label}</Label>
           <textarea
             rows={field.rows || 3}
             value={value}
@@ -259,10 +300,8 @@ export default function ShipmentStatus() {
 
   return (
     <div className="container mx-auto p-2 w-full bg-gray-100">
-      <div className="bg-white p-4 rounded shadow space-y-6">
-        {/* Enter Doc + Edit inline */}
-        <div className="flex items-end justify-between mb-4 gap-4">
-          {/* Enter Document field */}
+      <div className="bg-white p-4 rounded shadow space-y-2">
+        <div className="flex items-end justify-between mb-4 gap-4 border-b pb-3">
           <div className="flex-1">
             <Label>Enter RFQ No</Label>
             {isEditMode ? (
@@ -270,24 +309,57 @@ export default function ShipmentStatus() {
                 type="text"
                 value={formData.enter_document_no || ""}
                 readOnly
-                className="border border-gray-300 rounded-md px-3 py-2 w-full"
+                className="border border-gray-300 rounded-md px-3 py-2 w-[27%]"
               />
             ) : (
-              <select
-                value={formData.enter_document_no_name || ""} // store selected name internally
-                onChange={(e) => {
-                  const selected = rfqOptions.find(r => r.name === e.target.value);
-                  if (selected) handleRFQSelect(selected.name, selected.sr_no);
-                }}
-                className="border border-gray-300 rounded-md px-3 py-2 w-full"
-              >
-                <option value="">Search By RFQ Sr.No</option>
-                {rfqOptions.map((rfq: any, idx: number) => (
-                  <option key={idx} value={rfq.name}>
-                    {rfq.sr_no}
-                  </option>
-                ))}
-              </select>
+              <div className="flex-1 relative" ref={dropdownRef}>
+                <RFQDropdown
+                  value={formData.enter_rfq_no || ""}
+                  onChange={(val: string) => handleChange("enter_rfq_no", val)}
+                  options={rfqOptions}
+                  onSelect={(rfq: { name: string; sr_no: string }) => handleRFQSelect(rfq.name, rfq.sr_no)}
+                  autoClearFields={() =>
+                    setFormData((prev: Record<string, any>) => ({
+                      ...prev,
+                      rfq_number: "",
+                      rfq_number_date: "",
+                      jrn: "",
+                      jrn_date: "",
+                      consignee_name: "",
+                      consignor_name: "",
+                      port_of_loading: "",
+                      port_of_discharge: "",
+                      incoterms: "",
+                      shipment_mode: "",
+                      number_of_packs: "",
+                      packs_units: "",
+                      actual_weight: "",
+                      chargeable_weight: "",
+                      remarks: "",
+                    }))
+                  }
+                />
+
+                {dropdownOpen && filteredOptions.length > 0 && (
+                  <ul className="absolute z-10 bg-white border border-gray-300 w-[27%] mt-1.5 max-h-48 overflow-y-auto rounded-md shadow-md">
+                    {filteredOptions.map((rfq: { name: string; sr_no: string }, idx: number) => (
+                      <li
+                        key={rfq.name}
+                        className={`px-3 py-2 cursor-pointer ${highlightedIndex === idx ? "bg-gray-200" : ""
+                          }`}
+                        onMouseEnter={() => setHighlightedIndex(idx)}
+                        onClick={() => {
+                          handleRFQSelect(rfq.name, rfq.sr_no);
+                          setDropdownOpen(false);
+                          setHighlightedIndex(-1);
+                        }}
+                      >
+                        {rfq.sr_no}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             )}
           </div>
 
@@ -306,14 +378,17 @@ export default function ShipmentStatus() {
 
 
         {/* RFQ & JRN */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">{secondRow.map(renderField)}</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{secondRow.map(renderField)}</div>
 
         {/* Consignee & Consignor */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">{thirdRow.map(renderField)}</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{thirdRow.map(renderField)}</div>
 
         {/* Remaining fields */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {remainingFields.map(renderField)}
+        </div>
+
+        <div className="grid grid-cols-1 gap-6">
           {remarkField.map(renderField)}
         </div>
 
@@ -330,6 +405,6 @@ export default function ShipmentStatus() {
           </Button>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

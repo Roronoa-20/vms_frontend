@@ -26,8 +26,8 @@ export const NavbarConstant:Record<string,string> = {
     "/view-all-po-changes": "Changed PO Details",
     "/head-dashboard": "Dashboard",
     "/view-shipment-status": "Shipment Status (DSR)",
-    "/shipment-status": "Shipment Status (DSR)",
-    "/view-service-bill": "Service Bill (SB)",
-    "/service-bill": "Service Bill (SB)",
-    "/shipment-status-dashboard": "Shipment Status Dashboard",
+    "/new-shipment-status": "New Shipment Status (DSR)",
+    "/service-bill-dashboard": "Service Bill(SB) Dashboard",
+    "/new-service-bill": "New Service Bill (SB)",
+    "/shipment-status-dashboard": "Shipment Status(DSR) Dashboard",
 }

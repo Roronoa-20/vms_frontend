@@ -17,7 +17,7 @@ interface ApiResponse {
     data: {
       vendors: Vendor[];
       pagination: { current_page: number; total_pages: number; total_records: number };
-      analytics: { total_vendors: number; vms_registered: number; imported_vendors: number; total_vc_code: number };
+      analytics: { total_vendors: number; vms_registered: number; imported_vendors: number; total_vc_code: number; both_imported_and_vms_registered: number; };
       company_analytics: { company_wise_analytics: any[] };
     };
   };
@@ -27,7 +27,7 @@ const AllVendors = () => {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [searchedVendors, setSearchedVendors] = useState<Vendor[]>([]);
   const [companyAnalytics, setCompanyAnalytics] = useState<any[]>([]);
-  const [analytics, setAnalytics] = useState({ total_vendors: 0, vms_registered: 0, imported_vendors: 0, total_vc_code: 0 });
+  const [analytics, setAnalytics] = useState({ total_vendors: 0, vms_registered: 0, imported_vendors: 0, total_vc_code: 0, both_imported_and_vms_registered: 0 });
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCountry, setSearchCountry] = useState("");

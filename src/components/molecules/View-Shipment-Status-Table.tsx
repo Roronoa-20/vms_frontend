@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
-import { ShipmentItem, ShipmentTableResponse } from "@/src/types/shipmentstatusTypes";
+import { ShipmentItem, ShipmentTableResponse } from "@/src/types/ShipmentStatusTypes";
 import Pagination from "./Pagination";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -48,7 +48,7 @@ export default function ShipmentStatusTable({ company, tableTitle }: Props) {
   }, [company, page]);
 
   const handleNewShipment = () => {
-    router.push("/shipment-status");
+    router.push("/new-shipment-status");
   };
 
   return (
@@ -91,7 +91,7 @@ export default function ShipmentStatusTable({ company, tableTitle }: Props) {
                 <TableCell className="text-center">{item.shipment_status}</TableCell>
                 <TableCell className="text-center">{item.consignee_name}</TableCell>
                 <TableCell className="text-center">{item.consignor_name}</TableCell>
-                <TableCell className="text-center"><Link href={`/shipment-status?name=${item.name}`}><Button className="bg-[#5291CD] hover:bg-white hover:text-[#5291CD]">View</Button></Link></TableCell>
+                <TableCell className="text-center"><Link href={`/new-shipment-status?name=${item.name}`}><Button className="bg-[#5291CD] hover:bg-white hover:text-[#5291CD]">View</Button></Link></TableCell>
               </TableRow>
             ))
           ) : (

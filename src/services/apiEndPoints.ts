@@ -249,6 +249,12 @@ const API_END_POINTS = {
     allRFQSrNo: `${url}/api/method/vms.APIs.shipment_status.get_shipment_status.rfq_srno_list`,
     getRFQdata: `${url}/api/method/vms.APIs.shipment_status.get_shipment_status.rfq_data`,
 
+    // 2. Service Bill APIs
+    servicebillcount: `${url}/api/method/vms.APIs.service_bill.get_service_bill.get_service_bill_statistics`,
+    servicebillcompanywisetabledata: `${url}/api/method/vms.APIs.service_bill.get_service_bill.get_service_bill_list`,
+    servicebilldetails: `${url}/api/method/vms.APIs.service_bill.get_service_bill.get_service_bill_details`,
+    createnewservicebill: `${url}/api/method/vms.APIs.service_bill.create_service_bill.create_service_bill`,
+
 }
 
 export default API_END_POINTS;

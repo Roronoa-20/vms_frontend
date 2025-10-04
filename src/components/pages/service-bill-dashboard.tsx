@@ -5,8 +5,8 @@ import { CheckCircleIcon } from "lucide-react";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
-import {ShipmentCountResponse,CompanyWiseCount} from "@/src/types/ShipmentStatusTypes";
-import ShipmentStatusTable from "@/src/components/molecules/View-Shipment-Status-Table";
+import { ServiceBillCountResponse, CompanyWiseCount} from "@/src/types/ServiceBillTypes";
+import ServiceBillTable from "@/src/components/molecules/View-Service-Bill-table";
 
 export default function Dashboard() {
   const [companyCounts, setCompanyCounts] = useState<CompanyWiseCount[]>([]);
@@ -16,8 +16,8 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchCounts = async () => {
       try {
-        const res: AxiosResponse<ShipmentCountResponse> =
-          await requestWrapper<ShipmentCountResponse>({
+        const res: AxiosResponse<ServiceBillCountResponse> =
+          await requestWrapper<ServiceBillCountResponse>({
             url: API_END_POINTS.shipmentstatuscount,
             method: "GET",
           });
@@ -64,7 +64,7 @@ export default function Dashboard() {
 
   const cardsData = [
     {
-      name: "Total Shipments",
+      name: "Total Service Bill",
       key: "TOTAL",
       count: totalCount,
       ...cardColors[1],
@@ -119,11 +119,11 @@ export default function Dashboard() {
                     }`}
       >
         {activeTab && (
-          <ShipmentStatusTable
+          <ServiceBillTable
             company={activeTab === "TOTAL" ? "" : activeTab}
             tableTitle={
               activeTab === "TOTAL"
-                ? "Total Shipment Status"
+                ? "Total Service Bill"
                 : companyCounts.find((c) => c.company_code === activeTab)
                     ?.company_name || "Unknown Company"
             }

@@ -1,8 +1,14 @@
 
 export interface CompanyWiseCount {
-  company: string | null;
-  company_name?: string;
+  name: string;
+  company_code: string;
+  company_name: string;
   count: number;
+}
+
+export interface ShipmentCountData {
+  total_count: number;
+  [key: string]: number | CompanyWiseCount;
 }
 
 export interface StatusWiseCount {
@@ -13,11 +19,7 @@ export interface StatusWiseCount {
 export interface ShipmentCountResponse {
   message: {
     message: string;
-    data: {
-      total_count: number;
-      company_wise_count: CompanyWiseCount[];
-      status_wise_count?: StatusWiseCount[];
-    };
+    data: ShipmentCountData;
   };
 }
 
