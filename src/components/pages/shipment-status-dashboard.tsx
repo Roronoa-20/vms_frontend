@@ -5,7 +5,7 @@ import { CheckCircleIcon } from "lucide-react";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
-import {ShipmentCountResponse,CompanyWiseCount} from "@/src/types/ShipmentStatusTypes";
+import {ShipmentCountResponse,CompanyWiseCount} from "@/src/types/shipmentstatusTypes";
 import ShipmentStatusTable from "@/src/components/molecules/View-Shipment-Status-Table";
 
 export default function Dashboard() {

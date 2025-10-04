@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
-import { ShipmentItem, ShipmentTableResponse } from "@/src/types/ShipmentStatusTypes";
+import { ShipmentItem, ShipmentTableResponse } from "@/src/types/shipmentstatusTypes";
 import Pagination from "./Pagination";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
