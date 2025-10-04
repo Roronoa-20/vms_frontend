@@ -79,6 +79,12 @@ export const sidebarMenu: SidebarItem[] = [
     href: "/view-payment-requisition",
     children: []
   },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "Gate Entry",
+    href: "/gate-entry-dashboard",
+    children: []
+  },
   // {
   //   logo: "/sidebar-assests/view-grn.svg",
   //   name: "Shipment Status",
@@ -278,6 +284,19 @@ export const PurchaseHeadsidebarMenu: SidebarItem[] = [
   //   href:""
   // },
 ];
+
+export const StoreSideBar = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/gate-entry-dashboard"
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "Gate Entry",
+    href: "/gate-entry"
+  }
+]
 
 
 export const HeadSidebar: SidebarItem[] = [

@@ -124,7 +124,8 @@ formdata.append("attachment",singleTableRow?.file);
 const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.addProductInquiryProducts,method:"POST",data:formdata});
   if(response?.status == 200){
     alert("added successfully");
-    router.push(`pr-inquiry?cart_Id=${refno}`);
+    // router.push(`pr-inquiry?cart_Id=${refno}`);
+    location.reload();
   }
 
     setSingleTableRow(null);
@@ -261,7 +262,8 @@ if (assetCodeLine !== 0) {
     const respone:AxiosResponse = await requestWrapper({url:API_END_POINTS?.deleteInquiryProductItem,method:"GET",params:{purchase_inquiry_id:refno,row_name:row_id}});
     if(respone?.status == 200){
       alert("deleted successfully");
-      router.push(`pr-inquiry?cart_Id=${refno}`);
+      // router.push(`pr-inquiry?cart_Id=${refno}`);
+      location.reload();
     }
   }
 
@@ -294,7 +296,7 @@ if (assetCodeLine !== 0) {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Cart Use
           </h1>
-          <Select value={formData?.cart_use ?? ""} onValueChange={(value) => { handleSelectChange(value, "cart_use", false) }}>
+          <Select value={formData?.cart_use ?? ""} onValueChange={(value) => { handleSelectChange(value, "cart_use", false) }} disabled={refno?true:false}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -314,7 +316,7 @@ if (assetCodeLine !== 0) {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Category Type
           </h1>
-          <Select value={formData?.category_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "category_type", false); fetchProductName(value) }}>
+          <Select value={formData?.category_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "category_type", false); fetchProductName(value) }} disabled={refno?true:false}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -331,7 +333,7 @@ if (assetCodeLine !== 0) {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Company
           </h1>
-          <Select value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value); }}>
+          <Select value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value); }} disabled={refno?true:false}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -348,7 +350,7 @@ if (assetCodeLine !== 0) {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Purchase Type
           </h1>
-          <Select value={formData?.purchase_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_type", false) }}>
+          <Select value={formData?.purchase_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_type", false) }} disabled={refno?true:false}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -365,7 +367,7 @@ if (assetCodeLine !== 0) {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Plant
           </h1>
-          <Select value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant", false) }}>
+          <Select value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant", false) }} disabled={refno?true:false}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -382,7 +384,7 @@ if (assetCodeLine !== 0) {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Purchase Group
           </h1>
-          <Select value={formData?.purchase_group ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_group", false) }}>
+          <Select value={formData?.purchase_group ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_group", false) }} disabled={refno?true:false}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -512,6 +514,7 @@ if (assetCodeLine !== 0) {
                 <TableHead className="text-center">User Specification</TableHead>
                 <TableHead className="text-center">Attachment</TableHead>
                 <TableHead className="text-center">Actions</TableHead>
+                <TableHead className="text-center">Edit</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="text-center">
@@ -546,9 +549,16 @@ if (assetCodeLine !== 0) {
                   <TableCell>{item?.user_specifications}</TableCell>
                   <TableCell><Link href={item?.attachment?.url ?? ""} target='blank'>{item?.attachment?.file_name}</Link></TableCell>
                   <TableCell><div className='flex gap-4 justify-center items-center'>
-                    {/* <PencilIcon className='cursor-pointer' onClick={() => { handleEdit(item, index) }} /> */}
                     <Trash2 className={`text-red-400 cursor-pointer ${PRInquiryData?.is_submited?"hidden":""}`} onClick={()=>{deleteProductItem(item?.name ?? "")}}/>
                   </div>
+                  </TableCell>
+                  <TableCell>
+                    <>
+                    {
+                      PRInquiryData?.asked_to_modify?
+                    <PencilIcon className='cursor-pointer' onClick={() => { handleEdit(item, index) }} />:null
+                    }
+                    </>
                   </TableCell>
                 </TableRow>
               ))}

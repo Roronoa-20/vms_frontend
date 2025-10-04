@@ -6,21 +6,16 @@ import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/context/AuthContext";
 import { SidebarItem, SidebarChild } from "@/src/types/sidebar";
-
-
 const Sidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { designation } = useAuth();
   const { vendorRef } = useAuth();
-
   const sideBar = designation === "Vendor" ? VendorsidebarMenu : designation === "Enquirer" ? EnquirysidebarMenu : designation === "ASA" ? ASASideBarMenu : designation === "Accounts Team" ? AccountSideBarMenu : designation === "Accounts Head" ? AccountHeadSideBarMenu : designation === "Purchase Head" ? PurchaseHeadsidebarMenu : designation === "QA Team" ? QASideBarMenu : designation === "Super Head" ? SuperHeadSidebarMenu : designation === "Treasury" ? TreasurySideBarMenu : sidebarMenu;
-
   const [openMenu, setOpenMenu] = useState<SidebarItem | null>(null);
   const [submenuPos, setSubmenuPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const submenuRef = useRef<HTMLDivElement | null>(null);
-
   const handleClick = (item: SidebarItem, idx: number) => {
     if (item.children.length > 0) {
       const btn = buttonRefs.current[idx];
@@ -33,7 +28,6 @@ const Sidebar = () => {
       navigateTo(item);
     }
   };
-
   const navigateTo = (item: SidebarItem | SidebarChild) => {
     if ('children' in item && item.children.length > 0) return;
     if (item.name === "ASA Form") {
@@ -43,7 +37,6 @@ const Sidebar = () => {
     }
     setOpenMenu(null);
   };
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -59,8 +52,6 @@ const Sidebar = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-
   return (
     <>
       <div className="w-[110px] bg-[#0C2741] flex flex-col items-center gap-3 overflow-y-auto no-scrollbar sticky left-0 h-screen">
@@ -89,7 +80,6 @@ const Sidebar = () => {
           </button>
         ))}
       </div>
-
       {/* FLOATING ADJACENT SUBMENU */}
       {openMenu?.children && openMenu.children.length > 0 && (
         <div
@@ -113,5 +103,4 @@ const Sidebar = () => {
     </>
   );
 };
-
 export default Sidebar;
