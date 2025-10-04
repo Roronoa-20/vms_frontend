@@ -212,7 +212,7 @@ const Dashboard = async () => {
   const dashboardAccountsRejected = dashboardRejectedVendorAccounts?.status == 200?dashboardRejectedVendorAccounts?.data?.message : ""
   const dashboardAccountsSapErrors = dashboardSapErrorAccounts?.status == 200?dashboardSapErrorAccounts?.data?.message : ""
 
-
+console.log(prData,"prData")
   return (
     <div className="p-4">
       {/* Cards */}

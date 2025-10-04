@@ -44,7 +44,7 @@ export const updateQueryParam = (key: string, value: string) => {
   window.history.pushState({}, '', url.toString());
 };
 
-const   PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, StorageLocationDropdown, ValuationClassDropdown, ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, MaterialCodeDropdown, PurchaseOrgDropdown }: Props) => {
+const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, StorageLocationDropdown, ValuationClassDropdown, ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, MaterialCodeDropdown, PurchaseOrgDropdown }: Props) => {
   const user = Cookies.get("user_id");
   const [formData, setFormData] = useState<PurchaseRequestData["message"]["data"] | null>(PRData ? { ...PRData, requisitioner: PRData?.requisitioner, cart_id: cartId ? cartId : "" } : null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -56,7 +56,7 @@ const   PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropd
   const [isNBEditModalOpen, setNBEditModalOpen] = useState(false)
   const [selectedMainItemId, setSelectedMainItemId] = useState<string>("")
   const [purchase_request_no, setPurchaseReqNo] = useState<string>("")
-  const router= useRouter()
+  const router = useRouter()
   const deleteSubItem = async (subItemId: string) => {
     console.log(subItemId, "subItemId", pur_req, "pur_req")
     const url = `${API_END_POINTS?.PrSubHeadDeleteRow}?name=${pur_req}&row_id=${subItemId}`;
@@ -146,7 +146,7 @@ const   PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropd
       alert("Not able to Submit , PR Request No. Required")
       return
     }
-    const url = `${API_END_POINTS?.SubmitPR}?name=${pur_req? pur_req: mainItems?.docname? mainItems?.docname :""}`;
+    const url = `${API_END_POINTS?.SubmitPR}?name=${pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}`;
     const response: AxiosResponse = await requestWrapper({ url: url, method: "POST" });
     if (response?.status == 200) {
       alert("Submit Successfull");
@@ -175,12 +175,12 @@ const   PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropd
       console.log(response.data.message.name, "reposne dxcfgvbhjnkmjhgvfcdxcfvgbh")
       updateQueryParam("pur_req", response.data.message.name)
       fetchTableData(response.data.message.name)
-      alert("submission successfull");
+      alert("Submitted Successfully");
     } else {
       alert("error");
     }
   }
- const handleModel = (purchase_requisition_type: string) => purchase_requisition_type === "SB" ? setEditModalOpen(true) : setNBEditModalOpen(true);
+  const handleModel = (purchase_requisition_type: string) => purchase_requisition_type === "SB" ? setEditModalOpen(true) : setNBEditModalOpen(true);
 
 
   useEffect(() => {
@@ -189,9 +189,6 @@ const   PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropd
     }
   }, [pur_req])
 
-  console.log(!(pur_req),"pur_req----")
-  console.log(mainItems,"0--=-=-=--")
-  console.log(mainItems?.docname && mainItems?.docname,"mainItems?.docname && mainItems?.docname")
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <div className="grid grid-cols-3 gap-6 p-5">
@@ -291,7 +288,7 @@ const   PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropd
           <Input placeholder="" name='requisitioner' value={formData?.cart_id ?? ""} disabled />
         </div>
       </div>
-      {!(mainItems?.docname && mainItems?.docname)  && <div className={`flex justify-end p-4`}><Button type='button' className='bg-blue-400 hover:bg-blue-400' onClick={() => handleNext()}>Next</Button></div>}
+      {!(mainItems?.docname && mainItems?.docname) && <div className={`flex justify-end p-4`}><Button type='button' className='bg-blue-400 hover:bg-blue-400' onClick={() => handleNext()}>Next</Button></div>}
 
 
       {mainItems && mainItems?.data?.length > 0 && (
@@ -434,21 +431,21 @@ const   PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropd
                                 </Table>
                               </div>
                             </div>
-                          ) 
-                          : 
-                          (
-                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                              <p className="text-gray-500 mb-4">No sub-items added yet</p>
-                              <Button
-                                variant="outline"
-                                onClick={() => openSubItemModal(mainItem?.row_name)}
-                                className="flex items-center gap-2 mx-auto"
-                              >
-                                <Plus className="w-4 h-4" />
-                                Add First Sub Item
-                              </Button>
-                            </div>
-                          )}
+                          )
+                            :
+                            (
+                              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                                <p className="text-gray-500 mb-4">No sub-items added yet</p>
+                                <Button
+                                  variant="outline"
+                                  onClick={() => openSubItemModal(mainItem?.row_name)}
+                                  className="flex items-center gap-2 mx-auto"
+                                >
+                                  <Plus className="w-4 h-4" />
+                                  Add First Sub Item
+                                </Button>
+                              </div>
+                            )}
                         </div>}
                       </div>
                     </CollapsibleContent>
@@ -480,6 +477,8 @@ const   PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropd
           StorageLocationDropdown={StorageLocationDropdown}
           ValuationClassDropdown={ValuationClassDropdown}
           PurchaseOrgDropdown={PurchaseOrgDropdown}
+          GLAccountDropdwon={GLAccountDropdwon}
+          CostCenterDropdown={CostCenterDropdown}
           MaterialGroupDropdown={MaterialGroupDropdown}
           pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
         />}

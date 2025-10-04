@@ -136,6 +136,8 @@ export interface PurchaseOrganisation {
   purchase_organisation_code: string;
   purchase_organisation_name: string;
   description: string;
+  purchase_organization_name:string;
+  purchase_organization_code:string;
 }
 // Account Category
 export interface AccountCategory {
