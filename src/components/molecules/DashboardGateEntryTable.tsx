@@ -160,7 +160,7 @@ const DashboardGateEntryTable = ({ dashboardTableData, companyDropdown,TableTitl
           </TableHeader>
           <TableBody className="text-center">
             {table ? (
-              table?.map((item, index) => (
+              table?.map((item:any, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                   <TableCell className="text-nowrap">{item?.ref_no}</TableCell>
