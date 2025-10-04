@@ -125,6 +125,8 @@ export interface CompanyData {
   parenttype: string;
   company_display_name: string;
   via_import?: number | boolean | string;
+  onboarding_company_name: string | null;
+  company_id: string | null;
 
 }
 
@@ -156,6 +158,8 @@ export interface VendorOnboardingRecord {
   synced_date: string | null;
   synced_by: string | null;
   created_by_accounts_team: number;
+  onboarding_company_name: string | null;
+  company_id: string | null;
 }
 
 
@@ -249,7 +253,9 @@ export interface Metadata {
 }
 
 export interface VendorRow extends Vendor {
+  onboarding?: VendorOnboardingRecord;
   company?: CompanyData;
 }
+
 
 

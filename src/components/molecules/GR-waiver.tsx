@@ -69,11 +69,6 @@ export default function GRWaiver() {
     { label: "Shipping Amount In INR:", type: "text" },
   ];
 
-  const AccountApproval: Field[] = [
-    { label: "Approval Status:", type: "select", placeholder: "Search By" },
-    { label: "Remark", type: "text" },
-  ];
-
   const AccountCloserDetail: Field[] = [
     { label: "Approval Status:", type: "select", placeholder: "Search By" },
     { label: "Remark", type: "text" },
@@ -164,54 +159,60 @@ export default function GRWaiver() {
   );
 
   return (
-    <div className="container mx-auto w-full h-[90vh] bg-gray-100 p-4 rounded-xl shadow-lg overflow-y-auto space-y-6">
-      {renderSection("Requestor Detail", RequestorDetail)}
-      {renderSection("Reporting Head Approval", ReportingHeadApproval)}
-      {renderSection("Logistic Details", LogisticDetails)}
-      {renderSection("Accounts Details", AccountsDetails)}
-      {renderSection("Dispatch Form", DispatchForm)}
-      {renderSection("Account Approval", AccountApproval)}
+    <div className="min-h-screen w-full bg-gray-100 flex justify-center items-start p-2">
+      <div className="w-full max-w-7xl bg-white p-6 rounded-sm shadow-lg space-y-8 border border-gray-200 overflow-y-auto">
+        {renderSection("Requestor Detail", RequestorDetail)}
+        {renderSection("Reporting Head Approval", ReportingHeadApproval)}
+        {renderSection("Logistic Details", LogisticDetails)}
+        {renderSection("Accounts Details", AccountsDetails)}
+        {renderSection("Dispatch Form", DispatchForm)}
+        {renderSection("Account Approval", ReportingHeadApproval)}
 
-      {/* Closure Form */}
-      <div className="bg-white p-4 rounded-lg shadow space-y-6 border border-gray-300">
-        <h2 className="text-lg font-semibold">Closure Form</h2>
-        <div className="space-y-2">
-          <h3 className="text-md font-semibold">Requestor Closer Detail</h3>
-        </div>
-        <div>
-          <a
-            href="/path-to-certificate.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:underline"
-          >
-            Download Destruction Certificate
-          </a>
-        </div>
-        <div className="flex justify-end pt-4">
-          <button
-            onClick={() => handleSubmit("Closure Form")}
-            className="text-white px-6 py-2 rounded-xl shadow hover:border-blue-600 
-                       focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition"
-            style={{ backgroundColor: "#5291CD" }}
-          >
-            Submit
-          </button>
+        <div className="bg-white p-4 rounded-lg shadow space-y-6 border border-gray-300">
+          <div className="p-4 rounded-lg shadow space-y-4 border border-gray-200">
+            <h2 className="text-lg font-semibold">Closure Form</h2>
+            <div className="space-y-2">
+              <h3 className="text-md font-semibold">Requestor Closer Detail</h3>
+            </div>
+            <div>
+              <a
+                href="/path-to-certificate.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                Download Destruction Certificate
+              </a>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-lg shadow space-y-4 border border-gray-200">
+            <h2 className="text-lg font-semibold">Account Closer Detail</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {AccountCloserDetail.map(renderField)}
+            </div>
+            <div className="flex justify-end">
+            <button
+              onClick={() => handleSubmit("Account Closer Detail")}
+              className="text-white px-6 py-2 rounded-xl shadow hover:border-blue-600 
+                        focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition"
+              style={{ backgroundColor: "#5291CD" }}
+            >
+               Submit
+            </button>
+          </div>
         </div>
       </div>
 
-      {renderSection("Account Closer Detail", AccountCloserDetail)}
-
-      {/* Back Button at bottom */}
       <div className="flex justify-end pt-4">
         <button
-            onClick={() => window.history.back()}
-            className="border border-blue-500 text-blue-500 px-6 py-2 rounded-xl shadow transition hover:bg-blue-500 hover:text-white"
-            >
-            Back
+          onClick={() => window.history.back()}
+          className="border border-blue-500 text-blue-500 px-6 py-2 rounded-xl shadow transition hover:bg-blue-500 hover:text-white"
+        >
+          Back
         </button>
-
       </div>
     </div>
+  </div>
   );
 }

@@ -12,40 +12,8 @@ import {
 import { Button } from "@/components/ui/button"; 
 import Link from "next/link";
 import { FileText, Plus } from "lucide-react"; 
-
-interface pickupItem {
-  grn_no: string;
-  grn_company: string;
-  grn_date: string;
-  sap_booking_id: string;
-  sap_status: string;
-  invoice_url?: string;
-}
-
-const sampleData: pickupItem[] = [
-  {
-    grn_no: "GRN123",
-    grn_company: "ABC Corp",
-    grn_date: "2025-09-25",
-    sap_booking_id: "SAP001",
-    sap_status: "Confirmed",
-    invoice_url: "https://example.com/invoice1.pdf",
-  },
-  {
-    grn_no: "GRN456",
-    grn_company: "XYZ Ltd",
-    grn_date: "2025-09-24",
-    sap_booking_id: "SAP002",
-    sap_status: "Pending",
-  },
-];
-
-<ViewGrWaiver pickupData={sampleData} />;
-
-interface ViewGrWaiverProps {
-  pickupData?: pickupItem[];
-  onNewShipment?: () => void;  
-}
+import { GRwaiverData } from "@/src/constants/GR-waiverData";
+import { GRItem, ViewGrWaiverProps } from "@/src/types/GR-waiverIterm";
 
 const formatDate = (dateString: string): string => {
   try {
@@ -60,28 +28,28 @@ const formatDate = (dateString: string): string => {
   }
 };
 
-export default function ViewGrWaiver({ pickupData = [] }: ViewGrWaiverProps) {
+export default function ViewGrWaiver({ GRData = [] }: ViewGrWaiverProps) {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const router = useRouter();
 
   
   const filteredData = useMemo(() => {
-    if (!pickupData) return [];
-    if (!searchTerm.trim()) return pickupData;
+    if (!GRData) return [];
+    if (!searchTerm.trim()) return GRData;
 
-    return pickupData.filter((item) =>
-      item?.grn_no?.toLowerCase().includes(searchTerm.toLowerCase())
+    return GRData.filter((item) =>
+      item?.gr_no?.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [pickupData, searchTerm]);
+  }, [GRData, searchTerm]);
 
-  const onNewShipment = () => {
+  const onNewGR = () => {
     router.push("/gr-waiver");
   };
 
 
   return (
-    <div className="p-3 bg-gray-300 min-h-screen">
+    <div className="p-3 bg-gray-100 min-h-screen">
       <div className="shadow bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
@@ -93,10 +61,10 @@ export default function ViewGrWaiver({ pickupData = [] }: ViewGrWaiverProps) {
             variant={"nextbtn"}
             size={"nextbtnsize"}
             className="py-2 px-4"
-            onClick={onNewShipment}
+            onClick={onNewGR}
             >
             <Plus className="w-8 h-8" />
-            New Request
+            New GR Waiver
           </Button>
 
         </div>
@@ -104,30 +72,14 @@ export default function ViewGrWaiver({ pickupData = [] }: ViewGrWaiverProps) {
         <Table>
           <TableHeader>
             <TableRow className="bg-[#a4c0fb] text-[14px]">
-              <TableHead className="text-black text-center" scope="col">
-                Sr No.
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                Company
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                GRN No.
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                GRN Date
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                SAP Booking ID
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                SAP Status
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                View GRN
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                View Invoice
-              </TableHead>
+              <TableHead className="text-black text-center">Sr No.</TableHead>
+              <TableHead className="text-black text-center">Company</TableHead>
+              <TableHead className="text-black text-center">GR Waiver No.</TableHead>
+              <TableHead className="text-black text-center">GR Waiver Date</TableHead>
+              <TableHead className="text-black text-center">SAP Booking ID</TableHead>
+              <TableHead className="text-black text-center">SAP Status</TableHead>
+              <TableHead className="text-black text-center">View GR Waiver</TableHead>
+              <TableHead className="text-black text-center">View Invoice</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -136,14 +88,14 @@ export default function ViewGrWaiver({ pickupData = [] }: ViewGrWaiverProps) {
               filteredData.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell className="text-center">{index + 1}</TableCell>
-                  <TableCell className="text-center">{item.grn_company}</TableCell>
-                  <TableCell className="text-center">{item.grn_no}</TableCell>
-                  <TableCell className="text-center">{formatDate(item.grn_date)}</TableCell>
+                  <TableCell className="text-center">{item.gr_company}</TableCell>
+                  <TableCell className="text-center">{item.gr_no}</TableCell>
+                  <TableCell className="text-center">{formatDate(item.gr_date)}</TableCell>
                   <TableCell className="text-center">{item.sap_booking_id}</TableCell>
                   <TableCell className="text-center">{item.sap_status}</TableCell>
                   <TableCell className="text-center">
-                    <Link href={`/view-grn-details?grn_ref=${item.grn_no}`}>
-                      <Button className="bg-blue-400 text-white hover:bg-white hover:text-black">
+                    <Link href={`/view-grn-details?grn_ref=${item.gr_no}`}>
+                      <Button className=" text-blue-500 hover:bg-blue-500 hover:text-white bg-white">
                         View
                       </Button>
                     </Link>
@@ -167,7 +119,7 @@ export default function ViewGrWaiver({ pickupData = [] }: ViewGrWaiverProps) {
             ) : (
               <TableRow>
                 <TableCell colSpan={8} className="text-center text-gray-500 py-4">
-                  No Pickup Request found.
+                  No GR Waiver found.
                 </TableCell>
               </TableRow>
             )}

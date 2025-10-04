@@ -237,6 +237,26 @@ const API_END_POINTS = {
   InquiryAddtionalApproval:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.send_purchase_enquiry_approval_mail`,
   submitPrInquiry:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.submit_purchase_inquiry`,
 
+  // Dashboard Registered by API
+  filterregisteredby: `${url}api/method/vms.APIs.vendor_onboarding.vendor_registration_masters.vendor_registration_dropdown_masters`,
+
+  // Meri-Gate Module Dashboard APIs
+    // 1. SHipment Status APIs 
+    shipmentstatuscount: `${url}/api/method/vms.APIs.shipment_status.get_shipment_status.get_shipment_status_statistics`,
+    shipmentcompanwisetabledata: `${url}/api/method/vms.APIs.shipment_status.get_shipment_status.get_shipment_status_list`,
+    shipmentdetails: `${url}/api/method/vms.APIs.shipment_status.get_shipment_status.get_shipment_status_details`,
+    createnewshipmentstatus: `${url}/api/method/vms.APIs.shipment_status.create_shipment_status.create_shipment_status`,
+    allRFQSrNo: `${url}/api/method/vms.APIs.shipment_status.get_shipment_status.rfq_srno_list`,
+    getRFQdata: `${url}/api/method/vms.APIs.shipment_status.get_shipment_status.rfq_data`,
+
+    // 2. Service Bill APIs
+    servicebillcount: `${url}/api/method/vms.APIs.service_bill.get_service_bill.get_service_bill_statistics`,
+    servicebillcompanywisetabledata: `${url}/api/method/vms.APIs.service_bill.get_service_bill.get_service_bill_list`,
+    servicebilldetails: `${url}/api/method/vms.APIs.service_bill.get_service_bill.get_service_bill_details`,
+    createnewservicebill: `${url}/api/method/vms.APIs.service_bill.create_service_bill.create_service_bill`,
+
+    // submitPrInquiry:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.submit_purchase_inquiry`,
+
     //gate Entry
   sendQRData:`${url}/api/method/vms.APIs.dispatch.dispatch.get_dispatch_data`,
   sendGateEntry:`${url}/api/method/vms.APIs.dispatch.gate_entry.create_gate_entry`,
@@ -246,6 +266,8 @@ const API_END_POINTS = {
   handover_submit:`${url}/api/method/vms.APIs.dispatch.gate_entry.handover_gate_entry`,
   GateEntryDashboardCardCount:`${url}/api/method/vms.APIs.dispatch.get_gate_entry.get_gate_entry_statistics`,
   GateEntryTableData:`${url}/api/method/vms.APIs.dispatch.get_gate_entry.gate_entry_get`
+
+
 }
 
 export default API_END_POINTS;

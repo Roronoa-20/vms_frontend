@@ -49,6 +49,8 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
   const [files, setFiles] = useState<File[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<FileList | null>(null)
   const [rowNamesMapping, setRowNamesMapping] = useState<{ [key: string]: string }>({});
+  const isTreasuryUser = designation?.toLowerCase() === "treasury";
+
 
   const router = useRouter()
   useEffect(() => {
@@ -228,7 +230,8 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
     <div className="flex flex-col bg-white rounded-lg p-2 w-full">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Bank Details</h1>
-        {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}{(isAmendment == 1 || re_release == 1) && (
+        {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
+        {!isTreasuryUser && (isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled((prev) => !prev)}
             className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
@@ -398,7 +401,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
 
           <div className="flex gap-6 items-start flex-wrap">
             {/* Upload Section */}
-            {(isAccountTeam === 0 && designation === "Purchase Team" && isBankProof === 1)||
+            {(isAccountTeam === 0 && designation === "Purchase Team" && isBankProof === 1) ||
               (isAccountTeam === 1 && designation === "Accounts Team" && isBankProof === 1) ? (
               <div className="flex flex-col gap-2">
                 <SimpleFileUpload

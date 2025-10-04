@@ -8,28 +8,32 @@ import PopUp from "@/src/components/molecules/AllvendortablePopUp";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
-import Pagination from "@/src/components/molecules/Pagination";
+import Pagination from "@/src/components/molecules/Pagination-at-all-vendors";
 import NewVendorRegistration from "@/src/components/pages/newvendorregistration";
 import { TvendorRegistrationDropdown } from "@/src/types/types";
 import { Label } from "@/components/ui/label";
 import { Select, SelectGroup, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/src/components/atoms/select";
 import { RowData, ExtendRowData, MultipleCompanyData } from "@/src/types/rowdata";
 
-
 interface Props {
     vendors: VendorRow[];
     activeTab: string;
+    currentPage: number;
+    setCurrentPage: (page: number) => void;
+    pageSize: number;
+    totalPages: number;
+    totalRecords: number;
 }
 
-const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
-    console.log("Vendors-------->", vendors);
+const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurrentPage, pageSize, totalPages, totalRecords }) => {
+    // console.log("Vendors-------->", vendors);
     const router = useRouter();
     const [isVendorCodeDialog, setIsVendorCodeDialog] = React.useState(false);
     const [selectedVendorCodes, setSelectedVendorCodes] = React.useState<CompanyVendorCodeRecord[] | null>(null);
     const [copiedRow, setCopiedRow] = React.useState<RowData | null>(null);
     const [isExtendDialogOpen, setIsExtendDialogOpen] = React.useState(false);
     const [extendRow, setExtendRow] = React.useState<ExtendRowData | null>(null);
-    const [currentPage, setCurrentPage] = React.useState(1);
+    // const [currentPage, setCurrentPage] = React.useState(1);
     const copyFormRef = React.useRef<HTMLDivElement | null>(null);
     const extendFormRef = React.useRef<HTMLDivElement | null>(null);
     const recordPerPage = 10;
@@ -53,39 +57,6 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
             .reduce((sum, k) => sum + (colWidths[k] || 0), 0);
     };
 
-    // const rows: RowData[] = vendors.flatMap((vendor) => {
-    //     const companyData = vendor.multiple_company_data?.length
-    //         ? vendor.multiple_company_data.filter((c) => c.company_name === activeTab)
-    //         : [{ company_name: activeTab, company_display_name: activeTab, company_vendor_code: "N.A.", sap_client_code: "N.A.", purchase_organization: "N.A.", via_import: 0 }];
-
-    //     return companyData.map((c) => {
-    //         const approvedRecord = vendor.vendor_onb_records?.find(
-    //             (record) => record.onboarding_form_status === "Approved"
-    //         );
-
-    //         return {
-    //             multiple_company_data: [c],
-    //             name: vendor.name,
-    //             ref_no: approvedRecord?.vendor_onboarding_no || "N.A.",
-    //             multiple_company: vendor.bank_details?.registered_for_multi_companies ?? 0,
-    //             company_code: c.company_name,
-    //             vendor_code: c.company_vendor_code || "N.A.",
-    //             vendor_name: vendor.vendor_name || "N.A.",
-    //             office_email_primary: vendor.office_email_primary || "N.A.",
-    //             pan_number: vendor.bank_details?.company_pan_number || "N.A.",
-    //             gst_no: vendor.document_details || "N.A.",
-    //             state: c.company_display_name || "N.A.",
-    //             country: vendor.country || "N.A.",
-    //             pincode: vendor.mobile_number || "N.A.",
-    //             bank_name: vendor.bank_details?.bank_name || "N.A.",
-    //             ifsc_code: vendor.bank_details?.ifsc_code || "N.A.",
-    //             sap_client_code: c.sap_client_code || "N.A.",
-    //             purchase_org: c.purchase_organization || "N.A.",
-    //             via_data_import: vendor.via_data_import || "0",
-    //             created_from_registration: vendor.created_from_registration || "0",
-    //         };
-    //     });
-    // });
 
     const normalizeCompanyData = (c: Partial<CompanyData> | any): MultipleCompanyData => ({
         company_name: c.company_name ?? "N.A.",
@@ -161,9 +132,11 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
             } as RowData;
         });
     });
-    console.log("Normalized Rows----->", rows);
+    // console.log("Normalized Rows----->", rows);
 
-    const totalRecords = rows.length;
+    // const totalRecords = rows.length;
+    // const startIdx = (currentPage - 1) * recordPerPage;
+    // const paginatedRows = rows.slice(startIdx, startIdx + recordPerPage);
     const startIdx = (currentPage - 1) * recordPerPage;
     const paginatedRows = rows.slice(startIdx, startIdx + recordPerPage);
 
@@ -284,8 +257,8 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
         fetchDropdownData();
     }, [activeTab]);
 
-    console.log("SAP CLient Code Filter Data--->", dropdownData);
-    console.log("Unfiltered Data---->", unfilteredDropdownData);
+    // console.log("SAP CLient Code Filter Data--->", dropdownData);
+    // console.log("Unfiltered Data---->", unfilteredDropdownData);
     const companyDropdown = dropdownData?.company_master;
 
     const handleCopy = (row: RowData) => {
@@ -525,9 +498,8 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
             < div className="mt-4" >
                 <Pagination
                     currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
-                    total_event_list={totalRecords}
-                    record_per_page={recordPerPage}
+                    onPageChange={setCurrentPage}
+                    totalPages={Math.ceil(totalRecords / recordPerPage)}
                 />
             </div >
 

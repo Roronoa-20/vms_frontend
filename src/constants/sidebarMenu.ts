@@ -30,22 +30,17 @@ export const sidebarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/view-pr.svg",
     name: "MPR",
-    href: "/view-pickup-request",
+    href: "/pickup-dashboard",
     children: []
   },
-  // {
-  //   logo: "/sidebar-assests/raise-rfq-logo.svg",
-  //   name: "Raise RFQ",
-  //   href: "/create-rfq"
-  // },
   {
     logo: "/sidebar-assests/raise-rfq-logo.svg",
     name: "Raise RFQ",
     // href: "/create-rfq",
     children: [
       { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Create RFQ", href: "/create-rfq" },
-      { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Shipment Status", href: "/view-shipment-status" },
-      { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Service Bill", href: "/view-service-bill" },
+      { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Shipment Status", href: "/shipment-status-dashboard" },
+      { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Service Bill", href: "/service-bill-dashboard" },
     ],
   },
   {
@@ -75,7 +70,13 @@ export const sidebarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/view-grn.svg",
     name: "GR Waiver",
-    href: "/view-gr-waiver",
+    href: "/gr-waiver-dashboard",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "Payment",
+    href: "/view-payment-requisition",
     children: []
   },
   // {

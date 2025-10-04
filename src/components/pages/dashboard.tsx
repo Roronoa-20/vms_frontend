@@ -94,6 +94,9 @@ const Dashboard = async () => {
   const dropdownData: TvendorRegistrationDropdown["message"]["data"] =
     dropDownApi?.status == 200 ? dropDownApi?.data?.message?.data : "";
   const companyDropdown = dropdownData?.company_master
+  const filterregisteredby = dropdownData?.user_list
+
+  console.log("YYYYYYYYY---->",dropdownData)
 
 
   const prInquiryDashboardUrl = API_END_POINTS?.prInquiryDashboardTable;
@@ -221,6 +224,7 @@ const Dashboard = async () => {
       <DashboardCardCounter
         cardData={CardData}
         companyDropdown={companyDropdown}
+        filterregisteredby={filterregisteredby} 
         dashboardPOTableData={dashboardPOTableData}
         // dashboardDispatchVendorTableData={dashboardTotalVendorTableData}
         dashboardTotalVendorTableData={dashboardTotalVendorTableData}

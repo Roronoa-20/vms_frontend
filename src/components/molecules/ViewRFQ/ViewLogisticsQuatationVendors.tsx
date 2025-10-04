@@ -202,7 +202,7 @@ const ViewLogisticsQuatationVendors = ({
                                             );
                                         }
                                         return (
-                                            <TableCell key={idx} className={`text-center ${col.key === "name" ? "text-nowrap" : ""}`}>
+                                            <TableCell key={idx} className={`text-center text-nowrap ${col.key === "name" ? "text-nowrap" : ""}`}>
                                                 {getValueByKey(item, col.key, index)}
                                             </TableCell>
                                         );

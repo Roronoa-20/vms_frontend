@@ -19,7 +19,8 @@ export type TvendorRegistrationDropdown = {
       country_master: { name: string, mobile_code: string }[],
       company_master: { name: string, description: string , sap_client_code: string}[],
       incoterm_master: { name: string }[],
-      currency_master: { name: string }[]
+      currency_master: { name: string }[],
+      user_list: {user_id: string, full_name: string}[],
     }
   }
 }

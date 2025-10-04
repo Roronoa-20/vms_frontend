@@ -1,179 +1,119 @@
 "use client";
-import React, { useState, useMemo } from "react";
-import { useRouter } from 'next/navigation';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button"; 
+
+import React, { useEffect, useState } from "react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import requestWrapper from "@/src/services/apiCall";
+import { AxiosResponse } from "axios";
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import { ServiceBillItem, ServiceBillTableResponse } from "@/src/types/ServiceBillTypes";
+import Pagination from "./Pagination";
 import Link from "next/link";
-import { FileText, Plus } from "lucide-react"; 
+import { useRouter } from "next/navigation";
+import { Plus } from "lucide-react";
 
-interface shipmentItem {
-  grn_no: string;
-  grn_company: string;
-  grn_date: string;
-  sap_booking_id: string;
-  sap_status: string;
-  invoice_url?: string;
+interface Props {
+  company: string;
+  tableTitle?: string;
 }
 
-const sampleData: shipmentItem[] = [
-  {
-    grn_no: "GRN123",
-    grn_company: "ABC Corp",
-    grn_date: "2025-09-25",
-    sap_booking_id: "SAP001",
-    sap_status: "Confirmed",
-    invoice_url: "https://example.com/invoice1.pdf",
-  },
-  {
-    grn_no: "GRN456",
-    grn_company: "XYZ Ltd",
-    grn_date: "2025-09-24",
-    sap_booking_id: "SAP002",
-    sap_status: "Pending",
-  },
-];
-
-<ViewServiceBilltable shipmentData={sampleData} />;
-
-interface ViewServiceBilltableProps {
-  shipmentData?: shipmentItem[];
-  onNewShipment?: () => void;  
-}
-
-const formatDate = (dateString: string): string => {
-  try {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  } catch {
-    return "--";
-  }
-};
-
-export default function ViewServiceBilltable({ shipmentData = [] }: ViewServiceBilltableProps) {
-  const [searchTerm, setSearchTerm] = useState<string>("");
-
+export default function ViewServiceBillTable({ company, tableTitle }: Props) {
+  const [data, setData] = useState<ServiceBillItem[]>([]);
+  const [total, setTotal] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
   const router = useRouter();
+  const limit = 20;
 
-  
-  const filteredData = useMemo(() => {
-    if (!shipmentData) return [];
-    if (!searchTerm.trim()) return shipmentData;
-
-    return shipmentData.filter((item) =>
-      item?.grn_no?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [shipmentData, searchTerm]);
-
-  const onNewShipment = () => {
-    router.push("/service-bill");
+  const fetchTableData = async () => {
+    try {
+      const filters = company && company !== "" ? { company } : {};
+      const res: AxiosResponse<ServiceBillTableResponse> = await requestWrapper<ServiceBillTableResponse>({
+        url: API_END_POINTS.servicebillcompanywisetabledata,
+        method: "GET",
+        params: {
+          filters: JSON.stringify(filters),
+          page,
+          limit,
+        },
+      });
+      setData(res.data.message.data);
+      setTotal(res.data.message.pagination.total_count);
+    } catch (err) {
+      console.error("Error fetching table data", err);
+    }
   };
 
+  useEffect(() => {
+    fetchTableData();
+  }, [company, page]);
+
+  const handleNewShipment = () => {
+    router.push("/new-service-bill");
+  };
 
   return (
-    <div className="p-3 bg-gray-300 min-h-screen">
-      <div className="shadow bg-[#f6f6f7] p-4 rounded-2xl">
-        <div className="flex w-full justify-between pb-4">
-          <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Service Bill (SB) List
-          </h1>
-          
+    <div>
+      <div className="flex justify-between items-center">
+        <h1 className="text-lg font-semibold mb-4">{tableTitle || `Shipment Status Data (${company})`}</h1>
+        <div className="flex justify-end mb-4">
           <Button
-            type="button"
+            onClick={handleNewShipment}
             variant={"nextbtn"}
             size={"nextbtnsize"}
-            className="py-2 px-4"
-            onClick={onNewShipment}
-            >
-            <Plus className="w-8 h-8" />
-            New Service
+            className="py-2 flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            New Service Bill
           </Button>
-
         </div>
-
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-[#a4c0fb] text-[14px]">
-              <TableHead className="text-black text-center" scope="col">
-                Sr No.
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                Company
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                GRN No.
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                GRN Date
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                SAP Booking ID
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                SAP Status
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                View GRN
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                View Invoice
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {filteredData && filteredData.length > 0 ? (
-              filteredData.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell className="text-center">{index + 1}</TableCell>
-                  <TableCell className="text-center">{item.grn_company}</TableCell>
-                  <TableCell className="text-center">{item.grn_no}</TableCell>
-                  <TableCell className="text-center">{formatDate(item.grn_date)}</TableCell>
-                  <TableCell className="text-center">{item.sap_booking_id}</TableCell>
-                  <TableCell className="text-center">{item.sap_status}</TableCell>
-                  <TableCell className="text-center">
-                    <Link href={`/view-grn-details?grn_ref=${item.grn_no}`}>
-                      <Button className="bg-blue-400 text-white hover:bg-white hover:text-black">
-                        View
-                      </Button>
-                    </Link>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {item.invoice_url ? (
-                      <Link
-                        href={item.invoice_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex justify-center text-blue-600"
-                      >
-                        <FileText className="w-5 h-5" />
-                      </Link>
-                    ) : (
-                      "--"
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={8} className="text-center text-gray-500 py-4">
-                  No Service Bill found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
       </div>
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-[#a4c0fb] text-[14px]">
+            <TableHead className="text-black text-center">Sr No.</TableHead>
+            <TableHead className="text-black text-center">Company</TableHead>
+            <TableHead className="text-black text-center">RFQ Ref No.</TableHead>
+            <TableHead className="text-black text-center">RFQ Date</TableHead>
+            <TableHead className="text-black text-center">Meril Job No.</TableHead>
+            <TableHead className="text-black text-center">Meril Job Date</TableHead>
+            <TableHead className="text-black text-center">Service Provider Name</TableHead>
+            <TableHead className="text-black text-center">Submit Date</TableHead>
+            <TableHead className="text-black text-center">Status</TableHead>
+            <TableHead className="text-black text-center">View</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.length > 0 ? (
+            data.map((item, idx) => (
+              <TableRow key={idx}>
+                <TableCell className="text-center">{(page - 1) * limit + idx + 1}</TableCell>
+                <TableCell className="text-center">{item.company}</TableCell>
+                <TableCell className="text-center">{item.rfq_number}</TableCell>
+                <TableCell className="text-center">{item.rfq_date}</TableCell>
+                <TableCell className="text-center">{item.meril_job}</TableCell>
+                <TableCell className="text-center">{item.meril_date}</TableCell>
+                <TableCell className="text-center">{item.service_provider_name}</TableCell>
+                <TableCell className="text-center">{item.status}</TableCell>
+                <TableCell className="text-center">{item.service_provider_name}</TableCell>
+                <TableCell className="text-center"><Link href={`/new-service-bill?name=${item.name}`}><Button className="bg-[#5291CD] hover:bg-white hover:text-[#5291CD]">View</Button></Link></TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={7} className="text-center py-4 text-gray-500">
+                No data found.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+
+      <Pagination
+        currentPage={page}
+        setCurrentPage={setPage}
+        total_event_list={total}
+        record_per_page={limit}
+      />
     </div>
   );
 }

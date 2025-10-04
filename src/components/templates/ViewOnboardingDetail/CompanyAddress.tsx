@@ -253,6 +253,7 @@ const CompanyAddress = ({
     return errors;
   };
   const { designation } = useAuth();
+  const isTreasuryUser = designation?.toLowerCase() === "treasury";
 
   const handleSubmit = async () => {
 

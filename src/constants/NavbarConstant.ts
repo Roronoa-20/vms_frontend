@@ -26,11 +26,12 @@ export const NavbarConstant:Record<string,string> = {
     "/view-all-po-changes": "Changed PO Details",
     "/head-dashboard": "Dashboard",
     "/view-shipment-status": "Shipment Status (DSR)",
-    "/shipment-status": "Shipment Status (DSR)",
-    "/view-service-bill": "Service Bill (SB)",
-    "/service-bill": "Service Bill (SB)",
+    "/new-shipment-status": "New Shipment Status (DSR)",
+    "/service-bill-dashboard": "Service Bill(SB) Dashboard",
+    "/new-service-bill": "New Service Bill (SB)",
     // "/view-all-po-changes": "Changed PO Details",
     "/gate-entry":"Gate Entry",
     "/view-gate-entry":"View Gate Entry",
-    "/gate-entry-dashboard":"Gate-entry Dashboard"
+    "/gate-entry-dashboard":"Gate-entry Dashboard",
+    "/shipment-status-dashboard": "Shipment Status(DSR) Dashboard",
 }

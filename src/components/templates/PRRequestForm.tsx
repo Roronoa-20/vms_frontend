@@ -47,7 +47,6 @@ export const updateQueryParam = (key: string, value: string) => {
 const   PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, StorageLocationDropdown, ValuationClassDropdown, ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, MaterialCodeDropdown, PurchaseOrgDropdown }: Props) => {
   const user = Cookies.get("user_id");
   const [formData, setFormData] = useState<PurchaseRequestData["message"]["data"] | null>(PRData ? { ...PRData, requisitioner: PRData?.requisitioner, cart_id: cartId ? cartId : "" } : null);
-  const [requiredField, setRequiredField] = useState(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [expandedRowNames, setExpandedRowNames] = useState<string[]>([]);
   const [editRow, setEditRow] = useState<PurchaseRequisitionDataItem>()
@@ -181,34 +180,8 @@ const   PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropd
       alert("error");
     }
   }
+ const handleModel = (purchase_requisition_type: string) => purchase_requisition_type === "SB" ? setEditModalOpen(true) : setNBEditModalOpen(true);
 
-  const handleModel = (purchase_requisition_type: string) => purchase_requisition_type === "SB" ? setEditModalOpen(true) : setNBEditModalOpen(true);
-
-  const fetchRequiredData = async (company: string, pur_type: string, acct_cate: string) => {
-    console.log(company, pur_type, acct_cate)
-    try {
-      const Data = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.purchase_api.handle_req_field_pr.filter_req_fields?company=${company}&pur_type=${pur_type}&acct_cate=${acct_cate}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: 'include',
-        }
-      );
-      if (Data.ok) {
-        const data = await Data.json();
-        setRequiredField(data?.message)
-        console.log(data, "data in required")
-      }
-    } catch (error) {
-      console.log(error, "something went wrong");
-    }
-  };
-  // useEffect(() => {
-  //   fetchRequiredData(formData?.company, formData?.purchase_requisition_type, singleTableRow?.account_assignment_category);
-  // }, [formData?.company, formData?.purchase_requisition_type, singleTableRow?.account_assignment_category])
 
   useEffect(() => {
     if (pur_req) {
@@ -216,8 +189,8 @@ const   PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropd
     }
   }, [pur_req])
 
-  console.log(!(pur_req),"pur_req")
-  console.log(mainItems)
+  console.log(!(pur_req),"pur_req----")
+  console.log(mainItems,"0--=-=-=--")
   console.log(mainItems?.docname && mainItems?.docname,"mainItems?.docname && mainItems?.docname")
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">

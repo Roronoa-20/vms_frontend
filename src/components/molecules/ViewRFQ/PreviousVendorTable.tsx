@@ -24,6 +24,7 @@ interface Props {
 }
 
 const PreviousVendorTable = ({ RFQData }: Props) => {
+  const merged = [...RFQData.onboarded_vendors, ...RFQData.non_onboarded_vendors];  
   return (
     <Dialog>
       {/* Trigger button to open dialog */}
@@ -57,8 +58,8 @@ const PreviousVendorTable = ({ RFQData }: Props) => {
             </TableHeader>
 
             <TableBody className="text-center bg-white">
-              {RFQData?.onboarded_vendors?.length > 0 ? (
-                RFQData.onboarded_vendors.map((item, index) => (
+              {merged?.length > 0 ? (
+                merged.map((item, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium text-center">
                       {index + 1}
