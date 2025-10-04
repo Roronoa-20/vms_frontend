@@ -30,4 +30,5 @@ export const NavbarConstant:Record<string,string> = {
     "/service-bill-dashboard": "Service Bill(SB) Dashboard",
     "/new-service-bill": "New Service Bill (SB)",
     "/shipment-status-dashboard": "Shipment Status(DSR) Dashboard",
+    "/view-vendor-po": "Purchase Order (PO)",
 }

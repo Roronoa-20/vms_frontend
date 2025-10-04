@@ -117,7 +117,7 @@ const AllVendors = () => {
           const companyRecord = (vendor.multiple_company_data || []).find(
             rec => rec.company_name === defaultTab && rec.via_import === 1
           );
-          if (onbRecord && companyRecord && vendor.created_from_registration === 1) {
+          if (onbRecord && companyRecord) {
             return { ...vendor, onboarding: onbRecord, company: companyRecord } as VendorRow;
           }
         }

@@ -408,37 +408,39 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
                                     </TableHead>
                                 </TableRow>
                             </TableHeader>
-                            {/* Table Body */}
                             <TableBody>
-                                {/* {paginatedRows.map((row, idx) => ( */}
-                                {/* {(copiedRow ? [copiedRow] : paginatedRows).map((row, idx) => ( */}
-                                {(copiedRow || extendRow
-                                    ? paginatedRows.filter(
-                                        (row) =>
-                                            (copiedRow && row.name === copiedRow.name && row.company_code === copiedRow.company_code) ||
-                                            (extendRow && row.name === extendRow.name && row.company_code === extendRow.company_code)
-                                    )
-                                    : paginatedRows
-                                ).map((row, idx) => (
-                                    < TableRow key={`${row.name}-${row.company_code}-${idx}`}
-                                        className={copiedRow?.name === row.name && copiedRow?.company_code === row.company_code
-                                            ? "bg-yellow-100 border-2 border-yellow-400"
-                                            : idx % 2 === 0 ? "bg-gray-50" : "bg-white"}>
+                                {paginatedRows.map((row, idx) => (
+                                    <TableRow
+                                        key={`${row.name}-${row.company_code}-${idx}`}
+                                        className={
+                                            copiedRow?.name === row.name && copiedRow?.company_code === row.company_code
+                                                ? "bg-yellow-100 border-2 border-yellow-400"
+                                                : idx % 2 === 0
+                                                    ? "bg-gray-50"
+                                                    : "bg-white"
+                                        }
+                                    >
+                                        {/* Sr. No */}
                                         <TableCell
-                                            className={`text-center px-4 py-2 whitespace-nowrap sticky z-10 ${stickyKeys.includes("srno") ? "bg-white" : "bg-[#f7f7f7]"}`}
+                                            className={`text-center px-4 py-2 whitespace-nowrap sticky z-10 ${stickyKeys.includes("srno") ? "bg-white" : "bg-[#f7f7f7]"
+                                                }`}
                                             style={{ left: getStickyLeft("srno") }}
                                         >
                                             {startIdx + idx + 1}
                                         </TableCell>
 
+                                        {/* Columns */}
                                         {columns.map((col, index) => (
                                             <React.Fragment key={`${row.name}-${col.key}-${index}`}>
                                                 <TableCell
-                                                    className={`text-center px-4 py-2 whitespace-nowrap ${stickyKeys.includes(col.key) ? "sticky bg-white z-10" : "bg-[#f7f7f7]"}`}
+                                                    className={`text-center px-4 py-2 whitespace-nowrap ${stickyKeys.includes(col.key) ? "sticky bg-white z-10" : "bg-[#f7f7f7]"
+                                                        }`}
                                                     style={stickyKeys.includes(col.key) ? { left: getStickyLeft(col.key) } : {}}
                                                 >
                                                     {renderCell(row, col)}
                                                 </TableCell>
+
+                                                {/* Vendor Codes & GST Button */}
                                                 {index === 2 && (
                                                     <TableCell className="text-center px-4 py-2 bg-[#f7f7f7]">
                                                         <Button
@@ -456,7 +458,6 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
                                         {/* Actions */}
                                         <TableCell className="text-center bg-[#f7f7f7]">
                                             <Button
-                                                // onClick={() => handleView(row.ref_no, row.name, row.via_data_import)}
                                                 onClick={() => handleView(row)}
                                                 className="whitespace-nowrap bg-[#5291CD] text-white text-sm rounded-xl px-3 py-1"
                                             >
