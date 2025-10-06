@@ -489,7 +489,7 @@ if (assetCodeLine !== 0) {
         </div>
         <div className="col-span-1 mt-8">
           <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.asked_to_modify ? "" : "hidden"}`} onClick={() => handleTableAdd()}>Add</Button>
-          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.is_submited ? "hidden" : ""}`} onClick={() => handleTableAdd()}>Add</Button>
+          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.asked_to_modify ? "hidden" : ""}`} onClick={() => handleTableAdd()}>Add</Button>
         </div>
       </div>
       </>
