@@ -487,10 +487,13 @@ if (assetCodeLine !== 0) {
           </h1>
           <Input type='file' onChange={(e) => {setSingleTableRow((prev:any)=>({...prev,file:e.target?.files?.[0]}))}}/>
         </div>
-        <div className="col-span-1 mt-8">
+        {
+          !PRInquiryData?.is_submited &&
+          <div className="col-span-1 mt-8">
           <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.asked_to_modify ? "" : "hidden"}`} onClick={() => handleTableAdd()}>Add</Button>
           <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.asked_to_modify ? "hidden" : ""}`} onClick={() => handleTableAdd()}>Add</Button>
         </div>
+        }
       </div>
       </>
       }
