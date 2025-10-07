@@ -69,7 +69,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno, reconsiliationDrodow
     }
 
     const formData = new FormData();
-    if (designation == "Accounts Team" && isAccountTeam == 1 && isApprove) {
+    if (designation == "Accounts Team" && isAccountTeam == 1 && !isBankProofByPurchaseTeam) {
       alert("please Upload Bank Proof")
       return;
     }
@@ -168,7 +168,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno, reconsiliationDrodow
     <>
       <div className="w-full flex justify-end gap-5 px-5 pt-4">
 
-        {/* <Button
+        <Button
           variant={"backbtn"}
           size={"backbtnsize"}
           className={`submitButton py-2 ${designation != "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
@@ -178,7 +178,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno, reconsiliationDrodow
           }}
         >
           Reject
-        </Button> */}
+        </Button>
         <Button
           variant={"nextbtn"}
           size={"nextbtnsize"}
@@ -191,7 +191,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno, reconsiliationDrodow
           Approve
         </Button>
 
-        {/* <Button
+        <Button
           variant={"backbtn"}
           size={"backbtnsize"}
           className={`submitButton py-2 ${designation == "Accounts Team" && tabtype == "Purchase Detail" ? "" : "hidden"}`}
@@ -201,7 +201,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno, reconsiliationDrodow
           }}
         >
           Reject
-        </Button> */}
+        </Button>
         <Button
           variant={"nextbtn"}
           size={"nextbtnsize"}

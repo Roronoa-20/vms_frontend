@@ -29,9 +29,9 @@ export const sidebarTabsWithoutMaterialType = [
 export const AccountsTeamOnboardingSidebar = [
   "Company Detail",
   "Company Address",
-  "Contact Detail",
   "Document Detail",
   "Payment Detail / Bank Detail",
+  "Contact Detail",
   "Manufacturing Detail",
   "Reputed Partners",
   "Certificate"
