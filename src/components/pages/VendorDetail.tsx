@@ -47,7 +47,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
   const vendorOnboardingRefno = vendor_onboarding;
   const tabType = tabtype;
 
-  console.log(tabType,"this is tabtype");
+  console.log(tabType, "this is tabtype");
 
   const companyDetailDropdownUrl = API_END_POINTS?.companyDetailDropdown;
   const companyDetailresponse: AxiosResponse = await requestWrapper({
@@ -60,94 +60,95 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
       : "";
 
   const companyAddressDropdownUrl = API_END_POINTS?.companyAddressDropdown;
-  const companyAddressDropdownResponse:AxiosResponse = await requestWrapper({
-    url:`${companyAddressDropdownUrl}`,
-    method:"GET"
+  const companyAddressDropdownResponse: AxiosResponse = await requestWrapper({
+    url: `${companyAddressDropdownUrl}`,
+    method: "GET"
   })
-  const companyAddressDropdown:TCompanyAddressDropdown["message"]["data"] = companyAddressDropdownResponse?.status == 200 ? companyAddressDropdownResponse?.data?.message?.data:"";
+  const companyAddressDropdown: TCompanyAddressDropdown["message"]["data"] = companyAddressDropdownResponse?.status == 200 ? companyAddressDropdownResponse?.data?.message?.data : "";
 
   const certificateUrl = API_END_POINTS?.certifcateCodeDropdown;
-  const certificateResponse:AxiosResponse = await requestWrapper({
-    url:certificateUrl,
-    method:"GET"
+  const certificateResponse: AxiosResponse = await requestWrapper({
+    url: certificateUrl,
+    method: "GET"
   })
-  const certificateCodeDropdown:TcertificateCodeDropdown["message"]["data"] = certificateResponse?.status == 200?certificateResponse?.data?.message?.data : "";
+  const certificateCodeDropdown: TcertificateCodeDropdown["message"]["data"] = certificateResponse?.status == 200 ? certificateResponse?.data?.message?.data : "";
 
-  const gst_vendor_type_dropdown_url =API_END_POINTS?.documentDetail_dropdown;
-  const documentDetailDropdownApi:AxiosResponse = await requestWrapper({url:gst_vendor_type_dropdown_url,method:"GET"});
-  const documentDetailDropdown:TdocumentDetailDropdown["message"]["data"] =  documentDetailDropdownApi?.status == 200?documentDetailDropdownApi?.data?.message?.data:"";
+  const gst_vendor_type_dropdown_url = API_END_POINTS?.documentDetail_dropdown;
+  const documentDetailDropdownApi: AxiosResponse = await requestWrapper({ url: gst_vendor_type_dropdown_url, method: "GET" });
+  const documentDetailDropdown: TdocumentDetailDropdown["message"]["data"] = documentDetailDropdownApi?.status == 200 ? documentDetailDropdownApi?.data?.message?.data : "";
 
   const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${refno}&vendor_onboarding=${vendorOnboardingRefno}`;
-  const fetchOnboardingDetailResponse:AxiosResponse = await requestWrapper({url:fetchOnboardingDetailUrl,method:"GET"});
-  const OnboardingDetail:VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ?fetchOnboardingDetailResponse?.data?.message : "";
-  console.log(OnboardingDetail,"this is data")
+  const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: fetchOnboardingDetailUrl, method: "GET" });
+  const OnboardingDetail: VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message : "";
+  console.log(OnboardingDetail, "this is data")
+
   return (
     <AuthProvider>
       <Suspense>
-    <div className="h-screen flex flex-col bg-gray-200 relative">
-      {/* navbar */}
-      <div className="bg-white py-4 px-6 flex gap-5 items-center mb-6 sticky top-0">
-        <div className="w-6">
-          <VMSLogo />
+        <div className="h-screen flex flex-col bg-gray-200 relative">
+          {/* navbar */}
+          <div className="bg-white py-4 px-6 flex gap-5 items-center mb-6 sticky top-0">
+            <div className="w-6">
+              <VMSLogo />
+            </div>
+            <h1 className="text-[24px] font-semibold">Vendor Onboarding</h1>
+          </div>
+          <div className="flex px-6 justify-between gap-5">
+            {/* sidebar */}
+            <OnboardingSidebar onboarding_refno={vendorOnboardingRefno} refno={refno} vendor_type={OnboardingDetail?.company_details_tab?.vendor_types} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} />
+            {/* form */}
+            {tabType == "Company Detail" ? (
+              <CompanyDetailForm
+                companyDetailDropdown={companyDetailDropdown}
+                onboarding_refno={vendorOnboardingRefno}
+                refno={refno}
+                OnboardingDetail={OnboardingDetail?.company_details_tab}
+                multipleCompany={OnboardingDetail?.multi_company_data}
+                ismulticompany={OnboardingDetail?.is_multi_company}
+              />
+
+            )
+
+              : tabType == "Company Address" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
+                <InternationalCompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab} />
+              )
+                : tabType == "Company Address" ? (
+                  <CompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab} />
+                )
+                  : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
+                    <InternationalDocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
+                  )
+                    : tabType == "Document Detail" ? (
+                      <DocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
+                    )
+                      : tabType?.includes("Payment Detail") && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
+                        <InternationalPaymentDetail ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab} />
+                      )
+                        : tabType?.includes("Payment Detail") ? (
+                          <PaymentDetail ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab} />
+                        ) : tabType?.includes("Contact Detail") ? (
+                          <ContactDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.contact_details_tab} />
+                        ) : tabType == "Manufacturing Detail" ? (
+                          <ManufacturingDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.manufacturing_details_tab} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} VendorType={OnboardingDetail?.company_details_tab?.vendor_types} />
+                        ) : tabType == "Employee Detail" ? (
+                          <EmployeeDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.employee_details_tab} />
+                        ) : tabType == "Machinery Detail" ? (
+                          <MachineryDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.machinery_details_tab} />
+                        ) : tabType == "Testing Facility" ? (
+                          <TestingFacility ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.testing_details_tab} />
+                        ) : tabType == "Reputed Partners" ? (
+                          <ReputedPartners ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.reputed_partners_details_tab} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} VendorType={OnboardingDetail?.company_details_tab?.vendor_types} />
+                        ) : tabType == "Certificate" ? (
+                          <Certificate certificateCodeDropdown={certificateCodeDropdown?.certificate_names} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.certificate_details_tab} />
+                        ) : (
+                          // <InternationalDocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno}/>
+                          // <InternationalPaymentDetail/>
+                          ""
+                        )}
+          </div>
         </div>
-        <h1 className="text-[24px] font-semibold">Vendor Onboarding</h1>
-      </div>
-      <div className="flex px-6 justify-between gap-5">
-        {/* sidebar */}
-        <OnboardingSidebar onboarding_refno={vendorOnboardingRefno} refno={refno} vendor_type={OnboardingDetail?.company_details_tab?.vendor_types} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} />
-        {/* form */}
-        {tabType == "Company Detail" ? (
-          <CompanyDetailForm
-          companyDetailDropdown={companyDetailDropdown}
-          onboarding_refno={vendorOnboardingRefno}
-          refno={refno}
-          OnboardingDetail={OnboardingDetail?.company_details_tab}
-          multipleCompany={OnboardingDetail?.multi_company_data}
-          ismulticompany={OnboardingDetail?.is_multi_company}
-          />
-          
-        ) 
-        
-        : tabType == "Company Address" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
-          <InternationalCompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
-        )
-        : tabType == "Company Address" ? (
-          <CompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
-       ) 
-       : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
-          <InternationalDocumentDetails  ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
-        )
-         : tabType == "Document Detail" ? (
-          <DocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
-        ) 
-        : tabType?.includes("Payment Detail") && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? ( 
-        <InternationalPaymentDetail ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab}/>
-        )
-         : tabType?.includes("Payment Detail") ? ( 
-          <PaymentDetail ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab}/>
-        ) : tabType?.includes("Contact Detail") ? (
-          <ContactDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.contact_details_tab}/>
-        ) : tabType == "Manufacturing Detail" ? (
-          <ManufacturingDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.manufacturing_details_tab} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} VendorType={OnboardingDetail?.company_details_tab?.vendor_types}/>
-        ) : tabType == "Employee Detail" ? (
-          <EmployeeDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.employee_details_tab}/>
-        ) : tabType == "Machinery Detail" ? (
-          <MachineryDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.machinery_details_tab}/>
-        ) : tabType == "Testing Facility" ? (
-          <TestingFacility ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.testing_details_tab}/>
-        ) : tabType == "Reputed Partners" ? (
-          <ReputedPartners ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.reputed_partners_details_tab} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} VendorType={OnboardingDetail?.company_details_tab?.vendor_types}/>
-        ) : tabType == "Certificate" ? (
-          <Certificate certificateCodeDropdown={certificateCodeDropdown?.certificate_names} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.certificate_details_tab}/>
-        ) : (
-          // <InternationalDocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno}/>
-          // <InternationalPaymentDetail/>
-          ""
-        )}
-      </div>
-    </div>
-    </Suspense>
-        </AuthProvider>
+      </Suspense>
+    </AuthProvider>
   );
 };
 
