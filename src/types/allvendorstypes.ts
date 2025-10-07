@@ -62,6 +62,8 @@ export interface Vendor {
   multiple_company_data: CompanyData[];
   vendor_onb_records: VendorOnboardingRecord[];
   vendor_types: any[];
+  company_data: CompanyData[];
+  onboarding_records: VendorOnboardingRecord[];
 }
 
 export interface BankDetails {
@@ -140,6 +142,7 @@ export interface VendorOnboardingRecord {
   idx: number;
   vendor_onboarding_no: string;
   onboarding_form_status: string | null;
+  onboarding_form: string | null;
   registered_by: string | null;
   purchase_team_approval: string | null;
   purchase_head_approval: string | null;

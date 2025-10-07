@@ -160,7 +160,7 @@ const API_END_POINTS = {
   asaonboardedvendorlist: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.approved_vendor_list`,
 
   // All Approved Vendors Speicfy Detail API
-  allvendorsdetails: `${url}/api/method/vms.APIs.dashboard_api.vendor_brief.get_vendors_with_pagination`,
+  allvendorsdetails: `${url}/api/method/vms.APIs.dashboard_api.vendor_brief.get_vendors_with_pagination_next`,
   allvendorscompanycodedetails: `${url}/api/method/vms.APIs.dashboard_api.vendor_code_brief.get_comp_ven_code`,
   allvendorsspecificdetails: `${url}/api/method/vms.APIs.dashboard_api.vendor_specific_data.get_vendor_complete_ecosystem`,
 
@@ -257,7 +257,7 @@ const API_END_POINTS = {
 
     // submitPrInquiry:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.submit_purchase_inquiry`,
 
-    //gate Entry
+  //gate Entry
   sendQRData:`${url}/api/method/vms.APIs.dispatch.dispatch.get_dispatch_data`,
   sendGateEntry:`${url}/api/method/vms.APIs.dispatch.gate_entry.create_gate_entry`,
   fetchGateEntry:`${url}/api/method/vms.APIs.dispatch.get_gate_entry.gate_entry_get`,
@@ -266,8 +266,6 @@ const API_END_POINTS = {
   handover_submit:`${url}/api/method/vms.APIs.dispatch.gate_entry.handover_gate_entry`,
   GateEntryDashboardCardCount:`${url}/api/method/vms.APIs.dispatch.get_gate_entry.get_gate_entry_statistics`,
   GateEntryTableData:`${url}/api/method/vms.APIs.dispatch.get_gate_entry.gate_entry_get`
-
-
 }
 
 export default API_END_POINTS;

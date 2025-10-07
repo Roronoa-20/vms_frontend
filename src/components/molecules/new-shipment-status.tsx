@@ -10,6 +10,11 @@ import { Pencil } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "../atoms/input";
 import RFQDropdown from "../common/RFQSrNoDropdown";
+import { useRouter } from "next/navigation";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
+import { CheckCircle2 } from "lucide-react";
+
 
 type Field = {
   label: string;
@@ -31,6 +36,9 @@ export default function ShipmentStatus() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const [statusMessage, setStatusMessage] = useState<null | "success" | "updated">(null);
+  const [updatedStatus, setUpdatedStatus] = useState<string>("");
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -43,7 +51,6 @@ export default function ShipmentStatus() {
     document.addEventListener("click", handleClickOutside, true);
     return () => document.removeEventListener("click", handleClickOutside, true);
   }, []);
-
 
   const secondRow: Field[] = [
     { label: "RFQ Number & Date", name: "rfq_number", type: "text-date", placeholder: "RFQ Number" },
@@ -153,17 +160,13 @@ export default function ShipmentStatus() {
         rfq_number_date: rfqData.rfq_date_logistic || "",
         jrn: rfqData.jrn_number || "",
         jrn_date: rfqData.jrn_date || "",
-        consignee_name:
-          rfqData.consignee_name || rfqData.consignee_name_rfq || "",
-        consignor_name:
-          rfqData.consignor_name || rfqData.consignee_name_jrn || "",
+        consignee_name: rfqData.consignee_name || rfqData.consignee_name_rfq || "",
+        consignor_name: rfqData.consignor_name || rfqData.consignee_name_jrn || "",
         port_of_loading: rfqData.port_of_loading || "",
-        port_of_discharge:
-          rfqData.port_of_discharge || rfqData.destination_port || "",
+        port_of_discharge: rfqData.port_of_discharge || rfqData.destination_port || "",
         incoterms: rfqData.inco_terms || rfqData.incoterms || "",
         shipment_mode: rfqData.mode_of_shipment || rfqData.shipment_mode || "",
-        number_of_packs:
-          rfqData.no_of_pkg_units || rfqData.number_of_packs || "",
+        number_of_packs: rfqData.no_of_pkg_units || rfqData.number_of_packs || "",
         packs_units: rfqData.packs_unit || "",
         actual_weight: rfqData.actual_weight || "",
         chargeable_weight: rfqData.chargeable_weight || "",
@@ -174,27 +177,46 @@ export default function ShipmentStatus() {
     }
   };
 
+  const handleBack = () => {
+    router.push("/shipment-status-dashboard");
+  };
+
   const handleSubmit = async () => {
     try {
+      let res;
       if (isEditMode) {
-        await requestWrapper({
+        res = await requestWrapper({
           url: API_END_POINTS.createnewshipmentstatus,
-          method: "PATCH",
-          data: formData,
+          method: "PUT",
+          data: { data: JSON.stringify(formData) },
         });
-        alert("Shipment updated successfully");
+
+        const shipmentNo = res?.data?.message;
+        if (shipmentNo?.action === "Updated") {
+          setUpdatedStatus(shipmentNo.shipment_status || "");
+          setStatusMessage("updated");
+        } else {
+          console.error("Shipment not updated successfully", shipmentNo?.message);
+        }
       } else {
-        await requestWrapper({
+        res = await requestWrapper({
           url: API_END_POINTS.createnewshipmentstatus,
           method: "POST",
           data: { data: JSON.stringify(formData) },
         });
-        alert("New shipment created successfully");
+
+        const shipmentNo = res?.data?.message;
+        if (shipmentNo?.message === "Success") {
+          setStatusMessage("success");
+        } else {
+          console.error("Shipment not saved successfully", shipmentNo?.message);
+        }
       }
     } catch (err) {
       console.error("Error saving shipment", err);
     }
   };
+
 
   const renderField = (field: Field, index: number) => {
     const value = formData[field.name] || "";
@@ -233,23 +255,32 @@ export default function ShipmentStatus() {
     }
 
     if (field.type === "select") {
+      const options =
+        field.name === "shipment_mode"
+          ? ["Air", "Ocean"]
+          : field.name === "shipment_status"
+            ? ["AWAITING DUTY - COURIER SHIPMENT - ACCOUNT TEAM", "AWAITING DUTY CHEQUE", "AWAITING REVISED DOCUMENTS - DHL / FEDEX", "AWAITING SHIPPER CONFIRMATION FOR PICK UP", "BARD - FEDEX CLEARANCE", "DUAL USE", "IN-TRANSIT", "MATERIAL NOT READY", "PENDING FROM PURCHASE TEAM - PRODUCT LABEL", "PENDING FROM PURCHASE TEAM - SHIPPER NAME MISMATCHED", "SHIPMENT UNDER CUSTOM MORE THAN 5 WORKING DAYS", "SHIPMENT UNDER CUSTOM QUERY", "UNDER CLEARANCE", "UNDER PICK UP", "UNDER RFQ", "CLOSED", "DELIVERED"]
+            : [];
+
       return (
         <div key={index} className="flex flex-col">
           <Label className="text-[14px] font-normal text-black pb-2">{field.label}</Label>
-          <select
+          <Select
             value={value}
-            onChange={(e) => handleChange(field.name, e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2"
+            onValueChange={(val) => handleChange(field.name, val)}
             disabled={isDisabled}
           >
-            <option value="">{field.placeholder || "Select"}</option>
-            {field.name === "shipment_mode" &&
-              ["Air", "Ocean"].map((mode) => (
-                <option key={mode} value={mode}>
-                  {mode}
-                </option>
+            <SelectTrigger className="border border-gray-300 rounded-md px-3 py-2">
+              <SelectValue placeholder={field.placeholder || "Select"} />
+            </SelectTrigger>
+            <SelectContent>
+              {options.map((opt) => (
+                <SelectItem key={opt} value={opt}>
+                  {opt}
+                </SelectItem>
               ))}
-          </select>
+            </SelectContent>
+          </Select>
         </div>
       );
     }
@@ -298,106 +329,117 @@ export default function ShipmentStatus() {
     return null;
   };
 
+
+
   return (
     <div className="container mx-auto p-2 w-full bg-gray-100">
-      <div className="bg-white p-4 rounded shadow space-y-2">
-        <div className="flex items-end justify-between mb-4 gap-4 border-b pb-3">
-          <div className="flex-1">
-            <Label>Enter RFQ No</Label>
-            {isEditMode ? (
-              <Input
-                type="text"
-                value={formData.enter_document_no || ""}
-                readOnly
-                className="border border-gray-300 rounded-md px-3 py-2 w-[27%]"
-              />
-            ) : (
-              <div className="flex-1 relative" ref={dropdownRef}>
-                <RFQDropdown
-                  value={formData.enter_rfq_no || ""}
-                  onChange={(val: string) => handleChange("enter_rfq_no", val)}
-                  options={rfqOptions}
-                  onSelect={(rfq: { name: string; sr_no: string }) => handleRFQSelect(rfq.name, rfq.sr_no)}
-                  autoClearFields={() =>
-                    setFormData((prev: Record<string, any>) => ({
-                      ...prev,
-                      rfq_number: "",
-                      rfq_number_date: "",
-                      jrn: "",
-                      jrn_date: "",
-                      consignee_name: "",
-                      consignor_name: "",
-                      port_of_loading: "",
-                      port_of_discharge: "",
-                      incoterms: "",
-                      shipment_mode: "",
-                      number_of_packs: "",
-                      packs_units: "",
-                      actual_weight: "",
-                      chargeable_weight: "",
-                      remarks: "",
-                    }))
-                  }
+      <div className="bg-white p-4 rounded shadow ">
+        <div className="space-y-2">
+          <div className="flex items-end justify-between mb-4 gap-4 border-b pb-3">
+            <div className="flex-1">
+              <Label>Enter RFQ No</Label>
+              {isEditMode ? (
+                <Input
+                  type="text"
+                  value={formData.enter_document_no || ""}
+                  readOnly
+                  className="border border-gray-300 rounded-md px-3 py-2 w-[27%]"
                 />
+              ) : (
+                <div className="flex-1 relative" ref={dropdownRef}>
+                  <RFQDropdown
+                    value={formData.enter_rfq_no || ""}
+                    onChange={(val: string) => handleChange("enter_rfq_no", val)}
+                    options={rfqOptions}
+                    onSelect={(rfq: { name: string; sr_no: string }) => handleRFQSelect(rfq.name, rfq.sr_no)}
+                    autoClearFields={() =>
+                      setFormData((prev: Record<string, any>) => ({
+                        ...prev,
+                        rfq_number: "",
+                        rfq_number_date: "",
+                        jrn: "",
+                        jrn_date: "",
+                        consignee_name: "",
+                        consignor_name: "",
+                        port_of_loading: "",
+                        port_of_discharge: "",
+                        incoterms: "",
+                        shipment_mode: "",
+                        number_of_packs: "",
+                        packs_units: "",
+                        actual_weight: "",
+                        chargeable_weight: "",
+                        remarks: "",
+                      }))
+                    }
+                  />
 
-                {dropdownOpen && filteredOptions.length > 0 && (
-                  <ul className="absolute z-10 bg-white border border-gray-300 w-[27%] mt-1.5 max-h-48 overflow-y-auto rounded-md shadow-md">
-                    {filteredOptions.map((rfq: { name: string; sr_no: string }, idx: number) => (
-                      <li
-                        key={rfq.name}
-                        className={`px-3 py-2 cursor-pointer ${highlightedIndex === idx ? "bg-gray-200" : ""
-                          }`}
-                        onMouseEnter={() => setHighlightedIndex(idx)}
-                        onClick={() => {
-                          handleRFQSelect(rfq.name, rfq.sr_no);
-                          setDropdownOpen(false);
-                          setHighlightedIndex(-1);
-                        }}
-                      >
-                        {rfq.sr_no}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+                  {dropdownOpen && filteredOptions.length > 0 && (
+                    <ul className="absolute z-10 bg-white border border-gray-300 w-[27%] mt-1.5 max-h-48 overflow-y-auto rounded-md shadow-md">
+                      {filteredOptions.map((rfq: { name: string; sr_no: string }, idx: number) => (
+                        <li
+                          key={rfq.name}
+                          className={`px-3 py-2 cursor-pointer ${highlightedIndex === idx ? "bg-gray-200" : ""
+                            }`}
+                          onMouseEnter={() => setHighlightedIndex(idx)}
+                          onClick={() => {
+                            handleRFQSelect(rfq.name, rfq.sr_no);
+                            setDropdownOpen(false);
+                            setHighlightedIndex(-1);
+                          }}
+                        >
+                          {rfq.sr_no}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Edit button */}
+            {isEditMode && !isEditable && (
+              <Button
+                variant="nextbtn"
+                size="nextbtnsize"
+                onClick={() => setIsEditable(true)}
+                className="py-2 items-center self-end"
+              >
+                <Pencil className="w-4 h-4 mr-1" /> Edit
+              </Button>
             )}
           </div>
 
-          {/* Edit button */}
-          {isEditMode && !isEditable && (
-            <Button
-              variant="nextbtn"
-              size="nextbtnsize"
-              onClick={() => setIsEditable(true)}
-              className="py-2 items-center self-end"
-            >
-              <Pencil className="w-4 h-4 mr-1" /> Edit
-            </Button>
-          )}
-        </div>
+          {/* RFQ & JRN */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{secondRow.map(renderField)}</div>
 
+          {/* Consignee & Consignor */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{thirdRow.map(renderField)}</div>
 
-        {/* RFQ & JRN */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{secondRow.map(renderField)}</div>
+          {/* Remaining fields */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {remainingFields.map(renderField)}
+          </div>
 
-        {/* Consignee & Consignor */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{thirdRow.map(renderField)}</div>
-
-        {/* Remaining fields */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {remainingFields.map(renderField)}
-        </div>
-
-        <div className="grid grid-cols-1 gap-6">
-          {remarkField.map(renderField)}
+          <div className="grid grid-cols-1 gap-6">
+            {remarkField.map(renderField)}
+          </div>
         </div>
 
         {/* Submit / Update Button */}
-        <div className="mt-6 flex justify-end">
+        <div className="mt-6 flex space-x-3 justify-end">
           <Button
             className="py-2.5"
-            variant="nextbtn"
-            size="nextbtnsize"
+            onClick={handleBack}
+            variant={"backbtn"}
+            size={"backbtnsize"}
+          >
+            Back
+          </Button>
+          <Button
+            className="py-2.5"
+            variant={"nextbtn"}
+            size={"nextbtnsize"}
             onClick={handleSubmit}
             disabled={!formData.enter_document_no || (isEditMode && !isEditable)}
           >
@@ -405,6 +447,48 @@ export default function ShipmentStatus() {
           </Button>
         </div>
       </div>
-    </div >
+      {statusMessage && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+          <Card className="relative max-w-md w-full bg-gray-100 rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.2)] hover:shadow-[0_15px_30px_rgba(0,0,0,0.3)] transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02]">
+            <CardContent className="p-8 text-center bg-gradient-to-b from-white to-gray-50 rounded-2xl">
+              <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <CheckCircle2 className="h-8 w-8 text-green-600" />
+              </div>
+              {statusMessage === "success" ? (
+                <>
+                  <h2 className="text-2xl font-bold mb-2 text-black">
+                    Shipment Status submitted Successful!!!
+                  </h2>
+                  <p className="text-gray-600 mb-6">
+                    Thank you for submitting the shipment details.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-2xl font-bold mb-2 text-black">
+                    Shipment Status <span className="text-blue-600">{updatedStatus}</span> updated!!!
+                  </h2>
+                  <p className="text-gray-600 mb-6">
+                    Your shipment status has been successfully updated.
+                  </p>
+                </>
+              )}
+              <Button
+                className="mt-2"
+                variant={"nextbtn"}
+                size={"nextbtnsize"}
+                onClick={() => {
+                  setStatusMessage(null);
+                  router.push("/shipment-status-dashboard");
+                }}
+              >
+                OK
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+    </div>
   );
 }
