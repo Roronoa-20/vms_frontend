@@ -254,7 +254,10 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Bank Details</h1>
         {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
+        {
+          designation != "Purchase Team" && 
         <Button onClick={() => { setIsAmendCommentDialog(true)}} className={`mb-2 ${isAmendment == 0  ? "" : "hidden"}`}>Amend</Button>
+        }
         {!isTreasuryUser && (isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled((prev) => !prev)}
