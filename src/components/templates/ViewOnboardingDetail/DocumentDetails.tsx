@@ -26,6 +26,8 @@ import Link from "next/link";
 import { Trash2, X, Lock, Pencil } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
 import { Blob } from "buffer";
+import PopUp from "../../molecules/PopUp";
+import { Textarea } from "@/components/ui/textarea";
 
 interface documentDetail {
   company_pan_number: string;
@@ -116,6 +118,8 @@ const DocumentDetails = ({
   const [GSTTable, setGSTTable] = useState<gstRow[]>(OnboardingDetail?.gst_table);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const { designation } = useAuth();
+  const [remarks,setRemarks] = useState<string>("");
+    const [isAmendCommentDialog,setIsAmendCommentDialog] = useState<boolean>(false);
   const isTreasuryUser = designation?.toLowerCase() === "treasury";
 
   const [gstStateDropdown, setGstStateDropdown] = useState<gstDropdown>();
@@ -247,6 +251,11 @@ const DocumentDetails = ({
     }
   }
 
+  const handleClose = ()=>{
+    setIsAmendCommentDialog(false);
+    setRemarks("");
+  }
+
   const handleGSTDelete = async (row_name: string) => {
     const deleteUrl = `${API_END_POINTS?.deleteGSTRow}?row_name=${row_name}&ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
     const response: AxiosResponse = await requestWrapper({ url: deleteUrl, method: "GET" });
@@ -263,13 +272,29 @@ const DocumentDetails = ({
     setGSTTable(OnboardingDetail);
   }
 
+
+   const handleAmend = async()=>{
+    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.AmendAPI,method:"POST",data:{
+      data:{
+        vendor_onboarding:onboarding_ref_no,
+        remarks:remarks
+      }
+    }});
+    if(response?.status == 200){
+      alert("Amend Successfully");
+      router.push("dashboard");
+    }
+  }
+
   console.log(singlerow)
 
   return (
+    <>
     <div className="flex flex-col bg-white rounded-lg p-3 w-full max-h-[80vh]">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Document Details</h1>
         {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1 ? "" : "hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
+        <Button onClick={() => { setIsAmendCommentDialog(true)}} className={`mb-2 ${isAmendment == 0  ? "" : "hidden"}`}>Amend</Button>
         {!isTreasuryUser && (isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled((prev) => !prev)}
@@ -882,6 +907,18 @@ const DocumentDetails = ({
         </div>
       </div>
     </div>
+    {
+      isAmendCommentDialog && 
+      <PopUp handleClose={handleClose} isSubmit={true} headerText="Amend" Submitbutton={handleAmend}>
+        <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            {/* Comment */}
+          </h1>
+          <Textarea className="disabled:opacity-100" placeholder="" onChange={(e) => { setRemarks(e.target.value)}} />
+        </div>
+      </PopUp>
+    }
+    </>
   );
 };
 

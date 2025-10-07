@@ -19,6 +19,8 @@ import { VendorOnboardingResponse } from "@/src/types/types";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { Lock, Pencil, Trash2 } from "lucide-react";
+import PopUp from "../../molecules/PopUp";
+import { Textarea } from "@/components/ui/textarea";
 
 type Props = {
   ref_no: string,
@@ -32,6 +34,8 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendmen
   const { contactDetail, addContactDetail, resetContactDetail } = useContactDetailStore()
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [contact, setContact] = useState<Partial<TcontactDetail>>()
+  const [remarks,setRemarks] = useState<string>("");
+  const [isAmendCommentDialog,setIsAmendCommentDialog] = useState<boolean>(false);
   const { designation } = useAuth();
   const router = useRouter();
   useEffect(() => {
@@ -66,11 +70,31 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendmen
     }
   }
 
+  const handleClose = ()=>{
+    setIsAmendCommentDialog(false);
+    setRemarks("");
+  }
+
+  const handleAmend = async()=>{
+    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.AmendAPI,method:"POST",data:{
+      data:{
+        vendor_onboarding:onboarding_ref_no,
+        remarks:remarks
+      }
+    }});
+    if(response?.status == 200){
+      alert("Amend Successfully");
+      router.push("dashboard");
+    }
+  }
+
   return (
+    <>
+    
     <div className="flex flex-col bg-white rounded-lg p-3 w-full">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Contact Detail</h1>
-        {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1 ? "" : "hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
+        <Button onClick={() => { setIsAmendCommentDialog(true)}} className={`mb-2 ${isAmendment == 0  ? "" : "hidden"}`}>Amend</Button>
         {(isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled(prev => !prev)}
@@ -180,6 +204,18 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendmen
       <div className={`flex justify-end pr-4 pb-2 ${isDisabled ? "hidden" : ""}`}>
         <Button onClick={() => { handleSubmit() }} variant={"nextbtn"} size={"nextbtnsize"} className="py-2">Next</Button></div>
     </div>
+    {
+      isAmendCommentDialog && 
+      <PopUp handleClose={handleClose} isSubmit={true} headerText="Amend" Submitbutton={handleAmend}>
+        <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            {/* Comment */}
+          </h1>
+          <Textarea className="disabled:opacity-100" placeholder="" onChange={(e) => { setRemarks(e.target.value)}} />
+        </div>
+      </PopUp>
+    }
+    </>
   );
 };
 export default ContactDetail
