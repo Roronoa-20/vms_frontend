@@ -94,7 +94,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
       </div>
       <div className="flex px-6 justify-between gap-5">
         {/* sidebar */}
-        <OnboardingSidebar onboarding_refno={vendorOnboardingRefno} refno={refno} vendor_type={OnboardingDetail?.company_details_tab?.vendor_types} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} />
+        <OnboardingSidebar onboarding_refno={vendorOnboardingRefno} refno={refno} vendor_type={OnboardingDetail?.company_details_tab?.vendor_type_list_from_master} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} />
         {/* form */}
         {tabType == "Company Detail" ? (
           <CompanyDetailForm
@@ -114,15 +114,15 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
         : tabType == "Company Address" ? (
           <CompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
        ) 
-       : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
-          <InternationalDocumentDetails  ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
-        )
+      //  : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
+      //     <InternationalDocumentDetails  ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
+      //   )
          : tabType == "Document Detail" ? (
           <DocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
         ) 
-        : tabType?.includes("Payment Detail") && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? ( 
-        <InternationalPaymentDetail ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab}/>
-        )
+        // : tabType?.includes("Payment Detail") && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? ( 
+        // <InternationalPaymentDetail ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab}/>
+        // )
          : tabType?.includes("Payment Detail") ? ( 
           <PaymentDetail ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab}/>
         ) : tabType?.includes("Contact Detail") ? (
