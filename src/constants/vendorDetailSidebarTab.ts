@@ -32,7 +32,7 @@ export const AccountsTeamOnboardingSidebar = [
   "Document Detail",
   "Payment Detail / Bank Detail",
   "Contact Detail",
-  "Manufacturing Detail",
+  // "Manufacturing Detail",
   "Reputed Partners",
   "Certificate"
 ];

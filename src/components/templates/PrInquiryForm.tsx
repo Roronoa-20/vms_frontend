@@ -156,10 +156,10 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
 
     let assetCodeLine = 0;
 
-    if (PRInquiryData?.asked_to_modify == Boolean(1)) {
+    if (PRInquiryData?.asked_to_modify) {
       for (let i = 0; i < tableData.length; i++) {
         const item = tableData[i];
-        if (item?.need_asset_code == Boolean(1) && !item?.assest_code) {
+        if (item?.need_asset_code && !item?.assest_code) {
           assetCodeLine = i + 1; // Line number is usually 1-based
           break;
         }
@@ -486,10 +486,9 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
                 <Input type='file' onChange={(e) => { setSingleTableRow((prev: any) => ({ ...prev, file: e.target?.files?.[0] })) }} />
               </div>
               {
-                !PRInquiryData?.is_submited &&
                 <div className="col-span-1 mt-8">
-                  <Button className={`py-1.5 ${PRInquiryData?.asked_to_modify ? "" : "hidden"}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => handleTableAdd()}>Add</Button>
-                  <Button className={`py-1.5 ${PRInquiryData?.asked_to_modify ? "hidden" : ""}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => handleTableAdd()}>Add</Button>
+                  <Button className={`py-1.5 ${PRInquiryData?.asked_to_modify && PRInquiryData?.is_submited ? "" : "hidden"}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => handleTableAdd()}>Add</Button>
+                  <Button className={`py-1.5 ${PRInquiryData?.is_submited ? "hidden" : ""}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => handleTableAdd()}>Add</Button>
                 </div>
               }
             </div>

@@ -150,6 +150,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                 <TableHead className="text-center text-black whitespace-nowrap">Purchase Request Type</TableHead>
                 <TableHead className="text-center text-black whitespace-nowrap">Purchase Team Status</TableHead>
                 <TableHead className="text-center text-black whitespace-nowrap">HOD Status</TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">Additional Status</TableHead>
                 <TableHead className="text-center text-black whitespace-nowrap">Actions</TableHead>
                 <TableHead className={`text-center text-black whitespace-nowrap`}>Raise PR</TableHead>
               </TableRow>
@@ -206,8 +207,20 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                           {item?.hod_approval_status}
                         </div>
                       </TableCell>
+                      <TableCell className="text-center whitespace-nowrap">
+                        <div
+                          className={`px-2 py-3 rounded-xl uppercase ${item?.second_stage_approval_status === "Pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : item?.second_stage_approval_status === "Approved"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                            }`}
+                        >
+                          {item?.second_stage_approval_status}
+                        </div>
+                      </TableCell>
                       <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={url}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
-                      <TableCell className={`text-nowrap text-center whitespace-nowrap ${item?.hod_approved && item?.purchase_team_approved && item?.user == user ? "" : "hidden"}`}><Link href={`/pr-request?cart_id=${item?.name}`}><Button className="bg-blue-400 hover:bg-blue-400">PR</Button></Link></TableCell>
+                      <TableCell className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show? "" : "hidden"}`}><Link href={`/pr-request?cart_id=${item?.name}`}><Button className="bg-blue-400 hover:bg-blue-400">PR</Button></Link></TableCell>
                       {/* <TableCell>
                   <div
                     className={`px-2 py-3 rounded-xl ${item?.status === "pending"
