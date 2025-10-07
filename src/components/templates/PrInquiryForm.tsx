@@ -15,7 +15,8 @@ import { purchaseInquiryDropdown, TableData, TPRInquiry } from '../pages/Pr-Inqu
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import PopUp from '../molecules/PopUp'
+import { Card, CardContent } from "@/components/ui/card";
+import { CheckCircle2 } from "lucide-react";
 
 
 interface Props {
@@ -43,15 +44,18 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
   const [singleTableRow, setSingleTableRow] = useState<TableData | null>(null);
   const [tableData, setTableData] = useState<TableData[]>(PRInquiryData?.cart_product ?? []);
   const [productNameDropdown, setProductNameDropdown] = useState<ProductNameDropdown[]>([]);
-  const [isDialog,setIsDialog] = useState<boolean>(false);
+  const [isDialog, setIsDialog] = useState<boolean>(false);
   const [index, setIndex] = useState<number>(-1);
   const [showTable, setShowTable] = useState(PRInquiryData?.cart_product.length && PRInquiryData?.cart_product.length > 0 ? true : false);
   const [plantDropdown, setPlantDropdown] = useState<{ name: string, plant_name: string, description: string }[]>();
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const [purchaseGroupDropdown, setPurchaseGroupDropdown] = useState<{ name: string, purchase_group_code: string, purchase_group_name: string, description: string }[]>();
-  const [toEmail,setToEmail] = useState<string>("");
+  const [toEmail, setToEmail] = useState<string>("");
   const router = useRouter();
   const param = useSearchParams();
   const refno = param.get("cart_Id");
+
   useEffect(() => {
     if (PRInquiryData?.company) {
       handleCompanyChange(PRInquiryData?.company);
@@ -61,7 +65,6 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
       fetchProductName(PRInquiryData?.category_type);
     }
   }, [])
-
 
   const handleSelectChange = (value: any, name: string, isTable: boolean) => {
     if (isTable) {
@@ -82,7 +85,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     }
   }
 
-  const handleTableAdd = async() => {
+  const handleTableAdd = async () => {
     if (!singleTableRow) return;
 
     // setTableData(prev => {
@@ -96,37 +99,37 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     // });
     // setShowTable(true);
 
-  //   let assetCodeLine = 0;
+    //   let assetCodeLine = 0;
 
-  // if (PRInquiryData?.asked_to_modify == Boolean(1)) {
-  //   for (let i = 0; i < tableData.length; i++) {
-  //     const item = tableData[i];
-  //     if (item?.need_asset_code == Boolean(1) && !item?.assest_code) {
-  //       assetCodeLine = i + 1; // Line number is usually 1-based
-  //       break;
-  //     }
-  //   }
-  // }
+    // if (PRInquiryData?.asked_to_modify == Boolean(1)) {
+    //   for (let i = 0; i < tableData.length; i++) {
+    //     const item = tableData[i];
+    //     if (item?.need_asset_code == Boolean(1) && !item?.assest_code) {
+    //       assetCodeLine = i + 1; // Line number is usually 1-based
+    //       break;
+    //     }
+    //   }
+    // }
 
-// if (assetCodeLine !== 0) {
-//   alert(`Please enter Asset Code for line ${assetCodeLine}`);
-//   return;
-// }
-const formdata = new FormData();
-for(const key of Object.keys(singleTableRow) as (keyof TableData)[]){
-  const value = singleTableRow[key];
-  if(typeof(value) == "string"){
-    formdata.append(key,value);
-  }
-}
-formdata.append("attachment",singleTableRow?.file);
- formdata.append("purchase_inquiry_id",refno as string);
-const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.addProductInquiryProducts,method:"POST",data:formdata});
-  if(response?.status == 200){
-    alert("added successfully");
-    // router.push(`pr-inquiry?cart_Id=${refno}`);
-    location.reload();
-  }
+    // if (assetCodeLine !== 0) {
+    //   alert(`Please enter Asset Code for line ${assetCodeLine}`);
+    //   return;
+    // }
+    const formdata = new FormData();
+    for (const key of Object.keys(singleTableRow) as (keyof TableData)[]) {
+      const value = singleTableRow[key];
+      if (typeof (value) == "string") {
+        formdata.append(key, value);
+      }
+    }
+    formdata.append("attachment", singleTableRow?.file);
+    formdata.append("purchase_inquiry_id", refno as string);
+    const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.addProductInquiryProducts, method: "POST", data: formdata });
+    if (response?.status == 200) {
+      alert("Product Details Added Successfully!!!");
+      // router.push(`pr-inquiry?cart_Id=${refno}`);
+      location.reload();
+    }
 
     setSingleTableRow(null);
     setIndex(-1);
@@ -135,6 +138,11 @@ const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.addProd
   const handleEdit = (data: TableData, index: number) => {
     setIndex(index);
     setSingleTableRow({ ...data });
+  };
+
+  const handleSuccessOk = () => {
+    setShowSuccessModal(false);
+    router.push("/dashboard");
   };
 
   const handleSubmit = async () => {
@@ -148,33 +156,29 @@ const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.addProd
 
     let assetCodeLine = 0;
 
-if (PRInquiryData?.asked_to_modify == Boolean(1)) {
-  for (let i = 0; i < tableData.length; i++) {
-    const item = tableData[i];
-    if (item?.need_asset_code == Boolean(1) && !item?.assest_code) {
-      assetCodeLine = i + 1; // Line number is usually 1-based
-      break;
+    if (PRInquiryData?.asked_to_modify == Boolean(1)) {
+      for (let i = 0; i < tableData.length; i++) {
+        const item = tableData[i];
+        if (item?.need_asset_code == Boolean(1) && !item?.assest_code) {
+          assetCodeLine = i + 1; // Line number is usually 1-based
+          break;
+        }
+      }
     }
-  }
-}
 
-if (assetCodeLine !== 0) {
-  alert(`Please enter Asset Code for line ${assetCodeLine}`);
-  return;
-}
+    if (assetCodeLine !== 0) {
+      alert(`Please enter Asset Code for line ${assetCodeLine}`);
+      return;
+    }
 
 
-    const response: AxiosResponse = await requestWrapper({ url: url, data: { data: payload }, method: "POST", params:{purchase_inquiry_id:refno} });
+    const response: AxiosResponse = await requestWrapper({ url: url, data: { data: payload }, method: "POST", params: { purchase_inquiry_id: refno } });
     if (response?.status == 200) {
       setFormData(null);
-      alert("submission successfull");
-      const refno = response?.data?.message?.name;
-      // router.push(`pr-inquiry?refno=${refno}`)
-      router.push(`/dashboard`)
-      // const redirectUrl = `/pr-inquiry?refno=${refno}`;
-      // window.location.href = redirectUrl;
+      setSuccessMessage("Product Enquiry Submitted Successfully!");
+      setShowSuccessModal(true);
     } else {
-      alert("error");
+      alert("Error while submitting. Try again!");
     }
   };
 
@@ -251,17 +255,17 @@ if (assetCodeLine !== 0) {
     }
   };
 
-  const handleNext = async()=>{
-    const response:AxiosResponse = await  requestWrapper({url:API_END_POINTS?.submitPrInquiryNextButton,data:{data:{...formData,cart_date: formData?.cart_date ?? formatDateISO(new Date()),user: user,}},method:"POST"});
-    if(response?.status == 200){
+  const handleNext = async () => {
+    const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.submitPrInquiryNextButton, data: { data: { ...formData, cart_date: formData?.cart_date ?? formatDateISO(new Date()), user: user, } }, method: "POST" });
+    if (response?.status == 200) {
       router.push(`/pr-inquiry?cart_Id=${response?.data?.message?.name}`);
     }
   }
 
-  const deleteProductItem = async(row_id:string)=>{
-    const respone:AxiosResponse = await requestWrapper({url:API_END_POINTS?.deleteInquiryProductItem,method:"GET",params:{purchase_inquiry_id:refno,row_name:row_id}});
-    if(respone?.status == 200){
-      alert("deleted successfully");
+  const deleteProductItem = async (row_id: string) => {
+    const respone: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.deleteInquiryProductItem, method: "GET", params: { purchase_inquiry_id: refno, row_name: row_id } });
+    if (respone?.status == 200) {
+      alert("Product Item Deleted Successfully!!!");
       // router.push(`pr-inquiry?cart_Id=${refno}`);
       location.reload();
     }
@@ -276,301 +280,317 @@ if (assetCodeLine !== 0) {
       .join(" - ");
   };
 
-
-
-
-
   return (
     <>
-    
-    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      {/* <h1 className="border-b-2 border-gray-400 top-0 bg-white text-[#000000] text-lg">
+      <div className="flex flex-col bg-white rounded-lg px-2 pb-2 max-h-[80vh] w-full">
+        {/* <h1 className="border-b-2 border-gray-400 top-0 bg-white text-[#000000] text-lg">
         Purchase Inquiry
       </h1> */}
-      <div className="grid grid-cols-3 gap-6 p-5">
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">User</h1>
-          <Input placeholder="" name='user' onChange={(e) => { handleFieldChange(false, e) }} value={formData?.user ?? user ?? ""} disabled />
+        <div className="grid grid-cols-3 gap-6 p-2">
+          <div className="col-span-1">
+            <h1 className="text-[14px] font-normal text-[#000000] pb-2">User</h1>
+            <Input placeholder="" name='user' onChange={(e) => { handleFieldChange(false, e) }} value={formData?.user ?? user ?? ""} disabled />
+          </div>
+          <div className="col-span-1">
+            <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+              Cart Use
+            </h1>
+            <Select value={formData?.cart_use ?? ""} onValueChange={(value) => { handleSelectChange(value, "cart_use", false) }} disabled={refno ? true : false}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="Individual Use">Individual Use</SelectItem>
+                  <SelectItem value="Commercial Use">Commercial Use</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="col-span-1">
+            <h1 className="text-[14px] font-normal text-[#000000] pb-2">Cart Date</h1>
+            <Input type="text" name="cart_date" value={formData?.cart_date ? parseAndFormatDate(formData.cart_date) : formatDate(new Date())} readOnly />
+          </div>
+          <div className="col-span-1">
+            <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+              Category Type
+            </h1>
+            <Select value={formData?.category_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "category_type", false); fetchProductName(value) }} disabled={refno ? true : false}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {dropdown?.category_type?.map((item, index) => (
+                    <SelectItem key={index} value={item?.name}>{item?.category_name}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="col-span-1">
+            <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+              Company
+            </h1>
+            <Select value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value); }} disabled={refno ? true : false}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {companyDropdown?.map((item, index) => (
+                    <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="col-span-1">
+            <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+              Purchase Type
+            </h1>
+            <Select value={formData?.purchase_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_type", false) }} disabled={refno ? true : false}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {purchaseTypeDropdown?.map((item, index) => (
+                    <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="col-span-1">
+            <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+              Plant
+            </h1>
+            <Select value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant", false) }} disabled={refno ? true : false}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {plantDropdown?.map((item, index) => (
+                    <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="col-span-1">
+            <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+              Purchase Group
+            </h1>
+            <Select value={formData?.purchase_group ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_group", false) }} disabled={refno ? true : false}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {purchaseGroupDropdown?.map((item, index) => (
+                    <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className='col-span-1 flex items-end gap-4'>
+            <Button className={`py-1.5 ${refno ? "hidden" : ""}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={(e) => { handleNext() }}>Next</Button>
+          </div>
         </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-            Cart Use
-          </h1>
-          <Select value={formData?.cart_use ?? ""} onValueChange={(value) => { handleSelectChange(value, "cart_use", false) }} disabled={refno?true:false}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="Individual Use">Individual Use</SelectItem>
-                <SelectItem value="Commercial Use">Commercial Use</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Cart Date</h1>
-          <Input type="text" name="cart_date" value={formData?.cart_date ? parseAndFormatDate(formData.cart_date) : formatDate(new Date())} readOnly />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-            Category Type
-          </h1>
-          <Select value={formData?.category_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "category_type", false); fetchProductName(value) }} disabled={refno?true:false}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {dropdown?.category_type?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.category_name}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-            Company
-          </h1>
-          <Select value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value); }} disabled={refno?true:false}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {companyDropdown?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-            Purchase Type
-          </h1>
-          <Select value={formData?.purchase_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_type", false) }} disabled={refno?true:false}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {purchaseTypeDropdown?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-            Plant
-          </h1>
-          <Select value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant", false) }} disabled={refno?true:false}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {plantDropdown?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-            Purchase Group
-          </h1>
-          <Select value={formData?.purchase_group ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_group", false) }} disabled={refno?true:false}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {purchaseGroupDropdown?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className='col-span-1 flex items-end gap-4'>
-                <Button className={`bg-blue-400 hover:bg-blue-300 ${refno?"hidden":""}`} onClick={(e)=>{handleNext()}}>Next</Button>
-        </div>
-      </div>
-      {
-        refno && 
-      <>
-      <h1 className="border-b-2 border-gray-400 font-bold text-[18px]">
-        Purchase Inquiry Items
-      </h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
-        {/* <div className="col-span-1">
+        {refno &&
+          <>
+            <h1 className="border-b-2 border-gray-400 font-bold text-[18px]">
+              Purchase Inquiry Items
+            </h1>
+            <div className="grid grid-cols-3 gap-6 p-2">
+              {/* <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Assest Code
           </h1>
           <Input placeholder="" name='assest_code' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.assest_code ?? ""} />
         </div> */}
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-            Product Name
-          </h1>
-          <Select
-            // onValueChange={(value) => { handleSelectChange(value, "product_name",true) }} value={singleTableRow?.product_name ?? ""}
-            // value={singleTableRow?.product_name ?? ""}
-            onValueChange={handleProductNameSelect}
-            value={singleTableRow?.product_name ?? ""}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {productNameDropdown?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>
-                    {item?.product_name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-            Product Price Range
-          </h1>
-          <Input placeholder="" disabled name='product_price' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_price ?? ""}
-          />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-            Lead Time
-          </h1>
-          <Input placeholder="" disabled name='lead_time' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.lead_time ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-            UOM
-          </h1>
-          <Select onValueChange={(value) => { handleSelectChange(value, "uom", true) }} value={singleTableRow?.uom ?? ""}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {dropdown?.uom_master?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.name} - {item?.description}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
+              <div className="col-span-1">
+                <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+                  Product Name
+                </h1>
+                <Select
+                  // onValueChange={(value) => { handleSelectChange(value, "product_name",true) }} value={singleTableRow?.product_name ?? ""}
+                  // value={singleTableRow?.product_name ?? ""}
+                  onValueChange={handleProductNameSelect}
+                  value={singleTableRow?.product_name ?? ""}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {productNameDropdown?.map((item, index) => (
+                        <SelectItem key={index} value={item?.name}>
+                          {item?.product_name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="col-span-1">
+                <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+                  Product Price Range
+                </h1>
+                <Input placeholder="" disabled name='product_price' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_price ?? ""}
+                />
+              </div>
+              <div className="col-span-1">
+                <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+                  Lead Time
+                </h1>
+                <Input placeholder="" disabled name='lead_time' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.lead_time ?? ""} />
+              </div>
+              <div className="col-span-1">
+                <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+                  UOM
+                </h1>
+                <Select onValueChange={(value) => { handleSelectChange(value, "uom", true) }} value={singleTableRow?.uom ?? ""}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {dropdown?.uom_master?.map((item, index) => (
+                        <SelectItem key={index} value={item?.name}>{item?.name} - {item?.description}</SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
 
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-            Product Quantity
-          </h1>
-          <Input placeholder="" name='product_quantity' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_quantity ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-            User Specification
-          </h1>
-          <Input placeholder="" name='user_specifications' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.user_specifications ?? ""} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-            Attachment
-          </h1>
-          <Input type='file' onChange={(e) => {setSingleTableRow((prev:any)=>({...prev,file:e.target?.files?.[0]}))}}/>
-        </div>
-        {
-          !PRInquiryData?.is_submited &&
-          <div className="col-span-1 mt-8">
-          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.asked_to_modify ? "" : "hidden"}`} onClick={() => handleTableAdd()}>Add</Button>
-          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.asked_to_modify ? "hidden" : ""}`} onClick={() => handleTableAdd()}>Add</Button>
-        </div>
+              <div className="col-span-1">
+                <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+                  Product Quantity
+                </h1>
+                <Input placeholder="" name='product_quantity' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_quantity ?? ""} />
+              </div>
+              <div className="col-span-1">
+                <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+                  User Specification
+                </h1>
+                <Input placeholder="" name='user_specifications' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.user_specifications ?? ""} />
+              </div>
+              <div className="col-span-1">
+                <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+                  Attachment
+                </h1>
+                <Input type='file' onChange={(e) => { setSingleTableRow((prev: any) => ({ ...prev, file: e.target?.files?.[0] })) }} />
+              </div>
+              {
+                !PRInquiryData?.is_submited &&
+                <div className="col-span-1 mt-8">
+                  <Button className={`py-1.5 ${PRInquiryData?.asked_to_modify ? "" : "hidden"}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => handleTableAdd()}>Add</Button>
+                  <Button className={`py-1.5 ${PRInquiryData?.asked_to_modify ? "hidden" : ""}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => handleTableAdd()}>Add</Button>
+                </div>
+              }
+            </div>
+          </>
         }
-      </div>
-      </>
-      }
-      { PRInquiryData && PRInquiryData?.cart_product?.length>0 && (
-        <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
-          <div className="flex w-full justify-between pb-4">
-            <h1 className="text-[20px] text-[#03111F] font-semibold">
-              Items List
-            </h1>
-          </div>
-          <Table className=" max-h-40 overflow-y-scroll">
-            <TableHeader className="text-center">
-              <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                <TableHead className="w-[100px]">Sr No.</TableHead>
-                <TableHead className="text-center">Product Name</TableHead>
-                <TableHead className="text-center">Assest Code</TableHead>
-                <TableHead className="text-center">Product Price</TableHead>
-                <TableHead className="text-center">UOM</TableHead>
-                <TableHead className="text-center">Lead Time</TableHead>
-                <TableHead className="text-center">Product Quantity</TableHead>
-                <TableHead className="text-center">User Specification</TableHead>
-                <TableHead className="text-center">Attachment</TableHead>
-                <TableHead className="text-center">Actions</TableHead>
-                <TableHead className="text-center">Edit</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="text-center">
-              {tableData?.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-medium">{index + 1}</TableCell>
-                  <TableCell>
-                    {/* {item?.product_name} */}
-                    <Select
-                    disabled
-            value={item?.product_name ?? ""}
-          >
-            <SelectTrigger className='disabled:opacity-100'>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {productNameDropdown?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>
-                    {item?.product_name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-                    </TableCell>
-                  <TableCell className='flex justify-center'><Input disabled={item?.need_asset_code && PRInquiryData?.asked_to_modify ? false : true} className={`text-center w-28`} value={item?.assest_code ?? ""} onChange={(e) => { handleTableAssestCodeChange(index, e.target.value) }} /></TableCell>
-                  <TableCell>{item?.product_price}</TableCell>
-                  <TableCell>{item?.uom}</TableCell>
-                  <TableCell>{item?.lead_time}</TableCell>
-                  <TableCell>{item?.product_quantity}</TableCell>
-                  <TableCell>{item?.user_specifications}</TableCell>
-                  <TableCell><Link href={item?.attachment?.url ?? ""} target='blank'>{item?.attachment?.file_name}</Link></TableCell>
-                  <TableCell><div className='flex gap-4 justify-center items-center'>
-                    <Trash2 className={`text-red-400 cursor-pointer ${PRInquiryData?.is_submited?"hidden":""}`} onClick={()=>{deleteProductItem(item?.name ?? "")}}/>
-                  </div>
-                  </TableCell>
-                  <TableCell>
-                    <>
-                    {
-                      PRInquiryData?.asked_to_modify?
-                    <PencilIcon className='cursor-pointer' onClick={() => { handleEdit(item, index) }} />:null
-                    }
-                    </>
-                  </TableCell>
+        {PRInquiryData && PRInquiryData?.cart_product?.length > 0 && (
+          <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl mt-4">
+            <div className="flex w-full justify-between pb-4">
+              <h1 className="text-[20px] text-[#03111F] font-semibold">
+                Items List
+              </h1>
+            </div>
+            <Table className=" max-h-40 overflow-y-scroll">
+              <TableHeader className="text-center">
+                <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
+                  <TableHead className="w-[100px]">Sr No.</TableHead>
+                  <TableHead className="text-center">Product Name</TableHead>
+                  <TableHead className="text-center">Assest Code</TableHead>
+                  <TableHead className="text-center">Product Price</TableHead>
+                  <TableHead className="text-center">UOM</TableHead>
+                  <TableHead className="text-center">Lead Time</TableHead>
+                  <TableHead className="text-center">Product Quantity</TableHead>
+                  <TableHead className="text-center">User Specification</TableHead>
+                  <TableHead className="text-center">Attachment</TableHead>
+                  <TableHead className="text-center">Actions</TableHead>
+                  <TableHead className="text-center">Edit</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      )}
-      <div className={`flex justify-end pr-4 ${refno?"":"hidden"}`}><Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { handleSubmit() }}>Submit</Button></div>
-    </div>
+              </TableHeader>
+              <TableBody className="text-center">
+                {tableData?.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">{index + 1}</TableCell>
+                    <TableCell>
+                      {/* {item?.product_name} */}
+                      <Select
+                        disabled
+                        value={item?.product_name ?? ""}
+                      >
+                        <SelectTrigger className='disabled:opacity-100'>
+                          <SelectValue placeholder="Select" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {productNameDropdown?.map((item, index) => (
+                              <SelectItem key={index} value={item?.name}>
+                                {item?.product_name}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell className='flex justify-center'><Input disabled={item?.need_asset_code && PRInquiryData?.asked_to_modify ? false : true} className={`text-center w-28`} value={item?.assest_code ?? ""} onChange={(e) => { handleTableAssestCodeChange(index, e.target.value) }} /></TableCell>
+                    <TableCell>{item?.product_price}</TableCell>
+                    <TableCell>{item?.uom}</TableCell>
+                    <TableCell>{item?.lead_time}</TableCell>
+                    <TableCell>{item?.product_quantity}</TableCell>
+                    <TableCell>{item?.user_specifications}</TableCell>
+                    <TableCell><Link href={item?.attachment?.url ?? ""} target='blank'>{item?.attachment?.file_name}</Link></TableCell>
+                    <TableCell><div className='flex gap-4 justify-center items-center'>
+                      <Trash2 className={`text-red-400 cursor-pointer ${PRInquiryData?.is_submited ? "hidden" : ""}`} onClick={() => { deleteProductItem(item?.name ?? "") }} />
+                    </div>
+                    </TableCell>
+                    <TableCell>
+                      <>
+                        {
+                          PRInquiryData?.asked_to_modify ?
+                            <PencilIcon className='cursor-pointer' onClick={() => { handleEdit(item, index) }} /> : null
+                        }
+                      </>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+        <div className={`flex justify-end pr-2 mt-4 pb-4 ${refno ? "" : "hidden"}`}><Button className='py-2.5' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }}>Submit</Button></div>
+
+        {showSuccessModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+            <Card className="bg-white p-6 w-[400px] text-center rounded-lg shadow-lg">
+              <CardContent className="p-8 text-center bg-gradient-to-b from-white to-gray-50 rounded-2xl">
+                <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                  <CheckCircle2 className="h-8 w-8 text-green-600" />
+                </div>
+                <h2 className="text-lg font-semibold text-gray-800 mb-2">Success</h2>
+                <p className="text-sm text-gray-600">{successMessage}</p>
+                <Button
+                  className="mt-2"
+                  variant="nextbtn"
+                  size="nextbtnsize"
+                  onClick={handleSuccessOk}
+                >
+                  OK
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </div>
     </>
   )
 }

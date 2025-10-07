@@ -21,12 +21,12 @@ export const sidebarMenu: SidebarItem[] = [
     href:"/all-vendors",
     children: []
   },
-  {
-    logo: "/sidebar-assests/view-pr.svg",
-    name: "PR",
-    href: "/pr-request",
-    children: []
-  },
+  // {
+  //   logo: "/sidebar-assests/view-pr.svg",
+  //   name: "PR",
+  //   href: "/pr-request",
+  //   children: []
+  // },
   {
     logo: "/sidebar-assests/view-pr.svg",
     name: "MPR",
