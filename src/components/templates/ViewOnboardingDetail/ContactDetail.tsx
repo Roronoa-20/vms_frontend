@@ -94,10 +94,10 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendmen
     <div className="flex flex-col bg-white rounded-lg p-3 w-full">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Contact Detail</h1>
-        {
+        {/* {
           designation != "Purchase Team" &&  
-        <Button onClick={() => { setIsAmendCommentDialog(true)}} className={`mb-2 ${isAmendment == 0  ? "" : "hidden"}`}>Amend</Button>
-        }
+        <Button onClick={() => { setIsAmendCommentDialog(true)}} className={`mb-2`}>Amend</Button>
+        } */}
         {(isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled(prev => !prev)}
