@@ -56,7 +56,9 @@ export type TPRInquiry = {
     purchase_team_approved:boolean,
     acknowledged_date:string,
     is_submited:number,
-    hod_approved:boolean
+    hod_approved:boolean,
+    second_stage_approval_by:string
+    second_stage_approved:boolean
 }
 
 const PrInquiryPage = async ({ refno }: Props) => {

@@ -341,12 +341,19 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
         </div>
         {PRInquiryData?.acknowledged_date && (
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">Acknowledged Date</h1>
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">Early Delivery Date</h1>
             <Input placeholder="" value={PRInquiryData?.acknowledged_date} disabled />
           </div>
         )}
         {
-          PRInquiryData?.hod_approved ?
+          PRInquiryData?.second_stage_approval_by &&
+           <div className="col-span-1">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">Second Stage Approval Email</h1>
+            <Input placeholder="" value={PRInquiryData?.second_stage_approval_by} disabled />
+          </div>
+        }
+        {
+          PRInquiryData?.hod_approved && !PRInquiryData?.second_stage_approved ?
           <div className='flex items-end'>
       <Button className={`bg-blue-400 hover:bg-blue-300`} onClick={(e)=>{setIsEmailDialog(true)}}>Additional Approval</Button>
         </div>:
