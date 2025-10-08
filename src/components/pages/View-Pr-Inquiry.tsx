@@ -55,6 +55,8 @@ export type TPRInquiry = {
     acknowledged_date:string,
     is_submited:number,
     hod_approved:boolean
+    second_stage_approved:boolean,
+    second_stage_approval_by:string
 }
 
 
