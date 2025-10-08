@@ -258,7 +258,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
           designation != "Purchase Team" && 
         <Button onClick={() => { setIsAmendCommentDialog(true)}} className={`mb-2 ${isAmendment == 0  ? "" : "hidden"}`}>Amend</Button>
         } */}
-        {!isTreasuryUser && (isAmendment == 1 || re_release == 1) && (
+        {designation == "Purchase Team" && !isTreasuryUser && (isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled((prev) => !prev)}
             className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"

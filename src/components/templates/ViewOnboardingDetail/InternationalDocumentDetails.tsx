@@ -52,6 +52,7 @@ const DocumentDetails = ({
   const { designation } = useAuth();
   const isTreasuryUser = designation?.toLowerCase() === "treasury";
 
+  
 
   const handleSubmit = async () => {
     const url = API_END_POINTS?.documentDetailSubmit;
@@ -204,7 +205,7 @@ const DocumentDetails = ({
     <div className="flex flex-col bg-white rounded-lg p-2 w-full max-h-[80vh]">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Document Details</h1>
-        {!isTreasuryUser && (isAmendment == 1 || re_release == 1) && (
+        {designation == "Purchase Team" &&!isTreasuryUser && (isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled((prev) => !prev)}
             className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
