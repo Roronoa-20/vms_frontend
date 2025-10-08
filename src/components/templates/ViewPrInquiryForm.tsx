@@ -213,7 +213,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
     const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.InquiryAddtionalApproval,method:"GET",params:{email_id:toEmail,purchase_enquiry_id:refno}});
     if(response?.status == 200){
       alert("Added additional approval successfully");
-      handleClose();
+      handleEmailClose();
     }
   }
 
