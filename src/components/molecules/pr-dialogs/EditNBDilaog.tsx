@@ -22,6 +22,7 @@ import {
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
+import { today } from '../../templates/RFQTemplates/LogisticsImportRFQFormFields';
 import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ProfitCenter, PurchaseGroup, StorageLocation, StoreLocation, UOMMaster, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType';
 interface DropdownData {
   account_assignment_category: AccountAssignmentCategory[];
@@ -166,6 +167,10 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
 
   const handleSubmit = async () => {
     console.log(errors, "errors before submit")
+    if(!formData.account_assignment_category_head){
+      alert("Select Account Assignment Category")
+      return
+    }
     const validationErrors = validate();
 
     if (Object.keys(validationErrors).length > 0) {
@@ -185,7 +190,9 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       alert("error");
     }
   };
-
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, purchase_requisition_date_head: formData?.purchase_requisition_date_head ? formData?.purchase_requisition_date_head : today }));
+  }, [today, formData?.purchase_requisition_date_head]);
   const renderInput = (name: string, label: string, type = 'text', inputProps: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
     <div className="col-span-1">
       <h1 className="text-[12px] font-normal text-[#626973] pb-3">

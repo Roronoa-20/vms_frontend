@@ -1435,6 +1435,8 @@ export type TPRInquiryTable = {
     created_by_user_name:string
     pr_button_show:boolean
     second_stage_approval_status:string
+    pr_created:string,
+    pur_req:string
   }[]
 }
 
@@ -1485,8 +1487,10 @@ export type CartDetails = {
   hod: string,
   purchase_team: string,
   purchase_type: string,
-  pr_button_show:boolean
-  second_stage_approval_status:string
+  pr_button_show:boolean,
+  second_stage_approval_status:string,
+  pr_created:string,
+  pur_req:string,
 }
 
 export interface PurchaseRequisition {

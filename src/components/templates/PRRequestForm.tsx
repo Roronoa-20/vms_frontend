@@ -6,12 +6,11 @@ import { Button } from '../atoms/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../atoms/select'
 import { CostCenter, GLAccountNumber, MaterialCode, MaterialGroupMaster, ProfitCenter, PurchaseGroup, PurchaseOrganisation, PurchaseRequestData, PurchaseRequestDropdown, StorageLocation, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType'
-import { Edit2, Edit2Icon, EyeIcon } from 'lucide-react'
+import { Edit2Icon } from 'lucide-react'
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import Cookies from 'js-cookie'
-import { validateRequiredFields } from '@/src/app/utils/pr-validate'
 import { Badge } from "@/components/ui/badge"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Plus, Trash2, ChevronDown, ChevronRight } from "lucide-react"
@@ -22,6 +21,8 @@ import EditNBItemModal from '../molecules/pr-dialogs/EditNBDilaog'
 import { PurchaseRequisitionDataItem, PurchaseRequisitionResponse } from '@/src/types/PurchaseRequisitionType'
 import SummaryBlock from '../molecules/pr-dialogs/SummaryBlock'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/src/context/AuthContext'
+import { ApproveConfirmationDialog } from '../common/ApproveConfirmationDialog'
 interface Props {
   Dropdown: PurchaseRequestDropdown["message"]
   PRData: PurchaseRequestData["message"]["data"] | null
@@ -46,6 +47,9 @@ export const updateQueryParam = (key: string, value: string) => {
 
 const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, StorageLocationDropdown, ValuationClassDropdown, ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, MaterialCodeDropdown, PurchaseOrgDropdown }: Props) => {
   const user = Cookies.get("user_id");
+  const { designation } = useAuth();
+  const router = useRouter()
+  const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<PurchaseRequestData["message"]["data"] | null>(PRData ? { ...PRData, requisitioner: PRData?.requisitioner, cart_id: cartId ? cartId : "" } : null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [expandedRowNames, setExpandedRowNames] = useState<string[]>([]);
@@ -55,8 +59,6 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
   const [isEditModalOpen, setEditModalOpen] = useState(false)
   const [isNBEditModalOpen, setNBEditModalOpen] = useState(false)
   const [selectedMainItemId, setSelectedMainItemId] = useState<string>("")
-  const [purchase_request_no, setPurchaseReqNo] = useState<string>("")
-  const router = useRouter()
   const deleteSubItem = async (subItemId: string) => {
     console.log(subItemId, "subItemId", pur_req, "pur_req")
     const url = `${API_END_POINTS?.PrSubHeadDeleteRow}?name=${pur_req}&row_id=${subItemId}`;
@@ -118,29 +120,6 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
     []
   );
 
-  // const handleCompanyChange = async (value: string) => {
-  //   try {
-  //     const Data = await fetch(
-  //       `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.purchase_api.handle_req_field_pr.filter_master_field?company=${value}`,
-  //       {
-  //         method: "GET",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         credentials: 'include',
-  //       }
-  //     );
-  //     if (Data.ok) {
-  //       const data = await Data.json();
-  //       setFilterDropdown(data?.message)
-  //       console.log(data, "datadatadatadatadatadata  response")
-  //     }
-
-  //   } catch (error) {
-  //     console.log(error, "something went wrong");
-  //   }
-  // }
-
   const handleSubmit = async () => {
     if (!(mainItems?.docname)) {
       alert("Not able to Submit , PR Request No. Required")
@@ -148,6 +127,21 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
     }
     const url = `${API_END_POINTS?.SubmitPR}?name=${pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}`;
     const response: AxiosResponse = await requestWrapper({ url: url, method: "POST" });
+    if (response?.status == 200) {
+      alert("Submit Successfull");
+      router.push("/dashboard")
+    } else {
+      alert("error");
+    }
+  }
+
+  const handleApprove = async () => {
+    if (!(mainItems?.docname)) {
+      alert("Not able to Submit , PR Request No. Required")
+      return
+    }
+    const url = `${API_END_POINTS?.approvePR}?name=${pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}&approve=1`;
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "POST", data: { "data": { "name": `${pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}`, "approve": 1 } } });
     if (response?.status == 200) {
       alert("Submit Successfull");
       router.push("/dashboard")
@@ -188,7 +182,6 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
       fetchTableData(pur_req);
     }
   }, [pur_req])
-
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <div className="grid grid-cols-3 gap-6 p-5">
@@ -290,7 +283,6 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
       </div>
       {!(mainItems?.docname && mainItems?.docname) && <div className={`flex justify-end p-4`}><Button type='button' className='bg-blue-400 hover:bg-blue-400' onClick={() => handleNext()}>Next</Button></div>}
 
-
       {mainItems && mainItems?.data?.length > 0 && (
         <Card>
           <CardHeader>
@@ -336,7 +328,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
                           {/* <Badge variant="outline">${mainItem?.estimatedPrice}</Badge> */}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
+                      {/* <div className="flex items-center gap-2">
                         {(mainItem?.purchase_requisition_type == "SB" && mainItems?.['Form Status'] != "Submitted") && <Button
                           variant="outline"
                           size="sm"
@@ -354,7 +346,38 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
                         >
                           <Edit2Icon className="w-4 h-4" />
                         </Button>}
+                      </div> */}
+                      <div className="flex items-center gap-2">
+                        {(
+                          mainItems?.['Form Status'] !== "Submitted" ||
+                          (designation === "Purchase Team" && !mainItems?.form_is_submitted)
+                        ) && (
+                            <>
+                              {mainItem?.purchase_requisition_type === "SB" && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => openSubItemModal(mainItem?.row_name)}
+                                  className="flex items-center gap-2 bg-green-50 hover:bg-green-100 border-green-200"
+                                >
+                                  <Plus className="w-4 h-4" />
+                                  Add Sub Item
+                                </Button>
+                              )}
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  handleModel(mainItem?.purchase_requisition_type ? mainItem?.purchase_requisition_type : "SB");
+                                  setEditRow(mainItem);
+                                }}
+                                className=""
+                              >
+                                <Edit2Icon className="w-4 h-4" />
+                              </Button>
+                            </>
+                          )}
                       </div>
+
                     </div>
 
                     {/* Expanded Content - Main Item Details + Sub Items Table */}
@@ -365,15 +388,18 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
                         {mainItem.purchase_requisition_type == "SB" && <div className="mt-4">
                           <div className="flex items-center justify-between mb-4">
                             <h4 className="font-semibold text-lg">Sub Items ({mainItem?.subhead_fields.length})</h4>
-                            {mainItems?.['Form Status'] != "Submitted" && <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => openSubItemModal(mainItem?.row_name)}
-                              className="flex items-center gap-2"
-                            >
-                              <Plus className="w-4 h-4" />
-                              Add Sub Item
-                            </Button>}
+                            {(mainItems?.['Form Status'] !== "Submitted" ||
+                              (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => openSubItemModal(mainItem?.row_name)}
+                                  className="flex items-center gap-2"
+                                >
+                                  <Plus className="w-4 h-4" />
+                                  Add Sub Item
+                                </Button>
+                              )}
                           </div>
 
                           {mainItem?.subhead_fields?.length > 0 ? (
@@ -399,7 +425,6 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
                                       </TableHead>
                                     </TableRow>
                                   </TableHeader>
-
                                   <TableBody>
                                     {mainItem?.subhead_fields.map((subItem, index) => (
                                       <TableRow key={subItem.row_name} className="hover:bg-gray-50">
@@ -434,17 +459,32 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
                           )
                             :
                             (
-                              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                                <p className="text-gray-500 mb-4">No sub-items added yet</p>
-                                <Button
-                                  variant="outline"
-                                  onClick={() => openSubItemModal(mainItem?.row_name)}
-                                  className="flex items-center gap-2 mx-auto"
-                                >
-                                  <Plus className="w-4 h-4" />
-                                  Add First Sub Item
-                                </Button>
-                              </div>
+                              // <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                              //   <p className="text-gray-500 mb-4">No sub-items added yet</p>
+                              //   <Button
+                              //     variant="outline"
+                              //     onClick={() => openSubItemModal(mainItem?.row_name)}
+                              //     className="flex items-center gap-2 mx-auto"
+                              //   >
+                              //     <Plus className="w-4 h-4" />
+                              //     Add First Sub Item
+                              //   </Button>
+                              // </div>
+                              mainItem?.purchase_requisition_type === "SB" &&
+                              (mainItems?.['Form Status'] !== "Submitted" ||
+                                (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
+                                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                                  <p className="text-gray-500 mb-4">No sub-items added yet</p>
+                                  <Button
+                                    variant="outline"
+                                    onClick={() => openSubItemModal(mainItem?.row_name)}
+                                    className="flex items-center gap-2 mx-auto"
+                                  >
+                                    <Plus className="w-4 h-4" />
+                                    Add First Sub Item
+                                  </Button>
+                                </div>
+                              )
                             )}
                         </div>}
                       </div>
@@ -500,7 +540,42 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
         defaultData={editRow}
       />}
 
-      {(mainItems?.['Form Status'] != "Submitted" && mainItems?.docname) && <div className={`flex justify-end py-6`}><Button type='button' className='bg-blue-400 hover:bg-blue-400 px-6 font-medium' onClick={() => { handleSubmit() }}>Submit</Button></div>}
+      {/* {(mainItems?.['Form Status'] != "Submitted" && mainItems?.docname) && <div className={`flex justify-end py-6`}><Button type='button' className='bg-blue-400 hover:bg-blue-400 px-6 font-medium' onClick={() => { handleSubmit() }}>Submit</Button></div>} */}
+
+      {mainItems?.docname && (
+        <div className="flex justify-end py-6">
+          {/* Normal Submit Button (for non-submitted forms) */}
+          {mainItems?.['Form Status'] !== "Submitted" ? (
+            <Button
+              type="button"
+              className="bg-blue-400 hover:bg-blue-400 px-6 font-medium"
+              onClick={() => handleSubmit()}
+            >
+              Submit
+            </Button>
+          ) : (
+            // Show Final Submit button if designation is Purchase Team
+            designation === "Purchase Team" && (
+              <Button
+                type="button"
+                className="bg-green-500 hover:bg-green-600 px-6 font-medium"
+                onClick={() => setOpen(true)}
+              >
+                Final Submit
+              </Button>
+            )
+          )}
+        </div>
+      )}
+
+      <ApproveConfirmationDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        title={"Are You Sure?"}
+        buttontext={"Submit"}
+        dialogTitle={"Confirm Submit"}
+        handleSubmit={handleApprove}
+      />
     </div>
   )
 }

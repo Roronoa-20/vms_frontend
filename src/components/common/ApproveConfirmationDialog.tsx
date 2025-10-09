@@ -10,9 +10,10 @@ interface ApproveDialogProps {
   onClose: () => void;
   handleSubmit: () => void;
   buttontext?: string;
+  dialogTitle?:string;
 }
 
-export const ApproveConfirmationDialog: React.FC<ApproveDialogProps> = ({ open, onClose, handleSubmit, title, buttontext }) => {
+export const ApproveConfirmationDialog: React.FC<ApproveDialogProps> = ({ open, onClose, handleSubmit, title, buttontext,dialogTitle }) => {
   const [loading, setLoading] = useState(false);
 
   const onApprove = async () => {
@@ -29,7 +30,7 @@ export const ApproveConfirmationDialog: React.FC<ApproveDialogProps> = ({ open, 
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Confirm Approval</DialogTitle>
+          <DialogTitle>{dialogTitle?dialogTitle:"Confirm Approval"}</DialogTitle>
         </DialogHeader>
         <p className="text-sm text-muted-foreground">
           {title ? title : "Are you sure you want to approve this Quotation?"}

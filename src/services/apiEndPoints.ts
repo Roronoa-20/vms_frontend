@@ -94,6 +94,7 @@ const API_END_POINTS = {
   PrSubHeadDeleteRow: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.delete_pr_table_row`,
   SubmitPR: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.submit_pr_form`,
   getPRItemsTable: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_pr_details_simple`,
+  approvePR: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition_approval.purchase_team_approval_check`,
 
   //rfq apis
   fetchVendorListBasedOnRFQType: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.vendor_list`,
@@ -122,10 +123,10 @@ const API_END_POINTS = {
   //Public apis
   ProcessToken: `${url}/api/method/vms.purchase.doctype.request_for_quotation.request_for_quotation.process_token`,
   SubmitPublicQuatation: `${url}/api/method/vms.APIs.quotation.create_quotation.create_or_update_quotation_non_onboarded`,
-   QuotationDetail:`${url}/api/method/vms.APIs.quotation.quotation.get_quotation_details`,
+  QuotationDetail: `${url}/api/method/vms.APIs.quotation.quotation.get_quotation_details`,
   // Amend APIs
   AmendAPI: `${url}/api/method/vms.APIs.vendor_onboarding.onboarding_amendment.create_vendor_onboarding_amendment`,
-  
+
   // GRN APIs
   AllGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_all_grn_details`,
   SingleGRNdetails: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_grn_details_of_grn_number`,
@@ -232,40 +233,40 @@ const API_END_POINTS = {
   AccountsTeamRejectedVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.rejected_vendor_details_by_accounts`,
   AccountsTeamApprovedVendors: `${url}/api/method/vms.APIs.dashboard_api.dashboard_for_super_head.approved_vendor_details_by_accounts`,
 
-  addProductInquiryProducts:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.update_cart_products`,
-  deleteInquiryProductItem:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.delete_cart_product`,
-  InquiryAddtionalApproval:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.send_purchase_enquiry_approval_mail`,
-  submitPrInquiry:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.submit_purchase_inquiry`,
+  addProductInquiryProducts: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.update_cart_products`,
+  deleteInquiryProductItem: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.delete_cart_product`,
+  InquiryAddtionalApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.send_purchase_enquiry_approval_mail`,
+  submitPrInquiry: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.submit_purchase_inquiry`,
 
   // Dashboard Registered by API
   filterregisteredby: `${url}api/method/vms.APIs.vendor_onboarding.vendor_registration_masters.vendor_registration_dropdown_masters`,
 
   // Meri-Gate Module Dashboard APIs
-    // 1. SHipment Status APIs 
-    shipmentstatuscount: `${url}/api/method/vms.APIs.shipment_status.get_shipment_status.get_shipment_status_statistics`,
-    shipmentcompanwisetabledata: `${url}/api/method/vms.APIs.shipment_status.get_shipment_status.get_shipment_status_list`,
-    shipmentdetails: `${url}/api/method/vms.APIs.shipment_status.get_shipment_status.get_shipment_status_details`,
-    createnewshipmentstatus: `${url}/api/method/vms.APIs.shipment_status.create_shipment_status.create_shipment_status`,
-    allRFQSrNo: `${url}/api/method/vms.APIs.shipment_status.get_shipment_status.rfq_srno_list`,
-    getRFQdata: `${url}/api/method/vms.APIs.shipment_status.get_shipment_status.rfq_data`,
+  // 1. SHipment Status APIs 
+  shipmentstatuscount: `${url}/api/method/vms.APIs.shipment_status.get_shipment_status.get_shipment_status_statistics`,
+  shipmentcompanwisetabledata: `${url}/api/method/vms.APIs.shipment_status.get_shipment_status.get_shipment_status_list`,
+  shipmentdetails: `${url}/api/method/vms.APIs.shipment_status.get_shipment_status.get_shipment_status_details`,
+  createnewshipmentstatus: `${url}/api/method/vms.APIs.shipment_status.create_shipment_status.create_shipment_status`,
+  allRFQSrNo: `${url}/api/method/vms.APIs.shipment_status.get_shipment_status.rfq_srno_list`,
+  getRFQdata: `${url}/api/method/vms.APIs.shipment_status.get_shipment_status.rfq_data`,
 
-    // 2. Service Bill APIs
-    servicebillcount: `${url}/api/method/vms.APIs.service_bill.get_service_bill.get_service_bill_statistics`,
-    servicebillcompanywisetabledata: `${url}/api/method/vms.APIs.service_bill.get_service_bill.get_service_bill_list`,
-    servicebilldetails: `${url}/api/method/vms.APIs.service_bill.get_service_bill.get_service_bill_details`,
-    createnewservicebill: `${url}/api/method/vms.APIs.service_bill.create_service_bill.create_service_bill`,
+  // 2. Service Bill APIs
+  servicebillcount: `${url}/api/method/vms.APIs.service_bill.get_service_bill.get_service_bill_statistics`,
+  servicebillcompanywisetabledata: `${url}/api/method/vms.APIs.service_bill.get_service_bill.get_service_bill_list`,
+  servicebilldetails: `${url}/api/method/vms.APIs.service_bill.get_service_bill.get_service_bill_details`,
+  createnewservicebill: `${url}/api/method/vms.APIs.service_bill.create_service_bill.create_service_bill`,
 
-    // submitPrInquiry:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.submit_purchase_inquiry`,
+  // submitPrInquiry:`${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.submit_purchase_inquiry`,
 
   //gate Entry
-  sendQRData:`${url}/api/method/vms.APIs.dispatch.dispatch.get_dispatch_data`,
-  sendGateEntry:`${url}/api/method/vms.APIs.dispatch.gate_entry.create_gate_entry`,
-  fetchGateEntry:`${url}/api/method/vms.APIs.dispatch.get_gate_entry.gate_entry_get`,
-  inwardLocationDropdown:`${url}/api/method/vms.APIs.dispatch.gate_entry.get_inward_location`,
-  handoverPersonDropdown:`${url}/api/method/vms.APIs.dispatch.gate_entry.get_handover_person`,
-  handover_submit:`${url}/api/method/vms.APIs.dispatch.gate_entry.handover_gate_entry`,
-  GateEntryDashboardCardCount:`${url}/api/method/vms.APIs.dispatch.get_gate_entry.get_gate_entry_statistics`,
-  GateEntryTableData:`${url}/api/method/vms.APIs.dispatch.get_gate_entry.gate_entry_get`
+  sendQRData: `${url}/api/method/vms.APIs.dispatch.dispatch.get_dispatch_data`,
+  sendGateEntry: `${url}/api/method/vms.APIs.dispatch.gate_entry.create_gate_entry`,
+  fetchGateEntry: `${url}/api/method/vms.APIs.dispatch.get_gate_entry.gate_entry_get`,
+  inwardLocationDropdown: `${url}/api/method/vms.APIs.dispatch.gate_entry.get_inward_location`,
+  handoverPersonDropdown: `${url}/api/method/vms.APIs.dispatch.gate_entry.get_handover_person`,
+  handover_submit: `${url}/api/method/vms.APIs.dispatch.gate_entry.handover_gate_entry`,
+  GateEntryDashboardCardCount: `${url}/api/method/vms.APIs.dispatch.get_gate_entry.get_gate_entry_statistics`,
+  GateEntryTableData: `${url}/api/method/vms.APIs.dispatch.get_gate_entry.gate_entry_get`
 }
 
 export default API_END_POINTS;

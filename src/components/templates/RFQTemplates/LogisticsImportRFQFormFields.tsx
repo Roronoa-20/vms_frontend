@@ -16,7 +16,7 @@ interface Props {
     setUploadedFiles: React.Dispatch<React.SetStateAction<File[]>>;
 }
 // RFQ current date
-const today = new Date().toISOString().split("T")[0];
+export const today = new Date().toISOString().split("T")[0];
 const prev = new Date().toISOString().slice(0, 16)
 const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFiles, uploadedFiles }: Props) => {
     const [destinationPort, setDestinationPort] = useState<PortCode[]>([])

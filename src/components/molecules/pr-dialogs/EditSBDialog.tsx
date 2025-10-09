@@ -23,7 +23,8 @@ import API_END_POINTS from '@/src/services/apiEndPoints';
 import { AxiosResponse } from 'axios';
 import requestWrapper from '@/src/services/apiCall';
 import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMaster, MaterialGroupMaster, PurchaseGroup, PurchaseOrganisation, StorageLocation, StoreLocation, UOMMaster, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType';
-
+import { today } from '../../templates/RFQTemplates/LogisticsImportRFQFormFields';
+import { toast } from 'sonner';
 interface DropdownData {
   purchase_organisation: PurchaseOrganisation[];
   account_assignment_category: AccountAssignmentCategory[];
@@ -105,6 +106,9 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     fetchRequiredData(formData?.company_code_area_head, formData?.purchase_requisition_type, formData?.account_assignment_category_head);
   }, [formData?.company_code_area_head, formData?.purchase_requisition_type, formData?.account_assignment_category_head])
 
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, purchase_requisition_date_head: formData?.purchase_requisition_date_head ? formData?.purchase_requisition_date_head : today }));
+  }, [today, formData?.purchase_requisition_date_head]);
 
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -136,27 +140,6 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     errors[field] ? (
       <p className="text-red-500 text-xs mt-1">{errors[field]}</p>
     ) : null;
-
-  // const validate = () => {
-  //   const newErrors: Record<string, string> = {};
-
-  //   Object.entries(requiredField).forEach(([field, rule]) => {
-  //     const value = formData[field];
-
-  //     if (rule.includes("Compulsory")) {
-  //       if (!value || value.trim() === "") {
-  //         newErrors[field] = `${field} is required`;
-  //       }
-  //     }
-
-  //     if (rule === "Compulsory must D" && value !== "D") {
-  //       newErrors[field] = `${field} must be 'D'`;
-  //     }
-  //   });
-
-  //   setErrors(newErrors);
-  //   return newErrors;
-  // };
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -191,6 +174,10 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
 
   const handleSubmit = async () => {
     console.log(errors, "errors before submit")
+    if(!formData.account_assignment_category_head){
+      alert("Select Account Assignment Category")
+      return
+    }
     const validationErrors = validate();
 
     if (Object.keys(validationErrors).length > 0) {
