@@ -57,6 +57,8 @@ export type TPRInquiry = {
     hod_approved:boolean
     second_stage_approved:boolean,
     second_stage_approval_by:string
+    cost_center:string,
+    gl_account:string
 }
 
 
