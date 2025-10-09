@@ -58,7 +58,9 @@ export type TPRInquiry = {
     is_submited:number,
     hod_approved:boolean,
     second_stage_approval_by:string
-    second_stage_approved:boolean
+    second_stage_approved:boolean,
+    cost_center: string,
+    gl_account: string,
 }
 
 const PrInquiryPage = async ({ refno }: Props) => {
@@ -93,6 +95,8 @@ if (refno) {
         cookie:cookieHeaderString
     }});
     const purchaseTypeDropdown = purchaseTypeResponse?.status == 200? purchaseTypeResponse?.data?.message?.data : ""
+
+    
 
 return (
     <PrInquiryForm companyDropdown={companyDropdown} PRInquiryData={PRInquiryData} dropdown={dropdown} purchaseTypeDropdown={purchaseTypeDropdown} />

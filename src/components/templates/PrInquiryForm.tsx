@@ -39,7 +39,8 @@ const currentDate = new Date();
 
 const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeDropdown }: Props) => {
   const user = Cookies.get("user_id");
-  console.log(PRInquiryData, "__________-")
+  console.log(PRInquiryData, "__________-");
+
   const [formData, setFormData] = useState<TPRInquiry | null>(PRInquiryData ?? null);
   const [singleTableRow, setSingleTableRow] = useState<TableData | null>(null);
   const [tableData, setTableData] = useState<TableData[]>(PRInquiryData?.cart_product ?? []);
@@ -51,6 +52,9 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [purchaseGroupDropdown, setPurchaseGroupDropdown] = useState<{ name: string, purchase_group_code: string, purchase_group_name: string, description: string }[]>();
+  const [costCenterDropdown, setCostCenterDropdown] = useState<{ name: string, cost_center_code: string, cost_center_name: string,description: string }[]>([]);
+  const [glAccountDropdown, setGLAccountDropdown] = useState<{ name: string, gl_account_code: string, gl_account_name: string, description: string }[]>([]);
+
   const [toEmail, setToEmail] = useState<string>("");
   const router = useRouter();
   const param = useSearchParams();
@@ -230,6 +234,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     if (response?.status == 200) {
       setPlantDropdown(response?.data?.message?.plants);
       setPurchaseGroupDropdown(response?.data?.message?.purchase_groups);
+      setCostCenterDropdown(response?.data?.message?.cost_centers);
+      setGLAccountDropdown(response?.data?.message?.gl_accounts);
     }
   }
 
@@ -286,7 +292,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
         {/* <h1 className="border-b-2 border-gray-400 top-0 bg-white text-[#000000] text-lg">
         Purchase Inquiry
       </h1> */}
-        <div className="grid grid-cols-3 gap-6 p-2">
+        <div className="grid grid-cols-3 gap-6 p-3">
           <div className="col-span-1">
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">User</h1>
             <Input placeholder="" name='user' onChange={(e) => { handleFieldChange(false, e) }} value={formData?.user ?? user ?? ""} disabled />
@@ -396,16 +402,61 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
               </SelectContent>
             </Select>
           </div>
+          {/* Cost Center */}
+          <div className="col-span-1">
+            <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+              Cost Center
+            </h1>
+            <Select
+              value={formData?.cost_center ?? ""}
+              onValueChange={(value) => handleSelectChange(value, "cost_center", false)}
+              disabled={refno ? true : false}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {costCenterDropdown?.map((item, index) => (
+                    <SelectItem key={index} value={item?.name}>{item?.cost_center_code}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* G/L Account */}
+          <div className="col-span-1">
+            <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+              G/L Account
+            </h1>
+            <Select
+              value={formData?.gl_account ?? ""}
+              onValueChange={(value) => handleSelectChange(value, "gl_account", false)}
+              disabled={refno ? true : false}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {glAccountDropdown?.map((item, index) => (
+                    <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
           <div className='col-span-1 flex items-end gap-4'>
             <Button className={`py-1.5 ${refno ? "hidden" : ""}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={(e) => { handleNext() }}>Next</Button>
           </div>
         </div>
         {refno &&
           <>
-            <h1 className="border-b-2 border-gray-400 font-bold text-[18px]">
+            <h1 className="border-b-2 border-gray-400 font-bold text-[18px] p-1">
               Purchase Inquiry Items
             </h1>
-            <div className="grid grid-cols-3 gap-6 p-2">
+            <div className="grid grid-cols-3 gap-6 p-3">
               {/* <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Assest Code
