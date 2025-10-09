@@ -230,7 +230,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                       {item?.status}
                     </div>
                   </TableCell>
-                  <TableCell className="text-right whitespace-nowrap">{item?.name}</TableCell>
+                  <TableCell className="text-right whitespace-nowrap">{item?.vendors_tentative_delivery_date}</TableCell>
                   <TableCell>
                     <Button
                       variant={"outline"}

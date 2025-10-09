@@ -37,5 +37,6 @@ export const NavbarConstant:Record<string,string> = {
     "/view-vendor-po": "Purchase Order (PO)",
     "/gr-waiver-dashboard": "GR Waiver Dashboard",
     "/new-gr-waiver": "New GR Waiver",
-    "/view-gr-waiver": "GR Waiver"
+    "/view-gr-waiver": "GR Waiver",
+    "/dispatch-table":"Dispatch Orders"
 }

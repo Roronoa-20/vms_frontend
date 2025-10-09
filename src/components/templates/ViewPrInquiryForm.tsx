@@ -353,7 +353,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
           </div>
         }
         {
-          PRInquiryData?.hod_approved && !PRInquiryData?.second_stage_approved ?
+         designation != "Enquirer" &&  PRInquiryData?.hod_approved && !PRInquiryData?.second_stage_approved ?
           <div className='flex items-end'>
       <Button className={`bg-blue-400 hover:bg-blue-300`} onClick={(e)=>{setIsEmailDialog(true)}}>Additional Approval</Button>
         </div>:
