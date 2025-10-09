@@ -52,7 +52,7 @@ export const sidebarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/dispatch-logo.svg",
     name: "View Dispatch",
-    href: "",
+    href: "/view-dispatch-table",
     children: []
   },
   {
