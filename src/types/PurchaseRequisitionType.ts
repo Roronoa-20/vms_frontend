@@ -7,6 +7,7 @@ export interface PurchaseRequisitionResponse {
   "Purchase Group": string;
   "Cart ID": string;
   "Form Status": string;
+  form_is_submitted:boolean;
   data: PurchaseRequisitionDataItem[];
 }
 

@@ -91,19 +91,19 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
       setRecordPerPage(5);
     }
   };
-  
-   const handleSelectChange = (
-  value: string,
-  setter: (val: string) => void
+
+  const handleSelectChange = (
+    value: string,
+    setter: (val: string) => void
   ) => {
-  if (value === "--Select--") {
-    setter(""); // reset filter
-  } else {
-    setter(value);
-  }
-};
+    if (value === "--Select--") {
+      setter(""); // reset filter
+    } else {
+      setter(value);
+    }
+  };
 
-
+  console.log(table, "table")
   return (
     <>
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
@@ -114,9 +114,9 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
           <div className="flex gap-4">
             <Input placeholder="Search..." />
             <Select
-                value={selectedCompany}
-                onValueChange={(value) => handleSelectChange(value, setSelectedCompany)
-                }
+              value={selectedCompany}
+              onValueChange={(value) => handleSelectChange(value, setSelectedCompany)
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
@@ -220,7 +220,21 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                         </div>
                       </TableCell>
                       <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={url}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
-                      <TableCell className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show? "" : "hidden"}`}><Link href={`/pr-request?cart_id=${item?.name}`}><Button className="bg-blue-400 hover:bg-blue-400">PR</Button></Link></TableCell>
+                      <TableCell
+                        className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show ? "" : "hidden"
+                          }`}
+                      >
+                        {item?.pr_created ? (
+                          <Link href={`/pr-request?cart_id=${item?.name}&pur_req=${item?.pur_req}`}>
+                            <Button className="bg-green-500 hover:bg-green-500">View PR</Button>
+                          </Link>
+                        ) : (
+                          <Link href={`/pr-request?cart_id=${item?.name}`}>
+                            <Button className="bg-blue-400 hover:bg-blue-400">PR</Button>
+                          </Link>
+                        )}
+                      </TableCell>
+
                       {/* <TableCell>
                   <div
                     className={`px-2 py-3 rounded-xl ${item?.status === "pending"
