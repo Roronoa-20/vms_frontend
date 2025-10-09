@@ -224,15 +224,15 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                         className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show ? "" : "hidden"
                           }`}
                       >
-                        {item?.pr_created ? (
+                        {/* {item?.pr_created ? (
                           <Link href={`/pr-request?cart_id=${item?.name}&pur_req=${item?.pur_req}`}>
                             <Button className="bg-green-500 hover:bg-green-500">View PR</Button>
                           </Link>
-                        ) : (
-                          <Link href={`/pr-request?cart_id=${item?.name}`}>
-                            <Button className="bg-blue-400 hover:bg-blue-400">PR</Button>
+                        ) : ( */}
+                          <Link href={`/pr-request?cart_id=${item?.name}`}  className={`${item?.pr_created?"cursor-not-allowed":"cursor-pointer"}`}>
+                            <button  title={item?.pr_created?"PR Created":"Raise PR"} className={`py-2 px-4 text-white rounded-md  ${item?.pr_created?"cursor-not-allowed bg-blue-400/50 hover:bg-blue-400/50":"cursor-pointer bg-blue-400 hover:bg-blue-400"}`}>PR</button>
                           </Link>
-                        )}
+                        {/* )} */}
                       </TableCell>
 
                       {/* <TableCell>
