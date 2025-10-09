@@ -24,6 +24,7 @@ import { dispatchTable } from "@/src/types/dispatchTableType";
 import PopUp from "./PopUp";
 import { Button } from "../atoms/button";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/src/context/AuthContext";
 
 
 type Props = {
@@ -31,6 +32,7 @@ type Props = {
 }
 
 const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
+  const {designation} = useAuth();
   console.log(dashboardTableData, "this is table data")
   const [isPODialog, setIsPODialog] = useState<boolean>(false);
   const [selectedPOTable, setSelectedPOTable] = useState<string[]>();
@@ -77,7 +79,7 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
                 <TableCell className="text-center whitespace-nowrap">{item?.invoice_number}</TableCell>
                 <TableCell className="text-center whitespace-nowrap">{item?.status}</TableCell>
                 <TableCell><Button className="py-2" variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handlePOClick(item?.purchase_numbers) }}>View PO</Button></TableCell>
-                <TableCell><Button onClick={() => { router.push(`/dispatch?refno=${item?.name}`) }} className="bg-blue-400 hover:bg-blue-300" >View</Button></TableCell>
+                <TableCell><Button onClick={() => {designation != "Vendor"? router.push(`/view-dispatch?refno=${item?.name}`):router.push(`/dispatch?refno=${item?.name}`) }} className="bg-blue-400 hover:bg-blue-300" >View</Button></TableCell>
               </TableRow>
             ))
             ) : (

@@ -35,4 +35,5 @@ export const NavbarConstant:Record<string,string> = {
     "/gate-entry-dashboard":"Gate-entry Dashboard",
     "/shipment-status-dashboard": "Shipment Status(DSR) Dashboard",
     "/view-vendor-po": "Purchase Order (PO)",
+    "/dispatch-table":"Dispatch Orders"
 }

@@ -85,6 +85,12 @@ export const sidebarMenu: SidebarItem[] = [
     href: "/gate-entry-dashboard",
     children: []
   },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "Dispatch",
+    href: "/dispatch-table",
+    children: []
+  },
   // {
   //   logo: "/sidebar-assests/view-grn.svg",
   //   name: "Shipment Status",
