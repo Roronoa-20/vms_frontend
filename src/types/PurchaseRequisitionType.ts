@@ -8,6 +8,7 @@ export interface PurchaseRequisitionResponse {
   "Cart ID": string;
   "Form Status": string;
   form_is_submitted:boolean;
+  sap_error:string;
   data: PurchaseRequisitionDataItem[];
 }
 

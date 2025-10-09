@@ -6,7 +6,7 @@ import { Button } from '../atoms/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../atoms/select'
 import { CostCenter, GLAccountNumber, MaterialCode, MaterialGroupMaster, ProfitCenter, PurchaseGroup, PurchaseOrganisation, PurchaseRequestData, PurchaseRequestDropdown, StorageLocation, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType'
-import { Edit2Icon } from 'lucide-react'
+import { AlertCircleIcon, Edit2Icon } from 'lucide-react'
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
@@ -22,6 +22,7 @@ import { PurchaseRequisitionDataItem, PurchaseRequisitionResponse } from '@/src/
 import SummaryBlock from '../molecules/pr-dialogs/SummaryBlock'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/src/context/AuthContext'
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { ApproveConfirmationDialog } from '../common/ApproveConfirmationDialog'
 interface Props {
   Dropdown: PurchaseRequestDropdown["message"]
@@ -283,6 +284,17 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
       </div>
       {!(mainItems?.docname && mainItems?.docname) && <div className={`flex justify-end p-4`}><Button type='button' className='bg-blue-400 hover:bg-blue-400' onClick={() => handleNext()}>Next</Button></div>}
 
+      {mainItems?.sap_error &&
+        <div className='pb-4'>
+          <Alert variant="destructive" className=''>
+            <AlertCircleIcon />
+            <AlertTitle className='pl-1'>SAP Error ! Please Resubmit</AlertTitle>
+            <AlertDescription>
+              Error:{mainItems?.sap_error}
+            </AlertDescription>
+          </Alert>
+        </div>
+      }
       {mainItems && mainItems?.data?.length > 0 && (
         <Card>
           <CardHeader>
@@ -555,7 +567,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
             </Button>
           ) : (
             // Show Final Submit button if designation is Purchase Team
-            designation === "Purchase Team" && (
+            (designation === "Purchase Team" && !mainItems?.form_is_submitted) && (
               <Button
                 type="button"
                 className="bg-green-500 hover:bg-green-600 px-6 font-medium"
