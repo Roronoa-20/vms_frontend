@@ -6,28 +6,40 @@ import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/context/AuthContext";
 import { SidebarItem, SidebarChild } from "@/src/types/sidebar";
+
+
 const Sidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { designation } = useAuth();
   const { vendorRef } = useAuth();
+
   const sideBar = designation === "Vendor" ? VendorsidebarMenu : designation === "Enquirer" ? EnquirysidebarMenu : designation === "ASA" ? ASASideBarMenu : designation === "Accounts Team" ? AccountSideBarMenu : designation === "Accounts Head" ? AccountHeadSideBarMenu : designation === "Purchase Head" ? PurchaseHeadsidebarMenu : designation === "QA Team" ? QASideBarMenu : designation === "Super Head" ? SuperHeadSidebarMenu : designation === "Treasury" ? TreasurySideBarMenu : sidebarMenu;
+
+  const getSidebarWidth = (designation: string) => {
+    const compactRoles = ["Vendor", "Enquirer", "ASA", "QA Team"];
+    return compactRoles.includes(designation) ? "w-[95px]" : "w-[110px]";
+  };
+
   const [openMenu, setOpenMenu] = useState<SidebarItem | null>(null);
   const [submenuPos, setSubmenuPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const submenuRef = useRef<HTMLDivElement | null>(null);
+
   const handleClick = (item: SidebarItem, idx: number) => {
     if (item.children.length > 0) {
       const btn = buttonRefs.current[idx];
       if (btn) {
         const rect = btn.getBoundingClientRect();
-        setSubmenuPos({ top: rect.top, left: rect.right });
+        const offset = getSidebarWidth(designation || "") === "w-[95px]" ? 10 : 15;
+        setSubmenuPos({ top: rect.top, left: rect.right + offset });
       }
       setOpenMenu(openMenu?.name === item.name ? null : item);
     } else {
       navigateTo(item);
     }
   };
+
   const navigateTo = (item: SidebarItem | SidebarChild) => {
     if ('children' in item && item.children.length > 0) return;
     if (item.name === "ASA Form") {
@@ -37,6 +49,7 @@ const Sidebar = () => {
     }
     setOpenMenu(null);
   };
+  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -52,9 +65,10 @@ const Sidebar = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
   return (
     <>
-      <div className="w-[110px] bg-[#0C2741] flex flex-col items-center gap-3 overflow-y-auto no-scrollbar sticky left-0 h-screen">
+      <div className={`${getSidebarWidth(designation || "")} bg-[#0C2741] flex flex-col items-center gap-3 overflow-y-auto no-scrollbar sticky left-0 h-screen`}>
         <div className="w-3 h-3 pb-6 pt-5">
           <Logo />
         </div>
@@ -62,12 +76,8 @@ const Sidebar = () => {
           <button
             key={idx}
             ref={(el) => { buttonRefs.current[idx] = el; }}
-            // className={`px-2 py-2 rounded-lg text-sm flex flex-col justify-center items-center gap-1 text-white w-full ${openMenu?.name === item.name ? "bg-[#2C567E]" : "hover:bg-[#2C567E]"
-            //   }`}
             className={`px-2 py-2 rounded-lg text-sm flex flex-col justify-center items-center gap-1 text-white w-full 
-    ${
-              // Active if current pathname matches parent or one of its children
-              pathname === item.href ||
+            ${pathname === item.href ||
                 item.children.some(child => child.href === pathname) ||
                 (pathname === "/dashboard" && item.defaultActive)
                 ? "bg-[#2C567E]"
