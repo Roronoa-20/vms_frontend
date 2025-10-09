@@ -23,8 +23,8 @@ export const sidebarMenu: SidebarItem[] = [
   },
   {
     logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-    name: "Product Enquiry",
-    href: "/pr-inquiry",
+    name: "View Enquiry",
+    href: "/view-pr-inquiry-table",
     children: []
   },
   {
@@ -57,7 +57,7 @@ export const sidebarMenu: SidebarItem[] = [
   },
   {
     logo: "/sidebar-assests/view-pr.svg",
-    name: "MPN",
+    name: "View MPN",
     href: "/pickup-dashboard",
     children: []
   },
@@ -69,19 +69,19 @@ export const sidebarMenu: SidebarItem[] = [
   },
   {
     logo: "/sidebar-assests/view-grn.svg",
-    name: "GR Waiver",
+    name: "View GR Waiver",
     href: "/gr-waiver-dashboard",
     children: []
   },
   {
     logo: "/sidebar-assests/view-grn.svg",
-    name: "Payment",
+    name: "View Payment",
     href: "/view-payment-requisition",
     children: []
   },
   {
     logo: "/sidebar-assests/view-grn.svg",
-    name: "Gate Entry",
+    name: "View Gate Entry",
     href: "/gate-entry-dashboard",
     children: []
   },
@@ -109,8 +109,8 @@ export const SuperHeadSidebarMenu: SidebarItem[] = [
   },
   {
     logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-    name: "Product Enquiry",
-    href: "/pr-inquiry",
+    name: "View Product Enquiry",
+    href: "/view-pr-inquiry-table",
     children: []
   },
   {
@@ -179,8 +179,8 @@ export const PurchaseHeadsidebarMenu: SidebarItem[] = [
   },
   {
     logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-    name: "Product Enquiry",
-    href: "/pr-inquiry",
+    name: "View Product Enquiry",
+    href: "/view-pr-inquiry-table",
     children: []
   },
   {
@@ -314,7 +314,7 @@ export const VendorsidebarMenu: SidebarItem[] = [
   },
   {
     logo: "/sidebar-assests/dispatch-logo.svg",
-    name: "Dispatch",
+    name: "Create Dispatch",
     href: "/dispatch",
     children: []
   },

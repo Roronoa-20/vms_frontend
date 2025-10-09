@@ -72,7 +72,7 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
 
   const fetchTable = async () => {
     const dashboardPRTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.prTableData}?usr=${user}&company=${selectedCompany}&cart_id=${search}&page_no=${currentPage}`,
+      url: `${API_END_POINTS?.prTableData}?usr=${user}&company=${selectedCompany}&cart_id=${search}&page_no=${currentPage}&page_length=${record_per_page}`,
       method: "GET",
     });
     if (dashboardPRTableDataApi?.status == 200) {
@@ -85,15 +85,15 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
   };
 
   const handleSelectChange = (
-  value: string,
-  setter: (val: string) => void
+    value: string,
+    setter: (val: string) => void
   ) => {
-  if (value === "--Select--") {
-    setter(""); // reset filter
-  } else {
-    setter(value);
-  }
-};
+    if (value === "--Select--") {
+      setter(""); // reset filter
+    } else {
+      setter(value);
+    }
+  };
 
 
   console.log(table, "this is table");
@@ -103,7 +103,7 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Purchase Requisition
+            Purchase Requisition Request
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
@@ -127,7 +127,7 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
             </Select>
           </div>
         </div>
-        <div className="overflow-y-scroll max-h-[55vh]">
+        <div className="max-h-[55vh]">
           <Table className="">
             {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
             <TableHeader className="text-center">
@@ -141,8 +141,8 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
                 <TableHead className="text-center text-black">Requisitioner</TableHead>
                 <TableHead className="text-center text-black text-nowrap">Purchase Head</TableHead>
                 <TableHead className="text-center text-black">HOD</TableHead>
-                <TableHead className="text-center text-black">Actions</TableHead>
-                <TableHead className={`text-center text-black`}></TableHead>
+                <TableHead className="text-center text-black text-nowrap">View Cart</TableHead>
+                <TableHead className="text-center text-black">View PR</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="text-center">
@@ -182,7 +182,7 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
                         {item?.hod_approval_status || "--"}
                       </div>
                     </TableCell>
-                    <TableCell className="text-nowrap text-center"><Link href={`/view-pr?pur_req=${item?.name}`}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
+                    <TableCell className="text-nowrap text-center"><Link href={`/view-pr?pur_req=${item?.name}`}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]" >View</Button></Link></TableCell>
                     {/* <TableCell>
                   <div
                     className={`px-2 py-3 rounded-xl ${item?.status === "pending"
@@ -194,12 +194,14 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
                   >
                     {item?.status}
                   </div>
-                </TableCell>
-                <TableCell>{item?.purchase_team}</TableCell>
-                <TableCell>{item?.purchase_head}</TableCell>
-                <TableCell>{item?.accounts_team}</TableCell>
-                <TableCell><Link href={`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                <TableCell className="text-right">{item?.qms_form}</TableCell> */}
+                </TableCell> */}
+                    <TableCell
+                      className={`text-nowrap text-center whitespace-nowrap`}
+                    >
+                      <Link href={`/pr-request?cart_id=${item?.cart_details_id}&pur_req=${item?.name}`}>
+                        <Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View PR</Button>
+                      </Link>
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (

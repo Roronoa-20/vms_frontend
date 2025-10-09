@@ -77,8 +77,6 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const user = Cookies?.get("user_id");
-  console.log(user, "this is user");
-
   const debouncedSearchName = useDebounce(search, 300);
 
   useEffect(() => {
@@ -98,11 +96,8 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
       method: "GET",
     });
     if (dashboardApprovedVendorTableDataApi?.status == 200) {
-      setTable(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding
-      );
-      // settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count);
+      setTable(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding);
       settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count)
-      // setRecordPerPage(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding?.length)
       setRecordPerPage(5);
     }
   };
@@ -120,13 +115,26 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
     }
   };
 
+  const formatApprovalAge = (seconds: string | number) => {
+    const sec = Number(seconds);
+    if (!sec || sec <= 0) return "-";
+
+    const days = Math.floor(sec / (24 * 3600));
+    let remainder = sec % (24 * 3600);
+    const hours = Math.floor(remainder / 3600);
+    remainder %= 3600;
+    const minutes = Math.floor(remainder / 60);
+    const secondsLeft = remainder % 60;
+
+    return `${days}d ${hours}h ${minutes}m ${secondsLeft}s`;
+  };
 
   return (
     <>
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Total Onboarded Vendors
+            Total OnBoarded Vendors
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
@@ -158,6 +166,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
               <TableHead className="text-center text-black">Vendor Name</TableHead>
               <TableHead className="text-center text-black">Company Code</TableHead>
               <TableHead className="text-center text-black">Status</TableHead>
+              <TableHead className="text-center text-black">Aging</TableHead>
               <TableHead className="text-center text-black">Vendor Code</TableHead>
               <TableHead className="text-center text-black">Country</TableHead>
               <TableHead className="text-center text-black">Register By</TableHead>
@@ -187,6 +196,9 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                       {item?.onboarding_form_status}
                     </div>
                   </TableCell>
+                  <TableCell className="text-center bg-blue-100 text-blue-800 px-2 py-1 rounded-xl">
+                    {formatApprovalAge(item?.approval_age)}
+                  </TableCell>
                   <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
                   <TableCell className="text-center">{item?.vendor_country}</TableCell>
                   <TableCell className="text-center whitespace-nowrap">{item?.registered_by_full_name}</TableCell>
@@ -215,8 +227,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
 
         </Table>
       </div>
-      {
-        isVendorCodeDialog &&
+      {isVendorCodeDialog &&
         <PopUp handleClose={handleClose} classname="overflow-y-scroll">
           <Table>
             <TableHeader>
