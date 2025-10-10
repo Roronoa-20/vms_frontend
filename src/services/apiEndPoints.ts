@@ -11,6 +11,7 @@ const API_END_POINTS = {
   verifyOtp: `${url}/api/method/vms.vms.doctype.otp_verification.otp_verification.verify_otp_and_delete`,
   changePassword: `${url}/api/method/vms.APIs.authentication_api.login.reset_pwd`,
   vendorRegistrationDropdown: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration_masters.vendor_registration_dropdown_masters`,
+  UserRegistrationDropdown: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration_masters.team_wise_user_list`,
   companyBasedDropdown: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_field_details.get_purchase_team_details`,
   purchaseGroupBasedDropdown: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_field_details.account_group_details`,
   vendorRegistrationSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration.vendor_registration`,

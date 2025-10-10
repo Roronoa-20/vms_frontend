@@ -43,7 +43,7 @@ import { Mail, CheckCircle } from "lucide-react";
 
 type Props = {
   dashboardTableData?: DashboardTableType["sapErrorDashboardData"]
-  companyDropdown: { name: string }[]
+  companyDropdown: { name: string, description: string }[]
 }
 
 const useDebounce = (value: any, delay: any) => {
@@ -70,6 +70,7 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
   const [searchVendor, setSearchVendor] = useState<string>("");
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [remarks, setRemark] = useState("");
   const debouncedSearchName = useDebounce(searchVendor, 300);
   const router = useRouter();
@@ -77,7 +78,7 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
 
   useEffect(() => {
     fetchTable();
-  }, [debouncedSearchName, currentPage])
+  }, [debouncedSearchName, currentPage, selectedCompany])
 
   const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const {name, value } = e.target;
@@ -87,7 +88,7 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
 
   const fetchTable = async () => {
     const dashboardTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.sapApiDashboardDetails}?page_no=${currentPage}&vendor_name=${debouncedSearchName}`,
+      url: `${API_END_POINTS?.sapApiDashboardDetails}?page_no=${currentPage}&company=${selectedCompany}&vendor_name=${debouncedSearchName}`,
       method: "GET",
     });
     if (dashboardTableDataApi?.status == 200) {
@@ -140,20 +141,24 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." value={searchVendor} onChange={(e) => { handlesearchname(e) }} />
-            {/* <Select>
-              <SelectTrigger className="w-[180px]">
+            <Select
+              value={selectedCompany || "all"}
+              onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
+            >
+              <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
               <SelectContent>
-                <SelectGroup className="w-full">
-                  {
-                    companyDropdown?.map((item, index) => (
-                      <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                    ))
-                  }
+                <SelectGroup>
+                  <SelectItem value="all">All</SelectItem>
+                  {companyDropdown?.map((item) => (
+                    <SelectItem key={item.name} value={item.name}>
+                      {item.description}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
-            </Select> */}
+            </Select>
           </div>
         </div>
         <div className="overflow-y-scroll max-h-[55vh]">

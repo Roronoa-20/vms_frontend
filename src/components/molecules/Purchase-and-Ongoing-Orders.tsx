@@ -181,15 +181,15 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
   }
 
   const handleSelectChange = (
-  value: string,
-  setter: (val: string) => void
+    value: string,
+    setter: (val: string) => void
   ) => {
-  if (value === "--Select--") {
-    setter(""); // reset filter
-  } else {
-    setter(value);
-  }
-};
+    if (value === "--Select--") {
+      setter(""); // reset filter
+    } else {
+      setter(value);
+    }
+  };
 
 
   return (
@@ -201,24 +201,26 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
+            
             <Select
-              value={selectedCompany}
-              onValueChange={(value) => handleSelectChange(value, setSelectedCompany)}
+              value={selectedCompany || "all"}
+              onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
               <SelectContent>
-                <SelectGroup className="w-full">
-                  <SelectItem value="--Select--">--Select--</SelectItem>
-                  {
-                    companyDropdown?.map((item, index) => (
-                      <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                    ))
-                  }
+                <SelectGroup>
+                  <SelectItem value="all">All</SelectItem>
+                  {companyDropdown?.map((item) => (
+                    <SelectItem key={item.name} value={item.name}>
+                      {item.description}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
+
             <Select>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Status" />
@@ -271,10 +273,10 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                   <TableCell>
                     <div
                       className={`px-2 py-3 rounded-xl ${item?.status === "Pending by Vendor"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : item?.status === "Approved by Vendor"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : item?.status === "Approved by Vendor"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
                         }`}
                     >
                       {item?.status}

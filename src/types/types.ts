@@ -20,7 +20,15 @@ export type TvendorRegistrationDropdown = {
       company_master: { name: string, description: string, sap_client_code: string }[],
       incoterm_master: { name: string }[],
       currency_master: { name: string }[],
-      user_list: { user_id: string, full_name: string }[],
+      users_list: { user_id: string, full_name: string }[],
+    }
+  }
+}
+
+export type TuserRegistrationDropdown = {
+   message: {
+    data: {
+      users_list: { user_id: string, full_name: string }[],
     }
   }
 }

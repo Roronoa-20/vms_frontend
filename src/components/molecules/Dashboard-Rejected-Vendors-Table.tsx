@@ -135,16 +135,16 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
     );
   };
 
- const handleSelectChange = (
-  value: string,
-  setter: (val: string) => void
-) => {
-  if (value === "--Select--") {
-    setter(""); // reset filter
-  } else {
-    setter(value);
-  }
-};
+  const handleSelectChange = (
+    value: string,
+    setter: (val: string) => void
+  ) => {
+    if (value === "--Select--") {
+      setter(""); // reset filter
+    } else {
+      setter(value);
+    }
+  };
 
 
   return (
@@ -157,21 +157,20 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
             <Select
-                            value={selectedCompany}
-                            onValueChange={(value) => handleSelectChange(value, setSelectedCompany)
-                            }
-                          >
+              value={selectedCompany || "all"}
+              onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
               <SelectContent>
-                <SelectGroup className="w-full">
-                  <SelectItem value="--Select--">--Select--</SelectItem>
-                  {
-                    companyDropdown?.map((item, index) => (
-                      <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                    ))
-                  }
+                <SelectGroup>
+                  <SelectItem value="all">All</SelectItem>
+                  {companyDropdown?.map((item) => (
+                    <SelectItem key={item.name} value={item.name}>
+                      {item.description}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
