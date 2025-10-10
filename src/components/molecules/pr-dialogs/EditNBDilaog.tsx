@@ -24,6 +24,8 @@ import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import { today } from '../../templates/RFQTemplates/LogisticsImportRFQFormFields';
 import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ProfitCenter, PurchaseGroup, StorageLocation, StoreLocation, UOMMaster, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType';
+import SearchSelectComponent from '../../common/SelectSearchComponent';
+import PopUp from '../PopUp';
 interface DropdownData {
   account_assignment_category: AccountAssignmentCategory[];
   item_category_master: ItemCategoryMaster[];
@@ -54,7 +56,7 @@ interface EditNBModalProps {
   MaterialGroupDropdown: MaterialGroupMaster[]
   GLAccountDropdwon: GLAccountNumber[]
   CostCenterDropdown: CostCenter[]
-  MaterialCodeDropdown: MaterialCode[]
+  // MaterialCodeDropdown: MaterialCode[]
 }
 
 const EditNBModal: React.FC<EditNBModalProps> = ({
@@ -67,11 +69,13 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   PurchaseGroupDropdown,
   StorageLocationDropdown,
   ValuationClassDropdown,
-  ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, MaterialCodeDropdown
+  ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown
 }) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(false);
+  const [MaterialCodeDropdown, setMaterialCodeDropdown] = useState<MaterialCode[]>()
+  const [materialCode, setMaterialCode] = useState<string>("");
   const [requiredField, setRequiredField] = useState<Record<string, any>>({});
   useEffect(() => {
     if (isOpen) {
@@ -79,6 +83,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       setErrors({});
     }
   }, [isOpen, defaultData]);
+
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -134,6 +139,34 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     formData?.account_assignment_category_head
   ]);
 
+  const fetchMaterialCodeData = async (query?: string): Promise<[]> => {
+    console.log(query)
+    const baseUrl = API_END_POINTS?.MaterialCodeSearchApi;
+
+    let url = baseUrl;
+
+    // Only include filters if company exists
+    if (formData?.company_code_area_head) {
+      const filters = [{ company: formData.company_code_area_head }];
+      url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
+    }
+
+    // Add search_term if query exists
+    if (query) {
+      // If filters already added, use "&", otherwise "?"
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
+    }
+
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+    if (response?.status == 200) {
+      console.log(response.data.message.data, "response of material code  data---------_++_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_=")
+      setMaterialCodeDropdown(response.data.message.data)
+      return response.data.message.data
+    } else {
+      alert("error");
+    }
+    return []
+  }
   const validate = () => {
     const newErrors: Record<string, string> = {};
 
@@ -167,17 +200,15 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
 
   const handleSubmit = async () => {
     console.log(errors, "errors before submit")
-    if(!formData.account_assignment_category_head){
+    if (!formData.account_assignment_category_head) {
       alert("Select Account Assignment Category")
       return
     }
     const validationErrors = validate();
-
     if (Object.keys(validationErrors).length > 0) {
       alert(JSON.stringify(validationErrors));
       return;
     }
-
     const updateformdata = { ...formData, name: pur_req }
     const url = API_END_POINTS?.PRTableHeadSubmitData;
     const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...updateformdata } }, method: "POST" });
@@ -193,6 +224,10 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   useEffect(() => {
     setFormData((prev) => ({ ...prev, purchase_requisition_date_head: formData?.purchase_requisition_date_head ? formData?.purchase_requisition_date_head : today }));
   }, [today, formData?.purchase_requisition_date_head]);
+
+  useEffect(() => {
+    fetchMaterialCodeData()
+  }, [formData?.company_code_area_head]);
   const renderInput = (name: string, label: string, type = 'text', inputProps: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
     <div className="col-span-1">
       <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -247,124 +282,126 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       </div>
     );
   };
-  console.log(formData, "0000000000000000000000000000000000000000000000000000")
-  console.log(errors, "errors")
-  console.log(requiredField, "requiredField")
-
-
+  console.log(MaterialCodeDropdown, "MaterialCodeDropdown")
+  console.log(formData?.company_code_area_head, "formData?.company_code_area_head}----------------------------==================")
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl">Purchase Request Items</DialogTitle>
-        </DialogHeader>
-        <div className="grid grid-cols-3 gap-6">
-          {renderInput('item_number_of_purchase_requisition_head', 'Item Number of Purchase Requisition', 'text', { disabled: true })}
-          {renderInput('purchase_requisition_date_head', 'Purchase Requisition Date', 'date')}
-          {renderSelect(
-            'purchase_group_head',
-            'Purchase Group',
-            PurchaseGroupDropdown,
-            (item) => item.name,
-            (item) => `${item.purchase_group_code} - ${item.purchase_group_name}`
-          )}
+    <PopUp headerText='Purchase Request Items' classname='overflow-y-scroll md:max-w-[1000px] md:max-h-[600px]' handleClose={onClose} isSubmit={true} Submitbutton={handleSubmit}>
+      <div className="grid grid-cols-3 gap-6 pt-2">
+        {renderInput('item_number_of_purchase_requisition_head', 'Item Number of Purchase Requisition', 'text', { disabled: true })}
+        {renderInput('purchase_requisition_date_head', 'Purchase Requisition Date', 'date')}
+        {renderSelect(
+          'purchase_group_head',
+          'Purchase Group',
+          PurchaseGroupDropdown,
+          (item) => item.name,
+          (item) => `${item.purchase_group_code} - ${item.purchase_group_name}`
+        )}
 
-          {renderSelect(
-            'account_assignment_category_head',
-            'Account Assignment Category',
-            Dropdown.account_assignment_category,
-            (item) => item.name,
-            (item) => `${item.account_assignment_category_code} - ${item.account_assignment_category_name}`
-          )}
-          {renderSelect(
-            'store_location_head',
-            'Store Location',
-            StorageLocationDropdown,
-            (item) => item.name,
-            (item) => `${item.storage_name}`
-          )}
+        {renderSelect(
+          'account_assignment_category_head',
+          'Account Assignment Category',
+          Dropdown.account_assignment_category,
+          (item) => item.name,
+          (item) => `${item.account_assignment_category_code} - ${item.account_assignment_category_name}`
+        )}
+        {renderSelect(
+          'store_location_head',
+          'Store Location',
+          StorageLocationDropdown,
+          (item) => item.name,
+          (item) => `${item.storage_name}`
+        )}
 
-          {renderInput('delivery_date_head', 'Delivery Date', 'date')}
+        {renderInput('delivery_date_head', 'Delivery Date', 'date')}
 
-          {renderSelect(
-            'item_category_head',
-            'Item Category',
-            Dropdown.item_category_master,
-            (item) => item.name,
-            (item) => `${item.item_code} - ${item.item_name}`
-          )}
+        {renderSelect(
+          'item_category_head',
+          'Item Category',
+          Dropdown.item_category_master,
+          (item) => item.name,
+          (item) => `${item.item_code} - ${item.item_name}`
+        )}
 
-          {renderSelect(
-            'material_group_head',
-            'Material Group',
-            MaterialGroupDropdown,
-            (item) => item.name,
-            (item) => `${item.material_group_name} - ${item.material_group_description}`
-          )}
+        {renderSelect(
+          'material_group_head',
+          'Material Group',
+          MaterialGroupDropdown,
+          (item) => item.name,
+          (item) => `${item.material_group_name} - ${item.material_group_description}`
+        )}
 
-          {renderSelect(
-            'uom_head',
-            'UOM',
-            Dropdown.uom_master,
-            (item) => item.name,
-            (item) => `${item.uom_code} - ${item.uom}`
-          )}
+        {renderSelect(
+          'uom_head',
+          'UOM',
+          Dropdown.uom_master,
+          (item) => item.name,
+          (item) => `${item.uom_code} - ${item.uom}`
+        )}
 
-          {renderSelect(
-            'cost_center_head',
-            'Cost Center',
-            CostCenterDropdown,
-            (item) => item.name,
-            (item) => `${item.cost_center_code} - ${item.cost_center_name}`
-          )}
-          {renderInput('main_asset_no_head', 'Main Asset No')}
-          {renderInput('asset_subnumber_head', 'Asset Subnumber')}
+        {renderSelect(
+          'cost_center_head',
+          'Cost Center',
+          CostCenterDropdown,
+          (item) => item.name,
+          (item) => `${item.cost_center_code} - ${item.cost_center_name}`
+        )}
+        {renderInput('main_asset_no_head', 'Main Asset No')}
+        {renderInput('asset_subnumber_head', 'Asset Subnumber')}
 
-          {renderSelect(
-            'profit_ctr_head',
-            'Profit Center',
-            ProfitCenterDropdown,
-            (item) => item.name,
-            (item) => `${item.profit_center_code} - ${item.profit_center_name}`
-          )}
+        {renderSelect(
+          'profit_ctr_head',
+          'Profit Center',
+          ProfitCenterDropdown,
+          (item) => item.name,
+          (item) => `${item.profit_center_code} - ${item.profit_center_name}`
+        )}
 
-          {renderInput('short_text_head', 'Description')}
-          {/* {renderInput('valuation_area_head', 'Valuation Area')} */}
-          {renderSelect(
-            'valuation_area_head',
-            'Valuation Area',
-            ValuationClassDropdown,
-            (item) => item.name,
-            (item) => `${item.valuation_class_code} - ${item.valuation_class_name}`
-          )}
-          {renderInput('quantity_head', 'Quantity')}
-          {renderInput('price_of_purchase_requisition_head', 'Price Of Purchase Requisition')}
+        {renderInput('short_text_head', 'Description')}
+        {/* {renderInput('valuation_area_head', 'Valuation Area')} */}
+        {renderSelect(
+          'valuation_area_head',
+          'Valuation Area',
+          ValuationClassDropdown,
+          (item) => item.name,
+          (item) => `${item.valuation_class_code} - ${item.valuation_class_name}`
+        )}
+        {renderInput('quantity_head', 'Quantity')}
+        {renderInput('price_of_purchase_requisition_head', 'Price Of Purchase Requisition')}
 
-          {renderSelect(
-            'gl_account_number_head',
-            'GL Account Number',
-            GLAccountDropdwon,
-            (item) => item.name,
-            (item) => `${item.gl_account_code} - ${item.gl_account_name}`
-          )}
+        {renderSelect(
+          'gl_account_number_head',
+          'GL Account Number',
+          GLAccountDropdwon,
+          (item) => item.name,
+          (item) => `${item.gl_account_code} - ${item.gl_account_name}`
+        )}
 
-          {renderSelect(
+        {/* {renderSelect(
             'material_code_head',
             'Material Code',
             MaterialCodeDropdown,
             (item) => item.name,
             (item) => `${item.material_code} - ${item.material_name}`
-          )}
+          )} */}
+        <div className='w-full'>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-1 flex items-center gap-1 ">
+            {"Select Region"}
+            {/* {error && <span className="text-red-600">*</span>} */}
+          </h1>
+          <SearchSelectComponent
+            setData={(value) => setMaterialCode(value ?? "")}
+            data={materialCode ?? ""}
+            getLabel={(item) => item.name}
+            getValue={(item) => item?.name}
+            dropdown={MaterialCodeDropdown ? MaterialCodeDropdown : []}
+            searchApi={fetchMaterialCodeData}
+            setDropdown={setMaterialCodeDropdown}
+            placeholder='Select Material Code'
+          />
         </div>
+      </div>
 
-        <DialogFooter>
-          <Button variant="backbtn" size="backbtnsize" onClick={onClose}>Cancel</Button>
-          <Button onClick={handleSubmit} disabled={loading} className="py-2.5" variant={"nextbtn"} size={"nextbtnsize"}>
-            {loading ? 'Submitting...' : 'Submit'}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    </PopUp>
   );
 };
 

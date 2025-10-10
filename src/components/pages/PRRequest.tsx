@@ -118,16 +118,16 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
   const ValuationClassDropdown = ValuationClassResponse?.status == 200 ? ValuationClassResponse?.data.message?.valuation_class : "";
   console.log("ValuatnClassDropdown---->", ValuationClassDropdown);
   // 
-  const MaterialCodeURL = `${API_END_POINTS?.filterMaterialCode}?company=${company}`;
-  const MaterialCodeResponse: AxiosResponse = await requestWrapper({
-    url: MaterialCodeURL,
-    method: "GET",
-    headers: {
-      cookie: cookieHeaderString
-    }
-  });
-  const MaterialCodeDropdown = MaterialCodeResponse?.status == 200 ? MaterialCodeResponse?.data.message?.material_master : "";
-  console.log("MaterialCodeDropdown---->", MaterialCodeDropdown);
+  // const MaterialCodeURL = `${API_END_POINTS?.MaterialCodeSearchApi}?company=${company}`;
+  // const MaterialCodeResponse: AxiosResponse = await requestWrapper({
+  //   url: MaterialCodeURL,
+  //   method: "GET",
+  //   headers: {
+  //     cookie: cookieHeaderString
+  //   }
+  // });
+  // const MaterialCodeDropdown = MaterialCodeResponse?.status == 200 ? MaterialCodeResponse?.data.message?.material_master : "";
+  // console.log("MaterialCodeDropdown---->", MaterialCodeDropdown);
   // 
   const PurchaseOrgURL = `${API_END_POINTS?.filterpurchaseorg}?company=${company}`;
   const PurchaseOrgResponse: AxiosResponse = await requestWrapper({
@@ -143,7 +143,7 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
 
   return (
     <PRRequestForm Dropdown={Dropdown} PRData={PRData} cartId={cart_id} pur_req={pur_req} PurchaseGroupDropdown={PurchaseGroupDropdown} StorageLocationDropdown={StorageLocationDropdown} ValuationClassDropdown={ValuationClassDropdown}
-      ProfitCenterDropdown={ProfitCenterDropdown} MaterialGroupDropdown={MaterialGroupDropdown} GLAccountDropdwon={GLAccountDropdwon} CostCenterDropdown={CostCenterDropdown} MaterialCodeDropdown={MaterialCodeDropdown} PurchaseOrgDropdown={PurchaseOrgDropdown} />
+      ProfitCenterDropdown={ProfitCenterDropdown} MaterialGroupDropdown={MaterialGroupDropdown} GLAccountDropdwon={GLAccountDropdwon} CostCenterDropdown={CostCenterDropdown}  PurchaseOrgDropdown={PurchaseOrgDropdown} />
 
   )
 }
