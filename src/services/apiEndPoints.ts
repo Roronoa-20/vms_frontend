@@ -192,7 +192,7 @@ const API_END_POINTS = {
   dashboardSapErrorAcounts: `${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.sap_error_vendor_details_by_accounts`,
   bankProofByPurchaseTeam: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`,
   DispatchStateAndPlant: `${url}/api/method/vms.APIs.dispatch.vehicle_details.get_state_and_plant_data`,
-
+  MaterialCodeSearchApi:`${url}/api/method/vms.APIs.master_apis.material_code.get_material_code_list`,
   // bankProofByPurchaseTeam:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`,
 
   // QA Dashboard APIs

@@ -38,7 +38,7 @@ interface Props {
   MaterialGroupDropdown: MaterialGroupMaster[]
   GLAccountDropdwon: GLAccountNumber[]
   CostCenterDropdown: CostCenter[]
-  MaterialCodeDropdown: MaterialCode[]
+  // MaterialCodeDropdown: MaterialCode[]
   PurchaseOrgDropdown: PurchaseOrganisation[]
 }
 
@@ -48,7 +48,7 @@ export const updateQueryParam = (key: string, value: string) => {
   window.history.pushState({}, '', url.toString());
 };
 
-const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, StorageLocationDropdown, ValuationClassDropdown, ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, MaterialCodeDropdown, PurchaseOrgDropdown }: Props) => {
+const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, StorageLocationDropdown, ValuationClassDropdown, ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, PurchaseOrgDropdown }: Props) => {
   const user = Cookies.get("user_id");
   const { designation } = useAuth();
   const router = useRouter()
@@ -58,6 +58,7 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
   const [expandedRowNames, setExpandedRowNames] = useState<string[]>([]);
   const [editRow, setEditRow] = useState<PurchaseRequisitionDataItem>()
   const [mainItems, setMainItems] = useState<PurchaseRequisitionResponse>()
+  const [MaterialCodeDropdown, setMaterialCodeDropdown] = useState<MaterialCode[]>()
   const [isSubItemModalOpen, setIsSubItemModalOpen] = useState(false)
   const [isEditModalOpen, setEditModalOpen] = useState(false)
   const [isNBEditModalOpen, setNBEditModalOpen] = useState(false)
@@ -164,7 +165,6 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
       alert("error");
     }
   }
-
   const handleNext = async () => {
     const url = API_END_POINTS?.createPR;
     const response: AxiosResponse = await requestWrapper({ url: url, data: { ...formData }, method: "POST" });
@@ -552,7 +552,6 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
         MaterialGroupDropdown={MaterialGroupDropdown}
         GLAccountDropdwon={GLAccountDropdwon}
         CostCenterDropdown={CostCenterDropdown}
-        MaterialCodeDropdown={MaterialCodeDropdown}
         pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
         defaultData={editRow}
       />}
