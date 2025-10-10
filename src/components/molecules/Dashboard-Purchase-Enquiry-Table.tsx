@@ -134,7 +134,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
             </Select>
           </div>
         </div>
-        <div className="overflow-y-scroll max-h-[55vh]">
+        <div className="max-h-[55vh]">
           <Table className="">
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
