@@ -105,12 +105,10 @@ export default function ServiceBill() {
   const clearAutoPopulateFields = () => {
     setFormData((prev: any) => ({
       ...prev,
-      // RFQ identifiers
-      rfq_number: "", // backend name — unset if user types/clears
+      rfq_number: "",
       rfq_number_display: "",
       enter_rfq_no: "",
       rfq_number_date: "",
-      // auto fields that come from RFQ fetch
       jrn: "",
       jrn_date: "",
       consignee_name: "",
@@ -131,7 +129,6 @@ export default function ServiceBill() {
     setFormData((prev: any) => ({ ...prev, [name]: value }));
   };
 
-  // If fetching an existing service bill (edit mode), normalize RFQ display fields:
   useEffect(() => {
     const fetchservicebill = async () => {
       if (!servicename) return;
@@ -144,12 +141,10 @@ export default function ServiceBill() {
         const data = res.data.message.data || {};
         setFormData(data);
 
-        // Keep enter_document_no as earlier
         if (data.sr_no) {
           setFormData((prev: any) => ({ ...prev, enter_document_no: data.sr_no }));
         }
 
-        // If backend returned rfq_number (backend name) but not a display sr, fetch sr_no for UI
         if (data.rfq_number && !data.rfq_number_display) {
           try {
             const rfqRes: AxiosResponse<any> = await requestWrapper({
@@ -161,15 +156,12 @@ export default function ServiceBill() {
             setFormData((prev: any) => ({
               ...prev,
               rfq_number_display: rfqData.sr_no || rfqData.srno || "",
-              // keep rfq_number as backend name
               rfq_number_date: rfqData.rfq_date_logistic || prev.rfq_number_date || "",
               enter_rfq_no: rfqData.sr_no || rfqData.srno || prev.enter_rfq_no || "",
-              // populate other fields if needed
               jrn: rfqData.jrn_number || prev.jrn || "",
               jrn_date: rfqData.jrn_date || prev.jrn_date || "",
             }));
           } catch (err) {
-            // ignore — UI can still show backend name if display not found
             console.error("Error fetching RFQ sr_no for edit mode", err);
           }
         }
@@ -199,33 +191,27 @@ export default function ServiceBill() {
     }
   }, [isEditMode]);
 
-  // When user types or clears the Enter RFQ No input (top field)
   const handleEnterRFQChange = (val: string) => {
     if (!val) {
-      // user cleared input => clear auto-populated fields
       clearAutoPopulateFields();
       return;
     }
 
-    // user typed something — keep the typed value in enter_rfq_no and display,
-    // but unset rfq_number (backend id) until they select from dropdown
     setFormData((prev: any) => ({
       ...prev,
       enter_rfq_no: val,
       rfq_number_display: val,
-      rfq_number: "", // unset backend id
+      rfq_number: "",
     }));
   };
 
-  // When user selects from the RFQ dropdown we get (name, srNo)
   const handleRFQSelect = async (name: string, srNo: string) => {
     if (!name) return;
 
-    // set both backend name and display sr no, and set enter_rfq_no (input) to srNo
     setFormData((prev: any) => ({
       ...prev,
-      rfq_number: name, // backend id (what we will submit)
-      rfq_number_display: srNo, // what we show to user
+      rfq_number: name,
+      rfq_number_display: srNo,
       enter_rfq_no: srNo,
     }));
 
@@ -238,7 +224,6 @@ export default function ServiceBill() {
 
       const rfqData = res.data.message || {};
 
-      // update only the auto-populated fields, DO NOT overwrite rfq_number (backend id)
       setFormData((prev: any) => ({
         ...prev,
         rfq_number_date: rfqData.rfq_date_logistic || prev.rfq_number_date || "",
@@ -302,7 +287,6 @@ export default function ServiceBill() {
   };
 
   const renderField = (field: Field, index: number) => {
-    // For rfq_number field prefer to show the display (sr_no) value.
     const isDisabled = isEditMode && !isEditable;
 
     const valueForField =
@@ -331,16 +315,13 @@ export default function ServiceBill() {
             disabled={isDisabled}
             onChange={(e) => {
               const v = e.target.value;
-              // if editing rfq_number text directly, treat it like editing enter_rfq_no:
               if (field.name === "rfq_number") {
-                // user changed the display value manually, so unset backend id and clear auto fields
                 setFormData((prev: any) => ({
                   ...prev,
                   enter_rfq_no: v,
                   rfq_number_display: v,
                   rfq_number: "",
                 }));
-                // clear auto-populated fields so data doesn't misrepresent
                 setTimeout(() => clearAutoPopulateFields(), 0);
               } else {
                 handleChange(field.name!, v);
@@ -370,7 +351,6 @@ export default function ServiceBill() {
               onChange={(e) => {
                 const v = e.target.value;
                 if (field.name === "rfq_number") {
-                  // typing into second-row rfq input behaves same as typing top input
                   setFormData((prev: any) => ({
                     ...prev,
                     enter_rfq_no: v,
@@ -447,7 +427,6 @@ export default function ServiceBill() {
               ) : (
                 <div className="flex-1 relative" ref={dropdownRef}>
                   <RFQDropdown
-                    // controlled by enter_rfq_no (editable) — if not set, show rfq_number_display
                     value={formData.enter_rfq_no ?? formData.rfq_number_display ?? ""}
                     onChange={(val: string) => handleEnterRFQChange(val)}
                     options={rfqOptions}

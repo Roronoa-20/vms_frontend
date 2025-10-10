@@ -28,7 +28,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "./Pagination";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
-import { PurchaseItemsList, TableData } from "./GateentryDashboardCards";
+import { PurchaseItemsList, TableData } from "./GateEntryDashboardCards";
 import PopUp from "./PopUp";
 
 

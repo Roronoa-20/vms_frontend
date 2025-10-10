@@ -252,8 +252,23 @@ export const MaterialUserSideBar: SidebarItem[] = [
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
-    name: "Create Material Code Request",
+    name: "Raise Request",
     href: "/new-material-code-request",
+    children: []
+  }
+]
+
+export const MaterialCPSideBar: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/material-onboarding-dashboard",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "View Material Code Request",
+    href: "/view-material-code-request",
     children: []
   }
 ]

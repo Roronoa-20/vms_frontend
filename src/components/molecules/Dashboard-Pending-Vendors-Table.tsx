@@ -127,6 +127,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown, fil
             Total Pending Vendors
           </h1>
           <div className="flex gap-4">
+            {!isAccountsUser && !isTreasuryUser && (
             <Select
               value={selectedRegisteredBy || "all"}
               onValueChange={(value) => setSelectedRegisteredBy(value === "all" ? "" : value)}
@@ -147,6 +148,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown, fil
                 </SelectGroup>
               </SelectContent>
             </Select>
+            )}
 
             <Input
               placeholder="Search..."

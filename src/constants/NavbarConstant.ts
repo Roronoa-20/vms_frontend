@@ -40,4 +40,6 @@ export const NavbarConstant:Record<string,string> = {
     "/view-gr-waiver": "GR Waiver",
     "/view-dispatch-table":"Dispatch Orders",
     "/view-pr-inquiry-table": "Purchase Enquiry",
+    "/material-onboarding-dashboard": "Dashboard",
+    "/new-material-code-request": "Raise New Material Code Request",
 }
