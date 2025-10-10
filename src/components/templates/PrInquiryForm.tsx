@@ -89,36 +89,23 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     }
   }
 
+  const requiredTableFields = {
+    product_name:"Please Select Product",
+    uom:"Please Select UOM",
+    product_quantity:"Please Enter Product Quantity",
+    user_specifications:"Please Enter User Specification"
+  }
+
   const handleTableAdd = async () => {
+    for (const [key, message] of Object.entries(requiredTableFields)) {
+      if (!singleTableRow?.[key as keyof TableData]) {
+        alert(message);
+        return;
+      }
+    }
+    
     if (!singleTableRow) return;
 
-    // setTableData(prev => {
-    //   const rows = [...prev];
-    //   if (index !== -1) {
-    //     rows[index] = { ...singleTableRow };
-    //   } else {
-    //     rows.push({ ...singleTableRow });
-    //   }
-    //   return rows;
-    // });
-    // setShowTable(true);
-
-    //   let assetCodeLine = 0;
-
-    // if (PRInquiryData?.asked_to_modify == Boolean(1)) {
-    //   for (let i = 0; i < tableData.length; i++) {
-    //     const item = tableData[i];
-    //     if (item?.need_asset_code == Boolean(1) && !item?.assest_code) {
-    //       assetCodeLine = i + 1; // Line number is usually 1-based
-    //       break;
-    //     }
-    //   }
-    // }
-
-    // if (assetCodeLine !== 0) {
-    //   alert(`Please enter Asset Code for line ${assetCodeLine}`);
-    //   return;
-    // }
     const formdata = new FormData();
     for (const key of Object.keys(singleTableRow) as (keyof TableData)[]) {
       const value = singleTableRow[key];
@@ -131,7 +118,6 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.addProductInquiryProducts, method: "POST", data: formdata });
     if (response?.status == 200) {
       alert("Product Details Added Successfully!!!");
-      // router.push(`pr-inquiry?cart_Id=${refno}`);
       location.reload();
     }
 
@@ -215,18 +201,6 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     return `${year}-${month}-${day}`;
   };
 
-  // const formatPriceRange = (priceRange: string) => {
-  //   if (!priceRange) return "";
-
-  //   const parts = priceRange.split("-");
-  //   if (parts.length === 2) {
-  //     const formattedStart = `₹${Number(parts[0]).toLocaleString("en-IN")}`;
-  //     const formattedEnd = `₹${Number(parts[1]).toLocaleString("en-IN")}`;
-  //     return `${formattedStart} - ${formattedEnd}`;
-  //   }
-  //   return `₹${Number(priceRange).toLocaleString("en-IN")}`;
-  // };
-
 
   const handleCompanyChange = async (value: string) => {
     const url = `${API_END_POINTS?.InquiryDropdownsBasedOnCompany}?comp=${value}`
@@ -261,7 +235,26 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     }
   };
 
+  const requiredFields = {
+  cart_use: "Please Select Cart Use",
+  category_type: "Please Select Category Type",
+  company: "Please Select Company",
+  purchase_type: "Please Select Purchase Type",
+  plant: "Please Select Plant",
+  purchase_group: "Please Select Purchase Group",
+  cost_center: "Please Select Cost Center",
+  gl_account: "Please Select GL Account"
+};
+
+
   const handleNext = async () => {
+    //validation
+    for (const [key, message] of Object.entries(requiredFields)) {
+  if (!formData?.[key as keyof TPRInquiry]) {
+    alert(message);
+    return;
+  }
+}
     const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.submitPrInquiryNextButton, data: { data: { ...formData, cart_date: formData?.cart_date ?? formatDateISO(new Date()), user: user, } }, method: "POST" });
     if (response?.status == 200) {
       router.push(`/pr-inquiry?cart_Id=${response?.data?.message?.name}`);
@@ -277,15 +270,6 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     }
   }
 
-  const formatINRCurrencyRange = (value: string | null): string => {
-    if (!value) return "";
-
-    return value
-      .split("-")
-      .map((v) => `₹${v.trim()}`)
-      .join(" - ");
-  };
-
   return (
     <>
       <div className="flex flex-col bg-white rounded-lg px-2 pb-2 max-h-[80vh] w-full">
@@ -293,13 +277,13 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
         Purchase Inquiry
       </h1> */}
         <div className="grid grid-cols-3 gap-6 p-3">
-          <div className="col-span-1">
+          {/* <div className="col-span-1">
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">User</h1>
             <Input placeholder="" name='user' onChange={(e) => { handleFieldChange(false, e) }} value={formData?.user ?? user ?? ""} disabled />
-          </div>
+          </div> */}
           <div className="col-span-1">
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-              Cart Use
+              Cart Use <span className='text-red-400 text-[20px]'>*</span>
             </h1>
             <Select value={formData?.cart_use ?? ""} onValueChange={(value) => { handleSelectChange(value, "cart_use", false) }} disabled={refno ? true : false}>
               <SelectTrigger>
@@ -314,12 +298,12 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
             </Select>
           </div>
           <div className="col-span-1">
-            <h1 className="text-[14px] font-normal text-[#000000] pb-2">Cart Date</h1>
+            <h1 className="text-[14px] font-normal text-[#000000] pb-2">Cart Date <span className='text-red-400 text-[20px]'>*</span></h1>
             <Input type="text" name="cart_date" value={formData?.cart_date ? parseAndFormatDate(formData.cart_date) : formatDate(new Date())} readOnly />
           </div>
           <div className="col-span-1">
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-              Category Type
+              Category Type <span className='text-red-400 text-[20px]'>*</span>
             </h1>
             <Select value={formData?.category_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "category_type", false); fetchProductName(value) }} disabled={refno ? true : false}>
               <SelectTrigger>
@@ -336,7 +320,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
           </div>
           <div className="col-span-1">
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-              Company
+              Company <span className='text-red-400 text-[20px]'>*</span>
             </h1>
             <Select value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value); }} disabled={refno ? true : false}>
               <SelectTrigger>
@@ -353,7 +337,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
           </div>
           <div className="col-span-1">
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-              Purchase Type
+              Purchase Type <span className='text-red-400 text-[20px]'>*</span>
             </h1>
             <Select value={formData?.purchase_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_type", false) }} disabled={refno ? true : false}>
               <SelectTrigger>
@@ -370,7 +354,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
           </div>
           <div className="col-span-1">
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-              Plant
+              Plant <span className='text-red-400 text-[20px]'>*</span>
             </h1>
             <Select value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant", false) }} disabled={refno ? true : false}>
               <SelectTrigger>
@@ -387,7 +371,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
           </div>
           <div className="col-span-1">
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-              Purchase Group
+              Purchase Group <span className='text-red-400 text-[20px]'>*</span>
             </h1>
             <Select value={formData?.purchase_group ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_group", false) }} disabled={refno ? true : false}>
               <SelectTrigger>
@@ -405,7 +389,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
           {/* Cost Center */}
           <div className="col-span-1">
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-              Cost Center
+              Cost Center <span className='text-red-400 text-[20px]'>*</span>
             </h1>
             <Select
               value={formData?.cost_center ?? ""}
@@ -428,7 +412,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
           {/* G/L Account */}
           <div className="col-span-1">
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-              G/L Account
+              G/L Account <span className='text-red-400 text-[20px]'>*</span>
             </h1>
             <Select
               value={formData?.gl_account ?? ""}
@@ -454,7 +438,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
         {refno &&
           <>
             <h1 className="border-b-2 border-gray-400 font-bold text-[18px] p-1">
-              Purchase Inquiry Items
+              Purchase Inquiry Items <span className='text-red-400 text-[20px]'>*</span>
             </h1>
             <div className="grid grid-cols-3 gap-6 p-3">
               {/* <div className="col-span-1">
@@ -465,7 +449,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
         </div> */}
               <div className="col-span-1">
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-                  Product Name
+                  Product Name <span className='text-red-400 text-[20px]'>*</span>
                 </h1>
                 <Select
                   // onValueChange={(value) => { handleSelectChange(value, "product_name",true) }} value={singleTableRow?.product_name ?? ""}
@@ -489,20 +473,20 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
               </div>
               <div className="col-span-1">
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-                  Product Price Range
+                  Product Price Range <span className='text-red-400 text-[20px]'>*</span>
                 </h1>
                 <Input placeholder="" disabled name='product_price' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_price ?? ""}
                 />
               </div>
               <div className="col-span-1">
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-                  Lead Time
+                  Lead Time <span className='text-red-400 text-[20px]'>*</span>
                 </h1>
                 <Input placeholder="" disabled name='lead_time' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.lead_time ?? ""} />
               </div>
               <div className="col-span-1">
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-                  UOM
+                  UOM <span className='text-red-400 text-[20px]'>*</span>
                 </h1>
                 <Select onValueChange={(value) => { handleSelectChange(value, "uom", true) }} value={singleTableRow?.uom ?? ""}>
                   <SelectTrigger>
@@ -520,13 +504,13 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
 
               <div className="col-span-1">
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-                  Product Quantity
+                  Product Quantity <span className='text-red-400 text-[20px]'>*</span>
                 </h1>
                 <Input placeholder="" name='product_quantity' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_quantity ?? ""} />
               </div>
               <div className="col-span-1">
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-                  User Specification
+                  User Specification <span className='text-red-400 text-[20px]'>*</span>
                 </h1>
                 <Input placeholder="" name='user_specifications' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.user_specifications ?? ""} />
               </div>
