@@ -174,7 +174,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       // },
 
       {
-        name: "Purchase Inquiry",
+        name: "Purchase Enquiry",
         count: Props.cardData?.cart_count ?? 0,
         icon: "/dashboard-assests/cards_icon/doc.svg",
         text_color: "text-rose-800",
@@ -182,7 +182,7 @@ const DashboardCards = ({ ...Props }: Props) => {
         hover: "hover:border-rose-400",
       },
       {
-        name: "Purchase Requisition",
+        name: "Purchase Requisition Request",
         count: Props.cardData?.pr_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-rose-800",
@@ -320,7 +320,7 @@ const DashboardCards = ({ ...Props }: Props) => {
 
   let EnquirerCard = [
     {
-      name: "Purchase Inquiry",
+      name: "Purchase Enquiry",
       count: Props.cardData?.cart_count ?? 0,
       icon: "/dashboard-assests/cards_icon/doc.svg",
       text_color: "text-rose-800",
@@ -328,7 +328,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       hover: "hover:border-rose-400",
     },
     {
-      name: "Purchase Requisition",
+      name: "Purchase Requisition Request",
       count: Props.cardData?.pr_count ?? 0,
       icon: "/dashboard-assests/cards_icon/file-search.svg",
       text_color: "text-rose-800",
@@ -436,8 +436,8 @@ const DashboardCards = ({ ...Props }: Props) => {
           }
           const isEnquirerAllowed =
             user !== "Enquirer" ||
-            item.name === "Purchase Inquiry" ||
-            item.name === "Purchase Requisition";
+            item.name === "Purchase Enquiry" ||
+            item.name === "Purchase Requisition Request";
 
           return isEnquirerAllowed ? (
             <TabsContent key={item.name || index} value={item.name}>
@@ -480,14 +480,14 @@ const DashboardCards = ({ ...Props }: Props) => {
                   companyDropdown={Props?.companyDropdown}
                 />
               )}
-              {item.name === "Purchase Inquiry" &&
+              {item.name === "Purchase Enquiry" &&
                 (user === "Enquirer" || user === "Purchase Team") && (
                   <DashboardPurchaseEnquiryTable
                     dashboardTableData={Props?.prInquiryData?.cart_details}
                     companyDropdown={Props?.companyDropdown}
                   />
                 )}
-              {item.name === "Purchase Requisition" &&
+              {item.name === "Purchase Requisition Request" &&
                 (user === "Enquirer" || user === "Purchase Team") && (
                   <DashboardPurchaseRequisitionTable
                     dashboardTableData={Props?.prData}

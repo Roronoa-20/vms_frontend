@@ -33,14 +33,14 @@ export const ApproveConfirmationDialog: React.FC<ApproveDialogProps> = ({ open, 
           <DialogTitle>{dialogTitle?dialogTitle:"Confirm Approval"}</DialogTitle>
         </DialogHeader>
         <p className="text-sm text-muted-foreground">
-          {title ? title : "Are you sure you want to approve this Quotation?"}
+          {title ? title : "Are you sure you want to submit this Purchase Requisition (PR)?"}
         </p>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={loading}>
+          <Button variant="backbtn" size="backbtnsize" onClick={onClose} disabled={loading}>
             Cancel
           </Button>
-          <Button onClick={onApprove} disabled={loading}>
-            {loading ? `${buttontext ? buttontext + "..." : "Approving..."}` : `${buttontext ? buttontext : "Approve"}`}
+          <Button className="py-2.5" variant={"nextbtn"} size={"nextbtnsize"} onClick={onApprove} disabled={loading}>
+            {loading ? `${buttontext ? buttontext + "..." : "Submitting..."}` : `${buttontext ? buttontext : "Submit"}`}
           </Button>
         </DialogFooter>
       </DialogContent>

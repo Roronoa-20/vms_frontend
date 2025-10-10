@@ -30,8 +30,6 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 
 type Props = {
   dashboardTableData?: TPRInquiryTable["cart_details"]
-  // companyDropdown: { description: string; name: string; }[]
-  // dashboardTableDatawithpagination?: TPRInquiryTable[]
 }
 
 const useDebounce = (value: any, delay: any) => {
@@ -53,6 +51,16 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData }: Props) => 
 
   console.log("DashboardTableData PPRRRPRR--->", dashboardTableData);
   const { designation } = useAuth();
+  const [table, setTable] = useState<DashboardTableType["cart_details"]>(dashboardTableData || []);
+  const [selectedCompany, setSelectedCompany] = useState<string>("");
+  const [search, setSearch] = useState<string>("");
+  const [total_event_list, settotalEventList] = useState(0);
+  const [record_per_page, setRecordPerPage] = useState<number>(10);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [selectedPurchaseType, setSelectedPurchaseType] = useState<string>("");
+  const user = Cookies?.get("user_id");
+
+  const debouncedSearchName = useDebounce(search, 300);
 
   const formatDate = (date: Date): string => {
     const day = String(date.getDate()).padStart(2, '0');
@@ -60,18 +68,6 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData }: Props) => 
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   };
-
-  const [table, setTable] = useState<DashboardTableType["cart_details"]>(dashboardTableData || []);
-  const [selectedCompany, setSelectedCompany] = useState<string>("");
-  const [search, setSearch] = useState<string>("");
-  const [total_event_list, settotalEventList] = useState(0);
-  const [record_per_page, setRecordPerPage] = useState<number>(10);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-
-  const user = Cookies?.get("user_id");
-  console.log(user, "this is user");
-
-  const debouncedSearchName = useDebounce(search, 300);
 
   useEffect(() => {
     fetchTable();
@@ -83,151 +79,169 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData }: Props) => 
       method: "GET",
     });
     if (dashboardPurchaseEnquiryTableDataApi?.status == 200) {
-      setTable(dashboardPurchaseEnquiryTableDataApi?.data?.message?.cart_details
-      );
+      setTable(dashboardPurchaseEnquiryTableDataApi?.data?.message?.cart_details);
       settotalEventList(dashboardPurchaseEnquiryTableDataApi?.data?.message?.total_count);
-      // setRecordPerPage(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding?.length)
-      // setRecordPerPage(10);
     }
   };
+  const purchaseTypes = Array.from(new Set(dashboardTableData?.map(item => item.purchase_type))) || [];
 
-  console.log(table, "table")
+  const filteredTable = table.filter(item => {
+    const matchesSearch =
+      item?.created_by_user_name?.toLowerCase().includes(debouncedSearchName.toLowerCase()) ||
+      item?.name?.toLowerCase().includes(debouncedSearchName.toLowerCase());
+    const matchesPRType =
+      !selectedPurchaseType || selectedPurchaseType === "All" ? true : item.purchase_type === selectedPurchaseType;
+
+    return matchesSearch && matchesPRType;
+  });
+
+  // 1️⃣ Calculate paginated rows from filteredTable
+  const startIndex = (currentPage - 1) * record_per_page;
+  const endIndex = startIndex + record_per_page;
+  const paginatedTable = filteredTable.slice(startIndex, endIndex);
+
+  // 2️⃣ Adjust total count for pagination
+  const totalFilteredCount = filteredTable.length;
+
+
+
   return (
     <>
-      <div className="shadow- bg-[#f6f6f7] p-3 rounded-2xl">
-        <div className="">
-          <Table className="">
-            <TableHeader className="text-center">
-              <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                <TableHead className="text-center text-black whitespace-nowrap">Sr No.</TableHead>
-                <TableHead className="text-center text-black whitespace-nowrap">Ref No.</TableHead>
-                <TableHead className="text-center text-black whitespace-nowrap">Cart Date</TableHead>
-                {designation !== "Enquirer" && (
-                  <TableHead className="text-center text-black whitespace-nowrap">Created By</TableHead>
-                )}
-                <TableHead className="text-center text-black whitespace-nowrap">Transfer Status</TableHead>
-                <TableHead className="text-center text-black whitespace-nowrap">Category Type</TableHead>
-                <TableHead className="text-center text-black whitespace-nowrap">Purchase Request Type</TableHead>
-                <TableHead className="text-center text-black whitespace-nowrap">Purchase Team Status</TableHead>
-                <TableHead className="text-center text-black whitespace-nowrap">HOD Status</TableHead>
-                <TableHead className="text-center text-black whitespace-nowrap">Additional Status</TableHead>
-                <TableHead className="text-center text-black whitespace-nowrap">View Cart</TableHead>
-                <TableHead className={`text-center text-black whitespace-nowrap`}>Raise PR</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="text-center text-black">
-              {table ? (
-                table?.map((item, index) => {
-                  const url = item?.asked_to_modify ? `/pr-inquiry?cart_Id=${item?.name}` : `/view-pr-inquiry?cart_Id=${item?.name}`;
-                  return (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium text-center whitespace-nowrap">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
-                      <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.name}</TableCell>
-                      <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.cart_date ? formatDate(new Date(item.cart_date)) : "-"}</TableCell>
-                      {designation !== "Enquirer" && (
-                        <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.created_by_user_name}</TableCell>
-                      )}
-                      <TableCell className="text-center whitespace-nowrap">
-                        <div
-                          className={`px-2 py-3 rounded-xl uppercase ${item?.transfer_status === "Not Transferred"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : item?.transfer_status === "Transferred"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
-                            }`}
-                        >
-                          {item?.transfer_status}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.category_type}</TableCell>
-                      <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.purchase_type}</TableCell>
-                      {/* <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.purchase_team_approval_status}</TableCell> */}
-                      <TableCell className="text-center whitespace-nowrap">
-                        <div
-                          className={`px-2 py-3 rounded-xl uppercase ${item?.purchase_team_approval_status === "Pending"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : item?.purchase_team_approval_status === "Approved"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
-                            }`}
-                        >
-                          {item?.purchase_team_approval_status}
-                        </div>
-                      </TableCell>
-                      {/* <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.hod_approval_status}</TableCell> */}
-                      <TableCell className="text-center whitespace-nowrap">
-                        <div
-                          className={`px-2 py-3 rounded-xl uppercase ${item?.hod_approval_status === "Pending"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : item?.hod_approval_status === "Approved"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
-                            }`}
-                        >
-                          {item?.hod_approval_status}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center whitespace-nowrap">
-                        <div
-                          className={`px-2 py-3 rounded-xl uppercase ${item?.second_stage_approval_status === "Pending"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : item?.second_stage_approval_status === "Approved"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
-                            }`}
-                        >
-                          {item?.second_stage_approval_status}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={url}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View</Button></Link></TableCell>
-                      <TableCell
-                        className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show ? "" : "hidden"
+      <div className="shadow- bg-[#f6f6f7] p-3 rounded-2xl mb-4 flex gap-4 flex-wrap">
+        <div className="flex items-center gap-2">
+          <h1 className="text-[16px]">Filter by Requisition Type:</h1>
+          <Select value={selectedPurchaseType} onValueChange={setSelectedPurchaseType}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Filter by PR Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="All">All</SelectItem>
+                {purchaseTypes.map((type) => (
+                  <SelectItem key={type} value={type}>{type}</SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <Table className="">
+          <TableHeader className="text-center">
+            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
+              <TableHead className="text-center text-black whitespace-nowrap">Sr No.</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">Ref No.</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">Cart Date</TableHead>
+              {designation !== "Enquirer" && (
+                <TableHead className="text-center text-black whitespace-nowrap">Created By</TableHead>
+              )}
+              <TableHead className="text-center text-black whitespace-nowrap">Transfer Status</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">Category Type</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">Purchase Request Type</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">Purchase Team Status</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">HOD Status</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">Additional Status</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">View Cart</TableHead>
+              <TableHead className={`text-center text-black whitespace-nowrap`}>Raise PR</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="text-center text-black">
+            {paginatedTable.length > 0 ? (
+              paginatedTable.map((item, index) => {
+                const url = item?.asked_to_modify
+                  ? `/pr-inquiry?cart_Id=${item?.name}`
+                  : `/view-pr-inquiry?cart_Id=${item?.name}`;
+                return (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium text-center whitespace-nowrap">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
+                    <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.name}</TableCell>
+                    <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.cart_date ? formatDate(new Date(item.cart_date)) : "-"}</TableCell>
+                    {designation !== "Enquirer" && (
+                      <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.created_by_user_name}</TableCell>
+                    )}
+                    <TableCell className="text-center whitespace-nowrap">
+                      <div
+                        className={`px-2 py-3 rounded-xl uppercase ${item?.transfer_status === "Not Transferred"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : item?.transfer_status === "Transferred"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
                           }`}
                       >
-                        {item?.pr_created ? (
-                          <Link href={`/pr-request?cart_id=${item?.name}&pur_req=${item?.pur_req}`}>
-                            <Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View PR</Button>
-                          </Link>
-                        ) : (
-                          <Link href={`/pr-request?cart_id=${item?.name}`}>
-                            <Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">PR</Button>
-                          </Link>
-                        )}
-                      </TableCell>
-
-                      {/* <TableCell>
-                  <div
-                    className={`px-2 py-3 rounded-xl ${item?.status === "pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : item?.status === "approved"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                  >
-                    {item?.status}
-                  </div>
+                        {item?.transfer_status}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.category_type}</TableCell>
+                    <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.purchase_type}</TableCell>
+                    <TableCell className="text-center whitespace-nowrap">
+                      <div
+                        className={`px-2 py-3 rounded-xl uppercase ${item?.purchase_team_approval_status === "Pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : item?.purchase_team_approval_status === "Approved"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                          }`}
+                      >
+                        {item?.purchase_team_approval_status}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center whitespace-nowrap">
+                      <div
+                        className={`px-2 py-3 rounded-xl uppercase ${item?.hod_approval_status === "Pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : item?.hod_approval_status === "Approved"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                          }`}
+                      >
+                        {item?.hod_approval_status}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center whitespace-nowrap">
+                      <div
+                        className={`px-2 py-3 rounded-xl uppercase ${item?.second_stage_approval_status === "Pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : item?.second_stage_approval_status === "Approved"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                          }`}
+                      >
+                        {item?.second_stage_approval_status}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={url}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View</Button></Link></TableCell>
+                    <TableCell
+                      className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show ? "" : "hidden"
+                        }`}
+                    >
+                      {item?.pr_created ? (
+                        <Link href={`/pr-request?cart_id=${item?.name}&pur_req=${item?.pur_req}`}>
+                          <Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View PR</Button>
+                        </Link>
+                      ) : (
+                        <Link href={`/pr-request?cart_id=${item?.name}`}>
+                          <Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">PR</Button>
+                        </Link>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                )
+              })
+            ) : (
+              <TableRow>
+                <TableCell colSpan={9} className="text-center text-gray-500 py-4">
+                  No results found
                 </TableCell>
-                <TableCell>{item?.purchase_team}</TableCell>
-                <TableCell>{item?.purchase_head}</TableCell>
-                <TableCell>{item?.accounts_team}</TableCell>
-                <TableCell><Link href={`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                <TableCell className="text-right">{item?.qms_form}</TableCell> */}
-                    </TableRow>
-                  )
-                })
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={9} className="text-center text-gray-500 py-4">
-                    No results found
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
+              </TableRow>
+            )}
+          </TableBody>
 
-          </Table>
-        </div>
-      </div>
-      <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
+        </Table>
+      </div >
+      <Pagination
+        currentPage={currentPage}
+        record_per_page={record_per_page}
+        setCurrentPage={setCurrentPage}
+        total_event_list={totalFilteredCount}
+      />
     </>
   );
 };

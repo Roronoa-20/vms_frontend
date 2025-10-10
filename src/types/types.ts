@@ -1534,6 +1534,9 @@ export interface PurchaseRequisition {
   purchase_group: string | null;
   pr_created: string,
   pur_req: string,
+  sap_status:string,
+  sap_summary:string,
+  zmsg:string,
 }
 
 export interface RFQTable {

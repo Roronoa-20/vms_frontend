@@ -151,8 +151,8 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                 <TableHead className="text-center text-black whitespace-nowrap">Purchase Team Status</TableHead>
                 <TableHead className="text-center text-black whitespace-nowrap">HOD Status</TableHead>
                 <TableHead className="text-center text-black whitespace-nowrap">Additional Status</TableHead>
-                <TableHead className="text-center text-black whitespace-nowrap">Actions</TableHead>
-                <TableHead className={`text-center text-black whitespace-nowrap`}>Raise PR</TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">View Cart</TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">Raise PR</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="text-center text-black">
@@ -219,39 +219,27 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                           {item?.second_stage_approval_status}
                         </div>
                       </TableCell>
-                      <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={url}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
-                      <TableCell
-                        className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show ? "" : "hidden"
-                          }`}
-                      >
-                        {/* {item?.pr_created ? (
-                          <Link href={`/pr-request?cart_id=${item?.name}&pur_req=${item?.pur_req}`}>
-                            <Button className="bg-green-500 hover:bg-green-500">View PR</Button>
+                      <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={url}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View</Button></Link></TableCell>
+                      <TableCell className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show ? "" : "hidden"}`}>
+                        {item?.pr_created ? (
+                          <button
+                            title="PR Created"
+                            className="py-2 px-4 text-white rounded-[16px] bg-[#5291CD]/50 cursor-not-allowed"
+                            disabled
+                          >
+                            PR
+                          </button>
+                        ) : (
+                          <Link href={`/pr-request?cart_id=${item?.name}`}>
+                            <button
+                              title="Raise PR"
+                              className="py-2 px-4 text-white rounded-[16px] bg-[#5291CD] hover:bg-white hover:text-black"
+                            >
+                              PR
+                            </button>
                           </Link>
-                        ) : ( */}
-                          <Link href={`/pr-request?cart_id=${item?.name}`}  className={`${item?.pr_created?"cursor-not-allowed":"cursor-pointer"}`}>
-                            <button  title={item?.pr_created?"PR Created":"Raise PR"} className={`py-2 px-4 text-white rounded-md  ${item?.pr_created?"cursor-not-allowed bg-blue-400/50 hover:bg-blue-400/50":"cursor-pointer bg-blue-400 hover:bg-blue-400"}`}>PR</button>
-                          </Link>
-                        {/* )} */}
+                        )}
                       </TableCell>
-
-                      {/* <TableCell>
-                  <div
-                    className={`px-2 py-3 rounded-xl ${item?.status === "pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : item?.status === "approved"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                  >
-                    {item?.status}
-                  </div>
-                </TableCell>
-                <TableCell>{item?.purchase_team}</TableCell>
-                <TableCell>{item?.purchase_head}</TableCell>
-                <TableCell>{item?.accounts_team}</TableCell>
-                <TableCell><Link href={`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                <TableCell className="text-right">{item?.qms_form}</TableCell> */}
                     </TableRow>
                   )
                 })

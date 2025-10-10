@@ -22,8 +22,10 @@ import { PurchaseRequisitionDataItem, PurchaseRequisitionResponse } from '@/src/
 import SummaryBlock from '../molecules/pr-dialogs/SummaryBlock'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/src/context/AuthContext'
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { ApproveConfirmationDialog } from '../common/ApproveConfirmationDialog'
+import { Alert, AlertDescription, AlertTitle, AlertFooter } from "@/components/ui/alert"
+import { ApproveConfirmationDialog } from '../common/ApproveConfirmationDialog';
+
+
 interface Props {
   Dropdown: PurchaseRequestDropdown["message"]
   PRData: PurchaseRequestData["message"]["data"] | null
@@ -184,8 +186,8 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
     }
   }, [pur_req])
   return (
-    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <div className="grid grid-cols-3 gap-6 p-5">
+    <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
+      <div className="grid grid-cols-3 gap-6 p-3">
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Purchase Request Type <span className="text-red-600 ml-1">*</span>
@@ -282,21 +284,24 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
           <Input placeholder="" name='requisitioner' value={formData?.cart_id ?? ""} disabled />
         </div>
       </div>
-      {!(mainItems?.docname && mainItems?.docname) && <div className={`flex justify-end p-4`}><Button type='button' className='bg-blue-400 hover:bg-blue-400' onClick={() => handleNext()}>Next</Button></div>}
+      {!(mainItems?.docname && mainItems?.docname) && <div className={`flex justify-end p-2`}><Button type='button' className='py-2' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => handleNext()}>Next</Button></div>}
 
       {mainItems?.sap_error &&
-        <div className='pb-4'>
-          <Alert variant="destructive" className=''>
+        <div className='p-2'>
+          <Alert variant="destructive">
             <AlertCircleIcon />
-            <AlertTitle className='pl-1'>SAP Error ! Please Resubmit</AlertTitle>
+            <AlertTitle className='pl-1'>SAP Error!!!</AlertTitle>
             <AlertDescription>
-              Error:{mainItems?.sap_error}
+              Error: {mainItems?.sap_error}
             </AlertDescription>
+            <AlertFooter className='mt-2 text-sm italic'>
+              Kindly review and Re-Submit the Request.
+            </AlertFooter>
           </Alert>
         </div>
       }
       {mainItems && mainItems?.data?.length > 0 && (
-        <Card>
+        <Card className='mt-2 p-2'>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">Purchase Request Items</CardTitle>
             <CardDescription>
@@ -560,7 +565,9 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
           {mainItems?.['Form Status'] !== "Submitted" ? (
             <Button
               type="button"
-              className="bg-blue-400 hover:bg-blue-400 px-6 font-medium"
+              className="py-2.5"
+              variant={"nextbtn"}
+              size={"nextbtnsize"}
               onClick={() => handleSubmit()}
             >
               Submit
@@ -570,7 +577,9 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
             (designation === "Purchase Team" && !mainItems?.form_is_submitted) && (
               <Button
                 type="button"
-                className="bg-green-500 hover:bg-green-600 px-6 font-medium"
+                className="py-2.5"
+                variant={"nextbtn"}
+                size={"nextbtnsize"}
                 onClick={() => setOpen(true)}
               >
                 Final Submit

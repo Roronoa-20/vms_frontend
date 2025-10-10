@@ -250,13 +250,15 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   console.log(formData, "0000000000000000000000000000000000000000000000000000")
   console.log(errors, "errors")
   console.log(requiredField, "requiredField")
+
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">Purchase Request Items</DialogTitle>
         </DialogHeader>
-        <div className="grid grid-cols-3 gap-6 p-5">
+        <div className="grid grid-cols-3 gap-6">
           {renderInput('item_number_of_purchase_requisition_head', 'Item Number of Purchase Requisition', 'text', { disabled: true })}
           {renderInput('purchase_requisition_date_head', 'Purchase Requisition Date', 'date')}
           {renderSelect(
@@ -356,9 +358,9 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={handleSubmit} disabled={loading} className="bg-green-600 hover:bg-green-700">
-            {loading ? 'Submitting...' : 'Submit NB'}
+          <Button variant="backbtn" size="backbtnsize" onClick={onClose}>Cancel</Button>
+          <Button onClick={handleSubmit} disabled={loading} className="py-2.5" variant={"nextbtn"} size={"nextbtnsize"}>
+            {loading ? 'Submitting...' : 'Submit'}
           </Button>
         </DialogFooter>
       </DialogContent>

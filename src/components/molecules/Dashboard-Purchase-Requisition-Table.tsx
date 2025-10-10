@@ -47,7 +47,7 @@ const useDebounce = (value: any, delay: any) => {
 };
 
 const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
-
+  console.log(dashboardTableData, "this is dashboardTableData");
   const [table, setTable] = useState<PurchaseRequisition[]>(dashboardTableData || []);
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [search, setSearch] = useState<string>("");
@@ -78,8 +78,6 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
     if (dashboardPRTableDataApi?.status == 200) {
       setTable(dashboardPRTableDataApi?.data?.message?.data);
       settotalEventList(dashboardPRTableDataApi?.data?.message?.total_count);
-      settotalEventList(dashboardPRTableDataApi?.data?.message?.total_count);
-      // setRecordPerPage(dashboardPRTableDataApi?.data?.message?.rejected_vendor_onboarding?.length);
       setRecordPerPage(5)
     }
   };
@@ -139,8 +137,7 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
                 <TableHead className="text-center text-black">Company</TableHead>
                 <TableHead className="text-center text-black text-nowrap">Purchase Group</TableHead>
                 <TableHead className="text-center text-black">Requisitioner</TableHead>
-                <TableHead className="text-center text-black text-nowrap">Purchase Head</TableHead>
-                <TableHead className="text-center text-black">HOD</TableHead>
+                <TableHead className="text-center text-black text-nowrap">Status</TableHead>
                 <TableHead className="text-center text-black text-nowrap">View Cart</TableHead>
                 <TableHead className="text-center text-black">View PR</TableHead>
               </TableRow>
@@ -159,42 +156,18 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
                     {/* <TableCell className="text-nowrap text-center">{item?.purchase_head_status}</TableCell> */}
                     <TableCell>
                       <div
-                        className={`text-center px-2 py-3 rounded-xl ${item?.purchase_head_status === "Pending"
+                        className={`text-center px-2 py-3 rounded-xl ${item?.sap_status === "SAP Error"
                           ? "bg-yellow-100 text-yellow-800"
-                          : item?.purchase_head_status === "Approved"
+                          : item?.sap_status === "Pr Created"
                             ? "bg-green-100 text-green-800"
                             : "bg-red-100 text-red-800"
                           }`}
                       >
-                        {item?.purchase_head_status || "--"}
+                        {item?.sap_status || "--"}
                       </div>
                     </TableCell>
-                    {/* <TableCell className="text-nowrap text-center">{item?.hod_approval_status}</TableCell> */}
-                    <TableCell>
-                      <div
-                        className={`text-center px-2 py-3 rounded-xl ${item?.hod_approval_status === "Pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : item?.hod_approval_status === "Approved"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                          }`}
-                      >
-                        {item?.hod_approval_status || "--"}
-                      </div>
-                    </TableCell>
+                    
                     <TableCell className="text-nowrap text-center"><Link href={`/view-pr?pur_req=${item?.name}`}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]" >View</Button></Link></TableCell>
-                    {/* <TableCell>
-                  <div
-                    className={`px-2 py-3 rounded-xl ${item?.status === "pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : item?.status === "approved"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                  >
-                    {item?.status}
-                  </div>
-                </TableCell> */}
                     <TableCell
                       className={`text-nowrap text-center whitespace-nowrap`}
                     >

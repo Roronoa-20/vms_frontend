@@ -1,6 +1,5 @@
 import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils"
 
 const alertVariants = cva(
@@ -56,4 +55,16 @@ const AlertDescription = React.forwardRef<
 ))
 AlertDescription.displayName = "AlertDescription"
 
-export { Alert, AlertTitle, AlertDescription }
+const AlertFooter = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("text-sm [&_p]:leading-relaxed", className)}
+    {...props}
+  />
+))
+AlertFooter.displayName = "AlertFooter"
+
+export { Alert, AlertTitle, AlertDescription, AlertFooter }

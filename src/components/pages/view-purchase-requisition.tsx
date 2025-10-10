@@ -11,7 +11,7 @@ const ViewPurchaseRequisitionPage = () => {
   const [loading, setLoading] = useState(true);
   const [pageNo, setPageNo] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const pageLength = 5;
+  const pageLength = 10;
 
   const fetchPRData = async (page = 1) => {
     setLoading(true);
