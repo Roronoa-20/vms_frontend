@@ -1,85 +1,147 @@
-// import React, { useEffect, useState } from "react";
-// import { useForm } from "react-hook-form";
+import React from "react";
+import { UseFormReturn } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import RequestorInformation from "@/src/components/molecules/material-onboarding/requestor-information";
+import MaterialInformation from "@/src/components/molecules/material-onboarding/material-information";
+import { MaterialRegistrationFormData } from "@/src/types/MaterialCodeRequestFormTypes";
+
+interface MaterialOnboardingFormProps {
+    form: UseFormReturn<MaterialRegistrationFormData>;
+    onCancel: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+    onUpdate: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    UserDetailsJSON: any;
+    EmployeeDetailsJSON: any;
+    companyName: string;
+}
+
+const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({
+    form,
+    onCancel,
+    onSubmit,
+    onUpdate,
+    UserDetailsJSON,
+    EmployeeDetailsJSON,
+    companyName,
+}) => {
+    return (
+        <form onSubmit={onSubmit} className="bg-white p-4 rounded shadow space-y-4">
+            <div className="space-y-1">
+                <RequestorInformation
+                    form={form}
+                    UserDetails={UserDetailsJSON}
+                    EmployeeDetails={EmployeeDetailsJSON}
+                    companyInfo={companyName}
+                />
+
+                <MaterialInformation />
+            </div>
+
+            <div className="flex justify-end space-x-5 items-center">
+                <Button variant="backbtn" size="backbtnsize" onClick={onCancel}>
+                    Cancel
+                </Button>
+
+                {/* Uncomment & fix these if you implement conditional Submit/Update logic */}
+                {/* <Button variant="nextbtn" size="nextbtnsize" type="submit">
+          Submit
+        </Button>
+
+        <Button variant="nextbtn" size="nextbtnsize" type="button" onClick={onUpdate}>
+          Update
+        </Button> */}
+            </div>
+        </form>
+    );
+};
+
+export default MaterialOnboardingForm;
+
+
+
+// import React from "react";
+// import { UseFormReturn } from "react-hook-form";
 // import { Button } from "@/components/ui/button";
-// import {
-//     Form,
-//     FormControl,
-//     FormField,
-//     FormItem,
-//     FormLabel,
-//     FormMessage,
-// } from "@/components/ui/form";
-// import Alertbox from "@/src/components/common/vendor-onboarding-alertbox";
-// import MaterialInformation from "@/src/components/molecules/material-onboarding/material-information";
 // import RequestorInformation from "@/src/components/molecules/material-onboarding/requestor-information";
+// import MaterialInformation from "@/src/components/molecules/material-onboarding/material-information"
 
 
-// export default function MaterialOnboardingForm({
-//     form, onCancel, onSubmit, companyName, isLoading, showAlert, plantcode, UserDetails, EmployeeDetails, DivisionDetails, role,
-//     IndustryDetails, UnitOfMeasure, MRPType, ValuationClass, ProcurementType, ValuationCategory, MaterialGroup, companyInfo, lineItemFiles, setLineItemFiles, ProfitCenter, PriceControl, AvailabilityCheck, MaterialType, MRPController, StorageLocation, ClassType, PurchaseGroup, SerialProfile, InspectionType, MaterialDetails, materialRequestList, setMaterialRequestList, materialCompanyCode, setMaterialCompanyCode, MaterialCategory, FullName, AllMaterialCodes, MaterialOnboardingDetails, AllMaterialDetails, onUpdate
-// }) {
-
-//     console.log("MaterialOnboardingForm props:", MaterialOnboardingDetails)
-
-//     return (
-//         <Form {...form}>
-//             <form onSubmit={onSubmit}>
-//                 <div className="bg-[#F4F4F6]">
-//                     <div className="space-y-[32px] flex flex-col justify-between p-4 bg-white rounded-[8px]">
-//                         <div className="space-y-1">
-//                             <div>
-//                                 <RequestorInformation role={role} form={form} UserDetails={UserDetails} EmployeeDetails={EmployeeDetails} companyInfo={companyInfo} />
-//                             </div>
-
-//                             <div>
-//                                 <MaterialInformation lineItemFiles={lineItemFiles} MaterialCategory={MaterialCategory}
-//                                     setLineItemFiles={setLineItemFiles} MRPType={MRPType} form={form} UnitOfMeasure={UnitOfMeasure} IndustryDetails={IndustryDetails} plantcode={plantcode} role={role} companyName={companyName} UserDetails={UserDetails} DivisionDetails={DivisionDetails} ValuationClass={ValuationClass} ValuationCategory={ValuationCategory} MaterialGroup={MaterialGroup} EmployeeDetails={EmployeeDetails} companyInfo={companyInfo} ProfitCenter={ProfitCenter} PriceControl={PriceControl} AvailabilityCheck={AvailabilityCheck} MaterialType={MaterialType} MRPController={MRPController} StorageLocation={StorageLocation} ClassType={ClassType} PurchaseGroup={PurchaseGroup} SerialProfile={SerialProfile} InspectionType={InspectionType} MaterialDetails={MaterialDetails} materialRequestList={materialRequestList} setMaterialRequestList={setMaterialRequestList} materialCompanyCode={materialCompanyCode} setMaterialCompanyCode={setMaterialCompanyCode} AllMaterialCodes={AllMaterialCodes} MaterialOnboardingDetails={MaterialOnboardingDetails} AllMaterialDetails={AllMaterialDetails} />
-//                             </div>
-//                         </div>
-
-
-//                         <div className="flex justify-end space-x-5 items-center">
-//                             <Button
-//                                 variant="backbtn"
-//                                 size="backbtnsize"
-//                                 onClick={onCancel}
-//                             >
-//                                 Cancel
-//                             </Button>
-
-//                             {(MaterialOnboardingDetails?.approval_status === "" ||
-//                                 MaterialOnboardingDetails?.approval_status === undefined) && (
-//                                     <Button
-//                                         variant="nextbtn"
-//                                         size="nextbtnsize"
-//                                         type="submit"
-//                                     >
-//                                         {isLoading ? "Processing..." : "Submit"}
-//                                     </Button>
-//                                 )}
-
-//                             {MaterialOnboardingDetails?.approval_status === "Re-Opened by CP" && (
-//                                 <Button
-//                                     variant="nextbtn"
-//                                     size="nextbtnsize"
-//                                     type="button"
-//                                     onClick={onUpdate}
-//                                 >
-//                                     {isLoading ? "Processing..." : "Update"}
-//                                 </Button>
-//                             )}
-
-//                             {showAlert && (
-//                                 <Alertbox
-//                                     content={"Your Details have been submitted successfully!"}
-//                                     submit={showAlert}
-//                                     url="/material-onboarding-table"
-//                                 />
-//                             )}
-//                         </div>
-//                     </div>
-//                 </div>
-//             </form>
-//         </Form>
-//     );
+// interface MaterialOnboardingFormProps {
+//     form: UseFormReturn<MaterialRegistrationFormData>;
+//     onCancel: (e: React.MouseEvent<HTMLButtonElement>) => void;
+//     onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+//     onUpdate: (e: React.MouseEvent<HTMLButtonElement>) => void;
+//     UserDetailsJSON: any;
+//     EmployeeDetailsJSON: any;
+//     companyName: any;
 // }
+
+// const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({
+//     form,
+//     onCancel,
+//     onSubmit,
+//     onUpdate,
+//     UserDetailsJSON,
+//     EmployeeDetailsJSON,
+//     companyName,
+// }) => {
+//     return (
+//         <form onSubmit={onSubmit} className="bg-white p-4 rounded shadow space-y-4">
+//             <div className="space-y-1">
+//                 <RequestorInformation
+//                     form={form}
+//                     UserDetails={UserDetailsJSON.data[0]}
+//                     EmployeeDetails={EmployeeDetailsJSON.data[0]}
+//                     companyInfo={companyName.data[0]}
+//                 />
+
+//                 <div>
+//                     <MaterialInformation  />
+//                 </div>
+//             </div>
+
+
+//             <div className="flex justify-end space-x-5 items-center">
+//                 <Button
+//                     variant="backbtn"
+//                     size="backbtnsize"
+//                     onClick={onCancel}
+//                 >
+//                     Cancel
+//                 </Button>
+
+//                 {/* {(MaterialOnboardingDetails?.approval_status === "" ||
+//                     MaterialOnboardingDetails?.approval_status === undefined) && (
+//                         <Button
+//                             variant="nextbtn"
+//                             size="nextbtnsize"
+//                             type="submit"
+//                         >
+//                             {isLoading ? "Processing..." : "Submit"}
+//                         </Button>
+//                     )}
+
+//                 {MaterialOnboardingDetails?.approval_status === "Re-Opened by CP" && (
+//                     <Button
+//                         variant="nextbtn"
+//                         size="nextbtnsize"
+//                         type="button"
+//                         onClick={onUpdate}
+//                     >
+//                         {isLoading ? "Processing..." : "Update"}
+//                     </Button>
+//                 )}
+
+//                 {showAlert && (
+//                     <Alertbox
+//                         content={"Your Details have been submitted successfully!"}
+//                         submit={showAlert}
+//                         url="/material-onboarding-table"
+//                     />
+//                 )} */}
+//             </div>
+//         </form >
+//     );
+// };
+
+// export default MaterialOnboardingForm;

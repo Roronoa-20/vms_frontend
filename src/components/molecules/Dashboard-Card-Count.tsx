@@ -56,7 +56,7 @@ type Props = {
   dashboardApprovedVendorTableData: DashboardTableType;
   dashboardRejectedVendorTableData: DashboardTableType["rejected_vendor_onboarding"];
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"];
-  filterregisteredby: TvendorRegistrationDropdown["message"]["data"]["user_list"];
+  filterregisteredby: TvendorRegistrationDropdown["message"]["data"]["users_list"];
   prInquiryData: TPRInquiryTable;
   prData: PurchaseRequisition[];
   rfqData: RFQTable;

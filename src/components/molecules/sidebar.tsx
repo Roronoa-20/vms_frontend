@@ -17,7 +17,7 @@ const Sidebar = () => {
   const sideBar = designation === "Vendor" ? VendorsidebarMenu : designation === "Enquirer" ? EnquirysidebarMenu : designation === "ASA" ? ASASideBarMenu : designation === "Accounts Team" ? AccountSideBarMenu : designation === "Accounts Head" ? AccountHeadSideBarMenu : designation === "Purchase Head" ? PurchaseHeadsidebarMenu : designation === "QA Team" ? QASideBarMenu : designation === "Super Head" ? SuperHeadSidebarMenu : designation === "Treasury" ? TreasurySideBarMenu : designation === "Material User" ? MaterialUserSideBar : designation === "Material CP" ? MaterialCPSideBar : sidebarMenu;
 
   const getSidebarWidth = (designation: string) => {
-    const compactRoles = ["Vendor", "Enquirer", "ASA", "QA Team"];
+    const compactRoles = ["Vendor", "Enquirer", "ASA", "QA Team", "Material User", "Material CP"];
     return compactRoles.includes(designation) ? "w-[95px]" : "w-[110px]";
   };
 

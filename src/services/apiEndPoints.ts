@@ -3,6 +3,7 @@ import { User } from "lucide-react";
 import Dispatch from "../components/pages/Dispatch";
 
 const url = process.env.NEXT_PUBLIC_BACKEND_END;
+const resourceurl = process.env.NEXT_PUBLIC_API_RESOURCE_URL;
 const API_END_POINTS = {
   // Custom Methods
   // Standard Methods
@@ -268,7 +269,21 @@ const API_END_POINTS = {
   handoverPersonDropdown: `${url}/api/method/vms.APIs.dispatch.gate_entry.get_handover_person`,
   handover_submit: `${url}/api/method/vms.APIs.dispatch.gate_entry.handover_gate_entry`,
   GateEntryDashboardCardCount: `${url}/api/method/vms.APIs.dispatch.get_gate_entry.get_gate_entry_statistics`,
-  GateEntryTableData: `${url}/api/method/vms.APIs.dispatch.get_gate_entry.gate_entry_get`
+  GateEntryTableData: `${url}/api/method/vms.APIs.dispatch.get_gate_entry.gate_entry_get`,
+
+  // Material Onboarding APIs
+  getMaterialOnboardingTableList: `${url}/api/method/vms.APIs.material_onboarding.get_material_onboarding.get_material_onboarding_list`,
+  getRequestorMasterTableList: `${url}/api/method/vms.APIs.requestor_master.get_requestor_master.get_requestor_master_list`,
+  getMaterialOnboardingDetails: `${url}/api/method/vms.APIs.material_onboarding.get_material_onboarding_details`,
+  getAllMaterialDescriptionsAndCodes: `${url}/api/method/vms_app.APIs.material_onboarding.get_all_material_code.get_all_material_descriptions_and_codes`,
+  getAllMaterialCodes: `${url}/api/method/vms_app.APIs.material_code_apis.get_all_material_code.get_all_material_codes`,
+  getAllMaterialTypeMasterDetails: `${url}/api/method/vms_app.APIs.material_type_apis.get_all_material_type.get_all_material_type_master_details`,
+  getUserDetails: `${resourceurl}/User?fields=["*"]`,
+  getEmployeeDetails: `${resourceurl}/Employee`,
+  getCompanyMaster: `${resourceurl}/Company Master?fields=["name","company_name","company_short_form","company_code"]`,
+  getPlantMaster: `${resourceurl}/Plant Master?fields=["*"]&limit_page_length=999`,
+  getDivisionMaster: `${resourceurl}/Division Master?fields=["*"]&limit_page_length=999`,
+  getIndustryMaster: `${resourceurl}/Industry Master?fields=["*"]&limit_page_length=999`,
 }
 
 export default API_END_POINTS;

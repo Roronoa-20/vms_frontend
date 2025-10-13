@@ -33,7 +33,7 @@ import { useAuth } from "@/src/context/AuthContext";
 type Props = {
   dashboardTableData: DashboardTableType,
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
-  filterregisteredby: TvendorRegistrationDropdown["message"]["data"]["user_list"];
+  filterregisteredby: TvendorRegistrationDropdown["message"]["data"]["users_list"];
 
 }
 

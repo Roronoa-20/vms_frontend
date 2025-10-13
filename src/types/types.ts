@@ -17,7 +17,7 @@ export type TvendorRegistrationDropdown = {
       vendor_type: { name: string }[],
       vendor_title: { name: string }[],
       country_master: { name: string, mobile_code: string }[],
-      company_master: { name: string, description: string, sap_client_code: string }[],
+      company_master: { name: string, description: string, sap_client_code: string, company_name: string }[],
       incoterm_master: { name: string }[],
       currency_master: { name: string }[],
       users_list: { user_id: string, full_name: string }[],

@@ -41,5 +41,6 @@ export const NavbarConstant:Record<string,string> = {
     "/view-dispatch-table":"Dispatch Orders",
     "/view-pr-inquiry-table": "Purchase Enquiry",
     "/material-onboarding-dashboard": "Dashboard",
-    "/new-material-code-request": "Raise New Material Code Request",
+    "/new-material-code-request-form": "Material Code Request",
+    "/new-material-code-request-table": "Material Code Request",
 }
