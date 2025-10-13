@@ -79,7 +79,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
     "Meril Life Sciences Private Limited":
       "/printFormatLogo/Meril-life-sciences-logo.svg",
   };
-  console.log(prDetails)
+  console.log(prDetails,"this is pr details")
   return (
     <div
       ref={contentRef}
