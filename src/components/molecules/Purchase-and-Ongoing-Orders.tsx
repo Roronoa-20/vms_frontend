@@ -29,6 +29,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import PopUp from "./PopUp";
 import { useOutsideClick } from "@/src/hooks/useOutsideClick";
 import { useRouter } from "next/navigation";
+import Pagination from "./Pagination";
 
 
 type Props = {
@@ -306,6 +307,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
           </TableBody>
         </Table>
       </div>
+      <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
       {
         isDialog &&
         <div className="absolute z-50 flex pt-10 items-center justify-center bg-black bg-opacity-50 inset-0">

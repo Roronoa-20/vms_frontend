@@ -74,6 +74,7 @@ const ViewPO = ({po_name}:Props) => {
         if(response?.status == 200){
             // console.log(response?.data?.message,"this is response")
             setPRDetails(response?.data?.message?.data);
+            setIPrintFormat(true);
         }
     }
     const contentRef = useRef<HTMLDivElement>(null);
@@ -263,7 +264,7 @@ const ViewPO = ({po_name}:Props) => {
                 </SelectGroup>
               </SelectContent>
             </Select>
-          <button id="viewPrintBtn" onClick={()=>{getPODetails(); setIPrintFormat(true);}} className="bg-blue-500 text-white px-2 rounded hover:bg-blue-700 transition text-nowrap">
+          <button id="viewPrintBtn" onClick={()=>{getPODetails(); }} className="bg-blue-500 text-white px-2 rounded hover:bg-blue-700 transition text-nowrap">
             View PO Details
           </button>
           <button onClick={()=>{router.push(`/view-all-po-changes`)}} className="bg-blue-500 text-white px-2 rounded hover:bg-blue-700 transition text-nowrap">
@@ -278,16 +279,20 @@ const ViewPO = ({po_name}:Props) => {
           Early Delivery
         </button>
       </div>
-
+                  {
+                    isPrintFormat && 
       <Button onClick={()=>{handleDownloadPDF()}}>Download</Button>
+                  }
 
       {/* PO Main Section */}
       {
         isPrintFormat &&
       <POPrintFormat contentRef={contentRef} prDetails={prDetails} Heading={selectedPODropdown}/>
       }
-
+      {
+        isPrintFormat && 
       <div className="flex justify-end items-center"><Button onClick={()=>{setIsEmailDialog(true)}}>Send Email</Button></div>
+      }
 
       {
         isEmailDialog &&
