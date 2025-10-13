@@ -93,13 +93,16 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
         {/* Left Column */}
         <div className="border-r border-black">
           <div className="flex justify-center border-b border-black py-4">
-            <div className="text-center">
-              <img
-                src={`${companyLogo[prDetails?.bill_to_company]}`}
-                alt="No Logo"
-                className="h-25 w-25 mx-auto mb-1"
-              />
-            </div>
+            {
+                 prDetails?.company_logo?.base64 &&
+                <img
+                src={`data:image/png;base64,${prDetails && prDetails?.company_logo?prDetails?.company_logo?.base64:""}`}
+                alt="Signature"
+                //  crossOrigin="anonymous"
+                style={{ width: "25%", height: "auto", objectFit: "contain" }}
+                // content="contain"
+                />
+              }
           </div>
 
           {/* Supplier and Address */}
