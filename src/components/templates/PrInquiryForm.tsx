@@ -103,7 +103,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
         return;
       }
     }
-    
+
     if (!singleTableRow) return;
 
     const formdata = new FormData();
@@ -136,6 +136,10 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
   };
 
   const handleSubmit = async () => {
+    if(formData && formData?.cart_product?. length == 0){
+      alert("Please Enter At Least 1 Product");
+      return;
+    }
     const url = API_END_POINTS?.submitPrInquiry;
     const payload = {
       ...formData,

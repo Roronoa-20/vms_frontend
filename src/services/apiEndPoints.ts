@@ -284,6 +284,9 @@ const API_END_POINTS = {
   getPlantMaster: `${resourceurl}/Plant Master?fields=["*"]&limit_page_length=999`,
   getDivisionMaster: `${resourceurl}/Division Master?fields=["*"]&limit_page_length=999`,
   getIndustryMaster: `${resourceurl}/Industry Master?fields=["*"]&limit_page_length=999`,
+
+    dataBasedOnPo:`${url}/api/method/vms.APIs.purchase_api.po_get_mails.get_vendor_mails`
+
 }
 
 export default API_END_POINTS;
