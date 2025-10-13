@@ -267,7 +267,9 @@ const API_END_POINTS = {
   handoverPersonDropdown: `${url}/api/method/vms.APIs.dispatch.gate_entry.get_handover_person`,
   handover_submit: `${url}/api/method/vms.APIs.dispatch.gate_entry.handover_gate_entry`,
   GateEntryDashboardCardCount: `${url}/api/method/vms.APIs.dispatch.get_gate_entry.get_gate_entry_statistics`,
-  GateEntryTableData: `${url}/api/method/vms.APIs.dispatch.get_gate_entry.gate_entry_get`
+  GateEntryTableData: `${url}/api/method/vms.APIs.dispatch.get_gate_entry.gate_entry_get`,
+
+  dataBasedOnPo:`${url}/api/method/vms.APIs.purchase_api.po_get_mails.get_vendor_mails`
 }
 
 export default API_END_POINTS;

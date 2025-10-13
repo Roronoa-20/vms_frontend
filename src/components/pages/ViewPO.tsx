@@ -13,6 +13,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
+import MultiSelect, { MultiValue } from "react-select";
 interface POItemsTable {
   name:string,
   product_name:string,
@@ -39,6 +40,9 @@ interface PODropdown {
 interface Props {
   po_name?:string
 }
+
+
+
 const ViewPO = ({po_name}:Props) => {
     const [prDetails,setPRDetails] = useState();
     const [PRNumber,setPRNumber] = useState<string | undefined>(po_name);
@@ -49,11 +53,13 @@ const ViewPO = ({po_name}:Props) => {
     const [PONumberDropdown,setPONumberDropdown] = useState<PODropdown[]>([]);
     const [isPrintFormat,setIPrintFormat] = useState<boolean>(false);
     const [isEmailDialog, setIsEmailDialog] = useState<boolean>(false);
-    const email_to = useSearchParams().get("email_to");
+    const email_to = useSearchParams()?.get("email_to");
     const [email, setEmail] = useState<any>({to:email_to});
     const [date, setDate] = useState("");
       const [comments, setComments] = useState("");
       const [POFile, setPOFile] = useState<File | null>(null)
+
+    const [ccEmailsList,setCCEmailsList] = useState<{value:string,label:string}[]>([]);
 
       // setEmail((prev:any)=>({...prev,to:email_to}));
     // const [sign,setSign] = useState();
@@ -106,7 +112,7 @@ const ViewPO = ({po_name}:Props) => {
     setIsEmailDialog(false);
     setDate("");
     setComments("");
-    setEmail(null);
+    setEmail((prev:any)=>({...prev,cc:[]}));
     }
 
   const handleOpen = () => {
@@ -175,13 +181,13 @@ const ViewPO = ({po_name}:Props) => {
 
 
   const handleSubmit = async () => {
+    
+        if (!email?.cc) {
+          alert("please select at least 1 cc email");
+          return;
+        }
     if (!POFile) {
       alert("please add PO");
-      return;
-    }
-
-    if (!email?.cc) {
-      alert("please cc emails");
       return;
     }
     const sendPoEmailUrl = API_END_POINTS?.sendPOEmailVendor;
@@ -198,6 +204,27 @@ const ViewPO = ({po_name}:Props) => {
     }
   }
 
+  const handlePOChange = async(value:string)=>{
+    setPRNumber(value);
+    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.dataBasedOnPo,method:"GET",params:{po_number:value}});
+    if(response?.status == 200){
+      setEmail((prev:any)=>({...prev,to:response?.data?.message?.vendor_emails?.office_email_primary}));
+      const emailList =  response?.data?.message?.team_members?.all_team_user_ids?.map((item:any,index:any)=>{
+        const obj = {
+          label:item,
+          value:item
+        }
+        return obj;
+      })
+      setCCEmailsList(emailList);
+    }
+  }
+
+  const handleCcEmailChange = (value:MultiValue<{ value: string; label: string; }>)=>{
+    const emailList = value?.map((item)=>(item?.value));
+    setEmail((prev: any) => ({ ...prev, cc: emailList }));
+  }
+
   return (
     <div className="min-h-screen bg-[#f8fafc] p-6 space-y-6 text-sm text-black font-sans m-5">
       {/* Header Section */}
@@ -207,7 +234,7 @@ const ViewPO = ({po_name}:Props) => {
           type="text"
           className="w-full md:w-1/2 border border-gray-300 rounded px-4 py-2 focus:outline-none hover:border-blue-700 transition"
         /> */}
-        <Select onValueChange={(value)=>{setPRNumber(value)}} value={PRNumber ?? ""}>
+        <Select onValueChange={(value)=>{handlePOChange(value)}} value={PRNumber ?? ""}>
               <SelectTrigger className="w-60">
                 <SelectValue placeholder="Select PO Number" />
               </SelectTrigger>
@@ -275,7 +302,17 @@ const ViewPO = ({po_name}:Props) => {
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               CC
             </h1>
-            <Input onChange={(e) => { setEmail((prev: any) => ({ ...prev, cc: e.target.value })) }} />
+            {/* <Input onChange={(e) => { setEmail((prev: any) => ({ ...prev, cc: e.target.value })) }} /> */}
+            <MultiSelect
+              onChange={ (value)=>handleCcEmailChange(value) }
+              instanceId="vendor-type-multiselect"
+              options={ccEmailsList}
+              isMulti
+              required
+              className="text-[12px] text-black"
+              // menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+              // styles={multiSelectStyles}
+            />
           </div>
           <Input onChange={(e) => { setPOFile(e.target.files && e.target.files[0]) }} className="mt-4" type="file" />
         </PopUp>
