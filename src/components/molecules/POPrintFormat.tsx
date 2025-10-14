@@ -90,9 +90,13 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
             </div>
           </div>
           <div className="border-b border-black p-2 leading-4 text-sm">
-            ,<br />,<br />
-            ,-
-            <br />
+            <span className="font-medium">Address line 1</span> :- {prDetails?.vendor_address_details?.address_line_1}<br />
+            <span className="font-medium">Address line 2 </span> :- {prDetails?.vendor_address_details?.address_line_2}<br />
+            <span className="font-medium">City</span> :- {prDetails?.vendor_address_details?.city}<br />
+            <span className="font-medium">Country</span> :- {prDetails?.vendor_address_details?.country}<br />
+            <span className="font-medium">District </span>:- {prDetails?.vendor_address_details?.district}<br />
+            <span className="font-medium">State</span> :- {prDetails?.vendor_address_details?.state}<br />
+            <span className="font-medium">Pincode </span> :- {prDetails?.vendor_address_details?.zip_code}<br />
           </div>
 
           {/* Vendor Info List */}
