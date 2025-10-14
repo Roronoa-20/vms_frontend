@@ -90,13 +90,10 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
             </div>
           </div>
           <div className="border-b border-black p-2 leading-4 text-sm">
-            <span className="font-medium">Address line 1</span> :- {prDetails?.vendor_address_details?.address_line_1}<br />
-            <span className="font-medium">Address line 2 </span> :- {prDetails?.vendor_address_details?.address_line_2}<br />
-            <span className="font-medium">City</span> :- {prDetails?.vendor_address_details?.city}<br />
-            <span className="font-medium">Country</span> :- {prDetails?.vendor_address_details?.country}<br />
-            <span className="font-medium">District </span>:- {prDetails?.vendor_address_details?.district}<br />
-            <span className="font-medium">State</span> :- {prDetails?.vendor_address_details?.state}<br />
-            <span className="font-medium">Pincode </span> :- {prDetails?.vendor_address_details?.zip_code}<br />
+             {prDetails?.bill_to_company_details?.company_name}<br/>
+            {prDetails?.vendor_address_details?.address_line_1},<br />
+            {prDetails?.vendor_address_details?.address_line_2},<br />
+            {prDetails?.vendor_address_details?.city} - {prDetails?.vendor_address_details?.zip_code}, {prDetails?.vendor_address_details?.state}, {prDetails?.vendor_address_details?.country}<br />
           </div>
 
           {/* Vendor Info List */}
