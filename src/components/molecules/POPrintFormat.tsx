@@ -109,14 +109,15 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
 
         {/* Right Column */}
         <div className="border-l border-black">
-          <div className="border-b border-black p-2">
+          <div className="border-t border-black p-2">
             <div className="font-semibold">
               Bill To : {prDetails?.bill_to_company_details?.company_name}
             </div>
-            <div>Bilakhia House, Survey No 135/139</div>
-            <div>Muktanand Marg, Chala,</div>
-            <div>Vapi - 369191 (24-Gujarat)</div>
-            <div>Phone No: 0260-3052100</div>
+            <div>{prDetails?.bill_to_company_details?.street_1}</div>
+            <div>{prDetails?.bill_to_company_details?.street_2}</div>
+            {/* <div>Muktanand Marg, Chala,</div> */}
+            <div>{prDetails?.bill_to_company_details?.city} - {prDetails?.bill_to_company_details?.pincode} ({prDetails?.bill_to_company_details?.state})</div>
+            <div>Phone No: {prDetails?.bill_to_company_details?.contact_no}</div>
           </div>
 
           {rightColumnAddressConst1?.map((row, idx) => (
@@ -146,10 +147,11 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
             <div className="font-semibold">
               Ship To : {prDetails?.ship_to_company_details?.company_name}
             </div>
-            <div>Bilakhia House, Survey No 135/139</div>
-            <div>Muktanand Marg, Chala,</div>
-            <div>Vapi - 369191 (24-Gujarat)</div>
-            <div>Phone No: 0260-3052100</div>
+            <div>{prDetails?.ship_to_company_details?.street_1}</div>
+            <div>{prDetails?.ship_to_company_details?.street_2}</div>
+            {/* <div>Muktanand Marg, Chala,</div> */}
+            <div>{prDetails?.ship_to_company_details?.city} - {prDetails?.ship_to_company_details?.pincode} ({prDetails?.ship_to_company_details?.state})</div>
+            <div>Phone No: {prDetails?.ship_to_company_details?.contact_no}</div>
           </div>
         </div>
       </div>
