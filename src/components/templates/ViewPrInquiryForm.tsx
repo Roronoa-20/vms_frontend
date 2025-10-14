@@ -53,6 +53,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
   const [isModifyDialog, setIsModifyDialog] = useState<boolean>(false);
   const [plantDropdown, setPlantDropdown] = useState<{ name: string, plant_name: string, description: string }[]>();
   const [purchaseGroupDropdown, setPurchaseGroupDropdown] = useState<{ name: string, purchase_group_code: string, purchase_group_name: string, description: string }[]>();
+  const [costCenterDropdown, setCostCenterDropdown] = useState<{ name: string, cost_center_code: string, cost_center_name: string, description: string }[]>([]);
+  const [glAccountDropdown, setGLAccountDropdown] = useState<{ name: string, gl_account_code: string, gl_account_name: string, description: string }[]>([]);
   const [toEmail, setToEmail] = useState<string>("");
   const [isEmailDialog, setIsEmailDialog] = useState<boolean>(false);
   const router = useRouter();
@@ -186,8 +188,10 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
     const url = `${API_END_POINTS?.InquiryDropdownsBasedOnCompany}?comp=${value}`
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
-      setPlantDropdown(response?.data?.message?.plants);
-      setPurchaseGroupDropdown(response?.data?.message?.purchase_groups);
+      setPlantDropdown(response?.data?.message?.plants?.data);
+      setPurchaseGroupDropdown(response?.data?.message?.purchase_groups?.data);
+      setCostCenterDropdown(response?.data?.message?.cost_centers?.data);
+      setGLAccountDropdown(response?.data?.message?.gl_accounts?.data);
     }
   }
 
@@ -339,6 +343,51 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
             </SelectContent>
           </Select>
         </div>
+        {/* Cost Center */}
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+            Cost Center
+          </h1>
+          <Select
+            value={formData?.cost_center ?? ""}
+            onValueChange={(value) => handleSelectChange(value, "cost_center", false)}
+            disabled={refno ? true : false}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {costCenterDropdown?.map((item, index) => (
+                  <SelectItem key={index} value={item?.name}>{item?.cost_center_code}-{item?.cost_center_name}</SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* G/L Account */}
+        <div className="col-span-1">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+            G/L Account
+          </h1>
+          <Select
+            value={formData?.gl_account ?? ""}
+            onValueChange={(value) => handleSelectChange(value, "gl_account", false)}
+            disabled={refno ? true : false}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {glAccountDropdown?.map((item, index) => (
+                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
         {PRInquiryData?.acknowledged_date && (
           <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">Early Delivery Date</h1>
@@ -425,16 +474,16 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
       </div>
       {/* purchase team approval buttons */}
       {(PRInquiryData?.purchase_team == Boolean(0) || PRInquiryData?.asked_to_modify == Boolean(0)) &&
-        <div className={`flex justify-end pr-4 gap-4 ${designation != "Enquirer" ? "" : "hidden"}`}>
-          <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.purchase_team_acknowledgement ? "hidden" : ""}`} onClick={() => { setIsModifyDialog(true) }}>Modify</Button>
+        <div className={`flex justify-end pr-4 pb-4 gap-4 ${designation != "Enquirer" ? "" : "hidden"}`}>
+          <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${PRInquiryData?.purchase_team_acknowledgement ? "hidden" : ""}`} onClick={() => { setIsModifyDialog(true) }}>Modify</Button>
           {
             PRInquiryData?.purchase_team_acknowledgement == Boolean(1) ?
-              <Button className={`bg-blue-400 hover:bg-blue-400 ${PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsApproved(true); setIsDialog(true) }}>Approve</Button>
+              <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsApproved(true); setIsDialog(true) }}>Approve</Button>
               :
-              <Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { setIsAcknowledgeDialog(true) }}>Acknowledge</Button>
+              <Button variant={"nextbtn"} size={"nextbtnsize"} className='py-2.5 hover:bg-white hover:text-black' onClick={() => { setIsAcknowledgeDialog(true) }}>Acknowledge</Button>
           }
           {
-            <Button className={`bg-blue-400 hover:bg-blue-400 ${designation != "Enquirer" && PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsReject(true); setIsDialog(true) }}>Reject</Button>
+            <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${designation != "Enquirer" && PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsReject(true); setIsDialog(true) }}>Reject</Button>
           }
         </div>
       }
