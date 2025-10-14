@@ -45,20 +45,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
     ["Total Value of Purchase Order / Service Order", prDetails?.total_value_of_po__so,],
   ];
 
-  const MerilCompanyAddress = [
-    ["Bill To Company", prDetails?.bill_to_company],
-  ]
-
-  const companyLogo: Record<string, string> = {
-    "Meril Diagnostics Private Limited":
-      "/printFormatLogo/Meril-Diagnostics.svg",
-    "Meril Endo Surgery Private Limited":
-      "/printFormatLogo/Meril-Endo-surgery.svg",
-    "Meril Health Care Private Limited":
-      "/printFormatLogo/Meril-Healthcare-Logo.svg",
-    "Meril Life Sciences Private Limited":
-      "/printFormatLogo/Meril-life-sciences-logo.svg",
-  };
+  
 
   console.log(prDetails, "this is pr details")
 
@@ -103,9 +90,13 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
             </div>
           </div>
           <div className="border-b border-black p-2 leading-4 text-sm">
-            ,<br />,<br />
-            ,-
-            <br />
+            <span className="font-medium">Address line 1</span> :- {prDetails?.vendor_address_details?.address_line_1}<br />
+            <span className="font-medium">Address line 2 </span> :- {prDetails?.vendor_address_details?.address_line_2}<br />
+            <span className="font-medium">City</span> :- {prDetails?.vendor_address_details?.city}<br />
+            <span className="font-medium">Country</span> :- {prDetails?.vendor_address_details?.country}<br />
+            <span className="font-medium">District </span>:- {prDetails?.vendor_address_details?.district}<br />
+            <span className="font-medium">State</span> :- {prDetails?.vendor_address_details?.state}<br />
+            <span className="font-medium">Pincode </span> :- {prDetails?.vendor_address_details?.zip_code}<br />
           </div>
 
           {/* Vendor Info List */}
@@ -123,7 +114,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
         <div className="border-l border-black">
           <div className="border-b border-black p-2">
             <div className="font-semibold">
-              Bill To : {prDetails?.bill_to_company}
+              Bill To : {prDetails?.bill_to_company_details?.company_name}
             </div>
             <div>Bilakhia House, Survey No 135/139</div>
             <div>Muktanand Marg, Chala,</div>
@@ -156,7 +147,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
           {/* Ship To */}
           <div className="border-t border-black p-2">
             <div className="font-semibold">
-              Ship To : {prDetails?.ship_to_company}
+              Ship To : {prDetails?.ship_to_company_details?.company_name}
             </div>
             <div>Bilakhia House, Survey No 135/139</div>
             <div>Muktanand Marg, Chala,</div>

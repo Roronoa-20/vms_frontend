@@ -1,5 +1,5 @@
 import React from "react";
-import DashboardCard from "../molecules/GateEntryDashboardCards";
+import DashboardCard from "@/src/components/molecules/GateEntryDashboardCards";
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
