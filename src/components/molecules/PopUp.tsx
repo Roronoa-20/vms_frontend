@@ -98,7 +98,7 @@ const PopUp = ({
 
         {children}
 
-        <div className="flex justify-end pt-2 gap-4 w-full">
+        <div className="flex justify-end pt-3 gap-4 w-full">
           <Button
             className="py-2"
             variant={"backbtn"}
