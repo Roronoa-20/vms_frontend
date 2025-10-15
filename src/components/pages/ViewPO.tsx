@@ -270,6 +270,9 @@ const ViewPO = ({ po_name }: Props) => {
           <Button onClick={() => { router.push(`/view-all-po-changes`) }} variant={"nextbtn"} size={"nextbtnsize"} className="px-2 transition text-nowrap">
             View All Changed PO Details
           </Button>
+          <Button onClick={() => { router.push(`/view-invalid-po`) }} variant={"nextbtn"} size={"nextbtnsize"} className="px-2 transition text-nowrap">
+            View Invalid PO
+          </Button>
         </div>
       </div>
 
