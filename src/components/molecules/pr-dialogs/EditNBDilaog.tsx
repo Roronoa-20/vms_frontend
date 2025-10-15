@@ -77,12 +77,20 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   const [MaterialCodeDropdown, setMaterialCodeDropdown] = useState<MaterialCode[]>()
   const [materialCode, setMaterialCode] = useState<string>("");
   const [requiredField, setRequiredField] = useState<Record<string, any>>({});
+
   useEffect(() => {
     if (isOpen) {
       setFormData(defaultData || {});
       setErrors({});
     }
   }, [isOpen, defaultData]);
+
+  useEffect(() => {
+    if (defaultData?.material_code_head) {
+      setMaterialCode(defaultData.material_code_head);
+    }
+  }, [defaultData]);
+
 
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -159,8 +167,8 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
 
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
-      console.log(response.data.message.data, "response of material code  data---------_++_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_=")
-      setMaterialCodeDropdown(response.data.message.data)
+      // console.log(response.data.message.data, "response of material code  data---------_++_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_=")
+      setMaterialCodeDropdown(response?.data?.message?.data)
       return response.data.message.data
     } else {
       alert("error");
@@ -385,11 +393,14 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           )} */}
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#000000] pb-1 flex items-center gap-1 ">
-            {"Select Region"}
+            {"Select Material Code"}
             {/* {error && <span className="text-red-600">*</span>} */}
           </h1>
           <SearchSelectComponent
-            setData={(value) => setMaterialCode(value ?? "")}
+            setData={(value) => {
+              setMaterialCode(value ?? "");
+              setFormData(prev => ({ ...prev, material_code_head: value ?? "" }));
+            }}
             data={materialCode ?? ""}
             getLabel={(item) => item.name}
             getValue={(item) => item?.name}

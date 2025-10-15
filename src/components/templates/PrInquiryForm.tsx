@@ -52,7 +52,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [purchaseGroupDropdown, setPurchaseGroupDropdown] = useState<{ name: string, purchase_group_code: string, purchase_group_name: string, description: string }[]>();
-  const [costCenterDropdown, setCostCenterDropdown] = useState<{ name: string, cost_center_code: string, cost_center_name: string,description: string }[]>([]);
+  const [costCenterDropdown, setCostCenterDropdown] = useState<{ name: string, cost_center_code: string, cost_center_name: string, description: string }[]>([]);
   const [glAccountDropdown, setGLAccountDropdown] = useState<{ name: string, gl_account_code: string, gl_account_name: string, description: string }[]>([]);
 
   const [toEmail, setToEmail] = useState<string>("");
@@ -90,10 +90,10 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
   }
 
   const requiredTableFields = {
-    product_name:"Please Select Product",
-    uom:"Please Select UOM",
-    product_quantity:"Please Enter Product Quantity",
-    user_specifications:"Please Enter User Specification"
+    product_name: "Please Select Product",
+    uom: "Please Select UOM",
+    product_quantity: "Please Enter Product Quantity",
+    user_specifications: "Please Enter User Specification"
   }
 
   const handleTableAdd = async () => {
@@ -136,8 +136,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
   };
 
   const handleSubmit = async () => {
-    if(formData && formData?.cart_product?. length == 0){
-      alert("Please Enter At Least 1 Product");
+    if (!tableData || tableData.length === 0) {
+      alert("Please add at least 1 Product Item before submitting.");
       return;
     }
     const url = API_END_POINTS?.submitPrInquiry;
@@ -210,10 +210,10 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     const url = `${API_END_POINTS?.InquiryDropdownsBasedOnCompany}?comp=${value}`
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
-      setPlantDropdown(response?.data?.message?.plants);
-      setPurchaseGroupDropdown(response?.data?.message?.purchase_groups);
-      setCostCenterDropdown(response?.data?.message?.cost_centers);
-      setGLAccountDropdown(response?.data?.message?.gl_accounts);
+      setPlantDropdown(response?.data?.message?.plants?.data);
+      setPurchaseGroupDropdown(response?.data?.message?.purchase_groups?.data);
+      setCostCenterDropdown(response?.data?.message?.cost_centers?.data);
+      setGLAccountDropdown(response?.data?.message?.gl_accounts?.data);
     }
   }
 
@@ -240,25 +240,25 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
   };
 
   const requiredFields = {
-  cart_use: "Please Select Cart Use",
-  category_type: "Please Select Category Type",
-  company: "Please Select Company",
-  purchase_type: "Please Select Purchase Type",
-  plant: "Please Select Plant",
-  purchase_group: "Please Select Purchase Group",
-  cost_center: "Please Select Cost Center",
-  gl_account: "Please Select GL Account"
-};
+    cart_use: "Please Select Cart Use",
+    category_type: "Please Select Category Type",
+    company: "Please Select Company",
+    purchase_type: "Please Select Purchase Type",
+    plant: "Please Select Plant",
+    purchase_group: "Please Select Purchase Group",
+    cost_center: "Please Select Cost Center",
+    gl_account: "Please Select GL Account"
+  };
 
 
   const handleNext = async () => {
     //validation
     for (const [key, message] of Object.entries(requiredFields)) {
-  if (!formData?.[key as keyof TPRInquiry]) {
-    alert(message);
-    return;
-  }
-}
+      if (!formData?.[key as keyof TPRInquiry]) {
+        alert(message);
+        return;
+      }
+    }
     const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.submitPrInquiryNextButton, data: { data: { ...formData, cart_date: formData?.cart_date ?? formatDateISO(new Date()), user: user, } }, method: "POST" });
     if (response?.status == 200) {
       router.push(`/pr-inquiry?cart_Id=${response?.data?.message?.name}`);
@@ -367,7 +367,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
               <SelectContent>
                 <SelectGroup>
                   {plantDropdown?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                    <SelectItem key={index} value={item?.name}>{item?.plant_name}</SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
@@ -406,7 +406,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
               <SelectContent>
                 <SelectGroup>
                   {costCenterDropdown?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.cost_center_code}</SelectItem>
+                    <SelectItem key={index} value={item?.name}>{item?.cost_center_code}-{item?.cost_center_name}</SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
@@ -605,7 +605,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
             </Table>
           </div>
         )}
-        <div className={`flex justify-end pr-2 mt-4 pb-4 ${refno ? "" : "hidden"}`}><Button className='py-2.5' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }}>Submit</Button></div>
+        <div className={`flex justify-end pr-2 mt-4 pb-4 ${refno ? "" : "hidden"}`}><Button className='py-2.5' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }} disabled={tableData.length === 0}>Submit</Button></div>
 
         {showSuccessModal && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
