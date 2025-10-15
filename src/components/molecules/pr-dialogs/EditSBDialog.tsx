@@ -179,9 +179,10 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
       return
     }
     const validationErrors = validate();
-
+    console.log(validationErrors,"this are all the errors")
+    console.log(errors,"this is the funciton errors")
     if (Object.keys(validationErrors).length > 0) {
-      alert(JSON.stringify(validationErrors));
+      // alert(JSON.stringify(validationErrors));
       return;
     }
     const updateformdata = { ...formData, name: pur_req };

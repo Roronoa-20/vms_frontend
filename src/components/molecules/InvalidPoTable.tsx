@@ -75,7 +75,7 @@ const InvalidPoTable = ({ viewInvalidPOTable}: Props) => {
 
   useEffect(() => {
     const fetchPoTable = async () => {
-      const POUrl = `${API_END_POINTS?.poTable}?vendor_name=${search}`
+      const POUrl = `${API_END_POINTS?.poTable}?vendor_name=${search}&vendor_code_invalid=${1}`
       const dashboardPOTableDataApi: AxiosResponse = await requestWrapper({
         url: POUrl,
         method: "GET",
