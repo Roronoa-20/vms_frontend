@@ -8,13 +8,64 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
-import { EmployeeDetail, EmployeeAPIResponse } from "@/src/types/MaterialCodeRequestFormTypes";
+import {
+  EmployeeDetail,
+  EmployeeAPIResponse,
+} from "@/src/types/MaterialCodeRequestFormTypes";
+
+interface MastersData {
+  companyMaster: any[];
+  plantMaster: any[];
+  divisionMaster: any[];
+  industryMaster: any[];
+  uomMaster: any[];
+  mrpTypeMaster: any[];
+  valuationClassMaster: any[];
+  procurementTypeMaster: any[];
+  valuationCategoryMaster: any[];
+  materialGroupMaster: any[];
+  profitCenterMaster: any[];
+  priceControlMaster: any[];
+  availabilityCheckMaster: any[];
+  materialTypeMaster: any[];
+  mrpControllerMaster: any[];
+  storageLocationMaster: any[];
+  classTypeMaster: any[];
+  serialNumberMaster: any[];
+  inspectionTypeMaster: any[];
+  materialCategoryMaster: any[];
+}
+
 
 export default function MaterialRegistration() {
   const form = useForm<any>();
   const [UserDetailsJSON, setUserDetailsJSON] = useState<any>(null);
   const [EmployeeDetailsJSON, setEmployeeDetailsJSON] = useState<EmployeeDetail | null>(null);
   const [companyName, setCompanyName] = useState<string | null>(null);
+
+  const [masters, setMasters] = useState<MastersData>({
+    companyMaster: [],
+    plantMaster: [],
+    divisionMaster: [],
+    industryMaster: [],
+    uomMaster: [],
+    mrpTypeMaster: [],
+    valuationClassMaster: [],
+    procurementTypeMaster: [],
+    valuationCategoryMaster: [],
+    materialGroupMaster: [],
+    profitCenterMaster: [],
+    priceControlMaster: [],
+    availabilityCheckMaster: [],
+    materialTypeMaster: [],
+    mrpControllerMaster: [],
+    storageLocationMaster: [],
+    classTypeMaster: [],
+    serialNumberMaster: [],
+    inspectionTypeMaster: [],
+    materialCategoryMaster: [],
+  });
+
   useEffect(() => {
     const fetchEmployeeData = async () => {
       try {
@@ -24,18 +75,12 @@ export default function MaterialRegistration() {
           return;
         }
 
-        const filterParam = encodeURIComponent(JSON.stringify({ user_id: userId }));
-        const fieldsParam = encodeURIComponent(JSON.stringify(["*"]));
-
         const employeeRes: AxiosResponse<EmployeeAPIResponse> = await requestWrapper({
-          url: `${API_END_POINTS.getEmployeeDetails}?fields=${fieldsParam}&filters=${filterParam}`,
+          url: `${API_END_POINTS.getEmployeeDetails}?user=${userId}`,
           method: "GET",
         });
-
-        console.log("Employee Details----->", employeeRes);
-
         if (employeeRes?.status === 200) {
-          const employeeData = employeeRes?.data?.data?.[0];
+          const employeeData = employeeRes?.data?.message?.data
           if (!employeeData) {
             console.warn("No employee details found for user_id:", userId);
             return;
@@ -47,7 +92,6 @@ export default function MaterialRegistration() {
             full_name: employeeData.full_name,
             email: employeeData.company_email,
           });
-          setCompanyName(employeeData.branch || "Default Company");
         }
       } catch (err) {
         console.error("Error fetching employee details:", err);
@@ -57,6 +101,55 @@ export default function MaterialRegistration() {
     fetchEmployeeData();
   }, []);
 
+  useEffect(() => {
+    const fetchAllMasters = async () => {
+      try {
+        const apiList = {
+          companyMaster: API_END_POINTS.getCompanyMaster,
+          plantMaster: API_END_POINTS.getPlantMaster,
+          divisionMaster: API_END_POINTS.getDivisionMaster,
+          industryMaster: API_END_POINTS.getIndustryMaster,
+          uomMaster: API_END_POINTS.getUOMMaster,
+          mrpTypeMaster: API_END_POINTS.getMRPTypeMaster,
+          valuationClassMaster: API_END_POINTS.getValuationClassMaster,
+          procurementTypeMaster: API_END_POINTS.getProcurementTypeMaster,
+          valuationCategoryMaster: API_END_POINTS.getValuationCategoryMaster,
+          materialGroupMaster: API_END_POINTS.getMaterialGroupMaster,
+          profitCenterMaster: API_END_POINTS.getProfitCenterMaster,
+          priceControlMaster: API_END_POINTS.getPriceControlMaster,
+          availabilityCheckMaster: API_END_POINTS.getAvailabilityCheckMaster,
+          materialTypeMaster: API_END_POINTS.getMaterialTypeMaster,
+          mrpControllerMaster: API_END_POINTS.getMRPControllerMaster,
+          storageLocationMaster: API_END_POINTS.getStorageLocationMaster,
+          classTypeMaster: API_END_POINTS.getClassTypeMaster,
+          serialNumberMaster: API_END_POINTS.getSerialNumberMaster,
+          inspectionTypeMaster: API_END_POINTS.getInspectionTypeMaster,
+          materialCategoryMaster: API_END_POINTS.getMaterialCategoryMaster,
+        };
+
+        const results = await Promise.allSettled(
+          Object.entries(apiList).map(async ([key, url]) => {
+            const res = await requestWrapper({ url, method: "GET" });
+            return [key, res?.data?.data || []];
+          })
+        );
+
+        const fetchedMasters: Record<string, any[]> = {};
+        results.forEach((result) => {
+          if (result.status === "fulfilled") {
+            const [key, data] = result.value;
+            fetchedMasters[key] = data;
+          }
+        });
+
+        setMasters((prev) => ({ ...prev, ...fetchedMasters }));
+      } catch (err) {
+        console.error("Error fetching master data:", err);
+      }
+    };
+
+    fetchAllMasters();
+  }, []);
 
   const onCancel = (e: MouseEvent<HTMLButtonElement>) => e.preventDefault();
   const onSubmit = (e: FormEvent<HTMLFormElement>) => e.preventDefault();
@@ -81,6 +174,7 @@ export default function MaterialRegistration() {
           UserDetailsJSON={UserDetailsJSON}
           EmployeeDetailsJSON={EmployeeDetailsJSON}
           companyName={companyName}
+          masters={masters}
         />
       </Form>
     </div>

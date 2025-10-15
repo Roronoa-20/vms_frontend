@@ -252,7 +252,7 @@ export const MaterialUserSideBar: SidebarItem[] = [
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
-    name: "View Code Request",
+    name: "Raise Request",
     href: "/new-material-code-request-table",
     children: []
   }

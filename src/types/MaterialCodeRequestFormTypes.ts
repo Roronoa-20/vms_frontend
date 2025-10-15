@@ -15,8 +15,12 @@ export interface EmployeeDetail {
 }
 
 export interface EmployeeAPIResponse {
-  data: EmployeeDetail[];
+  message: {
+    message: string;
+    data: EmployeeDetail;
+  }
 }
+
 
 export type MaterialRegistrationFormData = {
   material_name: string;

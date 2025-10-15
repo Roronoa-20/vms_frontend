@@ -5,6 +5,29 @@ import RequestorInformation from "@/src/components/molecules/material-onboarding
 import MaterialInformation from "@/src/components/molecules/material-onboarding/material-information";
 import { MaterialRegistrationFormData } from "@/src/types/MaterialCodeRequestFormTypes";
 
+interface MastersData {
+    companyMaster: any[];
+    plantMaster: any[];
+    divisionMaster: any[];
+    industryMaster: any[];
+    uomMaster: any[];
+    mrpTypeMaster: any[];
+    valuationClassMaster: any[];
+    procurementTypeMaster: any[];
+    valuationCategoryMaster: any[];
+    materialGroupMaster: any[];
+    profitCenterMaster: any[];
+    priceControlMaster: any[];
+    availabilityCheckMaster: any[];
+    materialTypeMaster: any[];
+    mrpControllerMaster: any[];
+    storageLocationMaster: any[];
+    classTypeMaster: any[];
+    serialNumberMaster: any[];
+    inspectionTypeMaster: any[];
+    materialCategoryMaster: any[];
+}
+
 interface MaterialOnboardingFormProps {
     form: UseFormReturn<MaterialRegistrationFormData>;
     onCancel: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -13,6 +36,7 @@ interface MaterialOnboardingFormProps {
     UserDetailsJSON: any;
     EmployeeDetailsJSON: any;
     companyName: string;
+    masters: MastersData
 }
 
 const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({

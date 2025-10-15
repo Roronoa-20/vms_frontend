@@ -86,7 +86,7 @@ const API_END_POINTS = {
   asaformDetails: `${url}/api/method/vms.APIs.assessment_apis.asa.get_asa_details_without_label`,
   dispatchTable: `${url}/api/method/vms.APIs.dispatch_dashboard.dispatch_dashboard.dispatch_dashboard`,
   poTable: `${url}/api/method/vms.APIs.dashboard_api.filter_card.filtering_po_details`,
-  dataBasedOnPo:`${url}/api/method/vms.APIs.purchase_api.po_get_mails.get_vendor_mails`,
+  dataBasedOnPo: `${url}/api/method/vms.APIs.purchase_api.po_get_mails.get_vendor_mails`,
 
   //pr api atul
   fetchDataCartId: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.get_cart_details`,
@@ -194,7 +194,7 @@ const API_END_POINTS = {
   dashboardSapErrorAcounts: `${url}/api/method/vms.APIs.dashboard_api.dashboard_filters_data.sap_error_vendor_details_by_accounts`,
   bankProofByPurchaseTeam: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`,
   DispatchStateAndPlant: `${url}/api/method/vms.APIs.dispatch.vehicle_details.get_state_and_plant_data`,
-  MaterialCodeSearchApi:`${url}/api/method/vms.APIs.master_apis.material_code.get_material_code_list`,
+  MaterialCodeSearchApi: `${url}/api/method/vms.APIs.master_apis.material_code.get_material_code_list`,
   // bankProofByPurchaseTeam:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`,
 
   // QA Dashboard APIs
@@ -278,14 +278,32 @@ const API_END_POINTS = {
   getRequestorMasterTableList: `${url}/api/method/vms.APIs.requestor_master.get_requestor_master.get_requestor_master_list`,
   getMaterialOnboardingDetails: `${url}/api/method/vms.APIs.material_onboarding.get_material_onboarding_details`,
   getAllMaterialDescriptionsAndCodes: `${url}/api/method/vms_app.APIs.material_onboarding.get_all_material_code.get_all_material_descriptions_and_codes`,
-  getAllMaterialCodes: `${url}/api/method/vms_app.APIs.material_code_apis.get_all_material_code.get_all_material_codes`,
+  // getAllMaterialCodes: `${url}/api/method/vms_app.APIs.material_code_apis.get_all_material_code.get_all_material_codes`,
   getAllMaterialTypeMasterDetails: `${url}/api/method/vms_app.APIs.material_type_apis.get_all_material_type.get_all_material_type_master_details`,
   getUserDetails: `${resourceurl}/User?fields=["*"]`,
-  getEmployeeDetails: `${resourceurl}/Employee`,
+  // getEmployeeDetails: `${resourceurl}/Employee`,
+  getEmployeeDetails: `${url}/api/method/vms.APIs.employee.get_employee.get_employee_details`,
   getCompanyMaster: `${resourceurl}/Company Master?fields=["name","company_name","company_short_form","company_code"]`,
   getPlantMaster: `${resourceurl}/Plant Master?fields=["*"]&limit_page_length=999`,
   getDivisionMaster: `${resourceurl}/Division Master?fields=["*"]&limit_page_length=999`,
-  getIndustryMaster: `${resourceurl}/Industry Master?fields=["*"]&limit_page_length=999`,
+  getIndustryMaster: `${resourceurl}/Industry?fields=["*"]&limit_page_length=999`,
+  getUOMMaster: `${resourceurl}/UOM Master?fields=["*"]&limit_page_length=999`,
+  getMRPTypeMaster: `${resourceurl}/MRP Type Master?fields=["*"]&limit_page_length=999`,
+  getValuationClassMaster: `${resourceurl}/Valuation Class?fields=["*"]&limit_page_length=999`,
+  getProcurementTypeMaster: `${resourceurl}/Procurement Type?fields=["*"]&limit_page_length=999`,
+  getValuationCategoryMaster: `${resourceurl}/Valuation Category?fields=["*"]&limit_page_length=999`,
+  getMaterialGroupMaster: `${resourceurl}/Material Group?fields=["*"]&limit_page_length=999`,
+  getProfitCenterMaster: `${resourceurl}/Profit Center?fields=["*"]&limit_page_length=999`,
+  getPriceControlMaster: `${resourceurl}/Price Control Master?fields=["*"]&limit_page_length=999`,
+  getAvailabilityCheckMaster: `${resourceurl}/Availability Checks?fields=["*"]&limit_page_length=999`,
+  getMaterialTypeMaster: `${resourceurl}/Material Type Master?fields=["*"]&limit_page_length=999`,
+  getMRPControllerMaster: `${resourceurl}/MRP Controller Master?fields=["*"]&limit_page_length=999`,
+  getStorageLocationMaster: `${resourceurl}/Storage Location Master?fields=["*"]&limit_page_length=999`,
+  getClassTypeMaster: `${resourceurl}/Class Type?fields=["*"]&limit_page_length=999`,
+  getSerialNumberMaster: `${resourceurl}/Serial Number Profile?fields=["*"]&limit_page_length=999`,
+  getInspectionTypeMaster: `${resourceurl}/Inspection Type?fields=["*"]&limit_page_length=999`,
+  getMaterialCategoryMaster: `${resourceurl}/Material Category Master?fields=["*"]&limit_page_length=999`,
+
 }
 
 export default API_END_POINTS;

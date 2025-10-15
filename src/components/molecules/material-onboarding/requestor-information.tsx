@@ -8,7 +8,7 @@ export default function RequestorInformation({ form, EmployeeDetails, UserDetail
 
     useEffect(() => {
         if (EmployeeDetails) {
-            form.setValue("requested_by", EmployeeDetails.name);
+            form.setValue("requested_by", EmployeeDetails.name || "");
             // setRequestedByDisplay(`${EmployeeDetails.full_name} - ${EmployeeDetails.employee_code || "EMP001"}`);
             form.setValue("department", EmployeeDetails.department);
             form.setValue("sub_department", EmployeeDetails.sub_department);
