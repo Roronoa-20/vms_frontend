@@ -214,7 +214,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     }
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
-      alert(JSON.stringify(validationErrors));
+      // alert(JSON.stringify(validationErrors));
       return;
     }
     const updateformdata = { ...formData, name: pur_req }
@@ -409,6 +409,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
             setDropdown={setMaterialCodeDropdown}
             placeholder='Select Material Code'
           />
+          {renderError("material_code_head")}
         </div>
       </div>
 
