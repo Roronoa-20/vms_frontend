@@ -246,8 +246,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     purchase_type: "Please Select Purchase Type",
     plant: "Please Select Plant",
     purchase_group: "Please Select Purchase Group",
-    cost_center: "Please Select Cost Center",
-    gl_account: "Please Select GL Account"
+    // cost_center: "Please Select Cost Center",
+    // gl_account: "Please Select GL Account"
   };
 
 
@@ -393,7 +393,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
           {/* Cost Center */}
           <div className="col-span-1">
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-              Cost Center <span className='text-red-400 text-[20px]'>*</span>
+              Cost Center
             </h1>
             <Select
               value={formData?.cost_center ?? ""}
@@ -416,7 +416,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
           {/* G/L Account */}
           <div className="col-span-1">
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-              G/L Account <span className='text-red-400 text-[20px]'>*</span>
+              G/L Account 
             </h1>
             <Select
               value={formData?.gl_account ?? ""}
