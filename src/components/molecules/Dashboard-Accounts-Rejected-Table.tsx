@@ -232,8 +232,8 @@ const DashboardAccountsRejectedVendorsTable = ({ dashboardTableData, companyDrop
                       <Eye className="h-8 w-8 text-black" />
                     </Button>
                   </TableCell>
-                  <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                  <TableCell><Button onClick={() => handleAmendClick(item?.name)} className="bg-blue-400 hover:bg-blue-300">Amend</Button></TableCell>
+                  <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">View</Button></Link></TableCell>
+                  <TableCell><Button onClick={() => handleAmendClick(item?.name)} className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">Amend</Button></TableCell>
                 </TableRow>
               ))
             ) : (

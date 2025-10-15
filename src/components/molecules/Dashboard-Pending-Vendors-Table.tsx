@@ -260,7 +260,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown, fil
                   </TableCell>
                   <TableCell>
                     <Button
-                      className="bg-blue-400 hover:bg-blue-300"
+                      className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]"
                       onClick={() => {
                         item?.form_fully_submitted_by_vendor == 1
                           ? handleView(item?.ref_no, item?.name)
@@ -278,7 +278,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown, fil
                         <Link
                           href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}
                         >
-                          <Button className="bg-blue-400 hover:bg-blue-300">
+                          <Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">
                             View
                           </Button>
                         </Link>

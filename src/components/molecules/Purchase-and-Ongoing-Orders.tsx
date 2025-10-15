@@ -287,14 +287,14 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                   <TableCell>
                     <Button
                       variant={"outline"}
-                      className="bg-blue-400 hover:bg-blue-300 text-white font-medium"
+                      className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]"
                       // onClick={() => downloadPoDetails(item?.name)}
                       onClick={() => router.push(`/view-po?po_name=${item?.name}&email_to=${item?.email}`)}
                     >
                       View
                     </Button>
                   </TableCell>
-                  <TableCell><Button onClick={() => { setIsEmailDialog(true); setEmail((prev: any) => ({ ...prev, to: item?.email })) }} className="bg-blue-400 hover:bg-blue-300">Send</Button></TableCell>
+                  <TableCell><Button onClick={() => { setIsEmailDialog(true); setEmail((prev: any) => ({ ...prev, to: item?.email })) }} className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">Send</Button></TableCell>
                 </TableRow>
               ))
             ) : (

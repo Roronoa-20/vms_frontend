@@ -1,26 +1,24 @@
 import React from "react";
-import DashboardCard from "@/src/components/molecules/GateEntryDashboardCards";
+import DashboardCard from "@/src/components/molecules/MaterialOnboardingDashbordCards";
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
-import { DashboardPOTableData, dashboardCardData, DashboardTableType, TvendorRegistrationDropdown, TPRInquiryTable, PurchaseRequisition, RFQTable } from "@/src/types/types";
+import { TvendorRegistrationDropdown } from "@/src/types/types";
 import { cookies } from "next/headers";
 
-type data = {
-  name:string,
-  count:number,
-  company_name:string
+export type cardCount = {
+  total_count:number,
+  approved:number,
+  pending:number,
 }
 
 
 const MaterialOnboardingDashBoard = async () => {
-  // const cookie = await cookies()
   const cookieStore = await cookies();
   const user = cookieStore.get("user_id")?.value
   const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
-  //card data
   const dashboardCardApi: AxiosResponse = await requestWrapper({
-    url: `${API_END_POINTS?.GateEntryDashboardCardCount}`,
+    url: `${API_END_POINTS?.materialonboardingdashboard}`,
     method: "GET",
     headers: {
       cookie: cookieHeaderString

@@ -114,7 +114,7 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
   }[] = [
 
       {
-        name: "Pending Request",
+        name: "Total Entry",
         value:"",
         count: Props?.cardData?.total_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
@@ -123,7 +123,7 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
         hover: "hover:border-emerald-400",
       },
       {
-        name: "Approved Request",
+        name: "MLSIPL Entry",
         count: Props?.cardData?.["3000-Meril Life Sciences India Private Limited"]?.count ?? 0,
         value:Props?.cardData?.["3000-Meril Life Sciences India Private Limited"]?.name,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
@@ -131,9 +131,113 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
         bg_color: "bg-violet-100",
         hover: "hover:border-violet-400",
       },
+      {
+        name: "MLSPL Entry",
+        count: Props?.cardData?.["2000-Meril Life Sciences Private Limited"]?.count ?? 0,
+        value:Props?.cardData?.["2000-Meril Life Sciences Private Limited"]?.name,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-pink-800",
+        bg_color: "bg-pink-100",
+        hover: "hover:border-pink-400",
+      },
+   
+      {
+        name: "MEPL Entry",
+        count: Props.cardData?.["8000-Meril Endo Surgery Private Limited"]?.count ?? 0,
+        value:Props?.cardData?.["8000-Meril Endo Surgery Private Limited"]?.name,
+        icon: "/dashboard-assests/cards_icon/doc.svg",
+        text_color: "text-orange-800",
+        bg_color: "bg-orange-100",
+        hover: "hover:border-orange-400",
+      },
+      {
+        name: "MDPL Entry",
+        count: Props.cardData?.["7000-Meril Diagnostics Private Limited"]?.count ?? 0,
+        value:Props?.cardData?.["7000-Meril Diagnostics Private Limited"]?.name,
+        icon: "/dashboard-assests/cards_icon/tick.svg",
+        text_color: "text-blue-800",
+        bg_color: "bg-blue-100",
+        hover: "hover:border-blue-400",
+      },
+      {
+        name: "MCPL Entry",
+        count: Props.cardData?.["1030-Meril Corporation I Pvt Ltd"]?.count ?? 0,
+        value:Props?.cardData?.["1030-Meril Corporation I Pvt Ltd"]?.name,
+        icon: "/dashboard-assests/cards_icon/doc.svg",
+        text_color: "text-yellow-800",
+        bg_color: "bg-yellow-100",
+        hover: "hover:border-yellow-400",
+      },
+      {
+        name: "MILSPL Entry",
+        count: 0,
+        value:"",
+        icon: "/dashboard-assests/cards_icon/doc.svg",
+        text_color: "text-green-800",
+        bg_color: "bg-green-100",
+        hover: "hover:border-green-400",
+      },
+      {
+        name: "MMIPL Entry",
+        count: Props.cardData?.["1022-Meril Medical Innovation Pvt. Ltd."]?.count ?? 0,
+        value:Props?.cardData?.["1022-Meril Medical Innovation Pvt. Ltd."]?.name,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-purple-800",
+        bg_color: "bg-purple-200",
+        hover: "hover:border-purple-400",
+      },
+      {
+        name: "MNPL Entry",
+        count: Props.cardData?.["1025-Merai Newage Pvt. Ltd."]?.count ?? 0,
+        value:Props?.cardData?.["1025-Merai Newage Pvt. Ltd."]?.name,
+        icon: "/dashboard-assests/cards_icon/package.svg",
+        text_color: "text-yellow-800",
+        bg_color: "bg-yellow-100",
+        hover: "hover:border-yellow-400",
+      },
+      {
+        name: "MCIPL Entry",
+        count:  0,
+        value:"",
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-pink-800",
+        bg_color: "bg-pink-100",
+        hover: "hover:border-pink-400",
+      },
+      {
+        name: "Material Received",
+        count: Props?.cardData?.gate_received_count ?? 0,
+        value:"",
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-orange-800",
+        bg_color: "bg-orange-100",
+        hover: "hover:border-orange-400",
+      },
+  
+      {
+        name: "Material Handover",
+        count: Props.cardData?.handover_count ?? 0,
+        value:"",
+        icon: "/dashboard-assests/cards_icon/doc.svg",
+        text_color: "text-blue-800",
+        bg_color: "bg-blue-100",
+        hover: "hover:border-blue-400",
+      },
     ];
 
   let cardData = allCardData;
+
+
+
+  // useEffect(() => {
+  //   if (user) {
+  //     setLoading(false);
+  //   }
+  // }, [user])
+
+  // useEffect(()=>{
+  //  fetchTableData("","","");
+  // },[])
 
 console.log(tableTitle,"this is table title")
 
@@ -150,8 +254,19 @@ console.log(tableTitle,"this is table title")
         setTableData([]);
       }
     }
-  };
+  }
 
+
+  const fetchPoBasedOnVendorCode = async () => {
+    const url = `${API_END_POINTS?.vendorPOTable}?vendor_code`;
+  }
+
+  // if (loading) {
+  //   return <div>Loading...</div>
+  // }
+
+  // console.log(Props?.prInquiryData, "this is PR table")
+  // console.log(Props?.dashboardApprovedVendorTableData, "this is RFQ table");
 
   return (
     <div className="">
@@ -201,6 +316,9 @@ console.log(tableTitle,"this is table title")
               </TabsTrigger>
             ))}
           </TabsList>
+        </div>
+        <div className="flex justify-end">
+              <Button onClick={()=>{router.push("gate-entry")}}>Create Gate Entry</Button>
         </div>
         {cardData?.map((item, index) => (
             <TabsContent key={item.name || index} value={item.name} >

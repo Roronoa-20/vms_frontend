@@ -90,7 +90,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
             </div>
           </div>
           <div className="border-b border-black p-2 leading-4 text-sm">
-             {prDetails?.bill_to_company_details?.company_name}<br/>
+             {prDetails?.vendor_address_details?.vendor_name}<br/>
             {prDetails?.vendor_address_details?.address_line_1},<br />
             {prDetails?.vendor_address_details?.address_line_2},<br />
             {prDetails?.vendor_address_details?.city} - {prDetails?.vendor_address_details?.zip_code}, {prDetails?.vendor_address_details?.state}, {prDetails?.vendor_address_details?.country}<br />
@@ -116,7 +116,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
             <div>{prDetails?.bill_to_company_details?.street_1}</div>
             <div>{prDetails?.bill_to_company_details?.street_2}</div>
             {/* <div>Muktanand Marg, Chala,</div> */}
-            <div>{prDetails?.bill_to_company_details?.city} - {prDetails?.bill_to_company_details?.pincode} ({prDetails?.bill_to_company_details?.state})</div>
+            <div>{prDetails?.bill_to_company_details?.city} - {prDetails?.bill_to_company_details?.pincode} ({prDetails?.bill_to_company_details?.state_full})</div>
             <div>Phone No: {prDetails?.bill_to_company_details?.contact_no}</div>
           </div>
 
@@ -150,7 +150,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
             <div>{prDetails?.ship_to_company_details?.street_1}</div>
             <div>{prDetails?.ship_to_company_details?.street_2}</div>
             {/* <div>Muktanand Marg, Chala,</div> */}
-            <div>{prDetails?.ship_to_company_details?.city} - {prDetails?.ship_to_company_details?.pincode} ({prDetails?.ship_to_company_details?.state})</div>
+            <div>{prDetails?.ship_to_company_details?.city} - {prDetails?.ship_to_company_details?.pincode} ({prDetails?.ship_to_company_details?.state_full})</div>
             <div>Phone No: {prDetails?.ship_to_company_details?.contact_no}</div>
           </div>
         </div>

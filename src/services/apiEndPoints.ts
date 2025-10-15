@@ -86,6 +86,7 @@ const API_END_POINTS = {
   asaformDetails: `${url}/api/method/vms.APIs.assessment_apis.asa.get_asa_details_without_label`,
   dispatchTable: `${url}/api/method/vms.APIs.dispatch_dashboard.dispatch_dashboard.dispatch_dashboard`,
   poTable: `${url}/api/method/vms.APIs.dashboard_api.filter_card.filtering_po_details`,
+  dataBasedOnPo:`${url}/api/method/vms.APIs.purchase_api.po_get_mails.get_vendor_mails`,
 
   //pr api atul
   fetchDataCartId: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.get_cart_details`,
@@ -272,6 +273,7 @@ const API_END_POINTS = {
   GateEntryTableData: `${url}/api/method/vms.APIs.dispatch.get_gate_entry.gate_entry_get`,
 
   // Material Onboarding APIs
+  materialonboardingdashboard: `${url}/api/method/vms.APIs.requestor_master.get_requestor_master.get_requestor_statistics`,
   getMaterialOnboardingTableList: `${url}/api/method/vms.APIs.material_onboarding.get_material_onboarding.get_material_onboarding_list`,
   getRequestorMasterTableList: `${url}/api/method/vms.APIs.requestor_master.get_requestor_master.get_requestor_master_list`,
   getMaterialOnboardingDetails: `${url}/api/method/vms.APIs.material_onboarding.get_material_onboarding_details`,
@@ -284,9 +286,6 @@ const API_END_POINTS = {
   getPlantMaster: `${resourceurl}/Plant Master?fields=["*"]&limit_page_length=999`,
   getDivisionMaster: `${resourceurl}/Division Master?fields=["*"]&limit_page_length=999`,
   getIndustryMaster: `${resourceurl}/Industry Master?fields=["*"]&limit_page_length=999`,
-
-    dataBasedOnPo:`${url}/api/method/vms.APIs.purchase_api.po_get_mails.get_vendor_mails`
-
 }
 
 export default API_END_POINTS;

@@ -216,7 +216,7 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
                         </TooltipProvider>
                       )}
                     </TableCell>
-                    <TableCell><Button onClick={() => { item?.form_fully_submitted_by_vendor == 1 ? handleView(item?.ref_no, item?.name) : alert("Vendor Form is not fully subitted") }} variant={"outline"}>View</Button></TableCell>
+                    <TableCell><Button onClick={() => { item?.form_fully_submitted_by_vendor == 1 ? handleView(item?.ref_no, item?.name) : alert("Vendor Form is not fully subitted") }} className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">View</Button></TableCell>
                   </TableRow>
                 ))
               ) : (

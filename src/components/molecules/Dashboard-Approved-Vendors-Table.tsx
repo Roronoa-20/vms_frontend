@@ -196,10 +196,13 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                       {item?.onboarding_form_status}
                     </div>
                   </TableCell>
-                  <TableCell className="text-center bg-blue-100 text-blue-800 px-2 py-1 rounded-xl">
+                  <TableCell>
+                    <div className="text-center bg-blue-100 text-blue-800 px-2 py-3 rounded-[14px]">
                     {formatApprovalAge(item?.approval_age)}
+
+                    </div>
                   </TableCell>
-                  <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
+                  <TableCell><Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
                   <TableCell className="text-center">{item?.vendor_country}</TableCell>
                   <TableCell className="text-center whitespace-nowrap">{item?.registered_by_full_name}</TableCell>
                   <TableCell>
@@ -207,7 +210,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                       href={`/view-onboarding-details?tabtype=${isTreasuryUser ? "Document Detail" : "Company Detail"
                         }&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}
                     >
-                      <Button className="bg-blue-400 hover:bg-blue-300">View</Button>
+                      <Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">View</Button>
                     </Link>
                   </TableCell>
                   {/* <TableCell><Link href={`/view-onboarding-details?tabtype=Company Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-blue-400 hover:bg-blue-300">View</Button></Link></TableCell> */}

@@ -162,9 +162,9 @@ const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDrop
               <TableHead className="text-center">Country</TableHead>
               <TableHead className="text-center">Register By</TableHead>
               <TableHead className="text-center">View Details</TableHead>
-              {!isAccountsUser && !isTreasuryUser && (
+              {/* {!isAccountsUser && !isTreasuryUser && (
                 <TableHead className="text-center">QMS Form</TableHead>
-              )}
+              )} */}
             </TableRow>
           </TableHeader>
           <TableBody className="text-center">
@@ -187,7 +187,7 @@ const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDrop
                       {item?.onboarding_form_status}
                     </div>
                   </TableCell>
-                  <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
+                  <TableCell><Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
                   <TableCell>{item?.vendor_country}</TableCell>
                   <TableCell>{item?.registered_by}</TableCell>
                   <TableCell>
@@ -195,13 +195,13 @@ const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDrop
                       href={`/view-onboarding-details?tabtype=${isTreasuryUser ? "Document Detail" : "Company Detail"
                         }&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}
                     >
-                      <Button className="bg-blue-400 hover:bg-blue-300">View</Button>
+                      <Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">View</Button>
                     </Link>
                   </TableCell>
                   {/* <TableCell><Link href={`/view-onboarding-details?tabtype=Company Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-blue-400 hover:bg-blue-300">View</Button></Link></TableCell> */}
-                  {!isAccountsUser && !isTreasuryUser && (
-                    <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
-                  )}
+                  {/* {!isAccountsUser && !isTreasuryUser && (
+                    <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">View</Button></Link></div></TableCell>
+                  )} */}
                 </TableRow>
               ))
             ) : (
