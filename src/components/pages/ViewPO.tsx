@@ -61,6 +61,13 @@ const ViewPO = ({ po_name }: Props) => {
 
   const [ccEmailsList, setCCEmailsList] = useState<{ value: string, label: string }[]>([]);
 
+  useEffect(()=>{
+    if(po_name){
+      handlePOChange(po_name);
+    }
+  },[])
+
+
   // setEmail((prev:any)=>({...prev,to:email_to}));
   // const [sign,setSign] = useState();
   const router = useRouter();
@@ -210,6 +217,7 @@ const ViewPO = ({ po_name }: Props) => {
     const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.dataBasedOnPo, method: "GET", params: { po_number: value } });
     if (response?.status == 200) {
       setEmail((prev: any) => ({ ...prev, to: response?.data?.message?.vendor_emails?.office_email_primary }));
+      console.log(response?.data?.message?.team_members?.all_team_user_ids,"this is cc emails")
       const emailList = response?.data?.message?.team_members?.all_team_user_ids?.map((item: any, index: any) => {
         const obj = {
           label: item,
