@@ -232,8 +232,9 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                         ) : (
                           <Link href={`/pr-request?cart_id=${item?.name}`}>
                             <button
-                              title="Raise PR"
+                              title={designation == "Purchase Team"?"cannot raise pr":"Raise PR"}
                               className="py-2 px-4 text-white rounded-[16px] bg-[#5291CD] hover:bg-white hover:text-black"
+                              disabled={designation == "Purchase Team"?true:false}
                             >
                               PR
                             </button>
