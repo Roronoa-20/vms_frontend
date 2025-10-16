@@ -14,6 +14,7 @@ import jsPDF from 'jspdf';
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import MultiSelect, { MultiValue } from "react-select";
+
 interface POItemsTable {
   name: string,
   product_name: string,
@@ -189,6 +190,10 @@ const ViewPO = ({ po_name }: Props) => {
 
 
   const handleSubmit = async () => {
+    if (!PRNumber) {
+      alert("Please Select PO Number");
+      return;
+    }
 
     if (!email?.cc) {
       alert("please select at least 1 cc email");
@@ -198,7 +203,7 @@ const ViewPO = ({ po_name }: Props) => {
       alert("please add PO");
       return;
     }
-    const sendPoEmailUrl = API_END_POINTS?.sendPOEmailVendor;
+    const sendPoEmailUrl = `${API_END_POINTS.sendPOEmailVendor}?po_name=${PRNumber}`;
     const formdata = new FormData();
     if (POFile) {
       formdata.append("attach", POFile)
