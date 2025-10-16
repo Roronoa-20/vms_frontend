@@ -1,24 +1,33 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
 
-export default function RequestorInformation({ form, EmployeeDetails, UserDetails, companyInfo }: any) {
-    console.log("Reqeustor Details--->", EmployeeDetails);
+interface RequestorInformationProps {
+    form: any;
+    EmployeeDetails: any;
+    UserDetails?: any;
+    companyInfo?: any;
+}
 
+export default function RequestorInformation({ form, EmployeeDetails }: RequestorInformationProps) {
+    // Whenever EmployeeDetails changes, reset the form values
     useEffect(() => {
         if (EmployeeDetails) {
-            form.setValue("requested_by", EmployeeDetails.name || "");
-            // setRequestedByDisplay(`${EmployeeDetails.full_name} - ${EmployeeDetails.employee_code || "EMP001"}`);
-            form.setValue("department", EmployeeDetails.department);
-            form.setValue("sub_department", EmployeeDetails.sub_department);
-            form.setValue("hod", EmployeeDetails.head_of_department);
-            form.setValue("immediate_reporting_head", EmployeeDetails.reports_to);
-            form.setValue("company", EmployeeDetails.branch || companyInfo);
-            form.setValue("contact_information_email", EmployeeDetails.company_email);
-            form.setValue("contact_information_phone", EmployeeDetails.cell_number || "");
+            form.reset({
+                request_date: new Date().toISOString().split("T")[0], // today
+                requested_by: EmployeeDetails.name ?? "",
+                company: EmployeeDetails.company?.[0]?.company_name ?? "",
+                department: EmployeeDetails.department ?? "",
+                sub_department: EmployeeDetails.sub_department ?? "",
+                hod: EmployeeDetails.head_of_department ?? "",
+                immediate_reporting_head: EmployeeDetails.reports_to ?? "",
+                contact_information_email: EmployeeDetails.company_email ?? "",
+                contact_information_phone: EmployeeDetails.cell_number ?? "",
+            });
         }
-    }, [EmployeeDetails]);
+    }, [EmployeeDetails, form]);
 
     return (
         <div className="bg-[#F4F4F6]">
@@ -28,6 +37,7 @@ export default function RequestorInformation({ form, EmployeeDetails, UserDetail
                         Requestor Information
                     </div>
                     <div className="grid grid-cols-3 gap-x-6 gap-y-6 mt-4">
+
                         {/* Column 1 */}
                         <div className="space-y-2">
                             <FormField
@@ -43,14 +53,12 @@ export default function RequestorInformation({ form, EmployeeDetails, UserDetail
                                                 type="date"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
                                                 {...field}
-                                                value={field.value || new Date().toISOString().split("T")[0]} // ← fallback to today
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-
 
                             <FormField
                                 control={form.control}
@@ -64,7 +72,6 @@ export default function RequestorInformation({ form, EmployeeDetails, UserDetail
                                             <input
                                                 type="text"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
-                                                value={field.value || ""}
                                                 {...field}
                                                 readOnly
                                             />
@@ -86,9 +93,8 @@ export default function RequestorInformation({ form, EmployeeDetails, UserDetail
                                             <input
                                                 type="text"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
-                                                value={field.value || `${EmployeeDetails?.company || ""} - ${companyInfo.company_name}`}
-                                                readOnly
                                                 {...field}
+                                                readOnly
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -112,7 +118,6 @@ export default function RequestorInformation({ form, EmployeeDetails, UserDetail
                                                 type="text"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
                                                 {...field}
-                                                // value={EmployeeDetails.department_name}
                                                 readOnly
                                             />
                                         </FormControl>
@@ -134,7 +139,6 @@ export default function RequestorInformation({ form, EmployeeDetails, UserDetail
                                                 type="text"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
                                                 {...field}
-                                                // value={EmployeeDetails.sub_department_name}
                                                 readOnly
                                             />
                                         </FormControl>
@@ -156,7 +160,6 @@ export default function RequestorInformation({ form, EmployeeDetails, UserDetail
                                                 type="text"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
                                                 {...field}
-                                                // value={EmployeeDetails.hod}
                                                 readOnly
                                             />
                                         </FormControl>
@@ -181,7 +184,6 @@ export default function RequestorInformation({ form, EmployeeDetails, UserDetail
                                                 type="text"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
                                                 {...field}
-                                                // value={EmployeeDetails.reporting_head}
                                                 readOnly
                                             />
                                         </FormControl>
@@ -203,7 +205,6 @@ export default function RequestorInformation({ form, EmployeeDetails, UserDetail
                                                 type="email"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
                                                 {...field}
-                                                // value={EmployeeDetails.email}
                                                 readOnly
                                             />
                                         </FormControl>
@@ -225,7 +226,6 @@ export default function RequestorInformation({ form, EmployeeDetails, UserDetail
                                                 type="text"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
                                                 {...field}
-                                                // value={EmployeeDetails.contact_number}
                                                 readOnly
                                             />
                                         </FormControl>
@@ -234,6 +234,7 @@ export default function RequestorInformation({ form, EmployeeDetails, UserDetail
                                 )}
                             />
                         </div>
+
                     </div>
                 </div>
             </div>

@@ -8,6 +8,9 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import VendorRegistrationSchemas from "@/src/schemas/vendorRegistrationSchema";
 import {
   EmployeeDetail,
   EmployeeAPIResponse,
@@ -36,55 +39,43 @@ interface MastersData {
   materialCategoryMaster: any[];
 }
 
-
 export default function MaterialRegistration() {
-  const form = useForm<any>();
-  const [UserDetailsJSON, setUserDetailsJSON] = useState<any>(null);
-  const [EmployeeDetailsJSON, setEmployeeDetailsJSON] = useState<EmployeeDetail | null>(null);
-  const [companyName, setCompanyName] = useState<string | null>(null);
-
-  const [masters, setMasters] = useState<MastersData>({
-    companyMaster: [],
-    plantMaster: [],
-    divisionMaster: [],
-    industryMaster: [],
-    uomMaster: [],
-    mrpTypeMaster: [],
-    valuationClassMaster: [],
-    procurementTypeMaster: [],
-    valuationCategoryMaster: [],
-    materialGroupMaster: [],
-    profitCenterMaster: [],
-    priceControlMaster: [],
-    availabilityCheckMaster: [],
-    materialTypeMaster: [],
-    mrpControllerMaster: [],
-    storageLocationMaster: [],
-    classTypeMaster: [],
-    serialNumberMaster: [],
-    inspectionTypeMaster: [],
-    materialCategoryMaster: [],
+  const form = useForm<any>({
+    resolver: zodResolver(VendorRegistrationSchemas),
   });
 
+  const [UserDetailsJSON, setUserDetailsJSON] = useState<any>(null);
+  const [EmployeeDetailsJSON, setEmployeeDetailsJSON] =
+    useState<EmployeeDetail | null>(null);
+  const [companyName, setCompanyName] = useState<string | null>(null);
+  const [AllMaterialCodes, setAllMaterialCodes] = useState<any>(null);
+  const [materialRequestList, setMaterialRequestList] = useState<any[]>([]);
+  const [materialCompanyCode, setMaterialCompanyCode] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
+  const router = useRouter();
+  const token = Cookies.get("token");
+
+  const sanitizeValue = (value: any): string =>
+    value === undefined || value === "undefined" ? "" : value;
+
+  // 🧩 FETCH EMPLOYEE DETAILS
   useEffect(() => {
     const fetchEmployeeData = async () => {
       try {
         const userId = Cookies.get("user_id");
-        if (!userId) {
-          console.error("No user_id found in cookies");
-          return;
-        }
+        if (!userId) return console.error("No user_id found in cookies");
 
-        const employeeRes: AxiosResponse<EmployeeAPIResponse> = await requestWrapper({
-          url: `${API_END_POINTS.getEmployeeDetails}?user=${userId}`,
-          method: "GET",
-        });
+        const employeeRes: AxiosResponse<EmployeeAPIResponse> =
+          await requestWrapper({
+            url: `${API_END_POINTS.getEmployeeDetails}?user=${userId}`,
+            method: "GET",
+          });
+
         if (employeeRes?.status === 200) {
-          const employeeData = employeeRes?.data?.message?.data
-          if (!employeeData) {
-            console.warn("No employee details found for user_id:", userId);
-            return;
-          }
+          const employeeData = employeeRes?.data?.message?.data;
+          if (!employeeData) return console.warn("No employee details found");
 
           setEmployeeDetailsJSON(employeeData);
           setUserDetailsJSON({
@@ -101,6 +92,7 @@ export default function MaterialRegistration() {
     fetchEmployeeData();
   }, []);
 
+  // 🧩 FETCH ALL MASTERS
   useEffect(() => {
     const fetchAllMasters = async () => {
       try {
@@ -130,38 +122,189 @@ export default function MaterialRegistration() {
         const results = await Promise.allSettled(
           Object.entries(apiList).map(async ([key, url]) => {
             const res = await requestWrapper({ url, method: "GET" });
-            return [key, res?.data?.data || []];
+            const data =
+              res?.data?.data || res?.data?.message?.data || [];
+            return [key, data];
           })
         );
 
         const fetchedMasters: Record<string, any[]> = {};
-        results.forEach((result) => {
-          if (result.status === "fulfilled") {
-            const [key, data] = result.value;
+        results.forEach((r) => {
+          if (r.status === "fulfilled") {
+            const [key, data] = r.value;
             fetchedMasters[key] = data;
           }
         });
-
         setMasters((prev) => ({ ...prev, ...fetchedMasters }));
       } catch (err) {
-        console.error("Error fetching master data:", err);
+        console.error("Error fetching masters:", err);
       }
     };
 
     fetchAllMasters();
   }, []);
 
-  const onCancel = (e: MouseEvent<HTMLButtonElement>) => e.preventDefault();
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => e.preventDefault();
-  const onUpdate = (e: MouseEvent<HTMLButtonElement>) => e.preventDefault();
+  // 🧩 FETCH MATERIAL CODES
+  useEffect(() => {
+    const fetchMaterialCode = async () => {
+      try {
+        const MaterialCodeRes: AxiosResponse<EmployeeAPIResponse> =
+          await requestWrapper({
+            url: `${API_END_POINTS.MaterialCodeSearchApi}`,
+            method: "GET",
+          });
+        console.log("Mteirl code response--->",MaterialCodeRes)
+        if (MaterialCodeRes?.status === 200) {
+          const MaterialCodeData = MaterialCodeRes?.data?.message?.data;
+          setAllMaterialCodes(MaterialCodeData || []);
+        }
+      } catch (err) {
+        console.error("Error fetching material codes:", err);
+      }
+    };
 
-  if (!UserDetailsJSON || !EmployeeDetailsJSON || !companyName) {
+    fetchMaterialCode();
+  }, []);
+
+  const [masters, setMasters] = useState<MastersData>({
+    companyMaster: [],
+    plantMaster: [],
+    divisionMaster: [],
+    industryMaster: [],
+    uomMaster: [],
+    mrpTypeMaster: [],
+    valuationClassMaster: [],
+    procurementTypeMaster: [],
+    valuationCategoryMaster: [],
+    materialGroupMaster: [],
+    profitCenterMaster: [],
+    priceControlMaster: [],
+    availabilityCheckMaster: [],
+    materialTypeMaster: [],
+    mrpControllerMaster: [],
+    storageLocationMaster: [],
+    classTypeMaster: [],
+    serialNumberMaster: [],
+    inspectionTypeMaster: [],
+    materialCategoryMaster: [],
+  });
+
+  // 🧾 CREATE REQUESTOR MASTER
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+    try {
+      const formValues = form.getValues();
+      const finalMaterialRequestList =
+        materialRequestList.length > 0
+          ? materialRequestList
+          : [
+            {
+              material_name_description: formValues.material_name_description,
+              material_code_revised: formValues.material_code_revised,
+              material_company_code: materialCompanyCode,
+              material_type: formValues.material_type,
+              plant_name: formValues.plant_name,
+              material_category: formValues.material_category,
+              base_unit_of_measure: formValues.base_unit_of_measure,
+              comment_by_user: formValues.comment_by_user,
+              material_specifications: formValues.material_specifications,
+              is_revised_code_new: formValues.is_revised_code_new,
+            },
+          ];
+
+      const payload = new FormData();
+      Object.entries(formValues).forEach(([key, value]) => {
+        if (key !== "material_request")
+          payload.append(key, sanitizeValue(value));
+      });
+      payload.append("material_request", JSON.stringify(finalMaterialRequestList));
+
+      const res: AxiosResponse = await requestWrapper({
+        url: API_END_POINTS.createRequestorMaster,
+        method: "POST",
+        headers: { Authorization: `token ${token}` },
+        data: payload,
+      });
+
+      console.log("Create success →", res.data);
+      setIsButtonDisabled(true);
+      setShowAlert(true);
+
+    } catch (err) {
+      console.error("Error creating material:", err);
+
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 🧾 UPDATE REQUESTOR MASTER
+  const onUpdate = async (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+    try {
+      const formValues = form.getValues();
+      const requestorName = formValues?.requestor_name;
+      if (!requestorName) throw new Error("Missing Requestor Master name");
+
+      const finalMaterialRequestList =
+        materialRequestList.length > 0
+          ? materialRequestList
+          : [
+            {
+              material_name_description: formValues.material_name_description,
+              material_code_revised: formValues.material_code_revised,
+              material_company_code: materialCompanyCode,
+              material_type: formValues.material_type,
+              plant_name: formValues.plant_name,
+              material_category: formValues.material_category,
+              base_unit_of_measure: formValues.base_unit_of_measure,
+              comment_by_user: formValues.comment_by_user,
+              material_specifications: formValues.material_specifications,
+              is_revised_code_new: formValues.is_revised_code_new,
+            },
+          ];
+
+      const payload = new FormData();
+      payload.append("requestor_name", requestorName);
+      Object.entries(formValues).forEach(([key, value]) => {
+        if (key !== "material_request")
+          payload.append(key, sanitizeValue(value));
+      });
+      payload.append("material_request", JSON.stringify(finalMaterialRequestList));
+
+      const res: AxiosResponse = await requestWrapper({
+        url: API_END_POINTS.updateRequestorMaster,
+        method: "POST",
+        headers: { Authorization: `token ${token}` },
+        data: payload,
+      });
+
+      console.log("Update success →", res.data);
+      setIsButtonDisabled(true);
+      setShowAlert(true);
+
+    } catch (err) {
+      console.error("Error updating material:", err);
+
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onCancel = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    router.push("/new-material-code-request-table");
+    window.location.reload();
+  };
+
+  if (!UserDetailsJSON || !EmployeeDetailsJSON)
     return (
       <div className="text-center py-8 text-gray-700 font-medium">
         Loading data from server...
       </div>
     );
-  }
 
   return (
     <div className="pt-4 pl-[1%] pr-[1%] bg-slate-300">
@@ -173,8 +316,12 @@ export default function MaterialRegistration() {
           onUpdate={onUpdate}
           UserDetailsJSON={UserDetailsJSON}
           EmployeeDetailsJSON={EmployeeDetailsJSON}
-          companyName={companyName}
           masters={masters}
+          AllMaterialCodes={AllMaterialCodes}
+          showAlert={showAlert}
+          isLoading={isLoading}
+          isButtonDisabled={isButtonDisabled}
+
         />
       </Form>
     </div>

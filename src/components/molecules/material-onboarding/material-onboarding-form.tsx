@@ -4,6 +4,11 @@ import { Button } from "@/components/ui/button";
 import RequestorInformation from "@/src/components/molecules/material-onboarding/requestor-information";
 import MaterialInformation from "@/src/components/molecules/material-onboarding/material-information";
 import { MaterialRegistrationFormData } from "@/src/types/MaterialCodeRequestFormTypes";
+import { MaterialCode } from '@/src/types/PurchaseRequestType';
+
+interface DropdownData {
+    material_code: MaterialCode[];
+}
 
 interface MastersData {
     companyMaster: any[];
@@ -35,19 +40,42 @@ interface MaterialOnboardingFormProps {
     onUpdate: (e: React.MouseEvent<HTMLButtonElement>) => void;
     UserDetailsJSON: any;
     EmployeeDetailsJSON: any;
-    companyName: string;
-    masters: MastersData
+    masters: MastersData;
+    AllMaterialCodes: MaterialCode;
+    showAlert: any;
+    isLoading: any;
+    isButtonDisabled: any
 }
 
-const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({
-    form,
-    onCancel,
-    onSubmit,
-    onUpdate,
-    UserDetailsJSON,
-    EmployeeDetailsJSON,
-    companyName,
-}) => {
+const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, onCancel, onSubmit, onUpdate, UserDetailsJSON, EmployeeDetailsJSON, masters, AllMaterialCodes }) => {
+    console.log("Masters----->", AllMaterialCodes);
+
+    const basicMasters = {
+        companyMaster: masters.companyMaster,
+        plantMaster: masters.plantMaster,
+        materialCategoryMaster: masters.materialCategoryMaster,
+        materialTypeMaster: masters.materialTypeMaster,
+        uomMaster: masters.uomMaster,
+    };
+
+    const advancedMasters = {
+        mrpTypeMaster: masters.mrpTypeMaster,
+        valuationClassMaster: masters.valuationClassMaster,
+        procurementTypeMaster: masters.procurementTypeMaster,
+        valuationCategoryMaster: masters.valuationCategoryMaster,
+        materialGroupMaster: masters.materialGroupMaster,
+        profitCenterMaster: masters.profitCenterMaster,
+        priceControlMaster: masters.priceControlMaster,
+        availabilityCheckMaster: masters.availabilityCheckMaster,
+        mrpControllerMaster: masters.mrpControllerMaster,
+        storageLocationMaster: masters.storageLocationMaster,
+        classTypeMaster: masters.classTypeMaster,
+        serialNumberMaster: masters.serialNumberMaster,
+        inspectionTypeMaster: masters.inspectionTypeMaster,
+        divisionMaster: masters.divisionMaster,
+        industryMaster: masters.industryMaster,
+    };
+
     return (
         <form onSubmit={onSubmit} className="bg-white p-4 rounded shadow space-y-4">
             <div className="space-y-1">
@@ -55,10 +83,14 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({
                     form={form}
                     UserDetails={UserDetailsJSON}
                     EmployeeDetails={EmployeeDetailsJSON}
-                    companyInfo={companyName}
                 />
 
-                <MaterialInformation />
+                <MaterialInformation
+                    form={form}
+                    basicMasters={basicMasters}
+                    advancedMasters={advancedMasters}
+                    AllMaterialCodes={AllMaterialCodes}
+                />
             </div>
 
             <div className="flex justify-end space-x-5 items-center">

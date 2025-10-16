@@ -26,6 +26,7 @@ import { today } from '../../templates/RFQTemplates/LogisticsImportRFQFormFields
 import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ProfitCenter, PurchaseGroup, StorageLocation, StoreLocation, UOMMaster, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType';
 import SearchSelectComponent from '../../common/SelectSearchComponent';
 import PopUp from '../PopUp';
+
 interface DropdownData {
   account_assignment_category: AccountAssignmentCategory[];
   item_category_master: ItemCategoryMaster[];
@@ -175,6 +176,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     }
     return []
   }
+  
   const validate = () => {
     const newErrors: Record<string, string> = {};
 
