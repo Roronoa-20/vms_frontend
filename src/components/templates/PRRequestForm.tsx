@@ -556,6 +556,7 @@ const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGrou
           CostCenterDropdown={CostCenterDropdown}
           MaterialGroupDropdown={MaterialGroupDropdown}
           pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
+          
         />}
 
       {isNBEditModalOpen && <EditNBItemModal
@@ -574,6 +575,8 @@ const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGrou
         CostCenterDropdown={CostCenterDropdown}
         pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
         defaultData={editRow}
+        plant={formData?.plant ?formData?.plant : ''}
+        company={formData?.company?formData?.company:""}
       />}
 
       {/* {(mainItems?.['Form Status'] != "Submitted" && mainItems?.docname) && <div className={`flex justify-end py-6`}><Button type='button' className='bg-blue-400 hover:bg-blue-400 px-6 font-medium' onClick={() => { handleSubmit() }}>Submit</Button></div>} */}
@@ -581,7 +584,7 @@ const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGrou
       {mainItems?.docname && (
         <div className="flex justify-end py-6">
           {/* Normal Submit Button (for non-submitted forms) */}
-          {mainItems?.['Form Status'] !== "Submitted" ? (
+          {(mainItems?.['Form Status'] !== "Submitted") && (mainItems?.['Form Status'] !== "SAP Error") ? (
             <Button
               type="button"
               className="py-2.5"

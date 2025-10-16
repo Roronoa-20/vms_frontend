@@ -59,6 +59,8 @@ interface EditNBModalProps {
   accountAssigmentDropdown:AccountAssignmentCategory[]
   // MaterialCodeDropdown: MaterialCode[]
   itemCategoryDropdown:ItemCategoryMaster[]
+  plant:string
+  company:string
 }
 
 const EditNBModal: React.FC<EditNBModalProps> = ({
@@ -71,7 +73,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   PurchaseGroupDropdown,
   StorageLocationDropdown,
   ValuationClassDropdown,
-  ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown,accountAssigmentDropdown,itemCategoryDropdown
+  ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown,accountAssigmentDropdown,itemCategoryDropdown,plant,company
 }) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, any>>({});
@@ -87,7 +89,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
 
   useEffect(() => {
     if (defaultData?.material_code_head) {
-      setMaterialCode(defaultData.material_code_head);
+      setMaterialCode(defaultData?.material_code_head);
     }
   }, [defaultData]);
 
@@ -150,24 +152,21 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   const fetchMaterialCodeData = async (query?: string): Promise<[]> => {
     console.log(query)
     const baseUrl = API_END_POINTS?.MaterialCodeSearchApi;
-
     let url = baseUrl;
 
     // Only include filters if company exists
-    if (formData?.company_code_area_head) {
-      const filters = [{ company: formData.company_code_area_head }];
+    if (company) {
+      const filters = [{ company:company},{plant:plant}];
+      console.log(filters,"filters")
       url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
     }
-
     // Add search_term if query exists
     if (query) {
-      // If filters already added, use "&", otherwise "?"
       url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
     }
 
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
-      // console.log(response.data.message.data, "response of material code  data---------_++_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_=")
       setMaterialCodeDropdown(response?.data?.message?.data)
       return response.data.message.data
     } else {
@@ -231,7 +230,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     }
   };
   useEffect(() => {
-    setFormData((prev) => ({ ...prev, purchase_requisition_date_head: formData?.purchase_requisition_date_head ? formData?.purchase_requisition_date_head : today }));
+    setFormData((prev) => ({ ...prev, purchase_requisition_date_head: formData?.purchase_requisition_date_head ? formData?.purchase_requisition_date_head : today , plant_head:plant }));
   }, [today, formData?.purchase_requisition_date_head]);
 
   useEffect(() => {
@@ -293,6 +292,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       </div>
     );
   };
+
   return (
     <PopUp headerText='Purchase Request Items' classname='overflow-y-scroll md:max-w-[1000px] md:max-h-[600px]' handleClose={onClose} isSubmit={true} Submitbutton={handleSubmit}>
       <div className="grid grid-cols-3 gap-6 pt-2">
