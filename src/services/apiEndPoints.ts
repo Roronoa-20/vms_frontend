@@ -99,7 +99,7 @@ const API_END_POINTS = {
   getPRItemsTable: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_pr_details_simple`,
   approvePR: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition_approval.purchase_team_approval_check`,
   sapprcreated: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_purchase_requisition_form`,
-
+  fetchAccountAssignmentData:`${url}/api/method/vms.APIs.purchase_api.handle_req_field_pr.return_acc_ass_category_list`,
   //rfq apis
   fetchVendorListBasedOnRFQType: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.vendor_list`,
   CreateImportRFQ: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.create_import_logistic_rfq`,

@@ -5,7 +5,7 @@ import { Input } from '../atoms/input'
 import { Button } from '../atoms/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../atoms/select'
-import { CostCenter, GLAccountNumber, MaterialCode, MaterialGroupMaster, ProfitCenter, PurchaseGroup, PurchaseOrganisation, PurchaseRequestData, PurchaseRequestDropdown, StorageLocation, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType'
+import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ProfitCenter, PurchaseGroup, PurchaseOrganisation, PurchaseRequestData, PurchaseRequestDropdown, StorageLocation, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType'
 import { AlertCircleIcon, Edit2Icon } from 'lucide-react'
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
@@ -40,6 +40,7 @@ interface Props {
   CostCenterDropdown: CostCenter[]
   // MaterialCodeDropdown: MaterialCode[]
   PurchaseOrgDropdown: PurchaseOrganisation[]
+  company:string
 }
 
 export const updateQueryParam = (key: string, value: string) => {
@@ -48,7 +49,7 @@ export const updateQueryParam = (key: string, value: string) => {
   window.history.pushState({}, '', url.toString());
 };
 
-const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, StorageLocationDropdown, ValuationClassDropdown, ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, PurchaseOrgDropdown }: Props) => {
+const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, StorageLocationDropdown, ValuationClassDropdown, ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, PurchaseOrgDropdown }: Props) => {
   const user = Cookies.get("user_id");
   const { designation } = useAuth();
   const router = useRouter()
@@ -58,11 +59,12 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
   const [expandedRowNames, setExpandedRowNames] = useState<string[]>([]);
   const [editRow, setEditRow] = useState<PurchaseRequisitionDataItem>()
   const [mainItems, setMainItems] = useState<PurchaseRequisitionResponse>()
-  const [MaterialCodeDropdown, setMaterialCodeDropdown] = useState<MaterialCode[]>()
   const [isSubItemModalOpen, setIsSubItemModalOpen] = useState(false)
   const [isEditModalOpen, setEditModalOpen] = useState(false)
   const [isNBEditModalOpen, setNBEditModalOpen] = useState(false)
   const [selectedMainItemId, setSelectedMainItemId] = useState<string>("")
+  const [accountAssigmentDropdown, setAccountAssignmentDropdown] = useState<AccountAssignmentCategory[]>([])
+  const [itemCategoryDropdown, setitemCategoryDropdown] = useState<ItemCategoryMaster[]>([])
   const deleteSubItem = async (subItemId: string) => {
     console.log(subItemId, "subItemId", pur_req, "pur_req")
     const url = `${API_END_POINTS?.PrSubHeadDeleteRow}?name=${pur_req}&row_id=${subItemId}`;
@@ -178,13 +180,27 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
     }
   }
   const handleModel = (purchase_requisition_type: string) => purchase_requisition_type === "SB" ? setEditModalOpen(true) : setNBEditModalOpen(true);
-
+  
+  const fetchAccountAssigmentData = async (pur_req_type: string) => {
+    const url = `${API_END_POINTS?.fetchAccountAssignmentData}?pur_req_type=${pur_req_type}&company=${company}`
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+    if (response?.status == 200) {
+      console.log(response, "response of setAccountAssignmentDropdown data")
+      setAccountAssignmentDropdown(response.data.message?.account_assignment_category_head)
+      setitemCategoryDropdown(response.data.message?.item_category_head)
+    } else {
+      alert("error");
+    }
+  }
 
   useEffect(() => {
     if (pur_req) {
       fetchTableData(pur_req);
+      fetchAccountAssigmentData(PRData?.purchase_requisition_type??"")
     }
-  }, [pur_req])
+  }, [pur_req,PRData?.purchase_requisition_type])
+
+  console.log(accountAssigmentDropdown,"accountAssigmentDropdown")
   return (
     <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
       <div className="grid grid-cols-3 gap-6 p-3">
@@ -529,6 +545,8 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
           onClose={() => setEditModalOpen(false)}
           fetchTableData={fetchTableData}
           Dropdown={Dropdown}
+          accountAssigmentDropdown={accountAssigmentDropdown}
+          itemCategoryDropdown={itemCategoryDropdown}
           defaultData={editRow}
           PurchaseGroupDropdown={PurchaseGroupDropdown}
           StorageLocationDropdown={StorageLocationDropdown}
@@ -545,6 +563,8 @@ const PRRequestForm = ({ Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdow
         onClose={() => setNBEditModalOpen(false)}
         fetchTableData={fetchTableData}
         Dropdown={Dropdown}
+        itemCategoryDropdown={itemCategoryDropdown}
+        accountAssigmentDropdown={accountAssigmentDropdown}
         PurchaseGroupDropdown={PurchaseGroupDropdown}
         StorageLocationDropdown={StorageLocationDropdown}
         ValuationClassDropdown={ValuationClassDropdown}

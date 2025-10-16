@@ -143,7 +143,7 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
 
   return (
     <PRRequestForm Dropdown={Dropdown} PRData={PRData} cartId={cart_id} pur_req={pur_req} PurchaseGroupDropdown={PurchaseGroupDropdown} StorageLocationDropdown={StorageLocationDropdown} ValuationClassDropdown={ValuationClassDropdown}
-      ProfitCenterDropdown={ProfitCenterDropdown} MaterialGroupDropdown={MaterialGroupDropdown} GLAccountDropdwon={GLAccountDropdwon} CostCenterDropdown={CostCenterDropdown}  PurchaseOrgDropdown={PurchaseOrgDropdown} />
+      ProfitCenterDropdown={ProfitCenterDropdown} MaterialGroupDropdown={MaterialGroupDropdown} GLAccountDropdwon={GLAccountDropdwon} CostCenterDropdown={CostCenterDropdown}  PurchaseOrgDropdown={PurchaseOrgDropdown} company={company}/>
 
   )
 }
