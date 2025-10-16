@@ -76,7 +76,7 @@ const PopUp = ({
 
   return (
     // 👇 fixed instead of absolute
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" style={{"margin":"0"}}>
       <div
         ref={!disableRef ? null : DialogRef}
         className={cn(
