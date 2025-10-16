@@ -24,7 +24,6 @@ import { AxiosResponse } from 'axios';
 import requestWrapper from '@/src/services/apiCall';
 import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMaster, MaterialGroupMaster, PurchaseGroup, PurchaseOrganisation, StorageLocation, StoreLocation, UOMMaster, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType';
 import { today } from '../../templates/RFQTemplates/LogisticsImportRFQFormFields';
-import { toast } from 'sonner';
 interface DropdownData {
   purchase_organisation: PurchaseOrganisation[];
   account_assignment_category: AccountAssignmentCategory[];
@@ -51,6 +50,8 @@ interface EditItemModalProps {
   MaterialGroupDropdown: MaterialGroupMaster[]
   CostCenterDropdown: CostCenter[]
   GLAccountDropdwon: GLAccountNumber[]
+  accountAssigmentDropdown:AccountAssignmentCategory[]
+  itemCategoryDropdown:ItemCategoryMaster[]
 }
 
 const EditSBItemModal: React.FC<EditItemModalProps> = ({
@@ -66,7 +67,9 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
   PurchaseOrgDropdown,
   MaterialGroupDropdown,
   GLAccountDropdwon,
-  CostCenterDropdown
+  CostCenterDropdown,
+  accountAssigmentDropdown,
+  itemCategoryDropdown
 }) => {
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, any>>({});
@@ -263,7 +266,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {Dropdown?.account_assignment_category?.map((item, i) => (
+                  {accountAssigmentDropdown?.map((item, i) => (
                     <SelectItem key={i} value={item.account_assignment_category_code}>
                       {item.account_assignment_category_code} - {item.account_assignment_category_name}
                     </SelectItem>
@@ -331,13 +334,14 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
             <Select
               value={formData.item_category_head || ""}
               onValueChange={val => handleSelectChange(val, "item_category_head")}
+              disabled={itemCategoryDropdown?.length > 0 ? false : true}
             >
               <SelectTrigger className={getInputClass("item_category_head")}>
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {Dropdown?.item_category_master?.map((item, i) => (
+                  {itemCategoryDropdown?.map((item, i) => (
                     <SelectItem key={i} value={item.name}>
                       {item.item_code} - {item.item_name}
                     </SelectItem>

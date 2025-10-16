@@ -56,7 +56,9 @@ interface EditNBModalProps {
   MaterialGroupDropdown: MaterialGroupMaster[]
   GLAccountDropdwon: GLAccountNumber[]
   CostCenterDropdown: CostCenter[]
+  accountAssigmentDropdown:AccountAssignmentCategory[]
   // MaterialCodeDropdown: MaterialCode[]
+  itemCategoryDropdown:ItemCategoryMaster[]
 }
 
 const EditNBModal: React.FC<EditNBModalProps> = ({
@@ -69,15 +71,13 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   PurchaseGroupDropdown,
   StorageLocationDropdown,
   ValuationClassDropdown,
-  ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown
+  ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown,accountAssigmentDropdown,itemCategoryDropdown
 }) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, any>>({});
-  const [loading, setLoading] = useState(false);
   const [MaterialCodeDropdown, setMaterialCodeDropdown] = useState<MaterialCode[]>()
   const [materialCode, setMaterialCode] = useState<string>("");
   const [requiredField, setRequiredField] = useState<Record<string, any>>({});
-
   useEffect(() => {
     if (isOpen) {
       setFormData(defaultData || {});
@@ -175,6 +175,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     }
     return []
   }
+
   const validate = () => {
     const newErrors: Record<string, string> = {};
 
@@ -234,7 +235,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   }, [today, formData?.purchase_requisition_date_head]);
 
   useEffect(() => {
-    fetchMaterialCodeData()
+    fetchMaterialCodeData();
   }, [formData?.company_code_area_head]);
   const renderInput = (name: string, label: string, type = 'text', inputProps: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
     <div className="col-span-1">
@@ -257,7 +258,8 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     label: string,
     options: T[],
     getValue: (item: T) => string,
-    getLabel: (item: T) => string
+    getLabel: (item: T) => string,
+    disabled?:boolean
   ) => {
     const selectedValue = formData[name] ?? "";
     return (
@@ -272,13 +274,14 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
         <Select
           value={selectedValue}
           onValueChange={(value) => handleSelectChange(value, name)}
+          disabled={disabled}
         >
           <SelectTrigger className={errors[name as keyof typeof errors] ? 'border border-red-600' : ''}>
             <SelectValue placeholder="Select" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {options.map((item, idx) => (
+              {options?.map((item, idx) => (
                 <SelectItem key={idx} value={getValue(item)}>
                   {getLabel(item)}
                 </SelectItem>
@@ -290,8 +293,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       </div>
     );
   };
-  console.log(MaterialCodeDropdown, "MaterialCodeDropdown")
-  console.log(formData?.company_code_area_head, "formData?.company_code_area_head}----------------------------==================")
   return (
     <PopUp headerText='Purchase Request Items' classname='overflow-y-scroll md:max-w-[1000px] md:max-h-[600px]' handleClose={onClose} isSubmit={true} Submitbutton={handleSubmit}>
       <div className="grid grid-cols-3 gap-6 pt-2">
@@ -308,7 +309,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
         {renderSelect(
           'account_assignment_category_head',
           'Account Assignment Category',
-          Dropdown.account_assignment_category,
+          accountAssigmentDropdown,
           (item) => item.name,
           (item) => `${item.account_assignment_category_code} - ${item.account_assignment_category_name}`
         )}
@@ -325,9 +326,10 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
         {renderSelect(
           'item_category_head',
           'Item Category',
-          Dropdown.item_category_master,
+          itemCategoryDropdown,
           (item) => item.name,
-          (item) => `${item.item_code} - ${item.item_name}`
+          (item) => `${item.item_code} - ${item.item_name}`,
+          itemCategoryDropdown?.length > 0 ? false: true
         )}
 
         {renderSelect(
@@ -384,13 +386,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           (item) => `${item.gl_account_code} - ${item.gl_account_name}`
         )}
 
-        {/* {renderSelect(
-            'material_code_head',
-            'Material Code',
-            MaterialCodeDropdown,
-            (item) => item.name,
-            (item) => `${item.material_code} - ${item.material_name}`
-          )} */}
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#000000] pb-1 flex items-center gap-1 ">
             {"Select Material Code"}
