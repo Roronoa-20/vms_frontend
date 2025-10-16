@@ -29,6 +29,7 @@ const VendorDashboardCards = ({ ...Props }: Props) => {
   const [open, setOpen] = useState(false);
   const [cardCount, setCardCount] = useState(Props?.cardData);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [poTAble,setPoTable] = useState(Props?.dashboardPOTableData);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -55,7 +56,26 @@ const VendorDashboardCards = ({ ...Props }: Props) => {
       }
     }
     fetchCardCount();
+
+    if(selectedVendorCode){
+      
+    }  
+
+
   }, [selectedVendorCode])
+
+
+  const getPoDetail = async()=>{
+    const response = await requestWrapper({
+        url: API_END_POINTS?.vendorPOTable,
+        method: "GET",
+      })
+
+      if(response?.status == 200){
+        setPoTable(response?.data?.message)
+      }
+  }
+
 
   const cardData = [
     {
@@ -208,7 +228,7 @@ const VendorDashboardCards = ({ ...Props }: Props) => {
           return (
 
             <TabsContent key={item.name || index} value={item.name}>
-              {item.name === "Purchase & Ongoing Orders" && <PurchaseAndOngoingOrders dashboardPOTableData={Props?.dashboardPOTableData} companyDropdown={Props?.companyDropdown} />}
+              {item.name === "Purchase & Ongoing Orders" && <PurchaseAndOngoingOrders dashboardPOTableData={poTAble} companyDropdown={Props?.companyDropdown} />}
               {item.name === "Quotation" && <DashboardRFQTable dashboardTableData={Props?.rfqData?.data} companyDropdown={Props?.companyDropdown} />}
               {/* {item.name === "Dispatch Details" && <DashboardApprovedVendorsTable dashboardTableData={Props.dashboardApprovedVendorTableData} companyDropdown={Props?.companyDropdown}/>} */}
               {item.name === "Dispatch Details" && <DashboardDispatchVendorsTable dashboardTableData={Props?.dispatchTableData} />}
