@@ -175,7 +175,7 @@ console.log(tableTitle,"this is table title")
       }
       <Tabs defaultValue={cardData?.[0]?.name} className="">
         <div className="">
-          <TabsList className="grid grid-cols-4 gap-4 h-full pb-6 bg-white">
+          <TabsList className="grid md:grid-cols-4 grid-cols-2 gap-4 h-full pb-6 bg-white">
             {cardData?.map((item, index) => (
               <TabsTrigger onClick={()=>{
                 if(item?.name == "Material Received"){

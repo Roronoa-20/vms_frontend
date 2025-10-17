@@ -9,11 +9,11 @@ export default function LoginPage() {
 
     <div className="flex min-h-screen">
       {/* banner section */}
-      <div className="w-[60%] relative">
+      <div className="md:w-[60%]  relative">
         <Slider />
       </div>
       {/* login form */}
-      <div className="flex flex-col py-20 w-[40%]">
+      <div className="flex flex-col py-20 md:w-[40%] w-full">
         {/* logo */}
         <div className="w-full flex justify-center">
           <Logo />
