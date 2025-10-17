@@ -29,6 +29,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import PopUp from "./PopUp";
 import { useOutsideClick } from "@/src/hooks/useOutsideClick";
 import { useRouter } from "next/navigation";
+import Pagination from "./Pagination";
 
 
 type Props = {
@@ -60,6 +61,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
   const [tableData, setTableData] = useState<DashboardPOTableItem[]>(dashboardPOTableData?.total_po ?? []);
   const { MultipleVendorCode, addMultipleVendorCode, reset, selectedVendorCode } = useMultipleVendorCodeStore();
   const [search, setSearch] = useState<string>("");
+  const [selectedCompany, setSelectedCompany] = useState<string>("");
 
   const [total_event_list, settotalEventList] = useState(0);
   const [record_per_page, setRecordPerPage] = useState<number>(0);
@@ -179,6 +181,27 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
     }
   }
 
+  const handleSelectChange = (
+    value: string,
+    setter: (val: string) => void
+  ) => {
+    if (value === "--Select--") {
+      setter(""); // reset filter
+    } else {
+      setter(value);
+    }
+  };
+
+  const formatDate = (dateStr: string | null | undefined) => {
+    if (!dateStr) return "-";
+    const cleanDate = dateStr.trim().split(" ")[0];
+    if (!cleanDate) return "-";
+    const [year, month, day] = cleanDate.split("-");
+    if (!year || !month || !day) return "-";
+    return `${day}-${month}-${year}`;
+  };
+
+
   return (
     <>
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
@@ -188,20 +211,26 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
-            <Select>
-              <SelectTrigger className="w-[180px]">
+
+            <Select
+              value={selectedCompany || "all"}
+              onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
+            >
+              <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
               <SelectContent>
-                <SelectGroup className="w-full">
-                  {
-                    companyDropdown?.map((item, index) => (
-                      <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                    ))
-                  }
+                <SelectGroup>
+                  <SelectItem value="all">All</SelectItem>
+                  {companyDropdown?.map((item) => (
+                    <SelectItem key={item.name} value={item.name}>
+                      {item.description}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
+
             <Select>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Status" />
@@ -234,7 +263,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
               <TableHead className="text-center text-black">Delivery Date</TableHead>
               <TableHead className="text-center text-black">PO Amount</TableHead>
               <TableHead className="text-center text-black">Status</TableHead>
-              <TableHead className="text-center text-black">Early Delivery</TableHead>
+              <TableHead className="text-center text-black">Tentative Delivery</TableHead>
               <TableHead className="text-center text-black">View details</TableHead>
               <TableHead className="text-center text-black">Send Email</TableHead>
             </TableRow>
@@ -248,33 +277,32 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                   <TableCell>
                     {item?.supplier_name ? item.supplier_name : "-"}
                   </TableCell>
-                  <TableCell>{item?.po_date}</TableCell>
-                  <TableCell>{item?.delivery_date}</TableCell>
+                  <TableCell>{formatDate(item?.po_date)}</TableCell>
+                  <TableCell>{formatDate(item?.delivery_date)}</TableCell>
                   <TableCell>{item?.total_gross_amount}</TableCell>
                   <TableCell>
                     <div
                       className={`px-2 py-3 rounded-xl ${item?.status === "Pending by Vendor"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : item?.status === "Approved by Vendor"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : item?.status === "Approved by Vendor"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
                         }`}
                     >
                       {item?.status}
                     </div>
                   </TableCell>
-                  <TableCell className="text-right">{item?.name}</TableCell>
+                  <TableCell className="text-center whitespace-nowrap">{formatDate(item?.tentative_date)}</TableCell>
                   <TableCell>
                     <Button
-                      variant={"outline"}
-                      className="bg-blue-400 hover:bg-blue-300 text-white font-medium"
+                      className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]"
                       // onClick={() => downloadPoDetails(item?.name)}
                       onClick={() => router.push(`/view-po?po_name=${item?.name}&email_to=${item?.email}`)}
                     >
                       View
                     </Button>
                   </TableCell>
-                  <TableCell><Button onClick={() => { setIsEmailDialog(true); setEmail((prev: any) => ({ ...prev, to: item?.email })) }} className="bg-blue-400 hover:bg-blue-300">Send</Button></TableCell>
+                  <TableCell><Button onClick={() => { setIsEmailDialog(true); setEmail((prev: any) => ({ ...prev, to: item?.email })) }} className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">Send</Button></TableCell>
                 </TableRow>
               ))
             ) : (
@@ -287,6 +315,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
           </TableBody>
         </Table>
       </div>
+      <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
       {
         isDialog &&
         <div className="absolute z-50 flex pt-10 items-center justify-center bg-black bg-opacity-50 inset-0">

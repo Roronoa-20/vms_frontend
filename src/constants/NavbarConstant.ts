@@ -23,7 +23,24 @@ export const NavbarConstant:Record<string,string> = {
     "/view-profile": "Vendor Profile",
     "/view-rfq": "Request for Quotations (RFQ)",
     "/view-quotation": "Quotation",
-    "/view-all-po-changes": "Changed PO Details"
-
-
+    "/view-all-po-changes": "Changed PO Details",
+    "/head-dashboard": "Dashboard",
+    "/view-shipment-status": "Shipment Status (DSR)",
+    "/new-shipment-status": "New Shipment Status (DSR)",
+    "/service-bill-dashboard": "Service Bill(SB) Dashboard",
+    "/new-service-bill": "New Service Bill (SB)",
+    "/gate-entry":"Gate Entry",
+    "/view-gate-entry":"View Gate Entry",
+    "/gate-entry-dashboard":"Gate Entry Dashboard",
+    "/shipment-status-dashboard": "Shipment Status(DSR) Dashboard",
+    "/view-vendor-po": "Purchase Order (PO)",
+    "/gr-waiver-dashboard": "GR Waiver Dashboard",
+    "/new-gr-waiver": "New GR Waiver",
+    "/view-gr-waiver": "GR Waiver",
+    "/view-dispatch-table":"Dispatch Orders",
+    "/view-pr-inquiry-table": "Purchase Enquiry",
+    "/material-onboarding-dashboard": "Dashboard",
+    "/new-material-code-request-form": "Material Code Request",
+    "/new-material-code-request-table": "Material Code Request",
+    "/view-invalid-po":"Invalid PO"
 }

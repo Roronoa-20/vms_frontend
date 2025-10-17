@@ -27,9 +27,11 @@ interface Props {
   vendor_onboarding: any;
   tabtype: string;
   refno: string;
+  companycode: string | number;
+  importedVendors: string | number | boolean
 }
 
-const ViewOnboardingDetails = async ({ vendor_onboarding, tabtype, refno }: Props) => {
+const ViewOnboardingDetails = async ({ vendor_onboarding, tabtype, refno, companycode, importedVendors }: Props) => {
   const cookie = await cookies()
   const cookieStore = await cookies();
   const user = cookie.get("user_id")?.value
@@ -66,20 +68,37 @@ const ViewOnboardingDetails = async ({ vendor_onboarding, tabtype, refno }: Prop
   const documentDetailDropdownApi: AxiosResponse = await requestWrapper({ url: gst_vendor_type_dropdown_url, method: "GET" });
   const documentDetailDropdown: TdocumentDetailDropdown["message"]["data"] = documentDetailDropdownApi?.status == 200 ? documentDetailDropdownApi?.data?.message?.data : "";
 
-  const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${refno}&vendor_onboarding=${vendorOnboardingRefno}`;
-  const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: fetchOnboardingDetailUrl, method: "GET" });
-  const OnboardingDetail: VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message : "";
+  // const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${refno}&vendor_onboarding=${vendorOnboardingRefno}`;
+  // const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: fetchOnboardingDetailUrl, method: "GET" });
+  // const OnboardingDetail: VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message : "";
 
-  console.log(OnboardingDetail, "this is onboarding data")
+  let OnboardingDetail:VendorOnboardingResponse["message"] | null = null;
+
+  if (String(importedVendors) === "1") {
+
+    const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchimportedvendordetails}?refno=${refno}&company=${companycode}&via_data_import=${importedVendors}`;
+    const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: fetchOnboardingDetailUrl, method: "GET" });
+     OnboardingDetail = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message : "";
+  } else {
+    const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${refno}&vendor_onboarding=${vendorOnboardingRefno}`;
+    const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: fetchOnboardingDetailUrl, method: "GET" });
+    OnboardingDetail = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message : "";
+  }
+
+  console.log(OnboardingDetail, "this is onboarding data");
+
 
   const reconsiliationUrl = API_END_POINTS?.reconsiliationDropdown;
   const ReconciliationdropDownApi: AxiosResponse = await requestWrapper({ url: reconsiliationUrl, method: "POST", data: { data: { company: OnboardingDetail?.purchasing_details?.[0]?.company_name } } });
   const reconciliationDropdown: TReconsiliationDropdown["message"]["data"] = ReconciliationdropDownApi?.status == 200 ? ReconciliationdropDownApi?.data?.message?.data : ""
+
   console.log(reconciliationDropdown, "this is reconciliation")
+
   console.log(OnboardingDetail?.purchasing_details?.[0]?.account_group, "this is onboarding details")
+
   return (
     <div>
-      <OnboardingTab onboarding_refno={vendorOnboardingRefno} refno={refno} />
+      <OnboardingTab onboarding_refno={vendorOnboardingRefno} refno={refno} company={companycode} />
       <div className="flex justify-center gap-5 max-h-[70vh] w-full">
         {/* form */}
         {tabType == "Company Detail" ? (
@@ -90,50 +109,50 @@ const ViewOnboardingDetails = async ({ vendor_onboarding, tabtype, refno }: Prop
           //   OnboardingDetail={OnboardingDetail?.company_details_tab}
           // />
           <CompanyDetailForm
-            isAmendment={OnboardingDetail?.validation_check?.is_amendment}
-            re_release={OnboardingDetail?.validation_check?.re_release}
+            isAmendment={OnboardingDetail?.validation_check?.is_amendment as number}
+            re_release={OnboardingDetail?.validation_check?.re_release as number}
             companyDetailDropdown={companyDetailDropdown}
             onboarding_refno={vendorOnboardingRefno}
             refno={refno}
-            OnboardingDetail={OnboardingDetail?.company_details_tab}
-            multipleCompany={OnboardingDetail?.multi_company_data}
-            ismulticompany={OnboardingDetail?.is_multi_company}
+            OnboardingDetail={OnboardingDetail?.company_details_tab as VendorOnboardingResponse["message"]["company_details_tab"]}
+            multipleCompany={OnboardingDetail?.multi_company_data as VendorOnboardingResponse["message"]["multi_company_data"]}
+            ismulticompany={OnboardingDetail?.is_multi_company as boolean}
           />
         )
           : tabType == "Company Address" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
-            <InternationalCompanyAddress isAmendment={OnboardingDetail?.validation_check?.is_amendment} companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab} re_release={OnboardingDetail?.validation_check?.re_release} />
+            <InternationalCompanyAddress isAmendment={OnboardingDetail?.validation_check?.is_amendment  as number} companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab as VendorOnboardingResponse["message"]["company_address_tab"]} re_release={OnboardingDetail?.validation_check?.re_release  as number} />
           )
             : tabType == "Company Address" ? (
-              <CompanyAddress isAmendment={OnboardingDetail?.validation_check?.is_amendment} companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab} re_release={OnboardingDetail?.validation_check?.re_release} />
+              <CompanyAddress isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab as VendorOnboardingResponse["message"]["company_address_tab"]} re_release={OnboardingDetail?.validation_check?.re_release as number} />
             )
               : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
-                <InternationalDocumentDetails isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} re_release={OnboardingDetail?.validation_check?.re_release}/>
+                <InternationalDocumentDetails isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab as VendorOnboardingResponse["message"]["document_details_tab"]} documentDetailDropdown={documentDetailDropdown} re_release={OnboardingDetail?.validation_check?.re_release as number} />
               )
                 : tabType == "Document Detail" ? (
-                  <DocumentDetails isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} re_release={OnboardingDetail?.validation_check?.re_release}/>
+                  <DocumentDetails isAmendment={(OnboardingDetail?.validation_check?.is_amendment == 1?1:0) as number} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab as VendorOnboardingResponse["message"]["document_details_tab"]} documentDetailDropdown={documentDetailDropdown} re_release={OnboardingDetail?.validation_check?.re_release as number} />
                 )
                   : tabType?.includes("Payment Detail") && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
-                    <InternationalPaymentDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab} isAccountTeam={OnboardingDetail?.validation_check?.register_by_account_team == 1 ? 1 : 0} isBankProof={OnboardingDetail?.payment_details_tab?.bank_proof_upload_status} re_release={OnboardingDetail?.validation_check?.re_release}/>
+                    <InternationalPaymentDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab as VendorOnboardingResponse["message"]["payment_details_tab"]} isAccountTeam={OnboardingDetail?.validation_check?.register_by_account_team == 1 ? 1 : 0} isBankProof={OnboardingDetail?.payment_details_tab?.bank_proof_upload_status as number} re_release={OnboardingDetail?.validation_check?.re_release as number} />
                   )
                     : tabType?.includes("Payment Detail") ? (
-                      <PaymentDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} company_name={OnboardingDetail?.company_details_tab?.company_name} OnboardingDetail={OnboardingDetail?.payment_details_tab} isAccountTeam={OnboardingDetail?.validation_check?.register_by_account_team == 1 ? 1 : 0} isBankProof={OnboardingDetail?.payment_details_tab?.bank_proof_upload_status} re_release={OnboardingDetail?.validation_check?.re_release}/>
+                      <PaymentDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} company_name={OnboardingDetail?.company_details_tab?.company_name} OnboardingDetail={OnboardingDetail?.payment_details_tab as VendorOnboardingResponse["message"]["payment_details_tab"]} isAccountTeam={OnboardingDetail?.validation_check?.register_by_account_team == 1 ? 1 : 0} isBankProof={OnboardingDetail?.payment_details_tab?.bank_proof_upload_status as number} re_release={OnboardingDetail?.validation_check?.re_release as number} />
                     ) : tabType?.includes("Contact Detail") ? (
-                      <ContactDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.contact_details_tab} re_release={OnboardingDetail?.validation_check?.re_release} />
+                      <ContactDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.contact_details_tab as VendorOnboardingResponse["message"]["contact_details_tab"]} re_release={OnboardingDetail?.validation_check?.re_release as number} />
                     ) : tabType == "Manufacturing Detail" ? (
-                      <ManufacturingDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.manufacturing_details_tab} re_release={OnboardingDetail?.validation_check?.re_release} />
+                      <ManufacturingDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.manufacturing_details_tab as VendorOnboardingResponse["message"]["manufacturing_details_tab"]} re_release={OnboardingDetail?.validation_check?.re_release as number} />
                     ) : tabType == "Employee Detail" ? (
-                      <EmployeeDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.employee_details_tab} re_release={OnboardingDetail?.validation_check?.re_release} />
+                      <EmployeeDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.employee_details_tab as VendorOnboardingResponse["message"]["employee_details_tab"]} re_release={OnboardingDetail?.validation_check?.re_release as number} />
                     ) : tabType == "Machinery Detail" ? (
-                      <MachineryDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.machinery_details_tab} re_release={OnboardingDetail?.validation_check?.re_release} />
+                      <MachineryDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.machinery_details_tab as VendorOnboardingResponse["message"]["machinery_details_tab"]} re_release={OnboardingDetail?.validation_check?.re_release as number} />
                     ) : tabType == "Testing Facility" ? (
-                      <TestingFacility isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.testing_details_tab} re_release={OnboardingDetail?.validation_check?.re_release}/>
+                      <TestingFacility isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.testing_details_tab as VendorOnboardingResponse["message"]["testing_details_tab"]} re_release={OnboardingDetail?.validation_check?.re_release as number} />
                     ) : tabType == "Reputed Partners" ? (
-                      <ReputedPartners isAmendment={OnboardingDetail?.validation_check?.is_amendment} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.reputed_partners_details_tab} 
-                      re_release={OnboardingDetail?.validation_check?.re_release} />
+                      <ReputedPartners isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.reputed_partners_details_tab as VendorOnboardingResponse["message"]["reputed_partners_details_tab"]}
+                        re_release={OnboardingDetail?.validation_check?.re_release as number} />
                     ) : tabType == "Certificate" ? (
-                      <Certificate certificateCodeDropdown={certificateCodeDropdown?.certificate_names} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.certificate_details_tab} isAmendment={OnboardingDetail?.validation_check?.is_amendment} re_release={OnboardingDetail?.validation_check?.re_release} />
+                      <Certificate certificateCodeDropdown={certificateCodeDropdown?.certificate_names} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.certificate_details_tab as VendorOnboardingResponse["message"]["certificate_details_tab"]} isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} re_release={OnboardingDetail?.validation_check?.re_release as number} />
                     ) : tabType == "Purchase Detail" ? (
-                      <PurchaseDetails country={OnboardingDetail?.payment_details_tab?.address?.country} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.purchasing_details?.[0]} reconciliationDropdown={reconciliationDropdown} tabType={tabType} validation_check={OnboardingDetail?.validation_check} isPurchaseTeamBankFile={OnboardingDetail?.payment_details_tab?.bank_proofs_by_purchase_team?.[0]?.name} isAmendment={OnboardingDetail?.validation_check?.is_amendment} isPurchaseTeamBeneficiaryFile={OnboardingDetail?.payment_details_tab?.international_bank_details[0]?.international_bank_proof_by_purchase_team?.name} isPurchaseTeamIntermediateFile={OnboardingDetail?.payment_details_tab?.intermediate_bank_details?.[0]?.intermediate_bank_proof_by_purchase_team?.url} re_release={OnboardingDetail?.validation_check?.re_release} />
+                      <PurchaseDetails country={OnboardingDetail?.payment_details_tab?.address?.country as string} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.purchasing_details?.[0]} reconciliationDropdown={reconciliationDropdown} tabType={tabType} validation_check={OnboardingDetail?.validation_check as VendorOnboardingResponse["message"]["validation_check"]} isPurchaseTeamBankFile={OnboardingDetail?.payment_details_tab?.bank_proofs_by_purchase_team?.[0]?.name} isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} isPurchaseTeamBeneficiaryFile={OnboardingDetail?.payment_details_tab?.international_bank_details[0]?.international_bank_proof_by_purchase_team?.name} isPurchaseTeamIntermediateFile={OnboardingDetail?.payment_details_tab?.intermediate_bank_details?.[0]?.intermediate_bank_proof_by_purchase_team?.url} re_release={OnboardingDetail?.validation_check?.re_release as number} />
                     )
                       : (
                         ""

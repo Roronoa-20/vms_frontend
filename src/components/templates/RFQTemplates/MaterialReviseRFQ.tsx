@@ -126,7 +126,7 @@ const MaterialReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
                     <DialogTitle>
                         <div className='flex justify-between items-center pr-4'>
                             <h1 className='font-bold text-[24px] p-4 '>Revise RFQ</h1>
-                            <Button onClick={handleOpen}>Add New Vendor</Button>
+                            {/* <Button onClick={handleOpen}>Add New Vendor</Button> */}
                         </div>
                     </DialogTitle>
                 </DialogHeader>
@@ -151,7 +151,7 @@ const MaterialReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
                         <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
                     </div>
                     <div className='py-6'>
-                        <NewVendorTable newVendorTable={newVendorTable} />
+                        <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen} setNewVendorTable={setNewVendorTable}/>
                     </div>
                     {
                         isDialog &&

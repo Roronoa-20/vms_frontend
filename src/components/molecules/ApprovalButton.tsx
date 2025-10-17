@@ -69,7 +69,7 @@ const ApprovalButton = ({ tabtype, ref_no, onboardingRefno, reconsiliationDrodow
     }
 
     const formData = new FormData();
-    if (designation == "Accounts Team" && isAccountTeam == 1 && isApprove) {
+    if (designation == "Accounts Team" && isAccountTeam == 1 && !isBankProofByPurchaseTeam) {
       alert("please Upload Bank Proof")
       return;
     }

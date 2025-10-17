@@ -22,6 +22,8 @@ import { X, Lock, Pencil } from "lucide-react";
 import { UsePurchaseTeamApprovalStore } from "@/src/store/PurchaseTeamApprovalStore";
 import SimpleFileUpload from "../../molecules/multiple_file_upload";
 import { Toaster, toast } from 'sonner'
+import PopUp from "../../molecules/PopUp";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Props {
   ref_no: string,
@@ -49,6 +51,11 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
   const [files, setFiles] = useState<File[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<FileList | null>(null)
   const [rowNamesMapping, setRowNamesMapping] = useState<{ [key: string]: string }>({});
+  const isTreasuryUser = designation?.toLowerCase() === "treasury";
+
+  const [remarks,setRemarks] = useState<string>("");
+  const [isAmendCommentDialog,setIsAmendCommentDialog] = useState<boolean>(false);
+
 
   const router = useRouter()
   useEffect(() => {
@@ -106,6 +113,24 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
 
     return errors;
   };
+
+   const handleAmend = async()=>{
+    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.AmendAPI,method:"POST",data:{
+      data:{
+        vendor_onboarding:onboarding_ref_no,
+        remarks:remarks
+      }
+    }});
+    if(response?.status == 200){
+      alert("Amend Successfully");
+      router.push("dashboard");
+    }
+  }
+
+  const handleClose = ()=>{
+    setIsAmendCommentDialog(false);
+    setRemarks("");
+  }
 
 
   const FileUpload = async () => {
@@ -228,7 +253,12 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
     <div className="flex flex-col bg-white rounded-lg p-2 w-full">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Bank Details</h1>
-        {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}{(isAmendment == 1 || re_release == 1) && (
+        {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
+        {/* {
+          designation != "Purchase Team" && 
+        <Button onClick={() => { setIsAmendCommentDialog(true)}} className={`mb-2 ${isAmendment == 0  ? "" : "hidden"}`}>Amend</Button>
+        } */}
+        {designation == "Purchase Team" && !isTreasuryUser && (isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled((prev) => !prev)}
             className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
@@ -398,7 +428,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
 
           <div className="flex gap-6 items-start flex-wrap">
             {/* Upload Section */}
-            {(isAccountTeam === 0 && designation === "Purchase Team" && isBankProof === 1)||
+            {(isAccountTeam === 0 && designation === "Purchase Team" && isBankProof === 1) ||
               (isAccountTeam === 1 && designation === "Accounts Team" && isBankProof === 1) ? (
               <div className="flex flex-col gap-2">
                 <SimpleFileUpload
@@ -466,6 +496,17 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
         <div>
         </div>
       </div>
+      {
+      isAmendCommentDialog && 
+      <PopUp handleClose={handleClose} isSubmit={true} headerText="Amend" Submitbutton={handleAmend}>
+        <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            {/* Comment */}
+          </h1>
+          <Textarea className="disabled:opacity-100" placeholder="" onChange={(e) => { setRemarks(e.target.value)}} />
+        </div>
+      </PopUp>
+    }
       <div className={`flex justify-end pr-4 pb-4 ${isDisabled ? "hidden" : ""} `}><Button className="py-2" variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }}>Next</Button></div>
       <Toaster richColors position="top-right" />
     </div>

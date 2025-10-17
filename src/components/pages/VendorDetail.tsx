@@ -47,7 +47,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
   const vendorOnboardingRefno = vendor_onboarding;
   const tabType = tabtype;
 
-  console.log(tabType,"this is tabtype");
+  console.log(tabType, "this is tabtype");
 
   const companyDetailDropdownUrl = API_END_POINTS?.companyDetailDropdown;
   const companyDetailresponse: AxiosResponse = await requestWrapper({
@@ -60,27 +60,28 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
       : "";
 
   const companyAddressDropdownUrl = API_END_POINTS?.companyAddressDropdown;
-  const companyAddressDropdownResponse:AxiosResponse = await requestWrapper({
-    url:`${companyAddressDropdownUrl}`,
-    method:"GET"
+  const companyAddressDropdownResponse: AxiosResponse = await requestWrapper({
+    url: `${companyAddressDropdownUrl}`,
+    method: "GET"
   })
-  const companyAddressDropdown:TCompanyAddressDropdown["message"]["data"] = companyAddressDropdownResponse?.status == 200 ? companyAddressDropdownResponse?.data?.message?.data:"";
+  const companyAddressDropdown: TCompanyAddressDropdown["message"]["data"] = companyAddressDropdownResponse?.status == 200 ? companyAddressDropdownResponse?.data?.message?.data : "";
 
   const certificateUrl = API_END_POINTS?.certifcateCodeDropdown;
-  const certificateResponse:AxiosResponse = await requestWrapper({
-    url:certificateUrl,
-    method:"GET"
+  const certificateResponse: AxiosResponse = await requestWrapper({
+    url: certificateUrl,
+    method: "GET"
   })
-  const certificateCodeDropdown:TcertificateCodeDropdown["message"]["data"] = certificateResponse?.status == 200?certificateResponse?.data?.message?.data : "";
+  const certificateCodeDropdown: TcertificateCodeDropdown["message"]["data"] = certificateResponse?.status == 200 ? certificateResponse?.data?.message?.data : "";
 
-  const gst_vendor_type_dropdown_url =API_END_POINTS?.documentDetail_dropdown;
-  const documentDetailDropdownApi:AxiosResponse = await requestWrapper({url:gst_vendor_type_dropdown_url,method:"GET"});
-  const documentDetailDropdown:TdocumentDetailDropdown["message"]["data"] =  documentDetailDropdownApi?.status == 200?documentDetailDropdownApi?.data?.message?.data:"";
+  const gst_vendor_type_dropdown_url = API_END_POINTS?.documentDetail_dropdown;
+  const documentDetailDropdownApi: AxiosResponse = await requestWrapper({ url: gst_vendor_type_dropdown_url, method: "GET" });
+  const documentDetailDropdown: TdocumentDetailDropdown["message"]["data"] = documentDetailDropdownApi?.status == 200 ? documentDetailDropdownApi?.data?.message?.data : "";
 
   const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${refno}&vendor_onboarding=${vendorOnboardingRefno}`;
-  const fetchOnboardingDetailResponse:AxiosResponse = await requestWrapper({url:fetchOnboardingDetailUrl,method:"GET"});
-  const OnboardingDetail:VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ?fetchOnboardingDetailResponse?.data?.message : "";
-  console.log(OnboardingDetail,"this is data")
+  const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: fetchOnboardingDetailUrl, method: "GET" });
+  const OnboardingDetail: VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message : "";
+  console.log(OnboardingDetail, "this is data")
+
   return (
     <AuthProvider>
       <Suspense>
@@ -94,7 +95,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
       </div>
       <div className="flex px-6 justify-between gap-5">
         {/* sidebar */}
-        <OnboardingSidebar onboarding_refno={vendorOnboardingRefno} refno={refno} vendor_type={OnboardingDetail?.company_details_tab?.vendor_types} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} />
+        <OnboardingSidebar onboarding_refno={vendorOnboardingRefno} refno={refno} vendor_type={OnboardingDetail?.company_details_tab?.vendor_type_list_from_master} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} />
         {/* form */}
         {tabType == "Company Detail" ? (
           <CompanyDetailForm

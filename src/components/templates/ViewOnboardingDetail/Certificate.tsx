@@ -145,7 +145,7 @@ const Certificate = ({
       {/* Header with toggle */}
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Certificate Details</h1>
-        {(isAmendment == 1 || re_release == 1) && (
+        {designation == "Purchase Team" &&(isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled((prev) => !prev)}
             className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
@@ -289,7 +289,7 @@ const Certificate = ({
                 <TableCell className="text-center">{item?.certificate_code}</TableCell>
                 <TableCell className="text-center">{item?.valid_till}</TableCell>
                 <TableCell className="text-center">
-                  <Link href={item?.fileDetail?.url || ""} target="_blank">
+                  <Link href={item?.certificate_attach?.url || ""} target="_blank">
                     {item?.certificate_attach?.file_name}
                   </Link>
                 </TableCell>

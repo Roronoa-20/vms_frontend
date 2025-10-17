@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Vendor, AllVendorsCompanyCodeResponse, CompanyVendorCodeRecord } from "@/src/types/allvendorstypes";
+import React, { useEffect, useMemo } from "react";
+import { Vendor, AllVendorsCompanyCodeResponse, CompanyVendorCodeRecord, VendorRow, CompanyData } from "@/src/types/allvendorstypes";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/src/components/atoms/table";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -8,84 +8,148 @@ import PopUp from "@/src/components/molecules/AllvendortablePopUp";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
-import Pagination from "@/src/components/molecules/Pagination";
+import Pagination from "@/src/components/molecules/Pagination-at-all-vendors";
 import NewVendorRegistration from "@/src/components/pages/newvendorregistration";
 import { TvendorRegistrationDropdown } from "@/src/types/types";
 import { Label } from "@/components/ui/label";
 import { Select, SelectGroup, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/src/components/atoms/select";
-import { RowData, ExtendRowData } from "@/src/types/rowdata";
-
+import { RowData, ExtendRowData, MultipleCompanyData } from "@/src/types/rowdata";
 
 interface Props {
-    vendors: Vendor[];
+    vendors: VendorRow[];
     activeTab: string;
+    currentPage: number;
+    setCurrentPage: (page: number) => void;
+    pageSize: number;
+    totalPages: number;
+    totalRecords: number;
 }
 
-const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
+const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurrentPage, pageSize, totalPages, totalRecords }) => {
+    // console.log("Vendors-------->", vendors);
     const router = useRouter();
     const [isVendorCodeDialog, setIsVendorCodeDialog] = React.useState(false);
     const [selectedVendorCodes, setSelectedVendorCodes] = React.useState<CompanyVendorCodeRecord[] | null>(null);
     const [copiedRow, setCopiedRow] = React.useState<RowData | null>(null);
     const [isExtendDialogOpen, setIsExtendDialogOpen] = React.useState(false);
-    const [extendRow, setExtendRow] = React.useState<ExtendRowData  | null>(null);
-    const [currentPage, setCurrentPage] = React.useState(1);
+    const [extendRow, setExtendRow] = React.useState<ExtendRowData | null>(null);
+    // const [currentPage, setCurrentPage] = React.useState(1);
+    const copyFormRef = React.useRef<HTMLDivElement | null>(null);
+    const extendFormRef = React.useRef<HTMLDivElement | null>(null);
     const recordPerPage = 10;
+    const stickyKeys: (keyof RowData | "srno")[] = ["srno", "company_code", "vendor_name"];
+    const [colWidths, setColWidths] = React.useState<Record<string, number>>({});
+    const headerRefs = React.useRef<Record<string, HTMLTableCellElement | null>>({});
+
+    useEffect(() => setCurrentPage(1), [vendors]);
+
+    React.useEffect(() => {
+        const widths: Record<string, number> = {};
+        Object.entries(headerRefs.current).forEach(([key, el]) => {
+            if (el) widths[key] = el.offsetWidth;
+        });
+        setColWidths(widths);
+    }, [vendors, activeTab]);
+
+    const getStickyLeft = (key: string) => {
+        const index = stickyKeys.indexOf(key as any);
+        if (index === -1) return undefined;
+        return stickyKeys
+            .slice(0, index)
+            .reduce((sum, k) => sum + (colWidths[k] || 0), 0);
+    };
+
+
+    const normalizeCompanyData = (c: Partial<CompanyData> | any): MultipleCompanyData => ({
+        company_name: c.company_name ?? "N.A.",
+        purchase_organization: c.purchase_organization ?? "N.A.",
+        account_group: c.account_group ?? undefined,
+        terms_of_payment: c.terms_of_payment ?? undefined,
+        sap_client_code: c.sap_client_code ?? "N.A.",
+        purchase_group: c.purchase_group ?? undefined,
+        order_currency: c.order_currency ?? undefined,
+        incoterm: c.incoterm ?? undefined,
+        reconciliation_account: c.reconciliation_account ?? undefined,
+        company_vendor_code: c.company_vendor_code ?? "N.A.",
+        company_display_name: c.company_display_name ?? "N.A.",
+        via_import: c.via_import != null ? Number(c.via_import) : 0,
+    });
 
     const rows: RowData[] = vendors.flatMap((vendor) => {
-        const companyData = vendor.multiple_company_data?.length
+        // Always have at least one company entry for the active tab
+        const companyDataList: Partial<CompanyData>[] = vendor.multiple_company_data?.length
             ? vendor.multiple_company_data.filter((c) => c.company_name === activeTab)
-            : [{ company_name: activeTab, company_display_name: activeTab, company_vendor_code: "N.A.", sap_client_code: "N.A.", purchase_organization: "N.A." }];
+            : [{
+                name: "",
+                creation: "",
+                modified: "",
+                modified_by: "",
+                owner: "",
+                docstatus: 0,
+                idx: 0,
+                company_name: activeTab,
+                purchase_organization: "N.A.",
+                account_group: undefined,
+                terms_of_payment: undefined,
+                sap_client_code: "N.A.",
+                purchase_group: undefined,
+                order_currency: undefined,
+                incoterm: undefined,
+                reconciliation_account: undefined,
+                company_vendor_code: "N.A.",
+                company_display_name: activeTab,
+                parent: "",
+                parentfield: "",
+                parenttype: "",
+                via_import: 0,
+            }];
 
-        return companyData.map((c) => {
+        return companyDataList.map((company) => {
             const approvedRecord = vendor.vendor_onb_records?.find(
                 (record) => record.onboarding_form_status === "Approved"
             );
 
+            const normalizedCompany = normalizeCompanyData(company);
+
             return {
-                name: vendor.name,
-                ref_no: approvedRecord?.vendor_onboarding_no || "N.A.",
+                multiple_company_data: [normalizedCompany],
+                name: vendor.name ?? "N.A.",
+                ref_no: approvedRecord?.vendor_onboarding_no ?? "N.A.",
                 multiple_company: vendor.bank_details?.registered_for_multi_companies ?? 0,
-                company_code: c.company_name,
-                vendor_code: c.company_vendor_code || "N.A.",
-                vendor_name: vendor.vendor_name || "N.A.",
-                office_email_primary: vendor.office_email_primary || "N.A.",
-                pan_number: vendor.bank_details?.company_pan_number || "N.A.",
-                pan_file: vendor.bank_details?.bank_proof || "",
-                gst_no: vendor.document_details || "N.A.",
-                gst_file: "",
-                state: c.company_display_name || "N.A.",
-                country: vendor.country || "N.A.",
-                pincode: vendor.mobile_number || "N.A.",
-                bank_name: vendor.bank_details?.bank_name || "N.A.",
-                ifsc_code: vendor.bank_details?.ifsc_code || "N.A.",
-                bank_file: vendor.bank_details?.bank_proof || "",
-                sap_client_code: c.sap_client_code || "N.A.",
-                purchase_org: c.purchase_organization || "N.A.",
-            };
+                company_code: normalizedCompany.company_name,
+                vendor_code: normalizedCompany.company_vendor_code,
+                vendor_name: vendor.vendor_name ?? "N.A.",
+                office_email_primary: vendor.office_email_primary ?? "N.A.",
+                pan_number: vendor.bank_details?.company_pan_number ?? "N.A.",
+                gst_no: vendor.document_details ?? "N.A.",
+                state: normalizedCompany.company_display_name,
+                country: vendor.country ?? "N.A.",
+                pincode: vendor.mobile_number ?? "N.A.",
+                bank_name: vendor.bank_details?.bank_name ?? "N.A.",
+                ifsc_code: vendor.bank_details?.ifsc_code ?? "N.A.",
+                sap_client_code: normalizedCompany.sap_client_code,
+                purchase_org: normalizedCompany.purchase_organization,
+                via_data_import: vendor.via_data_import != null ? Number(vendor.via_data_import) : 0,
+                created_from_registration: vendor.created_from_registration != null ? Number(vendor.created_from_registration) : 0,
+            } as RowData;
         });
     });
+    // console.log("Normalized Rows----->", rows)
 
-    const totalRecords = rows.length;
-    const startIdx = (currentPage - 1) * recordPerPage;
-    const paginatedRows = rows.slice(startIdx, startIdx + recordPerPage);
+    const paginatedRows = useMemo(() => {
+        const start = (currentPage - 1) * pageSize;
+        return rows.slice(start, start + pageSize);
+    }, [rows, currentPage, pageSize]);
+    const startIdx = (currentPage - 1) * pageSize;
 
-    if (!rows.length) return <p>No vendors found for company code {activeTab}.</p>;
-
-    const columns: { key: keyof RowData; label: string; type?: "text" | "file" | "boolean" }[] = [
-        { key: "multiple_company", label: "Multi-Company?", type: "boolean" },
-        { key: "company_code", label: "Company Code" },
-        { key: "vendor_name", label: "Vendor Name" },
+    const columns: { key: keyof RowData; label: string; type?: "text" | "file" | "boolean"; sticky?: boolean; }[] = [
+        { key: "company_code", label: "Company Code", sticky: true },
+        { key: "vendor_name", label: "Vendor Name", sticky: true },
         { key: "country", label: "Country" },
         { key: "office_email_primary", label: "Official Email" },
         { key: "pan_number", label: "PAN Number" },
-        { key: "pan_file", label: "PAN File", type: "file" },
-        { key: "gst_no", label: "GST Number" },
-        { key: "gst_file", label: "GST File", type: "file" },
-        { key: "state", label: "State" },
-        { key: "pincode", label: "Pincode/ZipCode" },
         { key: "bank_name", label: "Bank Name" },
         { key: "ifsc_code", label: "IFSC Code" },
-        { key: "bank_file", label: "Bank File", type: "file" },
     ];
 
     const renderCell = (row: RowData, col: typeof columns[0]) => {
@@ -115,9 +179,32 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
         }
     };
 
-    const handleView = (refno: string, vendorId: string) => {
-        router.push(`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${vendorId}&refno=${refno}`);
+    // const handleView = (refno: string, vendorId: string, via_data_import: string | number) => {
+    //     router.push(
+    //         `/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${refno}&refno=${vendorId}&via_data_import=${via_data_import}`
+    //     );
+    // };
+
+    const handleView = (row: RowData) => {
+        const isImported = row.multiple_company_data?.some(c => String(c.via_import) === "1");
+        const isViaImport = String(row.via_data_import) === "1";
+        const isFromRegistration = String(row.created_from_registration) === "1";
+
+        if (isViaImport && isImported) {
+            router.push(
+                `/view-onboarding-details?tabtype=Company%20Detail&refno=${row.name}&company_code=${row.company_code}&via_data_import=1`
+            );
+        } else if (isFromRegistration && !isImported) {
+            router.push(
+                `/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${row.ref_no}&refno=${row.name}`
+            );
+        } else {
+            router.push(
+                `/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${row.ref_no}&refno=${row.name}`
+            );
+        }
     };
+
 
     const fetchVendorCodes = async (vendorId: string, company: string) => {
         try {
@@ -132,12 +219,20 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
 
     const dropdownUrl = API_END_POINTS?.vendorRegistrationDropdown;
     const [dropdownData, setDropdownData] = React.useState<TvendorRegistrationDropdown["message"]["data"] | null>(null);
+    const [unfilteredDropdownData, setUnfilteredDropdownData] = React.useState<TvendorRegistrationDropdown["message"]["data"] | null>(null);
 
     React.useEffect(() => {
         const fetchDropdownData = async () => {
             try {
-                if (!dropdownUrl || !activeTab) return;
+                if (!dropdownUrl) return;
 
+                const allDropDownApi: AxiosResponse = await requestWrapper({
+                    url: dropdownUrl,
+                    method: "GET",
+                });
+                setUnfilteredDropdownData(allDropDownApi?.status === 200 ? allDropDownApi.data?.message?.data ?? null : null);
+
+                if (!activeTab) return;
                 const selectedCompany = vendors
                     ?.flatMap((vendor) => vendor.multiple_company_data || [])
                     .find((c) => c.company_name === activeTab);
@@ -157,17 +252,16 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
             } catch (error) {
                 console.error("Error fetching dropdown data:", error);
                 setDropdownData(null);
+                setUnfilteredDropdownData(null);
             }
         };
 
         fetchDropdownData();
     }, [activeTab]);
 
-
-    const vendorTypeDropdown = dropdownData?.vendor_type;
+    // console.log("SAP CLient Code Filter Data--->", dropdownData);
+    // console.log("Unfiltered Data---->", unfilteredDropdownData);
     const companyDropdown = dropdownData?.company_master;
-    const incoTermsDropdown = dropdownData?.incoterm_master;
-    const currencyDropdown = dropdownData?.currency_master;
 
     const handleCopy = (row: RowData) => {
         if (copiedRow?.name === row.name && copiedRow?.company_code === row.company_code) {
@@ -179,6 +273,9 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
             setExtendRow(null);
         }
         setCopiedRow(row);
+        setTimeout(() => {
+            copyFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
     };
 
     const handleExtend = (row: RowData) => {
@@ -194,6 +291,9 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
             extend_company: "",
         } as any);
         setIsExtendDialogOpen(true);
+        setTimeout(() => {
+            extendFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
     };
 
     const [purchaseOrganizations, setPurchaseOrganizations] = React.useState<any[]>([]);
@@ -261,179 +361,215 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
         }
     };
 
+    const noVendors = rows.length === 0;
+
     return (
         <>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Vendors List</h2>
-
-            <div className="overflow-x-auto rounded-xl shadow-md border">
-                <Table className="min-w-full text-sm border-collapse">
-                    <TableHeader className="sticky top-0 z-10 bg-blue-100">
-                        <TableRow>
-                            <TableHead className="text-black text-center px-4 py-2">Sr. No.</TableHead>
-                            {columns.map((col, index) => (
-                                <React.Fragment key={`${col.key}-${index}`}>
-                                    <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
-                                        {col.label}
-                                    </TableHead>
-                                    {index === 2 && (
-                                        <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
-                                            Vendor Codes
-                                        </TableHead>
-                                    )}
-                                </React.Fragment>
-                            ))}
-                            <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
-                                View Details
-                            </TableHead>
-                            <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
-                                Extend Vendor
-                            </TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    {/* Table Body */}
-                    <TableBody>
-                        {/* {paginatedRows.map((row, idx) => ( */}
-                        {(copiedRow ? [copiedRow] : paginatedRows).map((row, idx) => (
-                            <TableRow
-                                key={`${row.name}-${row.company_code}-${idx}`}
-                                className={`${idx % 2 === 0 ? "bg-gray-50" : "bg-white"} ${copiedRow?.name === row.name && copiedRow?.company_code === row.company_code
-                                    ? "bg-yellow-100 border-2 border-yellow-400"
-                                    : "hover:bg-blue-50"
-                                    }`}
-                            >
-                                <TableCell className="text-center px-4 py-2 whitespace-nowrap">
-                                    {startIdx + idx + 1}
-                                </TableCell>
-
-                                {columns.map((col, index) => (
-                                    <React.Fragment key={`${row.name}-${col.key}-${index}`}>
-                                        <TableCell className="text-center px-4 py-2 whitespace-nowrap">
-                                            {renderCell(row, col)}
-                                        </TableCell>
-                                        {index === 2 && (
-                                            <TableCell className="text-center px-4 py-2">
-                                                <Button
-                                                    variant="outline"
-                                                    onClick={() => fetchVendorCodes(row.name, row.company_code)}
-                                                    className="whitespace-nowrap bg-[#5291CD] text-white text-sm rounded-xl px-3 py-1"
-                                                >
-                                                    View
-                                                </Button>
-                                            </TableCell>
-                                        )}
-                                    </React.Fragment>
-                                ))}
-
-                                {/* Actions */}
-                                <TableCell className="text-center">
-                                    <Button
-                                        onClick={() => handleView(row.ref_no, row.name)}
-                                        className="whitespace-nowrap bg-[#5291CD] text-white text-sm rounded-xl px-3 py-1"
+            {noVendors ? (
+                <p className="text-gray-500">
+                    No vendors found for company code <b>{activeTab}</b>.
+                </p>
+            ) : (
+                <div>
+                    <h2 className="text-xl font-semibold text-gray-800 mb-2">Vendors List</h2>
+                    <div className="overflow-x-auto rounded-xl shadow-md border">
+                        <Table className="min-w-full text-sm border-collapse">
+                            <TableHeader className="sticky top-0 z-10 bg-blue-100">
+                                <TableRow>
+                                    <TableHead
+                                        ref={(el) => { headerRefs.current["srno"] = el; }}
+                                        className="sticky left-0 z-20 bg-blue-100 text-center text-black text-nowrap px-4 py-2"
+                                        style={{ left: getStickyLeft("srno") }}
                                     >
-                                        View
-                                    </Button>
-                                </TableCell>
-                                <TableCell className="text-center">
-                                    {["1012", "1022", "1000", "1025", "1030"].includes(row.company_code) ? (
-                                        <div className="flex gap-2 justify-center">
-                                            <Button
-                                                onClick={() => handleExtend(row)}
-                                                className="bg-blue-600 text-white text-sm rounded-xl px-3 py-1"
+                                        Sr. No.
+                                    </TableHead>
+                                    {columns.map((col, index) => (
+                                        <React.Fragment key={`${col.key}-${index}`}>
+                                            <TableHead
+                                                key={col.key}
+                                                ref={(el) => { headerRefs.current[col.key] = el; }}
+                                                className={`text-black text-center px-4 py-2 whitespace-nowrap ${col.sticky ? "sticky left-0 bg-blue-100 z-20" : ""}`}
+                                                style={stickyKeys.includes(col.key) ? { left: getStickyLeft(col.key) } : {}}
                                             >
-                                                Extend
-                                            </Button>
-                                            <Button
-                                                onClick={() => handleCopy(row)}
-                                                className="bg-green-600 text-white text-sm rounded-xl px-3 py-1"
-                                            >
-                                                Copy
-                                            </Button>
-                                        </div>
-                                    ) : (
-                                        <Button
-                                            onClick={() => handleCopy(row)}
-                                            className="bg-green-600 text-white text-sm rounded-xl px-3 py-1"
+                                                {col.label}
+                                            </TableHead>
+                                            {index === 2 && (
+                                                <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
+                                                    Vendor Codes <br />& GST
+                                                </TableHead>
+                                            )}
+                                        </React.Fragment>
+                                    ))}
+                                    <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
+                                        View Details
+                                    </TableHead>
+                                    <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
+                                        Extend Vendor
+                                    </TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {paginatedRows.map((row, idx) => (
+                                    <TableRow
+                                        key={`${row.name}-${row.company_code}-${idx}`}
+                                        className={
+                                            copiedRow?.name === row.name && copiedRow?.company_code === row.company_code
+                                                ? "bg-yellow-100 border-2 border-yellow-400"
+                                                : idx % 2 === 0
+                                                    ? "bg-gray-50"
+                                                    : "bg-white"
+                                        }
+                                    >
+                                        {/* Sr. No */}
+                                        <TableCell
+                                            className={`text-center px-4 py-2 whitespace-nowrap sticky z-10 ${stickyKeys.includes("srno") ? "bg-white" : "bg-[#f7f7f7]"
+                                                }`}
+                                            style={{ left: getStickyLeft("srno") }}
                                         >
-                                            Copy
-                                        </Button>
-                                    )}
-                                </TableCell>
+                                            {startIdx + idx + 1}
+                                        </TableCell>
 
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                                        {/* Columns */}
+                                        {columns.map((col, index) => (
+                                            <React.Fragment key={`${row.name}-${col.key}-${index}`}>
+                                                <TableCell
+                                                    className={`text-center px-4 py-2 whitespace-nowrap ${stickyKeys.includes(col.key) ? "sticky bg-white z-10" : "bg-[#f7f7f7]"
+                                                        }`}
+                                                    style={stickyKeys.includes(col.key) ? { left: getStickyLeft(col.key) } : {}}
+                                                >
+                                                    {renderCell(row, col)}
+                                                </TableCell>
 
-            </div>
+                                                {/* Vendor Codes & GST Button */}
+                                                {index === 2 && (
+                                                    <TableCell className="text-center px-4 py-2 bg-[#f7f7f7]">
+                                                        <Button
+                                                            variant="outline"
+                                                            onClick={() => fetchVendorCodes(row.name, row.company_code)}
+                                                            className="whitespace-nowrap bg-[#5291CD] text-white text-sm rounded-xl px-3 py-1"
+                                                        >
+                                                            View
+                                                        </Button>
+                                                    </TableCell>
+                                                )}
+                                            </React.Fragment>
+                                        ))}
 
-            {/* 🔹 Pagination */}
-            <div className="mt-4">
+                                        {/* Actions */}
+                                        <TableCell className="text-center bg-[#f7f7f7]">
+                                            <Button
+                                                onClick={() => handleView(row)}
+                                                className="whitespace-nowrap bg-[#5291CD] text-white text-sm rounded-xl px-3 py-1"
+                                            >
+                                                View
+                                            </Button>
+                                        </TableCell>
+                                        <TableCell className="text-center bg-[#f7f7f7]">
+                                            {["1012", "1022", "1000", "1025", "1030"].includes(row.company_code) ? (
+                                                <div className="flex gap-2 justify-center">
+                                                    <Button
+                                                        onClick={() => handleExtend(row)}
+                                                        className="bg-blue-600 text-white text-sm rounded-xl px-3 py-1"
+                                                    >
+                                                        Extend
+                                                    </Button>
+                                                    <Button
+                                                        onClick={() => handleCopy(row)}
+                                                        className="bg-green-600 text-white text-sm rounded-xl px-3 py-1"
+                                                    >
+                                                        Copy
+                                                    </Button>
+                                                </div>
+                                            ) : (
+                                                <Button
+                                                    onClick={() => handleCopy(row)}
+                                                    className="bg-green-600 text-white text-sm rounded-xl px-3 py-1"
+                                                >
+                                                    Copy
+                                                </Button>
+                                            )}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div >
+                </div>
+            )}
+
+            {/*Pagination */}
+            <div className="mt-4 flex justify-between items-center">
+                <p className="text-[12px] text-gray-500">
+                    Showing {paginatedRows.length} of {totalRecords} entries
+                </p>
                 <Pagination
                     currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
-                    total_event_list={totalRecords}
-                    record_per_page={recordPerPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
                 />
             </div>
 
             {copiedRow && (
-                <div className="mt-6 border rounded-lg shadow bg-gray-50">
+                <div ref={copyFormRef} className="mt-6 border rounded-lg shadow bg-gray-50">
                     <h3 className="text-lg text-center font-medium pl-2 pt-2">
                         Copy Vendor Registration for: <span className="text-green-700 font-semibold underline italic">{copiedRow.vendor_name}</span>
                     </h3>
                     <NewVendorRegistration
-                        vendorTypeDropdown={vendorTypeDropdown || []}
-                        companyDropdown={companyDropdown || []}
-                        incoTermsDropdown={incoTermsDropdown || []}
-                        currencyDropdown={currencyDropdown || []}
+                        vendorTypeDropdown={dropdownData?.vendor_type || []}
+                        companyDropdown={unfilteredDropdownData?.company_master || []}
+                        incoTermsDropdown={unfilteredDropdownData?.incoterm_master || []}
+                        currencyDropdown={unfilteredDropdownData?.currency_master || []}
                         handleCancel={() => setCopiedRow(null)}
                         initialData={copiedRow}
                     />
                 </div>
             )}
 
-            {/* 🔹 Vendor Codes PopUp */}
+            {/*Vendor Codes PopUp */}
             {isVendorCodeDialog && selectedVendorCodes && (
                 <PopUp
                     handleClose={() => setIsVendorCodeDialog(false)}
                     headerText="Vendor Codes"
-                    classname="overflow-y-auto md:max-w-3xl md:max-h-[80vh]"
+                    classname="relative"
                 >
-                    <div className="overflow-x-auto mt-3">
-                        <Table className="min-w-full text-sm">
-                            <TableBody>
-                                {selectedVendorCodes.map((company) => (
-                                    <React.Fragment key={company.company_info.company_code}>
-                                        <TableRow className="bg-[#5291CD] text-white font-semibold sticky top-0">
-                                            <TableCell colSpan={3} className="hover:bg-[#5291CD]">
-                                                Company Code: {company.company_info.company_code}
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow className="bg-gray-200 hover:bg-gray-200 font-semibold">
-                                            <TableHead>State</TableHead>
-                                            <TableHead>GST No</TableHead>
-                                            <TableHead>Vendor Code</TableHead>
-                                        </TableRow>
-                                        {company.vendor_code_table.map((vendor, vIdx) => (
-                                            <TableRow
-                                                key={vIdx}
-                                                className={vIdx % 2 === 0 ? "bg-gray-50" : "bg-white"}
-                                            >
-                                                <TableCell>{vendor.state}</TableCell>
-                                                <TableCell>{vendor.gst_no}</TableCell>
-                                                <TableCell>{vendor.vendor_code || "-"}</TableCell>
+                    <div className="overflow-y-auto md:max-w-3xl md:max-h-[80vh] relative">
+                        <div className="overflow-x-auto">
+                            <Table className="min-w-full text-sm">
+                                <TableBody>
+                                    {selectedVendorCodes.map((company) => (
+                                        <React.Fragment key={company.company_info.company_code}>
+                                            <TableRow className="bg-[#5291CD] text-white font-semibold sticky top-0 z-10">
+                                                <TableCell colSpan={3} className="hover:bg-[#5291CD]">
+                                                    Company Code: {company.company_info.company_code}
+                                                </TableCell>
                                             </TableRow>
-                                        ))}
-                                    </React.Fragment>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                            <TableRow className="bg-gray-200 hover:bg-gray-200 font-semibold sticky top-[36px] z-10">
+                                                <TableHead>State</TableHead>
+                                                <TableHead>GST No</TableHead>
+                                                <TableHead>Vendor Code</TableHead>
+                                            </TableRow>
+                                            {company.vendor_code_table.map((vendor, vIdx) => (
+                                                <TableRow
+                                                    key={vIdx}
+                                                    className={vIdx % 2 === 0 ? "bg-gray-50" : "bg-white"}
+                                                >
+                                                    <TableCell>{vendor.state}</TableCell>
+                                                    <TableCell>{vendor.gst_no}</TableCell>
+                                                    <TableCell>{vendor.vendor_code || "-"}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </React.Fragment>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
                     </div>
                 </PopUp>
             )}
-            {/* 🔹 Extend Vendor Inline Form */}
+
+            {/*Extend Vendor Inline Form */}
             {isExtendDialogOpen && extendRow && (
-                <div className="mt-6 border rounded-lg shadow bg-gray-50 p-4">
+                <div ref={extendFormRef} className="mt-6 border rounded-lg shadow bg-gray-50 p-4">
                     <h3 className="text-lg text-center font-medium pl-2 pt-2">
                         Extend Vendor Registration for: <span className="text-green-700 font-semibold underline italic">{extendRow.vendor_name}</span>
                     </h3>
@@ -474,7 +610,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                     required
                                     onValueChange={(value) => handlePurchaseOrganizationDropdownChange(value)}
                                     value={extendRow?.purchase_org ?? ""}
-                                    disabled={!extendRow?.company_code} // disable until company is chosen
+                                    disabled={!extendRow?.company_code}
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select Purchase Organization" />
@@ -510,7 +646,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                 size={"nextbtnsize"}
                                 className="py-2"
                             >
-                                Save
+                                Extend
                             </Button>
                         </div>
                     </div >

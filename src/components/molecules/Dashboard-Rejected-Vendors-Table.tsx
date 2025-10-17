@@ -135,6 +135,17 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
     );
   };
 
+  const handleSelectChange = (
+    value: string,
+    setter: (val: string) => void
+  ) => {
+    if (value === "--Select--") {
+      setter(""); // reset filter
+    } else {
+      setter(value);
+    }
+  };
+
 
   return (
     <>
@@ -145,17 +156,21 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
-            <Select onValueChange={(value) => { setSelectedCompany(value) }}>
+            <Select
+              value={selectedCompany || "all"}
+              onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
               <SelectContent>
-                <SelectGroup className="w-full">
-                  {
-                    companyDropdown?.map((item, index) => (
-                      <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                    ))
-                  }
+                <SelectGroup>
+                  <SelectItem value="all">All</SelectItem>
+                  {companyDropdown?.map((item) => (
+                    <SelectItem key={item.name} value={item.name}>
+                      {item.description}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -219,8 +234,8 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                       <Eye className="!h-6 !w-6 text-black text-center" />
                     </Button>
                   </TableCell>
-                  <TableCell className="text-center"><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                  <TableCell className="text-center"><Button onClick={() => handleAmendClick(item?.name)} className="bg-blue-400 hover:bg-blue-300">Amend</Button></TableCell>
+                  <TableCell className="text-center"><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">View</Button></Link></TableCell>
+                  <TableCell className="text-center"><Button onClick={() => handleAmendClick(item?.name)} className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">Amend</Button></TableCell>
                 </TableRow>
               ))
             ) : (

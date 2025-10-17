@@ -26,6 +26,8 @@ import Link from "next/link";
 import { Trash2, X, Lock, Pencil } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
 import { Blob } from "buffer";
+import PopUp from "../../molecules/PopUp";
+import { Textarea } from "@/components/ui/textarea";
 
 interface documentDetail {
   company_pan_number: string;
@@ -116,7 +118,9 @@ const DocumentDetails = ({
   const [GSTTable, setGSTTable] = useState<gstRow[]>(OnboardingDetail?.gst_table);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const { designation } = useAuth();
-
+  const [remarks,setRemarks] = useState<string>("");
+    const [isAmendCommentDialog,setIsAmendCommentDialog] = useState<boolean>(false);
+  const isTreasuryUser = designation?.toLowerCase() === "treasury";
 
   const [gstStateDropdown, setGstStateDropdown] = useState<gstDropdown>();
   useEffect(() => {
@@ -139,50 +143,6 @@ const DocumentDetails = ({
 
   const validate = () => {
     const errors: any = {};
-    // if (!documentDetails?.company_pan_number && !OnboardingDetail?.company_pan_number) {
-    //   errors.company_pan_number = "Please Enter Company Pan Number";
-    // }
-    // if (!documentDetails?.name_on_company_pan && !OnboardingDetail?.name_on_company_pan) {
-    //   errors.name_on_company_pan = "Please Enter Name On Company Pan";
-    // }
-
-    // // if ((documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_state) && (!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_state)) {
-    // //   errors.gst_state = "Please Select Gst State";
-
-    // // } 
-    // // // if ((documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_number) && (!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_number)) {
-    // // //   errors.gst_number = "Please Enter Gst Number";
-
-    // // // } 
-    // // if ((documentDetails?.gst_ven_type == "Registered" && !documentDetails?.gst_registration_date) && ((!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_registration_date))) {
-    // //   errors.gst_registration_date = "Please Select Gst Registration Date";
-
-    // // } 
-    // // if ((documentDetails?.gst_ven_type == "Registered" && documentDetails?.gstDocument?.length && documentDetails?.gstDocument?.length == 0) && (!OnboardingDetail?.gst_table[0]?.gst_ven_type && OnboardingDetail?.gst_table[0]?.gst_document)) {
-    // //   errors.gst_state = "Please Upload Gst File";
-
-    // // } 
-
-    // if ((documentDetails?.msme_registered == "Yes" && !documentDetails?.msme_enterprise_type) && (OnboardingDetail?.msme_registered == "yes" && !OnboardingDetail?.msme_enterprise_type)) {
-    //   errors.msme_enterprise_type = "Please Select Enterprise Type";
-    // } 
-
-    // if ((documentDetails?.msme_registered == "Yes" && !documentDetails?.udyam_number) && (OnboardingDetail?.msme_registered == "Yes" && !OnboardingDetail?.udyam_number)) {
-    //   errors.udyam_number = "Please Enter Udhyam Registration Number";
-    // } 
-
-    // if ((documentDetails?.msme_registered == "Yes" && !documentDetails?.name_on_udyam_certificate) && (OnboardingDetail?.msme_registered == "Yes" && !OnboardingDetail?.name_on_udyam_certificate)) {
-    //   errors.name_on_udyam_certificate = "Please Enter Name Udhyam Certificate";
-    // } 
-
-    // if ((documentDetails?.msme_registered == "Yes" && documentDetails?.udyamCertificate?.length && documentDetails?.udyamCertificate?.length == 0) && (OnboardingDetail?.msme_registered == "Yes" && !OnboardingDetail?.msme_proof)) {
-    //   errors.udyamCertificate = "Please Upload Udhyam Certificate";
-    // } 
-
-
-    // if (!documentDetails?.enterprise_registration_number && !OnboardingDetail?.enterprise_registration_number) {
-    //   errors.enterprise_registration_number = "Please Enter Enterprice Registration Number";
-    // }
 
     return errors;
   };
@@ -291,6 +251,11 @@ const DocumentDetails = ({
     }
   }
 
+  const handleClose = ()=>{
+    setIsAmendCommentDialog(false);
+    setRemarks("");
+  }
+
   const handleGSTDelete = async (row_name: string) => {
     const deleteUrl = `${API_END_POINTS?.deleteGSTRow}?row_name=${row_name}&ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
     const response: AxiosResponse = await requestWrapper({ url: deleteUrl, method: "GET" });
@@ -307,14 +272,33 @@ const DocumentDetails = ({
     setGSTTable(OnboardingDetail);
   }
 
+
+   const handleAmend = async()=>{
+    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.AmendAPI,method:"POST",data:{
+      data:{
+        vendor_onboarding:onboarding_ref_no,
+        remarks:remarks
+      }
+    }});
+    if(response?.status == 200){
+      alert("Amend Successfully");
+      router.push("dashboard");
+    }
+  }
+
   console.log(singlerow)
 
   return (
+    <>
     <div className="flex flex-col bg-white rounded-lg p-3 w-full max-h-[80vh]">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Document Details</h1>
         {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1 ? "" : "hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
-        {(isAmendment == 1 || re_release == 1) && (
+        {/* {
+          designation != "Purchase Team" && 
+        <Button onClick={() => { setIsAmendCommentDialog(true)}} className={`mb-2 ${isAmendment == 0  ? "" : "hidden"}`}>Amend</Button>
+        } */}
+        {designation == "Purchase Team" && !isTreasuryUser && (isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled((prev) => !prev)}
             className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
@@ -926,6 +910,18 @@ const DocumentDetails = ({
         </div>
       </div>
     </div>
+    {
+      isAmendCommentDialog && 
+      <PopUp handleClose={handleClose} isSubmit={true} headerText="Amend" Submitbutton={handleAmend}>
+        <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            {/* Comment */}
+          </h1>
+          <Textarea className="disabled:opacity-100" placeholder="" onChange={(e) => { setRemarks(e.target.value)}} />
+        </div>
+      </PopUp>
+    }
+    </>
   );
 };
 

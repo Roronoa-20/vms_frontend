@@ -1,401 +1,499 @@
-export const sidebarMenu = [
+import { SidebarItem } from "@/src/types/sidebar";
+
+
+export const sidebarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/home-logo.svg",
     name: "Home",
-    href: "/dashboard"
+    href: "/dashboard",
+    defaultActive: true,
+    children: []
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "Vendor Registration",
-    href: "/vendor-registration"
+    href: "/vendor-registration",
+    children: []
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "All Vendors",
-    href:"/all-vendors"
+    href:"/all-vendors",
+    children: []
   },
-  {
-    logo: "/sidebar-assests/view-pr.svg",
-    name: "PR",
-    href: "/pr-request"
-  },
-  {
-    logo: "/sidebar-assests/raise-rfq-logo.svg",
-    name: "Raise RFQ",
-    href: "/create-rfq"
-  },
-  {
-    logo: "/sidebar-assests/po-details.svg",
-    name: "View PO",
-    href: "/view-po"
-  },
-  // {
-  //   logo: "/sidebar-assests/vendor-icon.svg",
-  //   name: "PR",
-  //   href:"/pr-request"
-  // },
   {
     logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-    name: "Product Enquiry",
-    href: "/pr-inquiry"
-  },
-  // {
-  //   logo: "/sidebar-assests/raise-rfq-logo.svg",
-  //   name: "Raise RFQ",
-  //   href:""
-  // },
-  {
-    logo: "/sidebar-assests/view-pr.svg",
-    name: "View PR",
-    href: "/view-purchase-requisition"
-  },
-  {
-    logo: "/sidebar-assests/view-grn.svg",
-    name: "View GRN",
-    href: "/view-grn"
-  },
-  // {
-  //   logo: "/sidebar-assests/dispatch-logo.svg",
-  //   name: "View Dispatch",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/raise-payment-1.svg",
-  //   name: "View Payment",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-  //   name: "Purchase Enquiry",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/complaint-box.svg",
-  //   name: "Complain Box",
-  //   href:""
-  // },
-];
-
-
-export const PurchaseHeadsidebarMenu = [
-  {
-    logo: "/sidebar-assests/home-logo.svg",
-    name: "Home",
-    href: "/dashboard"
-  },
-  // {
-  //   logo: "/sidebar-assests/vendor-icon.svg",
-  //   name: "Vendor Registration",
-  //   href: "/vendor-registration"
-  // },
-  {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "All Vendors",
-    href:"/all-vendors"
-  },
-  // {
-  //   logo: "/sidebar-assests/view-pr.svg",
-  //   name: "PR",
-  //   href:"/pr-request"
-  // },
-  {
-    logo: "/sidebar-assests/raise-rfq-logo.svg",
-    name: "Raise RFQ",
-    href: "/create-rfq"
-  },
-  {
-    logo: "/sidebar-assests/po-details.svg",
-    name: "View PO",
-    href: "/view-po"
-  },
-  // {
-  //   logo: "/sidebar-assests/vendor-icon.svg",
-  //   name: "PR",
-  //   href:"/pr-request"
-  // },
-  {
-    logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-    name: "Product Enquiry",
-    href: "/pr-inquiry"
-  },
-  // {
-  //   logo: "/sidebar-assests/raise-rfq-logo.svg",
-  //   name: "Raise RFQ",
-  //   href:""
-  // },
-  {
-    logo: "/sidebar-assests/view-pr.svg",
-    name: "View PR",
-    href: "/view-purchase-requisition"
-  },
-  // {
-  //   logo: "/sidebar-assests/po-details.svg",
-  //   name: "View PO",
-  //   href:""
-  // },
-  {
-    logo: "/sidebar-assests/view-grn.svg",
-    name: "View GRN",
-    href: "/view-grn"
-  },
-  // {
-  //   logo: "/sidebar-assests/dispatch-logo.svg",
-  //   name: "View Dispatch",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/raise-payment-1.svg",
-  //   name: "View Payment",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-  //   name: "Purchase Enquiry",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/complaint-box.svg",
-  //   name: "Complain Box",
-  //   href:""
-  // },
-];
-
-
-export const HeadSidebar = [
-  {
-    logo: "/sidebar-assests/home-logo.svg",
-    name: "Home",
-    href: "/dashboard"
-  },
-  {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "All Vendors",
-    href:"/all-vendors"
-  },
-  {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "PR",
-    href: "/pr-request"
-  },
-  {
-    logo: "/sidebar-assests/raise-rfq-logo.svg",
-    name: "Raise RFQ",
-    href: "/create-rfq"
-  },
-  {
-    logo: "/sidebar-assests/po-details.svg",
-    name: "View PO",
-    href: "/view-po"
-  },
-  // {
-  //   logo: "/sidebar-assests/vendor-icon.svg",
-  //   name: "Create PR",
-  //   href: "/pr-request"
-  // },
-  {
-    logo: "/sidebar-assests/raise-rfq-logo.svg",
-    name: "Raise RFQ",
-    href: "/create-rfq"
+    name: "View Enquiry",
+    href: "/view-pr-inquiry-table",
+    children: []
   },
   {
     logo: "/sidebar-assests/view-pr.svg",
     name: "View PR",
-    href: "/view-purchase-requisition"
+    href: "/view-purchase-requisition",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/raise-rfq-logo.svg",
+    name: "Raise RFQ",
+    // href: "/create-rfq",
+    children: [
+      { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Create RFQ", href: "/create-rfq" },
+      { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Shipment Status", href: "/shipment-status-dashboard" },
+      { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Service Bill", href: "/service-bill-dashboard" },
+    ],
   },
   {
     logo: "/sidebar-assests/po-details.svg",
     name: "View PO",
-    href: "/view-po"
-  },
-  // {
-  //   logo: "/sidebar-assests/dispatch-logo.svg",
-  //   name: "View Dispatch",
-  //   href:""
-  // },
-  {
-    logo: "/sidebar-assests/view-grn.svg",
-    name: "View GRN",
-    href: "/view-grn"
-  },
-
-  // {
-  //   logo: "/sidebar-assests/raise-payment-1.svg",
-  //   name: "View Payment",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/complaint-box.svg",
-  //   name: "Complain Box",
-  //   href:""
-  // },
-];
-
-
-export const VendorsidebarMenu = [
-  {
-    logo: "/sidebar-assests/home-logo.svg",
-    name: "Home",
-    href: "/vendor-dashboard"
+    href: "/view-po",
+    children: []
   },
   {
     logo: "/sidebar-assests/dispatch-logo.svg",
-    name: "Dispatch",
-    href: "/dispatch"
+    name: "View Dispatch",
+    href: "/view-dispatch-table",
+    children: []
   },
-  // {
-  //   logo: "/sidebar-assests/raise-rfq-logo.svg",
-  //   name: "Raise RFQ",
-  //   href:""
-  // },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "View MPN",
+    href: "/pickup-dashboard",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "View GRN",
+    href: "/view-grn",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "View GR Waiver",
+    href: "/gr-waiver-dashboard",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "View Payment",
+    href: "/view-payment-requisition",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "View Gate Entry",
+    href: "/gate-entry-dashboard",
+    children: []
+  },
+];
+
+export const SuperHeadSidebarMenu: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/head-dashboard",
+    defaultActive: true,
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "Vendor Registration",
+    href: "/vendor-registration",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "All Vendors",
+    href:"/all-vendors",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/purchase-enquiry-logo.svg",
+    name: "View Product Enquiry",
+    href: "/view-pr-inquiry-table",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "View PR",
+    href: "/view-purchase-requisition",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/raise-rfq-logo.svg",
+    name: "Raise RFQ",
+    href: "/create-rfq",
+    children: []
+  },
   {
     logo: "/sidebar-assests/po-details.svg",
     name: "View PO",
-    href: "/view-vendor-po"
+    href: "/view-po",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/dispatch-logo.svg",
+    name: "View Dispatch",
+    href:"",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "View GRN",
+    href: "/view-grn",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "GR Waiver",
+    href: "/gr-waiver-dashboard",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "Payment",
+    href: "/view-payment-requisition",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "Gate Entry",
+    href: "/gate-entry-dashboard",
+    children: []
+  },
+];
+
+export const PurchaseHeadsidebarMenu: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/dashboard",
+    defaultActive: true,
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "All Vendors",
+    href:"/all-vendors",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/purchase-enquiry-logo.svg",
+    name: "View Product Enquiry",
+    href: "/view-pr-inquiry-table",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "View PR",
+    href: "/view-purchase-requisition",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/po-details.svg",
+    name: "View PO",
+    href: "/view-po",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/dispatch-logo.svg",
+    name: "View Dispatch",
+    href: "",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "View GRN",
+    href: "/view-grn",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "GR Waiver",
+    href: "/gr-waiver-dashboard",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "Payment",
+    href: "/view-payment-requisition",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "Gate Entry",
+    href: "/gate-entry-dashboard",
+    children: []
+  },
+];
+
+export const StoreSideBar: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/gate-entry-dashboard",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "View Gate Entry",
+    href: "/gate-entry",
+    children: []
+  }
+]
+
+
+export const MaterialUserSideBar: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/material-onboarding-dashboard",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "Raise Request",
+    href: "/new-material-code-request-table",
+    children: []
+  }
+]
+
+export const MaterialCPSideBar: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/material-onboarding-dashboard",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "View Material Code Request",
+    href: "/view-material-code-request",
+    children: []
+  }
+]
+
+export const HeadSidebar: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/dashboard",
+    defaultActive: true,
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "All Vendors",
+    href:"/all-vendors",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/po-details.svg",
+    name: "View PO",
+    href: "/view-po",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "View PR",
+    href: "/view-purchase-requisition",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/po-details.svg",
+    name: "View PO",
+    href: "/view-po",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "View GRN",
+    href: "/view-grn",
+    children: []
+  },
+];
+
+export const VendorsidebarMenu: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/vendor-dashboard",
+    defaultActive: true,
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/po-details.svg",
+    name: "View PO",
+    href: "/view-vendor-po",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/dispatch-logo.svg",
+    name: "Create Dispatch",
+    href: "/dispatch",
+    children: []
   },
   {
     logo: "/sidebar-assests/view-pr.svg",
     name: "ASA Form",
-    href: "/asa-form"
+    href: "/asa-form",
+    children: []
   },
-  // {
-  //   logo: "/sidebar-assests/po-details.svg",
-  //   name: "View PO",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/view-grn.svg",
-  //   name: "View GRN",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/dispatch-logo.svg",
-  //   name: "View Dispatch",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/raise-payment-1.svg",
-  //   name: "View Payment",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-  //   name: "Purchase Enquiry",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/complaint-box.svg",
-  //   name: "Complain Box",
-  //   href:""
-  // },
 ];
 
-export const EnquirysidebarMenu = [
+export const EnquirysidebarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/home-logo.svg",
     name: "Home",
-    href: "/dashboard"
+    href: "/dashboard",
+    defaultActive: true,
+    children: []
   },
   {
     logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-    name: "Enquiry",
-    href: "/pr-inquiry"
-  },
-  {
-    logo: "/sidebar-assests/view-pr.svg",
-    name: "PR",
-    href: "/pr-request"
-  },
-];
-
-export const ASASideBarMenu = [
-  {
-    logo: "/sidebar-assests/home-logo.svg",
-    name: "Home",
-    href: "/dashboard"
-  },
-  {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "ASA",
-    href: "/view-vendor-asa"
-  },
-];
-
-export const QASideBarMenu = [
-  {
-    logo: "/sidebar-assests/home-logo.svg",
-    name: "Home",
-    href: "/qa-dashboard"
-  },
-  {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "QMS Form List",
-    href:"/all-qms-forms"
-  },
-];
-
-export const AccountSideBarMenu = [
-  {
-    logo: "/sidebar-assests/home-logo.svg",
-    name: "Home",
-    href: "/dashboard"
-  },
-  {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "Vendor Registration",
-    href: "/vendor-registration"
-  },
-  {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "All Vendors",
-    href:"/all-vendors"
-  },
-  {
-    logo: "/sidebar-assests/view-pr.svg",
-    name: "PR",
-    href: "/pr-request"
-  },
-  {
-    logo: "/sidebar-assests/po-details.svg",
-    name: "View PO",
-    href: "/view-po"
-  },
-  {
-    logo: "/sidebar-assests/view-grn.svg",
-    name: "View GRN",
-    href: "/view-grn"
-  }
-];
-
-
-export const AccountHeadSideBarMenu = [
-  {
-    logo: "/sidebar-assests/home-logo.svg",
-    name: "Home",
-    href: "/dashboard"
-  },
-  // {
-  //   logo: "/sidebar-assests/vendor-icon.svg",
-  //   name: "Vendor Registration",
-  //   href: "/vendor-registration"
-  // },
-  {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "All Vendors",
-    href:"/all-vendors"
+    name: "Raise Enquiry",
+    href: "/pr-inquiry",
+    children: []
   },
   {
     logo: "/sidebar-assests/view-pr.svg",
     name: "View PR",
-    href: "/view-purchase-requisition"
+    href: "/view-purchase-requisition",
+    children: []
+  },
+];
+
+export const ASASideBarMenu: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/dashboard",
+    defaultActive: true,
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "ASA",
+    href: "/view-vendor-asa",
+    children: []
+  },
+];
+
+export const QASideBarMenu: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/qa-dashboard",
+    defaultActive: true,
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "QMS Form List",
+    href:"/all-qms-forms",
+    children: []
+  },
+];
+
+export const AccountSideBarMenu: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/dashboard",
+    defaultActive: true,
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "Vendor Registration",
+    href: "/vendor-registration",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "All Vendors",
+    href:"/all-vendors",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "View PR",
+    href: "/view-purchase-requisition",
+    children: []
   },
   {
     logo: "/sidebar-assests/po-details.svg",
     name: "View PO",
-    href: "/view-po"
+    href: "/view-po",
+    children: []
   },
   {
     logo: "/sidebar-assests/view-grn.svg",
     name: "View GRN",
-    href: "/view-grn"
+    href: "/view-grn",
+    children: []
   }
+];
+
+
+export const AccountHeadSideBarMenu: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/dashboard",
+    defaultActive: true,
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "All Vendors",
+    href:"/all-vendors",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "View PR",
+    href: "/view-purchase-requisition",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/po-details.svg",
+    name: "View PO",
+    href: "/view-po",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "View GRN",
+    href: "/view-grn",
+    children: []
+  }
+];
+
+export const TreasurySideBarMenu: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/dashboard",
+    defaultActive: true,
+    children: []
+  },
+   {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "All Vendors",
+    href:"/all-vendors",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/po-details.svg",
+    name: "View PO",
+    href: "/view-po",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "View GRN",
+    href: "/view-grn",
+    children: []
+  },
 ];

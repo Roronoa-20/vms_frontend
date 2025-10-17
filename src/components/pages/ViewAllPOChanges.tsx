@@ -6,6 +6,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints';
 import { AxiosResponse } from 'axios';
 import requestWrapper from '@/src/services/apiCall';
 import { Button } from '../atoms/button';
+import Pagination from '../molecules/Pagination';
 
 
 interface table {
@@ -60,12 +61,13 @@ const ViewAllPOChanges = () => {
         <Table className=" max-h-40 overflow-y-scroll overflow-x-scroll">
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-              <TableHead className="text-center">PO Number</TableHead>
-              <TableHead className="text-center">PO Date</TableHead>
-              <TableHead className="text-center">Status</TableHead>
-              <TableHead className="text-center">Bill To Company</TableHead>
-              <TableHead className="text-center">PO Amount</TableHead>
-              <TableHead className="text-center">View</TableHead>
+              <TableHead className="text-black text-center">Sr. No.</TableHead>
+              <TableHead className="text-black text-center">PO Number</TableHead>
+              <TableHead className="text-black text-center">PO Date</TableHead>
+              <TableHead className="text-black text-center">Status</TableHead>
+              <TableHead className="text-black text-center">Bill To Company</TableHead>
+              <TableHead className="text-black text-center">PO Amount</TableHead>
+              <TableHead className="text-black text-center">View</TableHead>
               {/* <TableHead className="text-center">Quantity</TableHead>
               <TableHead className="text-center">Early Delivery Date</TableHead>
               <TableHead className="text-center">Remarks</TableHead>
@@ -79,12 +81,13 @@ const ViewAllPOChanges = () => {
             {
               table?.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell>{item?.po_number}</TableCell>
-                  <TableCell>{item?.po_date}</TableCell>
-                  <TableCell>{item?.status}</TableCell>
-                  <TableCell>{item?.bill_to_company}</TableCell>
-                  <TableCell>{item?.total_value_of_po}</TableCell>
-                  <TableCell><Button onClick={() => { handleOpen(item?.childTable) }}>View</Button></TableCell>
+                  <TableCell className="text-center">{item?.po_number}</TableCell>
+                  <TableCell className="text-center">{item?.po_number}</TableCell>
+                  <TableCell className="text-center">{item?.po_date}</TableCell>
+                  <TableCell className="text-center">{item?.status}</TableCell>
+                  <TableCell className="text-center">{item?.bill_to_company}</TableCell>
+                  <TableCell className="text-center">{item?.total_value_of_po}</TableCell>
+                  <TableCell className="text-center"><Button variant={"nextbtn"} size={"nextbtnsize"} className='py-2 w-[70px] rounded-[12px]' onClick={() => { handleOpen(item?.childTable) }}>View</Button></TableCell>
                 </TableRow>
               ))
             }

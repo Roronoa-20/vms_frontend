@@ -17,9 +17,18 @@ export type TvendorRegistrationDropdown = {
       vendor_type: { name: string }[],
       vendor_title: { name: string }[],
       country_master: { name: string, mobile_code: string }[],
-      company_master: { name: string, description: string , sap_client_code: string}[],
+      company_master: { name: string, description: string, sap_client_code: string, company_name: string }[],
       incoterm_master: { name: string }[],
-      currency_master: { name: string }[]
+      currency_master: { name: string }[],
+      users_list: { user_id: string, full_name: string }[],
+    }
+  }
+}
+
+export type TuserRegistrationDropdown = {
+   message: {
+    data: {
+      users_list: { user_id: string, full_name: string }[],
     }
   }
 }
@@ -223,7 +232,8 @@ export type VendorOnboarding = {
   company: string,
   sent_qms_form_link: boolean,
   qms_form_filled: boolean,
-  time_diff: string
+  time_diff: string,
+  approval_age: string | number,
 };
 
 type MultipleCompanyData = {
@@ -801,9 +811,9 @@ type PaymentDetailsTab = {
   bank_proof: FileAttachment;
   bank_proof_by_purchase_team: FileAttachment
 
-  bank_proofs_by_purchase_team:FileAttachment[]
-  international_bank_proofs_by_purchase_team:FileAttachment[]
-  intermediate_bank_proofs_by_purchase_team:FileAttachment[]
+  bank_proofs_by_purchase_team: FileAttachment[]
+  international_bank_proofs_by_purchase_team: FileAttachment[]
+  intermediate_bank_proofs_by_purchase_team: FileAttachment[]
   international_bank_details: {
     name: string
     beneficiary_name: string,
@@ -1019,6 +1029,7 @@ export interface DashboardPOTableItem {
   total_input_igst: string;
   vendor_status: string;
   vendors_tentative_delivery_date: string | null;
+  tentative_date: string | null;
   street_1: string;
   street_4: string;
   city: string;
@@ -1431,7 +1442,11 @@ export type TPRInquiryTable = {
     hod: string,
     purchase_team: string,
     purchase_type: string,
-    created_by_user_name:string
+    created_by_user_name: string
+    pr_button_show: boolean
+    second_stage_approval_status: string
+    pr_created: string,
+    pur_req: string
   }[]
 }
 
@@ -1482,6 +1497,10 @@ export type CartDetails = {
   hod: string,
   purchase_team: string,
   purchase_type: string,
+  pr_button_show: boolean,
+  second_stage_approval_status: string,
+  pr_created: string,
+  pur_req: string,
 }
 
 export interface PurchaseRequisition {
@@ -1522,6 +1541,11 @@ export interface PurchaseRequisition {
   mail_sent_to_purchase_head: number;
   ack_mail_to_user: number;
   purchase_group: string | null;
+  pr_created: string,
+  pur_req: string,
+  sap_status:string,
+  sap_summary:string,
+  zmsg:string,
 }
 
 export interface RFQTable {

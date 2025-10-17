@@ -83,9 +83,9 @@ export default function SimpleFileUpload({ onNext, buttonText, files, setUploade
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <button className="flex items-center gap-2 px-2 py-1 bg-[#F0EDFF] rounded-md shadow-sm cursor-pointer border-[1px] border-[#4430BF]/20 hover:bg-[#E8E3FF] transition-colors">
+                <button className="flex items-center gap-2 px-2 py-1 bg-[#F0EDFF] rounded-md shadow-sm cursor-pointer border-[1px] border-[#5291CD]/20 hover:bg-[#E8E3FF] transition-colors">
                     <Image src={'/svg/download.svg'} alt='downloadsvg' width={20} height={20} />
-                    <span className="font-medium text-[#4430BF]">
+                    <span className="font-medium text-[#5291CD]">
                         {files.length > 0
                             ? `${files.length} file${files.length > 1 ? 's' : ''} selected`
                             : buttonText}
@@ -94,17 +94,17 @@ export default function SimpleFileUpload({ onNext, buttonText, files, setUploade
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle className="text-center text-[30px] font-normal font-['Poppins'] text-black">Upload Document</DialogTitle>
+                    <DialogTitle className="text-center text-[30px] font-normal text-black">Upload Document</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4">
                     <div 
-                        className="flex-col cursor-pointer px-4 py-2 rounded-md transition-colors text-black flex items-center gap-2 border-2 border-dashed border-[#4430BF]/30" 
+                        className="flex-col cursor-pointer px-4 py-2 rounded-md transition-colors text-black flex items-center gap-2 border-2 border-dashed border-[#5291CD]/30" 
                         onDrop={handleDrop}
                         onDragOver={handleDragOver}
                     >
                         <Image src={`${'/svg/uploadFileIcon.svg'}`} alt="uploadIcon" width={150} height={50} />
                         <span>Drag & Drop Files or</span>
-                        <label htmlFor="file-upload" className="cursor-pointer text-[#4430BF] underline">
+                        <label htmlFor="file-upload" className="cursor-pointer text-[#5291CD] underline">
                             Choose Files
                         </label>
                         <Input
@@ -121,7 +121,7 @@ export default function SimpleFileUpload({ onNext, buttonText, files, setUploade
                             {files.map((file, index) => (
                                 <div key={index} className="flex items-center justify-between bg-gray-100 p-2 mb-2 rounded">
                                     <div className="flex items-center gap-2">
-                                        <FileText size={20} className="text-[#4430BF]" />
+                                        <FileText size={20} className="text-[#5291CD]" />
                                         <div className="flex flex-col">
                                             <span className="font-medium truncate max-w-[200px]">{file.name}</span>
                                             <span className="text-xs text-gray-500">{(file.size / 1024).toFixed(2)} KB</span>
@@ -140,7 +140,7 @@ export default function SimpleFileUpload({ onNext, buttonText, files, setUploade
                     )}
                 </div>
                 <Button
-                    className="border border-[#4430bf] text-[#FFF] px-6 bg-[#4430BF] text-[16px]"
+                    className="border border-[#5291CD] text-[#FFF] px-6 bg-[#5291CD] rounded-[20px] font-semibold text-[16px] hover:bg-white hover:text-black"
                     disabled={files.length === 0}
                     onClick={handleNext}
                 >

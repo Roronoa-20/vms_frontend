@@ -54,6 +54,8 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
 
   const { designation } = useAuth();
   const isAccountsUser = designation?.toLowerCase().includes("account");
+  const isTreasuryUser = designation?.toLowerCase() === "treasury";
+
   const handleClose = () => {
     setIsVendorCodeDialog(false);
     setSelectedVendorcodes([]);
@@ -75,8 +77,6 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const user = Cookies?.get("user_id");
-  console.log(user, "this is user");
-
   const debouncedSearchName = useDebounce(search, 300);
 
   useEffect(() => {
@@ -96,72 +96,83 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
       method: "GET",
     });
     if (dashboardApprovedVendorTableDataApi?.status == 200) {
-      setTable(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding
-      );
-      // settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count);
+      setTable(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding);
       settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count)
-      // setRecordPerPage(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding?.length)
       setRecordPerPage(5);
     }
   };
 
   if (!dashboardTableData) { return <div>Loading...</div>; }
 
+  const handleSelectChange = (
+    value: string,
+    setter: (val: string) => void
+  ) => {
+    if (value === "--Select--") {
+      setter(""); // reset filter
+    } else {
+      setter(value);
+    }
+  };
+
+  const formatApprovalAge = (seconds: string | number) => {
+    const sec = Number(seconds);
+    if (!sec || sec <= 0) return "-";
+
+    const days = Math.floor(sec / (24 * 3600));
+    let remainder = sec % (24 * 3600);
+    const hours = Math.floor(remainder / 3600);
+    remainder %= 3600;
+    const minutes = Math.floor(remainder / 60);
+    const secondsLeft = remainder % 60;
+
+    return `${days}d ${hours}h ${minutes}m`;
+  };
 
   return (
     <>
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Total Onboarded Vendors
+            Total OnBoarded Vendors
           </h1>
           <div className="flex gap-4">
-            <Input placeholder="Search..." onChange={(e)=>{handlesearchname(e)}} />
-            <Select>
+            <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
+            <Select
+              value={selectedCompany || "all"}
+              onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
               <SelectContent>
-                <SelectGroup className="w-full">
-                  {
-                    companyDropdown?.map((item, index) => (
-                      <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                    ))
-                  }
+                <SelectGroup>
+                  <SelectItem value="all">All</SelectItem>
+                  {companyDropdown?.map((item) => (
+                    <SelectItem key={item.name} value={item.name}>
+                      {item.description}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {/* <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select> */}
           </div>
         </div>
         <Table>
-          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
               <TableHead className="text-center text-black">Sr No.</TableHead>
               <TableHead className="text-center text-black">Ref No.</TableHead>
               <TableHead className="text-center text-black">Vendor Name</TableHead>
-              <TableHead className="text-center text-black">Company Code</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Company Code</TableHead>
               <TableHead className="text-center text-black">Status</TableHead>
-              <TableHead className="text-center text-black">Vendor Code</TableHead>
+              <TableHead className="text-center text-black">Aging</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Vendor Code</TableHead>
               <TableHead className="text-center text-black">Country</TableHead>
               <TableHead className="text-center text-black">Register By</TableHead>
-              <TableHead className="text-center text-black">View Details</TableHead>
-              {!isAccountsUser && (
-                <TableHead className="text-center text-black">QMS Form</TableHead>
+              <TableHead className="text-center text-black text-nowrap">View Details</TableHead>
+              {!isAccountsUser && !isTreasuryUser && (
+                <TableHead className="text-center text-black text-nowrap">QMS Form</TableHead>
               )}
             </TableRow>
           </TableHeader>
@@ -169,7 +180,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
             {table ? (
               table?.map((item, index) => (
                 <TableRow key={index}>
-                   <TableCell className="text-center font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
+                  <TableCell className="text-center font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                   <TableCell className="text-center text-nowrap">{item?.name}</TableCell>
                   <TableCell className="text-center text-nowrap">{item?.vendor_name}</TableCell>
                   <TableCell className="text-center text-nowrap">{item?.company_name}</TableCell>
@@ -185,11 +196,25 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                       {item?.onboarding_form_status}
                     </div>
                   </TableCell>
-                  <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
+                  <TableCell>
+                    <div className="text-center bg-blue-100 text-blue-800 px-2 py-3 rounded-[14px] w-[90px]">
+                    {formatApprovalAge(item?.approval_age)}
+
+                    </div>
+                  </TableCell>
+                  <TableCell><Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
                   <TableCell className="text-center">{item?.vendor_country}</TableCell>
                   <TableCell className="text-center whitespace-nowrap">{item?.registered_by_full_name}</TableCell>
-                  <TableCell><Link href={`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-blue-400 hover:bg-blue-300">View</Button></Link></TableCell>
-                  {!isAccountsUser && (
+                  <TableCell>
+                    <Link
+                      href={`/view-onboarding-details?tabtype=${isTreasuryUser ? "Document Detail" : "Company Detail"
+                        }&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}
+                    >
+                      <Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">View</Button>
+                    </Link>
+                  </TableCell>
+                  {/* <TableCell><Link href={`/view-onboarding-details?tabtype=Company Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-blue-400 hover:bg-blue-300">View</Button></Link></TableCell> */}
+                  {!isAccountsUser && !isTreasuryUser && (
                     <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
                   )}
                 </TableRow>
@@ -205,8 +230,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
 
         </Table>
       </div>
-      {
-        isVendorCodeDialog &&
+      {isVendorCodeDialog &&
         <PopUp handleClose={handleClose} classname="overflow-y-scroll">
           <Table>
             <TableHeader>
@@ -217,11 +241,11 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                   <TableRow className="bg-gray-700 hover:bg-gray-700 text-white font-semibold">
                     <TableCell colSpan={3}>Company Code: {company.company_code}</TableCell>
                   </TableRow>
-              <TableRow>
-                <TableHead>State</TableHead>
-                <TableHead>GST No</TableHead>
-                <TableHead>Vendor Code</TableHead>
-              </TableRow>
+                  <TableRow>
+                    <TableHead>State</TableHead>
+                    <TableHead>GST No</TableHead>
+                    <TableHead>Vendor Code</TableHead>
+                  </TableRow>
                   {company.vendor_codes.map((vendor, vIdx) => (
                     <TableRow
                       key={vIdx}

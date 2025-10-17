@@ -1,6 +1,6 @@
 
 // const safeData = data.filter(pr => pr.sap_pr_code !== null && pr.sap_pr_code !== undefined); DO NOT DELETE
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import SubItemViewComponent from "../molecules/view-pr/SubItemViewComponent";
+import Pagination from "../molecules/Pagination";
 
 interface PRItemsType {
   name: string,
@@ -43,31 +44,42 @@ type Props = {
 };
 
 const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChange }: Props) => {
+  console.log(data, "this is data")
   const [selectedRows, setSelectedRows] = useState<Record<string, boolean>>({});
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [filterType, setFilterType] = useState<string>("All");
   const router = useRouter();
+
+  useEffect(() => {
+    onPageChange(1);
+  }, [filterType]);
 
   const filteredData = filterType === "All" ? data : data.filter((pr) => pr.purchase_requisition_type === filterType);
   const totalPages = Math.ceil(totalCount / pageLength);
   const selectedData = data.filter((item) => selectedRows[item.sap_pr_code]);
   const uniqueTypes = Array.from(new Set(data.map((pr) => pr.purchase_requisition_type))).filter(Boolean);
 
-  const handleCheckboxChange = (clickedCode: string, clickedType: string | null) => {
+  const handleCheckboxChange = (prUniqueKey: string, clickedType: string | null) => {
     if (!clickedType) return;
 
-    const isAlreadySelected = !!selectedRows[clickedCode];
+    const isSelected = !!selectedRows[prUniqueKey];
     if (selectedType && selectedType !== clickedType) return;
 
     const updatedRows = { ...selectedRows };
-    if (isAlreadySelected) {
-      delete updatedRows[clickedCode];
+    if (isSelected) {
+      delete updatedRows[prUniqueKey];
     } else {
-      updatedRows[clickedCode] = true;
+      updatedRows[prUniqueKey] = true;
     }
 
-    const selectedCodes = Object.keys(updatedRows).filter((key) => updatedRows[key]);
-    setSelectedType(selectedCodes.length > 0 ? clickedType : null);
+    const selectedCodesOfType = Object.entries(updatedRows)
+      .filter(([key]) => {
+        const pr = data.find((item) => (item.sap_pr_code || item.name) === key);
+        return pr?.purchase_requisition_type === clickedType;
+      })
+      .map(([key]) => key);
+
+    setSelectedType(selectedCodesOfType.length > 0 ? clickedType : null);
     setSelectedRows(updatedRows);
   };
 
@@ -136,12 +148,19 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
     return Object.values(grouped);
   };
 
+  const formatDate = (date: Date): string => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
 
   if (loading) return <p className="text-center text-gray-500">Loading PR data...</p>;
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
+    <>
+      <div className="shadow- bg-[#f6f6f7] p-3 rounded-2xl flex gap-4 flex-wrap">
         <div className="flex items-center gap-2">
           <label className="text-sm font-medium">Filter by PR Type:</label>
           <Select onValueChange={(value) => setFilterType(value)} value={filterType}>
@@ -155,30 +174,30 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
               ))}
             </SelectContent>
           </Select>
-        </div>
-        {selectedData.length > 0 && (
-          <Button
-            className="my-4"
-            variant="nextbtn"
-            size="nextbtnsize"
-            onClick={handleCreateRFQ}
-            disabled={Object.values(selectedRows).filter(Boolean).length === 0}
-          >
-            Create RFQ
-          </Button>
-        )}
-      </div>
 
-      <div className="rounded-xl border overflow-hidden shadow-sm">
+          {selectedData.length > 0 && (
+            <Button
+              className="my-4"
+              variant="nextbtn"
+              size="nextbtnsize"
+              onClick={handleCreateRFQ}
+              disabled={Object.values(selectedRows).filter(Boolean).length === 0}
+            >
+              Create RFQ
+            </Button>
+          )}
+        </div>
         <Table>
-          <TableHeader className="bg-gray-100 text-center">
+          <TableHeader className="bg-blue-100 text-center">
             <TableRow>
               <TableHead className="text-center">Select</TableHead>
               <TableHead className="text-center">Sr. No.</TableHead>
-              <TableHead className="text-center">Purchase Requisition Type</TableHead>
+              <TableHead className="text-center">Company</TableHead>
+              <TableHead className="text-center">PR Type</TableHead>
+              <TableHead className="text-center">PR Name</TableHead>
               <TableHead className="text-center">PR No</TableHead>
               <TableHead className="text-center">Date</TableHead>
-              <TableHead className="text-center">Requester</TableHead>
+              <TableHead className="text-center">Plant</TableHead>
               <TableHead className="text-center">View</TableHead>
             </TableRow>
           </TableHeader>
@@ -193,21 +212,24 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
                   <TableCell className="text-center">
                     <input
                       type="checkbox"
-                      checked={!!selectedRows[pr.sap_pr_code]}
+                      checked={!!selectedRows[pr.sap_pr_code || pr.name]}
                       disabled={!!selectedType && selectedType !== pr.purchase_requisition_type}
-                      onChange={() => handleCheckboxChange(pr.sap_pr_code, pr.purchase_requisition_type)}
+                      onChange={() => handleCheckboxChange(pr.sap_pr_code || pr.name, pr.purchase_requisition_type)}
                       className="cursor-pointer w-4 h-4"
                     />
                   </TableCell>
                   <TableCell className="text-center">{(pageNo - 1) * pageLength + index + 1}</TableCell>
+                  <TableCell className="text-center">{pr.company}</TableCell>
                   <TableCell className="text-center">{pr.purchase_requisition_type}</TableCell>
+                  <TableCell className="text-center">{pr.prf_name_for_sap}</TableCell>
                   <TableCell className="text-center">{pr.sap_pr_code}</TableCell>
-                  <TableCell className="text-center">{pr.purchase_requisition_date}</TableCell>
-                  <TableCell className="text-center">{pr.requisitioner}</TableCell>
+                  <TableCell className="text-center">{pr.purchase_requisition_date ? formatDate(new Date(pr.purchase_requisition_date)) : ""}</TableCell>
+                  <TableCell className="text-center">{pr.plant}</TableCell>
                   <TableCell className="text-center">
                     <Button
-                      variant="outline"
-                      size="sm"
+                      variant="nextbtn"
+                      size="nextbtnsize"
+                      className="py-2.5 hover:bg-white hover:text-black w-[50px] rounded-[16px]"
                       onClick={async () => {
                         await fetchPRItems(pr.name);
                         setSelectedPRDetails(pr);
@@ -230,65 +252,63 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
             )}
           </TableBody>
         </Table>
-      </div>
-      {selectedPRDetails && (
-        <>
-          {showPRPopup && selectedPRDetails.purchase_requisition_type !== "SB" && (
-            <PopUp classname="w-full md:max-w-[70vw] md:max-h-[60vh] h-full overflow-y-scroll" handleClose={() => setShowPRPopup(false)}>
-              <h1 className="pl-5">Purchase Requisition Items</h1>
-              <div className="shadow bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
-                <Table className="max-h-40 overflow-y-scroll overflow-x-scroll">
-                  <TableHeader className="text-center">
-                    <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                      <TableHead>Sr. No.</TableHead>
-                      <TableHead>Plant</TableHead>
-                      <TableHead>Item Name</TableHead>
-                      <TableHead>Material Code</TableHead>
-                      <TableHead>Quantity</TableHead>
-                      <TableHead>UOM</TableHead>
-                      <TableHead>GL Account Number</TableHead>
-                      <TableHead>Cost Center</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {prItems.map((item, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell>{item.plant_head}</TableCell>
-                        <TableCell>{item.product_name_head}</TableCell>
-                        <TableCell>{item.material_code_head}</TableCell>
-                        <TableCell>{item.quantity_head}</TableCell>
-                        <TableCell>{item.uom_head}</TableCell>
-                        <TableCell>{item.cost_center_head}</TableCell>
-                        <TableCell>{item.gl_account_number_head}</TableCell>
+
+        {selectedPRDetails && (
+          <>
+            {showPRPopup && selectedPRDetails.purchase_requisition_type !== "SB" && (
+              <PopUp classname="w-full md:max-w-[70vw] md:max-h-[60vh] h-full overflow-y-scroll" handleClose={() => setShowPRPopup(false)}>
+                <h1 className="pl-5">Purchase Requisition Items</h1>
+                <div className="shadow bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
+                  <Table className="max-h-40 overflow-y-scroll overflow-x-scroll">
+                    <TableHeader className="text-center">
+                      <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
+                        <TableHead>Sr. No.</TableHead>
+                        <TableHead>Plant</TableHead>
+                        <TableHead>Item Name</TableHead>
+                        <TableHead>Material Code</TableHead>
+                        <TableHead>Quantity</TableHead>
+                        <TableHead>UOM</TableHead>
+                        <TableHead>GL Account Number</TableHead>
+                        <TableHead>Cost Center</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </PopUp>
-          )}
-          {showSubItemComponent && selectedPRDetails?.purchase_requisition_type === "SB" && (
-            <PopUp classname="w-full md:max-w-[80vw] md:max-h-[80vh] h-full overflow-y-scroll" handleClose={() => setShowSubItemComponent(false)}>
-              <SubItemViewComponent materials={transformToMaterials(prItems)} />
-            </PopUp>
-          )}
-        </>
+                    </TableHeader>
+                    <TableBody>
+                      {prItems.map((item, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{index + 1}</TableCell>
+                          <TableCell>{item.plant_head}</TableCell>
+                          <TableCell>{item.product_name_head}</TableCell>
+                          <TableCell>{item.material_code_head}</TableCell>
+                          <TableCell>{item.quantity_head}</TableCell>
+                          <TableCell>{item.uom_head}</TableCell>
+                          <TableCell>{item.cost_center_head}</TableCell>
+                          <TableCell>{item.gl_account_number_head}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </PopUp>
+            )}
+            {showSubItemComponent && selectedPRDetails?.purchase_requisition_type === "SB" && (
+              <SubItemViewComponent
+                open={showSubItemComponent}
+                onClose={() => setShowSubItemComponent(false)}
+                materials={transformToMaterials(prItems)}
+              />
+            )}
+          </>
+        )}
+      </div>
+      {totalCount > 0 && (
+        <Pagination
+          currentPage={pageNo}
+          setCurrentPage={onPageChange}
+          total_event_list={filterType === "All" ? totalCount : filteredData.length}
+          record_per_page={pageLength}
+        />
       )}
-
-
-      {totalPages > 1 && (
-        <div className="flex justify-start items-center gap-2 mt-4">
-          <Button variant="outline" disabled={pageNo === 1} onClick={() => onPageChange(pageNo - 1)}>
-            Previous
-          </Button>
-          <span className="text-sm">Page {pageNo} of {totalPages}</span>
-          <Button variant="outline" disabled={pageNo === totalPages} onClick={() => onPageChange(pageNo + 1)}>
-            Next
-          </Button>
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 

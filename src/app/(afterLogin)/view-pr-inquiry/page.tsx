@@ -1,10 +1,10 @@
 import PrInquiryPage from '@/src/components/pages/View-Pr-Inquiry'
 import React from 'react'
 
-const Page = async ({ searchParams }: { searchParams: Promise<{ refno?: string; }> }): Promise<React.ReactElement> => {
-    const { refno } = (await searchParams);
+const Page = async ({ searchParams }: { searchParams: Promise<{ cart_Id?: string; }> }): Promise<React.ReactElement> => {
+    const { cart_Id } = (await searchParams);
   return (
-    <PrInquiryPage refno={refno}/>
+    <PrInquiryPage refno={cart_Id}/>
   )
 }
 

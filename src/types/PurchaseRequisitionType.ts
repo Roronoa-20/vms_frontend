@@ -7,6 +7,9 @@ export interface PurchaseRequisitionResponse {
   "Purchase Group": string;
   "Cart ID": string;
   "Form Status": string;
+  form_is_submitted:boolean;
+  sap_error:string;
+  spa_status: string;
   data: PurchaseRequisitionDataItem[];
 }
 
@@ -67,6 +70,8 @@ export interface PurchaseRequisitionDataItem {
   company_code_area_head:string;
   requisitioner_name_head:string;
   sap_pr_code:string;
+  company: string;
+  prf_name_for_sap: string;
 }
 
 

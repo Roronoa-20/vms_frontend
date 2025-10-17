@@ -70,6 +70,18 @@ export default function LoginForm() {
         router.push("/qa-dashboard");
         return;
       }
+      if (designation === "Super Head"){
+        router.push("/head-dashboard");
+        return;
+      }
+      if (designation === "Material User" || designation === "Material CP"){
+        router.push("/material-onboarding-dashboard");
+        return;
+      }
+      if(designation === "Security"){
+        router.push("/gate-entry-dashboard");
+        return;
+      }
       router.push("/dashboard");
     }
   };

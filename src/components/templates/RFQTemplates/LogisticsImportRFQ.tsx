@@ -13,7 +13,6 @@ import AddNewVendorRFQDialog from '../../molecules/AddNewVendorRFQDialog';
 import NewVendorTable from '../../molecules/rfq/NewVendorTable';
 import LogisticsImportRFQFormFields from './LogisticsImportRFQFormFields';
 import { useRouter } from 'next/navigation';
-import { Plus } from 'lucide-react';
 
 export interface DropdownData {
     account_assignment_category: AccountAssignmentCategory[];
@@ -60,7 +59,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
     const [vendorSearchName, setVendorSearchName] = useState('')
     const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
     const [VendorList, setVendorList] = useState<VendorApiResponse>();
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const [selectedRows, setSelectedRows] = useState<VendorSelectType>(
         {
@@ -86,15 +85,20 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
         if (formData?.service_provider != "Select" && formData?.service_provider && formData?.company_name_logistic) {
             fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Logistics Vendor");
         }
-    }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider]);
+    }, [currentVendorPage, debouncedDoctorSearchName, formData?.service_provider, formData?.company_name_logistic]);
 
     const handleVendorSearch = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         setVendorCurrentPage(1)
         setVendorSearchName(e.target.value);
     }
     const handleSubmit = async () => {
+        setLoading(true)
         if (formData?.service_provider == "All Service Provider" || formData?.service_provider == "Select" || formData?.service_provider == "Premium Service Provider") {
             setSelectedRows({ vendors: [] })
+        }
+        if(!formData?.rfq_cutoff_date_logistic){
+            alert("Fill RFQ Cutoff Date")
+            return
         }
         const formdata = new FormData();
         const fullData = {
@@ -103,17 +107,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
             non_onboarded_vendors: newVendorTable,
             vendors: selectedRows.vendors,
         };
-
-        // loop through keys
-        Object.entries(fullData).forEach(([key, value]) => {
-            if (typeof value === "object") {
-                formdata.append(key, JSON.stringify(value));
-            } else {
-                formdata.append(key, value);
-            }
-        });
         formdata.append('data', JSON.stringify(fullData));
-        // Append file only if exists
         if (uploadedFiles) {
             uploadedFiles?.forEach((file) => {
                 formdata.append("file", file);
@@ -122,10 +116,12 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
         const url = `${API_END_POINTS?.CreateImportRFQ}`;
         const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" });
         if (response?.status == 200) {
-            alert("Submit Successfull");
+            alert(`Request for Quotation(Import) Raised Successfully`);
             router.push("/dashboard");
+            setLoading(false)
         } else {
             alert("error");
+            setLoading(false)
         }
     }
     const handleOpen = () => {
@@ -134,13 +130,10 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
     const handleClose = () => {
         setIsDialog(false);
     }
-
-    console.log(VendorList?.data, "VendorList?.data------------------------------------------0000000000086543")
     return (
         <div className='bg-white h-full w-full pb-6'>
             <div className='flex justify-between items-center pr-2'>
                 <h1 className='font-bold text-[24px] p-5'>RFQ Data for Import</h1>
-                {/* <Button onClick={() => { handleOpen() }}>Add New Vendor</Button> */}
             </div>
             <LogisticsImportRFQFormFields
                 formData={formData}
@@ -154,20 +147,19 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
             {formData?.service_provider === "Courier Service Provider" || formData?.service_provider === "Adhoc Service Provider" && <div className='px-4'>
                 <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
             </div>}
-            <div className='flex justify-end items-center pr-5'>
-                <Button
-                    className='bg-[#5291CD] font-medium text-[14px] inline-flex items-center gap-2'
-                    onClick={() => handleOpen()}
-                >
-                    <Plus className="w-4 h-4" />
-                    Add New Vendor
-                </Button>
-            </div>
-            <div className='py-6'>
-                <NewVendorTable newVendorTable={newVendorTable} />
+            <div className='py-4'>
+                <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen} setNewVendorTable={setNewVendorTable}/>
             </div>
             <div className='flex justify-end pt-10 px-4'>
-                <Button type='button' className='bg-[#5291CD] py-2' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }}>Submit RFQ</Button>
+                <Button type='button' className='bg-[#5291CD] py-2  disabled:opacity-50 disabled:cursor-not-allowed' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }}
+                    disabled={
+                        formData?.service_provider !== "Premium Service Provider" &&
+                        formData?.service_provider !== "All Service Provider" &&
+                        (newVendorTable?.length ?? 0) === 0 &&
+                        (selectedRows?.vendors?.length ?? 0) === 0
+                    }
+                >
+                    Submit RFQ</Button>
             </div>
             {
                 isDialog &&

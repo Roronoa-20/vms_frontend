@@ -46,7 +46,7 @@ const SearchSelectComponent = <T extends object>({
                     const results = await searchApi(searchQuery);
                     setDropdown(results);
                 } catch (error) {
-                    console.error('Error fetching search results:', error);
+                    console?.error('Error fetching search results:', error);
                     setDropdown([]);
                 } finally {
                     setLoading(false);

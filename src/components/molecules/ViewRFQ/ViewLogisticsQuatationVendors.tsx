@@ -202,7 +202,7 @@ const ViewLogisticsQuatationVendors = ({
                                             );
                                         }
                                         return (
-                                            <TableCell key={idx} className={`text-center ${col.key === "name" ? "text-nowrap" : ""}`}>
+                                            <TableCell key={idx} className={`text-center text-nowrap ${col.key === "name" ? "text-nowrap" : ""}`}>
                                                 {getValueByKey(item, col.key, index)}
                                             </TableCell>
                                         );
@@ -212,7 +212,7 @@ const ViewLogisticsQuatationVendors = ({
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={columns.length} className="text-center text-gray-500 py-4">
-                                    No results found
+                                    Bidding Details of Vendors will be seen after RFQ Cut-off Time.
                                 </TableCell>
                             </TableRow>
                         )}

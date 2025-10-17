@@ -78,11 +78,11 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
   const [uploadedFiles, setUploadedFiles] = useState<FileList | null>(null)
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [rowNamesMapping, setRowNamesMapping] = useState<{ [key: string]: string }>({});
+  const isTreasuryUser = designation?.toLowerCase() === "treasury";
 
 
   useEffect(() => {
     const fetchCurrency = async () => {
-
       const currencyUrl = `${API_END_POINTS?.currencyDropdown}`;
       const currencyResponse: AxiosResponse = await requestWrapper({ url: currencyUrl, method: "GET" });
       if (currencyResponse?.status == 200) {
@@ -92,7 +92,9 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
 
     fetchCurrency();
   }, [])
-  const router = useRouter()
+
+  const router = useRouter();
+
   useEffect(() => {
     const fetchBank = async () => {
 
@@ -142,8 +144,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
       alert("Updated Successfully");
       location.reload();
     }
-
-  }
+  };
 
   const FileUpload = async (bankType: "Beneficiary" | "Intermediate") => {
     if (!uploadedFiles || uploadedFiles.length === 0) {
@@ -233,7 +234,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
     } else {
       setFormData((prev: any) => ({ ...prev, intermediate_bank_details: { ...prev?.intermediate_bank_details, [name]: value } }));
     }
-  }
+  };
 
   const handleTwoWayFileDelete = async (attachment_table_name: string, row_name: string) => {
     const data = {
@@ -268,7 +269,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
         <div className="flex justify-between items-center border-b-2 w-full">
           <h1 className="font-semibold text-[18px]">Bank Details</h1>
           {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
-          {isClient && (isAmendment == 1 || re_release == 1) && (
+          {designation == "Purchase Team" && !isTreasuryUser && isClient && (isAmendment == 1 || re_release == 1) && (
             <div
               onClick={() => setIsDisabled((prev) => !prev)}
               className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
@@ -428,8 +429,8 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
 
           <div className="flex gap-6 items-start flex-wrap">
             {/* Upload Section */}
-            {(isAccountTeam === 0 && designation === "Purchase Team" && isBankProof === 1) ||
-              (isAccountTeam === 1 && designation === "Accounts Team" && isBankProof === 1) ? (
+            {(isAccountTeam === 0 && designation === "Purchase Team") ||
+              (isAccountTeam === 1 && designation === "Accounts Team") ? (
               <div className="flex flex-col gap-2">
                 <SimpleFileUpload
                   files={files}
@@ -640,8 +641,8 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
 
             <div className="flex gap-6 items-start flex-wrap">
               {/* Upload Section */}
-              {(isAccountTeam === 0 && designation === "Purchase Team" && isBankProof === 1) ||
-                (isAccountTeam === 1 && designation === "Accounts Team" && isBankProof === 1) ? (
+              {(isAccountTeam === 0 && designation === "Purchase Team") ||
+                (isAccountTeam === 1 && designation === "Accounts Team") ? (
                 <div className="flex flex-col gap-2">
                   <SimpleFileUpload
                     files={files}

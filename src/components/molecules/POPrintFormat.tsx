@@ -23,19 +23,9 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
     ["P.O. No.", prDetails?.name, "Date", prDetails?.po_date],
     ["Amd. Ver No.", "0", "Date", ""],
     ["Purchase Grp.", prDetails?.purchase_group, "", ""],
-    [
-      "Ref. PR No",
-      prDetails?.ref_pr_no,
-      "Ref. PR Date",
-      prDetails?.ref_pr_date,
-    ],
+    ["Ref. PR No", prDetails?.ref_pr_no, "Ref. PR Date", prDetails?.ref_pr_date],
     ["Ref. PR Person", prDetails?.ref_pr_person, "", ""],
-    [
-      "Contact Person",
-      prDetails?.contact_person,
-      "Phone No.",
-      prDetails?.phonemobile_no,
-    ],
+    ["Contact Person", prDetails?.contact_person, "Phone No.", prDetails?.phonemobile_no],
   ];
 
   const rightColumnAddressConst2 = [
@@ -45,41 +35,20 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
     ["SSI Regn No.", ""],
   ];
 
-  const Header = [
-    "Sr No.",
-    "Material Code",
-    "Description",
-    "HSN/SAC",
-    "UOM",
-    "Quantity",
-    "Rate",
-    "Amount",
-    "Sche. Date",
-    "Sche. Qty",
-  ];
+  const Header = ["Sr No.", "Material Code", "Description", "HSN/SAC", "UOM", "Quantity", "Rate", "Amount", "Sche. Date", "Sche. Qty"];
 
   const amountLabel = [
     ["Total Gross Amount", prDetails?.total_gross_amount],
     ["Total Discount on Gross Amount", ""],
     ["Total INPUT CGST", prDetails?.total_input_cgst],
     ["Total INPUT SGST", prDetails?.total_input_sgst],
-    [
-      "Total Value of Purchase Order / Service Order",
-      prDetails?.total_value_of_po__so,
-    ],
+    ["Total Value of Purchase Order / Service Order", prDetails?.total_value_of_po__so,],
   ];
 
-  const companyLogo:Record<string,string> = {
-    "Meril Diagnostics Private Limited":
-      "/printFormatLogo/Meril-Diagnostics.svg",
-    "Meril Endo Surgery Private Limited":
-      "/printFormatLogo/Meril-Endo-surgery.svg",
-    "Meril Health Care Private Limited":
-      "/printFormatLogo/Meril-Healthcare-Logo.svg",
-    "Meril Life Sciences Private Limited":
-      "/printFormatLogo/Meril-life-sciences-logo.svg",
-  };
-  console.log(prDetails)
+  
+
+  console.log(prDetails, "this is pr details")
+
   return (
     <div
       ref={contentRef}
@@ -93,13 +62,21 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
         {/* Left Column */}
         <div className="border-r border-black">
           <div className="flex justify-center border-b border-black py-4">
-            <div className="text-center">
+            {
+              prDetails?.company_logo?.base64 &&
+              // <img
+              // src={`data:image/png;base64,${prDetails && prDetails?.company_logo?prDetails?.company_logo?.base64:""}`}
+              // alt="Signature"
+              // //  crossOrigin="anonymous"
+              // style={{ width: "25%", height: "auto", objectFit: "contain" }}
+              // // content="contain"
+              // />
               <img
-                src={`${companyLogo[prDetails?.bill_to_company]}`}
-                alt="No Logo"
-                className="h-25 w-25 mx-auto mb-1"
+                src={`data:${prDetails?.company_logo?.mime_type};base64,${prDetails?.company_logo?.base64}`}
+                alt="Company Logo"
+                style={{ width: "25%", height: "auto", objectFit: "contain" }}
               />
-            </div>
+            }
           </div>
 
           {/* Supplier and Address */}
@@ -113,9 +90,10 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
             </div>
           </div>
           <div className="border-b border-black p-2 leading-4 text-sm">
-            ,<br />,<br />
-            ,-
-            <br />
+             <span className="font-semibold">{prDetails?.vendor_address_details?.vendor_name}</span><br/>
+            {prDetails?.vendor_address_details?.address_line_1},<br />
+            {prDetails?.vendor_address_details?.address_line_2},<br />
+            {prDetails?.vendor_address_details?.city} - {prDetails?.vendor_address_details?.zip_code}, {prDetails?.vendor_address_details?.state}, {prDetails?.vendor_address_details?.country}<br />
           </div>
 
           {/* Vendor Info List */}
@@ -130,15 +108,16 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
         </div>
 
         {/* Right Column */}
-        <div className="border-l border-black">
+        <div>
           <div className="border-b border-black p-2">
             <div className="font-semibold">
-              Bill To : Meril Life Sciences Private Limited
+              Bill To : {prDetails?.bill_to_company_details?.company_name}
             </div>
-            <div>Bilakhia House, Survey No 135/139</div>
-            <div>Muktanand Marg, Chala,</div>
-            <div>Vapi - 369191 (24-Gujarat)</div>
-            <div>Phone No: 0260-3052100</div>
+            <div>{prDetails?.bill_to_company_details?.street_1}</div>
+            <div>{prDetails?.bill_to_company_details?.street_2}</div>
+            {/* <div>Muktanand Marg, Chala,</div> */}
+            <div>{prDetails?.bill_to_company_details?.city} - {prDetails?.bill_to_company_details?.pincode} ({prDetails?.bill_to_company_details?.state_full})</div>
+            <div>Phone No: {prDetails?.bill_to_company_details?.contact_no}</div>
           </div>
 
           {rightColumnAddressConst1?.map((row, idx) => (
@@ -166,12 +145,13 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
           {/* Ship To */}
           <div className="border-t border-black p-2">
             <div className="font-semibold">
-              Ship To : Meril Endo Surgery Private Limited
+              Ship To : {prDetails?.ship_to_company_details?.company_name}
             </div>
-            <div>Bilakhia House, Survey No 135/139</div>
-            <div>Muktanand Marg, Chala,</div>
-            <div>Vapi - 369191 (24-Gujarat)</div>
-            <div>Phone No: 0260-3052100</div>
+            <div>{prDetails?.ship_to_company_details?.street_1}</div>
+            <div>{prDetails?.ship_to_company_details?.street_2}</div>
+            {/* <div>Muktanand Marg, Chala,</div> */}
+            <div>{prDetails?.ship_to_company_details?.city} - {prDetails?.ship_to_company_details?.pincode} ({prDetails?.ship_to_company_details?.state_full})</div>
+            <div>Phone No: {prDetails?.ship_to_company_details?.contact_no}</div>
           </div>
         </div>
       </div>
@@ -286,25 +266,25 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
           </div>
           <div className="grid grid-cols-3 text-center border-b border-black">
             <div className="border-r border-black h-20 flex items-center justify-center relative">
-            {
-               prDetails?.sign_url1?.base64 &&
-              <img
-              src={`data:image/png;base64,${prDetails && prDetails?.sign_url1?prDetails?.sign_url1?.base64:""}`}
-              alt="Signature"
-              //  crossOrigin="anonymous"
-              style={{ width: "50%", height: "auto", objectFit: "contain" }}
-              // content="contain"
-              />
-            }
+              {
+                prDetails?.sign_url1?.base64 &&
+                <img
+                  src={`data:image/png;base64,${prDetails && prDetails?.sign_url1 ? prDetails?.sign_url1?.base64 : ""}`}
+                  alt="Signature"
+                  //  crossOrigin="anonymous"
+                  style={{ width: "50%", height: "auto", objectFit: "contain" }}
+                // content="contain"
+                />
+              }
             </div>
             <div className="border-r border-black h-20 flex items-center justify-center">
               {
-                 prDetails?.sign_url2?.base64 &&
+                prDetails?.sign_url2?.base64 &&
                 <img
-                src={`data:image/png;base64,${prDetails && prDetails?.sign_url2?prDetails?.sign_url2?.base64:""}`}
-                alt="Signature"
-                //  crossOrigin="anonymous"
-                style={{ width: "50%", height: "auto", objectFit: "contain" }}
+                  src={`data:image/png;base64,${prDetails && prDetails?.sign_url2 ? prDetails?.sign_url2?.base64 : ""}`}
+                  alt="Signature"
+                  //  crossOrigin="anonymous"
+                  style={{ width: "50%", height: "auto", objectFit: "contain" }}
                 // content="contain"
                 />
               }
@@ -313,10 +293,10 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
               {
                 prDetails?.sign_url3?.base64 &&
                 <img
-                src={`data:image/png;base64,${prDetails && prDetails?.sign_url3?prDetails?.sign_url3?.base64:""}`}
-                alt="Signature"
-                //  crossOrigin="anonymous"
-                style={{ width: "50%", height: "auto", objectFit: "contain" }}
+                  src={`data:image/png;base64,${prDetails && prDetails?.sign_url3 ? prDetails?.sign_url3?.base64 : ""}`}
+                  alt="Signature"
+                  //  crossOrigin="anonymous"
+                  style={{ width: "50%", height: "auto", objectFit: "contain" }}
                 // content="contain"
                 />
               }

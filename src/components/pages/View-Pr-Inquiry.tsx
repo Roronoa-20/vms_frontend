@@ -4,7 +4,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios';
 import requestWrapper from '@/src/services/apiCall';
 import { cookies } from 'next/headers';
-import { TvendorRegistrationDropdown } from '@/src/types/types';
+import { FileAttachment, TvendorRegistrationDropdown } from '@/src/types/types';
 
 export interface purchaseInquiryDropdown {
     message:{
@@ -32,7 +32,9 @@ export type TableData = {
       uom:string,
       lead_time:string,
       product_quantity:string,
-      user_specifications:string
+      user_specifications:string,
+      file:File,
+      attachment:FileAttachment
 }
 
 export type TPRInquiry = {
@@ -50,7 +52,13 @@ export type TPRInquiry = {
     purchase_team_acknowledgement:boolean,
     asked_to_modify:boolean,
     purchase_team_approved:boolean,
-    acknowledged_date:string
+    acknowledged_date:string,
+    is_submited:number,
+    hod_approved:boolean
+    second_stage_approved:boolean,
+    second_stage_approval_by:string
+    cost_center:string,
+    gl_account:string
 }
 
 
