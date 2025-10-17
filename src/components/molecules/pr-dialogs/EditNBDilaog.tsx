@@ -1,16 +1,7 @@
 // components/EditNBModal.tsx
 'use client';
-
 import React, { useState, useEffect } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -23,7 +14,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import { today } from '../../templates/RFQTemplates/LogisticsImportRFQFormFields';
-import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ProfitCenter, PurchaseGroup, StorageLocation, StoreLocation, UOMMaster, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType';
+import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, Plant, ProfitCenter, PurchaseGroup, StorageLocation, StoreLocation, UOMMaster, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType';
 import SearchSelectComponent from '../../common/SelectSearchComponent';
 import PopUp from '../PopUp';
 
@@ -57,11 +48,11 @@ interface EditNBModalProps {
   MaterialGroupDropdown: MaterialGroupMaster[]
   GLAccountDropdwon: GLAccountNumber[]
   CostCenterDropdown: CostCenter[]
-  accountAssigmentDropdown:AccountAssignmentCategory[]
+  accountAssigmentDropdown: AccountAssignmentCategory[]
   // MaterialCodeDropdown: MaterialCode[]
-  itemCategoryDropdown:ItemCategoryMaster[]
-  plant:string
-  company:string
+  itemCategoryDropdown: ItemCategoryMaster[]
+  plant: string
+  company: string
 }
 
 const EditNBModal: React.FC<EditNBModalProps> = ({
@@ -74,12 +65,14 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   PurchaseGroupDropdown,
   StorageLocationDropdown,
   ValuationClassDropdown,
-  ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown,accountAssigmentDropdown,itemCategoryDropdown,plant,company
+  ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, accountAssigmentDropdown, itemCategoryDropdown, plant, company
 }) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, any>>({});
   const [MaterialCodeDropdown, setMaterialCodeDropdown] = useState<MaterialCode[]>()
+  const [PlantCodeDropdown, setPlantCodeDropdown] = useState<Plant[]>()
   const [materialCode, setMaterialCode] = useState<string>("");
+  const [plantCode, setPlantCode] = useState<string>("");
   const [requiredField, setRequiredField] = useState<Record<string, any>>({});
   useEffect(() => {
     if (isOpen) {
@@ -91,6 +84,9 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   useEffect(() => {
     if (defaultData?.material_code_head) {
       setMaterialCode(defaultData?.material_code_head);
+    }
+    if (defaultData?.plant_head) {
+      setMaterialCode(defaultData?.plant_head);
     }
   }, [defaultData]);
 
@@ -156,11 +152,22 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     let url = baseUrl;
 
     // Only include filters if company exists
+    const filters = [];
+
     if (company) {
-      const filters = [{ company:company},{plant:plant}];
-      console.log(filters,"filters")
+      filters.push({ company });
+    }
+
+    if (formData?.plant_head) {
+      filters.push({ plant: formData.plant_head });
+    }
+
+    if (filters.length > 0) {
       url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
     }
+
+    console.log(filters, "filters");
+
     // Add search_term if query exists
     if (query) {
       url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
@@ -175,7 +182,26 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     }
     return []
   }
+  const fetchPlantCodeData = async (query?: string): Promise<[]> => {
+    console.log(query)
+    const baseUrl = API_END_POINTS?.FetchPlantSearchApi;
+    let url = baseUrl;
 
+    // Add search_term if query exists
+    if (query) {
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
+    }
+
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+    if (response?.status == 200) {
+      console.log(response?.data?.message?.data, "response?.data?.message?.data plant")
+      setPlantCodeDropdown(response?.data?.message?.data)
+      return response.data.message.data
+    } else {
+      alert("error");
+    }
+    return []
+  }
   const validate = () => {
     const newErrors: Record<string, string> = {};
 
@@ -231,12 +257,15 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     }
   };
   useEffect(() => {
-    setFormData((prev) => ({ ...prev, purchase_requisition_date_head: formData?.purchase_requisition_date_head ? formData?.purchase_requisition_date_head : today , plant_head:plant }));
+    setFormData((prev) => ({ ...prev, purchase_requisition_date_head: formData?.purchase_requisition_date_head ? formData?.purchase_requisition_date_head : today, plant_head: plant }));
   }, [today, formData?.purchase_requisition_date_head]);
 
   useEffect(() => {
     fetchMaterialCodeData();
-  }, [formData?.company_code_area_head]);
+  }, [formData?.company_code_area_head, formData?.plant_head]);
+  useEffect(() => {
+    fetchPlantCodeData();
+  }, []);
   const renderInput = (name: string, label: string, type = 'text', inputProps: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
     <div className="col-span-1">
       <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -259,7 +288,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     options: T[],
     getValue: (item: T) => string,
     getLabel: (item: T) => string,
-    disabled?:boolean
+    disabled?: boolean
   ) => {
     const selectedValue = formData[name] ?? "";
     return (
@@ -293,20 +322,40 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       </div>
     );
   };
-
+  console.log(formData, "formData")
   return (
     <PopUp headerText='Purchase Request Items' classname='overflow-y-scroll md:max-w-[1000px] md:max-h-[600px]' handleClose={onClose} isSubmit={true} Submitbutton={handleSubmit}>
       <div className="grid grid-cols-3 gap-6 pt-2">
         {renderInput('item_number_of_purchase_requisition_head', 'Item Number of Purchase Requisition', 'text', { disabled: true })}
-        {renderInput('purchase_requisition_date_head', 'Purchase Requisition Date', 'date')}
+        {renderInput('purchase_requisition_date_head', 'Purchase Requisition Date', 'date',{ disabled: true })}
         {renderSelect(
           'purchase_group_head',
           'Purchase Group',
           PurchaseGroupDropdown,
           (item) => item.name,
-          (item) => `${item.purchase_group_code} - ${item.purchase_group_name}`
+          (item) => `${item.purchase_group_code} - ${item.purchase_group_name}`,
+          true
         )}
-
+        <div className='w-full'>
+          <h1 className="text-[14px] font-normal text-[#626973] pb-1 flex items-center gap-1 ">
+            {"Select Plant"}
+            {/* {error && <span className="text-red-600">*</span>} */}
+          </h1>
+          <SearchSelectComponent
+            setData={(value) => {
+              setPlantCode(value ?? "");
+              setFormData(prev => ({ ...prev, plant_head: value ?? "" }));
+            }}
+            data={plantCode ?? ""}
+            getLabel={(item) => `${item?.plant_code} - ${item?.plant_name}`}
+            getValue={(item) => item?.name}
+            dropdown={PlantCodeDropdown ? PlantCodeDropdown : []}
+            searchApi={fetchPlantCodeData}
+            setDropdown={setPlantCodeDropdown}
+            placeholder='Select Plant Code'
+          />
+          {renderError("plant_head")}
+        </div>
         {renderSelect(
           'account_assignment_category_head',
           'Account Assignment Category',
@@ -323,14 +372,13 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
         )}
 
         {renderInput('delivery_date_head', 'Delivery Date', 'date')}
-
         {renderSelect(
           'item_category_head',
           'Item Category',
           itemCategoryDropdown,
           (item) => item.name,
           (item) => `${item.item_code} - ${item.item_name}`,
-          itemCategoryDropdown?.length > 0 ? false: true
+          itemCategoryDropdown?.length > 0 ? false : true
         )}
 
         {renderSelect(
@@ -354,7 +402,9 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           'Cost Center',
           CostCenterDropdown,
           (item) => item.name,
-          (item) => `${item.cost_center_code} - ${item.cost_center_name}`
+          (item) => `${item.cost_center_code} - ${item.cost_center_name}`,
+          formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true:false
+
         )}
         {renderInput('main_asset_no_head', 'Main Asset No')}
         {renderInput('asset_subnumber_head', 'Asset Subnumber')}
@@ -384,11 +434,12 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           'GL Account Number',
           GLAccountDropdwon,
           (item) => item.name,
-          (item) => `${item.gl_account_code} - ${item.gl_account_name}`
+          (item) => `${item.gl_account_code} - ${item.gl_account_name}`,
+          formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true:false
         )}
 
         <div className='w-full'>
-          <h1 className="text-[14px] font-normal text-[#000000] pb-1 flex items-center gap-1 ">
+          <h1 className="text-[14px] font-normal text-[#626973] pb-1 flex items-center gap-1 ">
             {"Select Material Code"}
             {/* {error && <span className="text-red-600">*</span>} */}
           </h1>
@@ -398,7 +449,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
               setFormData(prev => ({ ...prev, material_code_head: value ?? "" }));
             }}
             data={materialCode ?? ""}
-            getLabel={(item) => item.name}
+            getLabel={(item) => item.material_code}
             getValue={(item) => item?.name}
             dropdown={MaterialCodeDropdown ? MaterialCodeDropdown : []}
             searchApi={fetchMaterialCodeData}
