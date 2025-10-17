@@ -78,6 +78,10 @@ export default function LoginForm() {
         router.push("/material-onboarding-dashboard");
         return;
       }
+      if(designation === "Security"){
+        router.push("/gate-entry-dashboard");
+        return;
+      }
       router.push("/dashboard");
     }
   };
