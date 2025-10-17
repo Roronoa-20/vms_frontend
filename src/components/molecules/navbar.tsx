@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import Logo from "@/src/components/atoms/vms-logo";
+import Logo from "@/src/components/atoms/VmsLoginLogo";
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import NavbarMenu from "./NavbarMenu";
@@ -102,7 +102,7 @@ const Navbar = () => {
       <div className="flex items-center gap-2">
         {/* Show Logo only for Security */}
         {designation?.toLowerCase() === "security" && (
-          <div className="flex items-center justify-center w-6 h-6">
+          <div className="flex items-center justify-center w-44">
             <Logo />
           </div>
         )}
