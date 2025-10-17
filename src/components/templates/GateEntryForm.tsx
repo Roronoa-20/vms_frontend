@@ -119,13 +119,18 @@ const GateEntryForm = ({QrfetchedData,refno,inwardLocationDropdown}:Props) => {
           {/* <Button className='bg-blue-500 hover:bg-blue-400'>Scan BarCode</Button> */}
           <QRScanner setScannedQRData={setScannedQRData}/>
         </div>
+
+        {/* <div className='col-span-1'> */}
+          {/* <h1 className="text-[14px] font-normal text-[#000000] pb-3 pt-5"></h1> */}
+                <Button className='bg-blue-500 hover:bg-blue-400 w-fit mt-9' onClick={()=>{router.push("/gate-entry-dashboard")}}>Back</Button>
+        {/* </div> */}
         
         
           {/* fetchedData?.is_submitted == 0 &&  */}
-          <div className="col-span-1">
+          {/* <div className="col-span-1"> */}
           {/* <h1 className="text-[14px] font-normal text-[#000000] pb-3">Docket No</h1>
           <Input placeholder="" name='user' /> */}
-        </div>
+        {/* </div> */}
           
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
@@ -198,7 +203,9 @@ const GateEntryForm = ({QrfetchedData,refno,inwardLocationDropdown}:Props) => {
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">Qty as per Invoice/Challan</h1>
           <Input placeholder="" name='user' />
         </div> */}
-         <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl mt-5">
+        {
+          fetchedData?.gate_entry_details?.length > 0 && 
+          <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl mt-5">
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
               Purchase Order Items
@@ -239,8 +246,12 @@ const GateEntryForm = ({QrfetchedData,refno,inwardLocationDropdown}:Props) => {
             </TableBody>
           </Table>
         </div>
+        }
 
-          <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl mt-5">
+          {
+
+            fetchedData?.vehicle_details_item?.length > 0 &&
+            <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl mt-5">
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
               Vehical List
@@ -260,7 +271,7 @@ const GateEntryForm = ({QrfetchedData,refno,inwardLocationDropdown}:Props) => {
             </TableHeader>
             <TableBody className="text-center">
              {
-                fetchedData?.vehicle_details_item?.map((item,index)=>(
+               fetchedData?.vehicle_details_item?.map((item,index)=>(
                   <TableRow key={index}>
                     <TableCell>
                       {index+1}
@@ -290,6 +301,7 @@ const GateEntryForm = ({QrfetchedData,refno,inwardLocationDropdown}:Props) => {
             </TableBody>
           </Table>
         </div>
+        }
 
         <div className='grid md:grid-cols-3 sm-grid-cols-3 gap-6'>
         {/* <div className="col-span-1">
