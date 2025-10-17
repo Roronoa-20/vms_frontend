@@ -92,7 +92,7 @@ const GateEntryForm = ({QrfetchedData,refno,inwardLocationDropdown}:Props) => {
 
   return (
     <div className='p-5'>
-    <div className='grid md:grid-cols-3 sm-grid-cols-3 gap-6'>
+    <div className='grid md:grid-cols-3 sm-grid-cols-3 gap-6 h-fit'>
         <div className="col-span-1">
           <h1 className="text-[14px] font-normal text-[#000000] pb-3">
             Inward Location
