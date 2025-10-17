@@ -46,6 +46,8 @@ interface Props {
 
 const ViewPO = ({ po_name }: Props) => {
   const [prDetails, setPRDetails] = useState();
+  const [isSuccessDialog, setIsSuccessDialog] = useState(false);
+
   const [PRNumber, setPRNumber] = useState<string | undefined>(po_name);
   const [POItemsTable, setPOItemsTable] = useState<POItemsTable[]>([]);
   const [isEarlyDeliveryDialog, setIsEarlyDeliveryDialog] = useState<boolean>(false);
@@ -62,11 +64,11 @@ const ViewPO = ({ po_name }: Props) => {
 
   const [ccEmailsList, setCCEmailsList] = useState<{ value: string, label: string }[]>([]);
 
-  useEffect(()=>{
-    if(po_name){
+  useEffect(() => {
+    if (po_name) {
       handlePOChange(po_name);
     }
-  },[])
+  }, [])
 
 
   // setEmail((prev:any)=>({...prev,to:email_to}));
@@ -211,18 +213,18 @@ const ViewPO = ({ po_name }: Props) => {
     formdata.append("to", JSON.stringify(email?.to))
     formdata.append("cc", JSON.stringify(email?.cc))
     const response: AxiosResponse = await requestWrapper({ url: sendPoEmailUrl, data: formdata, method: "POST" });
-    if (response?.status == 200) {
-      alert("email sent successfully");
+    if (response?.status === 200) {
+      setIsSuccessDialog(true);
       handleClose();
     }
-  }
+  };
 
   const handlePOChange = async (value: string) => {
     setPRNumber(value);
     const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.dataBasedOnPo, method: "GET", params: { po_number: value } });
     if (response?.status == 200) {
       setEmail((prev: any) => ({ ...prev, to: response?.data?.message?.vendor_emails?.office_email_primary }));
-      console.log(response?.data?.message?.team_members?.all_team_user_ids,"this is cc emails")
+      console.log(response?.data?.message?.team_members?.all_team_user_ids, "this is cc emails")
       const emailList = response?.data?.message?.team_members?.all_team_user_ids?.map((item: any, index: any) => {
         const obj = {
           label: item,
@@ -295,7 +297,7 @@ const ViewPO = ({ po_name }: Props) => {
           <Button onClick={() => { handleOpen() }} variant={"nextbtn"} size={"nextbtnsize"} className="px-4 py-2.5 transition">
             Early Delivery
           </Button>
-        <Button variant={"nextbtn"} size={"nextbtnsize"} className="px-4 py-2.5 transition" onClick={() => { handleDownloadPDF() }}>Download</Button>
+          <Button variant={"nextbtn"} size={"nextbtnsize"} className="px-4 py-2.5 transition" onClick={() => { handleDownloadPDF() }}>Download</Button>
 
         </div>
       }
@@ -375,6 +377,34 @@ const ViewPO = ({ po_name }: Props) => {
           <Button onClick={() => { handlePoItemsSubmit() }}>Submit</Button>
         </PopUp>
       }
+
+      {isSuccessDialog && (
+        <PopUp
+          handleClose={() => setIsSuccessDialog(false)}
+          // headerText="Success"
+          classname="md:max-w-[350px] text-center"
+        >
+          <div className="p-4 flex flex-col items-center justify-center space-y-4">
+            <div className="text-green-600 text-lg font-semibold">
+              ✅ Email Sent Successfully
+            </div>
+            <p className="text-gray-700 text-sm">
+              Purchase Order has been emailed to the vendor.
+            </p>
+            <Button
+              variant="nextbtn"
+              size="nextbtnsize"
+              onClick={() => {
+                setIsSuccessDialog(false);
+                router.push("/dashboard");
+              }}
+            >
+              OK
+            </Button>
+          </div>
+        </PopUp>
+      )}
+
     </div>
   );
 };

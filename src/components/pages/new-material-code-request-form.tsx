@@ -3,7 +3,7 @@
 import { useEffect, useState, MouseEvent, FormEvent } from "react";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
-import MaterialOnboardingForm from "@/src/components/molecules/material-onboarding/material-onboarding-form";
+// import MaterialOnboardingForm from "@/src/components/molecules/material-onboarding/material-onboarding-form";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
@@ -308,7 +308,7 @@ export default function MaterialRegistration() {
 
   return (
     <div className="pt-4 pl-[1%] pr-[1%] bg-slate-300">
-      <Form {...form}>
+      {/* <Form {...form}>
         <MaterialOnboardingForm
           form={form}
           onCancel={onCancel}
@@ -323,7 +323,7 @@ export default function MaterialRegistration() {
           isButtonDisabled={isButtonDisabled}
 
         />
-      </Form>
+      </Form> */}
     </div>
   );
 }

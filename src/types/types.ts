@@ -1029,6 +1029,7 @@ export interface DashboardPOTableItem {
   total_input_igst: string;
   vendor_status: string;
   vendors_tentative_delivery_date: string | null;
+  tentative_date: string | null;
   street_1: string;
   street_4: string;
   city: string;

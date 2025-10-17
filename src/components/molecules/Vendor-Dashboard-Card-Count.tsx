@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { dashboardCardData, DashboardPOTableData, DashboardPOTableItem, DashboardTableType, TvendorRegistrationDropdown, VendorDashboardPOTableData, RFQTable } from "@/src/types/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import PurchaseAndOngoingOrders from "./VendorPurchase-and-Ongoing-Orders";
+import PurchaseAndOngoingOrders from "./Vendor-Purchase-and-Ongoing-Orders";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../atoms/select";
 import { Command, CommandInput, CommandItem, CommandList, CommandGroup, CommandEmpty, } from "@/components/ui/command";
 import { useMultipleVendorCodeStore } from "@/src/store/MultipleVendorCodeStore";

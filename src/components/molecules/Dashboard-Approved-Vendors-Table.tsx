@@ -126,7 +126,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
     const minutes = Math.floor(remainder / 60);
     const secondsLeft = remainder % 60;
 
-    return `${days}d ${hours}h ${minutes}m ${secondsLeft}s`;
+    return `${days}d ${hours}h ${minutes}m`;
   };
 
   return (
@@ -164,15 +164,15 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
               <TableHead className="text-center text-black">Sr No.</TableHead>
               <TableHead className="text-center text-black">Ref No.</TableHead>
               <TableHead className="text-center text-black">Vendor Name</TableHead>
-              <TableHead className="text-center text-black">Company Code</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Company Code</TableHead>
               <TableHead className="text-center text-black">Status</TableHead>
               <TableHead className="text-center text-black">Aging</TableHead>
-              <TableHead className="text-center text-black">Vendor Code</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Vendor Code</TableHead>
               <TableHead className="text-center text-black">Country</TableHead>
               <TableHead className="text-center text-black">Register By</TableHead>
-              <TableHead className="text-center text-black">View Details</TableHead>
+              <TableHead className="text-center text-black text-nowrap">View Details</TableHead>
               {!isAccountsUser && !isTreasuryUser && (
-                <TableHead className="text-center text-black">QMS Form</TableHead>
+                <TableHead className="text-center text-black text-nowrap">QMS Form</TableHead>
               )}
             </TableRow>
           </TableHeader>
@@ -197,7 +197,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="text-center bg-blue-100 text-blue-800 px-2 py-3 rounded-[14px]">
+                    <div className="text-center bg-blue-100 text-blue-800 px-2 py-3 rounded-[14px] w-[90px]">
                     {formatApprovalAge(item?.approval_age)}
 
                     </div>

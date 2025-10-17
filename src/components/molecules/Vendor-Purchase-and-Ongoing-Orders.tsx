@@ -20,7 +20,7 @@ import { Input } from "../atoms/input";
 // import { useEffect } from 'react';
 import { DashboardPOTableData, DashboardPOTableItem, TvendorRegistrationDropdown, VendorDashboardPOTableData } from "@/src/types/types";
 import { Button } from "@/components/ui/button";
-import PODialog from './PODialog'
+import PODialog from './PODialog';
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { useMultipleVendorCodeStore } from "@/src/store/MultipleVendorCodeStore";
@@ -147,7 +147,16 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
     setIsDialog(false);
     setDate("");
     setComments("");
-  }
+  };
+
+  const formatDate = (dateStr: string | null | undefined) => {
+    if (!dateStr) return "-";
+    const cleanDate = dateStr.trim().split(" ")[0];
+    if (!cleanDate) return "-";
+    const [year, month, day] = cleanDate.split("-");
+    if (!year || !month || !day) return "-";
+    return `${day}-${month}-${year}`;
+  };
 
   console.log(companyDropdown, "this is company dropdown")
 
@@ -174,24 +183,9 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {/* <Select>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="apple">Apple</SelectItem>
-                  <SelectItem value="banana">Banana</SelectItem>
-                  <SelectItem value="blueberry">Blueberry</SelectItem>
-                  <SelectItem value="grapes">Grapes</SelectItem>
-                  <SelectItem value="pineapple">Pineapple</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select> */}
           </div>
         </div>
         <Table>
-          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
               <TableHead className="text-center text-black">Sr No.</TableHead>
@@ -201,7 +195,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
               <TableHead className="text-center text-black">Delivery Date</TableHead>
               <TableHead className="text-center text-black">PO Amount</TableHead>
               <TableHead className="text-center text-black">Status</TableHead>
-              <TableHead className="text-center text-black">Early Delivery</TableHead>
+              <TableHead className="text-center text-black">Tentative Delivery</TableHead>
               <TableHead className="text-center text-black">View details</TableHead>
               <TableHead className={`text-center text-black ${designation == "Vendor" ? "" : "hidden"}`}>Action</TableHead>
             </TableRow>
@@ -215,40 +209,45 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                   <TableCell className="text-center whitespace-nowrap">
                     {item?.supplier_name ? item.supplier_name : "-"}
                   </TableCell>
-                  <TableCell className="text-center whitespace-nowrap">{item?.po_date}</TableCell>
-                  <TableCell className="text-center whitespace-nowrap">{item?.delivery_date}</TableCell>
+                  <TableCell className="text-center whitespace-nowrap">{formatDate(item?.po_date)}</TableCell>
+                  <TableCell className="text-center whitespace-nowrap">{formatDate(item?.delivery_date)}</TableCell>
                   <TableCell className="text-center whitespace-nowrap">{item?.total_gross_amount}</TableCell>
                   <TableCell className="text-center whitespace-nowrap">
                     <div
                       className={`px-2 py-3 rounded-xl ${item?.status === "Pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : item?.status.includes("Approved")
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : item?.status.includes("Approved")
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
                         }`}
                     >
                       {item?.status}
                     </div>
                   </TableCell>
-                  <TableCell className="text-right whitespace-nowrap">{item?.vendors_tentative_delivery_date}</TableCell>
+                  <TableCell className="text-center whitespace-nowrap">{formatDate(item?.tentative_date)}</TableCell>
                   <TableCell>
                     <Button
-                      variant={"outline"}
-                      // onClick={() => downloadPoDetails(item?.name)}
+                      variant={"nextbtn"}
+                      size={"nextbtnsize"}
+                      className="py-2 hover:bg-white hover:text-black border border-transparent hover:border-[#5291CD] rounded-[14px]"
                       onClick={() => router.push(`/view-vendor-po?po_name=${item?.name}`)}
                     >
-                      view
+                      View
                     </Button>
                   </TableCell>
                   <TableCell className={`flex gap-4 ${designation == "Vendor" ? "" : "hidden"}  ${item?.approved_from_vendor == Boolean(1) ? "hidden" : ""} `}>
                     <Button
-                      variant={"outline"}
+                      variant={"nextbtn"}
+                      size={"nextbtnsize"}
+                      className="py-2 hover:bg-white hover:text-black border border-transparent hover:border-[#5291CD] rounded-[14px]"
                       onClick={() => { setStatus("approve"); setIsDialog((prev) => !prev); setPONumber(item?.name) }}
                     >
                       Approve
                     </Button>
                     <Button
-                      variant={"outline"}
+                      variant={"backbtn"}
+                      size={"backbtnsize"}
+                      className="py-2 hover:bg-[#5291CD] hover:text-white hover:border-[#5291CD] rounded-[14px]"
                       onClick={() => { setStatus("reject"); setIsDialog((prev) => !prev); setPONumber(item?.name) }}
                     >
                       Reject
@@ -266,8 +265,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
           </TableBody>
         </Table>
       </div>
-      {
-        isDialog &&
+      {isDialog &&
         <div className="absolute z-50 flex pt-10 items-center justify-center bg-black bg-opacity-50 inset-0">
           <PODialog Submitbutton={handleApproval} handleClose={handleClose} handleComment={setComments} handleDate={setDate} status={status} />
         </div>

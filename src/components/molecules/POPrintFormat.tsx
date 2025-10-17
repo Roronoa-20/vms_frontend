@@ -90,7 +90,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
             </div>
           </div>
           <div className="border-b border-black p-2 leading-4 text-sm">
-             {prDetails?.vendor_address_details?.vendor_name}<br/>
+             <span className="font-semibold">{prDetails?.vendor_address_details?.vendor_name}</span><br/>
             {prDetails?.vendor_address_details?.address_line_1},<br />
             {prDetails?.vendor_address_details?.address_line_2},<br />
             {prDetails?.vendor_address_details?.city} - {prDetails?.vendor_address_details?.zip_code}, {prDetails?.vendor_address_details?.state}, {prDetails?.vendor_address_details?.country}<br />
@@ -108,8 +108,8 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
         </div>
 
         {/* Right Column */}
-        <div className="border-l border-black">
-          <div className="border-t border-black p-2">
+        <div>
+          <div className="border-b border-black p-2">
             <div className="font-semibold">
               Bill To : {prDetails?.bill_to_company_details?.company_name}
             </div>

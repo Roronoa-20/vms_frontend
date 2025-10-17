@@ -192,6 +192,15 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
     }
   };
 
+  const formatDate = (dateStr: string | null | undefined) => {
+    if (!dateStr) return "-";
+    const cleanDate = dateStr.trim().split(" ")[0];
+    if (!cleanDate) return "-";
+    const [year, month, day] = cleanDate.split("-");
+    if (!year || !month || !day) return "-";
+    return `${day}-${month}-${year}`;
+  };
+
 
   return (
     <>
@@ -202,7 +211,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
-            
+
             <Select
               value={selectedCompany || "all"}
               onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
@@ -254,7 +263,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
               <TableHead className="text-center text-black">Delivery Date</TableHead>
               <TableHead className="text-center text-black">PO Amount</TableHead>
               <TableHead className="text-center text-black">Status</TableHead>
-              <TableHead className="text-center text-black">Early Delivery</TableHead>
+              <TableHead className="text-center text-black">Tentative Delivery</TableHead>
               <TableHead className="text-center text-black">View details</TableHead>
               <TableHead className="text-center text-black">Send Email</TableHead>
             </TableRow>
@@ -268,8 +277,8 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                   <TableCell>
                     {item?.supplier_name ? item.supplier_name : "-"}
                   </TableCell>
-                  <TableCell>{item?.po_date}</TableCell>
-                  <TableCell>{item?.delivery_date}</TableCell>
+                  <TableCell>{formatDate(item?.po_date)}</TableCell>
+                  <TableCell>{formatDate(item?.delivery_date)}</TableCell>
                   <TableCell>{item?.total_gross_amount}</TableCell>
                   <TableCell>
                     <div
@@ -283,10 +292,9 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                       {item?.status}
                     </div>
                   </TableCell>
-                  <TableCell className="text-right">{item?.name}</TableCell>
+                  <TableCell className="text-center whitespace-nowrap">{formatDate(item?.tentative_date)}</TableCell>
                   <TableCell>
                     <Button
-                      variant={"outline"}
                       className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]"
                       // onClick={() => downloadPoDetails(item?.name)}
                       onClick={() => router.push(`/view-po?po_name=${item?.name}&email_to=${item?.email}`)}
