@@ -135,7 +135,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData }: Props) => 
               )}
               <TableHead className="text-center text-black whitespace-nowrap">Transfer Status</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">Category Type</TableHead>
-              <TableHead className="text-center text-black whitespace-nowrap">Purchase Request Type</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">PR Type</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">Purchase Team Status</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">HOD Status</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">Additional Status</TableHead>

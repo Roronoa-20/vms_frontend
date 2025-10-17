@@ -147,7 +147,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
 
                 <TableHead className="text-center text-black whitespace-nowrap">Transfer Status</TableHead>
                 <TableHead className="text-center text-black whitespace-nowrap">Category Type</TableHead>
-                <TableHead className="text-center text-black whitespace-nowrap">Purchase Request Type</TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">PR Type</TableHead>
                 <TableHead className="text-center text-black whitespace-nowrap">Purchase Team Status</TableHead>
                 <TableHead className="text-center text-black whitespace-nowrap">HOD Status</TableHead>
                 <TableHead className="text-center text-black whitespace-nowrap">Additional Status</TableHead>
@@ -223,9 +223,9 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                       <TableCell className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show ? "" : "hidden"}`}>
                         {item?.pr_created ? (
                           <button
-                            title="PR Created"
-                            className="py-2 px-4 text-white rounded-[16px] bg-[#5291CD]/50 cursor-not-allowed"
-                            disabled
+                            title={designation == "Purchase Team"?"cannot raise pr":"Raise PR"}
+                            className={`py-2 px-4 text-white rounded-[16px] bg-[#5291CD] ${designation != "Purchase Team"?"hover:bg-white hover:text-black":"cursor-not-allowed"}`}
+                            disabled={designation == "Purchase Team"?true:false}
                           >
                             PR
                           </button>
@@ -233,7 +233,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                           <Link href={`/pr-request?cart_id=${item?.name}`}>
                             <button
                               title={designation == "Purchase Team"?"cannot raise pr":"Raise PR"}
-                              className="py-2 px-4 text-white rounded-[16px] bg-[#5291CD] hover:bg-white hover:text-black"
+                              className={`py-2 px-4 text-white rounded-[16px] bg-[#5291CD] ${designation != "Purchase Team"?"hover:bg-white hover:text-black":"cursor-not-allowed"}`}
                               disabled={designation == "Purchase Team"?true:false}
                             >
                               PR
