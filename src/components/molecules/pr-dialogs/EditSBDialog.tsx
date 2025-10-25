@@ -25,6 +25,7 @@ import requestWrapper from '@/src/services/apiCall';
 import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMaster, MaterialGroupMaster, Plant, PurchaseGroup, PurchaseOrganisation, StorageLocation, StoreLocation, UOMMaster, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType';
 import { today } from '../../templates/RFQTemplates/LogisticsImportRFQFormFields';
 import SearchSelectComponent from '../../common/SelectSearchComponent';
+import PopUp from '../PopUp';
 interface DropdownData {
   purchase_organisation: PurchaseOrganisation[];
   account_assignment_category: AccountAssignmentCategory[];
@@ -234,15 +235,9 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
   };
 
   // ✅ Typed input and select field arrays with `as const`
-  const disabledFields = ["item_number_of_purchase_requisition_head","purchase_requisition_date_head","purchase_group_head"];
-
+  const disabledFields = ["item_number_of_purchase_requisition_head", "purchase_requisition_date_head", "purchase_group_head"];
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl">Purchase Request Items</DialogTitle>
-          <DialogDescription>Edit the details below</DialogDescription>
-        </DialogHeader>
+    <PopUp headerText='Purchase Request Items' classname='overflow-y-scroll md:max-w-[1000px] md:max-h-[600px]' handleClose={onClose} isSubmit={true} Submitbutton={handleSubmit}>
         <div className="grid grid-cols-3 gap-6 p-5">
           {/* Purchase Requisition Date */}
           <div className="col-span-1">
@@ -271,7 +266,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
               <SelectContent>
                 <SelectGroup>
                   {PurchaseGroupDropdown?.map((item, i) => (
-                    <SelectItem key={i} value={item.purchase_group_code}>
+                    <SelectItem key={i} value={item.name}>
                       {item.purchase_group_code} - {item.purchase_group_name}
                     </SelectItem>
                   ))}
@@ -661,16 +656,14 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
           </div>
 
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          {/* <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
           <Button onClick={handleSubmit} disabled={loading}>
             {loading ? "Updating..." : "Update"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </Button> */}
+        
+     </PopUp >
   );
 };
 
