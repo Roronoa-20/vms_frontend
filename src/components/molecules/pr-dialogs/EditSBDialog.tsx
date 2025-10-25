@@ -233,7 +233,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
       alert("Error");
     }
   };
-
+console.log(MaterialGroupDropdown,"MaterialGroupDropdown")
   // ✅ Typed input and select field arrays with `as const`
   const disabledFields = ["item_number_of_purchase_requisition_head", "purchase_requisition_date_head", "purchase_group_head"];
   return (
@@ -407,7 +407,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
               <SelectContent>
                 <SelectGroup>
                   {MaterialGroupDropdown?.map((item, i) => (
-                    <SelectItem key={i} value={item.material_group_name}>
+                    <SelectItem key={i} value={item.name}>
                       {item.material_group_name} - {item.material_group_description}
                     </SelectItem>
                   ))}
@@ -451,7 +451,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
               <SelectContent>
                 <SelectGroup>
                   {CostCenterDropdown?.map((item, i) => (
-                    <SelectItem key={i} value={item.cost_center_name}>
+                    <SelectItem key={i} value={item.name}>
                       {item.cost_center_code} - {item.cost_center_name}
                     </SelectItem>
                   ))}
@@ -497,7 +497,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
               <SelectContent>
                 <SelectGroup>
                   {PurchaseOrgDropdown?.map((item, i) => (
-                    <SelectItem key={i} value={item.purchase_organization_name}>
+                    <SelectItem key={i} value={item.name}>
                       {item.purchase_organization_code} - {item.purchase_organization_name}
                     </SelectItem>
                   ))}
@@ -547,7 +547,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
               <SelectContent>
                 <SelectGroup>
                   {GLAccountDropdwon?.map((item, i) => (
-                    <SelectItem key={i} value={item.gl_account_name}>
+                    <SelectItem key={i} value={item.name}>
                       {item.gl_account_code} - ${item.gl_account_name}
                     </SelectItem>
                   ))}
