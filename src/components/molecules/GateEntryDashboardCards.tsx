@@ -16,10 +16,11 @@ import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { Button } from "../atoms/button";
 import { useRouter } from "next/navigation";
+import { Plus } from "lucide-react";
 
 
 export type TableData = {
-   gate_entry_date: string;
+  gate_entry_date: string;
   eway_bill_date: string;
   eway_bill_no: string;
   creation: string;
@@ -55,11 +56,11 @@ export type TableData = {
   bill_of_entry_date: string;
   bill_of_entry_no: string;
   is_submitted: number;
-  gate_entry_details:PurchaseItemsList[]
-} 
+  gate_entry_details: PurchaseItemsList[]
+}
 
 export type PurchaseItemsList = {
-   name: string;
+  name: string;
   owner: string;
   creation: string;            // datetime string
   modified: string;            // datetime string
@@ -83,13 +84,13 @@ export type PurchaseItemsList = {
 }
 
 type Props = {
-  cardData:cardCount
+  cardData: cardCount
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
 }
 
 type tableParams = {
-  company?:string,
-  status?:string,
+  company?: string,
+  status?: string,
 }
 
 const GateEntryDashboardCards = ({ ...Props }: Props) => {
@@ -98,24 +99,24 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
   const { designation } = useAuth();
   const user = designation;
   const [loading, setLoading] = useState<boolean>(true);
-  const [tableData,setTableData] = useState<TableData[]>([]);
-  const [tableTitle,setTableTitle] = useState<string>("Total Entry");
+  const [tableData, setTableData] = useState<TableData[]>([]);
+  const [tableTitle, setTableTitle] = useState<string>("Total Entry");
   const router = useRouter()
   // const [tableParams,setTableParams] = useState<tableParams | null>({company:"",status:""});
   // const user = cookieStore.get("designation")?.value;
   let allCardData: {
-    name:string,
-    value:string,
-    count:number,
-    icon:string,
-    text_color:string,
-    bg_color:string,
-    hover:string,
+    name: string,
+    value: string,
+    count: number,
+    icon: string,
+    text_color: string,
+    bg_color: string,
+    hover: string,
   }[] = [
 
       {
         name: "Total Entry",
-        value:"",
+        value: "",
         count: Props?.cardData?.total_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-emerald-800",
@@ -125,7 +126,7 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
       {
         name: "MLSIPL Entry",
         count: Props?.cardData?.["3000-Meril Life Sciences India Private Limited"]?.count ?? 0,
-        value:Props?.cardData?.["3000-Meril Life Sciences India Private Limited"]?.name,
+        value: Props?.cardData?.["3000-Meril Life Sciences India Private Limited"]?.name,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-violet-800",
         bg_color: "bg-violet-100",
@@ -134,17 +135,17 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
       {
         name: "MLSPL Entry",
         count: Props?.cardData?.["2000-Meril Life Sciences Private Limited"]?.count ?? 0,
-        value:Props?.cardData?.["2000-Meril Life Sciences Private Limited"]?.name,
+        value: Props?.cardData?.["2000-Meril Life Sciences Private Limited"]?.name,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-pink-800",
         bg_color: "bg-pink-100",
         hover: "hover:border-pink-400",
       },
-   
+
       {
         name: "MEPL Entry",
         count: Props.cardData?.["8000-Meril Endo Surgery Private Limited"]?.count ?? 0,
-        value:Props?.cardData?.["8000-Meril Endo Surgery Private Limited"]?.name,
+        value: Props?.cardData?.["8000-Meril Endo Surgery Private Limited"]?.name,
         icon: "/dashboard-assests/cards_icon/doc.svg",
         text_color: "text-orange-800",
         bg_color: "bg-orange-100",
@@ -153,7 +154,7 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
       {
         name: "MDPL Entry",
         count: Props.cardData?.["7000-Meril Diagnostics Private Limited"]?.count ?? 0,
-        value:Props?.cardData?.["7000-Meril Diagnostics Private Limited"]?.name,
+        value: Props?.cardData?.["7000-Meril Diagnostics Private Limited"]?.name,
         icon: "/dashboard-assests/cards_icon/tick.svg",
         text_color: "text-blue-800",
         bg_color: "bg-blue-100",
@@ -162,7 +163,7 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
       {
         name: "MCPL Entry",
         count: Props.cardData?.["1030-Meril Corporation I Pvt Ltd"]?.count ?? 0,
-        value:Props?.cardData?.["1030-Meril Corporation I Pvt Ltd"]?.name,
+        value: Props?.cardData?.["1030-Meril Corporation I Pvt Ltd"]?.name,
         icon: "/dashboard-assests/cards_icon/doc.svg",
         text_color: "text-yellow-800",
         bg_color: "bg-yellow-100",
@@ -171,7 +172,7 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
       {
         name: "MILSPL Entry",
         count: 0,
-        value:"",
+        value: "",
         icon: "/dashboard-assests/cards_icon/doc.svg",
         text_color: "text-green-800",
         bg_color: "bg-green-100",
@@ -180,7 +181,7 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
       {
         name: "MMIPL Entry",
         count: Props.cardData?.["1022-Meril Medical Innovation Pvt. Ltd."]?.count ?? 0,
-        value:Props?.cardData?.["1022-Meril Medical Innovation Pvt. Ltd."]?.name,
+        value: Props?.cardData?.["1022-Meril Medical Innovation Pvt. Ltd."]?.name,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-purple-800",
         bg_color: "bg-purple-200",
@@ -189,7 +190,7 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
       {
         name: "MNPL Entry",
         count: Props.cardData?.["1025-Merai Newage Pvt. Ltd."]?.count ?? 0,
-        value:Props?.cardData?.["1025-Merai Newage Pvt. Ltd."]?.name,
+        value: Props?.cardData?.["1025-Merai Newage Pvt. Ltd."]?.name,
         icon: "/dashboard-assests/cards_icon/package.svg",
         text_color: "text-yellow-800",
         bg_color: "bg-yellow-100",
@@ -197,8 +198,8 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
       },
       {
         name: "MCIPL Entry",
-        count:  0,
-        value:"",
+        count: 0,
+        value: "",
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-pink-800",
         bg_color: "bg-pink-100",
@@ -207,17 +208,17 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
       {
         name: "Material Received",
         count: Props?.cardData?.gate_received_count ?? 0,
-        value:"",
+        value: "",
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-orange-800",
         bg_color: "bg-orange-100",
         hover: "hover:border-orange-400",
       },
-  
+
       {
         name: "Material Handover",
         count: Props.cardData?.handover_count ?? 0,
-        value:"",
+        value: "",
         icon: "/dashboard-assests/cards_icon/doc.svg",
         text_color: "text-blue-800",
         bg_color: "bg-blue-100",
@@ -239,18 +240,18 @@ const GateEntryDashboardCards = ({ ...Props }: Props) => {
   //  fetchTableData("","","");
   // },[])
 
-console.log(tableTitle,"this is table title")
+  console.log(tableTitle, "this is table title")
 
-  const fetchTableData = async(company?:string,status?:string,title?:string)=>{
-    setTableTitle(title?title:"");
-    console.log(status,"this is status inside api calls")
-    const api = `${API_END_POINTS?.GateEntryTableData}?company=${company?company:""}&status=${status?status:""}&fields=["*"]`;
-    const response:AxiosResponse = await requestWrapper({url:api,method:"GET"});
-    if(response?.status == 200){
-      if(response?.data?.message?.data?.length > 0){
+  const fetchTableData = async (company?: string, status?: string, title?: string) => {
+    setTableTitle(title ? title : "");
+    console.log(status, "this is status inside api calls")
+    const api = `${API_END_POINTS?.GateEntryTableData}?company=${company ? company : ""}&status=${status ? status : ""}&fields=["*"]`;
+    const response: AxiosResponse = await requestWrapper({ url: api, method: "GET" });
+    if (response?.status == 200) {
+      if (response?.data?.message?.data?.length > 0) {
 
         setTableData(response?.data?.message?.data);
-      }else{
+      } else {
         setTableData([]);
       }
     }
@@ -269,37 +270,30 @@ console.log(tableTitle,"this is table title")
   // console.log(Props?.dashboardApprovedVendorTableData, "this is RFQ table");
 
   return (
-    <div className="">
-      {user === "Vendor" &&
-        <div className="flex justify-start pb-4 gap-6">
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Vendor code" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup className="w-full">
-                {
-                  MultipleVendorCode?.map((item, index) => (
-                    <SelectItem key={index} value={item?.vendor_code as string}>{item?.company_name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-      }
+    <div className="bg-slate-200 rounded-2xl shadow-lg p-4 space-y-4">
+      <div className="flex justify-start">
+        <Button
+          variant="nextbtn"
+          size="nextbtnsize"
+          className="flex items-center gap-2 py-2 px-4 rounded-[16px] hover:bg-white hover:text-black transition-colors"
+          onClick={() => { router.push("gate-entry") }}
+        >
+          <Plus className="w-5 h-5 text-white" />
+          Create Gate Entry
+        </Button>
+      </div>
       <Tabs defaultValue={cardData?.[0]?.name} className="">
         <div className="">
           <TabsList className="grid md:grid-cols-4 grid-cols-2 gap-4 h-full pb-6 bg-white">
             {cardData?.map((item, index) => (
-              <TabsTrigger onClick={()=>{
-                if(item?.name == "Material Received"){
-                  fetchTableData("","Received",item?.name)
-                }else if(item?.name == "Material Handover"){
-                  fetchTableData("","HandOver",item?.name);
+              <TabsTrigger onClick={() => {
+                if (item?.name == "Material Received") {
+                  fetchTableData("", "Received", item?.name)
+                } else if (item?.name == "Material Handover") {
+                  fetchTableData("", "HandOver", item?.name);
                 }
-                else{
-                  fetchTableData(item?.value,"",item?.name)
+                else {
+                  fetchTableData(item?.value, "", item?.name)
                 }
               }}
                 key={item.name || index}
@@ -309,7 +303,7 @@ console.log(tableTitle,"this is table title")
                   className={`group w-full h-full rounded-2xl ${item.bg_color} flex flex-col p-3 ${item.text_color} h-28 justify-between border-2 ${item.hover} hover:scale-105 transition duration-300 transform cursor-pointer shadow-md`}>
                   <div className="flex w-full justify-between">
                     <h1 className="text-[13px]">{item.name}</h1>
-                    <Image src={item.icon} alt="" width={25} height={30}/>
+                    <Image src={item.icon} alt="" width={25} height={30} />
                   </div>
                   <div className="text-[20px] text-start font-bold">{item.count}</div>
                 </div>
@@ -317,17 +311,15 @@ console.log(tableTitle,"this is table title")
             ))}
           </TabsList>
         </div>
-        <div className="flex justify-end">
-              <Button onClick={()=>{router.push("gate-entry")}}>Create Gate Entry</Button>
-        </div>
+
         {cardData?.map((item, index) => (
-            <TabsContent key={item.name || index} value={item.name} >
-              {
-                tableData?.length > 0 && 
-                <DashboardGateEntryTable dashboardTableData={tableData} companyDropdown={Props?.companyDropdown} TableTitle={tableTitle} />
-              }
-            </TabsContent>
-          ))}
+          <TabsContent key={item.name || index} value={item.name} >
+            {
+              tableData?.length > 0 &&
+              <DashboardGateEntryTable dashboardTableData={tableData} companyDropdown={Props?.companyDropdown} TableTitle={tableTitle} />
+            }
+          </TabsContent>
+        ))}
       </Tabs>
     </div>
   );

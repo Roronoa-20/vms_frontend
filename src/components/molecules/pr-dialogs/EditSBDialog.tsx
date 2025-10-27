@@ -22,8 +22,10 @@ import {
 import API_END_POINTS from '@/src/services/apiEndPoints';
 import { AxiosResponse } from 'axios';
 import requestWrapper from '@/src/services/apiCall';
-import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMaster, MaterialGroupMaster, PurchaseGroup, PurchaseOrganisation, StorageLocation, StoreLocation, UOMMaster, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType';
+import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMaster, MaterialGroupMaster, Plant, PurchaseGroup, PurchaseOrganisation, StorageLocation, StoreLocation, UOMMaster, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType';
 import { today } from '../../templates/RFQTemplates/LogisticsImportRFQFormFields';
+import SearchSelectComponent from '../../common/SelectSearchComponent';
+import PopUp from '../PopUp';
 interface DropdownData {
   purchase_organisation: PurchaseOrganisation[];
   account_assignment_category: AccountAssignmentCategory[];
@@ -50,8 +52,8 @@ interface EditItemModalProps {
   MaterialGroupDropdown: MaterialGroupMaster[]
   CostCenterDropdown: CostCenter[]
   GLAccountDropdwon: GLAccountNumber[]
-  accountAssigmentDropdown:AccountAssignmentCategory[]
-  itemCategoryDropdown:ItemCategoryMaster[]
+  accountAssigmentDropdown: AccountAssignmentCategory[]
+  itemCategoryDropdown: ItemCategoryMaster[]
 }
 
 const EditSBItemModal: React.FC<EditItemModalProps> = ({
@@ -75,6 +77,8 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
   const [errors, setErrors] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(false);
   const [requiredField, setRequiredField] = useState<Record<string, any>>({});
+  const [PlantCodeDropdown, setPlantCodeDropdown] = useState<Plant[]>()
+  const [plantCode, setPlantCode] = useState<string>("");
   useEffect(() => {
     if (isOpen) {
       setFormData(defaultData || {});
@@ -175,15 +179,39 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     return newErrors;
   };
 
+  const fetchPlantCodeData = async (query?: string): Promise<[]> => {
+    console.log(query)
+    const baseUrl = API_END_POINTS?.FetchPlantSearchApi;
+    let url = baseUrl;
+
+    // Add search_term if query exists
+    if (query) {
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
+    }
+
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+    if (response?.status == 200) {
+      console.log(response?.data?.message?.data, "response?.data?.message?.data plant")
+      setPlantCodeDropdown(response?.data?.message?.data)
+      return response.data.message.data
+    } else {
+      alert("error");
+    }
+    return []
+  }
+
+  useEffect(() => {
+    fetchPlantCodeData();
+  }, []);
   const handleSubmit = async () => {
     console.log(errors, "errors before submit")
-    if(!formData.account_assignment_category_head){
+    if (!formData.account_assignment_category_head) {
       alert("Select Account Assignment Category")
       return
     }
     const validationErrors = validate();
-    console.log(validationErrors,"this are all the errors")
-    console.log(errors,"this is the funciton errors")
+    console.log(validationErrors, "this are all the errors")
+    console.log(errors, "this is the funciton errors")
     if (Object.keys(validationErrors).length > 0) {
       // alert(JSON.stringify(validationErrors));
       return;
@@ -205,19 +233,12 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
       alert("Error");
     }
   };
-
+console.log(MaterialGroupDropdown,"MaterialGroupDropdown")
   // ✅ Typed input and select field arrays with `as const`
-  const disabledFields = ["item_number_of_purchase_requisition_head", "Item Number of Purchase Requisition"];
-
+  const disabledFields = ["item_number_of_purchase_requisition_head", "purchase_requisition_date_head", "purchase_group_head"];
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl">Purchase Request Items</DialogTitle>
-          <DialogDescription>Edit the details below</DialogDescription>
-        </DialogHeader>
+    <PopUp headerText='Purchase Request Items' classname='overflow-y-scroll md:max-w-[1000px] md:max-h-[600px]' handleClose={onClose} isSubmit={true} Submitbutton={handleSubmit}>
         <div className="grid grid-cols-3 gap-6 p-5">
-
           {/* Purchase Requisition Date */}
           <div className="col-span-1">
             {renderLabel("Purchase Requisition Date", "purchase_requisition_date_head")}
@@ -237,6 +258,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
             <Select
               value={formData.purchase_group_head || ""}
               onValueChange={val => handleSelectChange(val, "purchase_group_head")}
+              disabled={disabledFields.includes("purchase_group_head")}
             >
               <SelectTrigger className={getInputClass("purchase_group_head")}>
                 <SelectValue placeholder="Select" />
@@ -244,7 +266,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
               <SelectContent>
                 <SelectGroup>
                   {PurchaseGroupDropdown?.map((item, i) => (
-                    <SelectItem key={i} value={item.purchase_group_code}>
+                    <SelectItem key={i} value={item.name}>
                       {item.purchase_group_code} - {item.purchase_group_name}
                     </SelectItem>
                   ))}
@@ -252,6 +274,26 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
               </SelectContent>
             </Select>
             {renderError("purchase_group_head")}
+          </div>
+          <div className='w-full'>
+            <h1 className="text-[14px] font-normal text-[#626973] pb-1 flex items-center gap-1 ">
+              {"Select Plant"}
+              {/* {error && <span className="text-red-600">*</span>} */}
+            </h1>
+            <SearchSelectComponent
+              setData={(value) => {
+                setPlantCode(value ?? "");
+                setFormData(prev => ({ ...prev, plant_head: value ?? "" }));
+              }}
+              data={plantCode ?? ""}
+              getLabel={(item) => `${item?.plant_code} - ${item?.plant_name}`}
+              getValue={(item) => item?.name}
+              dropdown={PlantCodeDropdown ? PlantCodeDropdown : []}
+              searchApi={fetchPlantCodeData}
+              setDropdown={setPlantCodeDropdown}
+              placeholder='Select Plant Code'
+            />
+            {renderError("plant_head")}
           </div>
 
           {/* Account Assignment Category */}
@@ -365,7 +407,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
               <SelectContent>
                 <SelectGroup>
                   {MaterialGroupDropdown?.map((item, i) => (
-                    <SelectItem key={i} value={item.material_group_name}>
+                    <SelectItem key={i} value={item.name}>
                       {item.material_group_name} - {item.material_group_description}
                     </SelectItem>
                   ))}
@@ -409,7 +451,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
               <SelectContent>
                 <SelectGroup>
                   {CostCenterDropdown?.map((item, i) => (
-                    <SelectItem key={i} value={item.cost_center_name}>
+                    <SelectItem key={i} value={item.name}>
                       {item.cost_center_code} - {item.cost_center_name}
                     </SelectItem>
                   ))}
@@ -455,7 +497,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
               <SelectContent>
                 <SelectGroup>
                   {PurchaseOrgDropdown?.map((item, i) => (
-                    <SelectItem key={i} value={item.purchase_organization_name}>
+                    <SelectItem key={i} value={item.name}>
                       {item.purchase_organization_code} - {item.purchase_organization_name}
                     </SelectItem>
                   ))}
@@ -505,7 +547,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
               <SelectContent>
                 <SelectGroup>
                   {GLAccountDropdwon?.map((item, i) => (
-                    <SelectItem key={i} value={item.gl_account_name}>
+                    <SelectItem key={i} value={item.name}>
                       {item.gl_account_code} - ${item.gl_account_name}
                     </SelectItem>
                   ))}
@@ -614,16 +656,14 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
           </div>
 
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          {/* <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
           <Button onClick={handleSubmit} disabled={loading}>
             {loading ? "Updating..." : "Update"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </Button> */}
+        
+     </PopUp >
   );
 };
 
