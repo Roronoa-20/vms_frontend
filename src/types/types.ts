@@ -1446,7 +1446,8 @@ export type TPRInquiryTable = {
     pr_button_show: boolean
     second_stage_approval_status: string
     pr_created: string,
-    pur_req: string
+    pur_req: string,
+    is_submited:boolean
   }[]
 }
 
@@ -1501,6 +1502,7 @@ export type CartDetails = {
   second_stage_approval_status: string,
   pr_created: string,
   pur_req: string,
+  is_submited:boolean
 }
 
 export interface PurchaseRequisition {
