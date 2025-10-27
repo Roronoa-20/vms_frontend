@@ -265,7 +265,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
         return;
       }
     }
-    
+
     const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.submitPrInquiryNextButton, data: { data: { ...formData, cart_date: formData?.cart_date ?? formatDateISO(new Date()), user: user, } }, method: "POST" });
     if (response?.status == 200) {
       router.push(`/pr-inquiry?cart_Id=${response?.data?.message?.name}`);
@@ -402,6 +402,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
               Cost Center
             </h1>
+            <span className={`text-red-400 text-[20px] ${formData?.purchase_type == "SB"?"":"hidden"}`}>*</span>
             <Select
               value={formData?.cost_center ?? ""}
               onValueChange={(value) => handleSelectChange(value, "cost_center", false)}
@@ -425,6 +426,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
               G/L Account 
             </h1>
+            <span className={`text-red-400 text-[20px] ${formData?.purchase_type == "SB"?"":"hidden"}`}>*</span>
             <Select
               value={formData?.gl_account ?? ""}
               onValueChange={(value) => handleSelectChange(value, "gl_account", false)}
