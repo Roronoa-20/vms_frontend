@@ -221,6 +221,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
     }
   }
 
+  const today = new Date().toISOString().split("T")[0];
+
   console.log(PRInquiryData)
   console.log(productNameDropdown, "this is dropdown");
 
@@ -503,7 +505,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
           <Comment_box className='' handleClose={handleClose} Submitbutton={handleAcknowledge} handleComment={handleComment}>
             <div className="">
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">Expected Delivery</h1>
-              <Input className='w-44' type='Date' onChange={(e) => { setDate(e.target.value) }} />
+              <Input className='w-44' type='Date' onChange={(e) => { setDate(e.target.value) }} min={today} />
             </div>
           </Comment_box>
         </div>

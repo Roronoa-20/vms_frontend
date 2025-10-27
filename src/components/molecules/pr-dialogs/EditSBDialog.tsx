@@ -75,7 +75,6 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
 }) => {
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, any>>({});
-  const [loading, setLoading] = useState(false);
   const [requiredField, setRequiredField] = useState<Record<string, any>>({});
   const [PlantCodeDropdown, setPlantCodeDropdown] = useState<Plant[]>()
   const [plantCode, setPlantCode] = useState<string>("");
@@ -85,7 +84,11 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
       setErrors({});
     }
   }, [isOpen, defaultData]);
-
+  useEffect(() => {
+    if (defaultData?.plant_head) {
+      setPlantCode(defaultData?.plant_head);
+    }
+  }, [defaultData]);
 
   const fetchRequiredData = async (company: string, pur_type: string, acct_cate: string) => {
     console.log(company, pur_type, acct_cate)
@@ -548,7 +551,7 @@ console.log(MaterialGroupDropdown,"MaterialGroupDropdown")
                 <SelectGroup>
                   {GLAccountDropdwon?.map((item, i) => (
                     <SelectItem key={i} value={item.name}>
-                      {item.gl_account_code} - ${item.gl_account_name}
+                      {item.gl_account_code} - {item.gl_account_name}
                     </SelectItem>
                   ))}
                 </SelectGroup>

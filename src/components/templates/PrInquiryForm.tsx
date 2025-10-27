@@ -239,7 +239,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     }
   };
 
-  const requiredFields = {
+  let requiredFields : { [key: string]: string } = {
     cart_use: "Please Select Cart Use",
     category_type: "Please Select Category Type",
     company: "Please Select Company",
@@ -252,13 +252,20 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
 
 
   const handleNext = async () => {
+    
     //validation
+    if(formData?.purchase_type == "SB"){
+      requiredFields.cost_center = "Please Select Cost Center";
+      requiredFields.gl_account = "Please Select GL Account";
+    }
+
     for (const [key, message] of Object.entries(requiredFields)) {
       if (!formData?.[key as keyof TPRInquiry]) {
         alert(message);
         return;
       }
     }
+    
     const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.submitPrInquiryNextButton, data: { data: { ...formData, cart_date: formData?.cart_date ?? formatDateISO(new Date()), user: user, } }, method: "POST" });
     if (response?.status == 200) {
       router.push(`/pr-inquiry?cart_Id=${response?.data?.message?.name}`);

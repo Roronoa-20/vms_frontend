@@ -417,14 +417,14 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
     { name: "service_type_subhead", label: "Service Type" },
     { name: "net_value_subhead", label: "Net Value", type: "number" },
   ];
-  console.log(Dropdown?.currency_master, "Dropdown?.currency_master")
+
+  console.log(Dropdown?.uom_master,"Dropdown?.uom_master---------------")
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">Add Sub Item</DialogTitle>
         </DialogHeader>
-
         <div className="grid grid-cols-3 gap-6 p-5">
           {textFields.map(({ name, label, type }) => (
             <div className="col-span-1" key={name}>
@@ -451,7 +451,7 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
               <SelectContent>
                 <SelectGroup>
                   {Dropdown?.uom_master.map((item, i) => (
-                    <SelectItem key={i} value={item.name}>{item?.uom}</SelectItem>
+                    <SelectItem key={i} value={item?.name}>{item?.description}</SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
@@ -488,7 +488,7 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
               <SelectContent>
                 <SelectGroup>
                   {Dropdown?.cost_center.map((item, i) => (
-                    <SelectItem key={i} value={item.name}>{item?.cost_center_name}</SelectItem>
+                    <SelectItem key={i} value={item.name}>{item.cost_center_code} - {item.cost_center_name}</SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
@@ -507,14 +507,13 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
               <SelectContent>
                 <SelectGroup>
                   {Dropdown?.gl_account_number.map((item, i) => (
-                    <SelectItem key={i} value={item.name}>{item?.gl_account_name}</SelectItem>
+                    <SelectItem key={i} value={item.name}>{item.gl_account_code} - {item.gl_account_name}</SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
         </div>
-
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Cancel</Button>
           <Button

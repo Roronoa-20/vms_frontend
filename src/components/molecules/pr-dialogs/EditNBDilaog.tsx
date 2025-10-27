@@ -86,7 +86,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       setMaterialCode(defaultData?.material_code_head);
     }
     if (defaultData?.plant_head) {
-      setMaterialCode(defaultData?.plant_head);
+      setPlantCode(defaultData?.plant_head);
     }
   }, [defaultData]);
 
@@ -322,7 +322,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       </div>
     );
   };
-  console.log(formData, "formData")
   return (
     <PopUp headerText='Purchase Request Items' classname='overflow-y-scroll md:max-w-[1000px] md:max-h-[600px]' handleClose={onClose} isSubmit={true} Submitbutton={handleSubmit}>
       <div className="grid grid-cols-3 gap-6 pt-2">
