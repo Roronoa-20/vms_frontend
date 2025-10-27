@@ -196,11 +196,10 @@ const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGrou
   useEffect(() => {
     if (pur_req) {
       fetchTableData(pur_req);
-      fetchAccountAssigmentData(PRData?.purchase_requisition_type??"")
     }
+    fetchAccountAssigmentData(PRData?.purchase_requisition_type??"")
   }, [pur_req,PRData?.purchase_requisition_type])
 
-  console.log(accountAssigmentDropdown,"accountAssigmentDropdown")
   return (
     <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
       <div className="grid grid-cols-3 gap-6 p-3">
