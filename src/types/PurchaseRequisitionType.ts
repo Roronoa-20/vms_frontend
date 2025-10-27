@@ -9,7 +9,8 @@ export interface PurchaseRequisitionResponse {
   "Form Status": string;
   form_is_submitted:boolean;
   sap_error:string;
-  spa_status: string;
+  sap_response:string;
+  sap_status:string
   data: PurchaseRequisitionDataItem[];
 }
 
@@ -108,4 +109,6 @@ export interface SubheadField {
   price_subhead: string
   original_quantity:string
   original_delivery_date:string
+  doc_name:string;
+  name:string
 }

@@ -94,6 +94,7 @@ const API_END_POINTS = {
   fetchPRTableData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.get_pur_req_table_data`,
   PRTableHeadSubmitData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.update_pr_table_head_form`,
   PRTableSubHeadSubmitData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.create_pr_table_subhead_form`,
+  PRTableSubHeadUpdateData:`${url}/api/method/vms.APIs.purchase_api.purchase_requisition.update_pr_table_subhead_form`,
   PrSubHeadDeleteRow: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.delete_pr_table_row`,
   SubmitPR: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.submit_pr_form`,
   getPRItemsTable: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_pr_details_simple`,

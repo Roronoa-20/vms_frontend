@@ -6,7 +6,7 @@ import { Button } from '../atoms/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../atoms/select'
 import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ProfitCenter, PurchaseGroup, PurchaseOrganisation, PurchaseRequestData, PurchaseRequestDropdown, StorageLocation, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType'
-import { AlertCircleIcon, Edit2Icon } from 'lucide-react'
+import { AlertCircleIcon, CheckCircle2Icon, Edit2Icon } from 'lucide-react'
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
@@ -18,7 +18,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import SubItemModal from '../molecules/pr-dialogs/SubItemDialog'
 import EditSBItemModal from '../molecules/pr-dialogs/EditSBDialog'
 import EditNBItemModal from '../molecules/pr-dialogs/EditNBDilaog'
-import { PurchaseRequisitionDataItem, PurchaseRequisitionResponse } from '@/src/types/PurchaseRequisitionType'
+import { PurchaseRequisitionDataItem, PurchaseRequisitionResponse, SubheadField } from '@/src/types/PurchaseRequisitionType'
 import SummaryBlock from '../molecules/pr-dialogs/SummaryBlock'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/src/context/AuthContext'
@@ -40,7 +40,7 @@ interface Props {
   CostCenterDropdown: CostCenter[]
   // MaterialCodeDropdown: MaterialCode[]
   PurchaseOrgDropdown: PurchaseOrganisation[]
-  company:string
+  company: string
 }
 
 export const updateQueryParam = (key: string, value: string) => {
@@ -49,7 +49,7 @@ export const updateQueryParam = (key: string, value: string) => {
   window.history.pushState({}, '', url.toString());
 };
 
-const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, StorageLocationDropdown, ValuationClassDropdown, ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, PurchaseOrgDropdown }: Props) => {
+const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, StorageLocationDropdown, ValuationClassDropdown, ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, PurchaseOrgDropdown }: Props) => {
   const user = Cookies.get("user_id");
   const { designation } = useAuth();
   const router = useRouter()
@@ -58,13 +58,16 @@ const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGrou
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [expandedRowNames, setExpandedRowNames] = useState<string[]>([]);
   const [editRow, setEditRow] = useState<PurchaseRequisitionDataItem>()
+  const [editSubItemRow, setEditSubItemRow] = useState<SubheadField | null>(null)
   const [mainItems, setMainItems] = useState<PurchaseRequisitionResponse>()
   const [isSubItemModalOpen, setIsSubItemModalOpen] = useState(false)
   const [isEditModalOpen, setEditModalOpen] = useState(false)
   const [isNBEditModalOpen, setNBEditModalOpen] = useState(false)
+  const [editAction, setEditAction] = useState(false)
   const [selectedMainItemId, setSelectedMainItemId] = useState<string>("")
   const [accountAssigmentDropdown, setAccountAssignmentDropdown] = useState<AccountAssignmentCategory[]>([])
   const [itemCategoryDropdown, setitemCategoryDropdown] = useState<ItemCategoryMaster[]>([])
+  const [currentValue, setCurrentValue] = useState<number>(10);
   const deleteSubItem = async (subItemId: string) => {
     console.log(subItemId, "subItemId", pur_req, "pur_req")
     const url = `${API_END_POINTS?.PrSubHeadDeleteRow}?name=${pur_req}&row_id=${subItemId}`;
@@ -85,10 +88,19 @@ const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGrou
     );
   };
 
-  const openSubItemModal = (mainItemId: string) => {
-    setSelectedMainItemId(mainItemId)
-    setIsSubItemModalOpen(true)
-  }
+  const openSubItemModal = (mainItemId: string, subhead_fields: SubheadField[]) => {
+    // ✅ Ensure numeric values
+    const lastValue = subhead_fields?.length
+      ? Number(subhead_fields.at(-1)?.item_number_of_purchase_requisition_subhead ?? 0)
+      : 0;
+
+    const nextValue: number = lastValue > 0 ? lastValue + 10 : 10;
+    // ✅ Set in state (strict number)
+    setCurrentValue(nextValue);
+    setSelectedMainItemId(mainItemId);
+    setIsSubItemModalOpen(true);
+  };
+
 
   const handleFieldChange = useCallback(
     (
@@ -180,7 +192,7 @@ const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGrou
     }
   }
   const handleModel = (purchase_requisition_type: string) => purchase_requisition_type === "SB" ? setEditModalOpen(true) : setNBEditModalOpen(true);
-  
+
   const fetchAccountAssigmentData = async (pur_req_type: string) => {
     const url = `${API_END_POINTS?.fetchAccountAssignmentData}?pur_req_type=${pur_req_type}&company=${company}`
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
@@ -197,9 +209,9 @@ const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGrou
     if (pur_req) {
       fetchTableData(pur_req);
     }
-    fetchAccountAssigmentData(PRData?.purchase_requisition_type??"")
-  }, [pur_req,PRData?.purchase_requisition_type])
-
+    fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "")
+  }, [pur_req, PRData?.purchase_requisition_type])
+  console.log(mainItems)
   return (
     <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
       <div className="grid grid-cols-3 gap-6 p-3">
@@ -301,18 +313,29 @@ const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGrou
       </div>
       {!(mainItems?.docname && mainItems?.docname) && <div className={`flex justify-end p-2`}><Button type='button' className='py-2' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => handleNext()}>Next</Button></div>}
 
-      {mainItems?.sap_error &&
+      {(mainItems?.sap_status == "Failed" || mainItems?.sap_status == "Success") &&
         <div className='p-2'>
-          <Alert variant="destructive">
-            <AlertCircleIcon />
-            <AlertTitle className='pl-1'>SAP Error!!!</AlertTitle>
-            <AlertDescription>
-              Error: {mainItems?.sap_error}
-            </AlertDescription>
-            <AlertFooter className='mt-2 text-sm italic'>
-              Kindly review and Re-Submit the Request.
-            </AlertFooter>
-          </Alert>
+          {
+            mainItems?.sap_status == "Failed" ?
+              <Alert variant="destructive">
+                <AlertCircleIcon />
+                <AlertTitle className='pl-1'>SAP Error!!!</AlertTitle>
+                <AlertDescription>
+                  Error: {mainItems?.sap_response}
+                </AlertDescription>
+                <AlertFooter className='mt-2 text-sm italic'>
+                  Kindly review and Re-Submit the Request.
+                </AlertFooter>
+              </Alert>
+              :
+              <Alert variant="success">
+                <CheckCircle2Icon />
+                <AlertTitle>Success! </AlertTitle>
+                <AlertDescription>
+                  {mainItems?.sap_response}
+                </AlertDescription>
+              </Alert>
+          }
         </div>
       }
       {mainItems && mainItems?.data?.length > 0 && (
@@ -389,7 +412,7 @@ const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGrou
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => openSubItemModal(mainItem?.row_name)}
+                                  onClick={() => openSubItemModal(mainItem?.row_name, mainItem?.subhead_fields)}
                                   className="flex items-center gap-2 bg-green-50 hover:bg-green-100 border-green-200"
                                 >
                                   <Plus className="w-4 h-4" />
@@ -425,7 +448,7 @@ const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGrou
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => openSubItemModal(mainItem?.row_name)}
+                                  onClick={() => openSubItemModal(mainItem?.row_name, mainItem?.subhead_fields)}
                                   className="flex items-center gap-2"
                                 >
                                   <Plus className="w-4 h-4" />
@@ -438,7 +461,7 @@ const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGrou
                             <div className="border rounded-lg overflow-hidden">
                               <div className="overflow-x-auto relative">
                                 <Table>
-                                  <TableHeader>
+                                  <TableHeader className='text-nowrap'>
                                     <TableRow className="bg-gray-50">
                                       <TableHead className="w-[100px]">Sr No.</TableHead>
                                       <TableHead className="text-center">Item Number of Purchase Requisition</TableHead>
@@ -474,13 +497,25 @@ const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGrou
                                         <TableCell className="text-center">{subItem?.gl_account_number_subhead || "N/A"}</TableCell>
                                         {/* Sticky Actions Cell */}
                                         {mainItems?.['Form Status'] != "Submitted" && <TableCell className="text-center sticky right-0 bg-white z-20">
-                                          <Button
-                                            variant="destructive"
-                                            size="sm"
-                                            onClick={() => deleteSubItem(subItem.row_name)}
-                                          >
-                                            <Trash2 className="w-4 h-4" />
-                                          </Button>
+                                          <div className='flex gap-2'>
+                                            <Button
+                                              size="sm"
+                                              onClick={() => {
+                                                setEditSubItemRow(subItem);
+                                                setIsSubItemModalOpen(true);
+                                                setEditAction(true)
+                                              }}
+                                            >
+                                              <Edit2Icon className="w-4 h-4" />
+                                            </Button>
+                                            <Button
+                                              variant="destructive"
+                                              size="sm"
+                                              onClick={() => deleteSubItem(subItem.row_name)}
+                                            >
+                                              <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                          </div>
                                         </TableCell>}
                                       </TableRow>
                                     ))}
@@ -509,7 +544,7 @@ const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGrou
                                   <p className="text-gray-500 mb-4">No sub-items added yet</p>
                                   <Button
                                     variant="outline"
-                                    onClick={() => openSubItemModal(mainItem?.row_name)}
+                                    onClick={() => openSubItemModal(mainItem?.row_name, mainItem?.subhead_fields)}
                                     className="flex items-center gap-2 mx-auto"
                                   >
                                     <Plus className="w-4 h-4" />
@@ -531,11 +566,16 @@ const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGrou
       {isSubItemModalOpen &&
         <SubItemModal
           isOpen={isSubItemModalOpen}
-          onClose={() => setIsSubItemModalOpen(false)}
+          onClose={() => { setIsSubItemModalOpen(false); setEditSubItemRow(null);setEditAction(false) }}
           fetchTableData={fetchTableData}
           Dropdown={Dropdown}
+          GLAccountDropdwon={GLAccountDropdwon}
+          CostCenterDropdown={CostCenterDropdown}
           pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
           selectedMainItemId={selectedMainItemId}
+          currentItemNumber={currentValue}
+          defaultData={editSubItemRow ?? null}
+          editAction={editAction}
         />}
 
       {isEditModalOpen &&
@@ -555,7 +595,7 @@ const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGrou
           CostCenterDropdown={CostCenterDropdown}
           MaterialGroupDropdown={MaterialGroupDropdown}
           pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
-          
+
         />}
 
       {isNBEditModalOpen && <EditNBItemModal
@@ -574,8 +614,8 @@ const PRRequestForm = ({company, Dropdown, PRData, cartId, pur_req, PurchaseGrou
         CostCenterDropdown={CostCenterDropdown}
         pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
         defaultData={editRow}
-        plant={formData?.plant ?formData?.plant : ''}
-        company={formData?.company?formData?.company:""}
+        plant={formData?.plant ? formData?.plant : ''}
+        company={formData?.company ? formData?.company : ""}
       />}
 
       {/* {(mainItems?.['Form Status'] != "Submitted" && mainItems?.docname) && <div className={`flex justify-end py-6`}><Button type='button' className='bg-blue-400 hover:bg-blue-400 px-6 font-medium' onClick={() => { handleSubmit() }}>Submit</Button></div>} */}
