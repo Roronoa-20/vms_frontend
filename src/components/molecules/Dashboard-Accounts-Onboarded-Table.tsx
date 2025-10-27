@@ -118,6 +118,20 @@ const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDrop
     }
   };
 
+  const formatApprovalAge = (seconds: string | number) => {
+    const sec = Number(seconds);
+    if (!sec || sec <= 0) return "-";
+
+    const days = Math.floor(sec / (24 * 3600));
+    let remainder = sec % (24 * 3600);
+    const hours = Math.floor(remainder / 3600);
+    remainder %= 3600;
+    const minutes = Math.floor(remainder / 60);
+    const secondsLeft = remainder % 60;
+
+    return `${days}d ${hours}h ${minutes}m`;
+  };
+
   if (!dashboardTableData) { return <div>Loading...</div>; }
 
 
@@ -151,17 +165,18 @@ const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDrop
           </div>
         </div>
         <Table>
-          <TableHeader className="text-center">
+          <TableHeader className="text-center text-black">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-              <TableHead className="w-[100px]">Sr No.</TableHead>
-              <TableHead>Ref No.</TableHead>
-              <TableHead>Vendor Name</TableHead>
-              <TableHead className="text-center">Company Name</TableHead>
-              <TableHead className="text-center">Status</TableHead>
-              <TableHead className="text-center">Vendor Code</TableHead>
-              <TableHead className="text-center">Country</TableHead>
-              <TableHead className="text-center">Register By</TableHead>
-              <TableHead className="text-center">View Details</TableHead>
+              <TableHead className="text-center text-black">Sr No.</TableHead>
+              <TableHead className="text-center text-black">Ref No.</TableHead>
+              <TableHead className="text-center text-black">Vendor Name</TableHead>
+              <TableHead className="text-center text-black">Company Name</TableHead>
+              <TableHead className="text-center text-black">Status</TableHead>
+              <TableHead className="text-center text-black">Aging</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Vendor Code</TableHead>
+              <TableHead className="text-center text-black">Country</TableHead>
+              <TableHead className="text-center text-black">Register By</TableHead>
+              <TableHead className="text-center text-black">View Details</TableHead>
               {/* {!isAccountsUser && !isTreasuryUser && (
                 <TableHead className="text-center">QMS Form</TableHead>
               )} */}
@@ -185,6 +200,11 @@ const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDrop
                         }`}
                     >
                       {item?.onboarding_form_status}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="text-center bg-blue-100 text-blue-800 px-2 py-3 rounded-[14px] w-[90px]">
+                      {formatApprovalAge(item?.time_diff)}
                     </div>
                   </TableCell>
                   <TableCell><Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>

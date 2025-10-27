@@ -156,11 +156,11 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
                     {/* <TableCell className="text-nowrap text-center">{item?.purchase_head_status}</TableCell> */}
                     <TableCell>
                       <div
-                        className={`text-center px-2 py-3 rounded-xl ${item?.sap_status === "SAP Error"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : item?.sap_status === "Pr Created"
+                        className={`text-center px-2 py-3 rounded-xl ${item?.sap_status === "Failed"
+                          ? "bg-red-100 text-red-800"
+                          : item?.sap_status === "Success"
                             ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                            : "bg-yellow-100 text-yellow-800"
                           }`}
                       >
                         {item?.sap_status || "--"}
