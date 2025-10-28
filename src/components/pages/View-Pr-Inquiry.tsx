@@ -59,6 +59,7 @@ export type TPRInquiry = {
     second_stage_approval_by:string
     cost_center:string,
     gl_account:string
+    purchase_requisition_form_created:boolean
 }
 
 
