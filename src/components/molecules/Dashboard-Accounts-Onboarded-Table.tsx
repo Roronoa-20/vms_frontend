@@ -204,7 +204,7 @@ const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDrop
                   </TableCell>
                   <TableCell>
                     <div className="text-center bg-blue-100 text-blue-800 px-2 py-3 rounded-[14px] w-[90px]">
-                      {formatApprovalAge(item?.time_diff)}
+                      {formatApprovalAge(item?.approval_age)}
                     </div>
                   </TableCell>
                   <TableCell><Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
