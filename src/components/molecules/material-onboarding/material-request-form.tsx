@@ -56,6 +56,15 @@ interface UserRequestFormProps {
   MaterialOnboardingDetails?: any;
   EmployeeDetails?: any;
   companyName?: any;
+  handleMaterialSearch: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  searchResults: any[];
+  showSuggestions: boolean;
+  handleMaterialSelect: (item: any) => void;
+  materialSelectedFromList: boolean;
+  setMaterialSelectedFromList: React.Dispatch<React.SetStateAction<boolean>>;
+  setMaterialCodeAutoFetched: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSuggestions: React.Dispatch<React.SetStateAction<boolean>>;
+  materialCodeAutoFetched: boolean;
 }
 
 export default function UserRequestForm({
@@ -63,7 +72,16 @@ export default function UserRequestForm({
   masters,
   MaterialOnboardingDetails,
   EmployeeDetails,
-  companyName
+  companyName,
+  handleMaterialSearch,
+  searchResults,
+  showSuggestions,
+  handleMaterialSelect,
+  materialSelectedFromList,
+  setMaterialSelectedFromList,
+  setMaterialCodeAutoFetched,
+  setShowSuggestions,
+  materialCodeAutoFetched
 }: UserRequestFormProps) {
   const {
     companyMaster,
@@ -357,13 +375,13 @@ export default function UserRequestForm({
               control={form.control}
               name="material_name_description"
               rules={{ required: "Material Name/Description is required." }}
-              render={({ field }: { field: { value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; ref: React.Ref<HTMLInputElement> } }) => (
+              render={({ field }: { field: { value: string; onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void; ref: React.Ref<HTMLTextAreaElement> } }) => (
                 <FormItem>
                   <FormLabel>
                     Material Name/Description <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <>
+                    <div className="relative">
                       <textarea
                         ref={field.ref}
                         value={field.value || ""}
@@ -408,7 +426,7 @@ export default function UserRequestForm({
                           )}
                         </div>
                       )}
-                    </>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -555,7 +573,7 @@ export default function UserRequestForm({
             <div className="grid grid-cols-2 gap-4 pt-2">
               <FormField
                 name="requested_by_name"
-                render={() => (
+                render={({ field }: { field: { value?: string; onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; ref?: React.Ref<HTMLInputElement> } }) => (
                   <FormItem>
                     <FormLabel>Requested By - Name</FormLabel>
                     <FormControl>
@@ -567,11 +585,11 @@ export default function UserRequestForm({
 
               <FormField
                 name="requested_by_place"
-                render={() => (
+                render={({ field }: { field: { value?: string; onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; ref?: React.Ref<HTMLInputElement> } }) => (
                   <FormItem>
                     <FormLabel>Requested By - Place</FormLabel>
                     <FormControl>
-                      <Input className="p-3 w-full text-sm" placeholder="Enter Place" />
+                      <Input {...field} className="p-3 w-full text-sm" placeholder="Enter Place" />
                     </FormControl>
                   </FormItem>
                 )}

@@ -90,6 +90,8 @@ export interface MaterialCode {
   material_code: string;
   material_name: string;
   description: string;
+  material_description: string;
+  material_type: string;
 }
 
 export interface serviceCode {

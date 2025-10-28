@@ -52,7 +52,10 @@ export default function RequestorInformation({ form, EmployeeDetails }: Requesto
                                             <input
                                                 type="date"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
-                                                {...field}
+                                                value={field.value ?? ""}
+                                                onChange={field.onChange}
+                                                // {...field}
+                                                readOnly
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -72,8 +75,10 @@ export default function RequestorInformation({ form, EmployeeDetails }: Requesto
                                             <input
                                                 type="text"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
-                                                {...field}
+                                                value={field.value ?? ""}
                                                 readOnly
+                                                onChange={field.onChange}
+                                                // {...field}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -93,8 +98,10 @@ export default function RequestorInformation({ form, EmployeeDetails }: Requesto
                                             <input
                                                 type="text"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
-                                                {...field}
+                                                // {...field}
+                                                value={field.value ?? ""}
                                                 readOnly
+                                                onChange={field.onChange}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -117,8 +124,10 @@ export default function RequestorInformation({ form, EmployeeDetails }: Requesto
                                             <input
                                                 type="text"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
-                                                {...field}
+                                                // {...field}
+                                                value={field.value ?? ""}
                                                 readOnly
+                                                onChange={field.onChange}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -138,8 +147,10 @@ export default function RequestorInformation({ form, EmployeeDetails }: Requesto
                                             <input
                                                 type="text"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
-                                                {...field}
+                                                // {...field}
+                                                value={field.value ?? ""}
                                                 readOnly
+                                                onChange={field.onChange}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -159,8 +170,10 @@ export default function RequestorInformation({ form, EmployeeDetails }: Requesto
                                             <input
                                                 type="text"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
-                                                {...field}
+                                                // {...field}
+                                                value={field.value ?? ""}
                                                 readOnly
+                                                onChange={field.onChange}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -183,8 +196,10 @@ export default function RequestorInformation({ form, EmployeeDetails }: Requesto
                                             <input
                                                 type="text"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
-                                                {...field}
+                                                // {...field}
+                                                value={field.value ?? ""}
                                                 readOnly
+                                                onChange={field.onChange}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -204,8 +219,10 @@ export default function RequestorInformation({ form, EmployeeDetails }: Requesto
                                             <input
                                                 type="email"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
-                                                {...field}
+                                                // {...field}
+                                                value={field.value ?? ""}
                                                 readOnly
+                                                onChange={field.onChange}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -225,8 +242,10 @@ export default function RequestorInformation({ form, EmployeeDetails }: Requesto
                                             <input
                                                 type="text"
                                                 className="flex-1 px-3 py-2 text-sm rounded"
-                                                {...field}
+                                                // {...field}
+                                                value={field.value ?? ""}
                                                 readOnly
+                                                onChange={field.onChange}
                                             />
                                         </FormControl>
                                         <FormMessage />
