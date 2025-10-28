@@ -400,9 +400,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
           {/* Cost Center */}
           <div className="col-span-1">
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-              Cost Center
+              Cost Center <span className={`text-red-400 text-[20px] ${formData?.purchase_type == "SB"?"":"hidden"}`}>*</span>
             </h1>
-            <span className={`text-red-400 text-[20px] ${formData?.purchase_type == "SB"?"":"hidden"}`}>*</span>
             <Select
               value={formData?.cost_center ?? ""}
               onValueChange={(value) => handleSelectChange(value, "cost_center", false)}
@@ -424,9 +423,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
           {/* G/L Account */}
           <div className="col-span-1">
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-              G/L Account 
+              G/L Account <span className={`text-red-400 text-[20px] ${formData?.purchase_type == "SB"?"":"hidden"}`}>*</span>
             </h1>
-            <span className={`text-red-400 text-[20px] ${formData?.purchase_type == "SB"?"":"hidden"}`}>*</span>
             <Select
               value={formData?.gl_account ?? ""}
               onValueChange={(value) => handleSelectChange(value, "gl_account", false)}
@@ -451,7 +449,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
         {refno &&
           <>
             <h1 className="border-b-2 border-gray-400 font-bold text-[18px] p-1">
-              Purchase Inquiry Items <span className='text-red-400 text-[20px]'>*</span>
+              Purchase Inquiry Items
             </h1>
             <div className="grid grid-cols-3 gap-6 p-3">
               {/* <div className="col-span-1">

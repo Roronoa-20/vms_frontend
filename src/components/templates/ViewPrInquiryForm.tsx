@@ -406,7 +406,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
         {
           designation != "Enquirer" && PRInquiryData?.hod_approved && !PRInquiryData?.second_stage_approved ?
             <div className='flex items-end'>
-              <Button className="py-2.5" variant={"nextbtn"} size={"nextbtnsize"} onClick={(e) => { setIsEmailDialog(true) }}>Additional Approval</Button>
+              <Button className={`py-2.5 ${PRInquiryData?.purchase_requisition_form_created?"hidden":""}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={(e) => { setIsEmailDialog(true) }}>Additional Approval</Button>
             </div> :
             <div></div>
         }
