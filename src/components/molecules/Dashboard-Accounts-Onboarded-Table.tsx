@@ -205,8 +205,8 @@ const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDrop
                     </div>
                   </TableCell>
                   <TableCell><Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
-                  <TableCell>{item?.vendor_country}</TableCell>
-                  <TableCell>{item?.registered_by}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.vendor_country}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.registered_by}</TableCell>
                   <TableCell>
                     <Link
                       href={`/view-onboarding-details?tabtype=${isTreasuryUser ? "Document Detail" : "Company Detail"

@@ -193,8 +193,8 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown, te
                     </div>
                   </TableCell>
                   <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
-                  <TableCell className="text-center">{item?.vendor_country}</TableCell>
-                  <TableCell className="text-center whitespace-nowrap">{item?.registered_by_full_name}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.vendor_country}</TableCell>
+                  0<TableCell className="text-center text-nowrap">{item?.registered_by_full_name}</TableCell>
                   <TableCell><Link href={`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-blue-400 hover:bg-blue-300">View</Button></Link></TableCell>
                   {!isAccountsUser && (
                     <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
