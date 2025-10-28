@@ -118,16 +118,13 @@ const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDrop
     }
   };
 
-  const formatApprovalAge = (seconds: string | number) => {
-    const sec = Number(seconds);
-    if (!sec || sec <= 0) return "-";
+  const formatApprovalAge = (seconds?: string | number) => {
+    if (seconds == null || isNaN(Number(seconds))) return "-";
+    const sec = Math.floor(Number(seconds));
 
     const days = Math.floor(sec / (24 * 3600));
-    let remainder = sec % (24 * 3600);
-    const hours = Math.floor(remainder / 3600);
-    remainder %= 3600;
-    const minutes = Math.floor(remainder / 60);
-    const secondsLeft = remainder % 60;
+    const hours = Math.floor((sec % (24 * 3600)) / 3600);
+    const minutes = Math.floor((sec % 3600) / 60);
 
     return `${days}d ${hours}h ${minutes}m`;
   };
@@ -203,7 +200,7 @@ const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDrop
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="text-center bg-blue-100 text-blue-800 px-2 py-3 rounded-[14px] w-[90px]">
+                    <div className="text-center bg-blue-100 text-blue-800 px-2 py-3 rounded-[14px] w-[100px]">
                       {formatApprovalAge(item?.approval_age)}
                     </div>
                   </TableCell>
