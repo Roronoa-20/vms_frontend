@@ -110,6 +110,17 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown, te
     }
   };
 
+  const formatApprovalAge = (seconds?: string | number) => {
+    if (seconds == null || isNaN(Number(seconds))) return "-";
+    const sec = Math.floor(Number(seconds));
+
+    const days = Math.floor(sec / (24 * 3600));
+    const hours = Math.floor((sec % (24 * 3600)) / 3600);
+    const minutes = Math.floor((sec % 3600) / 60);
+
+    return `${days}d ${hours}h ${minutes}m`;
+  };
+
   if (!dashboardTableData) { return <div>Loading...</div>; }
 
 
@@ -136,24 +147,9 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown, te
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {/* <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select> */}
           </div>
         </div>
         <Table>
-          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
               <TableHead className="text-center text-black">Sr No.</TableHead>
@@ -161,6 +157,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown, te
               <TableHead className="text-center text-black">Vendor Name</TableHead>
               <TableHead className="text-center text-black">Company Code</TableHead>
               <TableHead className="text-center text-black">Status</TableHead>
+              <TableHead className="text-center text-black">Aging</TableHead>
               <TableHead className="text-center text-black">Vendor Code</TableHead>
               <TableHead className="text-center text-black">Country</TableHead>
               <TableHead className="text-center text-black">Register By</TableHead>
@@ -188,6 +185,11 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown, te
                         }`}
                     >
                       {item?.onboarding_form_status}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="text-center bg-blue-100 text-blue-800 px-2 py-3 rounded-[14px] w-[100px]">
+                      {formatApprovalAge(item?.approval_age)}
                     </div>
                   </TableCell>
                   <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>

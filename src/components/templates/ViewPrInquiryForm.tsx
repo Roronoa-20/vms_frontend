@@ -406,7 +406,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
         {
           designation != "Enquirer" && PRInquiryData?.hod_approved && !PRInquiryData?.second_stage_approved ?
             <div className='flex items-end'>
-              <Button className="py-2.5" variant={"nextbtn"} size={"nextbtnsize"} onClick={(e) => { setIsEmailDialog(true) }}>Additional Approval</Button>
+              <Button className={`py-2.5 ${PRInquiryData?.purchase_requisition_form_created?"hidden":""}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={(e) => { setIsEmailDialog(true) }}>Additional Approval</Button>
             </div> :
             <div></div>
         }
@@ -465,7 +465,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
                   <TableCell>{item?.user_specifications}</TableCell>
                   <TableCell><Link href={item?.attachment?.url ?? ""}>{item?.attachment?.file_name}</Link></TableCell>
                   <TableCell className='flex justify-center'>
-                    <Input disabled={PRInquiryData?.purchase_team_approved == Boolean(0) && PRInquiryData?.purchase_team == Boolean(1) ? false : true} value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e) => { handleTableInput(index, e) }} className={`text-center w-28 ${PRInquiryData?.purchase_team_acknowledgement ? "" : "hidden"}`} type='number' />
+                    <Input disabled={PRInquiryData?.purchase_team_approved == Boolean(0) && PRInquiryData?.purchase_team == Boolean(1) ? false : true} value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e) => { handleTableInput(index, e) }} className={`text-center w-28 ${PRInquiryData?.purchase_team_acknowledgement ? "" : "hidden"}`} />
                   </TableCell>
                   {/* <TableCell className='flex justify-center'><Input className='text-center w-28' type='checked' onChange={(e)=>{handleTableCheck(index,e.target.checked)}}/></TableCell> */}
                 </TableRow>
