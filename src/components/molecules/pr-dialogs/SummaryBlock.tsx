@@ -28,7 +28,7 @@ const NBFields: Partial<Record<keyof PurchaseRequisitionDataItem, string>> = {
 };
 
 const SBFields: Partial<Record<keyof PurchaseRequisitionDataItem, string>> = {
-    status_head: "Status",
+    // status_head: "Status",
     item_number_of_purchase_requisition_head: "Line Item Number",
     account_assignment_category_head: "Account Assignment Category",
     item_category_head: "Item Category",

@@ -18,7 +18,6 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
   const cookieStore = await cookies();
   const user = cookieStore.get("user_id")?.value
   const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
-  console.log(cart_id, "cart_id in server api")
   if (cart_id) {
     PRDataUrl = `${API_END_POINTS?.fetchDataCartId}?cart_id=${cart_id}`;
     const PRDataResponse: AxiosResponse = await requestWrapper({
@@ -49,7 +48,6 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
   });
   console.log(PurGroupresposne, "PurGroupresposne")
   const PurchaseGroupDropdown = PurGroupresposne?.status == 200 ? PurGroupresposne?.data.message?.pur_grp : "";
-  console.log("PurchaseGroupDropdown--------------------------->", PurGroupresposne)
 
   const StoragelocationURL = `${API_END_POINTS?.filterstoragelocation}?company=${company}`;
   const Storelocationresponse: AxiosResponse = await requestWrapper({
@@ -60,8 +58,6 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
     }
   });
   const StorageLocationDropdown = Storelocationresponse?.status == 200 ? Storelocationresponse?.data.message?.storage : "";
-  console.log("StorageLocationDropdown---->", StorageLocationDropdown)
-
 
   const CostCenterURL = `${API_END_POINTS?.filtercostcenter}?company=${company}`;
   const CostCenterResponse: AxiosResponse = await requestWrapper({
@@ -72,7 +68,6 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
     }
   });
   const CostCenterDropdown = CostCenterResponse?.status == 200 ? CostCenterResponse?.data.message?.cost_center : "";
-  console.log("CostCenterDropdown---->", CostCenterDropdown);
 
   const GLAccountURL = `${API_END_POINTS?.filterglaccount}?company=${company}`;
   const GLAccountResponse: AxiosResponse = await requestWrapper({
@@ -83,8 +78,7 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
     }
   });
   const GLAccountDropdwon = GLAccountResponse?.status == 200 ? GLAccountResponse?.data.message?.gl_account : "";
-  console.log("GLAccountDropdwon---->", GLAccountDropdwon);
-  // 
+
   const MaterialGroupURL = `${API_END_POINTS?.filtermaterialgroup}?company=${company}`;
   const MaterialGroupResponse: AxiosResponse = await requestWrapper({
     url: MaterialGroupURL,
@@ -94,8 +88,7 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
     }
   });
   const MaterialGroupDropdown = MaterialGroupResponse?.status == 200 ? MaterialGroupResponse?.data.message?.material_group : "";
-  console.log("MaterialGroupDropdown---->", MaterialGroupDropdown);
-  // 
+
   const ProfitCenterURL = `${API_END_POINTS?.filterprofitcenter}?company=${company}`;
   const PorfitCenterResponse: AxiosResponse = await requestWrapper({
     url: ProfitCenterURL,
@@ -105,8 +98,7 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
     }
   });
   const ProfitCenterDropdown = PorfitCenterResponse?.status == 200 ? PorfitCenterResponse?.data.message?.profit_center : "";
-  console.log("ProfitCenterDropdown---->", ProfitCenterDropdown);
-  // 
+ 
   const ValuationClassURL = `${API_END_POINTS?.filtervaluationclass}?company=${company}`;
   const ValuationClassResponse: AxiosResponse = await requestWrapper({
     url: ValuationClassURL,
@@ -116,19 +108,7 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
     }
   });
   const ValuationClassDropdown = ValuationClassResponse?.status == 200 ? ValuationClassResponse?.data.message?.valuation_class : "";
-  console.log("ValuatnClassDropdown---->", ValuationClassDropdown);
-  // 
-  // const MaterialCodeURL = `${API_END_POINTS?.MaterialCodeSearchApi}?company=${company}`;
-  // const MaterialCodeResponse: AxiosResponse = await requestWrapper({
-  //   url: MaterialCodeURL,
-  //   method: "GET",
-  //   headers: {
-  //     cookie: cookieHeaderString
-  //   }
-  // });
-  // const MaterialCodeDropdown = MaterialCodeResponse?.status == 200 ? MaterialCodeResponse?.data.message?.material_master : "";
-  // console.log("MaterialCodeDropdown---->", MaterialCodeDropdown);
-  // 
+
   const PurchaseOrgURL = `${API_END_POINTS?.filterpurchaseorg}?company=${company}`;
   const PurchaseOrgResponse: AxiosResponse = await requestWrapper({
     url: PurchaseOrgURL,
@@ -138,9 +118,7 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
     }
   });
   const PurchaseOrgDropdown = PurchaseOrgResponse?.status == 200 ? PurchaseOrgResponse?.data.message?.purchase_org : "";
-  console.log("PRData---->", PRData);
-
-
+console.log(CostCenterResponse,"CostCenterResponse:")
   return (
     <PRRequestForm Dropdown={Dropdown} PRData={PRData} cartId={cart_id} pur_req={pur_req} PurchaseGroupDropdown={PurchaseGroupDropdown} StorageLocationDropdown={StorageLocationDropdown} ValuationClassDropdown={ValuationClassDropdown}
       ProfitCenterDropdown={ProfitCenterDropdown} MaterialGroupDropdown={MaterialGroupDropdown} GLAccountDropdwon={GLAccountDropdwon} CostCenterDropdown={CostCenterDropdown}  PurchaseOrgDropdown={PurchaseOrgDropdown} company={company}/>
