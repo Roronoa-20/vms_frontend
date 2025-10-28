@@ -192,7 +192,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown, te
                   </TableCell>
                   <TableCell>
                     <div className="text-center bg-blue-100 text-blue-800 px-2 py-3 rounded-[14px] w-[90px]">
-                      {formatApprovalAge(item?.time_diff)}
+                      {formatApprovalAge(item?.approval_age)}
                     </div>
                   </TableCell>
                   <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
