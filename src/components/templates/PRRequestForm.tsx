@@ -93,7 +93,6 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     const lastValue = subhead_fields?.length
       ? Number(subhead_fields.at(-1)?.item_number_of_purchase_requisition_subhead ?? 0)
       : 0;
-
     const nextValue: number = lastValue > 0 ? lastValue + 10 : 10;
     // ✅ Set in state (strict number)
     setCurrentValue(nextValue);
@@ -211,7 +210,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     }
     fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "")
   }, [pur_req, PRData?.purchase_requisition_type])
-  console.log(mainItems)
+  console.log(formData,"formData,formData,formData,formData,formData,formData,formData,formData,")
   return (
     <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
       <div className="grid grid-cols-3 gap-6 p-3">
@@ -566,7 +565,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
       {isSubItemModalOpen &&
         <SubItemModal
           isOpen={isSubItemModalOpen}
-          onClose={() => { setIsSubItemModalOpen(false); setEditSubItemRow(null);setEditAction(false) }}
+          onClose={() => { setIsSubItemModalOpen(false); setEditSubItemRow(null); setEditAction(false) }}
           fetchTableData={fetchTableData}
           Dropdown={Dropdown}
           GLAccountDropdwon={GLAccountDropdwon}
@@ -576,6 +575,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           currentItemNumber={currentValue}
           defaultData={editSubItemRow ?? null}
           editAction={editAction}
+          company={formData?.company ? formData?.company : ""}
         />}
 
       {isEditModalOpen &&
@@ -595,7 +595,8 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           CostCenterDropdown={CostCenterDropdown}
           MaterialGroupDropdown={MaterialGroupDropdown}
           pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
-
+          company={formData?.company ? formData?.company : ""}
+          plant={formData?.company ? formData?.company : ""}
         />}
 
       {isNBEditModalOpen && <EditNBItemModal

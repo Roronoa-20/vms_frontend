@@ -196,6 +196,11 @@ const API_END_POINTS = {
   bankProofByPurchaseTeam: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`,
   DispatchStateAndPlant: `${url}/api/method/vms.APIs.dispatch.vehicle_details.get_state_and_plant_data`,
   MaterialCodeSearchApi: `${url}/api/method/vms.APIs.master_apis.material_code.get_material_code_list`,
+  MaterialGroupSearchApi: `${url}/api/method/vms.APIs.master_apis.material_group_master.get_material_group_list_custom`,
+  ValuationAreaSearchApi: `${url}/api/method/vms.APIs.master_apis.valuation_class_master.get_valuation_class_list_custom`,
+  CostCenterSearchApi: `${url}/api/method/vms.APIs.master_apis.cost_center_master.get_cost_center_list_custom`,
+  GLAccountSearchApi: `${url}/api/method/vms.APIs.master_apis.gl_account_master.get_gl_account_list_custom`,
+  StorageLocationSearchApi: `${url}/api/method/vms.APIs.master_apis.storage_location_master.get_storage_location_list`,
   FetchPlantSearchApi:`${url}/api/method/vms.APIs.master_apis.plant_master.get_plant_master_list`,
   // bankProofByPurchaseTeam:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`,
 
