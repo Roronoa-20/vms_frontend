@@ -179,7 +179,7 @@ export const PurchaseHeadsidebarMenu: SidebarItem[] = [
   },
   {
     logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-    name: "View Product Enquiry",
+    name: "View Enquiry",
     href: "/view-pr-inquiry-table",
     children: []
   },
@@ -198,7 +198,7 @@ export const PurchaseHeadsidebarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/dispatch-logo.svg",
     name: "View Dispatch",
-    href: "",
+    href: "/view-dispatch-table",
     children: []
   },
   {

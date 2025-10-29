@@ -47,7 +47,7 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
   }
 
   return (
-    <>
+    <div className="pt-6">
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
@@ -120,7 +120,7 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
           </Table>
         </PopUp>
       }
-    </>
+    </div>
   );
 };
 
