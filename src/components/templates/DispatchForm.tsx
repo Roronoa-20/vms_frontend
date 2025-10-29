@@ -146,7 +146,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
 
     const handleVendorCodeChange = async(value:string)=>{
         setFormData((prev:any)=>({...prev,vendor_code:value}))
-        const url = `${API_END_POINTS?.poBasedOnVendorCode}?vendor_code=${value}`;
+        const url = `${API_END_POINTS?.poBasedOnVendorCode}?vendor_code=${value}&filters=${encodeURIComponent(JSON.stringify({status:"Approved by Vendor"}))}`;
         const response:AxiosResponse = await requestWrapper({url:url,method:"GET"});
         if(response?.status == 200){
             const newDropdown = response?.data?.message?.data?.map((item:any)=>{
