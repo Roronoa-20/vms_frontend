@@ -115,9 +115,9 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
         : tabType == "Company Address" ? (
           <CompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
        ) 
-       : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
-          <InternationalDocumentDetails  ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
-        )
+      //  : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
+      //     <InternationalDocumentDetails  ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
+      //   )
          : tabType == "Document Detail" ? (
           <DocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
         ) 

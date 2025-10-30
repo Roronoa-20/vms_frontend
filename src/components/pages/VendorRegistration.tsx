@@ -61,45 +61,45 @@ const VendorRegistration = ({ ...Props }: Props) => {
 
   const handleSubmit = async () => {
 
-    // if (formData?.vendor_type && formData?.vendor_type?.length < 0) {
+    if (formData?.vendor_type && formData?.vendor_type?.length < 0) {
+      alert("Please Select Vendor Type");
+      return;
+    }
+
+    // if (!formData?.vendor_type || formData?.vendor_type?.length === 0) {
     //   alert("Please Select Vendor Type");
     //   return;
     // }
 
-    // // if (!formData?.vendor_type || formData?.vendor_type?.length === 0) {
-    // //   alert("Please Select Vendor Type");
-    // //   return;
-    // // }
+    if (!formData?.vendor_name) {
+      alert("please Enter Vendor Name");
+      return;
+    }
 
-    // if (!formData?.vendor_name) {
-    //   alert("please Enter Vendor Name");
-    //   return;
-    // }
+    if (!formData?.office_email_primary) {
+      alert("please Enter Vendor Email");
+      return;
+    }
 
-    // if (!formData?.office_email_primary) {
-    //   alert("please Enter Vendor Email");
-    //   return;
-    // }
+    if (!formData?.office_email_primary.includes("@")) {
+      alert("Please enter a valid email address with '@'");
+      return;
+    }
 
-    // if (!formData?.office_email_primary.includes("@")) {
-    //   alert("Please enter a valid email address with '@'");
-    //   return;
-    // }
+    if (!formData?.country) {
+      alert("please Select Vendor Country");
+      return;
+    }
 
-    // if (!formData?.country) {
-    //   alert("please Select Vendor Country");
-    //   return;
-    // }
+    if (!formData?.search_term) {
+      alert("please Enter Search Terms");
+      return;
+    }
 
-    // if (!formData?.search_term) {
-    //   alert("please Enter Search Terms");
-    //   return;
-    // }
-
-    // if (tableData?.length == 0) {
-    //   alert("Please Add atleast 1 Row");
-    //   return;
-    // }
+    if (tableData?.length == 0) {
+      alert("Please Add atleast 1 Row");
+      return;
+    }
 
     const submitButton = document.getElementById("submitButton") as HTMLButtonElement | null;
     if (submitButton) {
