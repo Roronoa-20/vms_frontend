@@ -1,4 +1,4 @@
-import DispatchTable from '@/src/components/pages/DispatchTable'
+import DispatchTable from '@/src/components/pages/VendorDispatchTable'
 import React from 'react'
 
 const page = () => {

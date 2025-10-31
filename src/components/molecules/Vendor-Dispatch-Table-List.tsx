@@ -25,6 +25,7 @@ import PopUp from "./PopUp";
 import { Button } from "../atoms/button";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/context/AuthContext";
+import { Plus } from "lucide-react";
 
 
 type Props = {
@@ -47,12 +48,15 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
   }
 
   return (
-    <div>
+    <div className="p-3">
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Dispatch Orders
+            All Dispatch Orders
           </h1>
+          <Button onClick={() => { router.push("/dispatch") }} className="py-2" variant={"nextbtn"} size={"nextbtnsize"}>
+            <Plus size={18} strokeWidth={2.5} />
+            Create Dispatch</Button>
         </div>
         <Table>
           <TableHeader className="text-center">

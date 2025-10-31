@@ -330,7 +330,7 @@ export const VendorsidebarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/dispatch-logo.svg",
     name: "Dispatch",
-    href: "/dispatch-table",
+    href: "/vendor-dispatch-table",
     children: []
   },
   {
