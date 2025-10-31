@@ -43,7 +43,7 @@ export interface DropdownDataMaterial {
 }
 type Props = {
   Dropdown: DropdownDataMaterial;
-  pr_codes?: string | null;
+  pr_codes?: string[] | [];
   pr_type?: string | null;
 };
 
@@ -106,14 +106,14 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
     fetchPRDropdown(formData?.rfq_type ? formData?.rfq_type : "Material Vendor");
   }, []);
 
-  useEffect(() => {
-    if (pr_codes) {
-      setFormData((prev) => ({
-        ...prev,
-        pr_number: pr_codes
-      }));
-    }
-  }, [pr_codes ?? null]);
+  // useEffect(() => {
+  //   if (pr_codes) {
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       pr_number: pr_codes
+  //     }));
+  //   }
+  // }, [pr_codes ?? null]);
 
   const handleVendorSearch = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setVendorCurrentPage(1)
@@ -167,6 +167,7 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
         <PRMaterialsManager
           prNumbers={availablePRs}
           // materials={mockMaterials}
+          defaultPRCodes={pr_codes}
           onSelectionChange={setPRItems}
           title="Select Purchase Request Numbers"
         />

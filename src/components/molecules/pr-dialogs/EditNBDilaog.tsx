@@ -84,8 +84,8 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   }, [isOpen, defaultData]);
 
   useEffect(() => {
-    if (defaultData?.plant_head) {
-      setPlantCode(defaultData?.plant_head);
+    if (defaultData?.plant_head || plant) {
+      setPlantCode(defaultData?.plant_head?defaultData?.plant_head:plant);
     }
     if (defaultData?.store_location_head) {
       setStoreLocation(defaultData?.store_location_head);
@@ -95,6 +95,9 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     }
     if (defaultData?.material_group_head) {
       setMaterialGroup(defaultData?.material_group_head);
+    }
+     if (defaultData?.material_code_head) {
+      setMaterialCode(defaultData?.material_code_head);
     }
     if (defaultData?.gl_account_number_head) {
       setGLAccount(defaultData?.gl_account_number_head);
