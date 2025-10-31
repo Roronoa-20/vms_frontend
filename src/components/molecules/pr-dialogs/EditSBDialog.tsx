@@ -81,8 +81,8 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     }
   }, [isOpen, defaultData]);
   useEffect(() => {
-    if (defaultData?.plant_head) {
-      setPlantCode(defaultData?.plant_head);
+    if (defaultData?.plant_head || plant) {
+      setPlantCode(defaultData?.plant_head ? defaultData?.plant_head : plant);
     }
     if (defaultData?.store_location_head) {
       setStoreLocation(defaultData?.store_location_head);
@@ -136,7 +136,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
   }, [formData?.company_code_area_head, formData?.purchase_requisition_type, formData?.account_assignment_category_head])
 
   useEffect(() => {
-    setFormData((prev) => ({ ...prev, purchase_requisition_date_head: formData?.purchase_requisition_date_head ? formData?.purchase_requisition_date_head : today }));
+    setFormData((prev) => ({ ...prev, purchase_requisition_date_head: formData?.purchase_requisition_date_head ? formData?.purchase_requisition_date_head : today, }));
   }, [today, formData?.purchase_requisition_date_head]);
 
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -206,8 +206,8 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     let url = baseUrl;
 
     // Add search_term if query exists
-    if (query) {
-      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
+    if (query || plantCode) {
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query?query:plantCode)}`;
     }
 
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
@@ -231,7 +231,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     const params = new URLSearchParams();
 
     if (plant_name) params.append("plant_name", plant_name);
-    if (query) params.append("search_term", query);
+    if (query || storeLocation) params.append("search_term", query?query:storeLocation);
 
     const url = `${baseUrl}?${params.toString()}`;
 
@@ -261,8 +261,8 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     }
 
     // Add search_term if query exists
-    if (query) {
-      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
+    if (query || MaterialGroup) {
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query?query:MaterialGroup)}`;
     }
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
@@ -288,8 +288,8 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     }
 
     // Add search_term if query exists
-    if (query) {
-      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
+    if (query || ValuationArea) {
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query?query:ValuationArea)}`;
     }
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
@@ -315,8 +315,8 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     }
 
     // Add search_term if query exists
-    if (query) {
-      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
+    if (query  || CostCenter) {
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query?query:CostCenter)}`;
     }
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
@@ -342,8 +342,8 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     }
 
     // Add search_term if query exists
-    if (query) {
-      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
+    if (query || GLAccount) {
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query?query:GLAccount)}`;
     }
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
