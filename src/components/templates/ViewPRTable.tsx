@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PurchaseRequisitionDataItem } from "@/src/types/PurchaseRequisitionType";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../atoms/select";
 import PopUp from "../molecules/PopUp";
 import API_END_POINTS from "@/src/services/apiEndPoints";
@@ -13,6 +12,8 @@ import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import SubItemViewComponent from "../molecules/view-pr/SubItemViewComponent";
 import Pagination from "../molecules/Pagination";
+import { PurchaseRequisitionDataItem, PurchaseRequisitionResponse, SubheadField } from '@/src/types/PurchaseRequisitionType'
+
 
 interface PRItemsType {
   name: string,
@@ -110,6 +111,7 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
     }
   };
 
+
   const toggleItemExpanded = (prName: string, itemNo: string) => {
     const key = `${prName}-${itemNo}`;
     setExpandedSubheadRows((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -156,25 +158,32 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
   };
 
 
+
   if (loading) return <p className="text-center text-gray-500">Loading PR data...</p>;
 
   return (
     <>
       <div className="shadow- bg-[#f6f6f7] p-3 rounded-2xl flex gap-4 flex-wrap">
-        <div className="flex items-center gap-2">
-          <label className="text-sm font-medium">Filter by PR Type:</label>
-          <Select onValueChange={(value) => setFilterType(value)} value={filterType}>
-            <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Select Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All">All</SelectItem>
-              {uniqueTypes.map((type) => (
-                <SelectItem key={type as string} value={type as string}>{type}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="flex items-center justify-end">
+          {/* Left section - Filter */}
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium">Filter by PR Type:</label>
+            <Select onValueChange={(value) => setFilterType(value)} value={filterType}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="Select Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All</SelectItem>
+                {uniqueTypes.map((type) => (
+                  <SelectItem key={type as string} value={type as string}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
+          {/* Right section - Create RFQ */}
           {selectedData.length > 0 && (
             <Button
               className="my-4"
@@ -229,18 +238,23 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
                     <Button
                       variant="nextbtn"
                       size="nextbtnsize"
-                      className="py-2.5 hover:bg-white hover:text-black w-[50px] rounded-[16px]"
-                      onClick={async () => {
-                        await fetchPRItems(pr.name);
-                        setSelectedPRDetails(pr);
+                      className="py-2.5 hover:bg-white hover:text-black hover:border border-blue-500 w-[70px] rounded-[16px]"
+                      // onClick={async () => {
+                      //   await fetchPRItems(pr.name);
+                      //   setSelectedPRDetails(pr);
 
-                        if (pr.purchase_requisition_type === "SB") {
-                          setShowSubItemComponent(true);
-                          setShowPRPopup(false);
-                        } else {
-                          setShowPRPopup(true);
-                          setShowSubItemComponent(false);
-                        }
+                      //   if (pr.purchase_requisition_type === "SB") {
+                      //     setShowSubItemComponent(true);
+                      //     setShowPRPopup(false);
+                      //   } else {
+                      //     setShowPRPopup(true);
+                      //     setShowSubItemComponent(false);
+                      //   }
+                      // }}
+                      onClick={() => {
+                        const cartId = pr.cart_id;
+                        const purReq = pr?.name;
+                        router.push(`/pr-request?cart_id=${cartId}&pur_req=${purReq}`);
                       }}
                     >
                       View

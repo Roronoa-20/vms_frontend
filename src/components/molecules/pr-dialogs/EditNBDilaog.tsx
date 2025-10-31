@@ -30,7 +30,6 @@ interface DropdownData {
   purchase_group: PurchaseGroup[];
   store_location: StoreLocation[];
   valuation_area: ValuationArea[];
-  // valuation_class: ValuationClass[];
   storage_location: StorageLocation[];
 }
 
@@ -42,17 +41,12 @@ interface EditNBModalProps {
   defaultData: Record<string, any> | undefined;
   pur_req: string;
   PurchaseGroupDropdown: PurchaseGroup[]
-  StorageLocationDropdown: StorageLocation[]
-  ValuationClassDropdown: ValuationClass[]
   ProfitCenterDropdown: ProfitCenter[]
-  MaterialGroupDropdown: MaterialGroupMaster[]
-  GLAccountDropdwon: GLAccountNumber[]
-  CostCenterDropdown: CostCenter[]
   accountAssigmentDropdown: AccountAssignmentCategory[]
-  // MaterialCodeDropdown: MaterialCode[]
   itemCategoryDropdown: ItemCategoryMaster[]
   plant: string
   company: string
+  purchase_group:string
 }
 
 const EditNBModal: React.FC<EditNBModalProps> = ({
@@ -63,9 +57,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   defaultData,
   pur_req,
   PurchaseGroupDropdown,
-  StorageLocationDropdown,
-  ValuationClassDropdown,
-  ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, accountAssigmentDropdown, itemCategoryDropdown, plant, company
+  ProfitCenterDropdown, accountAssigmentDropdown, itemCategoryDropdown, plant, company,purchase_group
 }) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, any>>({});
@@ -74,6 +66,16 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   const [materialCode, setMaterialCode] = useState<string>("");
   const [plantCode, setPlantCode] = useState<string>("");
   const [requiredField, setRequiredField] = useState<Record<string, any>>({});
+  const [GLAccountDropdown, setGLAccountDropdown] = useState<GLAccountNumber[]>()
+  const [GLAccount, setGLAccount] = useState<string>("");
+  const [StoreLocationDropdown, setStoreLocationDropdown] = useState<StorageLocation[]>()
+  const [storeLocation, setStoreLocation] = useState<string>("");
+  const [MaterialGroupDropdown, setMaterialGroupDropdown] = useState<MaterialGroupMaster[]>()
+  const [MaterialGroup, setMaterialGroup] = useState<string>("");
+  const [CostCenterDropdown, setCostCenterDropdown] = useState<CostCenter[]>()
+  const [CostCenter, setCostCenter] = useState<string>("");
+  const [ValuationAreaDropdown, setValuationAreaDropdown] = useState<ValuationClass[]>()
+  const [ValuationArea, setValuationArea] = useState<string>("");
   useEffect(() => {
     if (isOpen) {
       setFormData(defaultData || {});
@@ -82,14 +84,25 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   }, [isOpen, defaultData]);
 
   useEffect(() => {
-    if (defaultData?.material_code_head) {
-      setMaterialCode(defaultData?.material_code_head);
-    }
     if (defaultData?.plant_head) {
       setPlantCode(defaultData?.plant_head);
     }
+    if (defaultData?.store_location_head) {
+      setStoreLocation(defaultData?.store_location_head);
+    }
+    if (defaultData?.cost_center_head) {
+      setCostCenter(defaultData?.cost_center_head);
+    }
+    if (defaultData?.material_group_head) {
+      setMaterialGroup(defaultData?.material_group_head);
+    }
+    if (defaultData?.gl_account_number_head) {
+      setGLAccount(defaultData?.gl_account_number_head);
+    }
+    if (defaultData?.valuation_area_head) {
+      setValuationArea(defaultData?.valuation_area_head);
+    }
   }, [defaultData]);
-
 
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -232,7 +245,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     setErrors(newErrors);
     return newErrors;
   };
-
   const handleSubmit = async () => {
     console.log(errors, "errors before submit")
     if (!formData.account_assignment_category_head) {
@@ -257,15 +269,146 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     }
   };
   useEffect(() => {
-    setFormData((prev) => ({ ...prev, purchase_requisition_date_head: formData?.purchase_requisition_date_head ? formData?.purchase_requisition_date_head : today, plant_head: plant }));
-  }, [today, formData?.purchase_requisition_date_head]);
+    setFormData((prev) => ({ ...prev, purchase_requisition_date_head: formData?.purchase_requisition_date_head ? formData?.purchase_requisition_date_head : today, plant_head: plant,purchase_group_head:purchase_group }));
+  }, [today, formData?.purchase_requisition_date_head,purchase_group]);
 
   useEffect(() => {
     fetchMaterialCodeData();
   }, [formData?.company_code_area_head, formData?.plant_head]);
+  const fetchGLNumberData = async (query?: string): Promise<[]> => {
+    console.log(query)
+    const baseUrl = API_END_POINTS?.GLAccountSearchApi;
+    let url = baseUrl;
+    // Only include filters if company exists
+    const filters = [];
+    if (company) {
+      filters.push({ "company": company });
+    }
+    if (filters.length > 0) {
+      url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
+    }
+
+    // Add search_term if query exists
+    if (query) {
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
+    }
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+    if (response?.status == 200) {
+      setGLAccountDropdown(response?.data?.message?.data)
+      return response.data.message.data
+    } else {
+      alert("error");
+    }
+    return []
+  }
+  const fetchStoreLocationData = async (query?: string): Promise<[]> => {
+    console.log(query)
+    const baseUrl = API_END_POINTS?.StorageLocationSearchApi;
+
+    // Determine which plant name to use
+    const plant_name = plantCode ?? plant;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (plant_name) params.append("plant_name", plant_name);
+    if (query) params.append("search_term", query);
+
+    const url = `${baseUrl}?${params.toString()}`;
+
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+    if (response?.status == 200) {
+      console.log(response?.data?.message?.data, "response?.data?.message?.data store loaction")
+      setStoreLocationDropdown(response?.data?.message?.data)
+      return response.data.message.data
+    } else {
+      alert("error");
+    }
+    return []
+  }
+  const fetchMaterialGroupData = async (query?: string): Promise<[]> => {
+    console.log(query)
+    const baseUrl = API_END_POINTS?.MaterialGroupSearchApi;
+    let url = baseUrl;
+    // Only include filters if company exists
+    console.log(company, "company")
+    const filters = [];
+    if (company) {
+      filters.push({ "material_group_company": company });
+    }
+    if (filters.length > 0) {
+      url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
+    }
+
+    // Add search_term if query exists
+    if (query) {
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
+    }
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+    if (response?.status == 200) {
+      setMaterialGroupDropdown(response?.data?.message?.data)
+      return response.data.message.data
+    } else {
+      alert("error");
+    }
+    return []
+  }
+  const fetchCostCenterData = async (query?: string): Promise<[]> => {
+    console.log(query)
+    const baseUrl = API_END_POINTS?.CostCenterSearchApi;
+    let url = baseUrl;
+    // Only include filters if company exists
+    const filters = [];
+    if (company) {
+      filters.push({ "company_code": company });
+    }
+    if (filters.length > 0) {
+      url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
+    }
+
+    // Add search_term if query exists
+    if (query) {
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
+    }
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+    if (response?.status == 200) {
+      setCostCenterDropdown(response?.data?.message?.data)
+      return response.data.message.data
+    } else {
+      alert("error");
+    }
+    return []
+  }
+  const fetchValuationAreaData = async (query?: string): Promise<[]> => {
+    console.log(query)
+    const baseUrl = API_END_POINTS?.ValuationAreaSearchApi;
+    let url = baseUrl;
+    // Only include filters if company exists
+    const filters = [];
+    if (company) {
+      filters.push({ "company": company });
+    }
+    if (filters.length > 0) {
+      url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
+    }
+
+    // Add search_term if query exists
+    if (query) {
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
+    }
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+    if (response?.status == 200) {
+      setValuationAreaDropdown(response?.data?.message?.data)
+      return response.data.message.data
+    } else {
+      alert("error");
+    }
+    return []
+  }
   useEffect(() => {
-    fetchPlantCodeData();
-  }, []);
+    fetchStoreLocationData();
+  }, [plantCode]);
+
   const renderInput = (name: string, label: string, type = 'text', inputProps: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
     <div className="col-span-1">
       <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -326,7 +469,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     <PopUp headerText='Purchase Request Items' classname='overflow-y-scroll md:max-w-[1000px] md:max-h-[600px]' handleClose={onClose} isSubmit={true} Submitbutton={handleSubmit}>
       <div className="grid grid-cols-3 gap-6 pt-2">
         {renderInput('item_number_of_purchase_requisition_head', 'Item Number of Purchase Requisition', 'text', { disabled: true })}
-        {renderInput('purchase_requisition_date_head', 'Purchase Requisition Date', 'date',{ disabled: true })}
+        {renderInput('purchase_requisition_date_head', 'Purchase Requisition Date', 'date', { disabled: true })}
         {renderSelect(
           'purchase_group_head',
           'Purchase Group',
@@ -362,13 +505,33 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           (item) => item.name,
           (item) => `${item.account_assignment_category_code} - ${item.account_assignment_category_name}`
         )}
-        {renderSelect(
+        {/* {renderSelect(
           'store_location_head',
           'Store Location',
           StorageLocationDropdown,
           (item) => item.name,
           (item) => `${item.storage_name}`
-        )}
+        )} */}
+        <div className='w-full'>
+          <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
+            {"Select Store Location"}
+            {/* {error && <span className="text-red-600">*</span>} */}
+          </h1>
+          <SearchSelectComponent
+            setData={(value) => {
+              setStoreLocation(value ?? "");
+              setFormData(prev => ({ ...prev, store_location_head: value ?? "" }));
+            }}
+            data={storeLocation ?? ""}
+            getLabel={(item) => `${item?.storage_name} - ${item?.storage_location_name}`}
+            getValue={(item) => item?.name}
+            dropdown={StoreLocationDropdown ? StoreLocationDropdown : []}
+            searchApi={fetchStoreLocationData}
+            setDropdown={setStoreLocationDropdown}
+            placeholder='Select Store Location'
+          />
+          {renderError("store_location_head")}
+        </div>
 
         {renderInput('delivery_date_head', 'Delivery Date', 'date')}
         {renderSelect(
@@ -379,14 +542,34 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           (item) => `${item.item_code} - ${item.item_name}`,
           itemCategoryDropdown?.length > 0 ? false : true
         )}
-
+        {/* 
         {renderSelect(
           'material_group_head',
           'Material Group',
           MaterialGroupDropdown,
           (item) => item.name,
           (item) => `${item.material_group_name} - ${item.material_group_description}`
-        )}
+        )} */}
+        <div className='w-full'>
+          <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
+            {"Material Group"}
+            {/* {error && <span className="text-red-600">*</span>} */}
+          </h1>
+          <SearchSelectComponent
+            setData={(value) => {
+              setMaterialGroup(value ?? "");
+              setFormData(prev => ({ ...prev, material_group_head: value ?? "" }));
+            }}
+            data={MaterialGroup ?? ""}
+            getLabel={(item) => `${item?.material_group_name} - ${item?.material_group_description}`}
+            getValue={(item) => item?.name}
+            dropdown={MaterialGroupDropdown ? MaterialGroupDropdown : []}
+            searchApi={fetchMaterialGroupData}
+            setDropdown={setMaterialGroupDropdown}
+            placeholder='Select Material Group'
+          />
+          {renderError("material_group_head")}
+        </div>
 
         {renderSelect(
           'uom_head',
@@ -396,15 +579,35 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           (item) => `${item.uom_code} - ${item.uom}`
         )}
 
-        {renderSelect(
+        {/* {renderSelect(
           'cost_center_head',
           'Cost Center',
           CostCenterDropdown,
           (item) => item.name,
           (item) => `${item.cost_center_code} - ${item.cost_center_name}`,
-          formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true:false
+          formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true : false
+        )} */}
+        <div className='w-full'>
+          <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
+            {"Cost Center"}
+            {/* {error && <span className="text-red-600">*</span>} */}
+          </h1>
+          <SearchSelectComponent
+            setData={(value) => {
+              setCostCenter(value ?? "");
+              setFormData(prev => ({ ...prev, cost_center_head: value ?? "" }));
+            }}
+            data={CostCenter ?? ""}
+            getLabel={(item) => `${item?.cost_center_code} - ${item?.cost_center_name}`}
+            getValue={(item) => item?.name}
+            dropdown={CostCenterDropdown ? CostCenterDropdown : []}
+            searchApi={fetchCostCenterData}
+            setDropdown={setCostCenterDropdown}
+            placeholder='Select Cost Center'
+          />
+          {renderError("cost_center_head")}
+        </div>
 
-        )}
         {renderInput('main_asset_no_head', 'Main Asset No')}
         {renderInput('asset_subnumber_head', 'Asset Subnumber')}
 
@@ -418,24 +621,68 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
 
         {renderInput('short_text_head', 'Description')}
         {/* {renderInput('valuation_area_head', 'Valuation Area')} */}
-        {renderSelect(
+        {/* {renderSelect(
           'valuation_area_head',
           'Valuation Area',
           ValuationClassDropdown,
           (item) => item.name,
           (item) => `${item.valuation_class_code} - ${item.valuation_class_name}`
-        )}
+        )} */}
+        <div className='w-full'>
+          <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
+            {"Valuation Area"}
+            {/* {error && <span className="text-red-600">*</span>} */}
+          </h1>
+          <SearchSelectComponent
+            setData={(value) => {
+              setValuationArea(value ?? "");
+              setFormData(prev => ({ ...prev, valuation_area_head: value ?? "" }));
+            }}
+            data={ValuationArea ?? ""}
+            getLabel={(item) => `${item?.valuation_class_code} - ${item?.valuation_class_name}`}
+            getValue={(item) => item?.name}
+            dropdown={ValuationAreaDropdown ? ValuationAreaDropdown : []}
+            searchApi={fetchValuationAreaData}
+            setDropdown={setValuationAreaDropdown}
+            placeholder='Select Valuation Area'
+          />
+          {renderError("valuation_area_head")}
+        </div>
+
+
         {renderInput('quantity_head', 'Quantity')}
         {renderInput('price_of_purchase_requisition_head', 'Price Of Purchase Requisition')}
 
-        {renderSelect(
+        {/* {renderSelect(
           'gl_account_number_head',
           'GL Account Number',
           GLAccountDropdwon,
           (item) => item.name,
           (item) => `${item.gl_account_code} - ${item.gl_account_name}`,
-          formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true:false
-        )}
+          formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true : false
+        )} */}
+
+        <div className='w-full'>
+          <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
+            {"GL Account Number"}
+            {/* {error && <span className="text-red-600">*</span>} */}
+          </h1>
+          <SearchSelectComponent
+            setData={(value) => {
+              setGLAccount(value ?? "");
+              setFormData(prev => ({ ...prev, gl_account_number_head: value ?? "" }));
+            }}
+            data={GLAccount ?? ""}
+            getLabel={(item) => `${item?.gl_account_code} - ${item?.gl_account_name}`}
+            getValue={(item) => item?.name}
+            dropdown={GLAccountDropdown ? GLAccountDropdown : []}
+            searchApi={fetchGLNumberData}
+            setDropdown={setGLAccountDropdown}
+            placeholder='Select GL Account Number'
+            disabled={formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true : false}
+          />
+          {renderError("gl_account_number_head")}
+        </div>
 
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#626973] pb-1 flex items-center gap-1 ">

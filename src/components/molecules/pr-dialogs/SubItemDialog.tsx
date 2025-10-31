@@ -2,11 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import {
-  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectGroup, SelectItem,
   SelectTrigger, SelectValue,
@@ -30,8 +26,6 @@ interface SubItemModalProps {
   onClose: () => void;
   fetchTableData: (pur_req: string) => void;
   Dropdown: DropdownData;
-  CostCenterDropdown: CostCenter[]
-  GLAccountDropdwon: GLAccountNumber[]
   pur_req: string;
   selectedMainItemId: string;
   currentItemNumber: number;
@@ -42,7 +36,7 @@ interface SubItemModalProps {
 
 
 const SubItemModal: React.FC<SubItemModalProps> = ({
-  isOpen, onClose, fetchTableData, Dropdown, pur_req, selectedMainItemId, GLAccountDropdwon, currentItemNumber, defaultData, editAction, company
+  isOpen, onClose, fetchTableData, Dropdown, pur_req, selectedMainItemId, currentItemNumber, defaultData, editAction, company
 }) => {
   const emptyFormData: SubheadField = {
     row_id: "",
@@ -82,12 +76,6 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
   const [CostCenter, setCostCenter] = useState<string>("");
   const [GLAccountDropdown, setGLAccountDropdown] = useState<GLAccountNumber[]>()
   const [GLAccount, setGLAccount] = useState<string>("");
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     setFormData({ ...emptyFormData });
-  //     // setErrors({});
-  //   }
-  // }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) {

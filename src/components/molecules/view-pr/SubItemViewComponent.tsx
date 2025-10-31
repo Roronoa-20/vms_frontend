@@ -28,12 +28,13 @@ type Props = {
 };
 
 const SubItemViewComponent = ({ open, onClose, materials }: Props) => {
+  console.log(materials, "materials in subitem view component");
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-5xl overflow-y-auto flex flex-col">
         {/* Header with Cross button */}
         <DialogHeader className="flex justify-start mb-1">
-          <DialogTitle>PR Details</DialogTitle>
+          <DialogTitle className="font-medium">PR Details</DialogTitle>
         </DialogHeader>
 
         {/* Accordion */}

@@ -26,6 +26,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints';
 import requestWrapper from '@/src/services/apiCall';
 import { AxiosResponse } from 'axios';
 import SimpleFileUpload from "@/src/components/molecules/multiple_file_upload";
+import { useAuth } from "@/src/context/AuthContext";
 
 
 type Props = {
@@ -43,6 +44,8 @@ const ViewGRNEntry = ({ GRNData, companyDropdown }: Props) => {
         { account_document_no: string; miro_no: string; files: File[] }
     >>({});
     const [tableData, setTableData] = useState<GRNForm[]>(GRNData || []);
+    const { designation } = useAuth();
+
 
     const fetchGRNData = async () => {
         try {
@@ -202,17 +205,20 @@ const ViewGRNEntry = ({ GRNData, companyDropdown }: Props) => {
                 <Table>
                     <TableHeader>
                         <TableRow className="bg-[#a4c0fb] text-[14px] hover:bg-[#a4c0fb]">
-                            <TableHead className="text-black text-center">Sr No.</TableHead>
+                            <TableHead className="text-black text-center text-nowrap">Sr No.</TableHead>
                             <TableHead className="text-black text-center">Company</TableHead>
                             <TableHead className="text-black text-center">GRN No.</TableHead>
-                            <TableHead className="text-black text-center">GRN Date</TableHead>
+                            <TableHead className="text-black text-center text-nowrap">GRN Date</TableHead>
                             <TableHead className="text-black text-center">Account Document No.</TableHead>
                             <TableHead className="text-black text-center">MIRO No.</TableHead>
                             <TableHead className="text-black text-center text-nowrap">SAP Status</TableHead>
-                            <TableHead className="text-black text-center">Upload Invoice</TableHead>
-                            <TableHead className="text-black text-center">Action</TableHead>
+                            {designation !== "Purchase Team" && (
+                                <>
+                                    <TableHead className="text-black text-center">Upload Invoice</TableHead>
+                                    <TableHead className="text-black text-center">Action</TableHead>
+                                </>
+                            )}
                             <TableHead className="text-black text-center">View GRN</TableHead>
-
                         </TableRow>
                     </TableHeader>
 
@@ -224,7 +230,7 @@ const ViewGRNEntry = ({ GRNData, companyDropdown }: Props) => {
                                     <TableCell className="text-center">{item?.company_code}</TableCell>
                                     <TableCell className="text-center">{item?.grn_number}</TableCell>
                                     <TableCell className="text-center text-nowrap">{formatDate(item?.grn_date)}</TableCell>
-                                    <TableCell className="text-center">
+                                    {/* <TableCell className="text-center">
                                         {item.sap_booking_id ? (
                                             <span>{item.sap_booking_id}</span>
                                         ) : (
@@ -249,6 +255,37 @@ const ViewGRNEntry = ({ GRNData, companyDropdown }: Props) => {
                                                 placeholder="Enter MIRO No"
                                             />
                                         )}
+                                    </TableCell> */}
+                                    <TableCell className="text-center">
+                                        {item.sap_booking_id ? (
+                                            <span>{item.sap_booking_id}</span>
+                                        ) : designation === "Purchase Team" ? (
+                                            <span className="text-gray-600">{item.sap_booking_id}</span>
+                                        ) : (
+                                            <Input
+                                                value={editValues[item.grn_number]?.account_document_no || ""}
+                                                onChange={(e) =>
+                                                    handleInputChange(item.grn_number, "account_document_no", e.target.value)
+                                                }
+                                                placeholder="Enter Account Doc No"
+                                            />
+                                        )}
+                                    </TableCell>
+
+                                    <TableCell className="text-center">
+                                        {item?.miro_no ? (
+                                            <span>{item.miro_no}</span>
+                                        ) : designation === "Purchase Team" ? (
+                                            <span className="text-gray-600">{item.miro_no}</span>
+                                        ) : (
+                                            <Input
+                                                value={editValues[item.grn_number]?.miro_no || ""}
+                                                onChange={(e) =>
+                                                    handleInputChange(item.grn_number, "miro_no", e.target.value)
+                                                }
+                                                placeholder="Enter MIRO No"
+                                            />
+                                        )}
                                     </TableCell>
                                     <TableCell>
                                         <div
@@ -263,39 +300,48 @@ const ViewGRNEntry = ({ GRNData, companyDropdown }: Props) => {
                                         </div>
                                     </TableCell>
 
-                                    <TableCell className="text-center">
-                                        <SimpleFileUpload
-                                            buttonText="Upload Invoice"
-                                            files={editValues[item.grn_number]?.files || []}
-                                            setFiles={(newFiles) =>
-                                                setEditValues((prev) => {
-                                                    const files =
-                                                        typeof newFiles === "function" ? newFiles(prev[item.grn_number]?.files || []) : newFiles;
-                                                    return {
-                                                        ...prev,
-                                                        [item.grn_number]: {
-                                                            ...prev[item.grn_number],
-                                                            files,
-                                                        },
-                                                    };
-                                                })
-                                            }
-                                            setUploadedFiles={() => { }}
-                                            onNext={() => handleSave(item.grn_number)}
-                                        />
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <Button
-                                            size="sm"
-                                            variant="default"
-                                            onClick={() => handleSave(item.grn_number)}
-                                            disabled={!canSave(item.grn_number)}
-                                            className={`px-3 py-1 rounded-[28px] text-sm font-medium 
-      ${!canSave(item.grn_number) ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-green-600 text-white hover:bg-green-700"}`}
-                                        >
-                                            Save
-                                        </Button>
-                                    </TableCell>
+                                    {designation !== "Purchase Team" && (
+                                        <>
+                                            <TableCell className="text-center">
+                                                <SimpleFileUpload
+                                                    buttonText="Upload Invoice"
+                                                    files={editValues[item.grn_number]?.files || []}
+                                                    setFiles={(newFiles) =>
+                                                        setEditValues((prev) => {
+                                                            const files =
+                                                                typeof newFiles === "function"
+                                                                    ? newFiles(prev[item.grn_number]?.files || [])
+                                                                    : newFiles;
+                                                            return {
+                                                                ...prev,
+                                                                [item.grn_number]: {
+                                                                    ...prev[item.grn_number],
+                                                                    files,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                    setUploadedFiles={() => { }}
+                                                    onNext={() => handleSave(item.grn_number)}
+                                                />
+                                            </TableCell>
+
+                                            <TableCell className="text-center">
+                                                <Button
+                                                    size="sm"
+                                                    variant="default"
+                                                    onClick={() => handleSave(item.grn_number)}
+                                                    disabled={!canSave(item.grn_number)}
+                                                    className={`px-3 py-1 rounded-[28px] text-sm font-medium ${!canSave(item.grn_number)
+                                                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                                            : "bg-green-600 text-white hover:bg-green-700"
+                                                        }`}
+                                                >
+                                                    Save
+                                                </Button>
+                                            </TableCell>
+                                        </>
+                                    )}
 
                                     <TableCell className="text-center">
                                         <Link href={`/view-grn-details?grn_ref=${item?.grn_number}`}>

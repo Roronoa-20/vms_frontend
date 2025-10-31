@@ -73,6 +73,8 @@ export interface PurchaseRequisitionDataItem {
   sap_pr_code:string;
   company: string;
   prf_name_for_sap: string;
+  cart_id: string;
+  
 }
 
 

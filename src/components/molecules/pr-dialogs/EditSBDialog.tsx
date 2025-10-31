@@ -37,12 +37,7 @@ interface EditItemModalProps {
   defaultData: Record<string, any> | undefined;
   pur_req: string;
   PurchaseGroupDropdown: PurchaseGroup[]
-  StorageLocationDropdown: StorageLocation[]
-  ValuationClassDropdown: ValuationClass[]
   PurchaseOrgDropdown: PurchaseOrganisation[]
-  MaterialGroupDropdown: MaterialGroupMaster[]
-  CostCenterDropdown: CostCenter[]
-  GLAccountDropdwon: GLAccountNumber[]
   accountAssigmentDropdown: AccountAssignmentCategory[]
   itemCategoryDropdown: ItemCategoryMaster[]
   company: string
@@ -57,12 +52,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
   defaultData,
   pur_req,
   PurchaseGroupDropdown,
-  StorageLocationDropdown,
-  // ValuationClassDropdown,
   PurchaseOrgDropdown,
-  // MaterialGroupDropdown,
-  GLAccountDropdwon,
-  // CostCenterDropdown,
   accountAssigmentDropdown,
   itemCategoryDropdown,
   company,
@@ -100,8 +90,14 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     if (defaultData?.cost_center_head) {
       setCostCenter(defaultData?.cost_center_head);
     }
+    if (defaultData?.material_group_head) {
+      setMaterialGroup(defaultData?.material_group_head);
+    }
     if (defaultData?.gl_account_number_head) {
       setGLAccount(defaultData?.gl_account_number_head);
+    }
+    if (defaultData?.valuation_area_head) {
+      setValuationArea(defaultData?.valuation_area_head);
     }
   }, [defaultData]);
 
@@ -206,7 +202,6 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
   };
 
   const fetchPlantCodeData = async (query?: string): Promise<[]> => {
-    console.log(query)
     const baseUrl = API_END_POINTS?.FetchPlantSearchApi;
     let url = baseUrl;
 
@@ -264,7 +259,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     if (filters.length > 0) {
       url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
     }
-    
+
     // Add search_term if query exists
     if (query) {
       url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
@@ -291,7 +286,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     if (filters.length > 0) {
       url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
     }
-    
+
     // Add search_term if query exists
     if (query) {
       url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
@@ -318,7 +313,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     if (filters.length > 0) {
       url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
     }
-    
+
     // Add search_term if query exists
     if (query) {
       url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
@@ -345,7 +340,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     if (filters.length > 0) {
       url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
     }
-    
+
     // Add search_term if query exists
     if (query) {
       url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
@@ -394,7 +389,6 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     }
   };
 
-  console.log(CostCenterDropdown,"CostCenterDropdown")
   return (
     <PopUp headerText='Purchase Request Items' classname='overflow-y-scroll md:max-w-[1000px] md:max-h-[600px]' handleClose={onClose} isSubmit={true} Submitbutton={handleSubmit}>
       <div className="grid grid-cols-3 gap-6 p-5">
