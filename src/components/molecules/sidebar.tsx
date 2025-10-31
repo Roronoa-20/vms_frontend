@@ -69,10 +69,34 @@ const Sidebar = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+  useEffect(() => {
+    const sidebar = document.querySelector(".sidebar-scroll") as HTMLElement;
+    if (!sidebar) return;
+
+    const handleScroll = () => {
+      if (openMenu && buttonRefs.current.length > 0) {
+        const idx = sideBar.findIndex((item) => item.name === openMenu.name);
+        const btn = buttonRefs.current[idx];
+        if (btn) {
+          const rect = btn.getBoundingClientRect();
+          const sidebarRect = sidebar.getBoundingClientRect();
+          const offset = getSidebarWidth(designation || "") === "w-[95px]" ? 10 : 15;
+          setSubmenuPos({
+            top: rect.top - sidebarRect.top + sidebar.scrollTop,
+            left: rect.right - sidebarRect.left + offset,
+          });
+        }
+      }
+    };
+
+    sidebar.addEventListener("scroll", handleScroll);
+    return () => sidebar.removeEventListener("scroll", handleScroll);
+  }, [openMenu]);
+
 
   return (
     <>
-      <div className={`${getSidebarWidth(designation || "")} bg-[#0C2741] flex flex-col items-center gap-3 overflow-y-auto no-scrollbar sticky left-0 h-screen`}>
+      <div className={`${getSidebarWidth(designation || "")} bg-[#0C2741] flex flex-col items-center gap-3 overflow-y-auto no-scrollbar sticky left-0 h-screen `}>
         <div className="w-3 h-3 pb-6 pt-5">
           <Logo />
         </div>
@@ -98,8 +122,12 @@ const Sidebar = () => {
       {openMenu?.children && openMenu.children.length > 0 && (
         <div
           ref={submenuRef}
-          style={{ top: submenuPos.top, left: submenuPos.left }}
-          className="fixed bg-[#15395B] rounded-md shadow-lg flex flex-col gap-2 py-2 px-2 min-w-[180px] z-50"
+          style={{
+            top: submenuPos.top,
+            left: submenuPos.left,
+            position: "absolute",
+          }}
+          className="bg-[#15395B] rounded-md shadow-lg flex flex-col gap-2 py-2 px-2 min-w-[180px] z-50"
         >
           {openMenu.children.map((child, idx) => (
             <button

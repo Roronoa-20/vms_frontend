@@ -208,6 +208,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     }
     fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "")
   }, [pur_req, PRData?.purchase_requisition_type])
+
   return (
     <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
       <div className="grid grid-cols-3 gap-6 p-3">
@@ -379,36 +380,39 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                           {/* <Badge variant="outline">${mainItem?.estimatedPrice}</Badge> */}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {(
-                          mainItems?.['Form Status'] !== "Submitted" ||
-                          (designation === "Purchase Team" && !mainItems?.form_is_submitted)
-                        ) && (
-                            <>
-                              {mainItem?.purchase_requisition_type === "SB" && (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => openSubItemModal(mainItem?.row_name, mainItem?.subhead_fields)}
-                                  className="flex items-center gap-2 bg-green-50 hover:bg-green-100 border-green-200"
-                                >
-                                  <Plus className="w-4 h-4" />
-                                  Add Sub Item
-                                </Button>
+                      {
+                        mainItems?.sap_status != "Success" && (
+                          <div className="flex items-center gap-2">
+                            {(
+                              mainItems?.['Form Status'] !== "Submitted" ||
+                              (designation === "Purchase Team" && !mainItems?.form_is_submitted)
+                            ) && (
+                                <>
+                                  {mainItem?.purchase_requisition_type === "SB" && (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => openSubItemModal(mainItem?.row_name, mainItem?.subhead_fields)}
+                                      className="flex items-center gap-2 bg-green-50 hover:bg-green-100 border-green-200"
+                                    >
+                                      <Plus className="w-4 h-4" />
+                                      Add Sub Item
+                                    </Button>
+                                  )}
+                                  <Button
+                                    size="sm"
+                                    onClick={() => {
+                                      handleModel(mainItem?.purchase_requisition_type ? mainItem?.purchase_requisition_type : "SB");
+                                      setEditRow(mainItem);
+                                    }}
+                                    className=""
+                                  >
+                                    <Edit2Icon className="w-4 h-4" />
+                                  </Button>
+                                </>
                               )}
-                              <Button
-                                size="sm"
-                                onClick={() => {
-                                  handleModel(mainItem?.purchase_requisition_type ? mainItem?.purchase_requisition_type : "SB");
-                                  setEditRow(mainItem);
-                                }}
-                                className=""
-                              >
-                                <Edit2Icon className="w-4 h-4" />
-                              </Button>
-                            </>
-                          )}
-                      </div>
+                          </div>
+                        )}
                     </div>
 
                     {/* Expanded Content - Main Item Details + Sub Items Table */}
@@ -419,7 +423,8 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                         {mainItem.purchase_requisition_type == "SB" && <div className="mt-4">
                           <div className="flex items-center justify-between mb-4">
                             <h4 className="font-semibold text-lg">Sub Items ({mainItem?.subhead_fields.length})</h4>
-                            {(mainItems?.['Form Status'] !== "Submitted" ||
+
+                            {mainItems?.sap_status != "Success" && (mainItems?.['Form Status'] !== "Submitted" ||
                               (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
                                 <Button
                                   variant="outline"
@@ -440,7 +445,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                                   <TableHeader className='text-nowrap'>
                                     <TableRow className="bg-gray-50">
                                       <TableHead className="w-[100px]">Sr No.</TableHead>
-                                      <TableHead className="text-center">Item Number of Purchase Requisition</TableHead>
+                                      <TableHead className="text-center">Item No. of PR</TableHead>
                                       <TableHead className="text-center">Service Number</TableHead>
                                       <TableHead className="text-center">Short Text</TableHead>
                                       <TableHead className="text-center">Quantity</TableHead>
@@ -451,9 +456,12 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                                       <TableHead className="text-center">Net Value</TableHead>
                                       <TableHead className="text-center">Cost Center</TableHead>
                                       <TableHead className="text-center">GL Account Number</TableHead>
-                                      <TableHead className="text-center sticky right-0 bg-gray-50 z-30">
-                                        Actions
-                                      </TableHead>
+                                      {
+                                        mainItems?.sap_status == "Failed" && (
+                                          <TableHead className="text-center sticky right-0 bg-gray-50 z-30">
+                                            Actions
+                                          </TableHead>
+                                        )}
                                     </TableRow>
                                   </TableHeader>
                                   <TableBody>
@@ -469,10 +477,10 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                                         <TableCell className="text-center">{subItem?.currency_subhead || "N/A"}</TableCell>
                                         <TableCell className="text-center">{subItem?.service_type_subhead || "N/A"}</TableCell>
                                         <TableCell className="text-center">{subItem?.net_value_subhead || "N/A"}</TableCell>
-                                        <TableCell className="text-center">{subItem?.cost_center_subhead || "N/A"}</TableCell>
+                                        <TableCell className="text-center text-nowrap">{subItem?.cost_center_subhead || "N/A"}</TableCell>
                                         <TableCell className="text-center">{subItem?.gl_account_number_subhead || "N/A"}</TableCell>
                                         {/* Sticky Actions Cell */}
-                                        {mainItems?.['Form Status'] != "Submitted" && <TableCell className="text-center sticky right-0 bg-white z-20">
+                                        {mainItems?.sap_status == "Failed" && mainItems?.['Form Status'] != "Submitted" && <TableCell className="text-center sticky right-0 bg-white z-20">
                                           <div className='flex gap-2'>
                                             <Button
                                               size="sm"
@@ -582,7 +590,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
         defaultData={editRow}
         plant={formData?.plant ? formData?.plant : ''}
         company={formData?.company ? formData?.company : ""}
-        purchase_group={formData?.purchase_group? formData?.purchase_group:""}
+        purchase_group={formData?.purchase_group ? formData?.purchase_group : ""}
       />}
 
       {/* {(mainItems?.['Form Status'] != "Submitted" && mainItems?.docname) && <div className={`flex justify-end py-6`}><Button type='button' className='bg-blue-400 hover:bg-blue-400 px-6 font-medium' onClick={() => { handleSubmit() }}>Submit</Button></div>} */}
@@ -602,7 +610,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
             </Button>
           ) : (
             // Show Final Submit button if designation is Purchase Team
-            (designation === "Purchase Team" && !mainItems?.form_is_submitted) && (
+            (designation === "Purchase Team" && !mainItems?.form_is_submitted) && (mainItems?.sap_status != "Success") && (
               <Button
                 type="button"
                 className="py-2.5"
