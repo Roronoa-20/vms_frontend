@@ -32,13 +32,12 @@ interface Props {
   cartId?: string
   pur_req?: string
   PurchaseGroupDropdown: PurchaseGroup[]
-  StorageLocationDropdown: StorageLocation[]
-  ValuationClassDropdown: ValuationClass[]
+  // StorageLocationDropdown: StorageLocation[]
+  // ValuationClassDropdown: ValuationClass[]
   ProfitCenterDropdown: ProfitCenter[]
-  MaterialGroupDropdown: MaterialGroupMaster[]
-  GLAccountDropdwon: GLAccountNumber[]
-  CostCenterDropdown: CostCenter[]
-  // MaterialCodeDropdown: MaterialCode[]
+  // MaterialGroupDropdown: MaterialGroupMaster[]
+  // GLAccountDropdwon: GLAccountNumber[]
+  // CostCenterDropdown: CostCenter[]
   PurchaseOrgDropdown: PurchaseOrganisation[]
   company: string
 }
@@ -49,7 +48,7 @@ export const updateQueryParam = (key: string, value: string) => {
   window.history.pushState({}, '', url.toString());
 };
 
-const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, StorageLocationDropdown, ValuationClassDropdown, ProfitCenterDropdown, MaterialGroupDropdown, GLAccountDropdwon, CostCenterDropdown, PurchaseOrgDropdown }: Props) => {
+const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, ProfitCenterDropdown, PurchaseOrgDropdown }: Props) => {
   const user = Cookies.get("user_id");
   const { designation } = useAuth();
   const router = useRouter()
@@ -99,7 +98,6 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     setSelectedMainItemId(mainItemId);
     setIsSubItemModalOpen(true);
   };
-
 
   const handleFieldChange = useCallback(
     (
@@ -210,7 +208,6 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     }
     fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "")
   }, [pur_req, PRData?.purchase_requisition_type])
-  console.log(formData,"formData,formData,formData,formData,formData,formData,formData,formData,")
   return (
     <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
       <div className="grid grid-cols-3 gap-6 p-3">
@@ -382,25 +379,6 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                           {/* <Badge variant="outline">${mainItem?.estimatedPrice}</Badge> */}
                         </div>
                       </div>
-                      {/* <div className="flex items-center gap-2">
-                        {(mainItem?.purchase_requisition_type == "SB" && mainItems?.['Form Status'] != "Submitted") && <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => openSubItemModal(mainItem?.row_name)}
-                          className="flex items-center gap-2 bg-green-50 hover:bg-green-100 border-green-200"
-                        >
-                          <Plus className="w-4 h-4" />
-                          Add Sub Item
-                        </Button>}
-                        {mainItems?.['Form Status'] != "Submitted" && <Button
-                          // variant="destructive"
-                          size="sm"
-                          onClick={() => { handleModel(mainItem?.purchase_requisition_type ? mainItem?.purchase_requisition_type : "SB"); setEditRow(mainItem) }}
-                          className=""
-                        >
-                          <Edit2Icon className="w-4 h-4" />
-                        </Button>}
-                      </div> */}
                       <div className="flex items-center gap-2">
                         {(
                           mainItems?.['Form Status'] !== "Submitted" ||
@@ -431,7 +409,6 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                             </>
                           )}
                       </div>
-
                     </div>
 
                     {/* Expanded Content - Main Item Details + Sub Items Table */}
@@ -568,8 +545,6 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           onClose={() => { setIsSubItemModalOpen(false); setEditSubItemRow(null); setEditAction(false) }}
           fetchTableData={fetchTableData}
           Dropdown={Dropdown}
-          GLAccountDropdwon={GLAccountDropdwon}
-          CostCenterDropdown={CostCenterDropdown}
           pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
           selectedMainItemId={selectedMainItemId}
           currentItemNumber={currentValue}
@@ -588,12 +563,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           itemCategoryDropdown={itemCategoryDropdown}
           defaultData={editRow}
           PurchaseGroupDropdown={PurchaseGroupDropdown}
-          StorageLocationDropdown={StorageLocationDropdown}
-          ValuationClassDropdown={ValuationClassDropdown}
           PurchaseOrgDropdown={PurchaseOrgDropdown}
-          GLAccountDropdwon={GLAccountDropdwon}
-          CostCenterDropdown={CostCenterDropdown}
-          MaterialGroupDropdown={MaterialGroupDropdown}
           pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
           company={formData?.company ? formData?.company : ""}
           plant={formData?.company ? formData?.company : ""}
@@ -607,16 +577,12 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
         itemCategoryDropdown={itemCategoryDropdown}
         accountAssigmentDropdown={accountAssigmentDropdown}
         PurchaseGroupDropdown={PurchaseGroupDropdown}
-        StorageLocationDropdown={StorageLocationDropdown}
-        ValuationClassDropdown={ValuationClassDropdown}
         ProfitCenterDropdown={ProfitCenterDropdown}
-        MaterialGroupDropdown={MaterialGroupDropdown}
-        GLAccountDropdwon={GLAccountDropdwon}
-        CostCenterDropdown={CostCenterDropdown}
         pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
         defaultData={editRow}
         plant={formData?.plant ? formData?.plant : ''}
         company={formData?.company ? formData?.company : ""}
+        purchase_group={formData?.purchase_group? formData?.purchase_group:""}
       />}
 
       {/* {(mainItems?.['Form Status'] != "Submitted" && mainItems?.docname) && <div className={`flex justify-end py-6`}><Button type='button' className='bg-blue-400 hover:bg-blue-400 px-6 font-medium' onClick={() => { handleSubmit() }}>Submit</Button></div>} */}
@@ -624,7 +590,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
       {mainItems?.docname && (
         <div className="flex justify-end py-6">
           {/* Normal Submit Button (for non-submitted forms) */}
-          {(mainItems?.['Form Status'] !== "Submitted") && (mainItems?.['Form Status'] !== "SAP Error") ? (
+          {(mainItems?.['Form Status'] !== "Submitted") && (mainItems?.sap_status == "Failed") ? (
             <Button
               type="button"
               className="py-2.5"
