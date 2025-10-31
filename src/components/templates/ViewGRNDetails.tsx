@@ -26,7 +26,6 @@ const ViewGRNDetails = ({ grn }: { grn: GRNForm }) => {
     console.log("View GRN Data--->",grn);
     console.log("Attachments on render:", grn.attachments);
 
-
     return (
         <div className="p-3 bg-gray-300 min-h-screen">
             {/* Header Section */}
@@ -109,8 +108,9 @@ const ViewGRNDetails = ({ grn }: { grn: GRNForm }) => {
                                 </TableCell>
                                 <TableCell className='text-center'>
                                     <Button
-                                        variant="outline"
-                                        className="text-blue-600 border-blue-400 rounded-[24px]"
+                                        variant="nextbtn"
+                                        size="nextbtnsize"
+                                        className="py-2"
                                         onClick={() => openDialog(item)}
                                     >
                                         View
@@ -118,8 +118,9 @@ const ViewGRNDetails = ({ grn }: { grn: GRNForm }) => {
                                 </TableCell>
                                 <TableCell className='text-center'>
                                     <Button
-                                        variant="outline"
-                                        className="text-blue-600 border-blue-400 rounded-[24px]"
+                                        variant="nextbtn"
+                                        size="nextbtnsize"
+                                        className="py-2"
                                         onClick={() => router.push(`/view-po-conf?po_number=${item.po_no}&grn_ref=${grn_no}`)}
                                     >
                                         View

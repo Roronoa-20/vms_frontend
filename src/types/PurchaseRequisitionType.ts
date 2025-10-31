@@ -74,7 +74,7 @@ export interface PurchaseRequisitionDataItem {
   company: string;
   prf_name_for_sap: string;
   cart_id: string;
-  
+  pur_req_webform_name: string;
 }
 
 

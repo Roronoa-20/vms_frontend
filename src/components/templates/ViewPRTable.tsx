@@ -253,7 +253,7 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
                       // }}
                       onClick={() => {
                         const cartId = pr.cart_id;
-                        const purReq = pr?.name;
+                        const purReq = pr?.pur_req_webform_name;
                         router.push(`/pr-request?cart_id=${cartId}&pur_req=${purReq}`);
                       }}
                     >

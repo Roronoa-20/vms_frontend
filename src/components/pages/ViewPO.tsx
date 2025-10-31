@@ -242,7 +242,7 @@ const ViewPO = ({ po_name }: Props) => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] p-6 space-y-6 text-sm text-black font-sans m-5">
+    <div className="min-h-screen bg-[#f8fafc] space-y-6 text-sm text-black font-sans m-5">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-md border border-gray-300">
         {/* <input
