@@ -12,12 +12,7 @@ import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import SubItemViewComponent from "../molecules/view-pr/SubItemViewComponent";
 import Pagination from "../molecules/Pagination";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Badge } from "@/components/ui/badge";
-import { Plus, Edit2Icon, ChevronDown, ChevronRight, Trash2 } from "lucide-react";
 import { PurchaseRequisitionDataItem, PurchaseRequisitionResponse, SubheadField } from '@/src/types/PurchaseRequisitionType'
-
 
 
 interface PRItemsType {
@@ -244,17 +239,22 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
                       variant="nextbtn"
                       size="nextbtnsize"
                       className="py-2.5 hover:bg-white hover:text-black hover:border border-blue-500 w-[70px] rounded-[16px]"
-                      onClick={async () => {
-                        await fetchPRItems(pr.name);
-                        setSelectedPRDetails(pr);
+                      // onClick={async () => {
+                      //   await fetchPRItems(pr.name);
+                      //   setSelectedPRDetails(pr);
 
-                        if (pr.purchase_requisition_type === "SB") {
-                          setShowSubItemComponent(true);
-                          setShowPRPopup(false);
-                        } else {
-                          setShowPRPopup(true);
-                          setShowSubItemComponent(false);
-                        }
+                      //   if (pr.purchase_requisition_type === "SB") {
+                      //     setShowSubItemComponent(true);
+                      //     setShowPRPopup(false);
+                      //   } else {
+                      //     setShowPRPopup(true);
+                      //     setShowSubItemComponent(false);
+                      //   }
+                      // }}
+                      onClick={() => {
+                        const cartId = pr.cart_id;
+                        const purReq = pr?.name;
+                        router.push(`/pr-request?cart_id=${cartId}&pur_req=${purReq}`);
                       }}
                     >
                       View
