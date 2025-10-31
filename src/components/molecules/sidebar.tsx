@@ -35,13 +35,13 @@ const Sidebar = () => {
       const btn = buttonRefs.current[idx];
       const sidebar = document.querySelector(".sidebar-scroll") as HTMLElement;
       if (btn && sidebar) {
-        const offset = getSidebarWidth(designation || "") === "w-[95px]" ? 10 : 15;
+        const offset = getSidebarWidth(designation || "") === "w-[95px]" ? 0 : 0;
         const btnRect = btn.getBoundingClientRect();
         const sidebarRect = sidebar.getBoundingClientRect();
 
         // compute position relative to sidebar container
-        const top = btn.offsetTop - sidebar.scrollTop;
-        const left = sidebarRect.width + offset;
+        const top = btn.offsetTop + 15 - sidebar.scrollTop;
+        const left = sidebarRect.width - 10 + offset;
 
         setSubmenuPos({ top, left });
       }
@@ -61,8 +61,8 @@ const Sidebar = () => {
         const idx = sideBar.findIndex((item) => item.name === openMenu.name);
         const btn = buttonRefs.current[idx];
         if (btn) {
-          const offset = getSidebarWidth(designation || "") === "w-[95px]" ? 10 : 15;
-          const top = btn.offsetTop - sidebar.scrollTop;
+          const offset = getSidebarWidth(designation || "") === "w-[95px]" ? 0 : 0;
+          const top = btn.offsetTop + 15 - sidebar.scrollTop;
           const left = sidebar.clientWidth + offset;
 
           setSubmenuPos({ top, left });
@@ -102,7 +102,7 @@ const Sidebar = () => {
 
 
   return (
-    <div className="relative flex">
+    <div className="relative">
       {/* SIDEBAR */}
       <div
         className={`${getSidebarWidth(designation || "")} bg-[#0C2741] flex flex-col items-center gap-3 overflow-y-auto no-scrollbar h-screen sidebar-scroll`}
