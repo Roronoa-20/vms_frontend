@@ -53,6 +53,7 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
           <h1 className="text-[20px] text-[#03111F] font-semibold">
             Total Dispatch Orders
           </h1>
+        <Button onClick={()=>{router.push("/dispatch")}} className="bg-blue-500 hover:bg-blue-400">Create Dispatch</Button>
         </div>
         <Table>
           <TableHeader className="text-center">

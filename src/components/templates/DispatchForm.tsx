@@ -18,6 +18,7 @@ import Link from 'next/link'
 import { updateQueryParam } from './PRRequestForm'
 import PopUp from '../molecules/PopUp'
 import { ApiError } from 'next/dist/server/api-utils'
+import { toast, ToastContainer } from 'react-toastify'
 
 interface TPoDropdown{
     name:string
@@ -146,7 +147,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
 
     const handleVendorCodeChange = async(value:string)=>{
         setFormData((prev:any)=>({...prev,vendor_code:value}))
-        const url = `${API_END_POINTS?.poBasedOnVendorCode}?vendor_code=${value}`;
+        const url = `${API_END_POINTS?.poBasedOnVendorCode}?vendor_code=${value}&filters=${encodeURIComponent(JSON.stringify({status:"Approved by Vendor"}))}`;
         const response:AxiosResponse = await requestWrapper({url:url,method:"GET"});
         if(response?.status == 200){
             const newDropdown = response?.data?.message?.data?.map((item:any)=>{
@@ -299,7 +300,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
     }
      const resposne:AxiosResponse = await requestWrapper({url:url,data:formdata,method:"POST"});
      if(resposne?.status == 200){
-      alert("row updated successfully");
+      toast.success("row updated successfully");
       router.refresh();
      }
   }
@@ -308,7 +309,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
     const url = API_END_POINTS?.SubmitDispatch;
     const response:AxiosResponse = await requestWrapper({url:url,data:{data:{name:refno,submit:1}},method:"POST"});
     if(response?.status == 200){
-      alert("Submitted Successfully");
+      toast.success("Submitted Successfully");
       router.push("/vendor-dashboard");
     }
   }
@@ -321,7 +322,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
   const deleteVehicalRow = async(vehical_ref_no:string)=>{
     const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.deleteDispatchVehicalItem,method:"POST",params:{dispatch_item_id:refno,vehicle_details_id:vehical_ref_no}});
     if(response?.status == 200){
-      alert("deleted successfully");
+      toast.success("deleted successfully");
       location?.reload();
     }
   }
@@ -449,6 +450,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
           <Table className=" max-h-40 overflow-y-scroll">
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
+                <TableHead className="text-center">Sr No.</TableHead>
                 <TableHead className="text-center">Vehical No.</TableHead>
                 <TableHead className="text-center">Loading State</TableHead>
                 <TableHead className="text-center">Loading Location</TableHead>
@@ -464,6 +466,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
             <TableBody className="text-center">
               {DispatchDetails?.vehicle_details?.map((item, index) => (
                 <TableRow key={index}>
+                  <TableCell>{index+1}</TableCell>
                   <TableCell>{item?.vehicle_no}</TableCell>
                   <TableCell>{item?.loading_state}</TableCell>
                   <TableCell>{item?.loading_location}</TableCell>
@@ -622,6 +625,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
         </div>
         </PopUp>
     }
+    <ToastContainer closeButton theme="dark" autoClose={2000} />
     </>
   )
 }

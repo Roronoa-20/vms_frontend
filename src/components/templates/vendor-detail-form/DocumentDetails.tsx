@@ -32,7 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../atoms/table";
-import { Blob } from "buffer";
+import MultiSelect, { MultiValue } from "react-select";
 
 interface documentDetail {
   company_pan_number: string;
@@ -114,6 +114,8 @@ const DocumentDetails = ({
   const [isGstFilePreview, setIsGstFilePreview] = useState<boolean>(true);
   const [isPanFilePreview, setIsPanFilePreview] = useState<boolean>(true);
   const [singlerow, setSingleRow] = useState<gstRow | null>();
+  const [multiCompanyDropdown,setMultiCompanyDropdown] = useState();
+  const [multiCompanyDropdownValue,setMultiCompanyDropdownValue] = useState<{label:string,value:string}[]>();
   const [GSTTable, setGSTTable] = useState<gstRow[]>(
     OnboardingDetail?.gst_table
   );
@@ -135,6 +137,12 @@ const DocumentDetails = ({
     });
     if (response?.status == 200) {
       setGstStateDropdown(response?.data?.message?.data);
+      setMultiCompanyDropdown(
+        response?.data?.message?.data?.company?.map((item:any) => ({
+          label: item?.description,
+          value: item?.name,
+        }))
+      );
       console.log(response?.data?.message, "this is state dropdown");
     }
   };
@@ -399,6 +407,7 @@ const DocumentDetails = ({
       alert("submittes successfully");
       fetchGstTable();
       setSingleRow(null);
+      setMultiCompanyDropdownValue([]);
       setShowGSTTable(true);
       if (fileInput?.current) {
         fileInput.current.value = "";
@@ -466,6 +475,12 @@ const DocumentDetails = ({
         gst_registration_date: date,
       }));
     }
+  }
+
+  const handleMultiCompanySelect = (value: MultiValue<{label:string,value:string}>)=>{
+    setMultiCompanyDropdownValue(value as {label:string,value:string}[]);
+    const companyList = value?.map((item)=>(item?.value));
+    setSingleRow((prev:any)=>({...prev,company:companyList}));
   }
 
   console.log(singlerow);
@@ -614,7 +629,7 @@ const DocumentDetails = ({
               <h1 className="text-[12px] font-normal text-[#626973] pb-2">
                 Meril Company<span className="pl-1 text-red-400 text-2xl">*</span>
               </h1>
-              <Select
+              {/* <Select
                 onValueChange={(value) => {
                   setSingleRow((prev: any) => ({ ...prev, company: value }));
                 }}
@@ -632,7 +647,18 @@ const DocumentDetails = ({
                     ))}
                   </SelectGroup>
                 </SelectContent>
-              </Select>
+              </Select> */}
+              <MultiSelect
+                onChange={handleMultiCompanySelect}
+               instanceId="vendor-company-multiselect"
+               options={multiCompanyDropdown}
+               value={multiCompanyDropdownValue}
+               isMulti
+              //  required
+               className="text-[12px] text-black"
+              // menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+              // styles={multiSelectStyles}
+            />
               {errors?.pincode && !singlerow?.pincode && (
                 <span style={{ color: "red" }}>{errors?.pincode}</span>
               )}
