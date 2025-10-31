@@ -219,6 +219,18 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
     return []
   }
 
+    useEffect(() => {
+      if (GLAccount) {
+        fetchGLNumberData(GLAccount);
+      }
+      if (CostCenter) {
+        fetchCostCenterData(CostCenter);
+      }
+    }, [
+      GLAccount,
+      CostCenter,
+    ]);
+
   const textFields: { name: keyof SubheadField; label: string; type?: string }[] = [
     { name: "item_number_of_purchase_requisition_subhead", label: "Item Number of Purchase Requisition" },
     { name: "service_number_subhead", label: "Service Number" },

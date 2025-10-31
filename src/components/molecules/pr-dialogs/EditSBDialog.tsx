@@ -80,9 +80,11 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
       setErrors({});
     }
   }, [isOpen, defaultData]);
+
+  console.log(plantCode, "plantCode in edit dialog")
   useEffect(() => {
-    if (defaultData?.plant_head || plant) {
-      setPlantCode(defaultData?.plant_head ? defaultData?.plant_head : plant);
+    if (defaultData?.plant_head) {
+      setPlantCode(defaultData?.plant_head ? defaultData?.plant_head :"");
     }
     if (defaultData?.store_location_head) {
       setStoreLocation(defaultData?.store_location_head);
@@ -207,7 +209,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
 
     // Add search_term if query exists
     if (query || plantCode) {
-      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query?query:plantCode)}`;
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query ? query : plantCode)}`;
     }
 
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
@@ -231,7 +233,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     const params = new URLSearchParams();
 
     if (plant_name) params.append("plant_name", plant_name);
-    if (query || storeLocation) params.append("search_term", query?query:storeLocation);
+    if (query || storeLocation) params.append("search_term", query ? query : storeLocation);
 
     const url = `${baseUrl}?${params.toString()}`;
 
@@ -262,7 +264,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
 
     // Add search_term if query exists
     if (query || MaterialGroup) {
-      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query?query:MaterialGroup)}`;
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query ? query : MaterialGroup)}`;
     }
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
@@ -289,7 +291,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
 
     // Add search_term if query exists
     if (query || ValuationArea) {
-      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query?query:ValuationArea)}`;
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query ? query : ValuationArea)}`;
     }
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
@@ -315,8 +317,8 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     }
 
     // Add search_term if query exists
-    if (query  || CostCenter) {
-      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query?query:CostCenter)}`;
+    if (query || CostCenter) {
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query ? query : CostCenter)}`;
     }
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
@@ -343,7 +345,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
 
     // Add search_term if query exists
     if (query || GLAccount) {
-      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query?query:GLAccount)}`;
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query ? query : GLAccount)}`;
     }
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
@@ -358,6 +360,35 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
   useEffect(() => {
     fetchStoreLocationData();
   }, [plantCode]);
+
+useEffect(() => {
+  if (plantCode) {
+    fetchPlantCodeData(plantCode);
+  }
+  if (GLAccount) {
+    fetchGLNumberData(GLAccount);
+  }
+  if (CostCenter) {
+    fetchCostCenterData(CostCenter);
+  }
+  if (ValuationArea) {
+    fetchValuationAreaData(ValuationArea);
+  }
+  if (MaterialGroup) {
+    fetchMaterialGroupData(MaterialGroup);
+  }
+  if (storeLocation) {
+    fetchStoreLocationData(storeLocation);
+  }
+}, [
+  plantCode,
+  GLAccount,
+  CostCenter,
+  ValuationArea,
+  MaterialGroup,
+  storeLocation,
+]);
+
   const handleSubmit = async () => {
     console.log(errors, "errors before submit")
     if (!formData.account_assignment_category_head) {

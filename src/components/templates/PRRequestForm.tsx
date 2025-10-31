@@ -598,7 +598,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
       {mainItems?.docname && (
         <div className="flex justify-end py-6">
           {/* Normal Submit Button (for non-submitted forms) */}
-          {(mainItems?.['Form Status'] !== "Submitted") && (mainItems?.sap_status == "Failed") ? (
+          {(mainItems?.['Form Status'] !== "Submitted") && (mainItems?.sap_status != "Success") ? (
             <Button
               type="button"
               className="py-2.5"

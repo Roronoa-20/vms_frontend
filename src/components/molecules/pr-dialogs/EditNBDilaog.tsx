@@ -46,7 +46,7 @@ interface EditNBModalProps {
   itemCategoryDropdown: ItemCategoryMaster[]
   plant: string
   company: string
-  purchase_group:string
+  purchase_group: string
 }
 
 const EditNBModal: React.FC<EditNBModalProps> = ({
@@ -57,7 +57,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   defaultData,
   pur_req,
   PurchaseGroupDropdown,
-  ProfitCenterDropdown, accountAssigmentDropdown, itemCategoryDropdown, plant, company,purchase_group
+  ProfitCenterDropdown, accountAssigmentDropdown, itemCategoryDropdown, plant, company, purchase_group
 }) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, any>>({});
@@ -84,8 +84,8 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   }, [isOpen, defaultData]);
 
   useEffect(() => {
-    if (defaultData?.plant_head || plant) {
-      setPlantCode(defaultData?.plant_head?defaultData?.plant_head:plant);
+    if (defaultData?.plant_head) {
+      setPlantCode(defaultData?.plant_head);
     }
     if (defaultData?.store_location_head) {
       setStoreLocation(defaultData?.store_location_head);
@@ -96,7 +96,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     if (defaultData?.material_group_head) {
       setMaterialGroup(defaultData?.material_group_head);
     }
-     if (defaultData?.material_code_head) {
+    if (defaultData?.material_code_head) {
       setMaterialCode(defaultData?.material_code_head);
     }
     if (defaultData?.gl_account_number_head) {
@@ -106,7 +106,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       setValuationArea(defaultData?.valuation_area_head);
     }
   }, [defaultData]);
-
+  console.log(PlantCodeDropdown, "PlantCodeDropdown PlantCodeDropdownPlantCodeDropdownPlantCodeDropdown")
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -272,8 +272,8 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     }
   };
   useEffect(() => {
-    setFormData((prev) => ({ ...prev, purchase_requisition_date_head: formData?.purchase_requisition_date_head ? formData?.purchase_requisition_date_head : today, plant_head: plant,purchase_group_head:purchase_group }));
-  }, [today, formData?.purchase_requisition_date_head,purchase_group]);
+    setFormData((prev) => ({ ...prev, purchase_requisition_date_head: formData?.purchase_requisition_date_head ? formData?.purchase_requisition_date_head : today, plant_head: plant, purchase_group_head: purchase_group }));
+  }, [today, formData?.purchase_requisition_date_head, purchase_group]);
 
   useEffect(() => {
     fetchMaterialCodeData();
@@ -409,8 +409,38 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     return []
   }
   useEffect(() => {
-    fetchStoreLocationData();
-  }, [plantCode]);
+    if(plantCode){
+      fetchStoreLocationData();
+    }
+  }, [plantCode,formData?.plant_head]);
+
+  useEffect(() => {
+    if (plantCode) {
+      fetchPlantCodeData(plantCode);
+    }
+    if (GLAccount) {
+      fetchGLNumberData(GLAccount);
+    }
+    if (CostCenter) {
+      fetchCostCenterData(CostCenter);
+    }
+    if (ValuationArea) {
+      fetchValuationAreaData(ValuationArea);
+    }
+    if (MaterialGroup) {
+      fetchMaterialGroupData(MaterialGroup);
+    }
+    if (storeLocation) {
+      fetchStoreLocationData(storeLocation);
+    }
+  }, [
+    plantCode,
+    GLAccount,
+    CostCenter,
+    ValuationArea,
+    MaterialGroup,
+    storeLocation,
+  ]);
 
   const renderInput = (name: string, label: string, type = 'text', inputProps: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
     <div className="col-span-1">
