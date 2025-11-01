@@ -564,7 +564,7 @@ useEffect(() => {
 
         {/* C/ Delivery Date */}
         <div className="col-span-1">
-          {renderLabel("C/ Delivery Date", "c_delivery_date_head")}
+          {renderLabel("C/O Delivery Date", "c_delivery_date_head")}
           <Input
             name="c_delivery_date_head"
             type="date"
@@ -887,7 +887,7 @@ useEffect(() => {
 
         {/* Spit */}
         <div className="col-span-1">
-          {renderLabel("Spit", "spit_head")}
+          {renderLabel("Split", "spit_head")}
           <Input
             name="spit_head"
             type="text"
@@ -915,7 +915,7 @@ useEffect(() => {
 
         {/* Item Of */}
         <div className="col-span-1">
-          {renderLabel("Item Of...", "item_of_head")}
+          {renderLabel("Item Of", "item_of_head")}
           <Input
             name="item_of_head"
             type="text"
