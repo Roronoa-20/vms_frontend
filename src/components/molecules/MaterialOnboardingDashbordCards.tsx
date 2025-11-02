@@ -58,7 +58,7 @@ const MaterialOnboardingCards = ({ cardData, companyDropdown }: Props) => {
 
   const allCardData = [
     {
-      name: "Total Request",
+      name: "Total Material Request",
       count: cardData?.total_count ?? 0,
       icon: "/dashboard-assests/cards_icon/file-search.svg",
       text_color: "text-emerald-800",
@@ -66,7 +66,7 @@ const MaterialOnboardingCards = ({ cardData, companyDropdown }: Props) => {
       hover: "hover:border-emerald-400",
     },
     {
-      name: "Pending Request",
+      name: "Pending Material Request",
       count: cardData?.pending ?? 0,
       icon: "/dashboard-assests/cards_icon/file-search.svg",
       text_color: "text-violet-800",
@@ -74,7 +74,7 @@ const MaterialOnboardingCards = ({ cardData, companyDropdown }: Props) => {
       hover: "hover:border-violet-400",
     },
     {
-      name: "Approved Request",
+      name: "Approved Material Request",
       count: cardData?.approved ?? 0,
       icon: "/dashboard-assests/cards_icon/file-search.svg",
       text_color: "text-rose-800",

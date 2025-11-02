@@ -20,6 +20,7 @@ import { it } from "node:test";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast, ToastContainer } from "react-toastify";
 
 interface Props {
   certificateCodeDropdown: TcertificateCodeDropdown["message"]["data"]["certificate_names"];
@@ -60,7 +61,7 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
 
   const handleSubmit = async () => {
     if (OnboardingDetail?.length < 1) {
-      alert("Upload At Least 1 Certificate")
+      toast.warn("Upload At Least 1 Certificate")
       return;
     }
     const url = API_END_POINTS?.certificateSubmit;
@@ -97,16 +98,16 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
   }
 
 
-  const tableFetch = async () => {
-    const url = `${API_END_POINTS?.fetchDetails}?ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
-    const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
-    const OnboardingDetails: VendorOnboardingResponse["message"]["certificate_details_tab"] = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message?.certificate_details_tab : "";
-    console.log(OnboardingDetails, "this is after api")
-    setMultipleCertificateData([]);
-    OnboardingDetails?.map((item) => {
-      setMultipleCertificateData((prev: any) => ([...prev, { certificate_code: item?.certificate_code, fileDetail: { file_name: item?.certificate_attach?.file_name, name: item?.certificate_attach?.name, url: item?.certificate_attach?.url }, valid_till: item?.valid_till, name: item?.name }]))
-    })
-  }
+  // const tableFetch = async () => {
+  //   const url = `${API_END_POINTS?.fetchDetails}?ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
+  //   const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+  //   const OnboardingDetails: VendorOnboardingResponse["message"]["certificate_details_tab"] = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message?.certificate_details_tab : "";
+  //   console.log(OnboardingDetails, "this is after api")
+  //   setMultipleCertificateData([]);
+  //   OnboardingDetails?.map((item) => {
+  //     setMultipleCertificateData((prev: any) => ([...prev, { certificate_code: item?.certificate_code, fileDetail: { file_name: item?.certificate_attach?.file_name, name: item?.certificate_attach?.name, url: item?.certificate_attach?.url }, valid_till: item?.valid_till, name: item?.name }]))
+  //   })
+  // }
 
   const deleteRow = async (certificate_code: string) => {
     const url = `${API_END_POINTS?.deleteCertificate}?certificate_code=${certificate_code}&ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`
@@ -227,6 +228,7 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
           Submit
         </Button>
       </div>
+      <ToastContainer closeButton theme="dark" autoClose={2000} />
     </div>
   );
 };

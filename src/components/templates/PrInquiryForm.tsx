@@ -17,6 +17,7 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle2 } from "lucide-react";
+import { toast, ToastContainer } from 'react-toastify'
 
 
 interface Props {
@@ -117,7 +118,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     formdata.append("purchase_inquiry_id", refno as string);
     const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.addProductInquiryProducts, method: "POST", data: formdata });
     if (response?.status == 200) {
-      alert("Product Details Added Successfully!!!");
+      toast.success("Product Details Added Successfully!!!");
       location.reload();
     }
 
@@ -636,6 +637,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
           </div>
         )}
       </div>
+      <ToastContainer closeButton theme="dark" autoClose={2000} />
     </>
   )
 }

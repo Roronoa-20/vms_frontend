@@ -33,16 +33,46 @@ const Sidebar = () => {
   const handleClick = (item: SidebarItem, idx: number) => {
     if (item.children.length > 0) {
       const btn = buttonRefs.current[idx];
-      if (btn) {
-        const rect = btn.getBoundingClientRect();
-        const offset = getSidebarWidth(designation || "") === "w-[95px]" ? 10 : 15;
-        setSubmenuPos({ top: rect.top, left: rect.right + offset });
+      const sidebar = document.querySelector(".sidebar-scroll") as HTMLElement;
+      if (btn && sidebar) {
+        const offset = getSidebarWidth(designation || "") === "w-[95px]" ? 0 : 0;
+        const btnRect = btn.getBoundingClientRect();
+        const sidebarRect = sidebar.getBoundingClientRect();
+
+        // compute position relative to sidebar container
+        const top = btn.offsetTop + 15 - sidebar.scrollTop;
+        const left = sidebarRect.width - 10 + offset;
+
+        setSubmenuPos({ top, left });
       }
       setOpenMenu(openMenu?.name === item.name ? null : item);
     } else {
       navigateTo(item);
     }
   };
+
+  // Keep submenu aligned when scrolling
+  useEffect(() => {
+    const sidebar = document.querySelector(".sidebar-scroll") as HTMLElement;
+    if (!sidebar) return;
+
+    const handleScroll = () => {
+      if (openMenu) {
+        const idx = sideBar.findIndex((item) => item.name === openMenu.name);
+        const btn = buttonRefs.current[idx];
+        if (btn) {
+          const offset = getSidebarWidth(designation || "") === "w-[95px]" ? 0 : 0;
+          const top = btn.offsetTop + 15 - sidebar.scrollTop;
+          const left = sidebar.clientWidth + offset;
+
+          setSubmenuPos({ top, left });
+        }
+      }
+    };
+
+    sidebar.addEventListener("scroll", handleScroll);
+    return () => sidebar.removeEventListener("scroll", handleScroll);
+  }, [openMenu]);
 
   const navigateTo = (item: SidebarItem | SidebarChild) => {
     if ('children' in item && item.children.length > 0) return;
@@ -70,9 +100,13 @@ const Sidebar = () => {
     };
   }, []);
 
+
   return (
-    <>
-      <div className={`${getSidebarWidth(designation || "")} bg-[#0C2741] flex flex-col items-center gap-3 overflow-y-auto no-scrollbar sticky left-0 h-screen`}>
+    <div className="relative">
+      {/* SIDEBAR */}
+      <div
+        className={`${getSidebarWidth(designation || "")} bg-[#0C2741] flex flex-col items-center gap-3 overflow-y-auto no-scrollbar h-screen sidebar-scroll`}
+      >
         <div className="w-3 h-3 pb-6 pt-5">
           <Logo />
         </div>
@@ -94,18 +128,21 @@ const Sidebar = () => {
           </button>
         ))}
       </div>
-      {/* FLOATING ADJACENT SUBMENU */}
+
+      {/* FLOATING ADJACENT SUBMENU (inside relative wrapper) */}
       {openMenu?.children && openMenu.children.length > 0 && (
         <div
           ref={submenuRef}
-          style={{ top: submenuPos.top, left: submenuPos.left }}
-          className="fixed bg-[#15395B] rounded-md shadow-lg flex flex-col gap-2 py-2 px-2 min-w-[180px] z-50"
+          style={{
+            top: submenuPos.top,
+            left: submenuPos.left,
+          }}
+          className="absolute bg-[#15395B] rounded-md shadow-lg flex flex-col gap-2 py-2 px-2 min-w-[180px] z-50"
         >
           {openMenu.children.map((child, idx) => (
             <button
               key={idx}
-              className={`flex items-center gap-2 px-3 py-2 rounded text-sm text-white ${pathname === child.href ? "bg-[#2C567E]" : "hover:bg-[#2C567E]"
-                }`}
+              className={`flex items-center gap-2 px-3 py-2 rounded text-sm text-white ${pathname === child.href ? "bg-[#2C567E]" : "hover:bg-[#2C567E]"}`}
               onClick={() => navigateTo(child)}
             >
               {child.logo && <Image src={child.logo} alt={child.name} width={16} height={16} />}
@@ -114,7 +151,8 @@ const Sidebar = () => {
           ))}
         </div>
       )}
-    </>
+    </div>
   );
+
 };
 export default Sidebar;

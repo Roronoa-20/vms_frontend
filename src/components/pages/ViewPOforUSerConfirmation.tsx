@@ -52,7 +52,7 @@ const ViewPO = () => {
             <div className="flex justify-between mb-4">
                 <Button
                     onClick={handleBackClick}
-                    className="px-4 py-2.5 hover:bg-blue-400 hover:text-white rounded-[8px]"
+                    className="px-4 py-2.5 hover:bg-[#5291CD] hover:text-white rounded-[8px]"
                     variant="backbtn"
                     size="backbtnsize"
                 >

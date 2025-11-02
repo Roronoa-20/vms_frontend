@@ -98,7 +98,7 @@ const Navbar = () => {
   }
 
   return (
-    <div className="bg-white w-full shadow-sm flex justify-between p-2 items-center sticky top-0 z-50">
+    <div className="bg-white w-full shadow-sm flex justify-between p-2 items-center sticky top-0 z-50 border-b border-slate-300">
       <div className="flex items-center gap-2">
         {/* Show Logo only for Security */}
         {designation?.toLowerCase() === "security" && (
@@ -109,8 +109,8 @@ const Navbar = () => {
 
         <h1
           className={`${pathname === "/view-asa-form"
-            ? "text-[20px] font-medium"
-            : "text-[24px] font-semibold"
+            ? "text-[20px] font-medium pl-1"
+            : "text-[24px] font-semibold pl-1"
             } text-[#03111F]`}
         >
           {heading}

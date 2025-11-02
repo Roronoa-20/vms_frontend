@@ -2,14 +2,11 @@ import React from "react";
 
 
 interface Props {
-  poDetails: any
+  poDetails: any;
+  contentRef?: React.RefObject<HTMLDivElement | null>;
 }
 
-
-
-const POPrintFormat = ({ poDetails }: Props) => {
-
-
+const POforUserConfirmation = ({ poDetails, contentRef }: Props) => {
   const VendorInfoList = [
     ["VENDOR GSTIN NO:", poDetails?.vendor_gst_no],
     ["Contact Person :", poDetails?.contact_person],
@@ -21,7 +18,6 @@ const POPrintFormat = ({ poDetails }: Props) => {
     ["Supplier Quote Ref :", poDetails?.supplier_quote_ref],
   ];
 
-
   const rightColumnAddressConst1 = [
     ["P.O. No.", poDetails?.name, "Date", poDetails?.po_date],
     ["Amd. Ver No.", "0", "Date", ""],
@@ -31,7 +27,6 @@ const POPrintFormat = ({ poDetails }: Props) => {
     ["Contact Person", poDetails?.contact_person, "Phone No.", poDetails?.phonemobile_no],
   ];
 
-
   const rightColumnAddressConst2 = [
     ["E-mail", poDetails?.email2],
     ["D/L No", poDetails?.dl_no],
@@ -39,52 +34,48 @@ const POPrintFormat = ({ poDetails }: Props) => {
     ["SSI Regn No.", ""],
   ];
 
-
-  const Header = [
-    "Sr No.",
-    "Material Code",
-    "Description",
-    "HSN/SAC",
-    "UOM",
-    "Quantity",
-    "Rate",
-    "Amount",
-    "Sche. Date",
-    "Sche. Qty",
-  ];
-
+  const Header = ["Sr No.", "Material Code", "Description", "HSN/SAC", "UOM", "Quantity", "Rate", "Amount", "Sche. Date", "Sche. Qty"];
 
   const amountLabel = [
     ["Total Gross Amount", poDetails?.total_gross_amount],
     ["Total Discount on Gross Amount", ""],
     ["Total INPUT CGST", poDetails?.total_input_cgst],
     ["Total INPUT SGST", poDetails?.total_input_sgst],
-    ["Total Value of Purchase Order / Service Order", poDetails?.total_value_of_po__so],
+    ["Total Value of Purchase Order / Service Order", poDetails?.total_value_of_po__so,],
   ];
 
-
-  const companyLogo = {
-    "Meril Diagnostics Private Limited": "/printFormatLogo/Meril-Diagnostics.svg",
-    "Meril Endo Surgery Private LImited": "/printFormatLogo/Meril-Endo-surgery.svg",
-    "Meril Health Care Private Limited": "/printFormatLogo/Meril-Healthcare-Logo.svg",
-    "Meril Life Scinces Private Limited": "/printFormatLogo/Meril-life-sciences-logo.svg"
-  }
   
+
+  console.log(poDetails, "this is pr details")
+
   return (
-    <div className="bg-white border border-gray-300 rounded-md p-4 space-y-6 overflow-x-auto">
+    <div
+      ref={contentRef}
+      className="bg-white border border-gray-300 rounded-md px-6 py-4 space-y-1 overflow-x-auto"
+    >
+      <h1 className="text-center font-medium">
+        {poDetails?.purchase_order_format}
+      </h1>
       {/* Grid with 2 Columns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 border border-black ">
         {/* Left Column */}
         <div className="border-r border-black">
           <div className="flex justify-center border-b border-black py-4">
-            <div className="text-center">
+            {
+              poDetails?.company_logo?.base64 &&
+              // <img
+              // src={`data:image/png;base64,${poDetails && poDetails?.company_logo?poDetails?.company_logo?.base64:""}`}
+              // alt="Signature"
+              // //  crossOrigin="anonymous"
+              // style={{ width: "25%", height: "auto", objectFit: "contain" }}
+              // // content="contain"
+              // />
               <img
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNeWQPPw3D0A-4GbBqyuGJa6KHFOa6cO3giQ&s"
-                alt="Meril Logo"
-                className="h-18 w-18 mx-auto mb-1"
+                src={`data:${poDetails?.company_logo?.mime_type};base64,${poDetails?.company_logo?.base64}`}
+                alt="Company Logo"
+                style={{ width: "25%", height: "auto", objectFit: "contain" }}
               />
-              <div className="text-gray-700 text-sm">More to Life</div>
-            </div>
+            }
           </div>
 
           {/* Supplier and Address */}
@@ -93,13 +84,15 @@ const POPrintFormat = ({ poDetails }: Props) => {
               Supplier
             </div>
             <div className="col-span-2 p-2">
-              <span className="font-semibold">Code :</span> {poDetails?.supplier_name}
+              <span className="font-semibold">Code :</span>{" "}
+              {poDetails?.vendor_code}
             </div>
           </div>
           <div className="border-b border-black p-2 leading-4 text-sm">
-            ,<br />,<br />
-            ,-
-            <br />
+             <span className="font-semibold">{poDetails?.vendor_address_details?.vendor_name}</span><br/>
+            {poDetails?.vendor_address_details?.address_line_1},<br />
+            {poDetails?.vendor_address_details?.address_line_2},<br />
+            {poDetails?.vendor_address_details?.city} - {poDetails?.vendor_address_details?.zip_code}, {poDetails?.vendor_address_details?.state}, {poDetails?.vendor_address_details?.country}<br />
           </div>
 
           {/* Vendor Info List */}
@@ -114,15 +107,16 @@ const POPrintFormat = ({ poDetails }: Props) => {
         </div>
 
         {/* Right Column */}
-        <div className="border-l border-black">
+        <div>
           <div className="border-b border-black p-2">
             <div className="font-semibold">
-              Bill To : Meril Life Sciences Private Limited
+              Bill To : {poDetails?.bill_to_company_details?.company_name}
             </div>
-            <div>Bilakhia House, Survey No 135/139</div>
-            <div>Muktanand Marg, Chala,</div>
-            <div>Vapi - 369191 (24-Gujarat)</div>
-            <div>Phone No: 0260-3052100</div>
+            <div>{poDetails?.bill_to_company_details?.street_1}</div>
+            <div>{poDetails?.bill_to_company_details?.street_2}</div>
+            {/* <div>Muktanand Marg, Chala,</div> */}
+            <div>{poDetails?.bill_to_company_details?.city} - {poDetails?.bill_to_company_details?.pincode} ({poDetails?.bill_to_company_details?.state_full})</div>
+            <div>Phone No: {poDetails?.bill_to_company_details?.contact_no}</div>
           </div>
 
           {rightColumnAddressConst1?.map((row, idx) => (
@@ -150,12 +144,13 @@ const POPrintFormat = ({ poDetails }: Props) => {
           {/* Ship To */}
           <div className="border-t border-black p-2">
             <div className="font-semibold">
-              Ship To : Meril Endo Surgery Private Limited
+              Ship To : {poDetails?.ship_to_company_details?.company_name}
             </div>
-            <div>Bilakhia House, Survey No 135/139</div>
-            <div>Muktanand Marg, Chala,</div>
-            <div>Vapi - 369191 (24-Gujarat)</div>
-            <div>Phone No: 0260-3052100</div>
+            <div>{poDetails?.ship_to_company_details?.street_1}</div>
+            <div>{poDetails?.ship_to_company_details?.street_2}</div>
+            {/* <div>Muktanand Marg, Chala,</div> */}
+            <div>{poDetails?.ship_to_company_details?.city} - {poDetails?.ship_to_company_details?.pincode} ({poDetails?.ship_to_company_details?.state_full})</div>
+            <div>Phone No: {poDetails?.ship_to_company_details?.contact_no}</div>
           </div>
         </div>
       </div>
@@ -175,16 +170,32 @@ const POPrintFormat = ({ poDetails }: Props) => {
           <tbody>
             {poDetails?.po_items?.map((item: any, index: any) => (
               <tr key={index} className={index % 2 ? "bg-gray-50" : ""}>
-                <td className="border border-black px-2 py-1 text-center">{index + 1}</td>
-                <td className="border border-black px-2 py-1">{item?.material_code}</td>
-                <td className="border border-black px-2 py-1">{item?.description}</td>
-                <td className="border border-black px-2 py-1">{item?.hsnsac}</td>
+                <td className="border border-black px-2 py-1 text-center">
+                  {index + 1}
+                </td>
+                <td className="border border-black px-2 py-1">
+                  {item?.material_code}
+                </td>
+                <td className="border border-black px-2 py-1">
+                  {item?.description}
+                </td>
+                <td className="border border-black px-2 py-1">
+                  {item?.hsnsac}
+                </td>
                 <td className="border border-black px-2 py-1">{item?.uom}</td>
-                <td className="border border-black px-2 py-1">{item?.quantity}</td>
+                <td className="border border-black px-2 py-1">
+                  {item?.quantity}
+                </td>
                 <td className="border border-black px-2 py-1">{item?.rate}</td>
-                <td className="border border-black px-2 py-1">{item?.base_amount}</td>
-                <td className="border border-black px-2 py-1">{item?.schedule_date}</td>
-                <td className="border border-black px-2 py-1">{item?.quantity}</td>
+                <td className="border border-black px-2 py-1">
+                  {item?.base_amount}
+                </td>
+                <td className="border border-black px-2 py-1">
+                  {item?.schedule_date}
+                </td>
+                <td className="border border-black px-2 py-1">
+                  {item?.quantity}
+                </td>
               </tr>
             ))}
 
@@ -207,15 +218,20 @@ const POPrintFormat = ({ poDetails }: Props) => {
         </table>
       </div>
       <div className="border border-black bg-white text-left text-xs font-semibold p-2">
-        Totals Value in Words : <span className="font-normal">{poDetails?.total_value_in_words}</span>
+        Totals Value in Words :{" "}
+        <span className="font-normal">{poDetails?.total_value_in_words}</span>
       </div>
 
       {/* Terms and Footer */}
       <div className="border border-black p-4 text-sm space-y-2">
         <p className="font-semibold underline">Terms & Conditions</p>
-        <p className="font-semibold">Terms of Payment:{poDetails?.terms_of_payment}</p>
+        <p className="font-semibold">
+          Terms of Payment:{poDetails?.terms_of_payment}
+        </p>
         <p>100% within 30 Days from the Date of Invoice</p>
-        <p className="font-semibold">Delivery Schedule:{poDetails?.delivery_schedule}</p>
+        <p className="font-semibold">
+          Delivery Schedule:{poDetails?.delivery_schedule}
+        </p>
         <p className="font-semibold py-2">Shipping Instructions:</p>
         <p className="font-semibold">Pre Shipment Documentation:</p>
         <p className="">The following is required defore of material.</p>
@@ -248,13 +264,42 @@ const POPrintFormat = ({ poDetails }: Props) => {
             For Meril Endo Surgery Private Limited
           </div>
           <div className="grid grid-cols-3 text-center border-b border-black">
-            <div className="border-r border-black h-20 flex items-center justify-center">
-              Sign 1
+            <div className="border-r border-black h-20 flex items-center justify-center relative">
+              {
+                poDetails?.sign_url1?.base64 &&
+                <img
+                  src={`data:image/png;base64,${poDetails && poDetails?.sign_url1 ? poDetails?.sign_url1?.base64 : ""}`}
+                  alt="Signature"
+                  //  crossOrigin="anonymous"
+                  style={{ width: "50%", height: "auto", objectFit: "contain" }}
+                // content="contain"
+                />
+              }
             </div>
             <div className="border-r border-black h-20 flex items-center justify-center">
-              Sign 2
+              {
+                poDetails?.sign_url2?.base64 &&
+                <img
+                  src={`data:image/png;base64,${poDetails && poDetails?.sign_url2 ? poDetails?.sign_url2?.base64 : ""}`}
+                  alt="Signature"
+                  //  crossOrigin="anonymous"
+                  style={{ width: "50%", height: "auto", objectFit: "contain" }}
+                // content="contain"
+                />
+              }
             </div>
-            <div className="h-20 flex items-center justify-center">Sign 3</div>
+            <div className="h-20 flex items-center justify-center">
+              {
+                poDetails?.sign_url3?.base64 &&
+                <img
+                  src={`data:image/png;base64,${poDetails && poDetails?.sign_url3 ? poDetails?.sign_url3?.base64 : ""}`}
+                  alt="Signature"
+                  //  crossOrigin="anonymous"
+                  style={{ width: "50%", height: "auto", objectFit: "contain" }}
+                // content="contain"
+                />
+              }
+            </div>
           </div>
           <div className="grid grid-cols-3 text-center text-[11px]">
             <div className="border-r border-black p-1">Purchase Team</div>
@@ -276,4 +321,4 @@ const POPrintFormat = ({ poDetails }: Props) => {
   );
 };
 
-export default POPrintFormat;
+export default POforUserConfirmation;

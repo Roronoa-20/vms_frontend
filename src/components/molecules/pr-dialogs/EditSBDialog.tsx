@@ -37,12 +37,7 @@ interface EditItemModalProps {
   defaultData: Record<string, any> | undefined;
   pur_req: string;
   PurchaseGroupDropdown: PurchaseGroup[]
-  StorageLocationDropdown: StorageLocation[]
-  ValuationClassDropdown: ValuationClass[]
   PurchaseOrgDropdown: PurchaseOrganisation[]
-  MaterialGroupDropdown: MaterialGroupMaster[]
-  CostCenterDropdown: CostCenter[]
-  GLAccountDropdwon: GLAccountNumber[]
   accountAssigmentDropdown: AccountAssignmentCategory[]
   itemCategoryDropdown: ItemCategoryMaster[]
   company: string
@@ -57,12 +52,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
   defaultData,
   pur_req,
   PurchaseGroupDropdown,
-  StorageLocationDropdown,
-  // ValuationClassDropdown,
   PurchaseOrgDropdown,
-  // MaterialGroupDropdown,
-  GLAccountDropdwon,
-  // CostCenterDropdown,
   accountAssigmentDropdown,
   itemCategoryDropdown,
   company,
@@ -90,9 +80,11 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
       setErrors({});
     }
   }, [isOpen, defaultData]);
+
+  console.log(plantCode, "plantCode in edit dialog")
   useEffect(() => {
     if (defaultData?.plant_head) {
-      setPlantCode(defaultData?.plant_head);
+      setPlantCode(defaultData?.plant_head ? defaultData?.plant_head :"");
     }
     if (defaultData?.store_location_head) {
       setStoreLocation(defaultData?.store_location_head);
@@ -100,8 +92,14 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     if (defaultData?.cost_center_head) {
       setCostCenter(defaultData?.cost_center_head);
     }
+    if (defaultData?.material_group_head) {
+      setMaterialGroup(defaultData?.material_group_head);
+    }
     if (defaultData?.gl_account_number_head) {
       setGLAccount(defaultData?.gl_account_number_head);
+    }
+    if (defaultData?.valuation_area_head) {
+      setValuationArea(defaultData?.valuation_area_head);
     }
   }, [defaultData]);
 
@@ -140,7 +138,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
   }, [formData?.company_code_area_head, formData?.purchase_requisition_type, formData?.account_assignment_category_head])
 
   useEffect(() => {
-    setFormData((prev) => ({ ...prev, purchase_requisition_date_head: formData?.purchase_requisition_date_head ? formData?.purchase_requisition_date_head : today }));
+    setFormData((prev) => ({ ...prev, purchase_requisition_date_head: formData?.purchase_requisition_date_head ? formData?.purchase_requisition_date_head : today, }));
   }, [today, formData?.purchase_requisition_date_head]);
 
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -206,13 +204,12 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
   };
 
   const fetchPlantCodeData = async (query?: string): Promise<[]> => {
-    console.log(query)
     const baseUrl = API_END_POINTS?.FetchPlantSearchApi;
     let url = baseUrl;
 
     // Add search_term if query exists
-    if (query) {
-      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
+    if (query || plantCode) {
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query ? query : plantCode)}`;
     }
 
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
@@ -236,7 +233,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     const params = new URLSearchParams();
 
     if (plant_name) params.append("plant_name", plant_name);
-    if (query) params.append("search_term", query);
+    if (query || storeLocation) params.append("search_term", query ? query : storeLocation);
 
     const url = `${baseUrl}?${params.toString()}`;
 
@@ -264,10 +261,10 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     if (filters.length > 0) {
       url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
     }
-    
+
     // Add search_term if query exists
-    if (query) {
-      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
+    if (query || MaterialGroup) {
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query ? query : MaterialGroup)}`;
     }
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
@@ -291,10 +288,10 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     if (filters.length > 0) {
       url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
     }
-    
+
     // Add search_term if query exists
-    if (query) {
-      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
+    if (query || ValuationArea) {
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query ? query : ValuationArea)}`;
     }
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
@@ -318,10 +315,10 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     if (filters.length > 0) {
       url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
     }
-    
+
     // Add search_term if query exists
-    if (query) {
-      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
+    if (query || CostCenter) {
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query ? query : CostCenter)}`;
     }
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
@@ -345,10 +342,10 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     if (filters.length > 0) {
       url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
     }
-    
+
     // Add search_term if query exists
-    if (query) {
-      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
+    if (query || GLAccount) {
+      url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query ? query : GLAccount)}`;
     }
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
@@ -363,6 +360,35 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
   useEffect(() => {
     fetchStoreLocationData();
   }, [plantCode]);
+
+useEffect(() => {
+  if (plantCode) {
+    fetchPlantCodeData(plantCode);
+  }
+  if (GLAccount) {
+    fetchGLNumberData(GLAccount);
+  }
+  if (CostCenter) {
+    fetchCostCenterData(CostCenter);
+  }
+  if (ValuationArea) {
+    fetchValuationAreaData(ValuationArea);
+  }
+  if (MaterialGroup) {
+    fetchMaterialGroupData(MaterialGroup);
+  }
+  if (storeLocation) {
+    fetchStoreLocationData(storeLocation);
+  }
+}, [
+  plantCode,
+  GLAccount,
+  CostCenter,
+  ValuationArea,
+  MaterialGroup,
+  storeLocation,
+]);
+
   const handleSubmit = async () => {
     console.log(errors, "errors before submit")
     if (!formData.account_assignment_category_head) {
@@ -394,7 +420,6 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     }
   };
 
-  console.log(CostCenterDropdown,"CostCenterDropdown")
   return (
     <PopUp headerText='Purchase Request Items' classname='overflow-y-scroll md:max-w-[1000px] md:max-h-[600px]' handleClose={onClose} isSubmit={true} Submitbutton={handleSubmit}>
       <div className="grid grid-cols-3 gap-6 p-5">
@@ -539,7 +564,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
 
         {/* C/ Delivery Date */}
         <div className="col-span-1">
-          {renderLabel("C/ Delivery Date", "c_delivery_date_head")}
+          {renderLabel("C/O Delivery Date", "c_delivery_date_head")}
           <Input
             name="c_delivery_date_head"
             type="date"
@@ -862,7 +887,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
 
         {/* Spit */}
         <div className="col-span-1">
-          {renderLabel("Spit", "spit_head")}
+          {renderLabel("Split", "spit_head")}
           <Input
             name="spit_head"
             type="text"
@@ -890,7 +915,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
 
         {/* Item Of */}
         <div className="col-span-1">
-          {renderLabel("Item Of...", "item_of_head")}
+          {renderLabel("Item Of", "item_of_head")}
           <Input
             name="item_of_head"
             type="text"

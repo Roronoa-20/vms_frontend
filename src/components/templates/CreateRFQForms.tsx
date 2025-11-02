@@ -1,7 +1,7 @@
 
 "use client"
 import React, { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { PurchaseRequestDropdown } from '@/src/types/PurchaseRequestType'
 import { Tabs, TabsContent, TabsList, TabsTrigger, } from "@/components/ui/tabs";
 import LogisticsExportRFQ from './RFQTemplates/LogisticsExportRFQ'
@@ -17,31 +17,68 @@ interface Props {
 
 const CreateRFQForms = ({ Dropdown }: Props) => {
   const searchParams = useSearchParams();
-  const prCodeParam = searchParams.get('pr_codes');
+  // const prCodeParam = searchParams.get("pr_codes");
+  // const decodedValue = decodeURIComponent(prCodeParam ?? "");
+  // const resultPRArray = decodedValue.trim() === "" ? [] : decodedValue.split(",");
+  const [resultPRArray, setResultPRArray] = useState<string[]>([]);
   const prTypeParam = searchParams.get('pr_type');
   const [currentSlide, setCurrentSlide] = useState(1);
-
+  const router = useRouter();
+  const [defaultTab, setDefaultTab] = useState("RfqForLogisticImport");
   const getDefaultTab = (pr_type: string | null) => {
     switch (pr_type) {
       case "NB":
+        setCurrentSlide(3)
         return "RfqForMaterial";
       case "SB":
+        setCurrentSlide(4)
         return "RfqForService";
       default:
         return "RfqForLogisticImport";
     }
   };
 
-  const [defaultTab, setDefaultTab] = useState("RfqForLogisticImport");
+  const handleTabClick = (tabId: number) => {
+    setCurrentSlide(tabId);
+        // remove query params — navigate to base URL
+    router.replace("/create-rfq", { scroll: false });
+    switch (tabId) {
+      case 3:
+        setDefaultTab("RfqForMaterial")
+        return
+      case 4:
+        setDefaultTab("RfqForService")
+        return
+      case 2:
+        setDefaultTab("RfqForLogisticExport")
+        return
+      default:
+        setDefaultTab("RfqForLogisticImport")
+        return ;
+    }
+  };
 
   useEffect(() => {
     const newTab = getDefaultTab(prTypeParam);
-    console.log("New Tab:::",newTab)
-    setDefaultTab(newTab);
+    console.log("New Tab:::", newTab)
+    if(prTypeParam){
+      setDefaultTab(newTab);
+    }
   }, [prTypeParam]);
 
+useEffect(() => {
+  const prCodeParam = searchParams.get("pr_codes");
+  console.log(prCodeParam,"prCodeParamprCodeParamprCodeParamprCodeParamprCodeParamprCodeParam")
+  if (prCodeParam) {
+    console.log("prCodeParam inside oinsdie")
+    const decodedValue = decodeURIComponent(prCodeParam);
+    const parsedArray = decodedValue.trim() === "" ? [] : decodedValue.split(",");
+    setResultPRArray(parsedArray);
+  }else{
+    setResultPRArray([]);
+  }
+}, [searchParams]); // only run when params change
 
-console.log(prCodeParam,"prCodeParam")
   return (
     <div className="bg-[#F4F4F6]">
       <div className=" mx-auto pt-6">
@@ -57,7 +94,7 @@ console.log(prCodeParam,"prCodeParam")
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
-                onClick={() => setCurrentSlide(tab.id)}
+                onClick={() => handleTabClick(tab.id)}
                 className={[
                   "whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-medium transition ",
                   currentSlide === tab.id
@@ -81,11 +118,11 @@ console.log(prCodeParam,"prCodeParam")
           </TabsContent>
 
           <TabsContent value="RfqForMaterial" className="mt-8">
-            <MaterialRFQ Dropdown={Dropdown} pr_codes={prCodeParam} pr_type={prTypeParam} />
+            <MaterialRFQ Dropdown={Dropdown} pr_codes={resultPRArray} pr_type={prTypeParam} />
           </TabsContent>
 
           <TabsContent value="RfqForService" className="mt-8">
-            <ServiceRFQ Dropdown={Dropdown} pr_codes={prCodeParam} pr_type={prTypeParam}/>
+            <ServiceRFQ Dropdown={Dropdown} pr_codes={resultPRArray} pr_type={prTypeParam} />
           </TabsContent>
         </Tabs>
       </div>

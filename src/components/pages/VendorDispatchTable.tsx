@@ -1,5 +1,5 @@
 import React from 'react'
-import DispatchVendorsTable from '../molecules/Dashboard-Dispatch-Vendors-Table'
+import DispatchVendorsTable from '../molecules/Vendor-Dispatch-Table-List'
 import { AxiosResponse } from 'axios'
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { cookies } from 'next/headers'

@@ -2,11 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import {
-  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectGroup, SelectItem,
   SelectTrigger, SelectValue,
@@ -30,8 +26,6 @@ interface SubItemModalProps {
   onClose: () => void;
   fetchTableData: (pur_req: string) => void;
   Dropdown: DropdownData;
-  CostCenterDropdown: CostCenter[]
-  GLAccountDropdwon: GLAccountNumber[]
   pur_req: string;
   selectedMainItemId: string;
   currentItemNumber: number;
@@ -42,7 +36,7 @@ interface SubItemModalProps {
 
 
 const SubItemModal: React.FC<SubItemModalProps> = ({
-  isOpen, onClose, fetchTableData, Dropdown, pur_req, selectedMainItemId, GLAccountDropdwon, currentItemNumber, defaultData, editAction, company
+  isOpen, onClose, fetchTableData, Dropdown, pur_req, selectedMainItemId, currentItemNumber, defaultData, editAction, company
 }) => {
   const emptyFormData: SubheadField = {
     row_id: "",
@@ -82,12 +76,6 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
   const [CostCenter, setCostCenter] = useState<string>("");
   const [GLAccountDropdown, setGLAccountDropdown] = useState<GLAccountNumber[]>()
   const [GLAccount, setGLAccount] = useState<string>("");
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     setFormData({ ...emptyFormData });
-  //     // setErrors({});
-  //   }
-  // }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -134,16 +122,32 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
   );
 
   const requiredFields: (keyof SubheadField)[] = [
-    "service_number_subhead", "short_text_subhead", "quantity_subhead",
-    "uom_subhead", "gross_price_subhead", "currency_subhead",
-    "service_type_subhead", "net_value_subhead",
-    "cost_center_subhead", "gl_account_number_subhead"
+    // "service_number_subhead", "short_text_subhead", "quantity_subhead",
+    "cost_center_subhead", "gl_account_number_subhead", "uom_subhead",
+    // "gross_price_subhead", "currency_subhead", "service_type_subhead", "net_value_subhead",
   ];
 
 
   const handleSubmit = async () => {
     try {
-      let url = API_END_POINTS?.PRTableSubHeadSubmitData; // default = add
+      const newErrors: Record<keyof SubheadField, boolean> = {} as any;
+      let isValid = true;
+
+      requiredFields.forEach((field) => {
+        if (!formData[field] || formData[field]?.toString().trim() === "") {
+          newErrors[field] = true;
+          isValid = false;
+        }
+      });
+
+      setErrors(newErrors);
+
+      if (!isValid) {
+        alert("Please fill all mandatory fields — including Cost Center and GL Account Number.");
+        return;
+      }
+
+      let url = API_END_POINTS?.PRTableSubHeadSubmitData;
       let updateformdata: SubheadField = {
         ...formData,
         name: pur_req,
@@ -189,7 +193,7 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
     if (filters.length > 0) {
       url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
     }
-    
+
     // Add search_term if query exists
     if (query) {
       url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
@@ -216,7 +220,7 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
     if (filters.length > 0) {
       url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
     }
-    
+
     // Add search_term if query exists
     if (query) {
       url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
@@ -230,6 +234,18 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
     }
     return []
   }
+
+  useEffect(() => {
+    if (GLAccount) {
+      fetchGLNumberData(GLAccount);
+    }
+    if (CostCenter) {
+      fetchCostCenterData(CostCenter);
+    }
+  }, [
+    GLAccount,
+    CostCenter,
+  ]);
 
   const textFields: { name: keyof SubheadField; label: string; type?: string }[] = [
     { name: "item_number_of_purchase_requisition_subhead", label: "Item Number of Purchase Requisition" },
@@ -318,6 +334,7 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
           <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
             {"Cost Center"}
             {/* {error && <span className="text-red-600">*</span>} */}
+            {errors["cost_center_subhead"] && <span className="text-red-600">*</span>}
           </h1>
           <SearchSelectComponent
             setData={(value) => {
@@ -357,6 +374,7 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
           <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
             {"GL Account Number"}
             {/* {error && <span className="text-red-600">*</span>} */}
+            {errors["gl_account_number_subhead"] && <span className="text-red-600">*</span>}
           </h1>
           <SearchSelectComponent
             setData={(value) => {

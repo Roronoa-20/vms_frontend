@@ -200,7 +200,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                     </div>
                   </TableCell>
                   <TableCell><Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
-                  <TableCell className="text-center">{item?.vendor_country}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.vendor_country}</TableCell>
                   <TableCell className="text-center whitespace-nowrap">{item?.registered_by_full_name}</TableCell>
                   <TableCell>
                     <Link

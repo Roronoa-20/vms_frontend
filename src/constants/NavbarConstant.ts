@@ -4,7 +4,7 @@ export const NavbarConstant:Record<string,string> = {
     "/pr-request":"Create Purchase Requisition (PR)",
     "/pr-inquiry":"Purchase Enquiry",
     "/view-pr-inquiry":"View Purchase Enquiry",
-    "/dispatch":"Dispatch",
+    "/dispatch":"Create Dispatch",
     "/view-grn":"Good Receipts Note (GRN)",
     "/view-grn-details":"Good Receipts Note (GRN)",
     "/qms-form-details":"QMS Form",
@@ -42,5 +42,6 @@ export const NavbarConstant:Record<string,string> = {
     "/material-onboarding-dashboard": "Dashboard",
     "/new-material-code-request-form": "Material Code Request",
     "/new-material-code-request-table": "Material Code Request",
-    "/view-invalid-po":"Invalid PO"
+    "/view-invalid-po":"Invalid PO",
+    "/vendor-dispatch-table":"Dispatch Details"
 }
