@@ -370,7 +370,7 @@ export default function UserRequestForm({
             />
           </div>
           {/* Material Description */}
-          <div className="col-span-2 relative">
+          <div className="pt-3 col-span-2 relative">
             <FormField
               control={form.control}
               name="material_name_description"

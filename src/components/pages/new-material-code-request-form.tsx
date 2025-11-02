@@ -219,6 +219,7 @@ export default function MaterialRegistration() {
           payload.append(key, sanitizeValue(value));
       });
       payload.append("material_request", JSON.stringify(finalMaterialRequestList));
+      console.log("Payload on Submit----->", payload);
 
       const res: AxiosResponse = await requestWrapper({
         url: API_END_POINTS.createRequestorMaster,
