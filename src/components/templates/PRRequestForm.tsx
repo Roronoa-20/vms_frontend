@@ -67,6 +67,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
   const [accountAssigmentDropdown, setAccountAssignmentDropdown] = useState<AccountAssignmentCategory[]>([])
   const [itemCategoryDropdown, setitemCategoryDropdown] = useState<ItemCategoryMaster[]>([])
   const [currentValue, setCurrentValue] = useState<number>(10);
+  const [isPurchaseTeamEmailButton,setIsPurchaseTeamEmailButton] = useState<boolean>(mainItems?.sap_status == "Failed"?true:false);
   const deleteSubItem = async (subItemId: string) => {
     console.log(subItemId, "subItemId", pur_req, "pur_req")
     const url = `${API_END_POINTS?.PrSubHeadDeleteRow}?name=${pur_req}&row_id=${subItemId}`;
@@ -199,6 +200,15 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
       setitemCategoryDropdown(response.data.message?.item_category_head)
     } else {
       alert("error");
+    }
+  }
+
+  const handleEmailToPurchaseTeam = async()=>{
+    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.prToPurchaseTeam,params:{name:pur_req},method:"POST"});
+    if(response?.status == 200){
+      alert("Email sent to purchase team successfully");
+      setIsPurchaseTeamEmailButton(false);
+      return;
     }
   }
 
@@ -624,6 +634,11 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           )}
         </div>
       )}
+
+      {
+        designation == "Enquirer" && isPurchaseTeamEmailButton && 
+        <Button onClick={()=>{handleEmailToPurchaseTeam()}}>Send Email To Purchase Team</Button>
+      }
 
       <ApproveConfirmationDialog
         open={open}
