@@ -67,7 +67,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
   const [accountAssigmentDropdown, setAccountAssignmentDropdown] = useState<AccountAssignmentCategory[]>([])
   const [itemCategoryDropdown, setitemCategoryDropdown] = useState<ItemCategoryMaster[]>([])
   const [currentValue, setCurrentValue] = useState<number>(10);
-  const [isPurchaseTeamEmailButton,setIsPurchaseTeamEmailButton] = useState<boolean>(mainItems?.sap_status == "Failed"?true:false);
+  const [isPurchaseTeamEmailButton,setIsPurchaseTeamEmailButton] = useState<boolean>();
   const deleteSubItem = async (subItemId: string) => {
     console.log(subItemId, "subItemId", pur_req, "pur_req")
     const url = `${API_END_POINTS?.PrSubHeadDeleteRow}?name=${pur_req}&row_id=${subItemId}`;
@@ -173,6 +173,9 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     if (response?.status == 200) {
       console.log(response, "response of table data")
       setMainItems(response.data.message)
+      if(response?.data?.message?.sap_status == "Failed"){
+        setIsPurchaseTeamEmailButton(true);
+      }
     } else {
       alert("error");
     }
@@ -606,7 +609,11 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
       {/* {(mainItems?.['Form Status'] != "Submitted" && mainItems?.docname) && <div className={`flex justify-end py-6`}><Button type='button' className='bg-blue-400 hover:bg-blue-400 px-6 font-medium' onClick={() => { handleSubmit() }}>Submit</Button></div>} */}
 
       {mainItems?.docname && (
-        <div className="flex justify-end py-6">
+        <div className="flex justify-end py-6 gap-4">
+          {
+            designation == "Enquirer" && isPurchaseTeamEmailButton && 
+            <Button className='bg-blue-500 hover:bg-blue-400' onClick={()=>{handleEmailToPurchaseTeam()}} variant={"nextbtn"}>Send Email To Purchase Team</Button>
+          }
           {/* Normal Submit Button (for non-submitted forms) */}
           {(mainItems?.['Form Status'] !== "Submitted") && (mainItems?.sap_status != "Success") ? (
             <Button
@@ -635,10 +642,6 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
         </div>
       )}
 
-      {
-        designation == "Enquirer" && isPurchaseTeamEmailButton && 
-        <Button onClick={()=>{handleEmailToPurchaseTeam()}}>Send Email To Purchase Team</Button>
-      }
 
       <ApproveConfirmationDialog
         open={open}
