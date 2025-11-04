@@ -1,9 +1,9 @@
-import MaterialOnboarding from '@/src/components/pages/view-material-code-request'
+import MaterialOnboardingReqeust from '@/src/components/pages/material-onboarding-request'
 import React from 'react'
 
 const page = () => {
   return (
-    <MaterialOnboarding/>
+    <MaterialOnboardingReqeust/>
   )
 }
 

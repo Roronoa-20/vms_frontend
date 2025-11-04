@@ -43,5 +43,6 @@ export const NavbarConstant:Record<string,string> = {
     "/new-material-code-request-form": "Material Code Request",
     "/new-material-code-request-table": "Material Code Request",
     "/view-invalid-po":"Invalid PO",
-    "/vendor-dispatch-table":"Dispatch Details"
+    "/vendor-dispatch-table":"Dispatch Details",
+    "/view-material-code-request":"Material Code Request",
 }

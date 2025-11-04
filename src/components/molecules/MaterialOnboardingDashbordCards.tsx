@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/src/context/AuthContext";
-import DashboardTable from "./Material-Onboarding-Dashboard-Table";
+import DashboardTable from "./Material-Onboarding-Table/Material-Onboarding-User-Table";
 import { cardCount } from "../pages/MaterialOnboardingDashboard";
 import requestWrapper from "@/src/services/apiCall";
 import { MaterialRequestItem } from "@/src/types/MaterialRequestTableTypes";

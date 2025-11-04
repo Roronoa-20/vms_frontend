@@ -284,12 +284,12 @@ const API_END_POINTS = {
   getMaterialOnboardingTableList: `${url}/api/method/vms.APIs.material_onboarding.get_material_onboarding.get_material_onboarding_list`,
   getRequestorMasterTableList: `${url}/api/method/vms.APIs.requestor_master.get_requestor_master.get_requestor_master_list`,
   getMaterialOnboardingDetails: `${url}/api/method/vms.APIs.material_onboarding.get_material_onboarding_details`,
-  getAllMaterialDescriptionsAndCodes: `${url}/api/method/vms_app.APIs.material_onboarding.get_all_material_code.get_all_material_descriptions_and_codes`,
+  // getAllMaterialDescriptionsAndCodes: `${url}/api/method/vms_app.APIs.material_onboarding.get_all_material_code.get_all_material_descriptions_and_codes`,
   createRequestorMaster: `${url}/api/method/vms.APIs.requestor_master.create_requestor_master.create_requestor_master`,
   updateRequestorMaster: `${url}/api/method/vms.APIs.requestor_master.create_requestor_master.update_requestor_master`,
   // getAllMaterialCodes: `${url}/api/method/vms_app.APIs.material_code_apis.get_all_material_code.get_all_material_codes`,
-  getAllMaterialTypeMasterDetails: `${url}/api/method/vms_app.APIs.material_type_apis.get_all_material_type.get_all_material_type_master_details`,
-  getUserDetails: `${resourceurl}/User?fields=["*"]`,
+  getAllMaterialTypeMasterDetails: `${url}/api/method/vms.APIs.master_apis.material_type.get_material_type_master_details`,
+  // getUserDetails: `${resourceurl}/User?fields=["*"]`,
   // getEmployeeDetails: `${resourceurl}/Employee`,
   getEmployeeDetails: `${url}/api/method/vms.APIs.employee.get_employee.get_employee_details`,
   getCompanyMaster: `${resourceurl}/Company Master?fields=["name","company_name","company_short_form","company_code"]`,
@@ -312,6 +312,9 @@ const API_END_POINTS = {
   getSerialNumberMaster: `${resourceurl}/Serial Number Profile?fields=["*"]&limit_page_length=999`,
   getInspectionTypeMaster: `${resourceurl}/Inspection Type?fields=["*"]&limit_page_length=999`,
   getMaterialCategoryMaster: `${resourceurl}/Material Category Master?fields=["*"]&limit_page_length=999`,
+  getlotSizeMaster: `${resourceurl}/Lot Sizes?fields=["*"]&limit_page_length=999`,
+  getschedulingMarginKeyMaster: `${resourceurl}/Scheduling Margin Key?fields=["*"]&limit_page_length=999`,
+  getexpirationDateMaster: `${resourceurl}/Expiration Date Master?fields=["*"]&limit_page_length=999`,
 
 }
 

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/src/components/atoms/select";
-import Pagination from "./Pagination";
+import Pagination from "../Pagination";
 
 interface MaterialRequestTableProps {
     data: MaterialRequestItem[];
@@ -18,7 +18,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
     const [search, setSearch] = useState("");
     const [selectedCompany, setSelectedCompany] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const recordPerPage = 20;
+    const recordPerPage = 7;
 
     // Filtered & flattened data
     const flattenedData = useMemo(() => {
@@ -50,7 +50,6 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
         return `${day}-${month}-${year}`;
     };
 
-    // Reset page when filters change
     React.useEffect(() => setCurrentPage(1), [search, selectedCompany]);
 
     return (
