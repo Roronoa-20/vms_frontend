@@ -313,6 +313,8 @@ const API_END_POINTS = {
   getInspectionTypeMaster: `${resourceurl}/Inspection Type?fields=["*"]&limit_page_length=999`,
   getMaterialCategoryMaster: `${resourceurl}/Material Category Master?fields=["*"]&limit_page_length=999`,
 
+  prToPurchaseTeam:`${url}/api/method/vms.APIs.purchase_api.purchase_requisition_approval.sent_approval_to_purchase_team`
+
 }
 
 export default API_END_POINTS;
