@@ -247,18 +247,18 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     purchase_type: "Please Select Purchase Type",
     plant: "Please Select Plant",
     purchase_group: "Please Select Purchase Group",
-    // cost_center: "Please Select Cost Center",
-    // gl_account: "Please Select GL Account"
+    cost_center: "Please Select Cost Center",
+    gl_account: "Please Select GL Account"
   };
 
 
   const handleNext = async () => {
     
     //validation
-    if(formData?.purchase_type == "SB"){
-      requiredFields.cost_center = "Please Select Cost Center";
-      requiredFields.gl_account = "Please Select GL Account";
-    }
+    // if(formData?.purchase_type == "SB"){
+    //   requiredFields.cost_center = "Please Select Cost Center";
+    //   requiredFields.gl_account = "Please Select GL Account";
+    // }
 
     for (const [key, message] of Object.entries(requiredFields)) {
       if (!formData?.[key as keyof TPRInquiry]) {
