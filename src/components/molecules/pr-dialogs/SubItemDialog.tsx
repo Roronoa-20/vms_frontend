@@ -122,11 +122,8 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
   );
 
   const requiredFields: (keyof SubheadField)[] = [
-    // "service_number_subhead", "short_text_subhead", "quantity_subhead",
-    "cost_center_subhead", "gl_account_number_subhead", "uom_subhead",
-    // "gross_price_subhead", "currency_subhead", "service_type_subhead", "net_value_subhead",
+    "cost_center_subhead", "gl_account_number_subhead"
   ];
-
 
   const handleSubmit = async () => {
     try {
@@ -141,7 +138,6 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
       });
 
       setErrors(newErrors);
-
       if (!isValid) {
         alert("Please fill all mandatory fields — including Cost Center and GL Account Number.");
         return;
@@ -209,7 +205,6 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
   }
 
   const fetchGLNumberData = async (query?: string): Promise<[]> => {
-    console.log(query)
     const baseUrl = API_END_POINTS?.GLAccountSearchApi;
     let url = baseUrl;
     // Only include filters if company exists
@@ -253,7 +248,6 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
     { name: "short_text_subhead", label: "Short Text" },
     { name: "quantity_subhead", label: "Quantity", type: "number" },
     { name: "gross_price_subhead", label: "Gross Price", type: "number" },
-    // { name: "currency_subhead", label: "Currency" },
     { name: "service_type_subhead", label: "Service Type" },
     { name: "net_value_subhead", label: "Net Value", type: "number" },
   ];
@@ -334,7 +328,7 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
           <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
             {"Cost Center"}
             {/* {error && <span className="text-red-600">*</span>} */}
-            {errors["cost_center_subhead"] && <span className="text-red-600">*</span>}
+            <span className="text-red-600">*</span>
           </h1>
           <SearchSelectComponent
             setData={(value) => {
@@ -374,7 +368,7 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
           <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
             {"GL Account Number"}
             {/* {error && <span className="text-red-600">*</span>} */}
-            {errors["gl_account_number_subhead"] && <span className="text-red-600">*</span>}
+            <span className="text-red-600">*</span>
           </h1>
           <SearchSelectComponent
             setData={(value) => {
