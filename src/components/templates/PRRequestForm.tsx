@@ -24,6 +24,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/src/context/AuthContext'
 import { Alert, AlertDescription, AlertTitle, AlertFooter } from "@/components/ui/alert"
 import { ApproveConfirmationDialog } from '../common/ApproveConfirmationDialog';
+import Comment_box from '../molecules/CommentBox'
 
 
 interface Props {
@@ -67,6 +68,11 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
   const [accountAssigmentDropdown, setAccountAssignmentDropdown] = useState<AccountAssignmentCategory[]>([])
   const [itemCategoryDropdown, setitemCategoryDropdown] = useState<ItemCategoryMaster[]>([])
   const [currentValue, setCurrentValue] = useState<number>(10);
+
+  const [sendEmailDialog,setSendEmailDialog] = useState<boolean>(false);
+
+  const [comment,setComment] = useState<string>("");
+
   const deleteSubItem = async (subItemId: string) => {
     console.log(subItemId, "subItemId", pur_req, "pur_req")
     const url = `${API_END_POINTS?.PrSubHeadDeleteRow}?name=${pur_req}&row_id=${subItemId}`;
@@ -202,12 +208,17 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
 
   const handleEmailToPurchaseTeam = async () => {
     
-    const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.prToPurchaseTeam, params: { name: pur_req }, method: "POST" });
+    const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.prToPurchaseTeam, params: { name: pur_req,enquirer_remarks:comment }, method: "POST" });
     if (response?.status == 200) {
       alert("Email sent to purchase team successfully");
+      handleClose();
       router.push("/dashboard")
       return;
     }
+  }
+
+  const handleClose = ()=>{
+    setSendEmailDialog(false);
   }
 
   useEffect(() => {
@@ -619,7 +630,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                   className="py-2.5"
                   variant={"nextbtn"}
                   size={"nextbtnsize"} 
-                  onClick={() => { handleEmailToPurchaseTeam() }}>Send Email To Purchase Team</Button>
+                  onClick={() => { setSendEmailDialog(true) }}>Send Email To Purchase Team</Button>
               )}
 
               <Button
@@ -657,6 +668,14 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
         dialogTitle={"Confirm Submit"}
         handleSubmit={handleApprove}
       />
+
+      {
+        sendEmailDialog && (
+        <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
+          <Comment_box handleClose={handleClose} Submitbutton={handleEmailToPurchaseTeam} handleComment={setComment} />
+        </div>
+        )
+      }
     </div>
   )
 }
