@@ -82,18 +82,14 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
   const toggleMainItemExpansion = (row_name: string) => {
     setExpandedRowNames(prev =>
       prev.includes(row_name)
-        ? prev.filter(name => name !== row_name) // collapse if already expanded
-        : [...prev, row_name] // expand otherwise
+        ? prev.filter(name => name !== row_name)
+        : [...prev, row_name]
     );
   };
 
   const openSubItemModal = (mainItemId: string, subhead_fields: SubheadField[]) => {
-    // ✅ Ensure numeric values
-    const lastValue = subhead_fields?.length
-      ? Number(subhead_fields.at(-1)?.item_number_of_purchase_requisition_subhead ?? 0)
-      : 0;
+    const lastValue = subhead_fields?.length ? Number(subhead_fields.at(-1)?.item_number_of_purchase_requisition_subhead ?? 0) : 0;
     const nextValue: number = lastValue > 0 ? lastValue + 10 : 10;
-    // ✅ Set in state (strict number)
     setCurrentValue(nextValue);
     setSelectedMainItemId(mainItemId);
     setIsSubItemModalOpen(true);
@@ -148,7 +144,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     } else {
       alert("error");
     }
-  }
+  };
 
   const handleApprove = async () => {
     if (!(mainItems?.docname)) {
@@ -163,7 +159,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     } else {
       alert("error");
     }
-  }
+  };
 
   const fetchTableData = async (pur_req: string) => {
     console.log(pur_req, "pur_req in table code")
@@ -175,7 +171,8 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     } else {
       alert("error");
     }
-  }
+  };
+
   const handleNext = async () => {
     const url = API_END_POINTS?.createPR;
     const response: AxiosResponse = await requestWrapper({ url: url, data: { ...formData }, method: "POST" });
@@ -187,7 +184,8 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     } else {
       alert("error");
     }
-  }
+  };
+
   const handleModel = (purchase_requisition_type: string) => purchase_requisition_type === "SB" ? setEditModalOpen(true) : setNBEditModalOpen(true);
 
   const fetchAccountAssigmentData = async (pur_req_type: string) => {
@@ -203,6 +201,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
   }
 
   const handleEmailToPurchaseTeam = async () => {
+    
     const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.prToPurchaseTeam, params: { name: pur_req }, method: "POST" });
     if (response?.status == 200) {
       alert("Email sent to purchase team successfully");
@@ -345,7 +344,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
         </div>
       }
       {mainItems && mainItems?.data?.length > 0 && (
-        <Card className='mt-2 p-2'>
+        <Card className='m-2 p-2'>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">Purchase Request Items</CardTitle>
             <CardDescription>
@@ -389,36 +388,35 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                           {/* <Badge variant="outline">${mainItem?.estimatedPrice}</Badge> */}
                         </div>
                       </div>
-                      {
-                        mainItems?.sap_status != "Success" && (
-                          <div className="flex items-center gap-2">
-                            {((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
-                              <>
-                                {mainItem?.purchase_requisition_type === "SB" && (
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => openSubItemModal(mainItem?.row_name, mainItem?.subhead_fields)}
-                                    className="flex items-center gap-2 bg-green-50 hover:bg-green-100 border-green-200"
-                                  >
-                                    <Plus className="w-4 h-4" />
-                                    Add Sub Item
-                                  </Button>
-                                )}
+                      {mainItems?.sap_status != "Success" && (
+                        <div className="flex items-center gap-2">
+                          {((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
+                            <>
+                              {mainItem?.purchase_requisition_type === "SB" && (
                                 <Button
+                                  variant="outline"
                                   size="sm"
-                                  onClick={() => {
-                                    handleModel(mainItem?.purchase_requisition_type ? mainItem?.purchase_requisition_type : "SB");
-                                    setEditRow(mainItem);
-                                  }}
-                                  className=""
+                                  onClick={() => openSubItemModal(mainItem?.row_name, mainItem?.subhead_fields)}
+                                  className="flex items-center gap-2 bg-green-50 hover:bg-green-100 border-green-200"
                                 >
-                                  <Edit2Icon className="w-4 h-4" />
+                                  <Plus className="w-4 h-4" />
+                                  Add Sub Item
                                 </Button>
-                              </>
-                            )}
-                          </div>
-                        )}
+                              )}
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  handleModel(mainItem?.purchase_requisition_type ? mainItem?.purchase_requisition_type : "SB");
+                                  setEditRow(mainItem);
+                                }}
+                                className=""
+                              >
+                                <Edit2Icon className="w-4 h-4" />
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     {/* Expanded Content - Main Item Details + Sub Items Table */}
@@ -461,12 +459,11 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                                       <TableHead className="text-center">Net Value</TableHead>
                                       <TableHead className="text-center">Cost Center</TableHead>
                                       <TableHead className="text-center">GL Account Number</TableHead>
-                                      {
-                                        !mainItems?.form_is_submitted && (
-                                          <TableHead className="text-center sticky right-0 bg-gray-50 z-30">
-                                            Actions
-                                          </TableHead>
-                                        )}
+                                      {!mainItems?.form_is_submitted && (
+                                        <TableHead className="text-center sticky right-0 bg-gray-50 z-30">
+                                          Actions
+                                        </TableHead>
+                                      )}
                                     </TableRow>
                                   </TableHeader>
                                   <TableBody>
@@ -537,24 +534,22 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                                 </Table>
                               </div>
                             </div>
-                          )
-                            :
-                            (
-                              mainItem?.purchase_requisition_type === "SB" &&
-                              ((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
-                                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                                  <p className="text-gray-500 mb-4">No sub-items added yet</p>
-                                  <Button
-                                    variant="outline"
-                                    onClick={() => openSubItemModal(mainItem?.row_name, mainItem?.subhead_fields)}
-                                    className="flex items-center gap-2 mx-auto"
-                                  >
-                                    <Plus className="w-4 h-4" />
-                                    Add First Sub Item
-                                  </Button>
-                                </div>
-                              )
-                            )}
+                          ) : (
+                            mainItem?.purchase_requisition_type === "SB" &&
+                            ((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
+                              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                                <p className="text-gray-500 mb-4">No sub-items added yet</p>
+                                <Button
+                                  variant="outline"
+                                  onClick={() => openSubItemModal(mainItem?.row_name, mainItem?.subhead_fields)}
+                                  className="flex items-center gap-2 mx-auto"
+                                >
+                                  <Plus className="w-4 h-4" />
+                                  Add First Sub Item
+                                </Button>
+                              </div>
+                            )
+                          )}
                         </div>}
                       </div>
                     </CollapsibleContent>
@@ -577,7 +572,8 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           defaultData={editSubItemRow ?? null}
           editAction={editAction}
           company={formData?.company ? formData?.company : ""}
-        />}
+        />
+      }
 
       {isEditModalOpen &&
         <EditSBItemModal
@@ -593,28 +589,39 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
           company={formData?.company ? formData?.company : ""}
           plant={formData?.company ? formData?.company : ""}
-        />}
+        />
+      }
 
-      {isNBEditModalOpen && <EditNBItemModal
-        isOpen={isNBEditModalOpen}
-        onClose={() => setNBEditModalOpen(false)}
-        fetchTableData={fetchTableData}
-        Dropdown={Dropdown}
-        itemCategoryDropdown={itemCategoryDropdown}
-        accountAssigmentDropdown={accountAssigmentDropdown}
-        PurchaseGroupDropdown={PurchaseGroupDropdown}
-        ProfitCenterDropdown={ProfitCenterDropdown}
-        pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
-        defaultData={editRow}
-        plant={formData?.plant ? formData?.plant : ''}
-        company={formData?.company ? formData?.company : ""}
-        purchase_group={formData?.purchase_group ? formData?.purchase_group : ""}
-      />}
+      {isNBEditModalOpen &&
+        <EditNBItemModal
+          isOpen={isNBEditModalOpen}
+          onClose={() => setNBEditModalOpen(false)}
+          fetchTableData={fetchTableData}
+          Dropdown={Dropdown}
+          itemCategoryDropdown={itemCategoryDropdown}
+          accountAssigmentDropdown={accountAssigmentDropdown}
+          PurchaseGroupDropdown={PurchaseGroupDropdown}
+          ProfitCenterDropdown={ProfitCenterDropdown}
+          pur_req={pur_req ? pur_req : mainItems?.docname ? mainItems?.docname : ""}
+          defaultData={editRow}
+          plant={formData?.plant ? formData?.plant : ''}
+          company={formData?.company ? formData?.company : ""}
+          purchase_group={formData?.purchase_group ? formData?.purchase_group : ""}
+        />
+      }
+
       {mainItems?.docname && (
         <div className="flex justify-end py-6 gap-4">
           {(!mainItems?.mail_sent_to_purchase_team) && (designation === "Enquirer") ? (
             <>
-              <Button className='bg-blue-500 hover:bg-blue-400' onClick={() => { handleEmailToPurchaseTeam() }} variant={"nextbtn"}>Send Email To Purchase Team</Button>
+              {(mainItems?.sap_status == "Failed") && (
+                <Button
+                  className="py-2.5"
+                  variant={"nextbtn"}
+                  size={"nextbtnsize"} 
+                  onClick={() => { handleEmailToPurchaseTeam() }}>Send Email To Purchase Team</Button>
+              )}
+
               <Button
                 type="button"
                 className="py-2.5"
@@ -627,7 +634,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
             </>
           ) : (
             // Show Final Submit button if designation is Purchase Team
-            (designation === "Purchase Team" && !mainItems?.form_is_submitted) && (
+            (designation === "Purchase Team" && !mainItems?.form_is_submitted) && (mainItems?.mail_sent_to_purchase_team) && (
               <Button
                 type="button"
                 className="py-2.5"
@@ -641,7 +648,6 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           )}
         </div>
       )}
-
 
       <ApproveConfirmationDialog
         open={open}

@@ -406,7 +406,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
         {
           designation != "Enquirer" && PRInquiryData?.hod_approved && !PRInquiryData?.second_stage_approved ?
             <div className='flex items-end'>
-              <Button className={`py-2.5 ${PRInquiryData?.purchase_requisition_form_created?"hidden":""}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={(e) => { setIsEmailDialog(true) }}>Additional Approval</Button>
+              <Button className={`py-2.5 ${PRInquiryData?.purchase_requisition_form_created ? "hidden" : ""}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={(e) => { setIsEmailDialog(true) }}>Additional Approval</Button>
             </div> :
             <div></div>
         }
@@ -504,9 +504,11 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
         <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
           <Comment_box className='' handleClose={handleClose} Submitbutton={handleAcknowledge} handleComment={handleComment}>
             <div className="">
-              <h1 className="text-[12px] font-normal text-[#626973] pb-3">Expected Delivery</h1>
+              <h1 className="text-[12px] font-normal text-[#626973] pb-2">Expected Delivery</h1>
               <Input className='w-44' type='Date' onChange={(e) => { setDate(e.target.value) }} min={today} />
-              <h1 className='text-sm pt-2  font-mono'>This is the Disclaimer</h1>
+              <div className='pt-3 italic'>
+                <h1 className='text-[10px] bg-slate-400 font-mono'>Disclaimer: The Expected Delivery Date can be changed based on the Purchase Order and Purchase Requisition.</h1>
+              </div>
             </div>
           </Comment_box>
         </div>
@@ -515,7 +517,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
         isEmailDialog &&
         <PopUp handleClose={handleEmailClose} headerText='Additional Flow' isSubmit={true} Submitbutton={handleAddionalFlow}>
           <div className="col-span-1 py-4 ">
-            <h1 className="text-[14px] font-normal text-[#000000] pb-3">
+            <h1 className="text-[14px] font-normal text-[#000000] pb-2">
               To Email
             </h1>
             <Input onChange={(e) => { setToEmail(e.target.value) }} value={toEmail ?? ""} />
