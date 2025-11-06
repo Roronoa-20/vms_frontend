@@ -10,7 +10,8 @@ export interface PurchaseRequisitionResponse {
   form_is_submitted: boolean;
   sap_error: string;
   sap_response: string;
-  sap_status: string
+  sap_status: string;
+  mail_sent_to_purchase_team:boolean;
   data: PurchaseRequisitionDataItem[];
 }
 
