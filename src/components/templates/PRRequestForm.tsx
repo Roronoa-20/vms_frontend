@@ -45,7 +45,7 @@ interface Props {
 
 export const updateQueryParam = (key: string, value: string) => {
   const url = new URL(window.location.href);
-  url.searchParams.set(key, value); // Add or update the query param
+  url.searchParams.set(key, value);
   window.history.pushState({}, '', url.toString());
 };
 
