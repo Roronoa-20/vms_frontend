@@ -506,6 +506,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
             <div className="">
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">Expected Delivery</h1>
               <Input className='w-44' type='Date' onChange={(e) => { setDate(e.target.value) }} min={today} />
+              <h1 className='text-sm pt-2  font-mono'>This is the Disclaimer</h1>
             </div>
           </Comment_box>
         </div>
