@@ -91,7 +91,12 @@ export interface MaterialCode {
   material_name: string;
   description: string;
   material_description: string;
+  material_code_name: string;
   material_type: string;
+  material_group: string;
+  plant: string;
+  valuation_class: string;
+  profit_center: string;
 }
 
 export interface serviceCode {
@@ -129,8 +134,8 @@ export interface PurchaseGroup {
   purchase_group_code: string;
   purchase_group_name: string;
   description: string;
-  company:string;
-  purchase_group:string
+  company: string;
+  purchase_group: string
 }
 
 export interface PurchaseOrganisation {
@@ -138,8 +143,8 @@ export interface PurchaseOrganisation {
   purchase_organisation_code: string;
   purchase_organisation_name: string;
   description: string;
-  purchase_organization_name:string;
-  purchase_organization_code:string;
+  purchase_organization_name: string;
+  purchase_organization_code: string;
 }
 // Account Category
 export interface AccountCategory {
@@ -207,7 +212,7 @@ export interface Country {
   country_code: string;
   country_name: string;
   description: string | null;
-  display_text:string;
+  display_text: string;
 }
 export interface PortCode {
   name: string;
@@ -243,7 +248,7 @@ export interface ShipmentType {
   name: string;
   shipment_type_code: string;
   shipment_type_name: string;
-  description:string
+  description: string
 }
 
 export interface ServiceCode {
@@ -297,7 +302,7 @@ export type PurchaseRequestDropdown = {
     service_category: serviceCategory[]
     plant_code: plantCode[];
     quantity_unit: quantityUnit[]
-    shipment_type:ShipmentType[]
+    shipment_type: ShipmentType[]
   }
 }
 
