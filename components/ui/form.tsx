@@ -26,7 +26,12 @@ const FormItemContext = React.createContext<FormItemContextValue>(null)
 const FormField = ({ name, control, ...props }: any) => {
   return (
     <FormFieldContext.Provider value={{ name }}>
-      <Controller name={name} control={control} {...props} />
+      {/* <Controller name={name} control={control} {...props} /> */}
+      <Controller
+        name={name}
+        control={control}
+        render={props.render}
+      />
     </FormFieldContext.Provider>
   )
 }

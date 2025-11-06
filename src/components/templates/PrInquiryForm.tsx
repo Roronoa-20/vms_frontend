@@ -358,7 +358,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
               <SelectContent>
                 <SelectGroup>
                   {purchaseTypeDropdown?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                    <SelectItem key={index} value={item?.name}>{item?.name}-{item?.description}</SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
@@ -401,7 +401,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
           {/* Cost Center */}
           <div className="col-span-1">
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-              Cost Center <span className={`text-red-400 text-[20px] ${formData?.purchase_type == "SB"?"":"hidden"}`}>*</span>
+              Cost Center <span className='text-red-400 text-[20px]'>*</span>
             </h1>
             <Select
               value={formData?.cost_center ?? ""}
@@ -424,7 +424,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
           {/* G/L Account */}
           <div className="col-span-1">
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-              G/L Account <span className={`text-red-400 text-[20px] ${formData?.purchase_type == "SB"?"":"hidden"}`}>*</span>
+              G/L Account <span className='text-red-400 text-[20px]'>*</span>
             </h1>
             <Select
               value={formData?.gl_account ?? ""}

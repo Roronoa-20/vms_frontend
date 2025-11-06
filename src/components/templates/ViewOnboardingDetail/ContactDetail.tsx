@@ -154,15 +154,15 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendmen
           <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" onChange={(e) => { setContact((prev: any) => ({ ...prev, department_name: e.target.value })) }} value={contact?.department_name ?? ""} />
         </div>
       </div>
-      <div className={`flex justify-end p-2 mb-2`}>
+      <div className={`flex justify-end p-2`}>
         <Button className={`bg-blue-400 hover:bg-blue-400 rounded-[20px] w-[8%] font-size-[18px] ${isDisabled ? "hidden" : ""}`} onClick={() => { handleAdd() }}>Add</Button>
       </div>
-      <div className={`shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl`}>
-        <div className="flex w-full justify-between pb-4">
+      <div className={`shadow- bg-[#f6f6f7] p-2 mb-4 rounded-2xl`}>
+        {/* <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
             Multiple Contact
           </h1>
-        </div>
+        </div> */}
         <Table className=" max-h-40 overflow-y-scroll">
           {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader className="text-center">

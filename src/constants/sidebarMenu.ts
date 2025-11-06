@@ -267,7 +267,7 @@ export const MaterialCPSideBar: SidebarItem[] = [
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
-    name: "View Material Code Request",
+    name: "View Request",
     href: "/view-material-code-request",
     children: []
   }

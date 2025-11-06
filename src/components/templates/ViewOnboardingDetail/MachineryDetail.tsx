@@ -110,12 +110,12 @@ const MachineryDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendm
           <Button className={`py-2 ${isDisabled ? "hidden" : ""}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleAdd() }}>Add</Button>
         </div>
       </div>
-      <div className="shadow- bg-[#f6f6f7] p-4 mb-4 mt-4 rounded-2xl">
-        <div className="flex w-full justify-between pb-4">
+      <div className="shadow- bg-[#f6f6f7] p-2 mb-4 mt-4 rounded-2xl">
+        {/* <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
             Multiple Machinery Detail
           </h1>
-        </div>
+        </div> */}
         <Table className="max-h-40 overflow-y-scroll">
           {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader className="text-center">
