@@ -107,12 +107,12 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendm
         </div>
       </div>
 
-      <div className="shadow- bg-[#f6f6f7] p-4 mb-4 mt-2 rounded-2xl">
-        <div className="flex w-full justify-between pb-4">
+      <div className="shadow- bg-[#f6f6f7] p-2 mb-4 mt-2 rounded-2xl">
+        {/* <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
             Reputed Partners
           </h1>
-        </div>
+        </div> */}
         <Table className=" max-h-40 overflow-y-scroll">
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
