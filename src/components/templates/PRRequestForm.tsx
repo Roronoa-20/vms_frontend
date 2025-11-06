@@ -44,7 +44,7 @@ interface Props {
 
 export const updateQueryParam = (key: string, value: string) => {
   const url = new URL(window.location.href);
-  url.searchParams.set(key, value); // Add or update the query param
+  url.searchParams.set(key, value);
   window.history.pushState({}, '', url.toString());
 };
 
@@ -201,7 +201,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
   }
 
   const handleEmailToPurchaseTeam = async () => {
-    
+
     const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.prToPurchaseTeam, params: { name: pur_req }, method: "POST" });
     if (response?.status == 200) {
       alert("Email sent to purchase team successfully");
