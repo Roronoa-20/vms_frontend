@@ -89,6 +89,7 @@ export default function RequestorInformation({ form, EmployeeDetails }: Requesto
                             <FormField
                                 control={form.control}
                                 name="company"
+                                key="company"
                                 render={({ field }: { field: any }) => (
                                     <FormItem className="flex items-center gap-2">
                                         <FormLabel className="w-40 font-medium text-sm">

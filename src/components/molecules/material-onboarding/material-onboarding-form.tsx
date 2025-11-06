@@ -5,6 +5,7 @@ import RequestorInformation from "@/src/components/molecules/material-onboarding
 import MaterialInformation from "@/src/components/molecules/material-onboarding/material-information";
 import { MaterialRegistrationFormData } from "@/src/types/MaterialCodeRequestFormTypes";
 import { MaterialCode } from '@/src/types/PurchaseRequestType';
+import AlertBox from "../../common/vendor-onboarding-alertbox";
 
 interface DropdownData {
     material_code: MaterialCode[];
@@ -31,6 +32,7 @@ interface MastersData {
     serialNumberMaster: any[];
     inspectionTypeMaster: any[];
     materialCategoryMaster: any[];
+    MaterialOnboardinDetails: any[];
 }
 
 interface MaterialOnboardingFormProps {
@@ -47,8 +49,12 @@ interface MaterialOnboardingFormProps {
     isButtonDisabled: any
 }
 
-const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, onCancel, onSubmit, onUpdate, UserDetailsJSON, EmployeeDetailsJSON, masters, AllMaterialCodes }) => {
-    console.log("Masters----->", AllMaterialCodes);
+const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, onCancel, onSubmit, onUpdate, UserDetailsJSON, EmployeeDetailsJSON, masters, AllMaterialCodes, isLoading, showAlert }) => {
+    console.log("Masters----->", masters);
+
+    const MaterialOnboarding = {
+        ...masters.MaterialOnboardinDetails[0],
+    }
 
     const basicMasters = {
         companyMaster: masters.companyMaster,
@@ -76,6 +82,8 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, o
         industryMaster: masters.industryMaster,
     };
 
+    console.log("MaterialOnboarding Details----->", MaterialOnboarding);    
+
     return (
         <form onSubmit={onSubmit} className="bg-white p-4 rounded shadow space-y-4">
             <div className="space-y-1">
@@ -94,18 +102,43 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, o
             </div>
 
             <div className="flex justify-end space-x-5 items-center">
-                <Button variant="backbtn" size="backbtnsize" onClick={onCancel}>
+                <Button
+                    variant="backbtn"
+                    size="backbtnsize"
+                    onClick={onCancel}
+                >
                     Cancel
                 </Button>
 
-                {/* Uncomment & fix these if you implement conditional Submit/Update logic */}
-                <Button variant="nextbtn" size="nextbtnsize" type="submit">
-                    Submit
-                </Button>
+                {/* {(MaterialOnboarding?.approval_status === "" ||
+                    MaterialOnboarding?.approval_status === undefined) && ( */}
+                        <Button
+                            variant="nextbtn"
+                            size="nextbtnsize"
+                            type="submit"
+                        >
+                            {isLoading ? "Processing..." : "Submit"}
+                        </Button>
+                    {/* )} */}
 
-                <Button variant="nextbtn" size="nextbtnsize" type="button" onClick={onUpdate}>
-                    Update
-                </Button>
+                {MaterialOnboarding?.approval_status === "Re-Opened by CP" && (
+                    <Button
+                        variant="nextbtn"
+                        size="nextbtnsize"
+                        type="button"
+                        onClick={onUpdate}
+                    >
+                        {isLoading ? "Processing..." : "Update"}
+                    </Button>
+                )}
+
+                {showAlert && (
+                    <AlertBox
+                        content={"Your Details have been submitted successfully!"}
+                        submit={showAlert}
+                        url="new-material-code-request-table"
+                    />
+                )}
             </div>
         </form>
     );

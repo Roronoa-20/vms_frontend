@@ -1,33 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  Input
-} from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from "@/components/ui/form";
-import {
-  Table,
-  TableHead,
-  TableHeader,
-  TableCell,
-  TableRow,
-  TableBody
-} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Delete } from "lucide-react";
+import { useAuth } from "@/src/context/AuthContext";
 
 // --- Type definitions for props and masters ---
 interface MasterItem {
@@ -54,7 +32,6 @@ interface UserRequestFormProps {
   form: any;
   masters: Masters;
   MaterialOnboardingDetails?: any;
-  EmployeeDetails?: any;
   companyName?: any;
   handleMaterialSearch: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   searchResults: any[];
@@ -64,33 +41,14 @@ interface UserRequestFormProps {
   setMaterialSelectedFromList: React.Dispatch<React.SetStateAction<boolean>>;
   setMaterialCodeAutoFetched: React.Dispatch<React.SetStateAction<boolean>>;
   setShowSuggestions: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedMaterialType: React.Dispatch<React.SetStateAction<string>>;
   materialCodeAutoFetched: boolean;
 }
 
-export default function UserRequestForm({
-  form,
-  masters,
-  MaterialOnboardingDetails,
-  EmployeeDetails,
-  companyName,
-  handleMaterialSearch,
-  searchResults,
-  showSuggestions,
-  handleMaterialSelect,
-  materialSelectedFromList,
-  setMaterialSelectedFromList,
-  setMaterialCodeAutoFetched,
-  setShowSuggestions,
-  materialCodeAutoFetched
-}: UserRequestFormProps) {
-  const {
-    companyMaster,
-    plantMaster,
-    materialCategoryMaster,
-    materialTypeMaster,
-    uomMaster
-  } = masters;
+export default function UserRequestForm({ form, masters, MaterialOnboardingDetails, companyName, handleMaterialSearch, searchResults, showSuggestions, handleMaterialSelect, materialSelectedFromList, setMaterialSelectedFromList, setMaterialCodeAutoFetched, setShowSuggestions, materialCodeAutoFetched, setSelectedMaterialType }: UserRequestFormProps) {
+  const { companyMaster, plantMaster, materialCategoryMaster, materialTypeMaster, uomMaster } = masters;
   console.log("Material Type Mster----->", materialTypeMaster);
+
   // --- State Management ---
   const [filteredPlants, setFilteredPlants] = useState<MasterItem[]>([]);
   const [filteredMaterialType, setFilteredMaterialType] = useState<MasterItem[]>([]);
@@ -102,6 +60,13 @@ export default function UserRequestForm({
 
   const selectedMaterialCategory = form.watch("material_category");
   const selectedMaterialType = form.watch("material_type");
+  const { name } = useAuth();
+
+  useEffect(() => {
+    if (name) {
+      form.setValue("requested_by_name", name);
+    }
+  }, [name]);
 
   // --- Effect: Filter Plants and Material Types ---
   useEffect(() => {
@@ -163,13 +128,6 @@ export default function UserRequestForm({
       form.setValue("material_type", "");
     }
   }, [filteredMaterialType]);
-
-  // --- Auto populate employee details ---
-  useEffect(() => {
-    if (EmployeeDetails?.name) {
-      form.setValue("requested_by_name", EmployeeDetails.name);
-    }
-  }, [EmployeeDetails?.name]);
 
   useEffect(() => {
     const desc = form.watch("material_name_description");
@@ -249,13 +207,19 @@ export default function UserRequestForm({
           <div className="grid grid-cols-3 gap-4 pt-3">
             {/* Company Code */}
             <FormField
+              control={form.control}
               name="material_company_code"
-              render={() => (
+              key="material_company_code"
+              render={({ field }: { field: { value?: string; onChange: (value: string) => void; ref?: React.Ref<any> } }) => (
                 <FormItem>
                   <FormLabel>Company Code</FormLabel>
                   <FormControl>
                     <Select
-                      onValueChange={(value) => setMaterialCompanyCode(value)}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        setMaterialCompanyCode(value);
+                      }}
+                      value={field.value || ""}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select Company" />
@@ -273,38 +237,71 @@ export default function UserRequestForm({
               )}
             />
 
-            {/* Plant Code */}
-            <FormField
-              name="plant_name"
-              render={() => (
-                <FormItem>
-                  <FormLabel>Plant Code</FormLabel>
-                  <FormControl>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Plant" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {filteredPlantOptions?.map((item: MasterItem) => (
-                          <SelectItem key={item.name} value={item.name}>
-                            {item.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+            {/* Plant Name */}
+            <div className="space-y-2">
+              <FormField
+                control={form.control}
+                rules={{ required: "Plant Code is required." }}
+                name="plant_name"
+                key="plant_name"
+                render={({ field }: { field: { value?: string; onChange: (value: string) => void; ref?: React.Ref<any> } }) => (
+                  <FormItem>
+                    <FormLabel>Plant Code <span className="text-red-500">*</span></FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          setPlantSearch("");
+                        }}
+                        value={field.value || ""}
+                      >
+                        <SelectTrigger className={`p-3 w-full text-sm data-[placeholder]:text-gray-500`}>
+                          <SelectValue placeholder="Select Plant Code" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <div className="px-2 py-1">
+                            <input
+                              type="text"
+                              value={plantSearch}
+                              onChange={(e) => setPlantSearch(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (!["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
+                                  e.stopPropagation();
+                                }
+                              }} placeholder="Search Plant Code..."
+                              className="w-full p-2 border border-gray-300 rounded text-sm"
+                            />
+                          </div>
+                          {filteredPlantOptions?.length > 0 ? (
+                            filteredPlantOptions.map((plant) => (
+                              <SelectItem key={plant.plant_name ?? ""} value={plant.plant_name ?? ""}>
+                                {plant.plant_name}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <div className="px-3 py-2 text-sm text-gray-500">
+                              No matching plant found
+                            </div>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             {/* Material Category */}
             <FormField
+              control={form.control}
               name="material_category"
-              render={() => (
+              key="material_category"
+              render={({ field }: { field: { value?: string; onChange: (value: string) => void; ref?: React.Ref<any> } }) => (
                 <FormItem>
                   <FormLabel>Material Category</FormLabel>
                   <FormControl>
-                    <Select>
+                    <Select onValueChange={field.onChange} value={field.value || ""}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Category" />
                       </SelectTrigger>
@@ -322,37 +319,72 @@ export default function UserRequestForm({
             />
 
             {/* Material Type */}
-            <FormField
-              name="material_type"
-              render={() => (
-                <FormItem>
-                  <FormLabel>Material Type</FormLabel>
-                  <FormControl>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Material Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {filteredMaterialTypeOptions?.map((item: MasterItem) => (
-                          <SelectItem key={item.name} value={item.name}>
-                            {item.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+            <div className="space-y-2">
+              <FormField
+                control={form.control}
+                rules={{ required: "Material Type is required." }}
+                name="material_type"
+                key="material_type"
+                render={({ field }: { field: { value?: string; onChange: (value: string) => void; ref?: React.Ref<any> } }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Material Type <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Select
+                        value={field.value || ""}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          setSelectedMaterialType(value);
+                          setMaterialTypeSearch("");
+                        }}
+                      >
+                        <SelectTrigger className={`p-2 w-full text-sm data-[placeholder]:text-gray-500`}>
+                          <SelectValue placeholder="Select Material Type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <div className="px-2 py-1">
+                            <Input
+                              type="text"
+                              value={materialTypeSearch}
+                              onChange={(e) => setMaterialTypeSearch(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (!["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
+                                  e.stopPropagation();
+                                }
+                              }}
+                              placeholder="Search Material Type..."
+                              className="w-full p-2 border border-gray-300 rounded text-sm"
+                            />
+                          </div>
+                          {filteredMaterialTypeOptions?.length > 0 ? (
+                            filteredMaterialTypeOptions.map((material) => (
+                              <SelectItem key={material.name} value={material.name}>
+                                {material.name}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <div className="px-3 py-2 text-sm text-gray-500">No material types found</div>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             {/* Base UOM */}
             <FormField
+              control={form.control}
               name="base_unit_of_measure"
-              render={() => (
+              key="base_unit_of_measure"
+              render={({ field }: { field: { value?: string; onChange: (value: string) => void; ref?: React.Ref<any> } }) => (
                 <FormItem>
                   <FormLabel>Base Unit of Measure</FormLabel>
                   <FormControl>
-                    <Select>
+                    <Select onValueChange={field.onChange} value={field.value || ""}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select UOM" />
                       </SelectTrigger>
@@ -577,7 +609,7 @@ export default function UserRequestForm({
                   <FormItem>
                     <FormLabel>Requested By - Name</FormLabel>
                     <FormControl>
-                      <Input readOnly className="p-3 w-full text-sm" />
+                      <Input {...field} readOnly className="p-3 w-full text-sm bg-gray-100" />
                     </FormControl>
                   </FormItem>
                 )}

@@ -283,7 +283,6 @@ const API_END_POINTS = {
   materialonboardingdashboard: `${url}/api/method/vms.APIs.requestor_master.get_requestor_master.get_requestor_statistics`,
   getMaterialOnboardingTableList: `${url}/api/method/vms.APIs.material_onboarding.get_material_onboarding.get_material_onboarding_list`,
   getRequestorMasterTableList: `${url}/api/method/vms.APIs.requestor_master.get_requestor_master.get_requestor_master_list`,
-  getMaterialOnboardingDetails: `${url}/api/method/vms.APIs.material_onboarding.get_material_onboarding_details`,
   // getAllMaterialDescriptionsAndCodes: `${url}/api/method/vms_app.APIs.material_onboarding.get_all_material_code.get_all_material_descriptions_and_codes`,
   createRequestorMaster: `${url}/api/method/vms.APIs.requestor_master.create_requestor_master.create_requestor_master`,
   updateRequestorMaster: `${url}/api/method/vms.APIs.requestor_master.create_requestor_master.update_requestor_master`,

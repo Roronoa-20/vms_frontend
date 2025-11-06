@@ -12,41 +12,39 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import VendorRegistrationSchemas from "@/src/schemas/vendorRegistrationSchema";
 import {
-  EmployeeDetail,
-  EmployeeAPIResponse,
+  EmployeeDetail, EmployeeAPIResponse, Company, Plant, division, industry, ClassType,
+  UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber
 } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface MastersData {
-  companyMaster: any[];
-  plantMaster: any[];
-  divisionMaster: any[];
-  industryMaster: any[];
-  uomMaster: any[];
-  mrpTypeMaster: any[];
-  valuationClassMaster: any[];
-  procurementTypeMaster: any[];
-  valuationCategoryMaster: any[];
-  materialGroupMaster: any[];
-  profitCenterMaster: any[];
-  priceControlMaster: any[];
-  availabilityCheckMaster: any[];
+  companyMaster: Company[];
+  plantMaster: Plant[];
+  divisionMaster: division[];
+  industryMaster: industry[];
+  uomMaster: UOMMaster[];
+  mrpTypeMaster: MRPType[];
+  valuationClassMaster: ValuationClass[];
+  procurementTypeMaster: procurementType[];
+  valuationCategoryMaster: ValuationCategory[];
+  materialGroupMaster: MaterialGroupMaster[];
+  profitCenterMaster: ProfitCenter[];
+  priceControlMaster: PriceControl[];
+  availabilityCheckMaster: AvailabilityCheck[];
   materialTypeMaster: any[];
-  mrpControllerMaster: any[];
-  storageLocationMaster: any[];
-  classTypeMaster: any[];
-  serialNumberMaster: any[];
-  inspectionTypeMaster: any[];
-  materialCategoryMaster: any[];
+  mrpControllerMaster: MRPController[];
+  storageLocationMaster: StorageLocation[];
+  classTypeMaster: ClassType[];
+  serialNumberMaster: SerialNumber[];
+  inspectionTypeMaster: InspectionType[];
+  materialCategoryMaster: MaterialCategory[];
+  MaterialOnboardinDetails: any[];
 }
 
 export default function MaterialRegistration() {
-  const form = useForm<any>({
-    resolver: zodResolver(VendorRegistrationSchemas),
-  });
+  const form = useForm<any>({ resolver: zodResolver(VendorRegistrationSchemas) });
 
   const [UserDetailsJSON, setUserDetailsJSON] = useState<any>(null);
-  const [EmployeeDetailsJSON, setEmployeeDetailsJSON] =
-    useState<EmployeeDetail | null>(null);
+  const [EmployeeDetailsJSON, setEmployeeDetailsJSON] = useState<EmployeeDetail | null>(null);
   const [companyName, setCompanyName] = useState<string | null>(null);
   const [AllMaterialCodes, setAllMaterialCodes] = useState<any>(null);
   const [materialRequestList, setMaterialRequestList] = useState<any[]>([]);
@@ -55,12 +53,11 @@ export default function MaterialRegistration() {
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const router = useRouter();
-  const token = Cookies.get("token");
+
 
   const sanitizeValue = (value: any): string =>
     value === undefined || value === "undefined" ? "" : value;
 
-  // 🧩 FETCH EMPLOYEE DETAILS
   useEffect(() => {
     const fetchEmployeeData = async () => {
       try {
@@ -92,11 +89,11 @@ export default function MaterialRegistration() {
     fetchEmployeeData();
   }, []);
 
-  // 🧩 FETCH ALL MASTERS
   useEffect(() => {
     const fetchAllMasters = async () => {
       try {
         const apiList = {
+          MaterialOnboardinDetails: API_END_POINTS.getMaterialOnboardingTableList,
           companyMaster: API_END_POINTS.getCompanyMaster,
           plantMaster: API_END_POINTS.getPlantMaster,
           divisionMaster: API_END_POINTS.getDivisionMaster,
@@ -144,7 +141,6 @@ export default function MaterialRegistration() {
     fetchAllMasters();
   }, []);
 
-  // 🧩 FETCH MATERIAL CODES
   useEffect(() => {
     const fetchMaterialCode = async () => {
       try {
@@ -153,7 +149,7 @@ export default function MaterialRegistration() {
             url: `${API_END_POINTS.MaterialCodeSearchApi}`,
             method: "GET",
           });
-        console.log("Mteirl code response--->",MaterialCodeRes)
+        console.log("Mateirl code response--->", MaterialCodeRes)
         if (MaterialCodeRes?.status === 200) {
           const MaterialCodeData = MaterialCodeRes?.data?.message?.data;
           setAllMaterialCodes(MaterialCodeData || []);
@@ -187,14 +183,66 @@ export default function MaterialRegistration() {
     serialNumberMaster: [],
     inspectionTypeMaster: [],
     materialCategoryMaster: [],
+    MaterialOnboardinDetails: [],
   });
 
   // 🧾 CREATE REQUESTOR MASTER
+  // const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  //   event.preventDefault();
+  //   setIsLoading(true);
+  //   try {
+  //     const formValues = form.getValues();
+  //     const finalMaterialRequestList =
+  //       materialRequestList.length > 0
+  //         ? materialRequestList
+  //         : [
+  //           {
+  //             material_name_description: formValues.material_name_description,
+  //             material_code_revised: formValues.material_code_revised,
+  //             material_company_code: materialCompanyCode,
+  //             material_type: formValues.material_type,
+  //             plant_name: formValues.plant_name,
+  //             material_category: formValues.material_category,
+  //             base_unit_of_measure: formValues.base_unit_of_measure,
+  //             comment_by_user: formValues.comment_by_user,
+  //             material_specifications: formValues.material_specifications,
+  //             is_revised_code_new: formValues.is_revised_code_new,
+  //           },
+  //         ];
+
+  //     const payload = new FormData();
+  //     Object.entries(formValues).forEach(([key, value]) => {
+  //       if (key !== "material_request")
+  //         payload.append(key, sanitizeValue(value));
+  //     });
+  //     payload.append("material_request", JSON.stringify(finalMaterialRequestList));
+  //     console.log("Payload on Submit----->", payload);
+
+  //     const res: AxiosResponse = await requestWrapper({
+  //       url: API_END_POINTS.createRequestorMaster,
+  //       method: "POST",
+  //       // headers: { Authorization: `token ${token}` },
+  //       data: payload,
+  //     });
+
+  //     console.log("Create success →", res.data);
+  //     setIsButtonDisabled(true);
+  //     setShowAlert(true);
+
+  //   } catch (err) {
+  //     console.error("Error creating material:", err);
+
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
     try {
       const formValues = form.getValues();
+      console.log("Form Values on Submit----->", formValues);
       const finalMaterialRequestList =
         materialRequestList.length > 0
           ? materialRequestList
@@ -204,37 +252,49 @@ export default function MaterialRegistration() {
               material_code_revised: formValues.material_code_revised,
               material_company_code: materialCompanyCode,
               material_type: formValues.material_type,
-              plant_name: formValues.plant_name,
+              plant: formValues.plant_name,
               material_category: formValues.material_category,
-              base_unit_of_measure: formValues.base_unit_of_measure,
+              unit_of_measure: formValues.base_unit_of_measure,
               comment_by_user: formValues.comment_by_user,
               material_specifications: formValues.material_specifications,
               is_revised_code_new: formValues.is_revised_code_new,
+              company_name: formValues.material_company_code,
             },
           ];
 
+      const requestorData = {
+        request_date: formValues.request_date,
+        requested_by: formValues.requested_by,
+        requestor_company: formValues.company,
+        department: formValues.department,
+        sub_department: formValues.sub_department,
+        hod: formValues.hod,
+        immediate_reporting_head: formValues.immediate_reporting_head,
+        contact_information_email: formValues.contact_information_email,
+        contact_information_phone: formValues.contact_information_phone,
+        requested_by_name: formValues.requested_by_name,
+        requested_by_place: formValues.requested_by_place,
+      };
+
       const payload = new FormData();
-      Object.entries(formValues).forEach(([key, value]) => {
-        if (key !== "material_request")
-          payload.append(key, sanitizeValue(value));
-      });
+      payload.append("requestor_data", JSON.stringify(requestorData));
       payload.append("material_request", JSON.stringify(finalMaterialRequestList));
-      console.log("Payload on Submit----->", payload);
+      payload.append("send_email", "true");
+
+      console.log("🚀 Payload on Submit →", Object.fromEntries(payload.entries()));
 
       const res: AxiosResponse = await requestWrapper({
         url: API_END_POINTS.createRequestorMaster,
         method: "POST",
-        headers: { Authorization: `token ${token}` },
         data: payload,
       });
 
-      console.log("Create success →", res.data);
+      console.log("✅ Create success →", res.data);
       setIsButtonDisabled(true);
       setShowAlert(true);
 
     } catch (err) {
-      console.error("Error creating material:", err);
-
+      console.error("❌ Error creating material:", err);
     } finally {
       setIsLoading(false);
     }
@@ -278,7 +338,7 @@ export default function MaterialRegistration() {
       const res: AxiosResponse = await requestWrapper({
         url: API_END_POINTS.updateRequestorMaster,
         method: "POST",
-        headers: { Authorization: `token ${token}` },
+        // headers: { Authorization: `token ${token}` },
         data: payload,
       });
 

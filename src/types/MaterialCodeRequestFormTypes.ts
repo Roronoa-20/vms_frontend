@@ -31,3 +31,172 @@ export type MaterialRegistrationFormData = {
   requestor_email: string;
   [key: string]: any;
 };
+
+export interface Plant {
+  name: string;
+  plant_code: string;
+  plant_name: string | null;
+  description: string | null;
+}
+
+export interface Company {
+  name: string;
+  company_code: string;
+  company_name: string;
+  description: string | null;
+}
+
+export interface MaterialGroupMaster {
+  name: string;
+  material_group_name: string;
+  material_group_description: string;
+}
+
+// UOM Master
+export interface UOMMaster {
+  name: string;
+  uom_code: string;
+  uom: string;
+  description: string | null;
+}
+
+export interface CostCenter {
+  name: string;
+  cost_center_code: string;
+  cost_center_name: string;
+  description: string;
+}
+
+// Profit Center
+export interface ProfitCenter {
+  name: string;
+  profit_center_code: string;
+  profit_center_name: string;
+  description: string;
+}
+
+// GL Account Number
+export interface GLAccountNumber {
+  name: string;
+  gl_account_code: string;
+  gl_account_name: string;
+  description: string;
+}
+
+// Material Code
+export interface MaterialCode {
+  name: string;
+  material_code: string;
+  material_name: string;
+  description: string;
+  material_description: string;
+  material_type: string;
+}
+
+export interface StorageLocation {
+  name: string;
+  storage_name: string;
+  storage_location_name: string;
+  storage_location: string;
+  description: string;
+  company: string;
+}
+
+export interface ValuationClass {
+  name: string;
+  valuation_class_code: string;
+  valuation_class_name: string;
+  description: string;
+}
+
+export interface MRPType {
+  name: string;
+  mrp_type_code: string;
+  mrp_type_name: string;
+  description: string;
+}
+
+export interface MaterialCodeResponse {
+  message: {
+    message: string;
+    data: MaterialCode[];
+  }
+}
+
+export interface division {
+  name: string;
+  division_code: string;
+  division_name: string;
+  description: string;
+}
+
+export interface industry {
+  name: string;
+  industry_code: string;
+  industry_name: string;
+  description: string;
+}
+
+export interface procurementType {
+  name: string;
+  procurement_type_code: string;
+  procurement_type_name: string;
+  description: string;
+}
+
+export interface ValuationCategory {
+  name: string;
+  valuation_category_code: string;
+  valuation_category_name: string;
+  description: string;
+}
+
+export interface MaterialCategory {
+  name: string;
+  material_category_code: string;
+  material_category_name: string;
+  description: string;
+}
+
+export interface MRPController {
+  name: string;
+  mrp_controller_code: string;
+  mrp_controller_name: string;
+  description: string;
+}
+
+export interface InspectionType {
+  name: string;
+  inspection_type_code: string;
+  inspection_type_name: string;
+  description: string;
+}
+
+export interface SerialNumber {
+  name: string;
+  serial_no_profile: string;
+  serialization_level: string;
+}
+
+export interface PriceControl {
+  name: string;
+  price_control_code: string;
+  description: string;
+  do_not_cost: string;
+}
+
+export interface AvailabilityCheck {
+  availability_check: string;
+  name: string;
+  description: string;
+}
+
+export interface ClassType {
+  class_type: string;
+  class_name: string;
+  description: string;
+}
+
+export interface MaterialType {
+  
+}

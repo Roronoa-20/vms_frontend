@@ -1,6 +1,7 @@
 import React from "react";
-import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle} from "@/components/ui/alert-dialog";
 import Link from "next/link";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter } from "@/components/ui/alert-dialog";
+import { CheckCircle2 } from "lucide-react";
 
 interface AlertBoxProps {
     content: string;
@@ -11,18 +12,20 @@ interface AlertBoxProps {
 const AlertBox: React.FC<AlertBoxProps> = ({ content, submit, url }) => {
     return (
         <AlertDialog open={submit}>
-            <AlertDialogContent>
+            <AlertDialogContent className="w-[410px] text-center p-6 rounded-2xl">
                 <AlertDialogHeader>
-                    <AlertDialogTitle>{content}</AlertDialogTitle>
-                    <AlertDialogDescription></AlertDialogDescription>
+                    <div className="flex flex-col items-center space-y-2">
+                        <CheckCircle2 className="text-green-600 w-10 h-10" />
+                        <AlertDialogTitle className="text-base font-medium">{content}</AlertDialogTitle>
+                    </div>
                 </AlertDialogHeader>
-                <AlertDialogFooter className={""}>
-                    <Link href={url}>
-                        <AlertDialogAction className="ml-24 bg-[#5291CD] text-[#FFFFFF] text[16px] leading-[19.36px] rounded-[29px] px-7 py-3">
-                            OK
-                        </AlertDialogAction>
-                    </Link>
-                </AlertDialogFooter>
+                <AlertDialogDescription></AlertDialogDescription>
+                <Link href={url}>
+                    <AlertDialogAction className=" bg-[#5291CD] text-white rounded-full px-5 py-2 text-sm">
+                        OK
+                    </AlertDialogAction>
+                </Link>
+                <AlertDialogFooter></AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
     );

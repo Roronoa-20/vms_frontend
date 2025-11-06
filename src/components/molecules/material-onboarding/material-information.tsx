@@ -17,23 +17,17 @@ interface MaterialInformationProps {
   advancedMasters: Record<string, any[]>;
   AllMaterialCodes: MaterialCode[];
   MaterialOnboardingDetails?: any;
-  EmployeeDetails?: any;
   companyName?: any;
 }
 
-export default function MaterialInformation({
-  form,
-  basicMasters,
-  advancedMasters,
-  AllMaterialCodes,
-  MaterialOnboardingDetails,
-  EmployeeDetails,
-  companyName,
-}: MaterialInformationProps) {
+export default function MaterialInformation({ form, basicMasters, advancedMasters, AllMaterialCodes, MaterialOnboardingDetails, companyName }: MaterialInformationProps) {
+
+  console.log("ALl Material Codes----->", AllMaterialCodes);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [materialSelectedFromList, setMaterialSelectedFromList] = useState(false);
   const [materialCodeAutoFetched, setMaterialCodeAutoFetched] = useState(false);
+  const [selectedMaterialType, setSelectedMaterialType] = useState("");
 
   // 🔍 Material description search logic
   const handleMaterialSearch = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -57,7 +51,6 @@ export default function MaterialInformation({
       setSearchResults([]);
       setShowSuggestions(false);
     }
-
     setMaterialSelectedFromList(false);
     setMaterialCodeAutoFetched(false);
   };
@@ -78,7 +71,6 @@ export default function MaterialInformation({
         form={form}
         masters={basicMasters}
         MaterialOnboardingDetails={MaterialOnboardingDetails}
-        EmployeeDetails={EmployeeDetails}
         companyName={companyName}
         handleMaterialSearch={handleMaterialSearch}
         handleMaterialSelect={handleMaterialSelect}
@@ -89,6 +81,7 @@ export default function MaterialInformation({
         setMaterialSelectedFromList={setMaterialSelectedFromList}
         materialCodeAutoFetched={materialCodeAutoFetched}
         setMaterialCodeAutoFetched={setMaterialCodeAutoFetched}
+        setSelectedMaterialType={setSelectedMaterialType}
       />
     </div>
   );

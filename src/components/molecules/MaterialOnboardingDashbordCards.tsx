@@ -20,7 +20,7 @@ const MaterialOnboardingCards = ({ cardData, companyDropdown }: Props) => {
   const { designation } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [allData, setAllData] = useState<MaterialRequestItem[]>([]);
-  const [activeTab, setActiveTab] = useState<string>("Total Request");
+  const [activeTab, setActiveTab] = useState<string>("Total Material Request");
 
   const fetchTableData = async (page: number = 1) => {
     setLoading(true);
@@ -46,10 +46,10 @@ const MaterialOnboardingCards = ({ cardData, companyDropdown }: Props) => {
       return [];
     }
 
-    if (tabName === "Approved Request") {
+    if (tabName === "Approved Material Request") {
       const filtered = allData.filter((d) => d.approval_status === APPROVED_STATUS);
       return filtered;
-    } else if (tabName === "Pending Request") {
+    } else if (tabName === "Pending Material Request") {
       const filtered = allData.filter((d) => d.approval_status !== APPROVED_STATUS);
       return filtered;
     }
