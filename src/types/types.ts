@@ -527,6 +527,7 @@ export type VendorOnboardingResponse = {
     document_details_tab: DocumentDetailsTab;
     payment_details_tab: PaymentDetailsTab;
     contact_details_tab: ContactDetails[];
+    product_details_tab:ProductDetailsTab[]
     manufacturing_details_tab: ManufacturingDetailsTab;
     employee_details_tab: EmployeeDetail[];
     machinery_details_tab: MachineryDetail[];
@@ -539,6 +540,15 @@ export type VendorOnboardingResponse = {
     validation_check: IvalidationChecks
   };
 };
+export type ProductDetailsTab = {
+  material_name:string,
+  critical:number,
+  "on-critical":number,
+  material_description:string,
+  annual_capacity:string,
+  hsnsac_code:string
+  
+}
 
 interface IvalidationChecks {
   accounts_team_undertaking: number;

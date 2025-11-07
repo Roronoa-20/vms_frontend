@@ -31,6 +31,7 @@ import { AuthProvider, useAuth } from "@/src/context/AuthContext";
 import InternationalDocumentDetails from "../templates/vendor-detail-form/InternationalDocumentDetails";
 import InternationalPaymentDetail from "../templates/vendor-detail-form/InternationalPaymentDetail";
 import InternationalCompanyAddress from "../templates/vendor-detail-form/InternationalCompanyAddress";
+import ProductDetail from "../templates/vendor-detail-form/ProductDetail";
 
 interface Props {
   vendor_onboarding: string;
@@ -115,9 +116,9 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
         : tabType == "Company Address" ? (
           <CompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab}/>
        ) 
-      //  : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
-      //     <InternationalDocumentDetails  ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
-      //   )
+       : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
+          <InternationalDocumentDetails  ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
+        )
          : tabType == "Document Detail" ? (
           <DocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
         ) 
@@ -128,7 +129,11 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
           <PaymentDetail ref_no={refno} company_name={OnboardingDetail?.company_details_tab?.company_name} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.payment_details_tab}/>
         ) : tabType?.includes("Contact Detail") ? (
           <ContactDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.contact_details_tab}/>
-        ) : tabType == "Manufacturing Detail" ? (
+        )
+        :tabType == "Product Detail"?(
+          <ProductDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.product_details_tab}/>
+        )
+        : tabType == "Manufacturing Detail" ? (
           <ManufacturingDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.manufacturing_details_tab} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} VendorType={OnboardingDetail?.company_details_tab?.vendor_types}/>
         ) : tabType == "Employee Detail" ? (
           <EmployeeDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.employee_details_tab}/>

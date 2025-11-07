@@ -110,7 +110,7 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
     });
     if (submitResponse?.status == 200)
       router.push(
-        `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
+        `/vendor-details-form?tabtype=Product%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
       );
   };
 
