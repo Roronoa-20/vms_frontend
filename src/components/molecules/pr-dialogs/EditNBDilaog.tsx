@@ -413,10 +413,10 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     return []
   }
   useEffect(() => {
-    if(plantCode){
+    if (plantCode) {
       fetchStoreLocationData();
     }
-  }, [plantCode,formData?.plant_head]);
+  }, [plantCode, formData?.plant_head]);
 
   useEffect(() => {
     if (plantCode) {
@@ -615,7 +615,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           (item) => item.name,
           (item) => `${item.uom_code} - ${item.uom}`
         )}
-
+        {renderInput('quantity_head', 'Quantity')}
         {/* {renderSelect(
           'cost_center_head',
           'Cost Center',
@@ -646,6 +646,86 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
         </div>
 
         <div className='w-full'>
+          <h1 className="text-[14px] font-normal text-[#626973] pb-1 flex items-center gap-1 ">
+            {"Select Material Code"}
+            {/* {error && <span className="text-red-600">*</span>} */}
+          </h1>
+          <SearchSelectComponent
+            setData={(value) => {
+              setMaterialCode(value ?? "");
+              const selectedMaterial = MaterialCodeDropdown?.find(
+                (item) => item.name === value
+              );
+              setFormData((prev) => ({
+                ...prev,
+                material_code_head: value ?? "",
+                profit_ctr_head: selectedMaterial?.profit_center ?? "",
+                valuation_area_head: selectedMaterial?.valuation_class ?? "",
+              }));
+            }}
+
+            data={materialCode ?? ""}
+            getLabel={(item) => item.material_code}
+            getValue={(item) => item?.name}
+            dropdown={MaterialCodeDropdown ? MaterialCodeDropdown : []}
+            searchApi={fetchMaterialCodeData}
+            setDropdown={setMaterialCodeDropdown}
+            placeholder='Select Material Code'
+          />
+          {renderError("material_code_head")}
+        </div>
+        {renderInput('profit_ctr_head', 'Profit Center')}
+        {renderInput('valuation_area_head', 'Valuation Area')}
+        {renderInput('main_asset_no_head', 'Main Asset No')}
+        {renderInput('asset_subnumber_head', 'Asset Subnumber')}
+
+        {/* {renderSelect(
+          'profit_ctr_head',
+          'Profit Center',
+          ProfitCenterDropdown,
+          (item) => item.name,
+          (item) => `${item.profit_center_code} - ${item.profit_center_name}`
+        )} */}
+        {/* {renderSelect(
+          'valuation_area_head',
+          'Valuation Area',
+          ValuationClassDropdown,
+          (item) => item.name,
+          (item) => `${item.valuation_class_code} - ${item.valuation_class_name}`
+        )} */}
+        {/* <div className='w-full'>
+          <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
+            {"Valuation Area"}
+          </h1>
+          <SearchSelectComponent
+            setData={(value) => {
+              setValuationArea(value ?? "");
+              setFormData(prev => ({ ...prev, valuation_area_head: value ?? "" }));
+            }}
+            data={ValuationArea ?? ""}
+            getLabel={(item) => `${item?.valuation_class_code} - ${item?.valuation_class_name}`}
+            getValue={(item) => item?.name}
+            dropdown={ValuationAreaDropdown ? ValuationAreaDropdown : []}
+            searchApi={fetchValuationAreaData}
+            setDropdown={setValuationAreaDropdown}
+            placeholder='Select Valuation Area'
+          />
+          {renderError("valuation_area_head")}
+        </div> */}
+
+        {renderInput('short_text_head', 'Description')}
+        {renderInput('price_of_purchase_requisition_head', 'Price Of Purchase Requisition')}
+
+        {/* {renderSelect(
+          'gl_account_number_head',
+          'GL Account Number',
+          GLAccountDropdwon,
+          (item) => item.name,
+          (item) => `${item.gl_account_code} - ${item.gl_account_name}`,
+          formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true : false
+        )} */}
+
+        <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
             {"GL Account Number"}
             {/* {error && <span className="text-red-600">*</span>} */}
@@ -665,83 +745,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
             disabled={formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true : false}
           />
           {renderError("gl_account_number_head")}
-        </div>
-
-        {renderInput('main_asset_no_head', 'Main Asset No')}
-        {renderInput('asset_subnumber_head', 'Asset Subnumber')}
-
-        {renderSelect(
-          'profit_ctr_head',
-          'Profit Center',
-          ProfitCenterDropdown,
-          (item) => item.name,
-          (item) => `${item.profit_center_code} - ${item.profit_center_name}`
-        )}
-
-        {renderInput('short_text_head', 'Description')}
-        {/* {renderInput('valuation_area_head', 'Valuation Area')} */}
-        {/* {renderSelect(
-          'valuation_area_head',
-          'Valuation Area',
-          ValuationClassDropdown,
-          (item) => item.name,
-          (item) => `${item.valuation_class_code} - ${item.valuation_class_name}`
-        )} */}
-        <div className='w-full'>
-          <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
-            {"Valuation Area"}
-            {/* {error && <span className="text-red-600">*</span>} */}
-          </h1>
-          <SearchSelectComponent
-            setData={(value) => {
-              setValuationArea(value ?? "");
-              setFormData(prev => ({ ...prev, valuation_area_head: value ?? "" }));
-            }}
-            data={ValuationArea ?? ""}
-            getLabel={(item) => `${item?.valuation_class_code} - ${item?.valuation_class_name}`}
-            getValue={(item) => item?.name}
-            dropdown={ValuationAreaDropdown ? ValuationAreaDropdown : []}
-            searchApi={fetchValuationAreaData}
-            setDropdown={setValuationAreaDropdown}
-            placeholder='Select Valuation Area'
-          />
-          {renderError("valuation_area_head")}
-        </div>
-
-
-        {renderInput('quantity_head', 'Quantity', 'number', { disabled: isPurchaseTeam })}
-        {renderInput('price_of_purchase_requisition_head', 'Price Of Purchase Requisition','text', { disabled: isPurchaseTeam })}
-
-        {/* {renderSelect(
-          'gl_account_number_head',
-          'GL Account Number',
-          GLAccountDropdwon,
-          (item) => item.name,
-          (item) => `${item.gl_account_code} - ${item.gl_account_name}`,
-          formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true : false
-        )} */}
-
-        
-
-        <div className='w-full'>
-          <h1 className="text-[14px] font-normal text-[#626973] pb-1 flex items-center gap-1 ">
-            {"Select Material Code"}
-            {/* {error && <span className="text-red-600">*</span>} */}
-          </h1>
-          <SearchSelectComponent
-            setData={(value) => {
-              setMaterialCode(value ?? "");
-              setFormData(prev => ({ ...prev, material_code_head: value ?? "" }));
-            }}
-            data={materialCode ?? ""}
-            getLabel={(item) => item.material_code}
-            getValue={(item) => item?.name}
-            dropdown={MaterialCodeDropdown ? MaterialCodeDropdown : []}
-            searchApi={fetchMaterialCodeData}
-            setDropdown={setMaterialCodeDropdown}
-            placeholder='Select Material Code'
-          />
-          {renderError("material_code_head")}
         </div>
       </div>
 
