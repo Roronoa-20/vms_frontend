@@ -149,7 +149,7 @@ const ManufacturingDetail = ({
 
   const handleBack = () => {
     router.push(
-      `/vendor-details-form?tabtype=Contact%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
+      `/vendor-details-form?tabtype=Product%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
     );
   };
 
@@ -315,7 +315,7 @@ const ManufacturingDetail = ({
           />
         </div>
       </div>
-      <h1 className="border-b-2 pb-1 sticky top-0 bg-white py-4 text-lg">
+      {/* <h1 className="border-b-2 pb-1 sticky top-0 bg-white py-4 text-lg">
         Products Details
       </h1>
       <div className="grid grid-cols-3 gap-4 p-1">
@@ -327,7 +327,7 @@ const ManufacturingDetail = ({
             placeholder=""
             value={
               ManufacturingDetail?.material_description ??
-              OnboardingDetail?.materials_supplied[0]?.material_description ??
+              OnboardingDetail?.materials_supplied?.[0]?.material_description ??
               ""
             }
             onChange={(e) => {
@@ -343,7 +343,7 @@ const ManufacturingDetail = ({
             placeholder=""
             value={
               ManufacturingDetail?.hsnsac_code ??
-              OnboardingDetail?.materials_supplied[0]?.hsnsac_code ??
+              OnboardingDetail?.materials_supplied?.[0]?.hsnsac_code ??
               ""
             }
             onChange={(e) => {
@@ -359,7 +359,7 @@ const ManufacturingDetail = ({
             placeholder=""
             value={
               ManufacturingDetail?.annual_capacity ??
-              OnboardingDetail?.materials_supplied[0]?.annual_capacity ??
+              OnboardingDetail?.materials_supplied?.[0]?.annual_capacity ??
               ""
             }
             onChange={(e) => {
@@ -378,9 +378,9 @@ const ManufacturingDetail = ({
               onChange={(e) => {
                 setManufacturedFile(e.target.files);
               }}
-            />
+            /> */}
             {/* file preview */}
-            {isManufacturedFilePreview &&
+            {/* {isManufacturedFilePreview &&
               !manufacturedFile &&
               OnboardingDetail?.materials_supplied?.[0]?.material_images
                 ?.url && (
@@ -420,8 +420,8 @@ const ManufacturingDetail = ({
             Add
           </Button>
         </div>
-      </div>
-      {materialsTable?.length > 0 && (
+      </div> */}
+      {/* {materialsTable?.length > 0 && (
         <div className="shadow- bg-[#f6f6f7] p-4 mb-4 mt-4 rounded-2xl">
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
@@ -461,7 +461,7 @@ const ManufacturingDetail = ({
             </Table>
           </div>
         </div>
-      )}
+      )} */}
       <div className="grid grid-cols-2 gap-3 p-2">
         <div className="col-span-1">
           <h1 className="text-[16px] font-normal text-[#626973] pb-2">
