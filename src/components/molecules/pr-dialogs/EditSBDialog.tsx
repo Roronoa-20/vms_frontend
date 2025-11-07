@@ -17,6 +17,8 @@ import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMas
 import { today } from '../../templates/RFQTemplates/LogisticsImportRFQFormFields';
 import SearchSelectComponent from '../../common/SelectSearchComponent';
 import PopUp from '../PopUp';
+import { useAuth } from '@/src/context/AuthContext';
+
 interface DropdownData {
   purchase_organisation: PurchaseOrganisation[];
   account_assignment_category: AccountAssignmentCategory[];
@@ -74,6 +76,10 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
   const [GLAccountDropdown, setGLAccountDropdown] = useState<GLAccountNumber[]>()
   const [GLAccount, setGLAccount] = useState<string>("");
   const disabledFields = ["item_number_of_purchase_requisition_head", "purchase_requisition_date_head", "purchase_group_head"];
+  const { designation } = useAuth();
+  const isPurchaseTeam = designation === "Purchase Team";
+
+
   useEffect(() => {
     if (isOpen) {
       setFormData(defaultData || {});
@@ -84,7 +90,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
   console.log(plantCode, "plantCode in edit dialog")
   useEffect(() => {
     if (defaultData?.plant_head) {
-      setPlantCode(defaultData?.plant_head ? defaultData?.plant_head :"");
+      setPlantCode(defaultData?.plant_head ? defaultData?.plant_head : "");
     }
     if (defaultData?.store_location_head) {
       setStoreLocation(defaultData?.store_location_head);
@@ -160,7 +166,7 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     `w-full border p-2 rounded-md ${errors[field] ? "border-red-600" : "border-neutral-200"
     }`;
 
-  const renderLabel = (label: string, field: string) => (
+  const renderLabel = (label: string, field: string,) => (
     <h1 className="text-[12px] font-normal text-[#626973] pb-3 flex items-center gap-1">
       {label}
       {errors[field] && <span className="text-red-600">*</span>}
@@ -361,33 +367,33 @@ const EditSBItemModal: React.FC<EditItemModalProps> = ({
     fetchStoreLocationData();
   }, [plantCode]);
 
-useEffect(() => {
-  if (plantCode) {
-    fetchPlantCodeData(plantCode);
-  }
-  if (GLAccount) {
-    fetchGLNumberData(GLAccount);
-  }
-  if (CostCenter) {
-    fetchCostCenterData(CostCenter);
-  }
-  if (ValuationArea) {
-    fetchValuationAreaData(ValuationArea);
-  }
-  if (MaterialGroup) {
-    fetchMaterialGroupData(MaterialGroup);
-  }
-  if (storeLocation) {
-    fetchStoreLocationData(storeLocation);
-  }
-}, [
-  plantCode,
-  GLAccount,
-  CostCenter,
-  ValuationArea,
-  MaterialGroup,
-  storeLocation,
-]);
+  useEffect(() => {
+    if (plantCode) {
+      fetchPlantCodeData(plantCode);
+    }
+    if (GLAccount) {
+      fetchGLNumberData(GLAccount);
+    }
+    if (CostCenter) {
+      fetchCostCenterData(CostCenter);
+    }
+    if (ValuationArea) {
+      fetchValuationAreaData(ValuationArea);
+    }
+    if (MaterialGroup) {
+      fetchMaterialGroupData(MaterialGroup);
+    }
+    if (storeLocation) {
+      fetchStoreLocationData(storeLocation);
+    }
+  }, [
+    plantCode,
+    GLAccount,
+    CostCenter,
+    ValuationArea,
+    MaterialGroup,
+    storeLocation,
+  ]);
 
   const handleSubmit = async () => {
     console.log(errors, "errors before submit")
@@ -425,6 +431,17 @@ useEffect(() => {
       <div className="grid grid-cols-3 gap-6 p-5">
         {/* Purchase Requisition Date */}
         <div className="col-span-1">
+          {renderLabel('Item Number of Purchase Requisition', 'item_number_of_purchase_requisition_head')}
+          <Input
+            name="item_number_of_purchase_requisition_head"
+            type="text"
+            className={getInputClass("item_number_of_purchase_requisition_head")}
+            value={formData.item_number_of_purchase_requisition_head || ""}
+            onChange={handleFieldChange}
+            disabled={disabledFields.includes("item_number_of_purchase_requisition_head")}
+          />
+        </div>
+        <div className="col-span-1">
           {renderLabel("Purchase Requisition Date", "purchase_requisition_date_head")}
           <Input
             name="purchase_requisition_date_head"
@@ -459,6 +476,28 @@ useEffect(() => {
           </Select>
           {renderError("purchase_group_head")}
         </div>
+        {/* Purchase Organisation */}
+        <div className="col-span-1">
+          {renderLabel("Purchase Organisation", "purchase_organisation_head")}
+          <Select
+            value={formData.purchase_organisation_head || ""}
+            onValueChange={val => handleSelectChange(val, "purchase_organisation_head")}
+          >
+            <SelectTrigger className={getInputClass("purchase_organisation_head")}>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {PurchaseOrgDropdown?.map((item, i) => (
+                  <SelectItem key={i} value={item.name}>
+                    {item.purchase_organization_code} - {item.purchase_organization_name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          {renderError("purchase_organisation_head")}
+        </div>
         {/* Plant Code */}
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
@@ -481,29 +520,6 @@ useEffect(() => {
             placeholder='Select Plant Code'
           />
           {renderError("plant_head")}
-        </div>
-
-        {/* Account Assignment Category */}
-        <div className="col-span-1">
-          {renderLabel("Account Assignment Category", "account_assignment_category_head")}
-          <Select
-            value={formData.account_assignment_category_head || ""}
-            onValueChange={val => handleSelectChange(val, "account_assignment_category_head")}
-          >
-            <SelectTrigger className={getInputClass("account_assignment_category_head")}>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {accountAssigmentDropdown?.map((item, i) => (
-                  <SelectItem key={i} value={item.account_assignment_category_code}>
-                    {item.account_assignment_category_code} - {item.account_assignment_category_name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          {renderError("account_assignment_category_head")}
         </div>
 
         {/* Store Location */}
@@ -548,34 +564,28 @@ useEffect(() => {
           />
           {renderError("store_location_head")}
         </div>
-        {/* Delivery Date */}
+        {/* Account Assignment Category */}
         <div className="col-span-1">
-          {renderLabel("Delivery Date", "delivery_date_head")}
-          <Input
-            name="delivery_date_head"
-            type="date"
-            className={getInputClass("delivery_date_head")}
-            value={formData.delivery_date_head || ""}
-            onChange={handleFieldChange}
-            disabled={disabledFields.includes("delivery_date_head")}
-          />
-          {renderError("delivery_date_head")}
+          {renderLabel("Account Assignment Category", "account_assignment_category_head")}
+          <Select
+            value={formData.account_assignment_category_head || ""}
+            onValueChange={val => handleSelectChange(val, "account_assignment_category_head")}
+          >
+            <SelectTrigger className={getInputClass("account_assignment_category_head")}>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {accountAssigmentDropdown?.map((item, i) => (
+                  <SelectItem key={i} value={item.account_assignment_category_code}>
+                    {item.account_assignment_category_code} - {item.account_assignment_category_name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          {renderError("account_assignment_category_head")}
         </div>
-
-        {/* C/ Delivery Date */}
-        <div className="col-span-1">
-          {renderLabel("C/O Delivery Date", "c_delivery_date_head")}
-          <Input
-            name="c_delivery_date_head"
-            type="date"
-            className={getInputClass("c_delivery_date_head")}
-            value={formData.c_delivery_date_head || ""}
-            onChange={handleFieldChange}
-            disabled={disabledFields.includes("c_delivery_date_head")}
-          />
-          {renderError("c_delivery_date_head")}
-        </div>
-
         {/* Item Category */}
         <div className="col-span-1">
           {renderLabel("Item Category", "item_category_head")}
@@ -598,6 +608,83 @@ useEffect(() => {
             </SelectContent>
           </Select>
           {renderError("item_category_head")}
+        </div>
+
+        {/* Delivery Date */}
+        <div className="col-span-1">
+          {renderLabel("Delivery Date", "delivery_date_head")}
+          <Input
+            name="delivery_date_head"
+            type="date"
+            className={getInputClass("delivery_date_head")}
+            value={formData.delivery_date_head || ""}
+            onChange={handleFieldChange}
+            disabled={isPurchaseTeam}
+          />
+          {renderError("delivery_date_head")}
+        </div>
+
+        {/* C/ Delivery Date */}
+        <div className="col-span-1">
+          {renderLabel("C/O Delivery Date", "c_delivery_date_head")}
+          <Input
+            name="c_delivery_date_head"
+            type="date"
+            className={getInputClass("c_delivery_date_head")}
+            value={formData.c_delivery_date_head || ""}
+            onChange={handleFieldChange}
+            disabled={disabledFields.includes("c_delivery_date_head")}
+          />
+          {renderError("c_delivery_date_head")}
+        </div>
+        {/* Quantity */}
+        <div className="col-span-1">
+          {renderLabel("Quantity", "quantity_head")}
+          <Input
+            name="quantity_head"
+            type="number"
+            className={getInputClass("quantity_head")}
+            value={formData.quantity_head || ""}
+            onChange={handleFieldChange}
+            disabled={isPurchaseTeam}
+
+          />
+          {renderError("quantity_head")}
+        </div>
+        {/* UOM */}
+        <div className="col-span-1">
+          {renderLabel("UOM", "uom_head")}
+          <Select
+            value={formData.uom_head || ""}
+            onValueChange={val => handleSelectChange(val, "uom_head")}
+          >
+            <SelectTrigger className={getInputClass("uom_head")}>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {Dropdown?.uom_master?.map((item, i) => (
+                  <SelectItem key={i} value={item.uom_code}>
+                    {item.uom_code} - {item.uom}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          {renderError("uom_head")}
+        </div>
+        {/* Short Text */}
+        <div className="col-span-1">
+          {renderLabel("Short Text", "short_text_head")}
+          <Input
+            name="short_text_head"
+            type="text"
+            className={getInputClass("short_text_head")}
+            value={formData.short_text_head || ""}
+            onChange={handleFieldChange}
+            disabled={disabledFields.includes("short_text_head")}
+          />
+          {renderError("short_text_head")}
         </div>
 
         {/* Material Group */}
@@ -642,72 +729,6 @@ useEffect(() => {
           />
           {renderError("material_group_head")}
         </div>
-        {/* UOM */}
-        <div className="col-span-1">
-          {renderLabel("UOM", "uom_head")}
-          <Select
-            value={formData.uom_head || ""}
-            onValueChange={val => handleSelectChange(val, "uom_head")}
-          >
-            <SelectTrigger className={getInputClass("uom_head")}>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {Dropdown?.uom_master?.map((item, i) => (
-                  <SelectItem key={i} value={item.uom_code}>
-                    {item.uom_code} - {item.uom}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          {renderError("uom_head")}
-        </div>
-
-        {/* Cost Center */}
-
-        {/* <div className="col-span-1">
-          {renderLabel("Cost Center", "cost_center_head")}
-          <Select
-            value={formData.cost_center_head || ""}
-            onValueChange={val => handleSelectChange(val, "cost_center_head")}
-          >
-            <SelectTrigger className={getInputClass("cost_center_head")}>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {CostCenterDropdown?.map((item, i) => (
-                  <SelectItem key={i} value={item.name}>
-                    {item.cost_center_code} - {item.cost_center_name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          {renderError("cost_center_head")}
-        </div> */}
-        <div className='w-full'>
-          <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
-            {"Cost Center"}
-            {/* {error && <span className="text-red-600">*</span>} */}
-          </h1>
-          <SearchSelectComponent
-            setData={(value) => {
-              setCostCenter(value ?? "");
-              setFormData(prev => ({ ...prev, cost_center_head: value ?? "" }));
-            }}
-            data={CostCenter ?? ""}
-            getLabel={(item) => `${item?.cost_center_code} - ${item?.cost_center_name}`}
-            getValue={(item) => item?.name}
-            dropdown={CostCenterDropdown ? CostCenterDropdown : []}
-            searchApi={fetchCostCenterData}
-            setDropdown={setCostCenterDropdown}
-            placeholder='Select Cost Center'
-          />
-          {renderError("cost_center_head")}
-        </div>
         {/* Valuation Area */}
         {/* <div className="col-span-1">
           {renderLabel("Valuation Area", "valuation_area_head")}
@@ -750,55 +771,48 @@ useEffect(() => {
           />
           {renderError("valuation_area_head")}
         </div>
-        {/* Purchase Organisation */}
-        <div className="col-span-1">
-          {renderLabel("Purchase Organisation", "purchase_organisation_head")}
+        {/* Cost Center */}
+
+        {/* <div className="col-span-1">
+          {renderLabel("Cost Center", "cost_center_head")}
           <Select
-            value={formData.purchase_organisation_head || ""}
-            onValueChange={val => handleSelectChange(val, "purchase_organisation_head")}
+            value={formData.cost_center_head || ""}
+            onValueChange={val => handleSelectChange(val, "cost_center_head")}
           >
-            <SelectTrigger className={getInputClass("purchase_organisation_head")}>
+            <SelectTrigger className={getInputClass("cost_center_head")}>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {PurchaseOrgDropdown?.map((item, i) => (
+                {CostCenterDropdown?.map((item, i) => (
                   <SelectItem key={i} value={item.name}>
-                    {item.purchase_organization_code} - {item.purchase_organization_name}
+                    {item.cost_center_code} - {item.cost_center_name}
                   </SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
           </Select>
-          {renderError("purchase_organisation_head")}
-        </div>
-
-        {/* Short Text */}
-        <div className="col-span-1">
-          {renderLabel("Short Text", "short_text_head")}
-          <Input
-            name="short_text_head"
-            type="text"
-            className={getInputClass("short_text_head")}
-            value={formData.short_text_head || ""}
-            onChange={handleFieldChange}
-            disabled={disabledFields.includes("short_text_head")}
+          {renderError("cost_center_head")}
+        </div> */}
+        <div className='w-full'>
+          <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
+            {"Cost Center"}
+            {/* {error && <span className="text-red-600">*</span>} */}
+          </h1>
+          <SearchSelectComponent
+            setData={(value) => {
+              setCostCenter(value ?? "");
+              setFormData(prev => ({ ...prev, cost_center_head: value ?? "" }));
+            }}
+            data={CostCenter ?? ""}
+            getLabel={(item) => `${item?.cost_center_code} - ${item?.cost_center_name}`}
+            getValue={(item) => item?.name}
+            dropdown={CostCenterDropdown ? CostCenterDropdown : []}
+            searchApi={fetchCostCenterData}
+            setDropdown={setCostCenterDropdown}
+            placeholder='Select Cost Center'
           />
-          {renderError("short_text_head")}
-        </div>
-
-        {/* Quantity */}
-        <div className="col-span-1">
-          {renderLabel("Quantity", "quantity_head")}
-          <Input
-            name="quantity_head"
-            type="number"
-            className={getInputClass("quantity_head")}
-            value={formData.quantity_head || ""}
-            onChange={handleFieldChange}
-            disabled={disabledFields.includes("quantity_head")}
-          />
-          {renderError("quantity_head")}
+          {renderError("cost_center_head")}
         </div>
         {/* GL Account */}
         {/* <div className="col-span-1">

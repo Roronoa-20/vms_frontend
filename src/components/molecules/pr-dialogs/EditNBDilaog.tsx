@@ -462,6 +462,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       {renderError(name)}
     </div>
   );
+  
   const renderSelect = <T,>(
     name: string,
     label: string,
@@ -535,20 +536,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           />
           {renderError("plant_head")}
         </div>
-        {renderSelect(
-          'account_assignment_category_head',
-          'Account Assignment Category',
-          accountAssigmentDropdown,
-          (item) => item.name,
-          (item) => `${item.account_assignment_category_code} - ${item.account_assignment_category_name}`
-        )}
-        {/* {renderSelect(
-          'store_location_head',
-          'Store Location',
-          StorageLocationDropdown,
-          (item) => item.name,
-          (item) => `${item.storage_name}`
-        )} */}
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
             {"Select Store Location"}
@@ -569,24 +556,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           />
           {renderError("store_location_head")}
         </div>
-
-        {renderInput('delivery_date_head', 'Delivery Date', 'date')}
-        {renderSelect(
-          'item_category_head',
-          'Item Category',
-          itemCategoryDropdown,
-          (item) => item.name,
-          (item) => `${item.item_code} - ${item.item_name}`,
-          itemCategoryDropdown?.length > 0 ? false : true
-        )}
-        {/* 
-        {renderSelect(
-          'material_group_head',
-          'Material Group',
-          MaterialGroupDropdown,
-          (item) => item.name,
-          (item) => `${item.material_group_name} - ${item.material_group_description}`
-        )} */}
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
             {"Material Group"}
@@ -607,6 +576,37 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           />
           {renderError("material_group_head")}
         </div>
+        {renderSelect(
+          'account_assignment_category_head',
+          'Account Assignment Category',
+          accountAssigmentDropdown,
+          (item) => item.name,
+          (item) => `${item.account_assignment_category_code} - ${item.account_assignment_category_name}`
+        )}
+        {/* {renderSelect(
+          'store_location_head',
+          'Store Location',
+          StorageLocationDropdown,
+          (item) => item.name,
+          (item) => `${item.storage_name}`
+        )} */}
+        {renderSelect(
+          'item_category_head',
+          'Item Category',
+          itemCategoryDropdown,
+          (item) => item.name,
+          (item) => `${item.item_code} - ${item.item_name}`,
+          itemCategoryDropdown?.length > 0 ? false : true
+        )}
+        {/* 
+        {renderSelect(
+          'material_group_head',
+          'Material Group',
+          MaterialGroupDropdown,
+          (item) => item.name,
+          (item) => `${item.material_group_name} - ${item.material_group_description}`
+        )} */}
+        
 
         {renderSelect(
           'uom_head',
@@ -615,7 +615,10 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           (item) => item.name,
           (item) => `${item.uom_code} - ${item.uom}`
         )}
-        {renderInput('quantity_head', 'Quantity')}
+        {renderInput('quantity_head', 'Quantity','number', { disabled: isPurchaseTeam})}
+        {renderInput('delivery_date_head', 'Delivery Date', 'date', { disabled: isPurchaseTeam})}
+        {renderInput('short_text_head', 'Description')}
+        {renderInput('price_of_purchase_requisition_head', 'Price Of Purchase Requisition', 'number', { disabled: isPurchaseTeam})}
         {/* {renderSelect(
           'cost_center_head',
           'Cost Center',
@@ -624,26 +627,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           (item) => `${item.cost_center_code} - ${item.cost_center_name}`,
           formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true : false
         )} */}
-        <div className='w-full'>
-          <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
-            {"Cost Center"}
-            {/* {error && <span className="text-red-600">*</span>} */}
-          </h1>
-          <SearchSelectComponent
-            setData={(value) => {
-              setCostCenter(value ?? "");
-              setFormData(prev => ({ ...prev, cost_center_head: value ?? "" }));
-            }}
-            data={CostCenter ?? ""}
-            getLabel={(item) => `${item?.cost_center_code} - ${item?.cost_center_name}`}
-            getValue={(item) => item?.name}
-            dropdown={CostCenterDropdown ? CostCenterDropdown : []}
-            searchApi={fetchCostCenterData}
-            setDropdown={setCostCenterDropdown}
-            placeholder='Select Cost Center'
-          />
-          {renderError("cost_center_head")}
-        </div>
 
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#626973] pb-1 flex items-center gap-1 ">
@@ -678,6 +661,26 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
         {renderInput('valuation_area_head', 'Valuation Area')}
         {renderInput('main_asset_no_head', 'Main Asset No')}
         {renderInput('asset_subnumber_head', 'Asset Subnumber')}
+        <div className='w-full'>
+          <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
+            {"Cost Center"}
+            {/* {error && <span className="text-red-600">*</span>} */}
+          </h1>
+          <SearchSelectComponent
+            setData={(value) => {
+              setCostCenter(value ?? "");
+              setFormData(prev => ({ ...prev, cost_center_head: value ?? "" }));
+            }}
+            data={CostCenter ?? ""}
+            getLabel={(item) => `${item?.cost_center_code} - ${item?.cost_center_name}`}
+            getValue={(item) => item?.name}
+            dropdown={CostCenterDropdown ? CostCenterDropdown : []}
+            searchApi={fetchCostCenterData}
+            setDropdown={setCostCenterDropdown}
+            placeholder='Select Cost Center'
+          />
+          {renderError("cost_center_head")}
+        </div>
 
         {/* {renderSelect(
           'profit_ctr_head',
@@ -712,10 +715,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           />
           {renderError("valuation_area_head")}
         </div> */}
-
-        {renderInput('short_text_head', 'Description')}
-        {renderInput('price_of_purchase_requisition_head', 'Price Of Purchase Requisition')}
-
         {/* {renderSelect(
           'gl_account_number_head',
           'GL Account Number',
