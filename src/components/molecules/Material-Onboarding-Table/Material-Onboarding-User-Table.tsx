@@ -133,7 +133,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
                                 </TableCell>
                                 <TableCell className="text-center">
                                     <Link
-                                        href={`/new-material-code-request-form?name=${encodeURIComponent(item.requestor_ref_no)}&material_name=${encodeURIComponent(item.child_name)}`}
+                                        href={`/material-code-request-form?name=${encodeURIComponent(item.requestor_ref_no)}&material_name=${encodeURIComponent(item.child_name)}`}
                                     >
                                         <Button className="bg-[#5291CD] rounded-[16px] hover:bg-white hover:text-black">View</Button>
                                     </Link>

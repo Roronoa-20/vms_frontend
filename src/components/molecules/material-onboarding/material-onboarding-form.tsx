@@ -6,33 +6,16 @@ import MaterialInformation from "@/src/components/molecules/material-onboarding/
 import { MaterialRegistrationFormData } from "@/src/types/MaterialCodeRequestFormTypes";
 import { MaterialCode } from '@/src/types/PurchaseRequestType';
 import AlertBox from "../../common/vendor-onboarding-alertbox";
+import { EmployeeDetail, EmployeeAPIResponse, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, MaterialType } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface DropdownData {
     material_code: MaterialCode[];
 }
 
 interface MastersData {
-    companyMaster: any[];
-    plantMaster: any[];
-    divisionMaster: any[];
-    industryMaster: any[];
-    uomMaster: any[];
-    mrpTypeMaster: any[];
-    valuationClassMaster: any[];
-    procurementTypeMaster: any[];
-    valuationCategoryMaster: any[];
-    materialGroupMaster: any[];
-    profitCenterMaster: any[];
-    priceControlMaster: any[];
-    availabilityCheckMaster: any[];
-    materialTypeMaster: any[];
-    mrpControllerMaster: any[];
-    storageLocationMaster: any[];
-    classTypeMaster: any[];
-    serialNumberMaster: any[];
-    inspectionTypeMaster: any[];
-    materialCategoryMaster: any[];
-    MaterialOnboardinDetails: any[];
+    companyMaster: Company[];
+    uomMaster: UOMMaster[];
+    materialCategoryMaster: MaterialCategory[];
 }
 
 interface MaterialOnboardingFormProps {
@@ -40,64 +23,35 @@ interface MaterialOnboardingFormProps {
     onCancel: (e: React.MouseEvent<HTMLButtonElement>) => void;
     onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
     onUpdate: (e: React.MouseEvent<HTMLButtonElement>) => void;
-    UserDetailsJSON: any;
-    EmployeeDetailsJSON: any;
     masters: MastersData;
-    AllMaterialCodes: MaterialCode[];
     showAlert: any;
     isLoading: any;
-    isButtonDisabled: any
+    isButtonDisabled: any;
+    materialRequestList: MaterialRegistrationFormData;
+    EmployeeDetailsJSON: EmployeeDetail | null;
 }
 
-const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, onCancel, onSubmit, onUpdate, UserDetailsJSON, EmployeeDetailsJSON, masters, AllMaterialCodes, isLoading, showAlert }) => {
-    console.log("Masters----->", masters);
-
-    const MaterialOnboarding = {
-        ...masters.MaterialOnboardinDetails[0],
-    }
+const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, onCancel, onSubmit, onUpdate, materialRequestList, masters, isLoading, showAlert, EmployeeDetailsJSON }) => {
 
     const basicMasters = {
         companyMaster: masters.companyMaster,
-        plantMaster: masters.plantMaster,
         materialCategoryMaster: masters.materialCategoryMaster,
-        materialTypeMaster: masters.materialTypeMaster,
         uomMaster: masters.uomMaster,
     };
-
-    const advancedMasters = {
-        mrpTypeMaster: masters.mrpTypeMaster,
-        valuationClassMaster: masters.valuationClassMaster,
-        procurementTypeMaster: masters.procurementTypeMaster,
-        valuationCategoryMaster: masters.valuationCategoryMaster,
-        materialGroupMaster: masters.materialGroupMaster,
-        profitCenterMaster: masters.profitCenterMaster,
-        priceControlMaster: masters.priceControlMaster,
-        availabilityCheckMaster: masters.availabilityCheckMaster,
-        mrpControllerMaster: masters.mrpControllerMaster,
-        storageLocationMaster: masters.storageLocationMaster,
-        classTypeMaster: masters.classTypeMaster,
-        serialNumberMaster: masters.serialNumberMaster,
-        inspectionTypeMaster: masters.inspectionTypeMaster,
-        divisionMaster: masters.divisionMaster,
-        industryMaster: masters.industryMaster,
-    };
-
-    console.log("MaterialOnboarding Details----->", MaterialOnboarding);    
 
     return (
         <form onSubmit={onSubmit} className="bg-white p-4 rounded shadow space-y-4">
             <div className="space-y-1">
                 <RequestorInformation
                     form={form}
-                    UserDetails={UserDetailsJSON}
-                    EmployeeDetails={EmployeeDetailsJSON}
+                    MaterialOnboarding={materialRequestList}
+                    EmployeeDetails={EmployeeDetailsJSON || {} as EmployeeDetail}
                 />
 
                 <MaterialInformation
                     form={form}
                     basicMasters={basicMasters}
-                    advancedMasters={advancedMasters}
-                    AllMaterialCodes={AllMaterialCodes}
+                    MaterialOnboarding={materialRequestList}
                 />
             </div>
 
@@ -110,8 +64,8 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, o
                     Cancel
                 </Button>
 
-                {/* {(MaterialOnboarding?.approval_status === "" ||
-                    MaterialOnboarding?.approval_status === undefined) && ( */}
+                {(materialRequestList?.approval_status === "" ||
+                    materialRequestList?.approval_status === undefined) && (
                         <Button
                             variant="nextbtn"
                             size="nextbtnsize"
@@ -119,9 +73,9 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, o
                         >
                             {isLoading ? "Processing..." : "Submit"}
                         </Button>
-                    {/* )} */}
+                    )}
 
-                {MaterialOnboarding?.approval_status === "Re-Opened by CP" && (
+                {materialRequestList?.approval_status === "Re-Opened by CP" && (
                     <Button
                         variant="nextbtn"
                         size="nextbtnsize"

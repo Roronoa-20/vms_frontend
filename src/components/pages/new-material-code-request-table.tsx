@@ -115,7 +115,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
         {/* Left side: Button */}
         <div className="flex-shrink-0">
           <a
-            href="/new-material-code-request-form"
+            href="/material-code-request-form"
             rel="noopener noreferrer"
             className="bg-[#7298e5] text-white text-sm font-medium px-4 py-2 rounded-[24px] hover:bg-[#003b91] transition duration-200 inline-flex items-center"
           >
@@ -208,7 +208,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
                   </TableCell>
                   <TableCell className="text-center">
                     <Link
-                      href={`/new-material-code-request-form?name=${encodeURIComponent(
+                      href={`/material-code-request-form?name=${encodeURIComponent(
                         item.requestor_ref_no
                       )}&material_name=${encodeURIComponent(item.child_name)}`}
                       className="inline-block"

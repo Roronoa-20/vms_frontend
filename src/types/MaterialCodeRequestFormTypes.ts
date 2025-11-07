@@ -1,3 +1,5 @@
+import { string } from "zod";
+
 export interface EmployeeDetail {
   name: string;
   employee_code: string;
@@ -12,6 +14,9 @@ export interface EmployeeDetail {
   branch?: string | null;
   team?: string | null;
   cell_number?: string | null;
+  reports_to?: string | null;
+  head_of_department: string | null;
+  company?: Company[];
 }
 
 export interface EmployeeAPIResponse {
@@ -20,7 +25,6 @@ export interface EmployeeAPIResponse {
     data: EmployeeDetail;
   }
 }
-
 
 export type MaterialRegistrationFormData = {
   material_name: string;
@@ -32,11 +36,26 @@ export type MaterialRegistrationFormData = {
   [key: string]: any;
 };
 
+export type MaterialSafePrefillData = {
+  material_company_code: string;
+  material_category: string;
+  base_unit_of_measure: string;
+  plant_name: string;
+  material_type: string;
+  material_name_description: string;
+  material_code_revised: string;
+  material_specifications: string;
+  comment_by_user: string;
+  requested_by_name: string;
+  requested_by_place: string;
+}
+
 export interface Plant {
   name: string;
   plant_code: string;
   plant_name: string | null;
   description: string | null;
+  company: string;
 }
 
 export interface Company {
@@ -198,5 +217,26 @@ export interface ClassType {
 }
 
 export interface MaterialType {
-  
+  name: string; // e.g. "ZCAP - Capital Mat-Non Valuated"
+  material_type_name: string; // same as name, but keeping both for consistency
+  description: string; // e.g. "Capital Mat-Non Valuated"
+  material_category_type: string; // e.g. "F"
+  plant_code: string; // e.g. "9100 - HEALTH CARE"
+  multiple_company: {
+    company: string;
+    company_name: string;
+  }[];
+  storage_location_table: {
+    storage_location: string;
+    storage_name: string;
+  }[];
+  valuation_and_profit: {
+    company: string; // e.g. "9000"
+    division: string; // e.g. "AI - Arthroscopy - Implan - 9000"
+    division_name: string; // e.g. "AI - Arthroscopy - Implan"
+    profit_center: string; // e.g. "9151"
+    profit_center_description: string; // e.g. "ARTHROSCOPY IMPLANT"
+    valuation_class: string; // e.g. "GM91 - 9000"
+    valuation_class_description: string; // e.g. "General Material"
+  }[];
 }

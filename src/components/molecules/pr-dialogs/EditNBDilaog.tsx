@@ -17,6 +17,7 @@ import { today } from '../../templates/RFQTemplates/LogisticsImportRFQFormFields
 import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, Plant, ProfitCenter, PurchaseGroup, StorageLocation, StoreLocation, UOMMaster, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType';
 import SearchSelectComponent from '../../common/SelectSearchComponent';
 import PopUp from '../PopUp';
+import { useAuth } from '@/src/context/AuthContext';
 
 interface DropdownData {
   account_assignment_category: AccountAssignmentCategory[];
@@ -76,6 +77,8 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   const [CostCenter, setCostCenter] = useState<string>("");
   const [ValuationAreaDropdown, setValuationAreaDropdown] = useState<ValuationClass[]>()
   const [ValuationArea, setValuationArea] = useState<string>("");
+  const { designation } = useAuth();
+  const isPurchaseTeam = designation === "Purchase Team";
   useEffect(() => {
     if (isOpen) {
       setFormData(defaultData || {});
@@ -197,7 +200,8 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       alert("error");
     }
     return []
-  }
+  };
+  
   const fetchPlantCodeData = async (query?: string): Promise<[]> => {
     console.log(query)
     const baseUrl = API_END_POINTS?.FetchPlantSearchApi;
@@ -641,6 +645,28 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           {renderError("cost_center_head")}
         </div>
 
+        <div className='w-full'>
+          <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
+            {"GL Account Number"}
+            {/* {error && <span className="text-red-600">*</span>} */}
+          </h1>
+          <SearchSelectComponent
+            setData={(value) => {
+              setGLAccount(value ?? "");
+              setFormData(prev => ({ ...prev, gl_account_number_head: value ?? "" }));
+            }}
+            data={GLAccount ?? ""}
+            getLabel={(item) => `${item?.gl_account_code} - ${item?.gl_account_name}`}
+            getValue={(item) => item?.name}
+            dropdown={GLAccountDropdown ? GLAccountDropdown : []}
+            searchApi={fetchGLNumberData}
+            setDropdown={setGLAccountDropdown}
+            placeholder='Select GL Account Number'
+            disabled={formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true : false}
+          />
+          {renderError("gl_account_number_head")}
+        </div>
+
         {renderInput('main_asset_no_head', 'Main Asset No')}
         {renderInput('asset_subnumber_head', 'Asset Subnumber')}
 
@@ -683,8 +709,8 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
         </div>
 
 
-        {renderInput('quantity_head', 'Quantity')}
-        {renderInput('price_of_purchase_requisition_head', 'Price Of Purchase Requisition')}
+        {renderInput('quantity_head', 'Quantity', 'number', { disabled: isPurchaseTeam })}
+        {renderInput('price_of_purchase_requisition_head', 'Price Of Purchase Requisition','text', { disabled: isPurchaseTeam })}
 
         {/* {renderSelect(
           'gl_account_number_head',
@@ -695,27 +721,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true : false
         )} */}
 
-        <div className='w-full'>
-          <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
-            {"GL Account Number"}
-            {/* {error && <span className="text-red-600">*</span>} */}
-          </h1>
-          <SearchSelectComponent
-            setData={(value) => {
-              setGLAccount(value ?? "");
-              setFormData(prev => ({ ...prev, gl_account_number_head: value ?? "" }));
-            }}
-            data={GLAccount ?? ""}
-            getLabel={(item) => `${item?.gl_account_code} - ${item?.gl_account_name}`}
-            getValue={(item) => item?.name}
-            dropdown={GLAccountDropdown ? GLAccountDropdown : []}
-            searchApi={fetchGLNumberData}
-            setDropdown={setGLAccountDropdown}
-            placeholder='Select GL Account Number'
-            disabled={formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true : false}
-          />
-          {renderError("gl_account_number_head")}
-        </div>
+        
 
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#626973] pb-1 flex items-center gap-1 ">

@@ -3,20 +3,40 @@
 import React, { useEffect } from "react";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
+import { MaterialRegistrationFormData, EmployeeDetail } from "@/src/types/MaterialCodeRequestFormTypes";
+
+
 
 interface RequestorInformationProps {
     form: any;
-    EmployeeDetails: any;
+    EmployeeDetails: EmployeeDetail;
+    MaterialOnboarding?: MaterialRegistrationFormData;
     UserDetails?: any;
     companyInfo?: any;
 }
 
-export default function RequestorInformation({ form, EmployeeDetails }: RequestorInformationProps) {
+export default function RequestorInformation({ form, EmployeeDetails, MaterialOnboarding }: RequestorInformationProps) {
     // Whenever EmployeeDetails changes, reset the form values
     useEffect(() => {
-        if (EmployeeDetails) {
+        // VIEW EXISTING FORM MODE
+        if (MaterialOnboarding) {
             form.reset({
-                request_date: new Date().toISOString().split("T")[0], // today
+                request_date: MaterialOnboarding.request_date ?? "",
+                requested_by: MaterialOnboarding.requested_by ?? "",
+                company: MaterialOnboarding.material_company_name ?? "",
+                department: MaterialOnboarding.department ?? "",
+                sub_department: MaterialOnboarding.sub_department ?? "",
+                hod: MaterialOnboarding.hod ?? "",
+                immediate_reporting_head: MaterialOnboarding.immediate_reporting_head ?? "",
+                contact_information_email: MaterialOnboarding.contact_information_email ?? "",
+                contact_information_phone: MaterialOnboarding.contact_information_phone ?? "",
+            });
+        }
+
+        // NEW FORM MODE
+        else if (EmployeeDetails) {
+            form.reset({
+                request_date: new Date().toISOString().split("T")[0],
                 requested_by: EmployeeDetails.name ?? "",
                 company: EmployeeDetails.company?.[0]?.company_name ?? "",
                 department: EmployeeDetails.department ?? "",
@@ -27,7 +47,7 @@ export default function RequestorInformation({ form, EmployeeDetails }: Requesto
                 contact_information_phone: EmployeeDetails.cell_number ?? "",
             });
         }
-    }, [EmployeeDetails, form]);
+    }, [EmployeeDetails, MaterialOnboarding, form]);
 
     return (
         <div className="bg-[#F4F4F6]">
@@ -78,7 +98,7 @@ export default function RequestorInformation({ form, EmployeeDetails }: Requesto
                                                 value={field.value ?? ""}
                                                 readOnly
                                                 onChange={field.onChange}
-                                                // {...field}
+                                            // {...field}
                                             />
                                         </FormControl>
                                         <FormMessage />

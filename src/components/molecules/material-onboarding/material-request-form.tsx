@@ -1,38 +1,26 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Delete } from "lucide-react";
 import { useAuth } from "@/src/context/AuthContext";
-
-// --- Type definitions for props and masters ---
-interface MasterItem {
-  name: string;
-  description?: string;
-  company_name?: string;
-  company?: string;
-  plant_name?: string;
-  category_name?: string;
-  material_type_name?: string;
-  multiple_company?: { company: string }[];
-  material_category_type?: string;
-}
+import { MaterialRegistrationFormData, Company, Plant, MaterialCategory, MaterialType, UOMMaster, MaterialSafePrefillData } from "@/src/types/MaterialCodeRequestFormTypes";
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import { AxiosResponse } from "axios";
+import requestWrapper from "@/src/services/apiCall";
 
 interface Masters {
-  companyMaster: MasterItem[];
-  plantMaster: MasterItem[];
-  materialCategoryMaster: MasterItem[];
-  materialTypeMaster: MasterItem[];
-  uomMaster: MasterItem[];
+  companyMaster: Company[];
+  materialCategoryMaster: MaterialCategory[];
+  uomMaster: UOMMaster[];
 }
 
 interface UserRequestFormProps {
   form: any;
   masters: Masters;
-  MaterialOnboardingDetails?: any;
-  companyName?: any;
+  MaterialOnboardingDetails?: MaterialRegistrationFormData;
   handleMaterialSearch: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   searchResults: any[];
   showSuggestions: boolean;
@@ -45,22 +33,38 @@ interface UserRequestFormProps {
   materialCodeAutoFetched: boolean;
 }
 
-export default function UserRequestForm({ form, masters, MaterialOnboardingDetails, companyName, handleMaterialSearch, searchResults, showSuggestions, handleMaterialSelect, materialSelectedFromList, setMaterialSelectedFromList, setMaterialCodeAutoFetched, setShowSuggestions, materialCodeAutoFetched, setSelectedMaterialType }: UserRequestFormProps) {
-  const { companyMaster, plantMaster, materialCategoryMaster, materialTypeMaster, uomMaster } = masters;
-  console.log("Material Type Mster----->", materialTypeMaster);
+export default function UserMaterialRequestForm({ form, masters, MaterialOnboardingDetails, handleMaterialSearch, searchResults, showSuggestions, handleMaterialSelect, materialSelectedFromList, setMaterialSelectedFromList, setMaterialCodeAutoFetched, setShowSuggestions, materialCodeAutoFetched, setSelectedMaterialType }: UserRequestFormProps) {
 
-  // --- State Management ---
-  const [filteredPlants, setFilteredPlants] = useState<MasterItem[]>([]);
-  const [filteredMaterialType, setFilteredMaterialType] = useState<MasterItem[]>([]);
+  const { companyMaster, materialCategoryMaster, uomMaster } = masters;
+  const [filteredPlants, setFilteredPlants] = useState<Plant[]>([]);
+  const [filteredMaterialType, setFilteredMaterialType] = useState<MaterialType[]>([]);
   const [materialCompanyCode, setMaterialCompanyCode] = useState<string>("");
   const [plantSearch, setPlantSearch] = useState("");
   const [materialTypeSearch, setMaterialTypeSearch] = useState("");
   const [uomSearch, setUomSearch] = useState("");
-  const [materialRequestList, setMaterialRequestList] = useState<any[]>([]);
-
+  const prefillRef = useRef<MaterialRegistrationFormData | null>(null);
   const selectedMaterialCategory = form.watch("material_category");
   const selectedMaterialType = form.watch("material_type");
   const { name } = useAuth();
+  const isMastersReady = [companyMaster, materialCategoryMaster, uomMaster].every((arr) => arr && arr.length > 0);
+  console.log("Filtered Material Types:", MaterialOnboardingDetails);
+
+  useEffect(() => {
+    if (!MaterialOnboardingDetails || !isMastersReady) return;
+
+    const details = MaterialOnboardingDetails;
+    const currentValues = form.getValues();
+
+    if (
+      currentValues.material_name_description === details.material_name_description &&
+      currentValues.material_company_code === details.material_company_code
+    ) { return; }
+
+    if (details.material_company_code) {
+      setMaterialCompanyCode(String(details.material_company_code));
+    }
+    prefillRef.current = details;
+  }, [MaterialOnboardingDetails?.name, isMastersReady]);
 
   useEffect(() => {
     if (name) {
@@ -68,30 +72,103 @@ export default function UserRequestForm({ form, masters, MaterialOnboardingDetai
     }
   }, [name]);
 
-  // --- Effect: Filter Plants and Material Types ---
+  useEffect(() => {
+    if (!MaterialOnboardingDetails || !isMastersReady) return;
+
+    const prefillForm = async () => {
+      const details = MaterialOnboardingDetails;
+
+      if (details.material_company_code) setMaterialCompanyCode(String(details.material_company_code));
+
+      const [plants, materialTypes] = await Promise.all([
+        fetchPlantMaster(String(details.material_company_code)),
+        fetchMaterialTypeMaster(details.material_category, String(details.material_company_code)),
+      ]);
+
+      setFilteredPlants(plants);
+      setFilteredMaterialType(materialTypes);
+
+      const plantExists = !details.plant || plants.some(p => p.plant_name === details.plant);
+      const typeExists = !details.material_type || materialTypes.some((t: MaterialType) => t.name === details.material_type);
+      form.reset({
+        ...form.getValues(),
+        material_company_code: details.material_company_code || "",
+        material_category: details.material_category || "",
+        base_unit_of_measure: details.unit_of_measure || "",
+        plant_name: plantExists ? details.plant : "",
+        material_type: typeExists ? details.material_type : "",
+        material_name_description: details.material_name_description || "",
+        material_code_revised: details.material_code_revised || "",
+        material_specifications: details.material_specifications || "",
+        comment_by_user: details.comment_by_user || "",
+        requested_by_name: details.requested_by || name || "",
+        requested_by_place: details.requested_by_place || "",
+      });
+
+      if (typeExists && details.material_type) setSelectedMaterialType(details.material_type);
+
+      form.trigger([
+        "material_company_code",
+        "plant_name",
+        "material_category",
+        "material_type",
+        "base_unit_of_measure",
+      ]);
+
+      console.log("Prefill successful!", { plantExists, typeExists });
+    };
+    prefillForm();
+  }, [MaterialOnboardingDetails, name, isMastersReady]);
+
+  const fetchPlantMaster = async (query?: string): Promise<Plant[]> => {
+    const baseUrl = API_END_POINTS?.getPlantMaster;
+    let url = baseUrl;
+    if (query) {
+      url += `${url.includes('?') ? '&' : '?'}company=${encodeURIComponent(query)}`;
+    }
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+    if (response?.status == 200) {
+      return response.data.message.data
+    } else {
+      alert("error");
+    }
+    return []
+  };
+
+  const fetchMaterialTypeMaster = async (categoryType: string, companyCode: string) => {
+    try {
+      const res: AxiosResponse = await requestWrapper({
+        method: "GET",
+        url: `${API_END_POINTS.getMaterialTypeMaster}?material_category_type=${categoryType}&company=${companyCode}`,
+      });
+      return res?.data?.message?.data || [];
+    } catch (err) {
+      console.error("Error fetching MaterialTypeMaster:", err);
+      return [];
+    }
+  };
+
   useEffect(() => {
     if (!materialCompanyCode) return;
+    const loadPlantMaster = async () => {
+      const plants = await fetchPlantMaster(materialCompanyCode);
+      setFilteredPlants(plants);
+    };
+    loadPlantMaster();
+  }, [materialCompanyCode]);
 
-    // Filter plants by company
-    const filtered = plantMaster?.filter(
-      (plant) => String(plant.company) === materialCompanyCode
-    );
-    setFilteredPlants(filtered || []);
-
-    const filteredMaterialType = materialTypeMaster?.filter((type) => {
-      const hasMatchingCompany = type.multiple_company?.some(
-        (comp) => String(comp.company) === String(materialCompanyCode)
+  useEffect(() => {
+    if (!materialCompanyCode || !selectedMaterialCategory) return;
+    const loadMaterialTypes = async () => {
+      const materialTypes = await fetchMaterialTypeMaster(
+        selectedMaterialCategory,
+        materialCompanyCode
       );
+      setFilteredMaterialType(materialTypes);
+    };
+    loadMaterialTypes();
+  }, [selectedMaterialCategory, materialCompanyCode]);
 
-      const matchesCategory =
-        !selectedMaterialCategory ||
-        String(type.material_category_type) === String(selectedMaterialCategory);
-
-      return hasMatchingCompany && matchesCategory;
-    });
-
-    setFilteredMaterialType(filteredMaterialType || []);
-  }, [materialCompanyCode, selectedMaterialCategory, plantMaster, materialTypeMaster]);
 
   // --- Search Filters ---
   const filteredPlantOptions = plantSearch
@@ -129,8 +206,10 @@ export default function UserRequestForm({ form, masters, MaterialOnboardingDetai
     }
   }, [filteredMaterialType]);
 
+  const desc = form.watch("material_name_description");
+  const code = form.watch("material_code_revised");
+
   useEffect(() => {
-    const desc = form.watch("material_name_description");
 
     if (!desc && materialSelectedFromList) {
       form.setValue("material_code_revised", "");
@@ -142,59 +221,22 @@ export default function UserRequestForm({ form, masters, MaterialOnboardingDetai
       form.setValue("material_code_revised", "");
       setMaterialCodeAutoFetched(true);
     }
-  }, [form.watch("material_name_description")]);
+  }, [desc]);
 
   useEffect(() => {
-    const desc = form.watch("material_name_description");
-    const code = form.watch("material_code_revised");
-
     if (desc && code && !materialSelectedFromList) {
       form.setValue("is_revised_code_new", true);
     } else {
       form.setValue("is_revised_code_new", false);
     }
-  }, [form.watch("material_name_description"), form.watch("material_code_revised"), materialSelectedFromList]);
+  }, [desc, code, materialSelectedFromList]);
 
-
-  // --- Prefill from MaterialOnboardingDetails ---
-  useEffect(() => {
-    if (MaterialOnboardingDetails?.material_request && companyName?.data?.length > 0) {
-      const request = MaterialOnboardingDetails?.material_request?.[0] || {};
-      const requestby = MaterialOnboardingDetails || {};
-
-      form.setValue("material_company_code", String(request.company_name || ""));
-      form.setValue("material_category", request.material_category || "");
-      form.setValue("base_unit_of_measure", request.base_unit_of_measure || "");
-      form.setValue("material_name_description", request.material_name_description || "");
-      form.setValue("material_code_revised", request.material_code_revised || "");
-      form.setValue("material_specifications", request.material_specifications || "");
-      form.setValue("comment_by_user", request.comment_by_user || "");
-      form.setValue("requested_by_name", requestby.requested_by || "");
-      form.setValue("requested_by_place", requestby.requested_by_place || "");
-
-      setMaterialCompanyCode(String(request.company_name || ""));
-    }
-  }, [MaterialOnboardingDetails?.material_request, companyName?.data]);
-
-  useEffect(() => {
-    const request = MaterialOnboardingDetails?.material_request?.[0];
-
-    if (
-      request &&
-      filteredPlantOptions?.some(p => p.plant_name === request.plant_name) &&
-      filteredMaterialTypeOptions?.some(t => t.name === request.material_type)
-    ) {
-      form.setValue("plant_name", String(request.plant_name || ""));
-      form.setValue("material_type", String(request.material_type || ""));
-    }
-  }, [filteredPlants, filteredMaterialType]);
-
-  // --- Delete a row from table ---
-  const handleDeleteRow = (indexToDelete: number) => {
-    setMaterialRequestList((prevList) =>
-      prevList.filter((_, index) => index !== indexToDelete)
-    );
-  };
+  // --- Delete a row from table (DO NOT DELETE) ---
+  // const handleDeleteRow = (indexToDelete: number) => {
+  //   setMaterialRequestList((prevList) =>
+  //     prevList.filter((_, index) => index !== indexToDelete)
+  //   );
+  // };
 
   return (
     <div className="bg-[#F4F4F6]">
@@ -225,7 +267,7 @@ export default function UserRequestForm({ form, masters, MaterialOnboardingDetai
                         <SelectValue placeholder="Select Company" />
                       </SelectTrigger>
                       <SelectContent>
-                        {companyMaster?.map((item: MasterItem) => (
+                        {companyMaster?.map((item: Company) => (
                           <SelectItem key={item.name} value={item.name}>
                             {item.company_name}
                           </SelectItem>
@@ -306,7 +348,7 @@ export default function UserRequestForm({ form, masters, MaterialOnboardingDetai
                         <SelectValue placeholder="Select Category" />
                       </SelectTrigger>
                       <SelectContent>
-                        {materialCategoryMaster?.map((item: MasterItem) => (
+                        {materialCategoryMaster?.map((item: MaterialCategory) => (
                           <SelectItem key={item.name} value={item.name}>
                             {item.description}
                           </SelectItem>
@@ -389,7 +431,7 @@ export default function UserRequestForm({ form, masters, MaterialOnboardingDetai
                         <SelectValue placeholder="Select UOM" />
                       </SelectTrigger>
                       <SelectContent>
-                        {filteredUomOptions?.map((item: MasterItem) => (
+                        {filteredUomOptions?.map((item: UOMMaster) => (
                           <SelectItem key={item.name} value={item.name}>
                             {item.name} - {item.description}
                           </SelectItem>
