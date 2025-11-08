@@ -20,105 +20,75 @@ import MaterialQAQCData from "@/src/components/molecules/material-onboarding-det
 import MaterialOtherData from "@/src/components/molecules/material-onboarding-details/material-other-data";
 import SAPMaterialModal from "@/src/components/molecules/material-onboarding-modal/SAPMaterialModal";
 import RevertRemarkModal from "@/src/components/molecules/material-onboarding-modal/revert-remark-field";
+import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface FileRecord {
   file: File;
   fileURL: string;
 }
 
-interface DropdownOption {
-  company_code?: string;
-  [key: string]: any;
-}
-
 interface MaterialOnboardingFormProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<MaterialRegistrationFormData>;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   isLoading?: boolean;
   showAlert?: boolean;
   showcompletealert?: boolean;
   showRevertAlert?: boolean;
-  companyName?: { data: any[] };
-  plantcode?: { data: any[] };
-  designationname?: string;
-  UserDetails?: any;
-  EmployeeDetails?: any;
-  DivisionDetails?: any;
-  IndustryDetails?: any;
-  UnitOfMeasure?: any;
-  MRPType?: any;
-  ValuationClass?: any;
-  ProcurementType?: any;
-  ValuationCategory?: any;
-  MaterialGroup?: any;
-  MaterialOnboardingDetails?: any;
+  companyName?: Company[];
+  plantcode?: Plant[];
+  EmployeeDetailsJSON?: EmployeeDetail;
+  DivisionDetails?: division[];
+  IndustryDetails?: industry[];
+  UnitOfMeasure?: UOMMaster[];
+  MRPType?: MRPType[];
+  ValuationClass?: ValuationClass[];
+  ProcurementType?: procurementType[];
+  ValuationCategory?: ValuationCategory[];
+  MaterialGroup?: MaterialGroupMaster[];
+  MaterialOnboardingDetails?: MaterialRegistrationFormData;
   lineItemFiles?: Record<string, FileRecord>;
   setLineItemFiles?: React.Dispatch<React.SetStateAction<Record<string, FileRecord>>>;
   setHsnStatus?: (val: boolean) => void;
   hsnStatus?: boolean;
   companyInfo?: any;
-  ProfitCenter?: DropdownOption[];
-  PriceControl?: any;
-  AvailabilityCheck?: any;
-  MaterialType?: any;
-  MRPController?: any;
-  StorageLocation?: any;
-  ClassType?: any;
+  ProfitCenter?: ProfitCenter[];
+  PriceControl?: PriceControl[];
+  AvailabilityCheck?: AvailabilityCheck[];
+  MRPController?: MRPController[];
+  StorageLocation?: StorageLocation[];
+  ClassType?: ClassType[];
   PurchaseGroup?: any;
-  SerialProfile?: any;
-  InspectionType?: any;
-  LotSize?: any;
-  MaterialDetails?: any;
+  SerialProfile?: SerialNumber[];
+  InspectionType?: InspectionType[];
+  LotSize?: LotSize[];
   materialCompanyCode?: string;
   setMaterialCompanyCode?: (code: string) => void;
-  MaterialCode?: any;
-  MaterialCategory?: any;
-  AllMaterialType?: any;
-  SMK?: any;
-  ExpirationDate?: any;
+  MaterialCategory?: MaterialCategory[];
+  SMK?: SchedulingMarginKey[];
+  ExpirationDate?: ExpirationDate[];
   doc_name?: string;
   sendEmailToUser?: (doc: string) => Promise<void>;
   sendRevertEmail?: (doc: string, remark: string) => Promise<void>;
   onCloseCallback?: (doc: string) => void;
   saveAsDraft?: () => void;
-  AllMaterialCodes?: any;
 }
 
 const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) => {
-  const {
-    form,
-    onSubmit,
-    isLoading,
-    MaterialOnboardingDetails,
-    companyInfo,
-    ProfitCenter = [],
-    MaterialGroup,
-    MaterialCode,
-    setLineItemFiles,
-    lineItemFiles,
-    sendRevertEmail,
-    doc_name,
-    saveAsDraft,
-    onCloseCallback,
-    showAlert,
-    showcompletealert,
-    showRevertAlert,
-  } = props;
+  const { form, onSubmit, isLoading, MaterialOnboardingDetails, companyInfo, ProfitCenter = [], MaterialGroup, setLineItemFiles, lineItemFiles, sendRevertEmail, doc_name, saveAsDraft, onCloseCallback, showAlert, showcompletealert, showRevertAlert, EmployeeDetailsJSON } = props;
 
   const router = useRouter();
 
   const [fileSelected, setFileSelected] = useState(false);
   const [fileName, setFileName] = useState("");
-  const [filteredProfit, setFilteredProfit] = useState<DropdownOption[]>([]);
+  const [filteredProfit, setFilteredProfit] = useState<ProfitCenter[]>([]);
   const [showSAPModal, setShowSAPModal] = useState(false);
   const [isMaterialCodeEdited, setIsMaterialCodeEdited] = useState(false);
   const [shouldShowAllFields, setShouldShowAllFields] = useState(false);
   const [isMatchedMaterial, setIsMatchedMaterial] = useState(false);
   const [showRemarkDialog, setShowRemarkDialog] = useState(false);
   const { designation } = useAuth();
-  const role = designation || ""; 
+  const role = designation || "";
 
-  // ✅ set default request date
   useEffect(() => {
     const currentDate = new Date().toISOString().split("T")[0];
     if (!form.getValues("request_date")) {
@@ -126,30 +96,57 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
     }
   }, [form]);
 
-  // ✅ auto-show SAP modal
   useEffect(() => {
     if (MaterialOnboardingDetails?.approval_status === "Code Generated by SAP") {
       setShowSAPModal(true);
     }
   }, [MaterialOnboardingDetails]);
 
-  // ✅ filter Profit Center by company code
-  useEffect(() => {
-    const employeeCompanyCode = String(companyInfo?.company_code || "");
-    const filtered = ProfitCenter.filter(
-      (group) => String(group.company_code) === employeeCompanyCode
-    );
-    setFilteredProfit(filtered);
-  }, [MaterialGroup, companyInfo, ProfitCenter]);
 
-  // ✅ cancel navigation
+  useEffect(() => {
+    if (
+      !EmployeeDetailsJSON?.company ||
+      !Array.isArray(EmployeeDetailsJSON.company) ||
+      !ProfitCenter?.length
+    ) {
+      if (filteredProfit.length > 0) {
+        setFilteredProfit([]);
+      }
+      return;
+    }
+
+    const employeeCompanyCodes = EmployeeDetailsJSON.company
+      .map((comp) => String(comp.company_code))
+      .filter(Boolean);
+
+    const newFilteredProfit = ProfitCenter.filter((pc) =>
+      employeeCompanyCodes.includes(String(pc.company_code))
+    );
+
+    const hasChanged =
+      newFilteredProfit.length !== filteredProfit.length ||
+      newFilteredProfit.some(
+        (pc, i) =>
+          pc.profit_center_code !== filteredProfit[i]?.profit_center_code ||
+          pc.profit_center_name !== filteredProfit[i]?.profit_center_name
+      );
+
+    if (hasChanged) {
+      console.log("🔄 Updating filteredProfit:", newFilteredProfit);
+      setFilteredProfit(newFilteredProfit);
+    } else {
+      console.log("✅ Skipped update — filteredProfit unchanged");
+    }
+  }, [EmployeeDetailsJSON, ProfitCenter]);
+
+
+
   const onCancel = (e: React.MouseEvent) => {
     e.preventDefault();
     router.push("/material-onboarding-table");
     window.location.reload();
   };
 
-  // ✅ file handling
   const handleLabelClick = (inputId: string) => {
     document.getElementById(inputId)?.click();
   };
@@ -180,9 +177,8 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
     if (input) input.value = "";
   };
 
-  // ✅ dynamic button label
   const getButtonLabel = (role: string, approvalStatus?: string): string => {
-    if (["CP", "Store"].includes(role)) {
+    if (["Material CP", "Store"].includes(role)) {
       if (approvalStatus === "Pending by CP" || approvalStatus === "Re-Opened by CP")
         return "Send to SAP";
       if (approvalStatus === "Sent to SAP") return "Update";
@@ -191,7 +187,6 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
     return "Submit";
   };
 
-  // ✅ approval handling
   const handleApprovalStatus = async () => {
     if (role === "SAP") {
       form.setValue("approval_status", "Code Generated by SAP");
@@ -208,9 +203,8 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
     }
   };
 
-  // ✅ rejection handler
   const handleRejectStatus = (remark: string) => {
-    if (["CP", "Store"].includes(role)) {
+    if (["Material CP", "Store"].includes(role)) {
       form.setValue("approval_status", "Re-Opened by CP");
       form.setValue("remark_by_cp", remark);
     }
@@ -225,30 +219,29 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
     "Re-Opened by CP",
   ].includes(approvalStatus);
 
-  const materialType =
-    MaterialOnboardingDetails?.material_request?.[0]?.material_type_name;
+  const materialType = MaterialOnboardingDetails?.material_type_name;
   const isZCAPMaterial = materialType === "ZCAP";
 
   return (
     <Form {...form}>
       <form onSubmit={onSubmit}>
         <div className="bg-[#F4F4F6]">
-          <div className="space-y-[32px] flex flex-col justify-between p-4 bg-white rounded-[8px]">
+          <div className="space-y-[32px] flex flex-col justify-between p-3 bg-white rounded-[8px]">
             {/* === SAP MODAL === */}
-            <SAPMaterialModal
+            {/* <SAPMaterialModal
               isOpen={showSAPModal}
               onClose={() => setShowSAPModal(false)}
               materialCode={MaterialCode || ""}
               materialDescription={
-                MaterialOnboardingDetails?.material_request_item?.material_name_description || ""
+                MaterialOnboardingDetails?.material_name_description || ""
               }
               isZCAPMaterial={isZCAPMaterial}
-            />
+            /> */}
 
             {/* === SECTIONS === */}
             <RequesterDetails MaterialOnboardingDetails={MaterialOnboardingDetails} form={form} />
 
-            <MaterialInformation
+            {/* <MaterialInformation
               {...props}
               setShouldShowAllFields={setShouldShowAllFields}
               shouldShowAllFields={shouldShowAllFields}
@@ -290,7 +283,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
                   </>
                 )}
               </>
-            )}
+            )} */}
 
             {/* === FOOTER BUTTONS === */}
             <div className="flex justify-between items-center w-full mt-4">

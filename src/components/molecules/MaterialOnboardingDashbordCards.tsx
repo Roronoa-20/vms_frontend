@@ -6,7 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/src/context/AuthContext";
-import DashboardTable from "./Material-Onboarding-Table/Material-Onboarding-User-Table";
+import UserDashboardTable from "./Material-Onboarding-Table/Material-Onboarding-User-Table";
+import CPDashboardTable from "./Material-Onboarding-Table/Material-Onboarding-CP-table";
 import { cardCount } from "../pages/MaterialOnboardingDashboard";
 import requestWrapper from "@/src/services/apiCall";
 import { MaterialRequestItem } from "@/src/types/MaterialRequestTableTypes";
@@ -21,6 +22,7 @@ const MaterialOnboardingCards = ({ cardData, companyDropdown }: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [allData, setAllData] = useState<MaterialRequestItem[]>([]);
   const [activeTab, setActiveTab] = useState<string>("Total Material Request");
+  const CPUser = designation === "Material CP";
 
   const fetchTableData = async (page: number = 1) => {
     setLoading(true);
@@ -114,8 +116,14 @@ const MaterialOnboardingCards = ({ cardData, companyDropdown }: Props) => {
           <TabsContent key={item.name} value={item.name}>
             {loading ? (
               <div className="text-center py-10 text-gray-500">Loading...</div>
+            ) : CPUser ? (
+              <CPDashboardTable
+                data={getFilteredData(item.name)}
+                companyDropdown={companyDropdown}
+                TableTitle={item.name}
+              />
             ) : (
-              <DashboardTable
+              <UserDashboardTable
                 data={getFilteredData(item.name)}
                 companyDropdown={companyDropdown}
                 TableTitle={item.name}

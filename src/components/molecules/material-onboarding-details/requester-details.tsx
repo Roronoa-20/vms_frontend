@@ -1,67 +1,57 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { UseFormReturn } from "react-hook-form";
-
-interface MaterialOnboardingDetails {
-  company?: string;
-  request_date?: string;
-  requested_by?: string;
-  requestor_company?: string;
-  requestor_company_name?: string;
-  requestor_department?: string;
-  sub_department?: string;
-  requestor_hod?: string;
-  immediate_reporting_head?: string;
-  contact_information_email?: string;
-  contact_information_phone?: string;
-}
+import { useForm } from "react-hook-form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { UseFormReturn, ControllerRenderProps } from "react-hook-form";
+import { MaterialRegistrationFormData } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface MaterialRequesterDetailsFormProps {
   form: UseFormReturn<any>;
   onSubmit?: () => void;
-  MaterialOnboardingDetails: MaterialOnboardingDetails;
+  MaterialOnboardingDetails?: MaterialRegistrationFormData;
 }
 
-const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> = ({
-  form,
-  onSubmit,
-  MaterialOnboardingDetails,
-}) => {
+const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> = ({ onSubmit, MaterialOnboardingDetails }) => {
+  // console.log("Material Onboardging Details in requestor form CP role:--->", MaterialOnboardingDetails)
+
+  const form = useForm({
+    defaultValues: {
+      request_date: "",
+      requested_by: "",
+      company: "",
+      department: "",
+      sub_department: "",
+      hod: "",
+      immediate_reporting_head: "",
+      contact_information_email: "",
+      contact_information_phone: "",
+    },
+  });
+
+
+  const details = Array.isArray(MaterialOnboardingDetails)
+    ? MaterialOnboardingDetails[0]
+    : MaterialOnboardingDetails;
+
   useEffect(() => {
-    if (MaterialOnboardingDetails.company) {
-      form.setValue("company", MaterialOnboardingDetails.company);
+    if (details) {
+      form.setValue("request_date", details.request_date || "");
+      form.setValue("requested_by", details.requested_by || "");
+      form.setValue("company", details.material_company_name || "");
+      form.setValue("department", details.department || "");
+      form.setValue("sub_department", details.sub_department || "");
+      form.setValue("hod", details.hod || "");
+      form.setValue("immediate_reporting_head", details.immediate_reporting_head || "");
+      form.setValue("contact_information_email", details.contact_information_email || "");
+      form.setValue("contact_information_phone", details.contact_information_phone || "");
     }
-    if (MaterialOnboardingDetails.request_date) {
-      form.setValue("request_date", MaterialOnboardingDetails.request_date);
-    }
-  }, [
-    MaterialOnboardingDetails.company,
-    MaterialOnboardingDetails.request_date,
-    form,
-  ]);
+  }, [details, form]);
+
 
   return (
     <div className="bg-[#F4F4F6]">
-      <div className="flex flex-col justify-between pt-4 bg-white rounded-[8px]">
+      <div className="flex flex-col justify-between bg-white rounded-[8px]">
         <div className="space-y-1">
           <div>
             <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
@@ -74,7 +64,7 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                 <FormField
                   control={form.control}
                   name="request_date"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<any, string> }) => (
                     <FormItem className="flex items-center gap-2">
                       <FormLabel className="w-40 font-medium text-sm">
                         Request Date <span className="text-red-500">*</span> :
@@ -84,7 +74,8 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                           type="date"
                           className="flex-1 px-3 py-2 text-sm rounded"
                           readOnly
-                          {...field}
+                          // {...field}
+                          value={field.value || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -95,7 +86,7 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                 <FormField
                   control={form.control}
                   name="requested_by"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<any, string> }) => (
                     <FormItem className="flex items-center gap-2">
                       <FormLabel className="w-40 font-medium text-sm">
                         Requested By <span className="text-red-500">*</span> :
@@ -104,8 +95,9 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                         <input
                           type="text"
                           className="flex-1 px-3 py-2 text-sm rounded"
-                          {...field}
-                          value={MaterialOnboardingDetails.requested_by || ""}
+                          // {...field}
+                          value={field.value || ""}
+                          // value={MaterialOnboardingDetails?.requested_by || ""}
                           readOnly
                         />
                       </FormControl>
@@ -117,25 +109,20 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                 <FormField
                   control={form.control}
                   name="company"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<any, string> }) => (
                     <FormItem className="flex items-center gap-2">
                       <FormLabel className="w-40 font-medium text-sm">
                         Company <span className="text-red-500">*</span> :
                       </FormLabel>
                       <FormControl>
-                        <>
-                          <input
-                            type="text"
-                            className="flex-1 px-3 py-2 text-sm rounded"
-                            value={`${MaterialOnboardingDetails.requestor_company || ""} - ${MaterialOnboardingDetails.requestor_company_name || ""}`}
-                            readOnly
-                          />
-                          <input
-                            type="hidden"
-                            {...field}
-                            value={MaterialOnboardingDetails.company || ""}
-                          />
-                        </>
+                        <input
+                          type="text"
+                          className="flex-1 px-3 py-2 text-sm rounded"
+                          // {...field}
+                          value={field.value || ""}
+                          // value={`${MaterialOnboardingDetails?.requestor_company || ""} - ${MaterialOnboardingDetails?.requestor_company_name || ""}`}
+                          readOnly
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -148,7 +135,7 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                 <FormField
                   control={form.control}
                   name="department"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<any, string> }) => (
                     <FormItem className="flex items-center gap-2">
                       <FormLabel className="w-40 font-medium text-sm">
                         Department <span className="text-red-500">*</span> :
@@ -157,8 +144,9 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                         <input
                           type="text"
                           className="flex-1 px-3 py-2 text-sm rounded"
-                          {...field}
-                          value={MaterialOnboardingDetails.requestor_department || ""}
+                          // {...field}
+                          value={field.value || ""}
+                          // value={MaterialOnboardingDetails?.requestor_department || ""}
                           readOnly
                         />
                       </FormControl>
@@ -170,7 +158,7 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                 <FormField
                   control={form.control}
                   name="sub_department"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<any, string> }) => (
                     <FormItem className="flex items-center gap-2">
                       <FormLabel className="w-40 font-medium text-sm">
                         Sub-Department <span className="text-red-500">*</span> :
@@ -179,8 +167,9 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                         <input
                           type="text"
                           className="flex-1 px-3 py-2 text-sm rounded"
-                          {...field}
-                          value={MaterialOnboardingDetails.sub_department || ""}
+                          // {...field}
+                          value={field.value || ""}
+                          // value={MaterialOnboardingDetails?.sub_department || ""}
                           readOnly
                         />
                       </FormControl>
@@ -192,7 +181,7 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                 <FormField
                   control={form.control}
                   name="hod"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<any, string> }) => (
                     <FormItem className="flex items-center gap-2">
                       <FormLabel className="w-40 font-medium text-sm">
                         HOD <span className="text-red-500">*</span> :
@@ -201,8 +190,9 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                         <input
                           type="text"
                           className="flex-1 px-3 py-2 text-sm rounded"
-                          {...field}
-                          value={MaterialOnboardingDetails.requestor_hod || ""}
+                          // {...field}
+                          value={field.value || ""}
+                          // value={MaterialOnboardingDetails?.requestor_hod || ""}
                           readOnly
                         />
                       </FormControl>
@@ -217,7 +207,7 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                 <FormField
                   control={form.control}
                   name="immediate_reporting_head"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<any, string> }) => (
                     <FormItem className="flex items-center gap-2">
                       <FormLabel className="w-40 font-medium text-sm">
                         Immediate Reporting Head <span className="text-red-500">*</span> :
@@ -226,8 +216,9 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                         <input
                           type="text"
                           className="flex-1 px-3 py-2 text-sm rounded"
-                          {...field}
-                          value={MaterialOnboardingDetails.immediate_reporting_head || ""}
+                          // {...field}
+                          value={field.value || ""}
+                          // value={MaterialOnboardingDetails?.immediate_reporting_head || ""}
                           readOnly
                         />
                       </FormControl>
@@ -239,7 +230,7 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                 <FormField
                   control={form.control}
                   name="contact_information_email"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<any, string> }) => (
                     <FormItem className="flex items-center gap-2">
                       <FormLabel className="w-40 font-medium text-sm">
                         Email <span className="text-red-500">*</span> :
@@ -248,8 +239,9 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                         <input
                           type="email"
                           className="flex-1 px-3 py-2 text-sm rounded"
-                          {...field}
-                          value={MaterialOnboardingDetails.contact_information_email || ""}
+                          // {...field}
+                          value={field.value || ""}
+                          // value={MaterialOnboardingDetails?.contact_information_email || ""}
                           readOnly
                         />
                       </FormControl>
@@ -261,7 +253,7 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                 <FormField
                   control={form.control}
                   name="contact_information_phone"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<any, string> }) => (
                     <FormItem className="flex items-center gap-2">
                       <FormLabel className="w-40 font-medium text-sm">
                         Contact Number <span className="text-red-500">*</span> :
@@ -270,8 +262,9 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                         <input
                           type="text"
                           className="flex-1 px-3 py-2 text-sm rounded"
-                          {...field}
-                          value={MaterialOnboardingDetails.contact_information_phone || ""}
+                          // {...field}
+                          value={field.value || ""}
+                          // value={MaterialOnboardingDetails?.contact_information_phone || ""}
                           readOnly
                         />
                       </FormControl>

@@ -6,7 +6,7 @@ import MaterialInformation from "@/src/components/molecules/material-onboarding/
 import { MaterialRegistrationFormData } from "@/src/types/MaterialCodeRequestFormTypes";
 import { MaterialCode } from '@/src/types/PurchaseRequestType';
 import AlertBox from "../../common/vendor-onboarding-alertbox";
-import { EmployeeDetail, EmployeeAPIResponse, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, MaterialType } from "@/src/types/MaterialCodeRequestFormTypes";
+import { EmployeeDetail, Company, UOMMaster, MaterialCategory } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface DropdownData {
     material_code: MaterialCode[];

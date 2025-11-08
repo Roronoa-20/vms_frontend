@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import SignatureCanvas from "react-signature-canvas";
 import { RotateCcw } from "lucide-react";
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, ControllerRenderProps } from "react-hook-form";
 
 interface MaterialApprovalFormProps {
   form: UseFormReturn<any>; // You can replace `any` with your actual form schema type
@@ -94,7 +94,7 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({
               <FormField
                 control={form.control}
                 name="requested_by_name"
-                render={({ field }) => (
+                render={({ field }: { field: ControllerRenderProps<any, any> }) => (
                   <FormItem>
                     <FormLabel>Requested By - Name</FormLabel>
                     <FormControl>
@@ -117,7 +117,7 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({
               <FormField
                 control={form.control}
                 name="requested_by_place"
-                render={({ field }) => (
+                render={({ field }: { field: ControllerRenderProps<any, any> }) => (
                   <FormItem>
                     <FormLabel>Requested By - Place</FormLabel>
                     <FormControl>
@@ -140,7 +140,7 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({
               <FormField
                 control={form.control}
                 name="approved_by_name"
-                render={({ field }) => (
+                render={({ field }: { field: ControllerRenderProps<any, any> }) => (
                   <FormItem>
                     <FormLabel>Approved By - Name</FormLabel>
                     <FormControl>
@@ -162,7 +162,7 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({
               <FormField
                 control={form.control}
                 name="approved_by_place"
-                render={({ field }) => (
+                render={({ field }: { field: ControllerRenderProps<any, any> }) => (
                   <FormItem>
                     <FormLabel>Approved By - Place</FormLabel>
                     <FormControl>

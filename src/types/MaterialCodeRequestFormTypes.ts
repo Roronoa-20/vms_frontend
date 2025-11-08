@@ -92,6 +92,7 @@ export interface ProfitCenter {
   profit_center_code: string;
   profit_center_name: string;
   description: string;
+  company_code: string;
 }
 
 // GL Account Number
@@ -217,11 +218,11 @@ export interface ClassType {
 }
 
 export interface MaterialType {
-  name: string; // e.g. "ZCAP - Capital Mat-Non Valuated"
-  material_type_name: string; // same as name, but keeping both for consistency
-  description: string; // e.g. "Capital Mat-Non Valuated"
-  material_category_type: string; // e.g. "F"
-  plant_code: string; // e.g. "9100 - HEALTH CARE"
+  name: string;
+  material_type_name: string;
+  description: string;
+  material_category_type: string;
+  plant_code: string;
   multiple_company: {
     company: string;
     company_name: string;
@@ -231,12 +232,32 @@ export interface MaterialType {
     storage_name: string;
   }[];
   valuation_and_profit: {
-    company: string; // e.g. "9000"
-    division: string; // e.g. "AI - Arthroscopy - Implan - 9000"
-    division_name: string; // e.g. "AI - Arthroscopy - Implan"
-    profit_center: string; // e.g. "9151"
-    profit_center_description: string; // e.g. "ARTHROSCOPY IMPLANT"
-    valuation_class: string; // e.g. "GM91 - 9000"
-    valuation_class_description: string; // e.g. "General Material"
+    company: string;
+    division: string;
+    division_name: string;
+    profit_center: string;
+    profit_center_description: string;
+    valuation_class: string;
+    valuation_class_description: string;
   }[];
+}
+
+export interface LotSize {
+  name: string;
+  lot_size_code: string;
+  lot_size_name: string;
+  description: string;
+}
+
+export interface SchedulingMarginKey {
+  name: string;
+  smk_code: string;
+  description: string;
+}
+
+export interface ExpirationDate {
+  name: string;
+  expiration_date_code: string;
+  expiration_date_name: string;
+  description: string;
 }

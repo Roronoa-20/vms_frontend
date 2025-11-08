@@ -86,8 +86,8 @@ interface UserRequestFormProps {
     form: UseFormReturn<any>;
     onSubmit?: (data: any) => void;
     role: string;
-    companyName: { data: Company[] };
-    plantcode: { data: Plant[] };
+    companyName: Company[] ;
+    plantcode: Plant[];
     UnitOfMeasure: UnitType[];
     EmployeeDetails: EmployeeDetailsType[];
     MaterialType: MaterialType[];

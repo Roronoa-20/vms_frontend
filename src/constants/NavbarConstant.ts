@@ -45,4 +45,5 @@ export const NavbarConstant:Record<string,string> = {
     "/view-invalid-po":"Invalid PO",
     "/vendor-dispatch-table":"Dispatch Details",
     "/view-material-code-request":"Material Code Request",
+    "/material-onboarding-details":"Material Code Details"
 }
