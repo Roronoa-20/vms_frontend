@@ -22,6 +22,7 @@ import PurchaseDetails from '../templates/ViewOnboardingDetail/PurchaseDetails'
 import InternationalDocumentDetails from '../templates/ViewOnboardingDetail/InternationalDocumentDetails'
 import InternationalPaymentDetail from '../templates/ViewOnboardingDetail/InternationalPaymentDetail'
 import InternationalCompanyAddress from '../templates/ViewOnboardingDetail/InternationalCompanyAddress'
+import ProductDetail from '../templates/ViewOnboardingDetail/ProductDetail'
 
 interface Props {
   vendor_onboarding: any;
@@ -140,7 +141,11 @@ const ViewOnboardingDetails = async ({ vendor_onboarding, tabtype, refno, compan
                       <ContactDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.contact_details_tab as VendorOnboardingResponse["message"]["contact_details_tab"]} re_release={OnboardingDetail?.validation_check?.re_release as number} />
                     ) : tabType == "Manufacturing Detail" ? (
                       <ManufacturingDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.manufacturing_details_tab as VendorOnboardingResponse["message"]["manufacturing_details_tab"]} re_release={OnboardingDetail?.validation_check?.re_release as number} />
-                    ) : tabType == "Employee Detail" ? (
+                    ) 
+                     : tabtype == "Product Detail"?(
+                      <ProductDetail  ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.product_details_tab as VendorOnboardingResponse["message"]["product_details_tab"]} validation_check={OnboardingDetail?.validation_check as VendorOnboardingResponse["message"]["validation_check"]}/>
+                     ) 
+                    : tabType == "Employee Detail" ? (
                       <EmployeeDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.employee_details_tab as VendorOnboardingResponse["message"]["employee_details_tab"]} re_release={OnboardingDetail?.validation_check?.re_release as number} />
                     ) : tabType == "Machinery Detail" ? (
                       <MachineryDetail isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.machinery_details_tab as VendorOnboardingResponse["message"]["machinery_details_tab"]} re_release={OnboardingDetail?.validation_check?.re_release as number} />
