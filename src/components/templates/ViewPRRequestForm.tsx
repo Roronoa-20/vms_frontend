@@ -160,7 +160,7 @@ const ViewPRRequestForm = ({ Dropdown, PRData, hod, purchase_head, refno }: Prop
               <SelectGroup>
                 {
                   Dropdown?.purchase_requisition_type?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                    <SelectItem key={index} value={item?.name}>{item?.purchase_requisition_type_code} - {item?.purchase_requisition_type_name}</SelectItem>
                   ))
                 }
               </SelectGroup>

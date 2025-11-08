@@ -247,7 +247,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
               <SelectGroup>
                 {
                   Dropdown?.purchase_requisition_type?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                    <SelectItem key={index} value={item?.name}>{item?.purchase_requisition_type_code} - {item?.description}</SelectItem>
                   ))
                 }
               </SelectGroup>
@@ -270,7 +270,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
               <SelectGroup>
                 {
                   Dropdown?.company?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                    <SelectItem key={index} value={item?.name}>{item?.company_name}</SelectItem>
                   ))
                 }
               </SelectGroup>
@@ -315,7 +315,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
               <SelectGroup>
                 {
                   Dropdown?.purchase_group?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                    <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
                   ))
                 }
               </SelectGroup>
