@@ -22,7 +22,7 @@ const VendorDashboardClient: React.FC<VendorDashboardClientProps> = ({
   rfqData
 }) => {
   return (
-    <div className="p-4">
+    <div className="p-3">
       <VendorDashboardCardCounter
         companyDropdown={companyDropdown}
         cardData={cardData}

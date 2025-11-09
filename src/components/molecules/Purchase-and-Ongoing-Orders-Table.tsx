@@ -259,30 +259,28 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
               <TableHead className="text-center text-black">Sr No.</TableHead>
               <TableHead className="text-center text-black">PO No</TableHead>
               <TableHead className="text-center text-black">Vendor Name</TableHead>
-              <TableHead className="text-center text-black">PO Date</TableHead>
-              <TableHead className="text-center text-black">Delivery Date</TableHead>
-              <TableHead className="text-center text-black">PO Amount</TableHead>
-              <TableHead className="text-center text-black">Status</TableHead>
-              <TableHead className="text-center text-black">Tentative Delivery</TableHead>
-              <TableHead className="text-center text-black">View details</TableHead>
-              <TableHead className="text-center text-black">Send Email</TableHead>
+              <TableHead className="text-center text-black text-nowrap">PO Date</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Delivery Date</TableHead>
+              <TableHead className="text-center text-black text-nowrap">PO Amount</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Status</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Tentative Delivery</TableHead>
+              <TableHead className="text-center text-black text-nowrap">View details</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Send Email</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="text-center text-black">
             {tableData ? (
               tableData?.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell className="font-medium">{index + 1}</TableCell>
-                  <TableCell>{item?.name}</TableCell>
-                  <TableCell>
-                    {item?.supplier_name ? item.supplier_name : "-"}
-                  </TableCell>
-                  <TableCell>{formatDate(item?.po_date)}</TableCell>
-                  <TableCell>{formatDate(item?.delivery_date)}</TableCell>
-                  <TableCell>{item?.total_gross_amount}</TableCell>
+                  <TableCell className="text-center">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
+                  <TableCell className="text-center">{item?.name}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.supplier_name ? item.supplier_name : "-"}</TableCell>
+                  <TableCell className="text-center text-nowrap">{formatDate(item?.po_date)}</TableCell>
+                  <TableCell className="text-center text-nowrap">{formatDate(item?.delivery_date)}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.total_gross_amount}</TableCell>
                   <TableCell>
                     <div
-                      className={`px-2 py-3 rounded-xl ${item?.status === "Pending by Vendor"
+                      className={`px-2 py-3 rounded-xl text-nowrap ${item?.status === "Pending by Vendor"
                         ? "bg-yellow-100 text-yellow-800"
                         : item?.status === "Approved by Vendor"
                           ? "bg-green-100 text-green-800"
@@ -295,14 +293,14 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                   <TableCell className="text-center whitespace-nowrap">{formatDate(item?.tentative_date)}</TableCell>
                   <TableCell>
                     <Button
-                      className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]"
+                      className="bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px]"
                       // onClick={() => downloadPoDetails(item?.name)}
                       onClick={() => router.push(`/view-po?po_name=${item?.name}&email_to=${item?.email}`)}
                     >
                       View
                     </Button>
                   </TableCell>
-                  <TableCell><Button onClick={() => { setIsEmailDialog(true); setEmail((prev: any) => ({ ...prev, to: item?.email })) }} className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">Send</Button></TableCell>
+                  <TableCell><Button onClick={() => { setIsEmailDialog(true); setEmail((prev: any) => ({ ...prev, to: item?.email })) }} className="bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px]">Send</Button></TableCell>
                 </TableRow>
               ))
             ) : (

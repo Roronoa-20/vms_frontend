@@ -179,7 +179,7 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
               {table.length > 0 ? (
                 table?.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium text-center">{index + 1}</TableCell>
+                    <TableCell className="font-medium text-center">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.vendor_name}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.company_name}</TableCell>

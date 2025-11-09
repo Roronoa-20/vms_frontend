@@ -188,23 +188,23 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
         <Table>
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-              <TableHead className="text-center text-black">Sr No.</TableHead>
-              <TableHead className="text-center text-black">PO No</TableHead>
-              <TableHead className="text-center text-black">Vendor Name</TableHead>
-              <TableHead className="text-center text-black">PO Date</TableHead>
-              <TableHead className="text-center text-black">Delivery Date</TableHead>
-              <TableHead className="text-center text-black">PO Amount</TableHead>
-              <TableHead className="text-center text-black">Status</TableHead>
-              <TableHead className="text-center text-black">Tentative Delivery</TableHead>
-              <TableHead className="text-center text-black">View details</TableHead>
-              <TableHead className={`text-center text-black ${designation == "Vendor" ? "" : "hidden"}`}>Action</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Sr No.</TableHead>
+              <TableHead className="text-center text-black text-nowrap">PO No</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Vendor Name</TableHead>
+              <TableHead className="text-center text-black text-nowrap">PO Date</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Delivery Date</TableHead>
+              <TableHead className="text-center text-black text-nowrap">PO Amount</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Status</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Tentative Delivery</TableHead>
+              <TableHead className="text-center text-black text-nowrap">View details</TableHead>
+              <TableHead className={`text-center text-black text-nowrap ${designation == "Vendor" ? "" : "hidden"}`}>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="text-center">
             {tableData && tableData?.length > 0 ? (
               tableData.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell className="text-center font-medium">{index + 1}</TableCell>
+                  <TableCell className="text-center font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                   <TableCell className="text-center whitespace-nowrap">{item?.name}</TableCell>
                   <TableCell className="text-center whitespace-nowrap">
                     {item?.supplier_name ? item.supplier_name : "-"}
