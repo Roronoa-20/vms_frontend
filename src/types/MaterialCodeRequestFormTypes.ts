@@ -69,6 +69,7 @@ export interface MaterialGroupMaster {
   name: string;
   material_group_name: string;
   material_group_description: string;
+  material_group_company: string
 }
 
 // UOM Master
@@ -148,6 +149,7 @@ export interface division {
   division_code: string;
   division_name: string;
   description: string;
+  company: string
 }
 
 export interface industry {

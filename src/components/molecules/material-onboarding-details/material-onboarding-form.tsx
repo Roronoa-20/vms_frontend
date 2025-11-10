@@ -74,7 +74,7 @@ interface MaterialOnboardingFormProps {
 }
 
 const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) => {
-  const { form, onSubmit, isLoading, MaterialOnboardingDetails, companyInfo, ProfitCenter = [], MaterialGroup, setLineItemFiles, lineItemFiles, sendRevertEmail, doc_name, saveAsDraft, onCloseCallback, showAlert, showcompletealert, showRevertAlert, EmployeeDetailsJSON } = props;
+  const { form, onSubmit, isLoading, MaterialOnboardingDetails, ProfitCenter = [], MaterialGroup, setLineItemFiles, lineItemFiles, sendRevertEmail, doc_name, saveAsDraft, onCloseCallback, showAlert, showcompletealert, showRevertAlert, EmployeeDetailsJSON } = props;
 
   const router = useRouter();
 
@@ -220,6 +220,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
   ].includes(approvalStatus);
 
   const materialType = MaterialOnboardingDetails?.material_type_name;
+  // const materialType = MaterialOnboardingDetails?.material_;
   const isZCAPMaterial = materialType === "ZCAP";
 
   return (
@@ -228,20 +229,18 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
         <div className="bg-[#F4F4F6]">
           <div className="space-y-[32px] flex flex-col justify-between p-3 bg-white rounded-[8px]">
             {/* === SAP MODAL === */}
-            {/* <SAPMaterialModal
+            <SAPMaterialModal
               isOpen={showSAPModal}
               onClose={() => setShowSAPModal(false)}
-              materialCode={MaterialCode || ""}
-              materialDescription={
-                MaterialOnboardingDetails?.material_name_description || ""
-              }
+              materialCode={materialType || ""}
+              materialDescription={MaterialOnboardingDetails?.material_name_description || ""}
               isZCAPMaterial={isZCAPMaterial}
-            /> */}
+            />
 
             {/* === SECTIONS === */}
             <RequesterDetails MaterialOnboardingDetails={MaterialOnboardingDetails} form={form} />
 
-            {/* <MaterialInformation
+            <MaterialInformation
               {...props}
               setShouldShowAllFields={setShouldShowAllFields}
               shouldShowAllFields={shouldShowAllFields}
@@ -251,7 +250,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
               isZCAPMaterial={isZCAPMaterial}
             />
 
-            {shouldShowAllFields && (
+           {/* {shouldShowAllFields && (
               <>
                 {["CP", "Store"].includes(role) && (
                   <>

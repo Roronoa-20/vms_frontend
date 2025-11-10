@@ -3,114 +3,105 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
 import UserRequestDetails from "@/src/components/molecules/material-onboarding-details/user-request-details";
 import Storefields from "./material-store-fields";
-
-interface MaterialCodeItem {
-  material_description?: string;
-  name?: string;
-}
-
-interface CompanyInfo {
-  company_code?: string;
-  [key: string]: any;
-}
-
-interface MaterialGroupItem {
-  name: string;
-  material_group_company?: string;
-  material_group_name?: string;
-  material_group_description?: string;
-  [key: string]: any;
-}
-
-interface StorageLocationItem {
-  company?: string;
-  [key: string]: any;
-}
-
-interface DivisionItem {
-  company?: string;
-  [key: string]: any;
-}
-
-interface MaterialDetails {
-  material_master?: Record<string, any>;
-}
+import API_END_POINTS from '@/src/services/apiEndPoints'
+import { AxiosResponse } from 'axios'
+import requestWrapper from '@/src/services/apiCall'
+import { MaterialCode } from "@/src/types/PurchaseRequestType";
+import { MaterialRegistrationFormData, EmployeeDetail, EmployeeAPIResponse, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialType } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface MaterialInformationFormProps {
   form: any;
   onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
   companyName?: string;
-  plantcode?: string;
-  UserDetails?: any;
-  DivisionDetails?: DivisionItem[];
+  plantcode?: Plant[];
+  EmployeeDetailsJSON?: EmployeeDetail;
+  DivisionDetails?: division[];
   role?: string;
-  UnitOfMeasure?: any[];
-  MaterialGroup?: MaterialGroupItem[];
-  MaterialOnboardingDetails?: any;
-  companyInfo?: CompanyInfo;
-  ProfitCenter?: any[];
-  AvailabilityCheck?: any[];
-  MaterialType?: any[];
-  StorageLocation?: StorageLocationItem[];
-  ClassType?: any[];
-  SerialProfile?: any[];
-  MaterialDetails?: MaterialDetails;
+  UnitOfMeasure?: UOMMaster[];
+  MaterialGroup?: MaterialGroupMaster[];
+  MaterialOnboardingDetails?: MaterialRegistrationFormData;
+  companyInfo?: Company[];
+  ProfitCenter?: ProfitCenter[];
+  AvailabilityCheck?: AvailabilityCheck[];
+  MaterialType?: MaterialType[];
+  StorageLocation?: StorageLocation[];
+  ClassType?: ClassType[];
+  SerialProfile?: SerialNumber[];
   materialCompanyCode?: string;
   setMaterialCompanyCode?: React.Dispatch<React.SetStateAction<string>>;
-  MaterialCode?: any[];
-  MaterialCategory?: any[];
-  AllMaterialType?: any[];
+  MaterialCategory?: MaterialCategory[];
   isMaterialCodeEdited?: boolean;
   setIsMaterialCodeEdited?: React.Dispatch<React.SetStateAction<boolean>>;
-  AllMaterialCodes?: MaterialCodeItem[];
   setShouldShowAllFields?: React.Dispatch<React.SetStateAction<boolean>>;
   shouldShowAllFields?: boolean;
   setIsMatchedMaterial?: React.Dispatch<React.SetStateAction<boolean>>;
   isZCAPMaterial?: boolean;
 }
 
-const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({
-  form,
-  onSubmit,
-  companyName,
-  plantcode,
-  UserDetails,
-  DivisionDetails = [],
-  role,
-  UnitOfMeasure,
-  MaterialGroup = [],
-  MaterialOnboardingDetails,
-  companyInfo,
-  ProfitCenter,
-  AvailabilityCheck,
-  MaterialType,
-  StorageLocation = [],
-  ClassType,
-  SerialProfile,
-  MaterialDetails,
-  materialCompanyCode,
-  setMaterialCompanyCode,
-  MaterialCode,
-  MaterialCategory,
-  AllMaterialType,
-  isMaterialCodeEdited,
-  setIsMaterialCodeEdited,
-  AllMaterialCodes = [],
-  setShouldShowAllFields,
-  shouldShowAllFields,
-  setIsMatchedMaterial,
-  isZCAPMaterial
-}) => {
+const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form, onSubmit, companyName, plantcode, EmployeeDetailsJSON, DivisionDetails = [], role, UnitOfMeasure, MaterialGroup = [], MaterialOnboardingDetails, companyInfo, ProfitCenter, AvailabilityCheck, MaterialType, StorageLocation = [], ClassType, SerialProfile, materialCompanyCode, setMaterialCompanyCode, MaterialCategory, isMaterialCodeEdited, setIsMaterialCodeEdited, setShouldShowAllFields, shouldShowAllFields, setIsMatchedMaterial, isZCAPMaterial }) => {
+
   const [selectedMaterialType, setSelectedMaterialType] = useState<string>("");
-  const [filteredMaterialGroup, setFilteredMaterialGroup] = useState<MaterialGroupItem[]>([]);
-  const [filteredStorage, setFilteredStorage] = useState<StorageLocationItem[]>([]);
-  const [filteredDivision, setFilteredDivision] = useState<DivisionItem[]>([]);
-  const [searchResults, setSearchResults] = useState<MaterialCodeItem[]>([]);
+  const [filteredMaterialGroup, setFilteredMaterialGroup] = useState<MaterialGroupMaster[]>([]);
+  const [filteredStorage, setFilteredStorage] = useState<StorageLocation[]>([]);
+  const [filteredDivision, setFilteredDivision] = useState<division[]>([]);
+  const [searchResults, setSearchResults] = useState<MaterialCode[]>([]);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [materialSelectedFromList, setMaterialSelectedFromList] = useState<boolean>(false);
+  const [AllMaterialCodes, setAllMaterialCodes] = useState<MaterialCode[]>([]);
+
+  const fetchMaterialCodeData = async (query?: string): Promise<MaterialCode[]> => {
+    try {
+      const baseUrl = API_END_POINTS?.MaterialCodeSearchApi;
+      let url = baseUrl;
+
+      const company = form.getValues("material_company_code");
+      const materialtype = form.getValues("material_type");
+
+      const filters: Record<string, string> = {};
+      if (company) filters.company = company;
+      if (materialtype) filters.material_type = materialtype;
+
+      if (Object.keys(filters).length > 0) {
+        url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
+      }
+
+      if (query) {
+        url += `${url.includes("?") ? "&" : "?"}search_term=${encodeURIComponent(query)}`;
+      }
+
+      const response: AxiosResponse = await requestWrapper({ url, method: "GET" });
+      if (response?.status === 200) {
+        const data = response.data?.message?.data || [];
+        setAllMaterialCodes(data);
+        return data;
+      } else {
+        console.error("Failed to fetch material codes:", response);
+      }
+    } catch (error) {
+      console.error("Error fetching material code data:", error);
+    }
+    return [];
+  };
 
   useEffect(() => {
-    const employeeCompanyCode = String(companyInfo?.company_code || "");
+    fetchMaterialCodeData();
+  }, []);
+
+  useEffect(() => {
+    const subscription = form.watch(async (value, { name }) => {
+      if (name === "material_company_code" || name === "material_type") {
+        await fetchMaterialCodeData();
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
+  useEffect(() => {
+     if (
+      !EmployeeDetailsJSON?.company ||
+      !Array.isArray(EmployeeDetailsJSON.company) ||
+      !ProfitCenter?.length
+    )
     setFilteredMaterialGroup(
       MaterialGroup?.filter((group) => String(group.material_group_company) === employeeCompanyCode) || []
     );
@@ -130,12 +121,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({
         item.material_description?.toLowerCase().includes(val.toLowerCase())
       );
 
-      const mappedResults =
-        filtered?.map((item) => ({
-          material_description: item.material_description,
-          name: item.name
-        })) || [];
-
+      const mappedResults = filtered || [];
       setSearchResults(mappedResults);
       setShowSuggestions(true);
     } else {
