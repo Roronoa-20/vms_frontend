@@ -25,6 +25,7 @@ const API_END_POINTS = {
   contactDetailSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_contact_details.update_vendor_onboarding_contact_details`,
   manufacturingDetailSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_manufacturing_details.update_vendor_onboarding_manufacturing_details`,
   addProductDetail:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_manufacturing_details.update_supplied_material_data`,
+  criticalNonCritical:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_manufacturing_details.update_supplied_material_data`,
   deleteProductDetailItem:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_manufacturing_details.delete_supplied_material_row`,
   employeeDetailSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.production_facility.update_vendor_onboarding_production_facility_details`,
   machineDetailSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.production_facility.update_vendor_onboarding_machinery_detail`,

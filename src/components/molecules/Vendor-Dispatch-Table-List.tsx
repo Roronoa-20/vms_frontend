@@ -40,12 +40,22 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
   const router = useRouter();
   const handleClose = () => {
     setIsPODialog(false);
-  }
+  };
 
   const handlePOClick = (table: string[]) => {
     setSelectedPOTable(table);
     setIsPODialog(true);
-  }
+  };
+
+  const formatDate = (dateStr: string | null | undefined) => {
+    if (!dateStr) return "-";
+    const cleanDate = dateStr.trim().split(" ")[0];
+    if (!cleanDate) return "-";
+    const [year, month, day] = cleanDate.split("-");
+    if (!year || !month || !day) return "-";
+    return `${day}-${month}-${year}`;
+  };
+
 
   return (
     <div className="p-3">
@@ -54,20 +64,24 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
           <h1 className="text-[20px] text-[#03111F] font-semibold">
             All Dispatch Orders
           </h1>
-          <Button onClick={() => { router.push("/dispatch") }} className="py-2" variant={"nextbtn"} size={"nextbtnsize"}>
-            <Plus size={18} strokeWidth={2.5} />
-            Create Dispatch</Button>
+          {designation === "Vendor" && (
+            <Button onClick={() => { router.push("/dispatch") }} className="py-2" variant={"nextbtn"} size={"nextbtnsize"}>
+              <Plus size={18} strokeWidth={2.5} />
+              Create Dispatch</Button>
+          )}
         </div>
         <Table>
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
               <TableHead className="text-center text-black">Sr. No.</TableHead>
               <TableHead className="text-center text-black">Ref No.</TableHead>
-              <TableHead className="text-center text-black">Owner</TableHead>
-              <TableHead className="text-center text-black">Invoice Amount</TableHead>
-              <TableHead className="text-center text-black">Invoice Date</TableHead>
+              {designation !== "Vendor" && (
+                <TableHead className="text-center text-black">Vendor</TableHead>
+              )}
               <TableHead className="text-center text-black">Invoice Number</TableHead>
-              <TableHead className="text-center text-black">status</TableHead>
+              <TableHead className="text-center text-black">Invoice Date</TableHead>
+              <TableHead className="text-center text-black">Invoice Amount</TableHead>
+              <TableHead className="text-center text-black">Status</TableHead>
               <TableHead className="text-center text-black">PO Number</TableHead>
               <TableHead className="text-center text-black">View</TableHead>
             </TableRow>
@@ -77,10 +91,12 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
               <TableRow key={index}>
                 <TableCell className="text-center font-medium">{index + 1}</TableCell>
                 <TableCell className="text-center whitespace-nowrap">{item?.name}</TableCell>
-                <TableCell className="text-center whitespace-nowrap">{item?.owner}</TableCell>
-                <TableCell className="text-center whitespace-nowrap">{item?.invoice_amount}</TableCell>
-                <TableCell className="text-center whitespace-nowrap">{item?.invoice_date}</TableCell>
+                {designation !== "Vendor" && (
+                  <TableCell className="text-center whitespace-nowrap">{item?.owner}</TableCell>
+                )}
                 <TableCell className="text-center whitespace-nowrap">{item?.invoice_number}</TableCell>
+                <TableCell className="text-center whitespace-nowrap">{formatDate(item?.invoice_date)}</TableCell>
+                <TableCell className="text-center whitespace-nowrap">₹{item?.invoice_amount}</TableCell>
                 <TableCell className="text-center whitespace-nowrap">{item?.status}</TableCell>
                 <TableCell>
                   <Button className="py-2 font-medium hover:bg-white hover:text-black" variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handlePOClick(item?.purchase_numbers) }}>

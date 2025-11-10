@@ -146,7 +146,7 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
               {table ? (
                 table?.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium text-center">{index + 1}</TableCell>
+                    <TableCell className="font-medium text-center">{(currentPage - 1) * record_per_page + (index + 1)}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.cart_details_id}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.purchase_requisition_type}</TableCell>

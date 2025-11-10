@@ -11,7 +11,7 @@ import {
   TvendorRegistrationDropdown,
 } from "@/src/types/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import PurchaseAndOngoingOrders from "./Purchase-and-Ongoing-Orders";
+import PurchaseAndOngoingOrders from "./Purchase-and-Ongoing-Orders-Table";
 import DashboardTotalVendorsTable from "./Dashboard-Total-Vendors-Table";
 import DashboardPendingVendorsTable from "./Dashboard-Pending-Vendors-Table";
 import DashboardApprovedVendorsTable from "./Dashboard-Approved-Vendors-Table";

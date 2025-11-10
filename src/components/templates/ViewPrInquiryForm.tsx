@@ -305,7 +305,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
             <SelectContent>
               <SelectGroup>
                 {purchaseTypeDropdown?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                  <SelectItem key={index} value={item?.name}>{item?.purchase_requisition_type_name} - {item?.description}</SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
@@ -322,7 +322,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
             <SelectContent>
               <SelectGroup>
                 {plantDropdown?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                  <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
