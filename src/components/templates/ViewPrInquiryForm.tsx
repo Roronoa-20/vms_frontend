@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Input } from '../atoms/input'
 import { Button } from '../atoms/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
@@ -59,6 +59,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
   const [isEmailDialog, setIsEmailDialog] = useState<boolean>(false);
   const router = useRouter();
 
+  const acknowledgeButtonRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
     if (PRInquiryData?.company) {
       handleCompanyChange(PRInquiryData?.company);
@@ -68,6 +70,16 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
       fetchProductName(PRInquiryData?.category_type);
     }
   }, [])
+
+  useEffect(() => {
+  const needsAsset = tableData?.some(item => item?.need_asset_code && !item?.assest_code);
+
+  if (acknowledgeButtonRef.current) {
+    acknowledgeButtonRef.current.disabled = needsAsset;
+  }
+}, [tableData]);
+
+
 
   const handleSelectChange = (value: any, name: string, isTable: boolean) => {
     if (isTable) {
@@ -482,7 +494,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
             PRInquiryData?.purchase_team_acknowledgement == Boolean(1) ?
               <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsApproved(true); setIsDialog(true) }}>Approve</Button>
               :
-              <Button variant={"nextbtn"} size={"nextbtnsize"} className='py-2.5 hover:bg-white hover:text-black' onClick={() => { setIsAcknowledgeDialog(true) }}>Acknowledge</Button>
+              <Button variant={"nextbtn"} size={"nextbtnsize"} className='py-2.5 hover:bg-white hover:text-black' ref={acknowledgeButtonRef} onClick={() => { setIsAcknowledgeDialog(true) }}>Acknowledge</Button>
           }
           {
             <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${designation != "Enquirer" && PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsReject(true); setIsDialog(true) }}>Reject</Button>
