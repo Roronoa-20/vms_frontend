@@ -298,7 +298,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,validation_
           Add
         </Button>
       </div> */}
-      <div className="flex justify-end items-center space-x-3 mt-24">
+      {/* <div className="flex justify-end items-center space-x-3 mt-24">
         <Button onClick={handleBack} variant="backbtn" size="backbtnsize">
           Back
         </Button>
@@ -306,7 +306,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,validation_
         <Button  variant="nextbtn" size="nextbtnsize" onClick={()=>{handleNext()}}>
           Next
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 };
