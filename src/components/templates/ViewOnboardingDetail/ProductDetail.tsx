@@ -135,8 +135,10 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,validation_
       fetchTable();
   }
 
+  console.log("Mamafbaeofb",validation_check);
+
   return (
-    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
+    <div className="flex flex-col bg-white rounded-lg p-2 max-h-[80vh] w-full">
       {/* <h1 className="border-b-2 pb-1 sticky top-0 bg-white py-2 text-lg font-semibold">
         Product Detail<span className="pl-1 text-red-400 text-2xl">*</span>
       </h1> */}
@@ -225,10 +227,10 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,validation_
         </div>
       </div> */}
       {materialsTable?.length > 0 && (
-        <div className="shadow- bg-[#f6f6f7] p-4 mb-4 mt-4 rounded-2xl">
+        <div className="shadow- bg-[#f6f6f7] p-3 mb-3 mt-3 rounded-2xl">
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
-              Multiple Product List Detail
+              Product Details
             </h1>
           </div>
           <div className="col-span-3 mt-4">
@@ -259,13 +261,13 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,validation_
                     </TableCell>
                    <TableCell className="text-center">
                       <div className="flex justify-center">
-                        <Input type="checkbox" className="w-5 h-5" onChange={(e)=>{handleTableCheckbox(e.target.checked,"critical",material?.idx)}} checked={material?.critical} disabled={validation_check?.is_purchase_approve == 1?true : false} />
+                        <Input type="checkbox" className="w-5 h-5" onChange={(e)=>{handleTableCheckbox(e.target.checked,"critical",material?.idx)}} checked={material?.critical} disabled={validation_check?.purchase_team_undertaking == 1?true : false} />
                       </div>
                     </TableCell>
 
                     <TableCell className="text-center">
                       <div className="flex justify-center">
-                        <Input type="checkbox" className="w-5 h-5" checked={material?.non_critical} onChange={(e)=>{handleTableCheckbox(e.target.checked,"non_critical",material?.idx)}} disabled={validation_check?.is_purchase_approve == 1?true:false} />
+                        <Input type="checkbox" className="w-5 h-5" checked={material?.non_critical} onChange={(e)=>{handleTableCheckbox(e.target.checked,"non_critical",material?.idx)}} disabled={validation_check?.purchase_team_undertaking == 1?true:false} />
                       </div>
                     </TableCell>
 
