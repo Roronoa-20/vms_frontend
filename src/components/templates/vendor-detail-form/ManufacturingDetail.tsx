@@ -59,36 +59,36 @@ const ManufacturingDetail = ({
     useState<boolean>(true);
   const [materialsTable, setMaterialsTable] = useState<any[]>([]);
 
-  const handleAddMaterial = () => {
-    if (
-      !ManufacturingDetail.material_description ||
-      !ManufacturingDetail.hsnsac_code ||
-      !ManufacturingDetail.annual_capacity ||
-      !manufacturedFile
-    ) {
-      alert(
-        "Please fill in all fields and upload a product image before adding."
-      );
-      return;
-    }
-    const newEntry = {
-      material_description: ManufacturingDetail.material_description,
-      hsnsac_code: ManufacturingDetail.hsnsac_code,
-      annual_capacity: ManufacturingDetail.annual_capacity,
-      material_images: manufacturedFile[0],
-    };
-    setMaterialsTable((prev) => [...prev, newEntry]);
-    updateManufacturingDetail("material_description", "");
-    updateManufacturingDetail("hsnsac_code", "");
-    updateManufacturingDetail("annual_capacity", "");
-    setManufacturedFile(null);
-  };
+  // const handleAddMaterial = () => {
+  //   if (
+  //     !ManufacturingDetail.material_description ||
+  //     !ManufacturingDetail.hsnsac_code ||
+  //     !ManufacturingDetail.annual_capacity ||
+  //     !manufacturedFile
+  //   ) {
+  //     alert(
+  //       "Please fill in all fields and upload a product image before adding."
+  //     );
+  //     return;
+  //   }
+  //   const newEntry = {
+  //     material_description: ManufacturingDetail.material_description,
+  //     hsnsac_code: ManufacturingDetail.hsnsac_code,
+  //     annual_capacity: ManufacturingDetail.annual_capacity,
+  //     material_images: manufacturedFile[0],
+  //   };
+  //   setMaterialsTable((prev) => [...prev, newEntry]);
+  //   updateManufacturingDetail("material_description", "");
+  //   updateManufacturingDetail("hsnsac_code", "");
+  //   updateManufacturingDetail("annual_capacity", "");
+  //   setManufacturedFile(null);
+  // };
 
-  const handleDeleteMaterial = (index: number) => {
-    const updated = [...materialsTable];
-    updated.splice(index, 1);
-    setMaterialsTable(updated);
-  };
+  // const handleDeleteMaterial = (index: number) => {
+  //   const updated = [...materialsTable];
+  //   updated.splice(index, 1);
+  //   setMaterialsTable(updated);
+  // };
 
   const router = useRouter();
 
@@ -115,9 +115,9 @@ const ManufacturingDetail = ({
     formData.append("data", JSON.stringify(updatedData));
 
     materialsTable.forEach((item, index) => {
-      if (item.material_images) {
-        formData.append(`material_images_${index}`, item.material_images);
-      }
+      // if (item.material_images) {
+      //   formData.append(`material_images_${index}`, item.material_images);
+      // }
     });
     if (brochure_proof) {
       formData.append("brochure_proof", brochure_proof[0]);

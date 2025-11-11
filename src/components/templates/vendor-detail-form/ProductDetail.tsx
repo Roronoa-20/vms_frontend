@@ -98,7 +98,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
 
   const handleAdd = async () => {
 
-    if (materialsTable?.length < 1) {
+    if (materialsTable?.length == 0) {
       alert("Please Enter At Least 1 Material Details")
       return;
     }

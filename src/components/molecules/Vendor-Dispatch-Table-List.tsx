@@ -104,7 +104,7 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
                   </Button>
                 </TableCell>
                 <TableCell>
-                  <Button variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { designation != "Vendor" ? router.push(`/view-dispatch?refno=${item?.name}`) : router.push(`/dispatch?refno=${item?.name}`) }} className="hover:bg-white hover:text-black font-medium">
+                  <Button variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { (designation != "Vendor" || item?.status == "Pending")? router.push(`/view-dispatch?refno=${item?.name}`) : router.push(`/dispatch?refno=${item?.name}`) }} className="hover:bg-white hover:text-black font-medium">
                     View
                   </Button>
                 </TableCell>
