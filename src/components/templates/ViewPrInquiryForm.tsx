@@ -72,12 +72,12 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
   }, [])
 
   useEffect(() => {
-  const needsAsset = tableData?.some(item => item?.need_asset_code && !item?.assest_code);
+    const needsAsset = tableData?.some(item => item?.need_asset_code && !item?.assest_code);
 
-  if (acknowledgeButtonRef.current) {
-    acknowledgeButtonRef.current.disabled = needsAsset;
-  }
-}, [tableData]);
+    if (acknowledgeButtonRef.current) {
+      acknowledgeButtonRef.current.disabled = needsAsset;
+    }
+  }, [tableData]);
 
 
 
@@ -487,20 +487,21 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
         </div>
       </div>
       {/* purchase team approval buttons */}
-      {(PRInquiryData?.purchase_team == Boolean(0) || PRInquiryData?.asked_to_modify == Boolean(0)) &&
-        <div className={`flex justify-end pr-4 pb-4 gap-4 ${designation != "Enquirer" ? "" : "hidden"}`}>
-          <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${PRInquiryData?.purchase_team_acknowledgement ? "hidden" : ""}`} onClick={() => { setIsModifyDialog(true) }}>Modify</Button>
-          {
-            PRInquiryData?.purchase_team_acknowledgement == Boolean(1) ?
-              <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsApproved(true); setIsDialog(true) }}>Approve</Button>
-              :
-              <Button variant={"nextbtn"} size={"nextbtnsize"} className='py-2.5 hover:bg-white hover:text-black' ref={acknowledgeButtonRef} onClick={() => { setIsAcknowledgeDialog(true) }}>Acknowledge</Button>
-          }
-          {
-            <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${designation != "Enquirer" && PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsReject(true); setIsDialog(true) }}>Reject</Button>
-          }
-        </div>
-      }
+      {(PRInquiryData?.purchase_team == Boolean(0) || PRInquiryData?.asked_to_modify == Boolean(0)) && PRInquiryData?.rejected == Boolean(0) && (
+          <div className={`flex justify-end pr-4 pb-4 gap-4 ${designation != "Enquirer" ? "" : "hidden"}`}>
+            <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${PRInquiryData?.purchase_team_acknowledgement ? "hidden" : ""}`} onClick={() => { setIsModifyDialog(true) }}>Modify</Button>
+
+            {
+              PRInquiryData?.purchase_team_acknowledgement == Boolean(1) ?
+                <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsApproved(true); setIsDialog(true) }}>Approve</Button>
+                :
+                <Button variant={"nextbtn"} size={"nextbtnsize"} className='py-2.5 hover:bg-white hover:text-black' ref={acknowledgeButtonRef} onClick={() => { setIsAcknowledgeDialog(true) }}>Acknowledge</Button>
+            }
+            {
+              <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${designation != "Enquirer" && PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsReject(true); setIsDialog(true) }}>Reject</Button>
+            }
+          </div>
+      )}
 
       {isDialog &&
         <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
