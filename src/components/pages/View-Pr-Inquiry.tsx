@@ -61,6 +61,7 @@ export type TPRInquiry = {
     gl_account:string
     purchase_requisition_form_created:boolean
     purchase_team_approval_status:string
+    purchase_team_status:string
 }
 
 
