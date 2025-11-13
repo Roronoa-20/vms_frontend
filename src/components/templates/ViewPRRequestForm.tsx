@@ -55,7 +55,7 @@ type formData = {
 
 
 const ViewPRRequestForm = ({ Dropdown, PRData, hod, purchase_head, refno }: Props) => {
-  console.log(PRData, "this si data")
+  // console.log(PRData, "this si data")
   const user = Cookies.get("user_id");
   const [formData, setFormData] = useState<formData | null>(PRData ? { ...PRData, requisitioner: PRData?.requisitioner ?? user } : null);
   const [singleTableRow, setSingleTableRow] = useState<TableData | null>(null);
@@ -66,6 +66,7 @@ const ViewPRRequestForm = ({ Dropdown, PRData, hod, purchase_head, refno }: Prop
   const [isDialog, setIsDialog] = useState(false);
   const [comment, setComment] = useState<string>("")
   const router = useRouter();
+  
   const handleSelectChange = (value: any, name: string, isTable: boolean) => {
     if (isTable) {
       setSingleTableRow((prev: any) => ({ ...prev, [name]: value }));
@@ -159,7 +160,7 @@ const ViewPRRequestForm = ({ Dropdown, PRData, hod, purchase_head, refno }: Prop
               <SelectGroup>
                 {
                   Dropdown?.purchase_requisition_type?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
+                    <SelectItem key={index} value={item?.name}>{item?.purchase_requisition_type_code} - {item?.purchase_requisition_type_name}</SelectItem>
                   ))
                 }
               </SelectGroup>

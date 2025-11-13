@@ -91,7 +91,7 @@ const CompanyAddress = ({
   const [singlerow, setSingleRow] = useState<Partial<multipleAddress>>();
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
-
+  const { designation } = useAuth();
 
   console.log(OnboardingDetail, "htis is onboarding data")
 
@@ -194,7 +194,7 @@ const CompanyAddress = ({
           Company Address
         </h1>
         {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
-        {(isAmendment == 1 || re_release == 1) && (
+        {designation == "Purchase Team" &&(isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled(prev => !prev)}
             className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"

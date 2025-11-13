@@ -4,6 +4,7 @@ export const sidebarTabs = [
   "Document Detail",
   "Payment Detail / Bank Detail",
   "Contact Detail",
+  "Product Detail",
   "Manufacturing Detail",
   "Employee Detail",
   "Machinery Detail",
@@ -29,10 +30,10 @@ export const sidebarTabsWithoutMaterialType = [
 export const AccountsTeamOnboardingSidebar = [
   "Company Detail",
   "Company Address",
-  "Contact Detail",
   "Document Detail",
   "Payment Detail / Bank Detail",
-  "Manufacturing Detail",
+  "Contact Detail",
+  // "Manufacturing Detail",
   "Reputed Partners",
   "Certificate"
 ];
@@ -60,6 +61,7 @@ export const OnboardingTabs = [
   "Document Detail",
   "Payment Detail / Bank Detail",
   "Contact Detail",
+  "Product Detail",
   "Manufacturing Detail",
   "Employee Detail",
   "Machinery Detail",

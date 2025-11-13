@@ -22,22 +22,17 @@ export const sidebarMenu: SidebarItem[] = [
     children: []
   },
   {
-    logo: "/sidebar-assests/view-pr.svg",
-    name: "PR",
-    href: "/pr-request",
+    logo: "/sidebar-assests/purchase-enquiry-logo.svg",
+    name: "View Enquiry",
+    href: "/view-pr-inquiry-table",
     children: []
   },
   {
     logo: "/sidebar-assests/view-pr.svg",
-    name: "MPR",
-    href: "/pickup-dashboard",
+    name: "View PR",
+    href: "/view-purchase-requisition",
     children: []
   },
-  // {
-  //   logo: "/sidebar-assests/raise-rfq-logo.svg",
-  //   name: "Raise RFQ",
-  //   href: "/create-rfq"
-  // },
   {
     logo: "/sidebar-assests/raise-rfq-logo.svg",
     name: "Raise RFQ",
@@ -46,7 +41,7 @@ export const sidebarMenu: SidebarItem[] = [
       { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Create RFQ", href: "/create-rfq" },
       //{ logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Shipment Status", href: "/view-shipment-status" },
       { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Shipment Status", href: "/shipment-dashboard" },
-      { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Service Bill", href: "/service-dashboard" },
+      { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Service Bill", href: "/view-service-bill" },
     ],
   },
   {
@@ -56,15 +51,15 @@ export const sidebarMenu: SidebarItem[] = [
     children: []
   },
   {
-    logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-    name: "Product Enquiry",
-    href: "/pr-inquiry",
+    logo: "/sidebar-assests/dispatch-logo.svg",
+    name: "View Dispatch",
+    href: "/view-dispatch-table",
     children: []
   },
   {
     logo: "/sidebar-assests/view-pr.svg",
-    name: "View PR",
-    href: "/view-purchase-requisition",
+    name: "View MPN",
+    href: "/pickup-dashboard",
     children: []
   },
   {
@@ -75,48 +70,22 @@ export const sidebarMenu: SidebarItem[] = [
   },
   {
     logo: "/sidebar-assests/view-grn.svg",
-    name: "GR Waiver",
+    name: "View GR Waiver",
     href: "/gr-waiver-dashboard",
     children: []
   },
   {
     logo: "/sidebar-assests/view-grn.svg",
-    name: "Payment",
+    name: "View Payment",
     href: "/view-payment-requisition",
     children: []
   },
-  // {
-  //   logo: "/sidebar-assests/view-grn.svg",
-  //   name: "Shipment Status",
-  //   href: "/view-shipment-status",
-  //   children: []
-  // },
-  // {
-  //   logo: "/sidebar-assests/view-grn.svg",
-  //   name: "Service bill",
-  //   href: "/view-service-bill",
-  //   children: []
-  // },
-  // {
-  //   logo: "/sidebar-assests/dispatch-logo.svg",
-  //   name: "View Dispatch",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/raise-payment-1.svg",
-  //   name: "View Payment",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-  //   name: "Purchase Enquiry",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/complaint-box.svg",
-  //   name: "Complain Box",
-  //   href:""
-  // },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "View Gate Entry",
+    href: "/gate-entry-dashboard",
+    children: []
+  },
 ];
 
 export const SuperHeadSidebarMenu: SidebarItem[] = [
@@ -141,14 +110,8 @@ export const SuperHeadSidebarMenu: SidebarItem[] = [
   },
   {
     logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-    name: "Product Enquiry",
-    href: "/pr-inquiry",
-    children: []
-  },
-  {
-    logo: "/sidebar-assests/view-pr.svg",
-    name: "PR",
-    href: "/pr-request",
+    name: "View Product Enquiry",
+    href: "/view-pr-inquiry-table",
     children: []
   },
   {
@@ -181,18 +144,25 @@ export const SuperHeadSidebarMenu: SidebarItem[] = [
     href: "/view-grn",
     children: []
   },
-  // {
-  //   logo: "/sidebar-assests/raise-payment-1.svg",
-  //   name: "View Payment",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/complaint-box.svg",
-  //   name: "Complain Box",
-  //   href:""
-  // },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "GR Waiver",
+    href: "/gr-waiver-dashboard",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "Payment",
+    href: "/view-payment-requisition",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "Gate Entry",
+    href: "/gate-entry-dashboard",
+    children: []
+  },
 ];
-
 
 export const PurchaseHeadsidebarMenu: SidebarItem[] = [
   {
@@ -202,26 +172,22 @@ export const PurchaseHeadsidebarMenu: SidebarItem[] = [
     defaultActive: true,
     children: []
   },
-  // {
-  //   logo: "/sidebar-assests/vendor-icon.svg",
-  //   name: "Vendor Registration",
-  //   href: "/vendor-registration"
-  // },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "All Vendors",
     href:"/all-vendors",
     children: []
   },
-  // {
-  //   logo: "/sidebar-assests/view-pr.svg",
-  //   name: "PR",
-  //   href:"/pr-request"
-  // },
   {
-    logo: "/sidebar-assests/raise-rfq-logo.svg",
-    name: "Raise RFQ",
-    href: "/create-rfq",
+    logo: "/sidebar-assests/purchase-enquiry-logo.svg",
+    name: "View Enquiry",
+    href: "/view-pr-inquiry-table",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "View PR",
+    href: "/view-purchase-requisition",
     children: []
   },
   {
@@ -230,61 +196,83 @@ export const PurchaseHeadsidebarMenu: SidebarItem[] = [
     href: "/view-po",
     children: []
   },
-  // {
-  //   logo: "/sidebar-assests/vendor-icon.svg",
-  //   name: "PR",
-  //   href:"/pr-request"
-  // },
   {
-    logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-    name: "Product Enquiry",
-    href: "/pr-inquiry",
+    logo: "/sidebar-assests/dispatch-logo.svg",
+    name: "View Dispatch",
+    href: "/view-dispatch-table",
     children: []
   },
-  // {
-  //   logo: "/sidebar-assests/raise-rfq-logo.svg",
-  //   name: "Raise RFQ",
-  //   href:""
-  // },
-  {
-    logo: "/sidebar-assests/view-pr.svg",
-    name: "View PR",
-    href: "/view-purchase-requisition",
-    children: []
-  },
-  // {
-  //   logo: "/sidebar-assests/po-details.svg",
-  //   name: "View PO",
-  //   href:""
-  // },
   {
     logo: "/sidebar-assests/view-grn.svg",
     name: "View GRN",
     href: "/view-grn",
     children: []
   },
-  // {
-  //   logo: "/sidebar-assests/dispatch-logo.svg",
-  //   name: "View Dispatch",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/raise-payment-1.svg",
-  //   name: "View Payment",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-  //   name: "Purchase Enquiry",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/complaint-box.svg",
-  //   name: "Complain Box",
-  //   href:""
-  // },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "GR Waiver",
+    href: "/gr-waiver-dashboard",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "Payment",
+    href: "/view-payment-requisition",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-grn.svg",
+    name: "Gate Entry",
+    href: "/gate-entry-dashboard",
+    children: []
+  },
 ];
 
+export const StoreSideBar: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/gate-entry-dashboard",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "View Gate Entry",
+    href: "/gate-entry",
+    children: []
+  }
+]
+
+
+export const MaterialUserSideBar: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/material-onboarding-dashboard",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "Raise Request",
+    href: "/new-material-code-request-table",
+    children: []
+  }
+]
+
+export const MaterialCPSideBar: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/material-onboarding-dashboard",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "View Request",
+    href: "/view-material-code-request",
+    children: []
+  }
+]
 
 export const HeadSidebar: SidebarItem[] = [
   {
@@ -301,32 +289,9 @@ export const HeadSidebar: SidebarItem[] = [
     children: []
   },
   {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "PR",
-    href: "/pr-request",
-    children: []
-  },
-  {
-    logo: "/sidebar-assests/raise-rfq-logo.svg",
-    name: "Raise RFQ",
-    href: "/create-rfq",
-    children: []
-  },
-  {
     logo: "/sidebar-assests/po-details.svg",
     name: "View PO",
     href: "/view-po",
-    children: []
-  },
-  // {
-  //   logo: "/sidebar-assests/vendor-icon.svg",
-  //   name: "Create PR",
-  //   href: "/pr-request"
-  // },
-  {
-    logo: "/sidebar-assests/raise-rfq-logo.svg",
-    name: "Raise RFQ",
-    href: "/create-rfq",
     children: []
   },
   {
@@ -341,30 +306,13 @@ export const HeadSidebar: SidebarItem[] = [
     href: "/view-po",
     children: []
   },
-  // {
-  //   logo: "/sidebar-assests/dispatch-logo.svg",
-  //   name: "View Dispatch",
-  //   href:""
-  // },
   {
     logo: "/sidebar-assests/view-grn.svg",
     name: "View GRN",
     href: "/view-grn",
     children: []
   },
-
-  // {
-  //   logo: "/sidebar-assests/raise-payment-1.svg",
-  //   name: "View Payment",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/complaint-box.svg",
-  //   name: "Complain Box",
-  //   href:""
-  // },
 ];
-
 
 export const VendorsidebarMenu: SidebarItem[] = [
   {
@@ -375,20 +323,15 @@ export const VendorsidebarMenu: SidebarItem[] = [
     children: []
   },
   {
-    logo: "/sidebar-assests/dispatch-logo.svg",
-    name: "Dispatch",
-    href: "/dispatch",
-    children: []
-  },
-  // {
-  //   logo: "/sidebar-assests/raise-rfq-logo.svg",
-  //   name: "Raise RFQ",
-  //   href:""
-  // },
-  {
     logo: "/sidebar-assests/po-details.svg",
     name: "View PO",
     href: "/view-vendor-po",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/dispatch-logo.svg",
+    name: "Dispatch",
+    href: "/vendor-dispatch-table",
     children: []
   },
   {
@@ -397,36 +340,6 @@ export const VendorsidebarMenu: SidebarItem[] = [
     href: "/asa-form",
     children: []
   },
-  // {
-  //   logo: "/sidebar-assests/po-details.svg",
-  //   name: "View PO",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/view-grn.svg",
-  //   name: "View GRN",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/dispatch-logo.svg",
-  //   name: "View Dispatch",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/raise-payment-1.svg",
-  //   name: "View Payment",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-  //   name: "Purchase Enquiry",
-  //   href:""
-  // },
-  // {
-  //   logo: "/sidebar-assests/complaint-box.svg",
-  //   name: "Complain Box",
-  //   href:""
-  // },
 ];
 
 export const EnquirysidebarMenu: SidebarItem[] = [
@@ -439,14 +352,14 @@ export const EnquirysidebarMenu: SidebarItem[] = [
   },
   {
     logo: "/sidebar-assests/purchase-enquiry-logo.svg",
-    name: "Enquiry",
+    name: "Raise Enquiry",
     href: "/pr-inquiry",
     children: []
   },
   {
     logo: "/sidebar-assests/view-pr.svg",
-    name: "PR",
-    href: "/pr-request",
+    name: "View PR",
+    href: "/view-purchase-requisition",
     children: []
   },
 ];
@@ -505,8 +418,8 @@ export const AccountSideBarMenu: SidebarItem[] = [
   },
   {
     logo: "/sidebar-assests/view-pr.svg",
-    name: "PR",
-    href: "/pr-request",
+    name: "View PR",
+    href: "/view-purchase-requisition",
     children: []
   },
   {
@@ -532,11 +445,6 @@ export const AccountHeadSideBarMenu: SidebarItem[] = [
     defaultActive: true,
     children: []
   },
-  // {
-  //   logo: "/sidebar-assests/vendor-icon.svg",
-  //   name: "Vendor Registration",
-  //   href: "/vendor-registration"
-  // },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "All Vendors",

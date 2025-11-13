@@ -27,10 +27,10 @@ export default function Pagination({ ...Props }: props) {
     // createQueryString("page", (currentPage+1).toString());
   };
 
-  console.log("currentPage:", Props.currentPage);
-  console.log("total_event_list:", Props.total_event_list);
-  console.log("record_per_page:", Props.record_per_page);
-  console.log("total_pages:", Math.ceil(Props.total_event_list / Props.record_per_page));
+  // console.log("currentPage:", Props.currentPage);
+  // console.log("total_event_list:", Props.total_event_list);
+  // console.log("record_per_page:", Props.record_per_page);
+  // console.log("total_pages:", Math.ceil(Props.total_event_list / Props.record_per_page));
   
   return (
     <div className="flex items-center justify-between">

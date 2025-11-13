@@ -33,7 +33,7 @@ import { useAuth } from "@/src/context/AuthContext";
 type Props = {
   dashboardTableData: DashboardTableType,
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
-  filterregisteredby: TvendorRegistrationDropdown["message"]["data"]["user_list"];
+  filterregisteredby: TvendorRegistrationDropdown["message"]["data"]["users_list"];
 
 }
 
@@ -197,7 +197,7 @@ const DashboardTotalVendorsTable = ({ dashboardTableData, companyDropdown, filte
                   <TableCell>{item?.accounts_t_approval}</TableCell>
                   {/* <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell> */}
                   {!isAccountsUser && (
-                    <TableCell><div className={`${(item?.qms_form_filled || item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
+                    <TableCell><div className={`${(item?.qms_form_filled || item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&company_code=${item?.company_name}`}><Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">View</Button></Link></div></TableCell>
                   )}
                   <TableCell className="pl-6"><button onClick={() => { handleVendorCodeDialog(item?.ref_no) }}><Eye /></button></TableCell>
                 </TableRow>

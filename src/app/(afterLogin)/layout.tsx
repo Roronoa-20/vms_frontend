@@ -9,7 +9,9 @@ export default function RootLayout({
   return (
     <AuthProvider>
     <div className="h-screen w-full flex overflow-y-hidden">
+      <div className="hidden md:flex">
       <Sidebar />
+      </div>
       <div className="w-full overflow-y-scroll">
         <Navbar />
         {children}

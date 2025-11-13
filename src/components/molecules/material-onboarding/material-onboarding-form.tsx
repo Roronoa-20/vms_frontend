@@ -1,0 +1,101 @@
+import React from "react";
+import { UseFormReturn } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import RequestorInformation from "@/src/components/molecules/material-onboarding/requestor-information";
+import MaterialInformation from "@/src/components/molecules/material-onboarding/material-information";
+import { MaterialRegistrationFormData } from "@/src/types/MaterialCodeRequestFormTypes";
+import { MaterialCode } from '@/src/types/PurchaseRequestType';
+import AlertBox from "../../common/vendor-onboarding-alertbox";
+import { EmployeeDetail, Company, UOMMaster, MaterialCategory } from "@/src/types/MaterialCodeRequestFormTypes";
+
+interface DropdownData {
+    material_code: MaterialCode[];
+}
+
+interface MastersData {
+    companyMaster: Company[];
+    uomMaster: UOMMaster[];
+    materialCategoryMaster: MaterialCategory[];
+}
+
+interface MaterialOnboardingFormProps {
+    form: UseFormReturn<MaterialRegistrationFormData>;
+    onCancel: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+    onUpdate: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    masters: MastersData;
+    showAlert: any;
+    isLoading: any;
+    isButtonDisabled: any;
+    materialRequestList: MaterialRegistrationFormData;
+    EmployeeDetailsJSON: EmployeeDetail | null;
+}
+
+const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, onCancel, onSubmit, onUpdate, materialRequestList, masters, isLoading, showAlert, EmployeeDetailsJSON }) => {
+
+    const basicMasters = {
+        companyMaster: masters.companyMaster,
+        materialCategoryMaster: masters.materialCategoryMaster,
+        uomMaster: masters.uomMaster,
+    };
+
+    return (
+        <form onSubmit={onSubmit} className="bg-white p-4 rounded shadow space-y-4">
+            <div className="space-y-1">
+                <RequestorInformation
+                    form={form}
+                    MaterialOnboarding={materialRequestList}
+                    EmployeeDetails={EmployeeDetailsJSON || {} as EmployeeDetail}
+                />
+
+                <MaterialInformation
+                    form={form}
+                    basicMasters={basicMasters}
+                    MaterialOnboarding={materialRequestList}
+                />
+            </div>
+
+            <div className="flex justify-end space-x-5 items-center">
+                <Button
+                    variant="backbtn"
+                    size="backbtnsize"
+                    onClick={onCancel}
+                >
+                    Cancel
+                </Button>
+
+                {(materialRequestList?.approval_status === "" ||
+                    materialRequestList?.approval_status === undefined) && (
+                        <Button
+                            variant="nextbtn"
+                            size="nextbtnsize"
+                            type="submit"
+                        >
+                            {isLoading ? "Processing..." : "Submit"}
+                        </Button>
+                    )}
+
+                {materialRequestList?.approval_status === "Re-Opened by CP" && (
+                    <Button
+                        variant="nextbtn"
+                        size="nextbtnsize"
+                        type="button"
+                        onClick={onUpdate}
+                    >
+                        {isLoading ? "Processing..." : "Update"}
+                    </Button>
+                )}
+
+                {showAlert && (
+                    <AlertBox
+                        content={"Your Details have been submitted successfully!"}
+                        submit={showAlert}
+                        url="new-material-code-request-table"
+                    />
+                )}
+            </div>
+        </form>
+    );
+};
+
+export default MaterialOnboardingForm;

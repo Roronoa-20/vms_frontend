@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Vendor, AllVendorsCompanyCodeResponse, CompanyVendorCodeRecord, VendorRow, CompanyData } from "@/src/types/allvendorstypes";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/src/components/atoms/table";
 import { Button } from "@/components/ui/button";
@@ -8,34 +8,40 @@ import PopUp from "@/src/components/molecules/AllvendortablePopUp";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
-import Pagination from "@/src/components/molecules/Pagination";
+import Pagination from "@/src/components/molecules/Pagination-at-all-vendors";
 import NewVendorRegistration from "@/src/components/pages/newvendorregistration";
 import { TvendorRegistrationDropdown } from "@/src/types/types";
 import { Label } from "@/components/ui/label";
 import { Select, SelectGroup, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/src/components/atoms/select";
 import { RowData, ExtendRowData, MultipleCompanyData } from "@/src/types/rowdata";
 
-
 interface Props {
     vendors: VendorRow[];
     activeTab: string;
+    currentPage: number;
+    setCurrentPage: (page: number) => void;
+    pageSize: number;
+    totalPages: number;
+    totalRecords: number;
 }
 
-const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
-    console.log("Vendors-------->", vendors);
+const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurrentPage, pageSize, totalPages, totalRecords }) => {
+    // console.log("Vendors-------->", vendors);
     const router = useRouter();
     const [isVendorCodeDialog, setIsVendorCodeDialog] = React.useState(false);
     const [selectedVendorCodes, setSelectedVendorCodes] = React.useState<CompanyVendorCodeRecord[] | null>(null);
     const [copiedRow, setCopiedRow] = React.useState<RowData | null>(null);
     const [isExtendDialogOpen, setIsExtendDialogOpen] = React.useState(false);
     const [extendRow, setExtendRow] = React.useState<ExtendRowData | null>(null);
-    const [currentPage, setCurrentPage] = React.useState(1);
+    // const [currentPage, setCurrentPage] = React.useState(1);
     const copyFormRef = React.useRef<HTMLDivElement | null>(null);
     const extendFormRef = React.useRef<HTMLDivElement | null>(null);
     const recordPerPage = 10;
     const stickyKeys: (keyof RowData | "srno")[] = ["srno", "company_code", "vendor_name"];
     const [colWidths, setColWidths] = React.useState<Record<string, number>>({});
     const headerRefs = React.useRef<Record<string, HTMLTableCellElement | null>>({});
+
+    useEffect(() => setCurrentPage(1), [vendors]);
 
     React.useEffect(() => {
         const widths: Record<string, number> = {};
@@ -53,39 +59,6 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
             .reduce((sum, k) => sum + (colWidths[k] || 0), 0);
     };
 
-    // const rows: RowData[] = vendors.flatMap((vendor) => {
-    //     const companyData = vendor.multiple_company_data?.length
-    //         ? vendor.multiple_company_data.filter((c) => c.company_name === activeTab)
-    //         : [{ company_name: activeTab, company_display_name: activeTab, company_vendor_code: "N.A.", sap_client_code: "N.A.", purchase_organization: "N.A.", via_import: 0 }];
-
-    //     return companyData.map((c) => {
-    //         const approvedRecord = vendor.vendor_onb_records?.find(
-    //             (record) => record.onboarding_form_status === "Approved"
-    //         );
-
-    //         return {
-    //             multiple_company_data: [c],
-    //             name: vendor.name,
-    //             ref_no: approvedRecord?.vendor_onboarding_no || "N.A.",
-    //             multiple_company: vendor.bank_details?.registered_for_multi_companies ?? 0,
-    //             company_code: c.company_name,
-    //             vendor_code: c.company_vendor_code || "N.A.",
-    //             vendor_name: vendor.vendor_name || "N.A.",
-    //             office_email_primary: vendor.office_email_primary || "N.A.",
-    //             pan_number: vendor.bank_details?.company_pan_number || "N.A.",
-    //             gst_no: vendor.document_details || "N.A.",
-    //             state: c.company_display_name || "N.A.",
-    //             country: vendor.country || "N.A.",
-    //             pincode: vendor.mobile_number || "N.A.",
-    //             bank_name: vendor.bank_details?.bank_name || "N.A.",
-    //             ifsc_code: vendor.bank_details?.ifsc_code || "N.A.",
-    //             sap_client_code: c.sap_client_code || "N.A.",
-    //             purchase_org: c.purchase_organization || "N.A.",
-    //             via_data_import: vendor.via_data_import || "0",
-    //             created_from_registration: vendor.created_from_registration || "0",
-    //         };
-    //     });
-    // });
 
     const normalizeCompanyData = (c: Partial<CompanyData> | any): MultipleCompanyData => ({
         company_name: c.company_name ?? "N.A.",
@@ -161,11 +134,13 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
             } as RowData;
         });
     });
-    console.log("Normalized Rows----->", rows);
+    // console.log("Normalized Rows----->", rows)
 
-    const totalRecords = rows.length;
-    const startIdx = (currentPage - 1) * recordPerPage;
-    const paginatedRows = rows.slice(startIdx, startIdx + recordPerPage);
+    const paginatedRows = useMemo(() => {
+        const start = (currentPage - 1) * pageSize;
+        return rows.slice(start, start + pageSize);
+    }, [rows, currentPage, pageSize]);
+    const startIdx = (currentPage - 1) * pageSize;
 
     const columns: { key: keyof RowData; label: string; type?: "text" | "file" | "boolean"; sticky?: boolean; }[] = [
         { key: "company_code", label: "Company Code", sticky: true },
@@ -284,8 +259,8 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
         fetchDropdownData();
     }, [activeTab]);
 
-    console.log("SAP CLient Code Filter Data--->", dropdownData);
-    console.log("Unfiltered Data---->", unfilteredDropdownData);
+    // console.log("SAP CLient Code Filter Data--->", dropdownData);
+    // console.log("Unfiltered Data---->", unfilteredDropdownData);
     const companyDropdown = dropdownData?.company_master;
 
     const handleCopy = (row: RowData) => {
@@ -433,37 +408,39 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                     </TableHead>
                                 </TableRow>
                             </TableHeader>
-                            {/* Table Body */}
                             <TableBody>
-                                {/* {paginatedRows.map((row, idx) => ( */}
-                                {/* {(copiedRow ? [copiedRow] : paginatedRows).map((row, idx) => ( */}
-                                {(copiedRow || extendRow
-                                    ? paginatedRows.filter(
-                                        (row) =>
-                                            (copiedRow && row.name === copiedRow.name && row.company_code === copiedRow.company_code) ||
-                                            (extendRow && row.name === extendRow.name && row.company_code === extendRow.company_code)
-                                    )
-                                    : paginatedRows
-                                ).map((row, idx) => (
-                                    < TableRow key={`${row.name}-${row.company_code}-${idx}`}
-                                        className={copiedRow?.name === row.name && copiedRow?.company_code === row.company_code
-                                            ? "bg-yellow-100 border-2 border-yellow-400"
-                                            : idx % 2 === 0 ? "bg-gray-50" : "bg-white"}>
+                                {paginatedRows.map((row, idx) => (
+                                    <TableRow
+                                        key={`${row.name}-${row.company_code}-${idx}`}
+                                        className={
+                                            copiedRow?.name === row.name && copiedRow?.company_code === row.company_code
+                                                ? "bg-yellow-100 border-2 border-yellow-400"
+                                                : idx % 2 === 0
+                                                    ? "bg-gray-50"
+                                                    : "bg-white"
+                                        }
+                                    >
+                                        {/* Sr. No */}
                                         <TableCell
-                                            className={`text-center px-4 py-2 whitespace-nowrap sticky z-10 ${stickyKeys.includes("srno") ? "bg-white" : "bg-[#f7f7f7]"}`}
+                                            className={`text-center px-4 py-2 whitespace-nowrap sticky z-10 ${stickyKeys.includes("srno") ? "bg-white" : "bg-[#f7f7f7]"
+                                                }`}
                                             style={{ left: getStickyLeft("srno") }}
                                         >
                                             {startIdx + idx + 1}
                                         </TableCell>
 
+                                        {/* Columns */}
                                         {columns.map((col, index) => (
                                             <React.Fragment key={`${row.name}-${col.key}-${index}`}>
                                                 <TableCell
-                                                    className={`text-center px-4 py-2 whitespace-nowrap ${stickyKeys.includes(col.key) ? "sticky bg-white z-10" : "bg-[#f7f7f7]"}`}
+                                                    className={`text-center px-4 py-2 whitespace-nowrap ${stickyKeys.includes(col.key) ? "sticky bg-white z-10" : "bg-[#f7f7f7]"
+                                                        }`}
                                                     style={stickyKeys.includes(col.key) ? { left: getStickyLeft(col.key) } : {}}
                                                 >
                                                     {renderCell(row, col)}
                                                 </TableCell>
+
+                                                {/* Vendor Codes & GST Button */}
                                                 {index === 2 && (
                                                     <TableCell className="text-center px-4 py-2 bg-[#f7f7f7]">
                                                         <Button
@@ -481,7 +458,6 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
                                         {/* Actions */}
                                         <TableCell className="text-center bg-[#f7f7f7]">
                                             <Button
-                                                // onClick={() => handleView(row.ref_no, row.name, row.via_data_import)}
                                                 onClick={() => handleView(row)}
                                                 className="whitespace-nowrap bg-[#5291CD] text-white text-sm rounded-xl px-3 py-1"
                                             >
@@ -522,14 +498,16 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab }) => {
             )}
 
             {/*Pagination */}
-            < div className="mt-4" >
+            <div className="mt-4 flex justify-between items-center">
+                <p className="text-[12px] text-gray-500">
+                    Showing {paginatedRows.length} of {totalRecords} entries
+                </p>
                 <Pagination
                     currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
-                    total_event_list={totalRecords}
-                    record_per_page={recordPerPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
                 />
-            </div >
+            </div>
 
             {copiedRow && (
                 <div ref={copyFormRef} className="mt-6 border rounded-lg shadow bg-gray-50">

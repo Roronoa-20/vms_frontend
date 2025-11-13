@@ -83,7 +83,7 @@ export const VendorInfoForm = ({ vendor_onboarding, company_code }: { vendor_onb
                                     className="w-full border border-gray-300 p-2"
                                     rows={4}
                                     placeholder='Enter the details'
-                                    value={formData.name_of_parent_company}
+                                    value={formData.name_of_parent_company ?? ""}
                                     // onChange={(e) => handleTextareaChange(e, 'name_of_parent_company')}
                                     onChange={() => { }}
                                     readOnly

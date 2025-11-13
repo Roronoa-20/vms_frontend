@@ -8,13 +8,17 @@ import requestWrapper from '@/src/services/apiCall'
 import { useRouter } from 'next/navigation';
 import LogisticsImportQuatationFormFields from '../templates/QuatationForms/LogisticsImportQuatationFormFields';
 import { RFQDetails } from '@/src/types/RFQtype';
+import { QuotationDetail } from '@/src/types/QuatationTypes';
 interface Props {
     Dropdown: PurchaseRequestDropdown["message"];
     token: string;
     RFQData:RFQDetails
+    QuotationData:QuotationDetail | null
 }
-const PublicLogisticsImportQuatationForm = ({ Dropdown, token,RFQData }: Props) => {
-    const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Logistics Vendor",mode_of_shipment:RFQData.mode_of_shipment,logistic_type:"Import" });
+const PublicLogisticsImportQuatationForm = ({ Dropdown, token,RFQData,QuotationData }: Props) => {
+    console.log(JSON.stringify(QuotationData),"QuotationData------------")
+    // const [formData, setFormData] = useState<QuotationDetail>({ rfq_type: "Logistics Vendor",mode_of_shipment:RFQData.mode_of_shipment,logistic_type:"Import",QuotationData});
+    const [formData, setFormData] = useState<QuotationDetail>({...QuotationData,rfq_type: "Logistics Vendor",mode_of_shipment:RFQData.mode_of_shipment} as QuotationDetail);
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const router = useRouter()
 

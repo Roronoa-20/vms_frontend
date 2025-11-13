@@ -125,15 +125,15 @@ const DashboardAccountsRejectedVendorsTable = ({ dashboardTableData, companyDrop
   };
 
   const handleSelectChange = (
-  value: string,
-  setter: (val: string) => void
+    value: string,
+    setter: (val: string) => void
   ) => {
-  if (value === "--Select--") {
-    setter(""); // reset filter
-  } else {
-    setter(value);
-  }
-};
+    if (value === "--Select--") {
+      setter(""); // reset filter
+    } else {
+      setter(value);
+    }
+  };
 
 
   console.log(table, "this is table");
@@ -148,23 +148,20 @@ const DashboardAccountsRejectedVendorsTable = ({ dashboardTableData, companyDrop
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
             <Select
-                value={selectedCompany}
-                onValueChange={(value) => handleSelectChange(value, setSelectedCompany)}
+              value={selectedCompany || "all"}
+              onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
-              
               <SelectContent>
-                <SelectGroup className="w-full">
-                  <SelectItem value="--Select--">
-                                     --Select--
-                        </SelectItem>
-                  {
-                    companyDropdown?.map((item, index) => (
-                      <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                    ))
-                  }
+                <SelectGroup>
+                  <SelectItem value="all">All</SelectItem>
+                  {companyDropdown?.map((item) => (
+                    <SelectItem key={item.name} value={item.name}>
+                      {item.description}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -235,8 +232,8 @@ const DashboardAccountsRejectedVendorsTable = ({ dashboardTableData, companyDrop
                       <Eye className="h-8 w-8 text-black" />
                     </Button>
                   </TableCell>
-                  <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                  <TableCell><Button onClick={() => handleAmendClick(item?.name)} className="bg-blue-400 hover:bg-blue-300">Amend</Button></TableCell>
+                  <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">View</Button></Link></TableCell>
+                  <TableCell><Button onClick={() => handleAmendClick(item?.name)} className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">Amend</Button></TableCell>
                 </TableRow>
               ))
             ) : (

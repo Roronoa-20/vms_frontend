@@ -52,6 +52,7 @@ interface PRMaterialsManagerProps {
   title?: string
   className?: string
   disabled?: boolean
+  defaultPRCodes?:string[]
 }
 
 export default function PRServiceManager({
@@ -60,8 +61,9 @@ export default function PRServiceManager({
   title = "PR Materials Management",
   className = "",
   disabled = false,
+  defaultPRCodes
 }: PRMaterialsManagerProps) {
-  const [selectedPRs, setSelectedPRs] = useState<string[]>([])
+  const [selectedPRs, setSelectedPRs] = useState<string[]>(defaultPRCodes?defaultPRCodes:[])
   const [materials, setMaterials] = useState<PRItem[]>([])
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -165,9 +167,6 @@ export default function PRServiceManager({
     // 👇 Force-cast to SelectedMaterial[]
     return selected as unknown as SelectedMaterial[];
   }, [materials, selectedSubheads]);
-
-
-
 
   // Notify parent of selection changes
   useEffect(() => {
@@ -285,6 +284,8 @@ export default function PRServiceManager({
   const cancelEdit = () => {
     setEditValues({})
   }
+
+  console.log(selectedPRs,"selectedPRsselectedPRs",defaultPRCodes)
   return (
     <div className={cn("space-y-6", className)}>
       <Card>

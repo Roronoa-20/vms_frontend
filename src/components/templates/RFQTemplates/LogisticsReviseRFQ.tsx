@@ -159,6 +159,7 @@ import SingleSelectVendorTable from '../../molecules/rfq/SingleSelectVendorTable
 import Pagination from '../../molecules/Pagination';
 import NewVendorTable from '../../molecules/rfq/NewVendorTable';
 import AddVendorReviseRFQ from './AddVendorReviseRFQ';
+import PreviousVendorTable from '../../molecules/ViewRFQ/PreviousVendorTable';
 
 interface Props {
     RFQData: RFQDetails
@@ -231,6 +232,7 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
             alert("error");
         }
     }
+    console.log(RFQData?.onboarded_vendors, "RFQData----------------")
     return (
         <>
             <Dialog open={open} onOpenChange={onClose}>
@@ -262,6 +264,8 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
                         />
                     )}
 
+                  {(formData?.service_provider === "Adhoc Service Provider" || formData?.service_provider === "Courier Service Provider") &&  <PreviousVendorTable RFQData={RFQData} />}
+
                     {formData?.service_provider === "Adhoc Service Provider" && (
                         <VendorTable
                             VendorList={VendorList?.data ? VendorList?.data : []}
@@ -281,7 +285,6 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
                             handleVendorSearch={handleVendorSearch}
                         />
                     )}
-
                     {(formData?.service_provider === "Courier Service Provider" ||
                         formData?.service_provider === "Adhoc Service Provider") && (
                             <div className='px-4'>
@@ -295,7 +298,7 @@ const LogisticsReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
                         )}
 
                     <div className='py-6'>
-                        <NewVendorTable newVendorTable={newVendorTable} handleOpen={() => setIsDialog(true)} />
+                        <NewVendorTable newVendorTable={newVendorTable} handleOpen={() => setIsDialog(true)} setNewVendorTable={setNewVendorTable} />
                     </div>
 
                     <DialogFooter>

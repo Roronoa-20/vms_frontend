@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Logo from "@/src/components/atoms/VmsLoginLogo";
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import NavbarMenu from "./NavbarMenu";
@@ -97,15 +98,24 @@ const Navbar = () => {
   }
 
   return (
-    <div className="bg-white w-full shadow-sm flex justify-between p-2 items-center sticky top-0 z-50">
-      <h1
-        className={`${pathname === "/view-asa-form"
-          ? "text-[20px] font-medium"
-          : "text-[24px] font-semibold"
-          } text-[#03111F]`}
-      >
-        {heading}
-      </h1>
+    <div className="bg-white w-full shadow-sm flex justify-between p-2 items-center sticky top-0 z-50 border-b border-slate-300">
+      <div className="flex items-center gap-2">
+        {/* Show Logo only for Security */}
+        {designation?.toLowerCase() === "security" && (
+          <div className="flex items-center justify-center w-44">
+            <Logo />
+          </div>
+        )}
+
+        <h1
+          className={`${pathname === "/view-asa-form"
+            ? "text-[20px] font-medium pl-1"
+            : "text-[24px] font-semibold pl-1"
+            } text-[#03111F]`}
+        >
+          {heading}
+        </h1>
+      </div>
 
       <div className="flex items-center gap-3 relative">
         {/* Notification Bell */}

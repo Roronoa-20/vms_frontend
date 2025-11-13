@@ -50,6 +50,7 @@ interface PRMaterialsManagerProps {
   className?: string
   disabled?: boolean
   apiEndpoint?: string
+  defaultPRCodes?:string[]
 }
 
 export default function PRMaterialsManager({
@@ -58,8 +59,9 @@ export default function PRMaterialsManager({
   title = "PR Materials Management",
   className = "",
   disabled = false,
+  defaultPRCodes
 }: PRMaterialsManagerProps) {
-  const [selectedPRs, setSelectedPRs] = useState<string[]>([])
+  const [selectedPRs, setSelectedPRs] = useState<string[]>(defaultPRCodes?defaultPRCodes:[])
   const [selectedRows, setSelectedRows] = useState<string[]>([])
   const [editingCell, setEditingCell] = useState<{ id: string; field: string } | null>(null)
   const [materials, setMaterials] = useState<PRItem[]>([])

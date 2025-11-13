@@ -435,6 +435,8 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
             required
             className="text-[12px] text-black"
             menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+             menuPlacement="auto" // 'auto', 'top', or 'bottom'
+  menuPosition="fixed" // prevents clipping in scrollable containers
             styles={multiSelectStyles}
           />
         </div>

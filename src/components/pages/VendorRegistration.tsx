@@ -9,6 +9,7 @@ import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { useVendorStore } from "@/src/store/VendorRegistrationStore";
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from 'react-toastify';
 
 interface Props {
   vendorTitleDropdown: TvendorRegistrationDropdown["message"]["data"]["vendor_title"]
@@ -137,27 +138,31 @@ const VendorRegistration = ({ ...Props }: Props) => {
     });
 
     if (response?.status == 500) {
-      console.log("error in submitting this form");
+      // console.log("error in submitting this form");
+      toast?.error("Error submitting this form");
       return;
     }
 
     if (response?.status == 200) {
       if (response?.data?.message?.status == "duplicate") {
-        alert(response?.data?.message?.message);
+        toast.warn(response?.data?.message?.message);
         if (submitButton) {
           submitButton.disabled = false;
         }
         return;
       }
-      console.log("handle submit successfully");
-      alert("Submit Successfully");
-      router.push("/dashboard");
+      toast.success("Vendor Registered Successfully.....");
+      setTimeout(()=>{
+        router.push("/dashboard");
+      },2000)
       return;
     } else {
       if (submitButton) {
         submitButton.disabled = false;
       }
     }
+    // toast.success("Vendor Registered Successfully.....");
+    
   };
 
   const handleCancel = async () => {
@@ -192,6 +197,7 @@ const VendorRegistration = ({ ...Props }: Props) => {
         multiVendor={multiVendor}
       />
       {/* </form> */}
+      <ToastContainer closeButton theme="dark" autoClose={2000} />
     </div>
   );
 };

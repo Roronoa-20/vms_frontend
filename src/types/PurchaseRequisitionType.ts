@@ -7,6 +7,11 @@ export interface PurchaseRequisitionResponse {
   "Purchase Group": string;
   "Cart ID": string;
   "Form Status": string;
+  form_is_submitted: boolean;
+  sap_error: string;
+  sap_response: string;
+  sap_status: string;
+  mail_sent_to_purchase_team:boolean;
   data: PurchaseRequisitionDataItem[];
 }
 
@@ -55,29 +60,67 @@ export interface PurchaseRequisitionDataItem {
   asset_number: string;
   purchase_requisitioner_name: string;
   status_head: string;
-  quantity_head_head:string;
-  c_delivery_date_head:string;
-  tracking_id_head:string;
-  desired_vendor_head:string;
-  fixed_value_head:string;
-  spit_head:string;
-  agreement_head:string;
-  item_of_head:string;
-  mpn_number_head:string;
-  company_code_area_head:string;
-  requisitioner_name_head:string;
-  sap_pr_code:string;
+  quantity_head_head: string;
+  c_delivery_date_head: string;
+  tracking_id_head: string;
+  desired_vendor_head: string;
+  fixed_value_head: string;
+  spit_head: string;
+  agreement_head: string;
+  item_of_head: string;
+  mpn_number_head: string;
+  company_code_area_head: string;
+  requisitioner_name_head: string;
+  sap_pr_code: string;
+  company: string;
+  prf_name_for_sap: string;
+  cart_id: string;
+  pur_req_webform_name: string;
+  store_location_head_desc: string;
+  material_group_head_desc: string;
+  purchase_group_head_desc: string;
+  valuation_area_head_desc: string;
+  plant_head_desc: string;
+}
+
+export interface MaterialGroup {
+  name: string;
+  material_group_name: string;
+  material_group_description: string | null;
+}
+
+export interface Plant {
+  description: string;
+  name: string;
+  plant_code: string;
+  plant_name: string;
+}
+
+export interface StorageLocation {
+  name: string;
+  storage_location_name: string;
+}
+
+export interface ValuationArea {
+  name: string;
+  valuation_class_code: string;
+  valuation_class_name: string | null;
+}
+
+export interface PurchaseGroup {
+  name: string;
+  description: string | null;
 }
 
 
 export interface SubheadField {
-  row_id:string;
+  row_id: string;
   row_name: string;
   sub_head_unique_id: string;
   purchase_requisition_item_subhead: string | null;
   item_number_of_purchase_requisition_subhead: string | null;
   purchase_requisition_date_subhead: string | null;
-  delivery_date_subhead: string ;
+  delivery_date_subhead: string;
   store_location_subhead: string | null;
   item_category_subhead: string | null;
   material_group_subhead: string | null;
@@ -87,7 +130,7 @@ export interface SubheadField {
   asset_subnumber_subhead: string | null;
   profit_ctr_subhead: string | null;
   short_text_subhead: string | null;
-  quantity_subhead: string ;
+  quantity_subhead: string;
   price_of_purchase_requisition_subhead: string | null;
   gl_account_number_subhead: string | null;
   material_code_subhead: string | null;
@@ -101,6 +144,8 @@ export interface SubheadField {
   subhead_unique_field: string
   material_name_subhead: string
   price_subhead: string
-  original_quantity:string
-  original_delivery_date:string
+  original_quantity: string
+  original_delivery_date: string
+  doc_name: string;
+  name: string
 }

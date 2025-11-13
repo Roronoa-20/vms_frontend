@@ -24,6 +24,7 @@ import { dispatchTable } from "@/src/types/dispatchTableType";
 import PopUp from "./PopUp";
 import { Button } from "../atoms/button";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/src/context/AuthContext";
 
 
 type Props = {
@@ -31,6 +32,7 @@ type Props = {
 }
 
 const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
+  const { designation } = useAuth();
   console.log(dashboardTableData, "this is table data")
   const [isPODialog, setIsPODialog] = useState<boolean>(false);
   const [selectedPOTable, setSelectedPOTable] = useState<string[]>();
@@ -45,11 +47,11 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
   }
 
   return (
-    <>
+    <div>
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Total Dispatch Orders
+            Dispatch Orders
           </h1>
         </div>
         <Table>
@@ -76,8 +78,16 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
                 <TableCell className="text-center whitespace-nowrap">{item?.invoice_date}</TableCell>
                 <TableCell className="text-center whitespace-nowrap">{item?.invoice_number}</TableCell>
                 <TableCell className="text-center whitespace-nowrap">{item?.status}</TableCell>
-                <TableCell><Button className="py-2" variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handlePOClick(item?.purchase_numbers) }}>View PO</Button></TableCell>
-                <TableCell><Button onClick={() => { router.push(`/dispatch?refno=${item?.name}`) }} className="bg-blue-400 hover:bg-blue-300" >View</Button></TableCell>
+                <TableCell>
+                  <Button className="py-2 font-medium hover:bg-white hover:text-black" variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handlePOClick(item?.purchase_numbers) }}>
+                    View PO
+                  </Button>
+                </TableCell>
+                <TableCell>
+                  <Button variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { designation != "Vendor" ? router.push(`/view-dispatch?refno=${item?.name}`) : router.push(`/dispatch?refno=${item?.name}`) }} className="hover:bg-white hover:text-black font-medium">
+                    View
+                  </Button>
+                </TableCell>
               </TableRow>
             ))
             ) : (
@@ -104,7 +114,6 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
               {selectedPOTable ? (selectedPOTable?.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell>{item}</TableCell>
-
                 </TableRow>
               ))
               ) : (
@@ -118,7 +127,7 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
           </Table>
         </PopUp>
       }
-    </>
+    </div>
   );
 };
 

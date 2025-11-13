@@ -59,36 +59,36 @@ const ManufacturingDetail = ({
     useState<boolean>(true);
   const [materialsTable, setMaterialsTable] = useState<any[]>([]);
 
-  const handleAddMaterial = () => {
-    if (
-      !ManufacturingDetail.material_description ||
-      !ManufacturingDetail.hsnsac_code ||
-      !ManufacturingDetail.annual_capacity ||
-      !manufacturedFile
-    ) {
-      alert(
-        "Please fill in all fields and upload a product image before adding."
-      );
-      return;
-    }
-    const newEntry = {
-      material_description: ManufacturingDetail.material_description,
-      hsnsac_code: ManufacturingDetail.hsnsac_code,
-      annual_capacity: ManufacturingDetail.annual_capacity,
-      material_images: manufacturedFile[0],
-    };
-    setMaterialsTable((prev) => [...prev, newEntry]);
-    updateManufacturingDetail("material_description", "");
-    updateManufacturingDetail("hsnsac_code", "");
-    updateManufacturingDetail("annual_capacity", "");
-    setManufacturedFile(null);
-  };
+  // const handleAddMaterial = () => {
+  //   if (
+  //     !ManufacturingDetail.material_description ||
+  //     !ManufacturingDetail.hsnsac_code ||
+  //     !ManufacturingDetail.annual_capacity ||
+  //     !manufacturedFile
+  //   ) {
+  //     alert(
+  //       "Please fill in all fields and upload a product image before adding."
+  //     );
+  //     return;
+  //   }
+  //   const newEntry = {
+  //     material_description: ManufacturingDetail.material_description,
+  //     hsnsac_code: ManufacturingDetail.hsnsac_code,
+  //     annual_capacity: ManufacturingDetail.annual_capacity,
+  //     material_images: manufacturedFile[0],
+  //   };
+  //   setMaterialsTable((prev) => [...prev, newEntry]);
+  //   updateManufacturingDetail("material_description", "");
+  //   updateManufacturingDetail("hsnsac_code", "");
+  //   updateManufacturingDetail("annual_capacity", "");
+  //   setManufacturedFile(null);
+  // };
 
-  const handleDeleteMaterial = (index: number) => {
-    const updated = [...materialsTable];
-    updated.splice(index, 1);
-    setMaterialsTable(updated);
-  };
+  // const handleDeleteMaterial = (index: number) => {
+  //   const updated = [...materialsTable];
+  //   updated.splice(index, 1);
+  //   setMaterialsTable(updated);
+  // };
 
   const router = useRouter();
 
@@ -115,9 +115,9 @@ const ManufacturingDetail = ({
     formData.append("data", JSON.stringify(updatedData));
 
     materialsTable.forEach((item, index) => {
-      if (item.material_images) {
-        formData.append(`material_images_${index}`, item.material_images);
-      }
+      // if (item.material_images) {
+      //   formData.append(`material_images_${index}`, item.material_images);
+      // }
     });
     if (brochure_proof) {
       formData.append("brochure_proof", brochure_proof[0]);
@@ -135,7 +135,7 @@ const ManufacturingDetail = ({
     });
     if (manufacturingDetailResponse?.status == 200)
       if(isAccountsTeam == 1){
-        router.push(`/vendor-details-form?Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`)
+        router.push(`/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`)
       }else if(VendorType && !VendorType.includes("Material Vendor")){
         router.push(
           `/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
@@ -149,7 +149,7 @@ const ManufacturingDetail = ({
 
   const handleBack = () => {
     router.push(
-      `/vendor-details-form?tabtype=Contact%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
+      `/vendor-details-form?tabtype=Product%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
     );
   };
 
@@ -315,7 +315,7 @@ const ManufacturingDetail = ({
           />
         </div>
       </div>
-      <h1 className="border-b-2 pb-1 sticky top-0 bg-white py-4 text-lg">
+      {/* <h1 className="border-b-2 pb-1 sticky top-0 bg-white py-4 text-lg">
         Products Details
       </h1>
       <div className="grid grid-cols-3 gap-4 p-1">
@@ -327,7 +327,7 @@ const ManufacturingDetail = ({
             placeholder=""
             value={
               ManufacturingDetail?.material_description ??
-              OnboardingDetail?.materials_supplied[0]?.material_description ??
+              OnboardingDetail?.materials_supplied?.[0]?.material_description ??
               ""
             }
             onChange={(e) => {
@@ -343,7 +343,7 @@ const ManufacturingDetail = ({
             placeholder=""
             value={
               ManufacturingDetail?.hsnsac_code ??
-              OnboardingDetail?.materials_supplied[0]?.hsnsac_code ??
+              OnboardingDetail?.materials_supplied?.[0]?.hsnsac_code ??
               ""
             }
             onChange={(e) => {
@@ -359,7 +359,7 @@ const ManufacturingDetail = ({
             placeholder=""
             value={
               ManufacturingDetail?.annual_capacity ??
-              OnboardingDetail?.materials_supplied[0]?.annual_capacity ??
+              OnboardingDetail?.materials_supplied?.[0]?.annual_capacity ??
               ""
             }
             onChange={(e) => {
@@ -378,9 +378,9 @@ const ManufacturingDetail = ({
               onChange={(e) => {
                 setManufacturedFile(e.target.files);
               }}
-            />
+            /> */}
             {/* file preview */}
-            {isManufacturedFilePreview &&
+            {/* {isManufacturedFilePreview &&
               !manufacturedFile &&
               OnboardingDetail?.materials_supplied?.[0]?.material_images
                 ?.url && (
@@ -420,8 +420,8 @@ const ManufacturingDetail = ({
             Add
           </Button>
         </div>
-      </div>
-      {materialsTable?.length > 0 && (
+      </div> */}
+      {/* {materialsTable?.length > 0 && (
         <div className="shadow- bg-[#f6f6f7] p-4 mb-4 mt-4 rounded-2xl">
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
@@ -461,7 +461,7 @@ const ManufacturingDetail = ({
             </Table>
           </div>
         </div>
-      )}
+      )} */}
       <div className="grid grid-cols-2 gap-3 p-2">
         <div className="col-span-1">
           <h1 className="text-[16px] font-normal text-[#626973] pb-2">

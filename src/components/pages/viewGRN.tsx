@@ -35,9 +35,9 @@ const ViewGRNPage = async () => {
       cookie: cookieHeaderString,
     },
   });
-
+  console.log(GRNDataResponse, "GRN ALL API REsponSE----")
   if (GRNDataResponse?.status === 200) {
-    GRNData = GRNDataResponse?.data?.message || [];
+    GRNData = GRNDataResponse?.data?.message?.data || [];
   }
 
   return (

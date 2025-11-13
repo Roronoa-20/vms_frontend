@@ -179,7 +179,7 @@ const DashboardFiiledQMSTable = ({ dashboardTableData, companyDropdown }: Props)
                                     <TableCell>{item?.registered_by}</TableCell>
                                     <TableCell>
                                         <Link
-                                            href={`/view-onboarding-details?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}
+                                            href={`/view-onboarding-details?tabtype=Company Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}
                                         >
                                             <Button className="bg-blue-400 hover:bg-blue-300">View</Button>
                                         </Link>

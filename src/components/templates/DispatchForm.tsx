@@ -18,6 +18,7 @@ import Link from 'next/link'
 import { updateQueryParam } from './PRRequestForm'
 import PopUp from '../molecules/PopUp'
 import { ApiError } from 'next/dist/server/api-utils'
+import { toast, ToastContainer } from 'react-toastify'
 
 interface TPoDropdown{
     name:string
@@ -146,7 +147,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
 
     const handleVendorCodeChange = async(value:string)=>{
         setFormData((prev:any)=>({...prev,vendor_code:value}))
-        const url = `${API_END_POINTS?.poBasedOnVendorCode}?vendor_code=${value}`;
+        const url = `${API_END_POINTS?.poBasedOnVendorCode}?vendor_code=${value}&filters=${encodeURIComponent(JSON.stringify({status:"Approved by Vendor"}))}`;
         const response:AxiosResponse = await requestWrapper({url:url,method:"GET"});
         if(response?.status == 200){
             const newDropdown = response?.data?.message?.data?.map((item:any)=>{
@@ -299,7 +300,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
     }
      const resposne:AxiosResponse = await requestWrapper({url:url,data:formdata,method:"POST"});
      if(resposne?.status == 200){
-      alert("row updated successfully");
+      toast.success("row updated successfully");
       router.refresh();
      }
   }
@@ -308,7 +309,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
     const url = API_END_POINTS?.SubmitDispatch;
     const response:AxiosResponse = await requestWrapper({url:url,data:{data:{name:refno,submit:1}},method:"POST"});
     if(response?.status == 200){
-      alert("Submitted Successfully");
+      toast.success("Submitted Successfully");
       router.push("/vendor-dashboard");
     }
   }
@@ -321,7 +322,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
   const deleteVehicalRow = async(vehical_ref_no:string)=>{
     const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.deleteDispatchVehicalItem,method:"POST",params:{dispatch_item_id:refno,vehicle_details_id:vehical_ref_no}});
     if(response?.status == 200){
-      alert("deleted successfully");
+      toast.success("deleted successfully");
       location?.reload();
     }
   }
@@ -331,13 +332,10 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
       
   return (
     <>
-    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      {/* <h1 className="border-b-2 border-gray-400 top-0 bg-white text-[#000000] text-lg">
-        Purchase Inquiry
-      </h1> */}
-      <div className="grid grid-cols-3 gap-6 p-5">
+    <div className="flex flex-col bg-white rounded-lg px-3 pb-2 max-h-[80vh] overflow-y-scroll w-full">
+      <div className="grid grid-cols-3 gap-6 p-3">
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
             Vendor Code
           </h1>
           <Select disabled={DispatchDetails?.dispatch_form_submitted?true:false} value={formData?.vendor_code ?? DispatchDetails?.vendor_code ??  ""} onValueChange={(value)=>{handleVendorCodeChange(value)}}>
@@ -356,43 +354,43 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
           </Select>
         </div>
           <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
-            PO No
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+            PO No.
           </h1>
           <MultiSelect isDisabled={DispatchDetails?.dispatch_form_submitted?true:false} value={selectedPOMultiple ?? []} onChange={(value)=>{handlePOChange(value)}} instanceId="multiselect" options={PODropdown} isMulti required={true}/>
         </div>
         <div className="col-span-1">
           <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Docket No</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Docket No.</h1>
           <Input placeholder="" disabled={DispatchDetails?.dispatch_form_submitted?true:false} name='user' value={formData?.docket_number ?? DispatchDetails?.docket_number ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,docket_number:e.target.value}))}} />
         </div>
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Courier No</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Courier No.</h1>
           <Input type="text" disabled={DispatchDetails?.dispatch_form_submitted?true:false} name="cart_date" value={formData?.courier_number ?? DispatchDetails?.courier_number ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,courier_number:e.target.value}))}} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Courier Name</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Courier Name</h1>
           <Input placeholder="" disabled={DispatchDetails?.dispatch_form_submitted?true:false} name='user' value={formData?.courier_name ?? DispatchDetails?.courier_name ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,courier_name:e.target.value}))}} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Dispatch Date</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Dispatch Date</h1>
           <Input placeholder="" disabled={DispatchDetails?.dispatch_form_submitted?true:false} type='date' name='user' value={formData?.dispatch_date ?? DispatchDetails?.dispatch_date ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,dispatch_date:e.target.value}))}} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Invoice No</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Invoice No.</h1>
           <Input placeholder="" disabled={DispatchDetails?.dispatch_form_submitted?true:false} name='user' value={formData?.invoice_number ?? DispatchDetails?.invoice_number ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,invoice_number:e.target.value}))}} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Invoice Date</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Invoice Date</h1>
           <Input placeholder=""  disabled={DispatchDetails?.dispatch_form_submitted?true:false} type='date' name='user' value={formData?.invoice_date ?? DispatchDetails?.invoice_date ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,invoice_date:e.target.value}))}} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Invoice Amount</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Invoice Amount</h1>
           <Input placeholder="" name='user' disabled={DispatchDetails?.dispatch_form_submitted?true:false} value={formData?.invoice_amount ?? DispatchDetails?.invoice_amount ??  ""} onChange={(e)=>{setFormData((prev:any)=>({...prev,invoice_amount:e.target.value}))}} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload Invoice</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Upload Invoice</h1>
           {
             uploadedFiles?.invoice_attachment?.url?
             <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.invoice_attachment?.url}`}><h1>{uploadedFiles?.invoice_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,invoice_attachment:null}))}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>
@@ -401,7 +399,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
           }
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload packing list document</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Upload Packing List Document</h1>
           {
             uploadedFiles?.packing_list_attachment?.url?
             <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.packing_list_attachment?.url}`}><h1>{uploadedFiles?.packing_list_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,packing_list_attachment:null}))}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>
@@ -410,7 +408,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
           }
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload commercial invoice</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Upload Commercial Invoice</h1>
           {
             uploadedFiles?.commercial_attachment?.url?
             <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.commercial_attachment?.url}`}><h1>{uploadedFiles?.commercial_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,commercial_attachment:null}))}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>
@@ -419,7 +417,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
           }
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload e-way bill</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Upload E-Way Bill</h1>
           {
             uploadedFiles?.e_way_bill_attachment?.url?
             <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.e_way_bill_attachment?.url}`}><h1>{uploadedFiles?.e_way_bill_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,e_way_bill_attachment:null}))}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>
@@ -428,7 +426,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
           }
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload test certificates</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Upload Test Certificates</h1>
           {
             uploadedFiles?.test_certificates_attachment?.url?
             <div className='flex gap-4 justify-center'><Link target='blank' href={`${uploadedFiles?.test_certificates_attachment?.url}`}><h1>{uploadedFiles?.test_certificates_attachment?.file_name}</h1></Link><Trash2 onClick={()=>{setUploadedFiles((prev:any)=>({...prev,test_certificates_attachment:null}))}} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`}/></div>
@@ -437,8 +435,8 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
           }
         </div>
         <div className='col-span-1 flex items-end gap-4'>
-        <Button className={`bg-blue-400 hover:bg-blue-400 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{handleAdd()}} >Add</Button>
-        <Button className={`bg-blue-400 hover:bg-blue-400 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{setIsDialog(true)}} >Add Vehical Pass</Button>
+        <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{handleAdd()}} >Add</Button>
+        <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{setIsDialog(true)}} >Add Vehical Pass</Button>
         </div>
       </div>
       
@@ -446,12 +444,13 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
           <div className={`shadow- bg-[#f6f6f7] mb-8 p-4 rounded-2xl mt-4 ${DispatchDetails?.vehicle_details && DispatchDetails?.vehicle_details?.length > 0?"":"hidden"}`}>
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
-              Vehicle Pass
+              Vehicle Details
             </h1>
           </div>
           <Table className=" max-h-40 overflow-y-scroll">
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
+                <TableHead className="text-center">Sr No.</TableHead>
                 <TableHead className="text-center">Vehical No.</TableHead>
                 <TableHead className="text-center">Loading State</TableHead>
                 <TableHead className="text-center">Loading Location</TableHead>
@@ -467,6 +466,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
             <TableBody className="text-center">
               {DispatchDetails?.vehicle_details?.map((item, index) => (
                 <TableRow key={index}>
+                  <TableCell>{index+1}</TableCell>
                   <TableCell>{item?.vehicle_no}</TableCell>
                   <TableCell>{item?.loading_state}</TableCell>
                   <TableCell>{item?.loading_location}</TableCell>
@@ -486,7 +486,7 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
         <div className={`shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl ${table?.length > 0?"":"hidden"}`}>
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
-              Items List
+              PO Items List
             </h1>
           </div>
           <Table className=" max-h-40 overflow-y-scroll">
@@ -545,14 +545,14 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
     </div>
     {
       isDialog &&
-      <PopUp Submitbutton={()=>{handleVehicalAdd()}} isSubmit={true} headerText='Items List' handleClose={handleclose} classname='overflow-y-scroll md:w-full md:max-w-[800px] md:max-h-[700px]'>
+      <PopUp Submitbutton={()=>{handleVehicalAdd()}} isSubmit={true} headerText='Vehicle List' handleClose={handleclose} classname='pb-3 overflow-y-scroll md:w-full md:max-w-[800px] md:max-h-[700px]'>
         <div className='grid grid-cols-3 gap-5 w-full'>
           <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Vehical Number</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Vehical Number</h1>
           <Input placeholder="" name='vehical_number' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,vehicle_no:e.target.value}))}} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
             Location State
           </h1>
           <Select onValueChange={(e)=>{setVehicalForm((prev:any)=>({...prev,loading_state:e}))}}>
@@ -572,35 +572,35 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
         </div>
 
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Loading Location</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Loading Location</h1>
           <Input placeholder=""  name='loading_location' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,loading_location:e.target.value}))}} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Driver Name</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Driver Name</h1>
           <Input placeholder="" name='driver_name' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,driver_name:e.target.value}))}}/>
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Transporter Name</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Transporter Name</h1>
           <Input placeholder="" name='transporter_name' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,transporter_name:e.target.value}))}}/>
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Driver Phone</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Driver Phone</h1>
           <Input placeholder="" name='driver_phone' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,driver_phone:e.target.value}))}} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Driver License</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Driver License</h1>
           <Input placeholder="" name='driver_license' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,driver_license:e.target.value}))}}/>
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">LR Number</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">LR Number</h1>
           <Input placeholder="" name='lr_number' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,lr_number:e.target.value}))}} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">LR Date</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">LR Date</h1>
           <Input placeholder="" type='date' name='lr_date' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,lr_date:e.target.value}))}}/>
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
             Destination Plant
           </h1>
           <Select onValueChange={(e)=>{setVehicalForm((prev:any)=>({...prev,destination_plant:e}))}}>
@@ -619,12 +619,13 @@ const DispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
           </Select>
         </div>
         <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-3">Upload Attachment</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Upload Attachment</h1>
           <Input placeholder="" name='upload_attachment' type='file' onChange={(e)=>{setVehicalForm((prev:any)=>({...prev,attachment:e.target.files?.[0]}))}} />
         </div>
         </div>
         </PopUp>
     }
+    <ToastContainer closeButton theme="dark" autoClose={2000} />
     </>
   )
 }

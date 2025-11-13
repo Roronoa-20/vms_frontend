@@ -92,14 +92,10 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
 
     const formatDate = (dateStr: string | null | undefined) => {
         if (!dateStr) return "-";
-
         const cleanDate = dateStr.trim().split(" ")[0];
-
         if (!cleanDate) return "-";
-
         const [year, month, day] = cleanDate.split("-");
         if (!year || !month || !day) return "-";
-
         return `${day}-${month}-${year}`;
     };
 

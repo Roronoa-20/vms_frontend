@@ -36,16 +36,13 @@ type Props = {
   OnboardingDetail: VendorOnboardingResponse["message"]["contact_details_tab"];
 };
 
-const ContactDetail = ({
-  ref_no,
-  onboarding_ref_no,
-  OnboardingDetail,
-}: Props) => {
-  const { contactDetail, addContactDetail, resetContactDetail } =
-    useContactDetailStore();
+const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) => {
+  const { contactDetail, addContactDetail, resetContactDetail } = useContactDetailStore();
   const [showtable, setshowtable] = useState(false);
   const [contact, setContact] = useState<Partial<TcontactDetail>>();
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const router = useRouter();
+
   useEffect(() => {
     resetContactDetail();
     OnboardingDetail?.map((item, index) => {
@@ -53,15 +50,30 @@ const ContactDetail = ({
     });
   }, []);
 
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!contact?.first_name?.trim()) {
+      newErrors.first_name = "First name is required";
+    }
+    if (!contact?.last_name?.trim()) {
+      newErrors.last_name = "Last name is required";
+    }
+    if (!contact?.contact_number?.trim()) {
+      newErrors.contact_number = "Contact Number is required";
+    }
+    return newErrors;
+  };
+
   const handleAdd = () => {
-    if (contact?.first_name == "") {
-      alert("please enter First Name");
+    const validationErrors = validate();
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
-    if (contact?.last_name == "") {
-      alert("please enter Last Name");
-      return;
-    }
+
+    setErrors({});
     addContactDetail(contact);
     setshowtable(true);
     setContact({});
@@ -80,7 +92,7 @@ const ContactDetail = ({
   };
 
   const handleSubmit = async () => {
-    if(contactDetail?.length < 1){
+    if (contactDetail?.length < 1) {
       alert("Please Enter At Least 1 Contact Details")
       return;
     }
@@ -98,7 +110,7 @@ const ContactDetail = ({
     });
     if (submitResponse?.status == 200)
       router.push(
-        `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
+        `/vendor-details-form?tabtype=Product%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
       );
   };
 
@@ -117,10 +129,10 @@ const ContactDetail = ({
       <div className="grid grid-cols-3 gap-4 p-2">
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            First Name
+            First Name <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
-            placeholder=""
+            placeholder="Enter Your First Name"
             onChange={(e) => {
               setContact((prev: any) => ({
                 ...prev,
@@ -129,13 +141,16 @@ const ContactDetail = ({
             }}
             value={contact?.first_name ?? ""}
           />
+          {errors.first_name && (
+            <p className="text-red-500 text-xs mt-1">{errors.first_name}</p>
+          )}
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Last Name
+            Last Name<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
-            placeholder=""
+            placeholder="Enter Your Last Name"
             onChange={(e) => {
               setContact((prev: any) => ({
                 ...prev,
@@ -144,13 +159,45 @@ const ContactDetail = ({
             }}
             value={contact?.last_name ?? ""}
           />
+          {errors.last_name && (
+            <p className="text-red-500 text-xs mt-1">{errors.last_name}</p>
+          )}
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            Contact Number<span className="pl-1 text-red-400 text-xl">*</span>
+          </h1>
+          <Input
+            placeholder="Enter Your Contact Number"
+            onChange={(e) => {
+              setContact((prev: any) => ({
+                ...prev,
+                contact_number: e.target.value,
+              }));
+            }}
+            value={contact?.contact_number ?? ""}
+          />
+          {errors.contact_number && (
+            <p className="text-red-500 text-xs mt-1">{errors.contact_number}</p>
+          )}
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">Email</h1>
+          <Input
+            placeholder="Enter Your Email"
+            onChange={(e) => {
+              setContact((prev: any) => ({ ...prev, email: e.target.value }));
+            }}
+            value={contact?.email ?? ""}
+          />
+        
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Designation
           </h1>
           <Input
-            placeholder=""
+            placeholder="Enter Your Designation"
             onChange={(e) => {
               setContact((prev: any) => ({
                 ...prev,
@@ -161,36 +208,11 @@ const ContactDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">Email</h1>
-          <Input
-            placeholder=""
-            onChange={(e) => {
-              setContact((prev: any) => ({ ...prev, email: e.target.value }));
-            }}
-            value={contact?.email ?? ""}
-          />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Contact Number
-          </h1>
-          <Input
-            placeholder=""
-            onChange={(e) => {
-              setContact((prev: any) => ({
-                ...prev,
-                contact_number: e.target.value,
-              }));
-            }}
-            value={contact?.contact_number ?? ""}
-          />
-        </div>
-        <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Department Name
           </h1>
           <Input
-            placeholder=""
+            placeholder="Enter Your Department Name"
             onChange={(e) => {
               setContact((prev: any) => ({
                 ...prev,

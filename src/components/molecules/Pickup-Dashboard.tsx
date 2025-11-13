@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import ViewPickupRequest from "./View-Pickup-Request";
 import { pickupsData } from "@/src/constants/pickupData";
-//import { entry } from "@/src/types/shipmentEntry";
 import { CardsItem } from "@/src/types/Cards-Type";
 
 import {

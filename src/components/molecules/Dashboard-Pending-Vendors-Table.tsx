@@ -21,6 +21,7 @@ import { Input } from "../atoms/input";
 import {
   DashboardTableType,
   TvendorRegistrationDropdown,
+  TuserRegistrationDropdown
 } from "@/src/types/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -36,7 +37,7 @@ import { useAgingTimer } from "@/src/hooks/useAgingTimer";
 type Props = {
   dashboardTableData: DashboardTableType;
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"];
-  filterregisteredby: TvendorRegistrationDropdown["message"]["data"]["user_list"];
+  filterregisteredby: TuserRegistrationDropdown["message"]["data"]["users_list"];
 };
 
 const useDebounce = (value: any, delay: any) => {
@@ -62,15 +63,10 @@ const handleSelectChange = (value: string, setter: (val: string) => void) => {
   }
 };
 
-const DashboardPendingVendorsTable = ({
-  dashboardTableData,
-  companyDropdown,
-  filterregisteredby,
-}: Props) => {
+const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown, filterregisteredby }: Props) => {
   console.log(dashboardTableData, "this is dashboardTableData");
-  const [table, setTable] = useState<
-    DashboardTableType["pending_vendor_onboarding"]
-  >(dashboardTableData?.pending_vendor_onboarding);
+  const [table, setTable] = useState<DashboardTableType["pending_vendor_onboarding"]>(dashboardTableData?.pending_vendor_onboarding);
+  const [selectedRegisteredBy, setSelectedRegisteredBy] = useState<string>("");
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [search, setSearch] = useState<string>("");
   const [total_event_list, settotalEventList] = useState(0);
@@ -86,45 +82,34 @@ const DashboardPendingVendorsTable = ({
 
   useEffect(() => {
     fetchTable();
-  }, [debouncedSearchName, selectedCompany, currentPage]);
+  }, [debouncedSearchName, selectedCompany, selectedRegisteredBy, currentPage]);
 
-  const handlesearchname = async (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
+
+  const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     console.log(value, "this is search name");
     setSearch(value);
   };
 
   const fetchTable = async () => {
-    const dashboardPendingVendorTableDataApi: AxiosResponse =
-      await requestWrapper({
-        url: `${API_END_POINTS?.dashboardPendingVendorTableURL}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}`,
-        method: "GET",
-      });
+    const dashboardPendingVendorTableDataApi: AxiosResponse = await requestWrapper({
+      url: `${API_END_POINTS?.dashboardPendingVendorTableURL}?usr=${user}&company=${selectedCompany}&register_by=${selectedRegisteredBy}&vendor_name=${search}&page_no=${currentPage}`,
+      method: "GET",
+    });
     if (dashboardPendingVendorTableDataApi?.status == 200) {
-      setTable(
-        dashboardPendingVendorTableDataApi?.data?.message
-          ?.pending_vendor_onboarding
-      );
-      settotalEventList(
-        dashboardPendingVendorTableDataApi?.data?.message?.total_count
-      );
+      setTable(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding);
+      settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count);
       setRecordPerPage(5);
     }
   };
 
-  console.log(table, "this is table");
   const { designation } = useAuth();
   const isAccountsUser = designation?.toLowerCase().includes("account");
   const isTreasuryUser = designation?.toLowerCase() === "treasury";
 
   const handleView = async (refno: string, vendor_Onboarding: string) => {
     router.push(
-      `/view-onboarding-details?tabtype=${
-        isTreasuryUser ? "Document Detail" : "Company Detail"
+      `/view-onboarding-details?tabtype=${isTreasuryUser ? "Document Detail" : "Company Detail"
       }&vendor_onboarding=${vendor_Onboarding}&refno=${refno}`
     );
   };
@@ -142,45 +127,49 @@ const DashboardPendingVendorsTable = ({
             Total Pending Vendors
           </h1>
           <div className="flex gap-4">
+            {!isAccountsUser && !isTreasuryUser && (
             <Select
-              onValueChange={(value) => {
-                setSelectedCompany(value);
-              }}
+              value={selectedRegisteredBy || "all"}
+              onValueChange={(value) => setSelectedRegisteredBy(value === "all" ? "" : value)}
             >
-              <SelectTrigger className="w-96">
-                <SelectValue placeholder="Select CoPersonmpany" />
+              <SelectTrigger className="w-80">
+                <SelectValue placeholder="Filter by Registered By" />
               </SelectTrigger>
               <SelectContent>
-                <SelectGroup className="w-full">
-                  {filterregisteredby?.map((item, index) => (
-                    <SelectItem key={index} value={item?.user_id}>
-                      {item?.full_name}
-                    </SelectItem>
-                  ))}
+                <SelectGroup>
+                  <SelectItem value="all">All</SelectItem>
+                  {filterregisteredby
+                    ?.filter(item => item.user_id)
+                    .map((item) => (
+                      <SelectItem key={item.user_id} value={item.user_id}>
+                        {item.full_name}
+                      </SelectItem>
+                    ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
+            )}
+
             <Input
               placeholder="Search..."
               onChange={(e) => {
                 handlesearchname(e);
               }}
             />
+
             <Select
-              value={selectedCompany}
-              onValueChange={(value) =>
-                handleSelectChange(value, setSelectedCompany)
-              }
+              value={selectedCompany || "all"}
+              onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
               <SelectContent>
-                <SelectGroup className="w-full">
-                  <SelectItem value="--Select--">--Select--</SelectItem>
-                  {companyDropdown?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>
-                      {item?.description}
+                <SelectGroup>
+                  <SelectItem value="all">All</SelectItem>
+                  {companyDropdown?.map((item) => (
+                    <SelectItem key={item.name} value={item.name}>
+                      {item.description}
                     </SelectItem>
                   ))}
                 </SelectGroup>
@@ -244,13 +233,12 @@ const DashboardPendingVendorsTable = ({
                   </TableCell>
                   <TableCell>
                     <div
-                      className={`px-2 py-3 rounded-xl uppercase ${
-                        item?.onboarding_form_status === "Pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : item?.onboarding_form_status === "Approved"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                      }`}
+                      className={`px-2 py-3 rounded-xl uppercase ${item?.onboarding_form_status === "Pending"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : item?.onboarding_form_status === "Approved"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                        }`}
                     >
                       {item?.onboarding_form_status || "--"}
                     </div>
@@ -272,7 +260,7 @@ const DashboardPendingVendorsTable = ({
                   </TableCell>
                   <TableCell>
                     <Button
-                      className="bg-blue-400 hover:bg-blue-300"
+                      className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]"
                       onClick={() => {
                         item?.form_fully_submitted_by_vendor == 1
                           ? handleView(item?.ref_no, item?.name)
@@ -290,7 +278,7 @@ const DashboardPendingVendorsTable = ({
                         <Link
                           href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}
                         >
-                          <Button className="bg-blue-400 hover:bg-blue-300">
+                          <Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">
                             View
                           </Button>
                         </Link>

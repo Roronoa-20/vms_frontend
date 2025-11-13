@@ -53,7 +53,14 @@ export type TPRInquiry = {
     asked_to_modify:boolean,
     purchase_team_approved:boolean,
     acknowledged_date:string,
-    is_submited:number
+    is_submited:number,
+    hod_approved:boolean
+    second_stage_approved:boolean,
+    second_stage_approval_by:string
+    cost_center:string,
+    gl_account:string
+    purchase_requisition_form_created:boolean
+    purchase_team_approval_status:string
 }
 
 

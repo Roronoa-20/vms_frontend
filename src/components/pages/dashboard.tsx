@@ -3,7 +3,7 @@ import DashboardCardCounter from "../molecules/Dashboard-Card-Count";
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
-import { DashboardPOTableData, dashboardCardData, DashboardTableType, TvendorRegistrationDropdown, TPRInquiryTable, PurchaseRequisition, RFQTable } from "@/src/types/types";
+import { DashboardPOTableData, dashboardCardData, DashboardTableType, TvendorRegistrationDropdown, TuserRegistrationDropdown, TPRInquiryTable, PurchaseRequisition, RFQTable } from "@/src/types/types";
 import { cookies } from "next/headers";
 
 const Dashboard = async () => {
@@ -94,9 +94,23 @@ const Dashboard = async () => {
   const dropdownData: TvendorRegistrationDropdown["message"]["data"] =
     dropDownApi?.status == 200 ? dropDownApi?.data?.message?.data : "";
   const companyDropdown = dropdownData?.company_master
-  const filterregisteredby = dropdownData?.user_list
 
-  console.log("YYYYYYYYY---->",dropdownData)
+
+  const RegisteredByURL = API_END_POINTS?.UserRegistrationDropdown;
+  const RegisteredByApi: AxiosResponse = await requestWrapper({
+    url: RegisteredByURL,
+    method: "GET",
+    headers: {
+      cookie: cookieHeaderString
+    }
+  });
+  console.log("YYYYYYYYY---->",RegisteredByApi)
+
+  const RegisteredByData: TuserRegistrationDropdown["message"]["data"] =
+    RegisteredByApi?.status == 200 ? RegisteredByApi?.data?.message : "";
+  const filterregisteredby = RegisteredByData?.users_list
+
+  console.log("YYYYYYYYY---->",RegisteredByData)
 
 
   const prInquiryDashboardUrl = API_END_POINTS?.prInquiryDashboardTable;
@@ -217,7 +231,7 @@ const Dashboard = async () => {
   const dashboardAccountsRejected = dashboardRejectedVendorAccounts?.status == 200?dashboardRejectedVendorAccounts?.data?.message : ""
   const dashboardAccountsSapErrors = dashboardSapErrorAccounts?.status == 200?dashboardSapErrorAccounts?.data?.message : ""
 
-
+console.log(filterregisteredby,"prData")
   return (
     <div className="p-4">
       {/* Cards */}

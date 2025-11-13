@@ -55,7 +55,7 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAccoun
   const handleBack = () => {
 
     if (isAccountsTeam == 1) {
-      router.push(`/vendor-details-form?Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`)
+      router.push(`/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`)
     } else if (VendorType && !VendorType.includes("Material Vendor")) {
       router.push(
         `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`

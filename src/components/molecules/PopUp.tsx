@@ -76,7 +76,7 @@ const PopUp = ({
 
   return (
     // 👇 fixed instead of absolute
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" style={{"margin":"0"}}>
       <div
         ref={!disableRef ? null : DialogRef}
         className={cn(
@@ -98,7 +98,7 @@ const PopUp = ({
 
         {children}
 
-        <div className="flex justify-end pt-2 gap-4 w-full">
+        <div className="flex justify-end pt-3 gap-4 w-full">
           <Button
             className="py-2"
             variant={"backbtn"}

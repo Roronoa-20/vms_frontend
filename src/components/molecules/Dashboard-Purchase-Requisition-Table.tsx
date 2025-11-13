@@ -47,7 +47,7 @@ const useDebounce = (value: any, delay: any) => {
 };
 
 const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
-
+  console.log(dashboardTableData, "this is dashboardTableData");
   const [table, setTable] = useState<PurchaseRequisition[]>(dashboardTableData || []);
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [search, setSearch] = useState<string>("");
@@ -72,28 +72,26 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
 
   const fetchTable = async () => {
     const dashboardPRTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.prTableData}?usr=${user}&company=${selectedCompany}&cart_id=${search}&page_no=${currentPage}`,
+      url: `${API_END_POINTS?.prTableData}?usr=${user}&company=${selectedCompany}&cart_id=${search}&page_no=${currentPage}&page_length=${record_per_page}`,
       method: "GET",
     });
     if (dashboardPRTableDataApi?.status == 200) {
       setTable(dashboardPRTableDataApi?.data?.message?.data);
       settotalEventList(dashboardPRTableDataApi?.data?.message?.total_count);
-      settotalEventList(dashboardPRTableDataApi?.data?.message?.total_count);
-      // setRecordPerPage(dashboardPRTableDataApi?.data?.message?.rejected_vendor_onboarding?.length);
       setRecordPerPage(5)
     }
   };
 
   const handleSelectChange = (
-  value: string,
-  setter: (val: string) => void
+    value: string,
+    setter: (val: string) => void
   ) => {
-  if (value === "--Select--") {
-    setter(""); // reset filter
-  } else {
-    setter(value);
-  }
-};
+    if (value === "--Select--") {
+      setter(""); // reset filter
+    } else {
+      setter(value);
+    }
+  };
 
 
   console.log(table, "this is table");
@@ -103,103 +101,80 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Purchase Requisition
+            Purchase Requisition Request
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
             <Select
-              value={selectedCompany}
-              onValueChange={(value) => handleSelectChange(value, setSelectedCompany)}
+              value={selectedCompany || "all"}
+              onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
               <SelectContent>
-                <SelectGroup className="w-full">
-                  <SelectItem value="--Select--">--Select--</SelectItem>
-                  {
-                    companyDropdown?.map((item, index) => (
-                      <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                    ))
-                  }
+                <SelectGroup>
+                  <SelectItem value="all">All</SelectItem>
+                  {companyDropdown?.map((item) => (
+                    <SelectItem key={item.name} value={item.name}>
+                      {item.description}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
         </div>
-        <div className="overflow-y-scroll max-h-[55vh]">
+        <div className="max-h-[55vh]">
           <Table className="">
             {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                 <TableHead className="text-center text-black">Sr No.</TableHead>
                 <TableHead className="text-center text-black">Ref No.</TableHead>
-                <TableHead className="text-center text-black">Cart</TableHead>
-                <TableHead className="text-center text-black">Plant</TableHead>
+                <TableHead className="text-center text-black">Cart No.</TableHead>
+                <TableHead className="text-center text-black">PR Type</TableHead>
                 <TableHead className="text-center text-black">Company</TableHead>
                 <TableHead className="text-center text-black text-nowrap">Purchase Group</TableHead>
                 <TableHead className="text-center text-black">Requisitioner</TableHead>
-                <TableHead className="text-center text-black text-nowrap">Purchase Head</TableHead>
-                <TableHead className="text-center text-black">HOD</TableHead>
-                <TableHead className="text-center text-black">Actions</TableHead>
-                <TableHead className={`text-center text-black`}></TableHead>
+                <TableHead className="text-center text-black text-nowrap">Status</TableHead>
+                <TableHead className="text-center text-black text-nowrap">View Cart</TableHead>
+                <TableHead className="text-center text-black">View PR</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="text-center">
               {table ? (
                 table?.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium text-center">{index + 1}</TableCell>
+                    <TableCell className="font-medium text-center">{(currentPage - 1) * record_per_page + (index + 1)}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.cart_details_id}</TableCell>
-                    <TableCell className="text-nowrap text-center">{item?.plant}</TableCell>
+                    <TableCell className="text-nowrap text-center">{item?.purchase_requisition_type}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.company}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.purchase_group}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.requisitioner}</TableCell>
                     {/* <TableCell className="text-nowrap text-center">{item?.purchase_head_status}</TableCell> */}
                     <TableCell>
                       <div
-                        className={`text-center px-2 py-3 rounded-xl ${item?.purchase_head_status === "Pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : item?.purchase_head_status === "Approved"
+                        className={`text-center px-2 py-3 rounded-xl ${item?.sap_status === "Failed"
+                          ? "bg-red-100 text-red-800"
+                          : item?.sap_status === "Success"
                             ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                            : "bg-yellow-100 text-yellow-800"
                           }`}
                       >
-                        {item?.purchase_head_status || "--"}
+                        {item?.sap_status || "--"}
                       </div>
                     </TableCell>
-                    {/* <TableCell className="text-nowrap text-center">{item?.hod_approval_status}</TableCell> */}
-                    <TableCell>
-                      <div
-                        className={`text-center px-2 py-3 rounded-xl ${item?.hod_approval_status === "Pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : item?.hod_approval_status === "Approved"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                          }`}
-                      >
-                        {item?.hod_approval_status || "--"}
-                      </div>
+
+                    <TableCell className="text-nowrap text-center"><Link href={`/view-pr-inquiry?cart_Id=${item?.cart_details_id}`}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]" >View</Button></Link></TableCell>
+                    <TableCell
+                      className={`text-nowrap text-center whitespace-nowrap`}
+                    >
+                      <Link href={`/pr-request?cart_id=${item?.cart_details_id}&pur_req=${item?.name}`}>
+                        <Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View PR</Button>
+                      </Link>
                     </TableCell>
-                    <TableCell className="text-nowrap text-center"><Link href={`/view-pr?pur_req=${item?.name}`}><Button className="bg-white text-black hover:bg-white hover:text-black">View</Button></Link></TableCell>
-                    {/* <TableCell>
-                  <div
-                    className={`px-2 py-3 rounded-xl ${item?.status === "pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : item?.status === "approved"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                  >
-                    {item?.status}
-                  </div>
-                </TableCell>
-                <TableCell>{item?.purchase_team}</TableCell>
-                <TableCell>{item?.purchase_head}</TableCell>
-                <TableCell>{item?.accounts_team}</TableCell>
-                <TableCell><Link href={`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell>
-                <TableCell className="text-right">{item?.qms_form}</TableCell> */}
                   </TableRow>
                 ))
               ) : (

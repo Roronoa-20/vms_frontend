@@ -32,10 +32,8 @@ type Props = {
 const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendment, re_release }: Props) => {
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const { ManufacturingDetail, updateManufacturingDetail } = useManufacturingDetailStore()
-  const [manufacturedFile, setManufacturedFile] = useState<FileList | null>(null)
   const [brochure_proof, setBrochure_proof] = useState<FileList | null>(null)
   const [organisation_structure_document, setOrganisation_structure_document] = useState<FileList | null>(null)
-  const [isManufacturedFilePreview, setIsManufacturedFilePreview] = useState<boolean>(true);
   const [isBrochureFilePreview, setIsBrochureFilePreview] = useState<boolean>(true);
   const [isStructureFilePreview, setIsStructureFilePreview] = useState<boolean>(true);
 
@@ -48,9 +46,6 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAm
     const updatedData = { ...ManufacturingDetail, materials_supplied: [{ hsnsac_code: ManufacturingDetail?.hsnsac_code, annual_capacity: ManufacturingDetail?.annual_capacity, material_description: ManufacturingDetail?.material_description }], ref_no: ref_no, vendor_onboarding: onboarding_ref_no }
     const formData = new FormData();
     formData.append("data", JSON.stringify(updatedData));
-    if (manufacturedFile) {
-      formData.append("material_images", manufacturedFile[0]);
-    }
     if (brochure_proof) {
       formData.append("brochure_proof", brochure_proof[0]);
     }
@@ -69,7 +64,7 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAm
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Manufacturing Detail</h1>
         {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
-        {(isAmendment == 1 || re_release == 1) && (
+        { designation == "Purchase Team" && (isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled(prev => !prev)}
             className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
@@ -160,69 +155,6 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAm
             onChange={(e) => { updateManufacturingDetail("cold_storage", e.target.checked) }}
             checked={(ManufacturingDetail?.cold_storage ?? OnboardingDetail?.cold_storage) == 1}
           />
-        </div>
-      </div>
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
-        Products Details
-      </h1>
-      <div className="grid grid-cols-3 gap-6 p-2">
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Product Manufactured
-          </h1>
-          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={ManufacturingDetail?.material_description ?? OnboardingDetail?.materials_supplied[0]?.material_description ?? ""} onChange={(e) => { updateManufacturingDetail("material_description", e.target.value) }} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            HSN/SAC Code
-          </h1>
-          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={ManufacturingDetail?.hsnsac_code ?? OnboardingDetail?.materials_supplied[0]?.hsnsac_code ?? ""} onChange={(e) => { updateManufacturingDetail("hsnsac_code", e.target.value) }} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Annual Capacity
-          </h1>
-          <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={ManufacturingDetail?.annual_capacity ?? OnboardingDetail?.materials_supplied[0]?.annual_capacity ?? ""} onChange={(e) => { updateManufacturingDetail("annual_capacity", e.target.value) }} />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Upload manufactured product image
-          </h1>
-          <div className="flex gap-4 items-center">
-            <label
-              className={`flex items-center gap-2 cursor-pointer ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
-            >
-              <Paperclip className="w-5 h-5 text-blue-500" />
-              <Input
-                className="hidden"
-                disabled={isDisabled}
-                type="file"
-                onChange={(e) => setManufacturedFile(e.target.files)}
-              />
-              <span className="text-sm text-gray-600">
-                {manufacturedFile?.[0]?.name || "Choose file"}
-              </span>
-            </label>
-
-            {/* file preview */}
-            {isManufacturedFilePreview &&
-              !manufacturedFile &&
-              OnboardingDetail?.materials_supplied?.[0]?.material_images?.url && (
-                <div className="flex gap-2">
-                  <Link
-                    target="blank"
-                    href={OnboardingDetail?.materials_supplied?.[0]?.material_images?.url}
-                    className="underline text-blue-300 max-w-44 truncate"
-                  >
-                    <span>{OnboardingDetail?.materials_supplied?.[0]?.material_images?.file_name}</span>
-                  </Link>
-                  <X
-                    className={`cursor-pointer ${isDisabled ? "hidden" : ""}`}
-                    onClick={() => setIsManufacturedFilePreview((prev) => !prev)}
-                  />
-                </div>
-              )}
-          </div>
         </div>
       </div>
       <div className="grid grid-cols-3 gap-3 p-2">

@@ -77,6 +77,8 @@ const VendorDashboard = async () => {
       rfqApi?.status === 200 ? rfqApi?.data?.message : "";
 
     // --- Render Client Component ---
+
+    console.log(dashboardPOTableData,"this is before vendor code")
     return (
       <VendorDashboardClient
         companyDropdown={companyDropdown}

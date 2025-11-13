@@ -20,6 +20,7 @@ import { it } from "node:test";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast, ToastContainer } from "react-toastify";
 
 interface Props {
   certificateCodeDropdown: TcertificateCodeDropdown["message"]["data"]["certificate_names"];
@@ -36,31 +37,25 @@ type certificateData = {
   name?: string
   certificate_attach?: CertificateAttachment
   others?: string
+  certificate_number?: string
+  certificate_body?: string
 }
 
 const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, OnboardingDetail }: Props) => {
-  console.log(OnboardingDetail)
   const [certificateData, setCertificateData] = useState<Partial<certificateData>>({});
   const [multipleCertificateData, setMultipleCertificateData] = useState<certificateData[]>(OnboardingDetail);
   const [otherField, setOtherField] = useState<string>()
   const router = useRouter();
-
   const [isOtherField, setIsOtherField] = useState<boolean>(false);
 
   useEffect(() => {
-
   }, [multipleCertificateData])
 
-
-
   console.log(OnboardingDetail, "this is data of certificate")
-
   const fileInput = useRef<HTMLInputElement>(null);
-
-
   const handleSubmit = async () => {
     if (OnboardingDetail?.length < 1) {
-      alert("Upload At Least 1 Certificate")
+      toast.warn("Upload At Least 1 Certificate")
       return;
     }
     const url = API_END_POINTS?.certificateSubmit;
@@ -97,16 +92,16 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
   }
 
 
-  const tableFetch = async () => {
-    const url = `${API_END_POINTS?.fetchDetails}?ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
-    const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
-    const OnboardingDetails: VendorOnboardingResponse["message"]["certificate_details_tab"] = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message?.certificate_details_tab : "";
-    console.log(OnboardingDetails, "this is after api")
-    setMultipleCertificateData([]);
-    OnboardingDetails?.map((item) => {
-      setMultipleCertificateData((prev: any) => ([...prev, { certificate_code: item?.certificate_code, fileDetail: { file_name: item?.certificate_attach?.file_name, name: item?.certificate_attach?.name, url: item?.certificate_attach?.url }, valid_till: item?.valid_till, name: item?.name }]))
-    })
-  }
+  // const tableFetch = async () => {
+  //   const url = `${API_END_POINTS?.fetchDetails}?ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
+  //   const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+  //   const OnboardingDetails: VendorOnboardingResponse["message"]["certificate_details_tab"] = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message?.certificate_details_tab : "";
+  //   console.log(OnboardingDetails, "this is after api")
+  //   setMultipleCertificateData([]);
+  //   OnboardingDetails?.map((item) => {
+  //     setMultipleCertificateData((prev: any) => ([...prev, { certificate_code: item?.certificate_code, fileDetail: { file_name: item?.certificate_attach?.file_name, name: item?.certificate_attach?.name, url: item?.certificate_attach?.url }, valid_till: item?.valid_till, name: item?.name }]))
+  //   })
+  // }
 
   const deleteRow = async (certificate_code: string) => {
     const url = `${API_END_POINTS?.deleteCertificate}?certificate_code=${certificate_code}&ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`
@@ -155,6 +150,18 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            Certificate Number
+          </h1>
+          <Input value={certificateData?.certificate_number ?? ""} onChange={(e) => { setCertificateData((prev: any) => ({ ...prev, certificate_number: e.target.value })) }} />
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            Certification Body
+          </h1>
+          <Input value={certificateData?.certificate_body ?? ""} onChange={(e) => { setCertificateData((prev: any) => ({ ...prev, certificate_body: e.target.value })) }} />
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Valid Till
           </h1>
           <Input value={certificateData?.valid_till ?? ""} placeholder="" type="date" onChange={(e) => { setCertificateData((prev: any) => ({ ...prev, valid_till: e.target.value })) }} />
@@ -188,7 +195,9 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                 <TableHead className="text-center">Sr No.</TableHead>
-                <TableHead className="text-center">Company Code</TableHead>
+                <TableHead className="text-center">Certifcate Code</TableHead>
+                <TableHead className="text-center">Certifcate Number</TableHead>
+                <TableHead className="text-center">Certifcate Body</TableHead>
                 <TableHead className="text-center">Valid Till</TableHead>
                 <TableHead className="text-center">File</TableHead>
                 <TableHead className="text-center">Action</TableHead>
@@ -200,6 +209,8 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
                 <TableRow key={item?.name ? item?.name : ""}>
                   <TableCell className="font-medium text-center">{index + 1}</TableCell>
                   <TableCell className="text-center">{item?.certificate_code}</TableCell>
+                  <TableCell className="text-center">{item?.certificate_number}</TableCell>
+                  <TableCell className="text-center">{item?.certificate_body}</TableCell>
                   <TableCell className="text-center">{item?.valid_till}</TableCell>
                   <TableCell className="text-center"><Link href={item?.certificate_attach?.url as string}>{item?.certificate_attach?.file_name}</Link></TableCell>
                   <TableCell className="flex justify-center items-center text-center"><Trash2 onClick={() => { deleteRow(item?.certificate_code ? item?.certificate_code : "") }} className=" text-red-400 cursor-pointer" /></TableCell>
@@ -227,6 +238,7 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
           Submit
         </Button>
       </div>
+      <ToastContainer closeButton theme="dark" autoClose={2000} />
     </div>
   );
 };

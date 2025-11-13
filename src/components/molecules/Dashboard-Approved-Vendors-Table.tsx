@@ -77,8 +77,6 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const user = Cookies?.get("user_id");
-  console.log(user, "this is user");
-
   const debouncedSearchName = useDebounce(search, 300);
 
   useEffect(() => {
@@ -98,11 +96,8 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
       method: "GET",
     });
     if (dashboardApprovedVendorTableDataApi?.status == 200) {
-      setTable(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding
-      );
-      // settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count);
+      setTable(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding);
       settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count)
-      // setRecordPerPage(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding?.length)
       setRecordPerPage(5);
     }
   };
@@ -120,31 +115,42 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
     }
   };
 
+  const formatApprovalAge = (seconds?: string | number) => {
+    if (seconds == null || isNaN(Number(seconds))) return "-";
+    const sec = Math.floor(Number(seconds));
+
+    const days = Math.floor(sec / (24 * 3600));
+    const hours = Math.floor((sec % (24 * 3600)) / 3600);
+    const minutes = Math.floor((sec % 3600) / 60);
+
+    return `${days}d ${hours}h ${minutes}m`;
+  };
+
 
   return (
     <>
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Total Onboarded Vendors
+            Total OnBoarded Vendors
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
             <Select
-              value={selectedCompany}
-              onValueChange={(value) => handleSelectChange(value, setSelectedCompany)}
+              value={selectedCompany || "all"}
+              onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
               <SelectContent>
-                <SelectGroup className="w-full">
-                  <SelectItem value="--Select--">--Select--</SelectItem>
-                  {
-                    companyDropdown?.map((item, index) => (
-                      <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                    ))
-                  }
+                <SelectGroup>
+                  <SelectItem value="all">All</SelectItem>
+                  {companyDropdown?.map((item) => (
+                    <SelectItem key={item.name} value={item.name}>
+                      {item.description}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -156,14 +162,15 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
               <TableHead className="text-center text-black">Sr No.</TableHead>
               <TableHead className="text-center text-black">Ref No.</TableHead>
               <TableHead className="text-center text-black">Vendor Name</TableHead>
-              <TableHead className="text-center text-black">Company Code</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Company Code</TableHead>
               <TableHead className="text-center text-black">Status</TableHead>
-              <TableHead className="text-center text-black">Vendor Code</TableHead>
+              <TableHead className="text-center text-black">Aging</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Vendor Code</TableHead>
               <TableHead className="text-center text-black">Country</TableHead>
               <TableHead className="text-center text-black">Register By</TableHead>
-              <TableHead className="text-center text-black">View Details</TableHead>
+              <TableHead className="text-center text-black text-nowrap">View Details</TableHead>
               {!isAccountsUser && !isTreasuryUser && (
-                <TableHead className="text-center text-black">QMS Form</TableHead>
+                <TableHead className="text-center text-black text-nowrap">QMS Form</TableHead>
               )}
             </TableRow>
           </TableHeader>
@@ -187,15 +194,20 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
                       {item?.onboarding_form_status}
                     </div>
                   </TableCell>
-                  <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
-                  <TableCell className="text-center">{item?.vendor_country}</TableCell>
+                  <TableCell>
+                    <div className="text-center bg-blue-100 text-blue-800 px-2 py-3 rounded-[14px] w-[100px]">
+                      {formatApprovalAge(item?.approval_age)}
+                    </div>
+                  </TableCell>
+                  <TableCell><Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.vendor_country}</TableCell>
                   <TableCell className="text-center whitespace-nowrap">{item?.registered_by_full_name}</TableCell>
                   <TableCell>
                     <Link
                       href={`/view-onboarding-details?tabtype=${isTreasuryUser ? "Document Detail" : "Company Detail"
                         }&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}
                     >
-                      <Button className="bg-blue-400 hover:bg-blue-300">View</Button>
+                      <Button className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">View</Button>
                     </Link>
                   </TableCell>
                   {/* <TableCell><Link href={`/view-onboarding-details?tabtype=Company Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button className="bg-blue-400 hover:bg-blue-300">View</Button></Link></TableCell> */}
@@ -215,8 +227,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
 
         </Table>
       </div>
-      {
-        isVendorCodeDialog &&
+      {isVendorCodeDialog &&
         <PopUp handleClose={handleClose} classname="overflow-y-scroll">
           <Table>
             <TableHeader>

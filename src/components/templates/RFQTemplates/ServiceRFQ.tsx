@@ -47,7 +47,7 @@ export interface DropdownDataService {
 }
 type Props = {
   Dropdown: DropdownDataService;
-  pr_codes?: string | null;
+  pr_codes?: string[] | [];
   pr_type?: string | null;
 };
 
@@ -63,7 +63,7 @@ export interface newVendorTable {
   gst_number: string
 }
 
-const ServiceRFQ = ({ Dropdown }: Props) => {
+const ServiceRFQ = ({ Dropdown,pr_codes }: Props) => {
   const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Service Vendor" });
   const [vendorSearchName, setVendorSearchName] = useState('')
   const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
@@ -161,9 +161,10 @@ const ServiceRFQ = ({ Dropdown }: Props) => {
 
       <div className="w-full mx-auto space-y-6 p-5">
         {/* PR Materials Manager Component */}
-        <PRServiceManager
+        <PRServiceManager 
           prNumbers={availablePRs}
           onSelectionChange={setItems}
+          defaultPRCodes={pr_codes}
           title="Select Purchase Request Numbers"
         />
       </div>
@@ -190,7 +191,7 @@ const ServiceRFQ = ({ Dropdown }: Props) => {
       </div> */}
 
       <div className='py-6'>
-        <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen}/>
+        <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen} setNewVendorTable={setNewVendorTable}/>
       </div>
       {
         isDialog &&

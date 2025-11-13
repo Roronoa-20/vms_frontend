@@ -3,11 +3,11 @@ import { PurchaseRequisitionRow } from "./RFQtype";
 export type QuotationDetail = {
   name: string;
   rfq_number: string;
-  vendor_code: string | null;
-  quote_amount: string | null;
-  rank: string | null;
+  vendor_code: string ;
+  quote_amount: string ;
+  rank: string ;
   mode_of_shipment: string;
-  office_email_primary: string | null;
+  office_email_primary: string ;
   airlinevessel_name: string;
   chargeable_weight: string;
   ratekg: string;
@@ -16,19 +16,19 @@ export type QuotationDetail = {
   actual_weight: string;
   sc: string;
   xray: string;
-  pickuporigin: string | null;
-  ex_works: string | null;
+  pickuporigin: string ;
+  ex_works: string ;
   total_freight: string;
-  from_currency: string | null;
-  to_currency: string | null;
-  exchange_rate: string | null;
-  total_freightinr: string | null;
-  destination_charge: string | null;
-  shipping_line_charge: string | null;
-  cfs_charge: string | null;
-  total_landing_price: string | null;
+  from_currency: string ;
+  to_currency: string ;
+  exchange_rate: string ;
+  total_freightinr: string ;
+  destination_charge: string ;
+  shipping_line_charge: string ;
+  cfs_charge: string ;
+  total_landing_price: string ;
   invoice_no: string;
-  transit_days: string | null;
+  transit_days: string ;
   other_charges_in_total: string;
   expected_delivery_in_no_of_days: string;
   remarks: string;
@@ -38,6 +38,8 @@ export type QuotationDetail = {
   payment_terms:string;
   negotiation:boolean;
   quotation_item_list: PurchaseRequisitionRow[]
+  rfq_type:string;
+  logistic_type:string;
 };
 export type DocumentAttachment = {
   document_name: string;

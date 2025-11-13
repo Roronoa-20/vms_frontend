@@ -127,41 +127,23 @@ const DashboardAccountsPendingVendorsTable = ({ dashboardTableData, companyDropd
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
             <Select
-              value={selectedCompany}
-              onValueChange={(value) => handleSelectChange(value, setSelectedCompany)}
+              value={selectedCompany || "all"}
+              onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
             >
-
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
-
               <SelectContent>
-                <SelectGroup className="w-full">
-                  <SelectItem value="--Select--">
-                    --Select--
-                  </SelectItem>
-                  {
-                    companyDropdown?.map((item, index) => (
-                      <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                    ))
-                  }
+                <SelectGroup>
+                  <SelectItem value="all">All</SelectItem>
+                  {companyDropdown?.map((item) => (
+                    <SelectItem key={item.name} value={item.name}>
+                      {item.description}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {/* <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select> */}
           </div>
         </div>
         <Table>
@@ -176,9 +158,9 @@ const DashboardAccountsPendingVendorsTable = ({ dashboardTableData, companyDropd
               <TableHead className="text-center">Account Team</TableHead>
               <TableHead className="text-center">Account Head</TableHead>
               <TableHead className="text-center">View Details</TableHead>
-              {!isAccountsUser && !isTreasuryUser && (
+              {/* {!isAccountsUser && !isTreasuryUser && (
                 <TableHead className="text-center">QMS Form</TableHead>
-              )}
+              )} */}
             </TableRow>
           </TableHeader>
           <TableBody className="text-center">
@@ -205,10 +187,10 @@ const DashboardAccountsPendingVendorsTable = ({ dashboardTableData, companyDropd
                   <TableCell>{item?.accounts_head_approval}</TableCell>
                   {/* <TableCell><Link href={`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}><Button variant={"outline"}>View</Button></Link></TableCell> */}
                   {/* <TableCell className="text-right">{item?.qms_form}</TableCell> */}
-                  <TableCell><Button onClick={() => { item?.form_fully_submitted_by_vendor == 1 ? handleView(item?.ref_no, item?.name) : alert("Vendor Form is not fully subitted") }} variant={"outline"}>View</Button></TableCell>
-                  {!isAccountsUser && !isTreasuryUser && (
+                  <TableCell><Button onClick={() => { item?.form_fully_submitted_by_vendor == 1 ? handleView(item?.ref_no, item?.name) : alert("Vendor Form is not fully subitted") }} className="bg-[#5291CD] hover:bg-white hover:text-black rounded-[14px]">View</Button></TableCell>
+                  {/* {!isAccountsUser && !isTreasuryUser && (
                     <TableCell><div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}><Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}><Button variant={"outline"}>View</Button></Link></div></TableCell>
-                  )}
+                  )} */}
                 </TableRow>
               ))
             ) : (

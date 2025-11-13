@@ -61,7 +61,7 @@ const EmployeeDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendme
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Number of Employees</h1>
         {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
-        {(isAmendment == 1 || re_release == 1) && (
+        {designation == "Purchase Team" && (isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled(prev => !prev)}
             className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
@@ -117,37 +117,37 @@ const EmployeeDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendme
           </h1>
           <Input disabled={isDisabled} className="disabled:opacity-100" placeholder="" value={addEmployeeDetail?.hse ?? ""} onChange={(e) => { setEmployeeDetail((prev: any) => ({ ...prev, hse: e.target.value })) }} />
         </div>
-          <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Employees in Other Department
-            </h1>
-            <Input
-              disabled={isDisabled}
-              className="disabled:opacity-100"
-              placeholder=""
-              value={addEmployeeDetail?.other ?? ""}
-              onChange={(e) =>
-                setEmployeeDetail((prev: any) => ({ ...prev, other: e.target.value }))
-              }
-            />
-          </div>
-          <div className="col-span-1 flex items-end">
-            <Button
-              variant={"nextbtn"}
-              size={"nextbtnsize"}
-              onClick={() => { handleAdd(); }}
-              className={`scroll-py-24 ${isDisabled ? "hidden" : ""}`}
-            >
-              Add
-            </Button>
-          </div>
+        <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            Employees in Other Department
+          </h1>
+          <Input
+            disabled={isDisabled}
+            className="disabled:opacity-100"
+            placeholder=""
+            value={addEmployeeDetail?.other ?? ""}
+            onChange={(e) =>
+              setEmployeeDetail((prev: any) => ({ ...prev, other: e.target.value }))
+            }
+          />
+        </div>
+        <div className="col-span-1 flex items-end">
+          <Button
+            variant={"nextbtn"}
+            size={"nextbtnsize"}
+            onClick={() => { handleAdd(); }}
+            className={`scroll-py-24 ${isDisabled ? "hidden" : ""}`}
+          >
+            Add
+          </Button>
+        </div>
       </div>
-      <div className="shadow- bg-[#f6f6f7] p-4 mb-4 mt-2 rounded-2xl">
-        <div className="flex w-full justify-between pb-4">
+      <div className="shadow- bg-[#f6f6f7] p-2 mb-4 mt-2 rounded-2xl">
+        {/* <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
             Employees
           </h1>
-        </div>
+        </div> */}
         <Table className=" max-h-40 overflow-y-scroll">
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
@@ -163,26 +163,34 @@ const EmployeeDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendme
             </TableRow>
           </TableHeader>
           <TableBody className="text-center">
-            {employeeDetail?.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-medium">{index + 1}</TableCell>
-                <TableCell>{item?.production}</TableCell>
-                <TableCell>{item?.qaqc}</TableCell>
-                <TableCell>{item?.logistics}</TableCell>
-                <TableCell>{item?.marketing}</TableCell>
-                <TableCell>{item?.r_d}</TableCell>
-                <TableCell>{item?.hse}</TableCell>
-                <TableCell>{item?.other}</TableCell>
-                <TableCell className="flex justify-center">
-                  {!isDisabled && (
-                    <Trash2
-                      className="text-red-400 cursor-pointer"
-                      onClick={() => handleRowDelete(index)}
-                    />
-                  )}
+            {employeeDetail && employeeDetail.length > 0 ? (
+              employeeDetail.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium">{index + 1}</TableCell>
+                  <TableCell>{item?.production}</TableCell>
+                  <TableCell>{item?.qaqc}</TableCell>
+                  <TableCell>{item?.logistics}</TableCell>
+                  <TableCell>{item?.marketing}</TableCell>
+                  <TableCell>{item?.r_d}</TableCell>
+                  <TableCell>{item?.hse}</TableCell>
+                  <TableCell>{item?.other}</TableCell>
+                  <TableCell className="flex justify-center">
+                    {!isDisabled && (
+                      <Trash2
+                        className="text-red-400 cursor-pointer"
+                        onClick={() => handleRowDelete(index)}
+                      />
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={9} className="text-center py-4 text-gray-500 italic">
+                  No Employee Details mentioned by the Vendor
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>

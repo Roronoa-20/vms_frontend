@@ -54,6 +54,8 @@ type certificateData = {
   name?: string;
   certificate_attach?: CertificateAttachment;
   others?: string;
+  certificate_number?: string
+  certificate_body?: string
 };
 
 const Certificate = ({
@@ -66,8 +68,7 @@ const Certificate = ({
 }: Props) => {
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [certificateData, setCertificateData] = useState<Partial<certificateData>>({});
-  const [multipleCertificateData, setMultipleCertificateData] =
-    useState<certificateData[]>(OnboardingDetail);
+  const [multipleCertificateData, setMultipleCertificateData] = useState<certificateData[]>(OnboardingDetail || []);
   const fileInput = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
@@ -145,7 +146,7 @@ const Certificate = ({
       {/* Header with toggle */}
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Certificate Details</h1>
-        {(isAmendment == 1 || re_release == 1) && (
+        {designation == "Purchase Team" && (isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled((prev) => !prev)}
             className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
@@ -193,6 +194,26 @@ const Certificate = ({
               </SelectGroup>
             </SelectContent>
           </Select>
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[12px] text-[#626973] pb-3">Certificate Number</h1>
+          <Input
+            disabled={isDisabled}
+            value={certificateData?.certificate_number ?? ""}
+            onChange={(e) =>
+              setCertificateData((prev: any) => ({ ...prev, certificate_number: e.target.value }))
+            }
+          />
+        </div>
+        <div className="col-span-1">
+          <h1 className="text-[12px] text-[#626973] pb-3">Certification Body</h1>
+          <Input
+            disabled={isDisabled}
+            value={certificateData?.certificate_body ?? ""}
+            onChange={(e) =>
+              setCertificateData((prev: any) => ({ ...prev, certificate_body: e.target.value }))
+            }
+          />
         </div>
 
         <div className="col-span-1">
@@ -268,15 +289,17 @@ const Certificate = ({
       </div>
 
       {/* Table */}
-      <div className="bg-[#f6f6f7] p-4 mb-4 mt-2 rounded-2xl">
-        <h1 className="text-[20px] text-[#03111F] font-semibold pb-4">
+      <div className="bg-[#f6f6f7] p-2 mb-4 mt-2 rounded-2xl">
+        {/* <h1 className="text-[20px] text-[#03111F] font-semibold pb-4">
           Certificates List
-        </h1>
+        </h1> */}
         <Table>
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px]">
               <TableHead className="text-center text-black">Sr No.</TableHead>
-              <TableHead className="text-center text-black">Certificate</TableHead>
+              <TableHead className="text-center text-black">Certificate Code</TableHead>
+              <TableHead className="text-center text-black">Certificate Number</TableHead>
+              <TableHead className="text-center text-black">Certificate Body</TableHead>
               <TableHead className="text-center text-black">Valid Till</TableHead>
               <TableHead className="text-center text-black">File</TableHead>
               <TableHead className="text-center text-black">Action</TableHead>
@@ -287,6 +310,8 @@ const Certificate = ({
               <TableRow key={item?.name || index}>
                 <TableCell className="text-center">{index + 1}</TableCell>
                 <TableCell className="text-center">{item?.certificate_code}</TableCell>
+                <TableCell className="text-center">{item?.certificate_number}</TableCell>
+                <TableCell className="text-center">{item?.certificate_body}</TableCell>
                 <TableCell className="text-center">{item?.valid_till}</TableCell>
                 <TableCell className="text-center">
                   <Link href={item?.certificate_attach?.url || ""} target="_blank">
@@ -314,7 +339,7 @@ const Certificate = ({
           variant="nextbtn"
           size="nextbtnsize"
           onClick={handleSubmit}
-          disabled={multipleCertificateData.length === 0}
+          disabled={!multipleCertificateData || multipleCertificateData.length === 0}
           style={{
             display: isDisabled ? "none" : "inline-flex",
           }}

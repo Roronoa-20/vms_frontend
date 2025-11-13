@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useRef, useEffect } from "react";
 import Logo from "@/src/components/atoms/vms-logo";
-import { sidebarMenu, VendorsidebarMenu, EnquirysidebarMenu, ASASideBarMenu, AccountSideBarMenu, AccountHeadSideBarMenu, PurchaseHeadsidebarMenu, QASideBarMenu, SuperHeadSidebarMenu, TreasurySideBarMenu } from "@/src/constants/sidebarMenu";
+import { sidebarMenu, VendorsidebarMenu, EnquirysidebarMenu, ASASideBarMenu, AccountSideBarMenu, AccountHeadSideBarMenu, PurchaseHeadsidebarMenu, QASideBarMenu, SuperHeadSidebarMenu, TreasurySideBarMenu, MaterialUserSideBar, MaterialCPSideBar } from "@/src/constants/sidebarMenu";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/context/AuthContext";
@@ -14,7 +14,16 @@ const Sidebar = () => {
   const { designation } = useAuth();
   const { vendorRef } = useAuth();
 
-  const sideBar = designation === "Vendor" ? VendorsidebarMenu : designation === "Enquirer" ? EnquirysidebarMenu : designation === "ASA" ? ASASideBarMenu : designation === "Accounts Team" ? AccountSideBarMenu : designation === "Accounts Head" ? AccountHeadSideBarMenu : designation === "Purchase Head" ? PurchaseHeadsidebarMenu : designation === "QA Team" ? QASideBarMenu : designation === "Super Head" ? SuperHeadSidebarMenu : designation === "Treasury" ? TreasurySideBarMenu : sidebarMenu;
+  if (designation?.toLowerCase() === "security") {
+    return null;
+  }
+
+  const sideBar = designation === "Vendor" ? VendorsidebarMenu : designation === "Enquirer" ? EnquirysidebarMenu : designation === "ASA" ? ASASideBarMenu : designation === "Accounts Team" ? AccountSideBarMenu : designation === "Accounts Head" ? AccountHeadSideBarMenu : designation === "Purchase Head" ? PurchaseHeadsidebarMenu : designation === "QA Team" ? QASideBarMenu : designation === "Super Head" ? SuperHeadSidebarMenu : designation === "Treasury" ? TreasurySideBarMenu : designation === "Material User" ? MaterialUserSideBar : designation === "Material CP" ? MaterialCPSideBar : sidebarMenu;
+
+  const getSidebarWidth = (designation: string) => {
+    const compactRoles = ["Vendor", "Enquirer", "ASA", "QA Team", "Material User", "Material CP"];
+    return compactRoles.includes(designation) ? "w-[95px]" : "w-[110px]";
+  };
 
   const [openMenu, setOpenMenu] = useState<SidebarItem | null>(null);
   const [submenuPos, setSubmenuPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
@@ -24,15 +33,46 @@ const Sidebar = () => {
   const handleClick = (item: SidebarItem, idx: number) => {
     if (item.children.length > 0) {
       const btn = buttonRefs.current[idx];
-      if (btn) {
-        const rect = btn.getBoundingClientRect();
-        setSubmenuPos({ top: rect.top, left: rect.right });
+      const sidebar = document.querySelector(".sidebar-scroll") as HTMLElement;
+      if (btn && sidebar) {
+        const offset = getSidebarWidth(designation || "") === "w-[95px]" ? 0 : 0;
+        const btnRect = btn.getBoundingClientRect();
+        const sidebarRect = sidebar.getBoundingClientRect();
+
+        // compute position relative to sidebar container
+        const top = btn.offsetTop + 15 - sidebar.scrollTop;
+        const left = sidebarRect.width - 10 + offset;
+
+        setSubmenuPos({ top, left });
       }
       setOpenMenu(openMenu?.name === item.name ? null : item);
     } else {
       navigateTo(item);
     }
   };
+
+  // Keep submenu aligned when scrolling
+  useEffect(() => {
+    const sidebar = document.querySelector(".sidebar-scroll") as HTMLElement;
+    if (!sidebar) return;
+
+    const handleScroll = () => {
+      if (openMenu) {
+        const idx = sideBar.findIndex((item) => item.name === openMenu.name);
+        const btn = buttonRefs.current[idx];
+        if (btn) {
+          const offset = getSidebarWidth(designation || "") === "w-[95px]" ? 0 : 0;
+          const top = btn.offsetTop + 15 - sidebar.scrollTop;
+          const left = sidebar.clientWidth + offset;
+
+          setSubmenuPos({ top, left });
+        }
+      }
+    };
+
+    sidebar.addEventListener("scroll", handleScroll);
+    return () => sidebar.removeEventListener("scroll", handleScroll);
+  }, [openMenu]);
 
   const navigateTo = (item: SidebarItem | SidebarChild) => {
     if ('children' in item && item.children.length > 0) return;
@@ -62,8 +102,11 @@ const Sidebar = () => {
 
 
   return (
-    <>
-      <div className="w-[110px] bg-[#0C2741] flex flex-col items-center gap-3 overflow-y-auto no-scrollbar sticky left-0 h-screen">
+    <div className="relative">
+      {/* SIDEBAR */}
+      <div
+        className={`${getSidebarWidth(designation || "")} bg-[#0C2741] flex flex-col items-center gap-3 overflow-y-auto no-scrollbar h-screen sidebar-scroll`}
+      >
         <div className="w-3 h-3 pb-6 pt-5">
           <Logo />
         </div>
@@ -71,12 +114,8 @@ const Sidebar = () => {
           <button
             key={idx}
             ref={(el) => { buttonRefs.current[idx] = el; }}
-            // className={`px-2 py-2 rounded-lg text-sm flex flex-col justify-center items-center gap-1 text-white w-full ${openMenu?.name === item.name ? "bg-[#2C567E]" : "hover:bg-[#2C567E]"
-            //   }`}
             className={`px-2 py-2 rounded-lg text-sm flex flex-col justify-center items-center gap-1 text-white w-full 
-    ${
-              // Active if current pathname matches parent or one of its children
-              pathname === item.href ||
+            ${pathname === item.href ||
                 item.children.some(child => child.href === pathname) ||
                 (pathname === "/dashboard" && item.defaultActive)
                 ? "bg-[#2C567E]"
@@ -90,18 +129,20 @@ const Sidebar = () => {
         ))}
       </div>
 
-      {/* FLOATING ADJACENT SUBMENU */}
+      {/* FLOATING ADJACENT SUBMENU (inside relative wrapper) */}
       {openMenu?.children && openMenu.children.length > 0 && (
         <div
           ref={submenuRef}
-          style={{ top: submenuPos.top, left: submenuPos.left }}
-          className="fixed bg-[#15395B] rounded-md shadow-lg flex flex-col gap-2 py-2 px-2 min-w-[180px] z-50"
+          style={{
+            top: submenuPos.top,
+            left: submenuPos.left,
+          }}
+          className="absolute bg-[#15395B] rounded-md shadow-lg flex flex-col gap-2 py-2 px-2 min-w-[180px] z-50"
         >
           {openMenu.children.map((child, idx) => (
             <button
               key={idx}
-              className={`flex items-center gap-2 px-3 py-2 rounded text-sm text-white ${pathname === child.href ? "bg-[#2C567E]" : "hover:bg-[#2C567E]"
-                }`}
+              className={`flex items-center gap-2 px-3 py-2 rounded text-sm text-white ${pathname === child.href ? "bg-[#2C567E]" : "hover:bg-[#2C567E]"}`}
               onClick={() => navigateTo(child)}
             >
               {child.logo && <Image src={child.logo} alt={child.name} width={16} height={16} />}
@@ -110,8 +151,8 @@ const Sidebar = () => {
           ))}
         </div>
       )}
-    </>
+    </div>
   );
-};
 
+};
 export default Sidebar;
