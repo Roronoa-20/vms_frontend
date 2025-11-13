@@ -33,8 +33,9 @@ const requestWrapper = async <TResponse>({
 
     return data;
   } catch (e) {
-    const error = e as AxiosError;
-    throw error.message || "Something went wrong";
+    // const error = e as AxiosError;
+    // throw error.message || "Something went wrong";
+    return e as AxiosResponse;
   }
 };
 
