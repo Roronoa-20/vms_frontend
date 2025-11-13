@@ -60,6 +60,7 @@ export type TPRInquiry = {
     cost_center:string,
     gl_account:string
     purchase_requisition_form_created:boolean
+    purchase_team_approval_status:string
 }
 
 

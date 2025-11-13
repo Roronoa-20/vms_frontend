@@ -487,7 +487,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
         </div>
       </div>
       {/* purchase team approval buttons */}
-      {(PRInquiryData?.purchase_team == Boolean(0) || PRInquiryData?.asked_to_modify == Boolean(0)) && PRInquiryData?.rejected == Boolean(0) && (
+      {((PRInquiryData?.purchase_team == Boolean(0) || PRInquiryData?.asked_to_modify == Boolean(0)) && PRInquiryData?.purchase_team_approval_status != "Rejected") && (
           <div className={`flex justify-end pr-4 pb-4 gap-4 ${designation != "Enquirer" ? "" : "hidden"}`}>
             <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${PRInquiryData?.purchase_team_acknowledgement ? "hidden" : ""}`} onClick={() => { setIsModifyDialog(true) }}>Modify</Button>
 
