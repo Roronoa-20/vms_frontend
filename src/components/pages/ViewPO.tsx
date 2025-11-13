@@ -163,6 +163,10 @@ const ViewPO = ({ po_name }: Props) => {
     }
   }, [])
 
+  useEffect(()=>{
+    
+  },[selectedPODropdown])
+
   const getPODropdown = async () => {
     const url = API_END_POINTS?.getPONumberDropdown;
     const response: AxiosResponse = await requestWrapper({ url: url, method: 'GET' });
