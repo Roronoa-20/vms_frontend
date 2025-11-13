@@ -46,7 +46,7 @@ export const sidebarMenu: SidebarItem[] = [
       { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Create RFQ", href: "/create-rfq" },
       //{ logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Shipment Status", href: "/view-shipment-status" },
       { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Shipment Status", href: "/shipment-dashboard" },
-      { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Service Bill", href: "/view-service-bill" },
+      { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Service Bill", href: "/service-dashboard" },
     ],
   },
   {

@@ -1,66 +1,14 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import MultipleFileUpload from "./MultipleFileUpload";
-
-type Field = {
-  label: string;
-  type: "text" | "date" | "select" | "text-date" | "textarea" | "number";
-  placeholder?: string;
-  rows?: number;
-};
+import BoeDetails from "./BillDetails"; 
+import { remainingFields, remarkField, Field } from "@/src/constants/paymentFields";
+import BillDetails from "./BillDetails";
 
 export default function PaymentRequisition() {
   const [files, setFiles] = useState<File[]>([]);
-  const [boeFiles, setBoeFiles] = useState<File[]>([]);
   const [showBOEDetails, setShowBOEDetails] = useState(false);
   const boeRef = useRef<HTMLDivElement | null>(null);
-
-  const remainingFields: Field[] = [
-    { label: "Division:*", type: "select", placeholder: "Search By" },
-    { label: "PRF Number & Date:*", type: "text-date", placeholder: "PRF Number" },
-    { label: "Favoring Of: *", type: "select", placeholder: "Search By" },
-    { label: "Origin: *", type: "select", placeholder: "Search By" },
-    { label: "Consignment: *", type: "select", placeholder: "Search By" },
-    { label: "Mode of Shipment: *", type: "select", placeholder: "Search By" },
-    { label: "Payable At: *", type: "select", placeholder: "Search By" },
-    { label: "Payment By: *", type: "select", placeholder: "Search By" },
-    { label: "Payment Required: *", type: "text" },
-    { label: "P.O. W.O.No: *", type: "number" },
-    { label: "P.O. W.O. Date:", type: "date" },
-    { label: "CHA:", type: "select", placeholder: "Search By" },
-    { label: "Type of Materials : *", type: "select", placeholder: "Search By" },
-    { label: "Supplier Name: *", type: "text" },
-    { label: "Duty Amount:*", type: "text" },
-    { label: "Job No:*", type: "number" },
-    { label: "Duty Amount in Word:*", type: "text" },
-    { label: "Payment Details:*", type: "text" },
-    { label: "RODTEP Details:*", type: "select", placeholder: "Search By" },
-  ];
-
-  const billdetails: Field[] = [
-    { label: "Assessable Value: *", type: "text" },
-    { label: "Deferred Duty Amt: *", type: "text" },
-    { label: "Cargo Type: *", type: "text" },
-    { label: "BOE No/Date: *", type: "text-date", placeholder: "PRF Number" },
-    { label: "Deferred Duty: *", type: "text" },
-    { label: "Remarks: *", type: "text" },
-    { label: "Period: *", type: "text" },
-    { label: "BCD: *", type: "text" },
-    { label: "Health Cess: *", type: "text" },
-    { label: "SW Surcharge: *", type: "text" },
-    { label: "IGST: *", type: "text" },
-    { label: "Penalty:", type: "text" },
-    { label: "Total: *", type: "text" },
-  ];
-
-  const remarkField: Field[] = [
-    {
-      label: "Specific Remark:",
-      type: "textarea",
-      rows: 3,
-      placeholder: "Enter remarks here...",
-    },
-  ];
 
   const renderLabel = (label: string) => {
     const hasAsterisk = label.includes("*");
@@ -77,7 +25,12 @@ export default function PaymentRequisition() {
   };
 
   const renderField = (field: Field, index: number) => {
-    const fullWidthFields = ["Dimension (cm):*", "Remark", "Specific Remark:"];
+    const fullWidthFields = [
+      "Duty Amount in Word:*",
+      "Payment Details:*",
+      "RODTEP Details:*",
+      "Specific Remark:",
+    ];
     const isFullWidth = fullWidthFields.includes(field.label);
 
     return (
@@ -85,14 +38,14 @@ export default function PaymentRequisition() {
         key={index}
         className={`flex flex-col ${isFullWidth ? "col-span-1 md:col-span-3" : ""}`}
       >
-        <label className="mb-1 font-medium text-gray-700">{renderLabel(field.label)}</label>
+        <label className="mb-1 text-[14px] text-gray-700">{renderLabel(field.label)}</label>
 
         {field.type === "text" && (
           <input
             type="text"
             placeholder={field.placeholder || ""}
-            className="border border-gray-300 rounded-md px-3 py-2 hover:border-blue-500 focus:outline-none 
-                       focus:ring-blue-500 focus:border-blue-500 transition"
+            className="border border-gray-300 rounded-md px-3 py-1.5 hover:border-blue-500 focus:outline-none 
+                       focus:ring-blue-500 focus:border-blue-500 transition text-[16px]"
           />
         )}
 
@@ -100,22 +53,22 @@ export default function PaymentRequisition() {
           <input
             type="number"
             placeholder={field.placeholder || ""}
-            className="border border-gray-300 rounded-md px-3 py-2 hover:border-blue-500 focus:outline-none 
-                       focus:ring-blue-500 focus:border-blue-500 transition"
+            className="border border-gray-300 rounded-md px-3 py-1.5 hover:border-blue-500 focus:outline-none 
+                       focus:ring-blue-500 focus:border-blue-500 transition text-[16px]"
           />
         )}
 
         {field.type === "date" && (
           <input
             type="date"
-            className="border border-gray-300 rounded-md px-3 py-2 hover:border-blue-500 focus:outline-none 
-                       focus:ring-blue-500 focus:border-blue-500 transition"
+            className="border border-gray-300 rounded-md px-3 py-1.5 hover:border-blue-500 focus:outline-none 
+                       focus:ring-blue-500 focus:border-blue-500 transition text-[16px]"
           />
         )}
 
         {field.type === "select" && (
           <select className="border border-gray-300 rounded-md px-3 py-2 hover:border-blue-500 focus:outline-none 
-                       focus:ring-blue-500 focus:border-blue-500 transition">
+                       focus:ring-blue-500 focus:border-blue-500 transition text-[16px]">
             <option value="">{field.placeholder || "Select"}</option>
           </select>
         )}
@@ -125,13 +78,13 @@ export default function PaymentRequisition() {
             <input
               type="text"
               placeholder={field.placeholder || ""}
-              className="w-1/2 border border-gray-300 rounded-md px-3 py-2 hover:border-blue-500 focus:outline-none 
-                         focus:ring-blue-500 focus:border-blue-500 transition"
+              className="w-1/2 border border-gray-300 rounded-md px-3 py-1.5 hover:border-blue-500 focus:outline-none 
+                         focus:ring-blue-500 focus:border-blue-500 transition text-[16px]"
             />
             <input
               type="date"
-              className="w-1/2 border border-gray-300 rounded-md px-3 py-2 hover:border-blue-500 focus:outline-none 
-                         focus:ring-blue-500 focus:border-blue-500 transition"
+              className="w-1/2 border border-gray-300 rounded-md px-3 py-1.5 hover:border-blue-500 focus:outline-none 
+                         focus:ring-blue-500 focus:border-blue-500 transition text-[16px]"
             />
           </div>
         )}
@@ -140,26 +93,19 @@ export default function PaymentRequisition() {
           <textarea
             rows={field.rows || 3}
             placeholder={field.placeholder || ""}
-            className={`border border-gray-300 rounded-md px-3 py-2 hover:border-blue-500 focus:outline-none 
-                        focus:ring-blue-500 focus:border-blue-500 transition resize-y`}
+            className="border border-gray-300 rounded-md px-3 py-2 hover:border-blue-500 focus:outline-none 
+                        focus:ring-blue-500 focus:border-blue-500 transition resize-y text-[16px]"
           />
         )}
       </div>
     );
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const formData = new FormData();
     files.forEach((file) => formData.append("files", file));
-    boeFiles.forEach((file) => formData.append("boeFiles", file));
-    console.log("Submitting form with files:", files, boeFiles);
+    console.log("Submitting form with files:", files);
   };
-
-  useEffect(() => {
-    if (showBOEDetails && boeRef.current) {
-      boeRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [showBOEDetails]);
 
   const renderFileTable = (fileList: File[], setFileList: Function) => (
     <div className="overflow-x-auto mt-6">
@@ -212,6 +158,12 @@ export default function PaymentRequisition() {
     </div>
   );
 
+  useEffect(() => {
+    if (showBOEDetails && boeRef.current) {
+      boeRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [showBOEDetails]);
+
   return (
     <div className="container mx-auto p-2 w-full bg-gray-100">
       <div className="bg-white p-4 rounded shadow space-y-6">
@@ -238,8 +190,7 @@ export default function PaymentRequisition() {
         <div className="mt-6 flex justify-end gap-2">
           <button
             onClick={() => setShowBOEDetails((prev) => !prev)}
-            className="text-white px-6 py-2 rounded-xl shadow hover:border-blue-600 focus:outline-none 
-                        focus:ring-blue-500 focus:border-blue-500 transition"
+            className="text-white px-6 py-2 rounded-xl shadow transition"
             style={{ backgroundColor: "#5291CD" }}
           >
             {showBOEDetails ? "Update BOE" : "Update BOE"}
@@ -247,8 +198,7 @@ export default function PaymentRequisition() {
 
           <button
             onClick={handleSubmit}
-            className="text-white px-6 py-2 rounded-xl shadow hover:border-blue-600 focus:outline-none 
-                        focus:ring-blue-500 focus:border-blue-500 transition"
+            className="text-white px-6 py-2 rounded-xl shadow transition"
             style={{ backgroundColor: "#5291CD" }}
           >
             Submit
@@ -256,34 +206,8 @@ export default function PaymentRequisition() {
         </div>
 
         {showBOEDetails && (
-          <div ref={boeRef} className="bg-white p-4 rounded shadow mt-6">
-            <h2 className="text-lg font-semibold mb-4">Bill Of Entry Details</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {billdetails.map(renderField)}
-            </div>
-
-            <div className="flex justify-between items-center mt-6">
-              <h2 className="text-lg font-semibold">Uploaded Documents</h2>
-              <MultipleFileUpload
-                files={boeFiles}
-                setFiles={setBoeFiles}
-                buttonText="Attach Files"
-                onNext={(uploadedFiles) => console.log("Files uploaded:", uploadedFiles)}
-              />
-            </div>
-
-            {renderFileTable(boeFiles, setBoeFiles)}
-
-            <div className="mt-6 flex justify-end gap-2">
-              <button
-                onClick={handleSubmit}
-                className="text-white px-6 py-2 rounded-xl shadow hover:border-blue-600 focus:outline-none 
-                           focus:ring-blue-500 focus:border-blue-500 transition"
-                style={{ backgroundColor: "#5291CD" }}
-              >
-                Update BOE
-              </button>
-            </div>
+          <div ref={boeRef}>
+            <BillDetails/>
           </div>
         )}
       </div>
