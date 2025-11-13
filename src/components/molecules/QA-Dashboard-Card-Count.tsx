@@ -32,7 +32,7 @@ const QADashboardCards = ({ ...Props }: Props) => {
       bg_color: "bg-rose-100",
       hover: "hover:border-rose-400",
     },
-    {
+    /*{
       name: "Filled QMS Form",
       count: Props.dashboardFilledQMSTableData?.total_count ?? 0,
       icon: "/dashboard-assests/cards_icon/doc.svg",
@@ -47,7 +47,7 @@ const QADashboardCards = ({ ...Props }: Props) => {
       text_color: "text-blue-800",
       bg_color: "bg-blue-100",
       hover: "hover:border-blue-400",
-    },
+    },*/
     {
       name: "Approved QMS Form",
       count: Props?.dashboardApprovedTableData?.total_count ?? 0,
@@ -56,14 +56,14 @@ const QADashboardCards = ({ ...Props }: Props) => {
       bg_color: "bg-emerald-100",
       hover: "hover:border-emerald-400",
     },
-    {
+    /*{
       name: "Rejected QMS Form",
       count: Props?.dashboardRejectedTableData?.total_count ?? 0,
       icon: "/dashboard-assests/cards_icon/tick.svg",
       text_color: "text-violet-800",
       bg_color: "bg-violet-100",
       hover: "hover:border-violet-400",
-    },
+    },*/
 
   ];
 

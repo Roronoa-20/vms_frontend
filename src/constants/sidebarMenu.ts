@@ -394,6 +394,12 @@ export const QASideBarMenu: SidebarItem[] = [
     href:"/all-qms-forms",
     children: []
   },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "ASL",
+    href:"/view-asl",
+    children: []
+  },
 ];
 
 export const AccountSideBarMenu: SidebarItem[] = [
