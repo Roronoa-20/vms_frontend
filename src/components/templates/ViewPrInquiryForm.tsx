@@ -41,12 +41,12 @@ type ProductNameDropdown = {
 }
 const currentDate = new Date();
 
-const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purchaseTypeDropdown, AllcompanyDropdown }: Props) => {
+const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purchaseTypeDropdown, AllcompanyDropdown,productHistory }: Props) => {
   const user = Cookies.get("user_id");
   const [formData, setFormData] = useState<TPRInquiry | null>(PRInquiryData ?? null);
   const [singleTableRow, setSingleTableRow] = useState<TableData | null>(null);
   const [tableData, setTableData] = useState<TableData[]>(PRInquiryData?.cart_product ?? []);
-  const [productHistroytableData, setProductHistoryTable] = useState<ProductHistory[]>([]);
+  const [productHistroytableData, setProductHistoryTable] = useState<ProductHistory[]>(productHistory);
   const [productNameDropdown, setProductNameDropdown] = useState<ProductNameDropdown[]>([]);
   const [index, setIndex] = useState<number>(-1)
   const [isApproved, setIsApproved] = useState(false);
@@ -242,6 +242,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
 
   console.log(PRInquiryData)
   console.log(productNameDropdown, "this is dropdown");
+
+  console.log(productHistroytableData,"this is table")
 
   return (
     <div className="flex flex-col bg-white rounded-lg p-2 max-h-[90vh] w-full">

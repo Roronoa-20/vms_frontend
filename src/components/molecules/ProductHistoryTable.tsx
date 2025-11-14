@@ -43,7 +43,7 @@ const ProductHistoryTable = ({tableData,refno,product_name}:Props) => {
 
   const fetchTable = async()=>{
      const response: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.FullProductHistory}?&page_no=${currentPage}&page_size=${record_per_page}&cart_id=${refno}&product_name=${product_name}`,
+      url: `${API_END_POINTS?.FullProductHistory}?&page_no=${currentPage}&page_size=${record_per_page}product_name=${product_name}`,
       method: "GET",
     });
     if (response?.status == 200) {
@@ -57,9 +57,6 @@ const ProductHistoryTable = ({tableData,refno,product_name}:Props) => {
 
   return (
      <div className='pb-4'>
-        <h1 className="border-b-2 sticky top-0 bg-white text-lg font-semibold z-30">
-          Product History
-        </h1>
         <div className="shadow- bg-[#f6f6f7] mt-4 p-4 rounded-2xl">
           <Table className="max-h-40">
             <TableHeader className="text-center">

@@ -103,7 +103,7 @@ if (refno) {
         cookie: cookieHeaderString
     }});
     if(productTableResponse.status == 200){
-        productHistory = productTableResponse?.data?.message
+        productHistory = productTableResponse?.data?.message?.data
     }else{
         productHistory = [];
     }   
@@ -126,6 +126,9 @@ const purchaseTypeDropdown = purchaseTypeResponse?.status == 200? purchaseTypeRe
   });
   const AllcompanyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"] =
     dropDownApi?.status == 200 ? dropDownApi?.data?.message?.data?.company_master : "";
+
+    console?.log(productHistory,"this is server side product history")
+
 return (
     <ViewPrInquiryForm PRInquiryData={PRInquiryData} companyDropdown={companyDropdown} AllcompanyDropdown={AllcompanyDropdown} purchaseTypeDropdown={purchaseTypeDropdown} dropdown={dropdown} refno={refno}  productHistory={productHistory} />
 )

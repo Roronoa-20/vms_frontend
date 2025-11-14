@@ -30,7 +30,7 @@ const ProductHistory = async({refno,product_name}:Props) => {
       console.log(user, "user")
       const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
 
-    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.FullProductHistory,method:"GET",params:{cart_id:refno,product_name:product_name},headers:{
+    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.FullProductHistory,method:"GET",params:{product_name:product_name},headers:{
         cookie:cookieHeaderString
     }})
 
