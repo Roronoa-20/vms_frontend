@@ -5,6 +5,7 @@ import { AxiosResponse } from 'axios';
 import requestWrapper from '@/src/services/apiCall';
 import { cookies } from 'next/headers';
 import { FileAttachment, TvendorRegistrationDropdown } from '@/src/types/types';
+import { ProductHistory } from './Pr-Inquiry';
 
 export interface purchaseInquiryDropdown {
     message:{
@@ -88,6 +89,7 @@ const PrInquiryPage = async({refno}:Props) => {
         : { category_type: [], uom_master: [] };
   
 let PRInquiryData: TPRInquiry | null   = null;
+let productHistory:ProductHistory[] = [];
 console.log(refno,"this is refno")
 if (refno) {
     const PRInquiryDataUrl = `${API_END_POINTS?.prInquiryData}?pi_name=${refno}`;
@@ -96,6 +98,15 @@ if (refno) {
     } });
     PRInquiryData = PRInquiryDataResponse?.status == 200 ? PRInquiryDataResponse?.data?.message : "";
 
+
+    const productTableResponse:AxiosResponse = await requestWrapper({url:API_END_POINTS?.prInquiryProductHistory,method:"GET",params:{cart_id:refno},headers:{
+        cookie: cookieHeaderString
+    }});
+    if(productTableResponse.status == 200){
+        productHistory = productTableResponse?.data?.message?.data
+    }else{
+        productHistory = [];
+    }   
 }
 const companyDropdownUrl = `${API_END_POINTS?.InquirycompanyBasedOnUser}?usr=${user}`;
 const companyDropdownResponse:AxiosResponse = await requestWrapper({url:companyDropdownUrl,method:"GET",headers:{
@@ -115,8 +126,11 @@ const purchaseTypeDropdown = purchaseTypeResponse?.status == 200? purchaseTypeRe
   });
   const AllcompanyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"] =
     dropDownApi?.status == 200 ? dropDownApi?.data?.message?.data?.company_master : "";
+
+    console?.log(productHistory,"this is server side product history")
+
 return (
-    <ViewPrInquiryForm PRInquiryData={PRInquiryData} companyDropdown={companyDropdown} AllcompanyDropdown={AllcompanyDropdown} purchaseTypeDropdown={purchaseTypeDropdown} dropdown={dropdown} refno={refno} />
+    <ViewPrInquiryForm PRInquiryData={PRInquiryData} companyDropdown={companyDropdown} AllcompanyDropdown={AllcompanyDropdown} purchaseTypeDropdown={purchaseTypeDropdown} dropdown={dropdown} refno={refno}  productHistory={productHistory} />
 )
 }
 

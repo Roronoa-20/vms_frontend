@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Input } from '../atoms/input'
 import { Button } from '../atoms/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
@@ -60,6 +60,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
   const router = useRouter();
   const param = useSearchParams();
   const refno = param.get("cart_Id");
+
+  const fileUploadRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (PRInquiryData?.company) {
