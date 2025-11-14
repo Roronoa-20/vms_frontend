@@ -240,7 +240,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     }
   };
 
-  let requiredFields : { [key: string]: string } = {
+  let requiredFields: { [key: string]: string } = {
     cart_use: "Please Select Cart Use",
     category_type: "Please Select Category Type",
     company: "Please Select Company",
@@ -253,7 +253,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
 
 
   const handleNext = async () => {
-    
+
     //validation
     // if(formData?.purchase_type == "SB"){
     //   requiredFields.cost_center = "Please Select Cost Center";
@@ -280,7 +280,21 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
       // router.push(`pr-inquiry?cart_Id=${refno}`);
       location.reload();
     }
-  }
+  };
+
+  const handleNumberInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
+    if (allowedKeys.includes(e.key)) return;
+    if (e.key === ".") {
+      if (e.currentTarget.value.includes(".")) {
+        e.preventDefault();
+      }
+      return;
+    }
+    if (!/^\d$/.test(e.key)) {
+      e.preventDefault();
+    }
+  };
 
   return (
     <>
@@ -518,7 +532,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">
                   Product Quantity <span className='text-red-400 text-[20px]'>*</span>
                 </h1>
-                <Input placeholder="" name='product_quantity' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_quantity ?? ""} />
+                <Input placeholder="" name='product_quantity' onChange={(e) => { handleFieldChange(true, e) }} onKeyDown={handleNumberInputKeyDown} inputMode="decimal" value={singleTableRow?.product_quantity ?? ""} />
               </div>
               <div className="col-span-1">
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">

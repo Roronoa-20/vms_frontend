@@ -235,6 +235,21 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
 
   const today = new Date().toISOString().split("T")[0];
 
+  const handleNumberInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const allowedKeys = [ "Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
+    if (allowedKeys.includes(e.key)) return;
+    if (e.key === ".") {
+      if (e.currentTarget.value.includes(".")) {
+        e.preventDefault();
+      }
+      return;
+    }
+    if (!/^\d$/.test(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+
   console.log(PRInquiryData)
   console.log(productNameDropdown, "this is dropdown");
 
@@ -245,11 +260,11 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
       </h1>
       <div className="grid grid-cols-3 gap-6 p-3">
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">User</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">User</h1>
           <Input placeholder="" name='user' onChange={(e) => { handleFieldChange(false, e) }} value={formData?.user ?? user ?? ""} disabled />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
             Cart Use
           </h1>
           <Select disabled value={formData?.cart_use ?? ""} onValueChange={(value) => { handleSelectChange(value, "cart_use", false) }}>
@@ -265,11 +280,11 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
           </Select>
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">Cart Date</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Cart Date</h1>
           <Input placeholder="" name='cart_date' onChange={(e) => { handleFieldChange(false, e) }} value={formData?.cart_date ?? currentDate?.toLocaleDateString() ?? ""} disabled />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
             Category Type
           </h1>
           <Select disabled value={formData?.category_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "category_type", false); fetchProductName(value) }}>
@@ -404,14 +419,14 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
         </div>
         {PRInquiryData?.acknowledged_date && (
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">Early Delivery Date</h1>
+            <h1 className="text-[14px] font-normal text-[#000000] pb-2">Early Delivery Date</h1>
             <Input placeholder="" value={PRInquiryData?.acknowledged_date} disabled />
           </div>
         )}
         {
           PRInquiryData?.second_stage_approval_by &&
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">Second Stage Approval Email</h1>
+            <h1 className="text-[14px] font-normal text-[#000000] pb-2">Second Stage Approval Email</h1>
             <Input placeholder="" value={PRInquiryData?.second_stage_approval_by} disabled />
           </div>
         }
@@ -477,7 +492,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
                   <TableCell>{item?.user_specifications}</TableCell>
                   <TableCell><Link href={item?.attachment?.url ?? ""}>{item?.attachment?.file_name}</Link></TableCell>
                   <TableCell className='flex justify-center'>
-                    <Input disabled={PRInquiryData?.purchase_team_approved == Boolean(0) && PRInquiryData?.purchase_team == Boolean(1) ? false : true} value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e) => { handleTableInput(index, e) }} className={`text-center w-28 ${PRInquiryData?.purchase_team_acknowledgement ? "" : "hidden"}`} />
+                    <Input disabled={PRInquiryData?.purchase_team_approved == Boolean(0) && PRInquiryData?.purchase_team == Boolean(1) ? false : true} value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e) => { handleTableInput(index, e) }} onKeyDown={handleNumberInputKeyDown} inputMode="decimal" pattern="^[0-9]*\.?[0-9]*$" className={`text-center w-28 ${PRInquiryData?.purchase_team_acknowledgement ? "" : "hidden"}`} />
                   </TableCell>
                   {/* <TableCell className='flex justify-center'><Input className='text-center w-28' type='checked' onChange={(e)=>{handleTableCheck(index,e.target.checked)}}/></TableCell> */}
                 </TableRow>
@@ -487,21 +502,21 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
         </div>
       </div>
       {/* purchase team approval buttons */}
-      
-      {PRInquiryData?.purchase_team_approval_status != "Rejected" && (PRInquiryData?.purchase_team == Boolean(0) || PRInquiryData?.asked_to_modify == Boolean(0)) && (
-          <div className={`flex justify-end pr-4 pb-4 gap-4 ${designation != "Enquirer" ? "" : "hidden"}`}>
-            <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${PRInquiryData?.purchase_team_acknowledgement ? "hidden" : ""}`} onClick={() => { setIsModifyDialog(true) }}>Modify</Button>
 
-            {
-              PRInquiryData?.purchase_team_acknowledgement == Boolean(1) ?
-                <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsApproved(true); setIsDialog(true) }}>Proceed</Button>
-                :
-                <Button variant={"nextbtn"} size={"nextbtnsize"} className='py-2.5 hover:bg-white hover:text-black' ref={acknowledgeButtonRef} onClick={() => { setIsAcknowledgeDialog(true) }}>Acknowledge</Button>
-            }
-            {
-              <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${designation != "Enquirer" && PRInquiryData?.purchase_team_approved == Boolean(0) && PRInquiryData?.purchase_team_acknowledgement == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsReject(true); setIsDialog(true) }}>Reject</Button>
-            }
-          </div>
+      {PRInquiryData?.purchase_team_approval_status != "Rejected" && (PRInquiryData?.purchase_team == Boolean(0) || PRInquiryData?.asked_to_modify == Boolean(0)) && (
+        <div className={`flex justify-end pr-4 pb-4 gap-4 ${designation != "Enquirer" ? "" : "hidden"}`}>
+          <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:border border-[#5291CD] hover:text-black ${PRInquiryData?.purchase_team_acknowledgement ? "hidden" : ""}`} onClick={() => { setIsModifyDialog(true) }}>Modify</Button>
+
+          {
+            PRInquiryData?.purchase_team_acknowledgement == Boolean(1) ?
+              <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:border border-[#5291CD] hover:text-black ${PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsApproved(true); setIsDialog(true) }}>Proceed</Button>
+              :
+              <Button variant={"nextbtn"} size={"nextbtnsize"} className='py-2.5 hover:bg-white hover:border border-[#5291CD] hover:text-black' ref={acknowledgeButtonRef} onClick={() => { setIsAcknowledgeDialog(true) }}>Acknowledge</Button>
+          }
+          {
+            <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:border border-[#5291CD] hover:text-black ${designation != "Enquirer" && PRInquiryData?.purchase_team_approved == Boolean(0) && PRInquiryData?.purchase_team_acknowledgement == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsReject(true); setIsDialog(true) }}>Reject</Button>
+          }
+        </div>
       )}
 
       {isDialog &&
@@ -521,7 +536,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
               <h1 className="text-[12px] font-normal text-[#626973] pb-2">Expected Delivery</h1>
               <Input className='w-44' type='Date' onChange={(e) => { setDate(e.target.value) }} min={today} />
               <div className='pt-3 italic'>
-                <h1 className='text-[10px] bg-slate-400 font-mono'>Disclaimer: The Expected Delivery Date can be changed based on the Purchase Order and Purchase Requisition.</h1>
+                <h1 className='text-[10px] bg-slate-400 font-mono'>Disclaimer: The Expected Delivery Date can be changed based on the receipt of Purchase Order and Purchase Requisition.</h1>
               </div>
             </div>
           </Comment_box>
