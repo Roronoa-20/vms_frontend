@@ -97,6 +97,8 @@ export interface MaterialCode {
   plant: string;
   valuation_class: string;
   profit_center: string;
+  material_code_revised: string;
+  material_name_description: string;
 }
 
 export interface serviceCode {

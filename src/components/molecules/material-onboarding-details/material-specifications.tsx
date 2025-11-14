@@ -2,40 +2,20 @@ import React, { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Pencil } from "lucide-react";
-import { UseFormReturn } from "react-hook-form";
+import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
+import { MaterialRequestData } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface MaterialSpecificationsFormProps {
-  form: UseFormReturn<any>; // ideally replace `any` with your form schema type (e.g., `MaterialFormSchema`)
-  MaterialDetails?: {
-    material_onboarding?: Record<string, any>;
-    material_request_item?: {
-      material_specifications?: string;
-    };
-  };
-  isZCAPMaterial?: boolean;
+  form: UseFormReturn<any>;
+  MaterialDetails?: MaterialRequestData;
+  isZCAPMaterial: boolean;
 }
 
-const MaterialSpecificationsForm: React.FC<MaterialSpecificationsFormProps> = ({
-  form,
-  MaterialDetails,
-  isZCAPMaterial = false,
-}) => {
+const MaterialSpecificationsForm: React.FC<MaterialSpecificationsFormProps> = ({ form, MaterialDetails, isZCAPMaterial = false }) => {
+
   useEffect(() => {
     const data = MaterialDetails?.material_onboarding;
     const requestItem = MaterialDetails?.material_request_item;
@@ -75,7 +55,8 @@ const MaterialSpecificationsForm: React.FC<MaterialSpecificationsFormProps> = ({
                   <FormField
                     control={form.control}
                     name="storage_requirements"
-                    render={({ field }) => (
+                    key="storage_requirements"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "storage_requirements"> }) => (
                       <FormItem>
                         <FormLabel>Storage Requirements</FormLabel>
                         <FormControl>
@@ -103,7 +84,8 @@ const MaterialSpecificationsForm: React.FC<MaterialSpecificationsFormProps> = ({
                   <FormField
                     control={form.control}
                     name="intended_usage_application"
-                    render={({ field }) => (
+                    key="intended_usage_application"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "intended_usage_application"> }) => (
                       <FormItem>
                         <FormLabel>Intended Usage / Application</FormLabel>
                         <FormControl>
@@ -131,7 +113,8 @@ const MaterialSpecificationsForm: React.FC<MaterialSpecificationsFormProps> = ({
                   <FormField
                     control={form.control}
                     name="hazardous_material"
-                    render={({ field }) => (
+                    key="hazardous_material"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "hazardous_material"> }) => (
                       <FormItem>
                         <FormLabel>Hazardous Material (Y/N)</FormLabel>
                         <FormControl>

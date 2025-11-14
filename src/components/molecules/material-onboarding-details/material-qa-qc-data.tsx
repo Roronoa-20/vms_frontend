@@ -1,26 +1,11 @@
+"use client";
+
 import React, { useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { UseFormReturn } from "react-hook-form";
-
-interface ExpirationDateOption {
-    name: string;
-    description: string;
-}
+import { FormField, FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Controller, ControllerRenderProps, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
+import { ExpirationDate, MaterialRequestData, MaterialType, InspectionType } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface MaterialOnboardingData {
     minimum_remaining_shell_life?: string;
@@ -32,39 +17,52 @@ interface MaterialOnboardingData {
     incoming_inspection_09?: boolean;
 }
 
-interface MaterialDetailsType {
-    material_onboarding?: MaterialOnboardingData;
-}
-
 interface MaterialQAQCFormProps {
-    form: UseFormReturn<any>; // you can replace `any` with your actual form schema type
-    InspectionType?: string[];
-    AllMaterialType?: string[];
-    ExpirationDate?: ExpirationDateOption[];
-    MaterialDetails?: MaterialDetailsType;
+    form: UseFormReturn<any>;
+    InspectionType?: InspectionType[];
+    AllMaterialType?: MaterialType[];
+    ExpirationDate?: ExpirationDate[];
+    MaterialDetails?: MaterialRequestData;
 }
 
 const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({
     form,
-    InspectionType,
-    AllMaterialType,
     ExpirationDate,
     MaterialDetails,
 }) => {
-    const inspectionRequire = form.watch("inspection_require");
+    const prevDataRef = React.useRef<string>("");
 
-    // Set default value for inspection_require
+    // watch inspection_require to conditionally render fields
+    const inspectionRequire = useWatch({
+        control: form.control,
+        name: "inspection_require",
+    });
+
+    // memoize options list so <SelectItem> list doesn't get recreated each render
+    const expirationMemo = React.useMemo(() => ExpirationDate ?? [], [ExpirationDate]);
+
+    // ensure inspection_require has a default (only once)
     useEffect(() => {
-        const currentValue = form.getValues("inspection_require");
-        if (!currentValue) {
-            form.setValue("inspection_require", "No");
+        const cur = form.getValues("inspection_require");
+        if (cur === undefined || cur === null || cur === "") {
+            form.setValue("inspection_require", "No", {
+                shouldDirty: false,
+                shouldTouch: false,
+                shouldValidate: false,
+            });
         }
-    }, [form]);
+        // run only once on mount
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    // Populate fields if MaterialDetails exist
+    // Sync incoming MaterialDetails.material_onboarding -> only set changed fields (no reset)
     useEffect(() => {
         const data = MaterialDetails?.material_onboarding;
         if (!data) return;
+
+        const dataString = JSON.stringify(data);
+        if (dataString === prevDataRef.current) return; // already applied
+        prevDataRef.current = dataString;
 
         const fields: (keyof MaterialOnboardingData)[] = [
             "minimum_remaining_shell_life",
@@ -76,26 +74,51 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({
             "incoming_inspection_09",
         ];
 
-        fields.forEach((field) => {
-            if (data[field] !== undefined && data[field] !== null) {
-                form.setValue(field, data[field]);
+        // Read current values once
+        const currentValues = form.getValues();
+
+        // For each field, if different, setValue (with options that avoid validation/dirty/touch reflow)
+        let didUpdate = false;
+        for (const field of fields) {
+            const incoming = (data as any)[field];
+            const current = (currentValues as any)[field];
+
+            // treat undefined / null as "no update"
+            if (incoming !== undefined && incoming !== null && incoming !== current) {
+                form.setValue(field as any, incoming, {
+                    shouldDirty: false,
+                    shouldTouch: false,
+                    shouldValidate: false,
+                });
+                didUpdate = true;
             }
-        });
+        }
+
+        // guard: if nothing changed, do nothing further
+        if (!didUpdate) return;
     }, [MaterialDetails, form]);
+
+    // Helper used in Controller render to guard onValueChange & avoid redundant updates
+    const makeOnValueChangeGuarded = (field: ControllerRenderProps<FieldValues, string>) => {
+        return (val: string) => {
+            if (val !== field.value) field.onChange(val);
+        };
+    };
 
     return (
         <div className="bg-[#F4F4F6]">
-            <div className="flex flex-col justify-between pt-4 bg-white rounded-[8px]">
+            <div className="flex flex-col justify-between pt-4 pb-2 bg-white rounded-[8px]">
                 <div className="space-y-1">
                     <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
                         QA/QC Data
                     </div>
+
                     <div className="grid grid-cols-3 gap-4">
                         {/* Minimum Remaining Shelf Life */}
                         <FormField
                             control={form.control}
                             name="minimum_remaining_shell_life"
-                            render={({ field }) => (
+                            render={({ field }: { field: ControllerRenderProps<FieldValues, "minimum_remaining_shell_life"> }) => (
                                 <FormItem>
                                     <FormLabel>Minimum Remaining Shell Life</FormLabel>
                                     <FormControl>
@@ -103,7 +126,6 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({
                                             {...field}
                                             className="p-3 w-full text-sm placeholder:text-gray-400"
                                             placeholder="Enter minimum remaining shell life"
-                                            onChange={field.onChange}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -111,11 +133,12 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({
                             )}
                         />
 
+
                         {/* Total Shelf Life */}
                         <FormField
                             control={form.control}
                             name="total_shell_life"
-                            render={({ field }) => (
+                            render={({ field }: { field: ControllerRenderProps<FieldValues, "total_shell_life"> }) => (
                                 <FormItem>
                                     <FormLabel>Total Shelf Life</FormLabel>
                                     <FormControl>
@@ -123,7 +146,7 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({
                                             {...field}
                                             className="p-3 w-full text-sm placeholder:text-gray-400"
                                             placeholder="Enter total shelf life"
-                                            onChange={field.onChange}
+                                            onChange={(e) => field.onChange(e.target.value)}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -135,19 +158,16 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({
                         <FormField
                             control={form.control}
                             name="expiration_date"
-                            render={({ field }) => (
+                            render={({ field }: { field: ControllerRenderProps<FieldValues, "expiration_date"> }) => (
                                 <FormItem>
                                     <FormLabel>Period Indicator for Shelf Life Expiration Date</FormLabel>
                                     <FormControl>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            value={field.value || ""}
-                                        >
+                                        <Select value={field.value ?? ""} onValueChange={makeOnValueChangeGuarded(field as any)}>
                                             <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
                                                 <SelectValue placeholder="Select Expiration Date Type" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {ExpirationDate?.map((exp) => (
+                                                {expirationMemo.map((exp) => (
                                                     <SelectItem key={exp.name} value={exp.name}>
                                                         {exp.description}
                                                     </SelectItem>
@@ -160,18 +180,18 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({
                             )}
                         />
 
-                        {/* Inspection Require */}
+                        {/* Inspection Require - whole row */}
                         <div className="col-span-3 grid grid-cols-3 gap-4">
                             <FormField
                                 control={form.control}
                                 name="inspection_require"
-                                render={({ field }) => (
+                                render={({ field }: { field: ControllerRenderProps<FieldValues, "inspection_require"> }) => (
                                     <FormItem>
                                         <FormLabel>Inspection Require</FormLabel>
                                         <FormControl>
                                             <Select
-                                                onValueChange={field.onChange}
-                                                value={field.value || "No"}
+                                                value={field.value ?? ""}
+                                                onValueChange={makeOnValueChangeGuarded(field as any)}
                                             >
                                                 <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
                                                     <SelectValue placeholder="Select Yes or No" />
@@ -194,20 +214,18 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({
                                         <FormField
                                             control={form.control}
                                             name="incoming_inspection_01"
-                                            render={({ field }) => (
+                                            render={({ field }: { field: ControllerRenderProps<FieldValues, "incoming_inspection_01"> }) => (
                                                 <FormItem>
                                                     <div className="flex items-center gap-2">
                                                         <FormControl>
                                                             <input
                                                                 type="checkbox"
                                                                 className="w-4 h-4 accent-blue-600"
-                                                                checked={field.value || false}
+                                                                checked={!!field.value}
                                                                 onChange={(e) => field.onChange(e.target.checked)}
                                                             />
                                                         </FormControl>
-                                                        <FormLabel className="text-[16px] m-0">
-                                                            Incoming Inspection 01
-                                                        </FormLabel>
+                                                        <FormLabel className="text-[16px] m-0">Incoming Inspection 01</FormLabel>
                                                     </div>
                                                 </FormItem>
                                             )}
@@ -216,31 +234,28 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({
                                         <FormField
                                             control={form.control}
                                             name="incoming_inspection_09"
-                                            render={({ field }) => (
+                                            render={({ field }: { field: ControllerRenderProps<FieldValues, "incoming_inspection_09"> }) => (
                                                 <FormItem>
                                                     <div className="flex items-center gap-2">
                                                         <FormControl>
                                                             <input
                                                                 type="checkbox"
                                                                 className="w-4 h-4 accent-blue-600"
-                                                                checked={field.value || false}
+                                                                checked={!!field.value}
                                                                 onChange={(e) => field.onChange(e.target.checked)}
                                                             />
                                                         </FormControl>
-                                                        <FormLabel className="text-[16px] m-0">
-                                                            Incoming Inspection 09
-                                                        </FormLabel>
+                                                        <FormLabel className="text-[16px] m-0">Incoming Inspection 09</FormLabel>
                                                     </div>
                                                 </FormItem>
                                             )}
                                         />
                                     </div>
 
-                                    {/* Inspection Interval */}
                                     <FormField
                                         control={form.control}
                                         name="inspection_interval"
-                                        render={({ field }) => (
+                                        render={({ field }: { field: ControllerRenderProps<FieldValues, "inspection_interval"> }) => (
                                             <FormItem>
                                                 <FormLabel>Inspection Interval (In Days)</FormLabel>
                                                 <FormControl>
@@ -249,7 +264,7 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({
                                                         type="number"
                                                         className="p-3 w-full text-sm placeholder:text-gray-400"
                                                         placeholder="Enter Inspection interval in days"
-                                                        onChange={field.onChange}
+                                                        onChange={(e) => field.onChange(e.target.value)}
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -267,3 +282,278 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({
 };
 
 export default MaterialQAQCForm;
+
+
+
+
+
+
+// import React, { useEffect } from "react";
+// import { Input } from "@/components/ui/input";
+// import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+// import { ControllerRenderProps, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
+// import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialRequestData, MaterialType, MaterialMaster } from "@/src/types/MaterialCodeRequestFormTypes";
+
+// interface MaterialOnboardingData {
+//     minimum_remaining_shell_life?: string;
+//     total_shell_life?: string;
+//     expiration_date?: string;
+//     inspection_require?: string;
+//     inspection_interval?: string;
+//     incoming_inspection_01?: boolean;
+//     incoming_inspection_09?: boolean;
+// }
+
+// interface MaterialQAQCFormProps {
+//     form: UseFormReturn<any>;
+//     InspectionType?: InspectionType[];
+//     AllMaterialType?: MaterialType[];
+//     ExpirationDate?: ExpirationDate[];
+//     MaterialDetails?: MaterialRequestData;
+// }
+
+// const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, InspectionType, AllMaterialType, ExpirationDate, MaterialDetails }) => {
+//     const prevDataRef = React.useRef<string>("");
+//     const inspectionRequire = useWatch({
+//         control: form.control,
+//         name: "inspection_require",
+//     });
+
+//     useEffect(() => {
+//         if (!form.getValues("inspection_require")) {
+//             form.setValue("inspection_require", "No", { shouldDirty: false, shouldTouch: false });
+//         }
+//     }, []);
+
+//     useEffect(() => {
+//         const data = MaterialDetails?.material_onboarding;
+//         if (!data) return;
+
+//         const dataString = JSON.stringify(data);
+//         if (dataString === prevDataRef.current) return;
+//         prevDataRef.current = dataString;
+
+//         const fields: (keyof MaterialOnboardingData)[] = [
+//             "minimum_remaining_shell_life",
+//             "total_shell_life",
+//             "expiration_date",
+//             "inspection_require",
+//             "inspection_interval",
+//             "incoming_inspection_01",
+//             "incoming_inspection_09",
+//         ];
+
+//         const currentValues = form.getValues();
+//         const newValues: Record<string, any> = {};
+
+//         for (const field of fields) {
+//             const newVal = data[field];
+//             if (newVal !== undefined && newVal !== currentValues[field]) {
+//                 newValues[field] = newVal;
+//             }
+//         }
+
+//         // 🚫 Nothing changed → no reset
+//         if (Object.keys(newValues).length === 0) return;
+
+//         // ✅ Only update once
+//         form.reset({ ...currentValues, ...newValues }, { keepDefaultValues: true });
+//     }, [MaterialDetails, form]);
+
+
+//     return (
+//         <div className="bg-[#F4F4F6]">
+//             <div className="flex flex-col justify-between pt-4 bg-white rounded-[8px]">
+//                 <div className="space-y-1">
+//                     <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
+//                         QA/QC Data
+//                     </div>
+//                     <div className="grid grid-cols-3 gap-4">
+//                         {/* Minimum Remaining Shelf Life */}
+//                         <FormField
+//                             control={form.control}
+//                             name="minimum_remaining_shell_life"
+//                             key="minimum_remaining_shell_life"
+//                             render={({ field }: { field: ControllerRenderProps<FieldValues, "minimum_remaining_shell_life"> }) => (
+//                                 <FormItem>
+//                                     <FormLabel>Minimum Remaining Shell Life</FormLabel>
+//                                     <FormControl>
+//                                         <Input
+//                                             {...field}
+//                                             className="p-3 w-full text-sm placeholder:text-gray-400"
+//                                             placeholder="Enter minimum remaining shell life"
+//                                             onChange={field.onChange}
+//                                         />
+//                                     </FormControl>
+//                                     <FormMessage />
+//                                 </FormItem>
+//                             )}
+//                         />
+
+//                         {/* Total Shelf Life */}
+//                         <FormField
+//                             control={form.control}
+//                             name="total_shell_life"
+//                             key="total_shell_life"
+//                             render={({ field }: { field: ControllerRenderProps<FieldValues, "total_shell_life"> }) => (
+//                                 <FormItem>
+//                                     <FormLabel>Total Shelf Life</FormLabel>
+//                                     <FormControl>
+//                                         <Input
+//                                             {...field}
+//                                             className="p-3 w-full text-sm placeholder:text-gray-400"
+//                                             placeholder="Enter total shelf life"
+//                                             onChange={field.onChange}
+//                                         />
+//                                     </FormControl>
+//                                     <FormMessage />
+//                                 </FormItem>
+//                             )}
+//                         />
+
+//                         {/* Expiration Date */}
+//                         <FormField
+//                             control={form.control}
+//                             name="expiration_date"
+//                             key="expiration_date"
+//                             render={({ field }: { field: ControllerRenderProps<FieldValues, "expiration_date"> }) => (
+//                                 <FormItem>
+//                                     <FormLabel>Period Indicator for Shelf Life Expiration Date</FormLabel>
+//                                     <FormControl>
+//                                         <Select
+//                                             value={field.value ?? ""}
+//                                             onValueChange={(val) => {
+//                                                 if (val !== field.value) field.onChange(val);
+//                                             }}
+//                                         >
+//                                             <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
+//                                                 <SelectValue placeholder="Select Expiration Date Type" />
+//                                             </SelectTrigger>
+//                                             <SelectContent>
+//                                                 {ExpirationDate?.map((exp) => (
+//                                                     <SelectItem key={exp.name} value={exp.name}>
+//                                                         {exp.description}
+//                                                     </SelectItem>
+//                                                 ))}
+//                                             </SelectContent>
+//                                         </Select>
+//                                     </FormControl>
+//                                     <FormMessage />
+//                                 </FormItem>
+//                             )}
+//                         />
+
+//                         {/* Inspection Require */}
+//                         <div className="col-span-3 grid grid-cols-3 gap-4">
+//                             <FormField
+//                                 control={form.control}
+//                                 name="inspection_require"
+//                                 key="inspection_require"
+//                                 render={({ field }: { field: ControllerRenderProps<FieldValues, "inspection_require"> }) => (
+//                                     <FormItem>
+//                                         <FormLabel>Inspection Require</FormLabel>
+//                                         <FormControl>
+//                                             <Select
+//                                                 value={field.value ?? ""}
+//                                                 onValueChange={(val) => {
+//                                                     if (val !== field.value) field.onChange(val);
+//                                                 }}
+//                                             >
+//                                                 <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
+//                                                     <SelectValue placeholder="Select Yes or No" />
+//                                                 </SelectTrigger>
+//                                                 <SelectContent>
+//                                                     <SelectItem value="Yes">Yes</SelectItem>
+//                                                     <SelectItem value="No">No</SelectItem>
+//                                                 </SelectContent>
+//                                             </Select>
+//                                         </FormControl>
+//                                         <FormMessage />
+//                                     </FormItem>
+//                                 )}
+//                             />
+
+//                             {/* Conditionally Render QA Fields */}
+//                             {inspectionRequire === "Yes" && (
+//                                 <>
+//                                     <div className="grid grid-cols-2 gap-4 mt-[36.8px]">
+//                                         <FormField
+//                                             control={form.control}
+//                                             name="incoming_inspection_01"
+//                                             key="incoming_inspection_01"
+//                                             render={({ field }: { field: ControllerRenderProps<FieldValues, "incoming_inspection_01"> }) => (
+//                                                 <FormItem>
+//                                                     <div className="flex items-center gap-2">
+//                                                         <FormControl>
+//                                                             <input
+//                                                                 type="checkbox"
+//                                                                 className="w-4 h-4 accent-blue-600"
+//                                                                 checked={field.value || false}
+//                                                                 onChange={(e) => field.onChange(e.target.checked)}
+//                                                             />
+//                                                         </FormControl>
+//                                                         <FormLabel className="text-[16px] m-0">
+//                                                             Incoming Inspection 01
+//                                                         </FormLabel>
+//                                                     </div>
+//                                                 </FormItem>
+//                                             )}
+//                                         />
+
+//                                         <FormField
+//                                             control={form.control}
+//                                             name="incoming_inspection_09"
+//                                             key="incoming_inspection_09"
+//                                             render={({ field }: { field: ControllerRenderProps<FieldValues, "incoming_inspection_09"> }) => (
+//                                                 <FormItem>
+//                                                     <div className="flex items-center gap-2">
+//                                                         <FormControl>
+//                                                             <input
+//                                                                 type="checkbox"
+//                                                                 className="w-4 h-4 accent-blue-600"
+//                                                                 checked={field.value || false}
+//                                                                 onChange={(e) => field.onChange(e.target.checked)}
+//                                                             />
+//                                                         </FormControl>
+//                                                         <FormLabel className="text-[16px] m-0">
+//                                                             Incoming Inspection 09
+//                                                         </FormLabel>
+//                                                     </div>
+//                                                 </FormItem>
+//                                             )}
+//                                         />
+//                                     </div>
+
+//                                     {/* Inspection Interval */}
+//                                     <FormField
+//                                         control={form.control}
+//                                         name="inspection_interval"
+//                                         key="inspection_interval"
+//                                         render={({ field }: { field: ControllerRenderProps<FieldValues, "inspection_interval"> }) => (
+//                                             <FormItem>
+//                                                 <FormLabel>Inspection Interval (In Days)</FormLabel>
+//                                                 <FormControl>
+//                                                     <Input
+//                                                         {...field}
+//                                                         type="number"
+//                                                         className="p-3 w-full text-sm placeholder:text-gray-400"
+//                                                         placeholder="Enter Inspection interval in days"
+//                                                         onChange={field.onChange}
+//                                                     />
+//                                                 </FormControl>
+//                                                 <FormMessage />
+//                                             </FormItem>
+//                                         )}
+//                                     />
+//                                 </>
+//                             )}
+//                         </div>
+//                     </div>
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default MaterialQAQCForm;

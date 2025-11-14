@@ -19,7 +19,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import UOMConversionModal from "@/src/components/molecules/material-onboarding-modal/UOMConversionModal";
-import { UseFormReturn } from "react-hook-form";
+import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
+import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialRequestData, MaterialType, MaterialMaster } from "@/src/types/MaterialCodeRequestFormTypes";
+
 
 // Type definitions for props
 interface OptionType {
@@ -28,97 +30,36 @@ interface OptionType {
   [key: string]: any;
 }
 
-interface MRPTypeOption {
-  name: string;
-  mrp_name?: string;
-}
-
-interface ProcurementTypeOption {
-  name: string;
-  procurement_type_code: string;
-  procurement_type_name: string;
-}
-
-interface MRPControllerOption {
-  name: string;
-  mrp_controller?: string;
-  description?: string;
-}
-
-interface LotSizeOption {
-  name: string;
-  description?: string;
-}
-
-interface SMKOption {
-  name: string;
-}
-
-interface MaterialMaster {
-  [key: string]: any;
-  mrp_type?: string;
-  mrp_group?: string;
-  mrp_controller_revised?: string;
-  lot_size_key?: string;
-  procurement_type?: string;
-  scheduling_margin_key?: string;
-  issue_unit?: string;
-  conversion_issue_uom?: string;
-  numerator_issue_uom?: string;
-  denominator_issue_uom?: string;
-}
-
-interface MaterialDetailsType {
-  material_master?: MaterialMaster;
-  material_request_item?: {
-    base_unit_of_measure?: string;
-  };
-}
 
 interface MaterialMRPFormProps {
   form: UseFormReturn<any>;
-  onSubmit?: () => void;
-  ValuationClass?: OptionType[];
+  onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
+  ValuationClass?: ValuationClass[];
   role?: string;
-  ProcurementType?: ProcurementTypeOption[];
+  ProcurementType?: procurementType[];
   designationname?: string;
-  MaterialOnboardingDetails?: any;
-  LotSize?: LotSizeOption[];
+  MaterialOnboardingDetails?: MaterialRegistrationFormData;
+  LotSize?: LotSize[];
   PurchaseGroup?: OptionType[];
-  companyInfo?: any;
-  UnitOfMeasure?: OptionType[];
-  MRPType?: MRPTypeOption[];
-  MRPController?: MRPControllerOption[];
-  AllMaterialType?: OptionType[];
-  MaterialDetails?: MaterialDetailsType;
-  SMK?: SMKOption[];
+  companyInfo?: Company[];
+  UnitOfMeasure?: UOMMaster[];
+  MRPType?: MRPType[];
+  MRPController?: MRPController[];
+  AllMaterialType?: MaterialType[];
+  MaterialDetails?: MaterialRequestData;
+  SMK?: SchedulingMarginKey[];
   isZCAPMaterial?: boolean;
 }
 
-const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({
-  form,
-  onSubmit,
-  ValuationClass,
-  role,
-  ProcurementType,
-  designationname,
-  MaterialOnboardingDetails,
-  LotSize,
-  PurchaseGroup,
-  companyInfo,
-  UnitOfMeasure,
-  MRPType,
-  MRPController,
-  AllMaterialType,
-  MaterialDetails,
-  SMK,
-  isZCAPMaterial,
-}) => {
+const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType, MaterialOnboardingDetails, LotSize, UnitOfMeasure, MRPType, MRPController, MaterialDetails, SMK, isZCAPMaterial, }) => {
+
+  console.log("MRP Type----->",MaterialDetails)
+
   const [showConversionModal, setShowConversionModal] = useState<boolean>(false);
   const [conversionRatio, setConversionRatio] = useState<string>("");
   const [initialLoadDone, setInitialLoadDone] = useState<boolean>(false);
   const issueUOM = form.watch("issue_unit");
-  const baseUOM = MaterialDetails?.material_request_item?.base_unit_of_measure;
+  const baseUOM = MaterialDetails?.material_request_item?.unit_of_measure;
   const showConversionUOM = baseUOM && issueUOM && baseUOM !== issueUOM;
   const [issueUOMSearch, setIssueUOMSearch] = useState<string>("");
   const [MRPControllerSearch, setMRPControllerSearch] = useState<string>("");
@@ -159,29 +100,17 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({
     }
   }, [issueUOM, baseUOM, initialLoadDone]);
 
-  const IssueUOMOptions = issueUOMSearch
-    ? UnitOfMeasure?.filter(
-        (group) =>
-          group.description?.toLowerCase().includes(issueUOMSearch.toLowerCase()) ||
-          group.name?.toLowerCase().includes(issueUOMSearch.toLowerCase())
-      )
-    : UnitOfMeasure;
+  const IssueUOMOptions = issueUOMSearch ? UnitOfMeasure?.filter((group) =>
+        group.description?.toLowerCase().includes(issueUOMSearch.toLowerCase()) ||
+        group.name?.toLowerCase().includes(issueUOMSearch.toLowerCase())) : UnitOfMeasure;
 
-  const filteredMRPControllerOptions = MRPControllerSearch
-    ? MRPController?.filter(
-        (group) =>
-          group.description?.toLowerCase().includes(MRPControllerSearch.toLowerCase()) ||
-          group.name?.toLowerCase().includes(MRPControllerSearch.toLowerCase())
-      )
-    : MRPController;
+  const filteredMRPControllerOptions = MRPControllerSearch ? MRPController?.filter((group) =>
+        group.description?.toLowerCase().includes(MRPControllerSearch.toLowerCase()) ||
+        group.name?.toLowerCase().includes(MRPControllerSearch.toLowerCase())) : MRPController;
 
-  const filteredLotSizeOptions = lotsizeSearch
-    ? LotSize?.filter(
-        (group) =>
-          group.description?.toLowerCase().includes(lotsizeSearch.toLowerCase()) ||
-          group.name?.toLowerCase().includes(lotsizeSearch.toLowerCase())
-      )
-    : LotSize;
+  const filteredLotSizeOptions = lotsizeSearch ? LotSize?.filter((group) =>
+        group.description?.toLowerCase().includes(lotsizeSearch.toLowerCase()) ||
+        group.name?.toLowerCase().includes(lotsizeSearch.toLowerCase())) : LotSize;
 
   useEffect(() => {
     const data = MaterialDetails?.material_master;
@@ -191,18 +120,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({
       setInitialLoadDone(true);
     }
 
-    const fields = [
-      "mrp_type",
-      "mrp_group",
-      "mrp_controller_revised",
-      "lot_size_key",
-      "procurement_type",
-      "scheduling_margin_key",
-      "issue_unit",
-      "conversion_issue_uom",
-      "numerator_issue_uom",
-      "denominator_issue_uom",
-    ];
+    const fields = [ "mrp_type", "mrp_group", "mrp_controller_revised", "lot_size_key", "procurement_type", "scheduling_margin_key", "base_uom", "numerator_issue_uom", "denominator_issue_uom"] as const;
 
     fields.forEach((field) => {
       if (data[field]) {
@@ -210,21 +128,14 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({
       }
     });
 
-    if (
-      data.numerator_issue_uom &&
-      data.denominator_issue_uom &&
-      baseUOM &&
-      issueUOM
-    ) {
-      setConversionRatio(
-        `${data.numerator_issue_uom} ${baseUOM} = ${data.denominator_issue_uom} ${issueUOM}`
-      );
+    if (data.numerator_issue_uom && data.denominator_issue_uom && baseUOM && issueUOM) {
+      setConversionRatio(`${data.numerator_issue_uom} ${baseUOM} = ${data.denominator_issue_uom} ${issueUOM}`);
     }
   }, [MaterialDetails, baseUOM, issueUOM]);
 
   return (
     <div className="bg-[#F4F4F6]">
-      <div className="flex flex-col justify-between pt-4 bg-white rounded-[8px]">
+      <div className="flex flex-col justify-between pb-2 bg-white rounded-[8px]">
         <div className="space-y-1">
           <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
             MRP Data
@@ -236,7 +147,8 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({
               <FormField
                 control={form.control}
                 name="mrp_type"
-                render={({ field }) => (
+                key="mrp_type"
+                render={({ field }: { field: ControllerRenderProps<FieldValues, "mrp_type"> }) => (
                   <FormItem>
                     <FormLabel>MRP Type</FormLabel>
                     <FormControl>
@@ -269,7 +181,8 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({
                   <FormField
                     control={form.control}
                     name="mrp_group"
-                    render={({ field }) => (
+                    key="mrp_group"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "mrp_group"> }) => (
                       <FormItem>
                         <FormLabel>MRP Group</FormLabel>
                         <FormControl>
@@ -290,7 +203,8 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({
                   <FormField
                     control={form.control}
                     name="mrp_controller_revised"
-                    render={({ field }) => (
+                    key="mrp_controller_revised"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "mrp_controller_revised"> }) => (
                       <FormItem>
                         <FormLabel>MRP Controller (Revised)</FormLabel>
                         <FormControl>
@@ -329,7 +243,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({
                                     key={mrpcontroller.name}
                                     value={mrpcontroller.name}
                                   >
-                                    {mrpcontroller.mrp_controller} -{" "}
+                                    {mrpcontroller.mrp_controller} -
                                     {mrpcontroller.description}
                                   </SelectItem>
                                 ))
@@ -352,7 +266,8 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({
                   <FormField
                     control={form.control}
                     name="lot_size_key"
-                    render={({ field }) => (
+                    key="lot_size_key"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "lot_size_key"> }) => (
                       <FormItem>
                         <FormLabel>Lot Size Key</FormLabel>
                         <FormControl>
@@ -410,7 +325,8 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({
               <FormField
                 control={form.control}
                 name="procurement_type"
-                render={({ field }) => (
+                key="procurement_type"
+                render={({ field }: { field: ControllerRenderProps<FieldValues, "procurement_type"> }) => (
                   <FormItem>
                     <FormLabel>
                       Procurement Type <span className="text-red-500">*</span>
@@ -446,7 +362,8 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({
                   <FormField
                     control={form.control}
                     name="scheduling_margin_key"
-                    render={({ field }) => (
+                    key="scheduling_margin_key"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "scheduling_margin_key"> }) => (
                       <FormItem>
                         <FormLabel>Scheduling Margin Key</FormLabel>
                         <FormControl>
@@ -476,8 +393,9 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({
                 <div className="space-y-2">
                   <FormField
                     control={form.control}
-                    name="issue_unit"
-                    render={({ field }) => (
+                    name="base_uom"
+                    key="base_uom"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "base_uom"> }) => (
                       <FormItem>
                         <FormLabel>Issue Unit</FormLabel>
                         <FormControl>

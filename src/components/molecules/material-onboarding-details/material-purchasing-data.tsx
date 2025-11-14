@@ -1,29 +1,13 @@
 'use client';
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import UOMConversionModal from "@/src/components/molecules/material-onboarding-modal/UOMConversionModal";
-import { UseFormReturn } from "react-hook-form";
-
-// ---------- Types ----------
-interface OptionType {
-  name: string;
-  description?: string;
-  company_code?: string | number;
-}
-
-interface MaterialDetailsType {
-  material_request_item?: {
-    base_unit_of_measure?: string;
-  };
-  material_master?: Record<string, any>;
-}
-
-interface MaterialOnboardingDetailsType {
-  material_request?: { company_name?: string }[];
-}
+import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
+import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialRequestData, MaterialType, MaterialMaster } from "@/src/types/MaterialCodeRequestFormTypes";
+import { TcompanyNameBasedDropdown } from "@/src/types/types";
 
 interface UOMConversionData {
   numerator: string;
@@ -32,41 +16,28 @@ interface UOMConversionData {
 
 interface MaterialPurchasingDataFormProps {
   form: UseFormReturn<any>;
-  onSubmit?: () => void;
+  onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
   role?: string;
-  ProcurementType?: string;
+  ProcurementType?: procurementType[];
   designationname?: string;
-  MaterialOnboardingDetails?: MaterialOnboardingDetailsType;
-  LotSize?: OptionType[];
-  PurchaseGroup?: OptionType[];
-  companyInfo?: Record<string, any>;
-  UnitOfMeasure?: OptionType[];
-  MaterialDetails?: MaterialDetailsType;
-  AllMaterialType?: OptionType[];
+  MaterialOnboardingDetails?: MaterialRegistrationFormData;
+  LotSize?: LotSize[];
+  PurchaseGroup?: TcompanyNameBasedDropdown["message"]["data"]["purchase_groups"];
+  companyInfo?: Company[];
+  UnitOfMeasure?: UOMMaster[];
+  MaterialDetails?: MaterialRequestData;
+  AllMaterialType?: MaterialType[];
   isZCAPMaterial?: boolean;
 }
 
-// ---------- Component ----------
-const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
-  form,
-  onSubmit,
-  role,
-  ProcurementType,
-  designationname,
-  MaterialOnboardingDetails,
-  LotSize = [],
-  PurchaseGroup = [],
-  companyInfo,
-  UnitOfMeasure = [],
-  MaterialDetails,
-  AllMaterialType = [],
-  isZCAPMaterial = false,
-}) => {
-  const [filteredPurchaseGroup, setFilteredPurchaseGroup] = useState<OptionType[]>([]);
+const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({ form, MaterialOnboardingDetails, LotSize = [], PurchaseGroup, companyInfo, UnitOfMeasure = [], MaterialDetails, isZCAPMaterial = false }) => {
+
+  const [filteredPurchaseGroup, setFilteredPurchaseGroup] = useState<TcompanyNameBasedDropdown["message"]["data"]["purchase_groups"]>([]);
   const [showConversionModal, setShowConversionModal] = useState(false);
-  const [initialLoadDone, setInitialLoadDone] = useState(false);
+  const initialLoadRef = useRef(false);
+
   const purchaseUOM = form.watch("purchase_uom");
-  const baseUOM = MaterialDetails?.material_request_item?.base_unit_of_measure;
+  const baseUOM = MaterialDetails?.material_request_item?.unit_of_measure;
   const showConversionUOM = baseUOM && purchaseUOM && baseUOM !== purchaseUOM;
   const [conversionRatio, setConversionRatio] = useState("");
   const [purchaseGroupSearch, setPurchaseGroupSearch] = useState("");
@@ -80,93 +51,61 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
   };
 
   useEffect(() => {
-    if (!initialLoadDone) return;
-
     const numerator = form.getValues("numerator_purchase_uom");
     const denominator = form.getValues("denominator_purchase_uom");
 
     if (showConversionUOM && !numerator && !denominator && !showConversionModal) {
       setShowConversionModal(true);
     }
-  }, [purchaseUOM, baseUOM, initialLoadDone, showConversionUOM, form, showConversionModal]);
+  }, [showConversionUOM, form, showConversionModal]);
 
   useEffect(() => {
     const employeeCompanyCode =
-      MaterialOnboardingDetails?.material_request?.[0]?.company_name || "";
-
+      MaterialOnboardingDetails?.material_company_code || "";
     const filtered =
       PurchaseGroup?.filter(
-        (group) => String(group.company_code) === employeeCompanyCode
+        (group) => String(group.company) === employeeCompanyCode
       ) || [];
     setFilteredPurchaseGroup(filtered);
   }, [companyInfo, PurchaseGroup, MaterialOnboardingDetails]);
 
-  const filteredPurchaseGroupOptions = purchaseGroupSearch
-    ? filteredPurchaseGroup?.filter(
-        (group) =>
-          group.description?.toLowerCase().includes(purchaseGroupSearch.toLowerCase()) ||
-          group.name?.toLowerCase().includes(purchaseGroupSearch.toLowerCase())
-      )
-    : filteredPurchaseGroup;
+  const filteredPurchaseGroupOptions = purchaseGroupSearch ? filteredPurchaseGroup?.filter((group) => group.description?.toLowerCase().includes(purchaseGroupSearch.toLowerCase()) || group.name?.toLowerCase().includes(purchaseGroupSearch.toLowerCase())) : filteredPurchaseGroup;
 
-  const PurchaseUOMOptions = purchaseUOMSearch
-    ? UnitOfMeasure?.filter(
-        (group) =>
-          group.description?.toLowerCase().includes(purchaseUOMSearch.toLowerCase()) ||
-          group.name?.toLowerCase().includes(purchaseUOMSearch.toLowerCase())
-      )
-    : UnitOfMeasure;
+  const PurchaseUOMOptions = purchaseUOMSearch ? UnitOfMeasure?.filter((group) => group.description?.toLowerCase().includes(purchaseUOMSearch.toLowerCase()) || group.name?.toLowerCase().includes(purchaseUOMSearch.toLowerCase())) : UnitOfMeasure;
 
-  const filteredLotSizeOptions = lotsizeSearch
-    ? LotSize?.filter(
-        (group) =>
-          group.description?.toLowerCase().includes(lotsizeSearch.toLowerCase()) ||
-          group.name?.toLowerCase().includes(lotsizeSearch.toLowerCase())
-      )
-    : LotSize;
+  const filteredLotSizeOptions = lotsizeSearch ? LotSize?.filter((group) => group.description?.toLowerCase().includes(lotsizeSearch.toLowerCase()) || group.name?.toLowerCase().includes(lotsizeSearch.toLowerCase())) : LotSize;
 
   useEffect(() => {
-    const data = MaterialDetails?.material_master;
-    if (!data || !filteredPurchaseGroup.length) return;
+    if (initialLoadRef.current) return;
+    if (!MaterialDetails?.material_master || !filteredPurchaseGroup.length) return;
 
-    if (!initialLoadDone) {
-      setInitialLoadDone(true);
-    }
+    initialLoadRef.current = true;
 
-    const fields = [
-      "purchasing_group",
-      "gr_processing_time",
-      "purchase_uom",
-      "lead_time",
-      "purchasing_value_key",
-      "min_lot_size",
-      "purchase_order_text",
-      "conversion_purchase_uom",
-      "numerator_purchase_uom",
-      "denominator_purchase_uom",
-    ];
+    const fieldMap: Record<string, keyof MaterialMaster> = {
+      purchasing_group: "purchasing_group",
+      gr_processing_time: "gr_processing_time",
+      purchase_uom: "purchase_uom",
+      lead_time: "lead_time",
+      purchasing_value_key: "purchasing_value_key",
+      min_lot_size: "min_lot_size",
+      purchase_order_text: "purchase_order_text",
+      numerator_purchase_uom: "numerator_for_conversion",
+      denominator_purchase_uom: "denominator_for_conversion",
+    };
 
-    fields.forEach((field) => {
-      if (data[field]) {
-        form.setValue(field, data[field]);
+    Object.entries(fieldMap).forEach(([formField, apiField]) => {
+      const value = MaterialDetails.material_master[apiField];
+      if (value != null) {
+        form.setValue(formField, value, { shouldDirty: false, shouldTouch: false });
       }
     });
 
-    if (
-      data.numerator_purchase_uom &&
-      data.denominator_purchase_uom &&
-      baseUOM &&
-      purchaseUOM
-    ) {
-      setConversionRatio(
-        `${data.numerator_purchase_uom} ${baseUOM} = ${data.denominator_purchase_uom} ${purchaseUOM}`
-      );
-    }
-  }, [MaterialDetails, filteredPurchaseGroup, baseUOM, purchaseUOM, initialLoadDone, form]);
+  }, [MaterialDetails, filteredPurchaseGroup, form]);
+
 
   return (
     <div className="bg-[#F4F4F6]">
-      <div className="flex flex-col justify-between pt-4 bg-white rounded-[8px]">
+      <div className="flex flex-col pt-4 justify-between bg-white rounded-[8px]">
         <div className="space-y-1">
           <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
             Purchasing Data
@@ -177,7 +116,8 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
               <FormField
                 control={form.control}
                 name="purchasing_group"
-                render={({ field }) => (
+                key="purchasing_group"
+                render={({ field }: { field: ControllerRenderProps<FieldValues, "purchasing_group"> }) => (
                   <FormItem>
                     <FormLabel>
                       Purchasing Group <span className="text-red-500">*</span>
@@ -188,7 +128,11 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                           field.onChange(val);
                           setPurchaseGroupSearch("");
                         }}
-                        value={field.value || ""}
+                        value={
+                          filteredPurchaseGroupOptions.some((opt) => opt.name === field.value)
+                            ? field.value
+                            : ""
+                        }
                       >
                         <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
                           <SelectValue placeholder="Select Purchasing Group" />
@@ -234,7 +178,8 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                 <FormField
                   control={form.control}
                   name="gr_processing_time"
-                  render={({ field }) => (
+                  key="gr_processing_time"
+                  render={({ field }: { field: ControllerRenderProps<FieldValues, "gr_processing_time"> }) => (
                     <FormItem>
                       <FormLabel>GR Processing Time</FormLabel>
                       <FormControl>
@@ -256,7 +201,8 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
               <FormField
                 control={form.control}
                 name="purchase_uom"
-                render={({ field }) => (
+                key="purchase_uom"
+                render={({ field }: { field: ControllerRenderProps<FieldValues, "purchase_uom"> }) => (
                   <FormItem>
                     <FormLabel>Purchase UOM</FormLabel>
                     <FormControl>
@@ -265,7 +211,11 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                           field.onChange(val);
                           setPurchaseUOMSearch("");
                         }}
-                        value={field.value || ""}
+                        value={
+                          PurchaseUOMOptions.some((opt) => opt.name === field.value)
+                            ? field.value
+                            : ""
+                        }
                       >
                         <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
                           <SelectValue placeholder="Select Purchase UOM" />
@@ -322,7 +272,8 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
               <FormField
                 control={form.control}
                 name="lead_time"
-                render={({ field }) => (
+                key="lead_time"
+                render={({ field }: { field: ControllerRenderProps<FieldValues, "lead_time"> }) => (
                   <FormItem>
                     <FormLabel>Lead Time</FormLabel>
                     <FormControl>
@@ -349,7 +300,8 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
               <FormField
                 control={form.control}
                 name="purchasing_value_key"
-                render={({ field }) => (
+                key="purchasing_value_key"
+                render={({ field }: { field: ControllerRenderProps<FieldValues, "purchasing_value_key"> }) => (
                   <FormItem>
                     <FormLabel>Purchasing Value Key</FormLabel>
                     <FormControl>
@@ -373,7 +325,8 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                 <FormField
                   control={form.control}
                   name="min_lot_size"
-                  render={({ field }) => (
+                  key="min_lot_size"
+                  render={({ field }: { field: ControllerRenderProps<FieldValues, "min_lot_size"> }) => (
                     <FormItem>
                       <FormLabel>Min Lot Size</FormLabel>
                       <FormControl>
@@ -382,7 +335,11 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                             field.onChange(val);
                             setLotsizeSearch("");
                           }}
-                          value={field.value || ""}
+                          value={
+                            filteredLotSizeOptions.some((opt) => opt.name === field.value)
+                              ? field.value
+                              : ""
+                          }
                         >
                           <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
                             <SelectValue placeholder="Select Min Lot Size" />
@@ -429,7 +386,8 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                 <FormField
                   control={form.control}
                   name="purchase_order_text"
-                  render={({ field }) => (
+                  key="purchase_order_text"
+                  render={({ field }: { field: ControllerRenderProps<FieldValues, "purchase_order_text"> }) => (
                     <FormItem>
                       <FormLabel>Purchase Order Text</FormLabel>
                       <FormControl>
@@ -455,7 +413,7 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
 
             {/* Conversion Ratio */}
             {conversionRatio && (
-              <div className="col-span-3 text-sm text-blue-600 mt-2 font-medium">
+              <div className="col-span-3 text-sm text-blue-600 pb-3 font-bold">
                 Conversion Ratio: {conversionRatio}
               </div>
             )}

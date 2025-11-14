@@ -16,90 +16,42 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { MaterialRegistrationFormData, EmployeeDetail, EmployeeAPIResponse, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialType, MaterialRequestData } from "@/src/types/MaterialCodeRequestFormTypes";
+import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
 
-interface MaterialGroupItem {
-  name: string;
-  material_group_company?: string;
-  material_group_name?: string;
-  material_group_description?: string;
-}
-
-interface ClassTypeItem {
-  name: string;
-  class_number?: string;
-}
-
-interface SerialProfileItem {
-  name: string;
-  serial_no_profile?: string;
-  serialization_level?: string;
-}
-
-interface AvailabilityCheckItem {
-  name: string;
-  description?: string;
-}
-
-interface MaterialOnboardingDetails {
-  material_request?: Array<{ company_name?: string }>;
-}
-
-interface MaterialDetails {
-  material_master?: Record<string, any>;
-}
 
 interface MaterialStoreFieldsProps {
   form: any;
   onSubmit?: () => void;
-  companyName?: string;
   UserDetails?: any;
   role?: string;
-  UnitOfMeasure?: any[];
-  MaterialGroup?: MaterialGroupItem[];
-  MaterialOnboardingDetails?: MaterialOnboardingDetails;
-  companyInfo?: any;
-  ProfitCenter?: any[];
-  AvailabilityCheck?: AvailabilityCheckItem[];
-  ClassType?: ClassTypeItem[];
-  SerialProfile?: SerialProfileItem[];
-  MaterialDetails?: MaterialDetails;
-  AllMaterialType?: any[];
+  UnitOfMeasure?: UOMMaster[];
+  MaterialGroup?: MaterialGroupMaster[];
+  MaterialOnboardingDetails?: MaterialRegistrationFormData;
+  companyInfo?: Company[];
+  ProfitCenter?: ProfitCenter[];
+  AvailabilityCheck?: AvailabilityCheck[];
+  ClassType?: ClassType[];
+  SerialProfile?: SerialNumber[];
+  MaterialDetails?: MaterialRequestData;
+  AllMaterialType?: MaterialType[];
   isZCAPMaterial?: boolean;
+  materialCompanyCode?: string;
+  setMaterialCompanyCode?: React.Dispatch<React.SetStateAction<string>>;
+  MaterialType?: MaterialType[];
+  plantcode?: Plant[];
+
 }
 
-const Storefields: React.FC<MaterialStoreFieldsProps> = ({
-  form,
-  onSubmit,
-  companyName,
-  UserDetails,
-  role,
-  UnitOfMeasure,
-  MaterialGroup = [],
-  MaterialOnboardingDetails,
-  companyInfo,
-  ProfitCenter,
-  AvailabilityCheck = [],
-  ClassType = [],
-  SerialProfile = [],
-  MaterialDetails,
-  AllMaterialType,
-  isZCAPMaterial,
-}) => {
-  const [filteredMaterialGroup, setFilteredMaterialGroup] = useState<
-    MaterialGroupItem[]
-  >([]);
+const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, MaterialOnboardingDetails, companyInfo, AvailabilityCheck = [], ClassType = [], SerialProfile = [], MaterialDetails, isZCAPMaterial }) => {
+
+  const [filteredMaterialGroup, setFilteredMaterialGroup] = useState<MaterialGroupMaster[]>([]);
   const [materialGroupSearch, setMaterialGroupSearch] = useState<string>("");
 
   useEffect(() => {
-    const CompanyCode = String(
-      MaterialOnboardingDetails?.material_request?.[0]?.company_name || ""
-    );
-    setFilteredMaterialGroup(
-      MaterialGroup?.filter(
-        (group) => String(group.material_group_company) === CompanyCode
-      ) || []
-    );
-  }, [MaterialGroup, companyInfo, MaterialOnboardingDetails]);
+    setFilteredMaterialGroup(MaterialGroup || []);
+  }, [MaterialGroup?.length]);
+
 
   const materialGroupOptions = useMemo(() => {
     if (!materialGroupSearch) return filteredMaterialGroup;
@@ -123,14 +75,20 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({
       "class_number",
       "serial_number_profile",
       "serialization_level",
-    ];
+    ] as const;
 
     fields.forEach((field) => {
-      if (data[field]) {
-        form.setValue(field, data[field]);
+      const currentValue = form.getValues(field);
+
+      if (!currentValue && data[field]) {
+        form.setValue(field, data[field], {
+          shouldValidate: false,
+          shouldDirty: false,
+        });
       }
     });
-  }, [MaterialDetails, filteredMaterialGroup, form]);
+
+  }, [MaterialDetails?.material_master, filteredMaterialGroup]);
 
   const batchRequirement = form.watch("batch_requirements_yn");
   const classTypeSelected = form.watch("class_type");
@@ -166,28 +124,23 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({
         form.setValue("serialization_level", "");
       }
     }
-  }, [
-    classTypeSelected,
-    ClassType,
-    form,
-    serialNumberProfile,
-    SerialProfile,
-  ]);
+  }, [classTypeSelected, ClassType, form, serialNumberProfile, SerialProfile]);
 
   return (
     <div className="bg-[#F4F4F6]">
-      <div className="flex flex-col justify-between pt-4 bg-white rounded-[8px]">
+      <div className="flex flex-col justify-between bg-white rounded-[8px]">
         <div className="space-y-1">
           <div className="flex items-center justify-between text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1 mt-4">
             <span>Store Data</span>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-4 pb-2">
             {/* Material Group */}
             <div className="space-y-2">
               <FormField
                 control={form.control}
                 name="material_group"
-                render={({ field }) => (
+                key="material_group"
+                render={({ field }: { field: ControllerRenderProps<FieldValues, "material_group"> }) => (
                   <FormItem>
                     <FormLabel>
                       Material Group <span className="text-red-500">*</span>
@@ -243,7 +196,8 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({
                   <FormField
                     control={form.control}
                     name="batch_requirements_yn"
-                    render={({ field }) => (
+                    key="batch_requirements_yn"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "batch_requirements_yn"> }) => (
                       <FormItem>
                         <FormLabel>Batch Management Required (Y/N)</FormLabel>
                         <FormControl>
@@ -268,7 +222,8 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({
                   <FormField
                     control={form.control}
                     name="brand_make"
-                    render={({ field }) => (
+                    key="brand_make"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "brand_make"> }) => (
                       <FormItem>
                         <FormLabel>Brand / Make (if required)</FormLabel>
                         <FormControl>
@@ -290,7 +245,8 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({
                   <FormField
                     control={form.control}
                     name="availability_check"
-                    render={({ field }) => (
+                    key="availability_check"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "availability_check"> }) => (
                       <FormItem>
                         <FormLabel>Availability Check</FormLabel>
                         <FormControl>
@@ -324,7 +280,8 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({
                       <FormField
                         control={form.control}
                         name="class_type"
-                        render={({ field }) => (
+                        key="class_type"
+                        render={({ field }: { field: ControllerRenderProps<FieldValues, "class_type"> }) => (
                           <FormItem>
                             <FormLabel>Class Type</FormLabel>
                             <FormControl>
@@ -355,7 +312,8 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({
                       <FormField
                         control={form.control}
                         name="class_number"
-                        render={({ field }) => (
+                        key="class_number"
+                        render={({ field }: { field: ControllerRenderProps<FieldValues, "class_number"> }) => (
                           <FormItem>
                             <FormLabel>Class Number</FormLabel>
                             <FormControl>
@@ -380,7 +338,8 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({
                   <FormField
                     control={form.control}
                     name="serial_number_profile"
-                    render={({ field }) => (
+                    key="serial_number_profile"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "serial_number_profile"> }) => (
                       <FormItem>
                         <FormLabel>Serial Number Profile</FormLabel>
                         <FormControl>
@@ -412,7 +371,8 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({
                     <FormField
                       control={form.control}
                       name="serialization_level"
-                      render={({ field }) => (
+                      key="serialization_level"
+                      render={({ field }: { field: ControllerRenderProps<FieldValues, "serialization_level"> }) => (
                         <FormItem>
                           <FormLabel>Serialization Level</FormLabel>
                           <FormControl>

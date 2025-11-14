@@ -2,88 +2,27 @@
 
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Paperclip } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import { UseFormReturn } from "react-hook-form";
-
-// ------------------ Types ------------------
-
-interface PriceControlType {
-  name: string;
-  description?: string;
-  do_not_cost?: string;
-}
-
-interface ValuationProfitType {
-  company: string;
-  valuation_class?: string;
-  valuation_class_description?: string;
-  profit_center?: string;
-  profit_center_description?: string;
-}
-
-interface MaterialType {
-  name: string;
-  valuation_and_profit?: ValuationProfitType[];
-}
-
-interface ProfitCenter {
-  name: string;
-  description: string;
-}
-
-interface ValuationClass {
-  name: string;
-  valuation_class_code: string;
-  valuation_class_name: string;
-}
-
-interface MaterialDetailsType {
-  material_request_item?: {
-    material_type?: string;
-    company_name?: string;
-  };
-  material_onboarding?: {
-    price_control?: string;
-    hsn_code?: string;
-    do_not_cost?: string;
-    material_information?: string;
-    profit_center?: string;
-    valuation_class?: string;
-  };
-}
+import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
+import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialRequestData, MaterialType } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface MaterialProcurementFormProps {
   form: UseFormReturn<any>;
-  onSubmit: (values: any) => void;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  setFilteredProfit: React.Dispatch<React.SetStateAction<ProfitCenter[]>>;
   role: string;
   designationname?: string;
-  MaterialOnboardingDetails?: any;
-  MaterialDetails?: MaterialDetailsType;
-  companyInfo?: any;
-  PriceControl?: PriceControlType[];
-  ValuationClass?: any[];
-  filteredProfit?: any[];
-  handleImageChange: (
-    e: React.ChangeEvent<HTMLInputElement>,
-    field: string
-  ) => void;
+  MaterialOnboardingDetails?: MaterialRegistrationFormData;
+  MaterialDetails?: MaterialRequestData;
+  companyInfo?: Company[];
+  PriceControl?: PriceControl[];
+  ValuationClass?: ValuationClass[];
+  filteredProfit?: ProfitCenter[];
+  handleImageChange: (e: React.ChangeEvent<HTMLInputElement>, field: string) => void;
   handleLabelClick: (id: string) => void;
   handleRemoveFile: (id: string, setFileName: React.Dispatch<React.SetStateAction<string>>) => void;
   lineItemFiles?: any;
@@ -95,35 +34,13 @@ interface MaterialProcurementFormProps {
   isZCAPMaterial?: boolean;
 }
 
-// ------------------ Component ------------------
 
-const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({
-  form,
-  onSubmit,
-  role,
-  designationname,
-  MaterialOnboardingDetails,
-  MaterialDetails,
-  companyInfo,
-  PriceControl = [],
-  ValuationClass,
-  filteredProfit,
-  handleImageChange,
-  handleLabelClick,
-  handleRemoveFile,
-  lineItemFiles,
-  fileSelected,
-  setFileSelected,
-  setFileName,
-  fileName,
-  AllMaterialType = [],
-  isZCAPMaterial = false,
-}) => {
+const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, onSubmit, role, designationname, MaterialOnboardingDetails, MaterialDetails, companyInfo, PriceControl = [], ValuationClass, filteredProfit, handleImageChange, handleLabelClick, handleRemoveFile, lineItemFiles, fileSelected, setFileSelected, setFileName, fileName, AllMaterialType = [], isZCAPMaterial = false }) => {
+
   const [filteredProfitCenter, setFilteredProfitCenter] = useState<ProfitCenter[]>([]);
   const [filteredValuationClass, setFilteredValuationClass] = useState<ValuationClass[]>([]);
   const [profitcenterSearch, setProfitCenterSearch] = useState<string>("");
 
-  // ------------------ Effect: Price Control ------------------
   useEffect(() => {
     const currentPriceControl = form.getValues("price_control");
     const matched = PriceControl.find(
@@ -141,7 +58,6 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({
     }
   }, [form.watch("price_control"), PriceControl, form]);
 
-  // ------------------ Effect: Filter Valuation & Profit ------------------
   useEffect(() => {
     const materialType = MaterialDetails?.material_request_item?.material_type;
     const company = MaterialDetails?.material_request_item?.company_name;
@@ -170,6 +86,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({
             name: item.valuation_class,
             valuation_class_code: item.valuation_class,
             valuation_class_name: item.valuation_class_description || "",
+            description: item.valuation_class_description || "",
           });
         }
 
@@ -191,13 +108,12 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({
 
   const filteredProfitCenterOptions = profitcenterSearch
     ? filteredProfitCenter.filter((profit) =>
-        profit.name
-          ?.toLowerCase()
-          .includes(profitcenterSearch.toLowerCase())
-      )
+      profit.name
+        ?.toLowerCase()
+        .includes(profitcenterSearch.toLowerCase())
+    )
     : filteredProfitCenter;
 
-  // ------------------ Effect: Prefill from Onboarding ------------------
   useEffect(() => {
     const data = MaterialDetails?.material_onboarding;
     if (!data) return;
@@ -234,7 +150,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({
     }
   }, [MaterialDetails, filteredProfitCenter, filteredValuationClass, form]);
 
-  // ------------------ Render ------------------
+
   return (
     <div className="bg-[#F4F4F6]">
       <div className="flex flex-col justify-between pt-4 bg-white rounded-[8px]">
@@ -249,7 +165,8 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({
               <FormField
                 control={form.control}
                 name="profit_center"
-                render={({ field }) => (
+                key="profit_center"
+                render={({ field }: { field: ControllerRenderProps<FieldValues, "profit_center"> }) => (
                   <FormItem>
                     <FormLabel>
                       Profit Center <span className="text-red-500">*</span>
@@ -310,7 +227,8 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({
                   <FormField
                     control={form.control}
                     name="valuation_class"
-                    render={({ field }) => (
+                    key="valuation_class"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "valuation_class"> }) => (
                       <FormItem>
                         <FormLabel>
                           Valuation Class <span className="text-red-500">*</span>
@@ -343,7 +261,8 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({
                   <FormField
                     control={form.control}
                     name="price_control"
-                    render={({ field }) => (
+                    key="price_control"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "price_control"> }) => (
                       <FormItem>
                         <FormLabel>
                           Price Control <span className="text-red-500">*</span>
@@ -376,7 +295,8 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({
                   <FormField
                     control={form.control}
                     name="hsn_code"
-                    render={({ field }) => (
+                    key="hsn_code"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "hsn_code"> }) => (
                       <FormItem>
                         <FormLabel>HSN Code</FormLabel>
                         <FormControl>
@@ -409,7 +329,8 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({
                   <FormField
                     control={form.control}
                     name="do_not_cost"
-                    render={({ field }) => (
+                    key="do_not_cost"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "do_not_cost"> }) => (
                       <FormItem>
                         <FormLabel>Do Not Cost</FormLabel>
                         <FormControl>
@@ -425,7 +346,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({
                   />
                 </div>
 
-                {(role === "CP" || role === "Store") && (
+                {(role === "Material CP" || role === "Store") && (
                   <div className="col-span-1 space-y-[5px]">
                     <Label htmlFor="fileinput">
                       Upload Material Information File

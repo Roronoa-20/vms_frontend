@@ -1,18 +1,20 @@
 "use client";
 
-import React, { useEffect, useState, ChangeEvent } from "react";
+import React, { useEffect, useState, useCallback, ChangeEvent } from "react";
+import { useWatch } from "react-hook-form";
 import UserRequestDetails from "@/src/components/molecules/material-onboarding-details/user-request-details";
+import UserRequestDetails2 from "@/src/components/molecules/material-onboarding-details/user-request-details-2";
 import Storefields from "./material-store-fields";
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import { MaterialCode } from "@/src/types/PurchaseRequestType";
-import { MaterialRegistrationFormData, EmployeeDetail, EmployeeAPIResponse, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialType } from "@/src/types/MaterialCodeRequestFormTypes";
+import { MaterialRegistrationFormData, EmployeeDetail, EmployeeAPIResponse, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialType, MaterialRequestData } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface MaterialInformationFormProps {
   form: any;
   onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
-  companyName?: string;
+  companyName?: Company[];
   plantcode?: Plant[];
   EmployeeDetailsJSON?: EmployeeDetail;
   DivisionDetails?: division[];
@@ -28,17 +30,20 @@ interface MaterialInformationFormProps {
   ClassType?: ClassType[];
   SerialProfile?: SerialNumber[];
   materialCompanyCode?: string;
-  setMaterialCompanyCode?: React.Dispatch<React.SetStateAction<string>>;
+  setMaterialCompanyCode: React.Dispatch<React.SetStateAction<string>>;
   MaterialCategory?: MaterialCategory[];
   isMaterialCodeEdited?: boolean;
-  setIsMaterialCodeEdited?: React.Dispatch<React.SetStateAction<boolean>>;
-  setShouldShowAllFields?: React.Dispatch<React.SetStateAction<boolean>>;
-  shouldShowAllFields?: boolean;
-  setIsMatchedMaterial?: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsMaterialCodeEdited: React.Dispatch<React.SetStateAction<boolean>>;
+  setShouldShowAllFields: React.Dispatch<React.SetStateAction<boolean>>;
+  shouldShowAllFields: boolean;
+  setIsMatchedMaterial: React.Dispatch<React.SetStateAction<boolean>>;
   isZCAPMaterial?: boolean;
+  MaterialDetails?: MaterialRequestData;
 }
 
-const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form, onSubmit, companyName, plantcode, EmployeeDetailsJSON, DivisionDetails = [], role, UnitOfMeasure, MaterialGroup = [], MaterialOnboardingDetails, companyInfo, ProfitCenter, AvailabilityCheck, MaterialType, StorageLocation = [], ClassType, SerialProfile, materialCompanyCode, setMaterialCompanyCode, MaterialCategory, isMaterialCodeEdited, setIsMaterialCodeEdited, setShouldShowAllFields, shouldShowAllFields, setIsMatchedMaterial, isZCAPMaterial }) => {
+const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form, onSubmit, companyName, plantcode, EmployeeDetailsJSON, DivisionDetails = [], role, UnitOfMeasure, MaterialGroup, MaterialOnboardingDetails, companyInfo, ProfitCenter, AvailabilityCheck, MaterialType, StorageLocation = [], ClassType, SerialProfile, materialCompanyCode, setMaterialCompanyCode, MaterialCategory, isMaterialCodeEdited, setIsMaterialCodeEdited, setShouldShowAllFields, shouldShowAllFields, setIsMatchedMaterial, isZCAPMaterial, MaterialDetails }) => {
+
+  // console.log("Material GRoup Parent---->",MaterialGroup);
 
   const [selectedMaterialType, setSelectedMaterialType] = useState<string>("");
   const [filteredMaterialGroup, setFilteredMaterialGroup] = useState<MaterialGroupMaster[]>([]);
@@ -49,71 +54,73 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
   const [materialSelectedFromList, setMaterialSelectedFromList] = useState<boolean>(false);
   const [AllMaterialCodes, setAllMaterialCodes] = useState<MaterialCode[]>([]);
 
-  const fetchMaterialCodeData = async (query?: string): Promise<MaterialCode[]> => {
-    try {
-      const baseUrl = API_END_POINTS?.MaterialCodeSearchApi;
-      let url = baseUrl;
+  const company = useWatch({ control: form.control, name: "material_company_code" });
+  const materialType = useWatch({ control: form.control, name: "material_type" });
 
-      const company = form.getValues("material_company_code");
-      const materialtype = form.getValues("material_type");
+  const fetchMaterialCodeData = useCallback(
+    async (query?: string): Promise<MaterialCode[]> => {
+      try {
+        let url = API_END_POINTS?.MaterialCodeSearchApi;
+        const filters: Record<string, string> = {};
+        if (company) filters.company = company;
+        if (materialType) filters.material_type = materialType;
 
-      const filters: Record<string, string> = {};
-      if (company) filters.company = company;
-      if (materialtype) filters.material_type = materialtype;
+        if (Object.keys(filters).length > 0) {
+          url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
+        }
+        if (query) {
+          url += `${url.includes("?") ? "&" : "?"}search_term=${encodeURIComponent(query)}`;
+        }
 
-      if (Object.keys(filters).length > 0) {
-        url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
+        const response: AxiosResponse = await requestWrapper({ url, method: "GET" });
+
+        if (response?.status === 200) {
+          const data = response.data?.message?.data || [];
+          setAllMaterialCodes(data);
+          return data;
+        } else {
+          console.error("Failed to fetch material codes:", response);
+        }
+      } catch (error) {
+        console.error("Error fetching material code data:", error);
       }
+      return [];
+    },
+    [company, materialType]
+  );
 
-      if (query) {
-        url += `${url.includes("?") ? "&" : "?"}search_term=${encodeURIComponent(query)}`;
-      }
-
-      const response: AxiosResponse = await requestWrapper({ url, method: "GET" });
-      if (response?.status === 200) {
-        const data = response.data?.message?.data || [];
-        setAllMaterialCodes(data);
-        return data;
-      } else {
-        console.error("Failed to fetch material codes:", response);
-      }
-    } catch (error) {
-      console.error("Error fetching material code data:", error);
+  useEffect(() => {
+    if (company || materialType) {
+      fetchMaterialCodeData();
     }
-    return [];
-  };
+  }, [company, materialType]);
 
   useEffect(() => {
-    fetchMaterialCodeData();
-  }, []);
+    const employeeCompanyCode = (EmployeeDetailsJSON?.company && Array.isArray(EmployeeDetailsJSON.company) && EmployeeDetailsJSON.company[0]?.company_code) || "";
 
-  useEffect(() => {
-    const subscription = form.watch(async (value, { name }) => {
-      if (name === "material_company_code" || name === "material_type") {
-        await fetchMaterialCodeData();
-      }
+    const newFilteredMaterialGroup = MaterialGroup?.filter((group) => String(group.material_group_company) === employeeCompanyCode) || [];
+    const newFilteredStorage = StorageLocation?.filter((loc) => String(loc.company) === employeeCompanyCode) || [];
+    const newFilteredDivision = DivisionDetails?.filter((div) => String(div.company) === employeeCompanyCode) || [];
+
+    setFilteredMaterialGroup(prev => {
+      if (JSON.stringify(prev) !== JSON.stringify(newFilteredMaterialGroup)) return newFilteredMaterialGroup;
+      return prev;
     });
-    return () => subscription.unsubscribe();
-  }, [form]);
 
-  useEffect(() => {
-     if (
-      !EmployeeDetailsJSON?.company ||
-      !Array.isArray(EmployeeDetailsJSON.company) ||
-      !ProfitCenter?.length
-    )
-    setFilteredMaterialGroup(
-      MaterialGroup?.filter((group) => String(group.material_group_company) === employeeCompanyCode) || []
-    );
-    setFilteredStorage(
-      StorageLocation?.filter((loc) => String(loc.company) === employeeCompanyCode) || []
-    );
-    setFilteredDivision(
-      DivisionDetails?.filter((div) => String(div.company) === employeeCompanyCode) || []
-    );
-  }, [MaterialGroup, companyInfo, ProfitCenter, MaterialType, StorageLocation, DivisionDetails]);
+    setFilteredStorage(prev => {
+      if (JSON.stringify(prev) !== JSON.stringify(newFilteredStorage)) return newFilteredStorage;
+      return prev;
+    });
 
-  const handleMaterialSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setFilteredDivision(prev => {
+      if (JSON.stringify(prev) !== JSON.stringify(newFilteredDivision)) return newFilteredDivision;
+      return prev;
+    });
+
+  }, [EmployeeDetailsJSON, MaterialGroup, StorageLocation, DivisionDetails]);
+
+
+  const handleMaterialSearch = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
 
     if (val.trim().length > 3) {
@@ -132,7 +139,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
     setMaterialSelectedFromList(false);
   };
 
-  const handleMaterialSelect = (item: { material_name_description?: string; material_code_revised?: string }) => {
+  const handleMaterialSelect = (item: MaterialCode) => {
     form.setValue("material_name_description", item.material_name_description || "");
 
     if (item.material_code_revised && item.material_code_revised !== "null") {
@@ -158,7 +165,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
       "class_number",
       "serial_number_profile",
       "serialization_level"
-    ];
+    ] as const;
 
     fields.forEach((field) => {
       if (data[field]) {
@@ -167,13 +174,20 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
     });
   }, [MaterialDetails, filteredMaterialGroup]);
 
+  // console.log("role check →", role, typeof role);
+  // console.log("shouldShowAllFields check →", shouldShowAllFields);
+
+  useEffect(() => {
+    // console.log("MaterialInformationForm: role =", role, "showAll =", shouldShowAllFields);
+  }, [role, shouldShowAllFields]);
+
+
   return (
     <div className="bg-[#F4F4F6]">
-      <div className="flex flex-col justify-between pt-4 bg-white rounded-[8px]">
+      <div className="flex flex-col justify-between bg-white rounded-[8px]">
         <div>
           <UserRequestDetails
             companyName={companyName}
-            role={role}
             form={form}
             MaterialDetails={MaterialDetails}
             MaterialOnboardingDetails={MaterialOnboardingDetails}
@@ -193,11 +207,11 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
             handleMaterialSelect={handleMaterialSelect}
             setSearchResults={setSearchResults}
             setShowSuggestions={setShowSuggestions}
-            MaterialCode={MaterialCode}
+            // MaterialCode={MaterialCode}
             MaterialCategory={MaterialCategory}
             filteredDivision={filteredDivision}
             StorageLocation={StorageLocation}
-            AllMaterialType={AllMaterialType}
+            AllMaterialType={MaterialType}
             isMaterialCodeEdited={isMaterialCodeEdited}
             setIsMaterialCodeEdited={setIsMaterialCodeEdited}
             AllMaterialCodes={AllMaterialCodes}
@@ -207,26 +221,60 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
             isZCAPMaterial={isZCAPMaterial}
           />
 
-          {shouldShowAllFields && (role === "CP" || role === "Store") && (
-            <Storefields
-              companyInfo={companyInfo}
-              companyName={companyName}
-              role={role}
-              form={form}
-              MaterialDetails={MaterialDetails}
-              MaterialOnboardingDetails={MaterialOnboardingDetails}
-              materialCompanyCode={materialCompanyCode}
-              setMaterialCompanyCode={setMaterialCompanyCode}
-              UnitOfMeasure={UnitOfMeasure}
-              MaterialType={MaterialType}
-              plantcode={plantcode}
-              AllMaterialType={AllMaterialType}
-              AvailabilityCheck={AvailabilityCheck}
-              MaterialGroup={MaterialGroup}
-              SerialProfile={SerialProfile}
-              ClassType={ClassType}
-              isZCAPMaterial={isZCAPMaterial}
-            />
+          <UserRequestDetails2
+            companyName={companyName}
+            form={form}
+            MaterialDetails={MaterialDetails}
+            MaterialOnboardingDetails={MaterialOnboardingDetails}
+            materialCompanyCode={materialCompanyCode}
+            setMaterialCompanyCode={setMaterialCompanyCode}
+            setSelectedMaterialType={setSelectedMaterialType}
+            selectedMaterialType={selectedMaterialType}
+            UnitOfMeasure={UnitOfMeasure}
+            MaterialType={MaterialType}
+            plantcode={plantcode}
+            DivisionDetails={DivisionDetails}
+            filteredStorage={filteredStorage}
+            searchResults={searchResults}
+            showSuggestions={showSuggestions}
+            materialSelectedFromList={materialSelectedFromList}
+            handleMaterialSearch={handleMaterialSearch}
+            handleMaterialSelect={handleMaterialSelect}
+            setSearchResults={setSearchResults}
+            setShowSuggestions={setShowSuggestions}
+            // MaterialCode={MaterialCode}
+            MaterialCategory={MaterialCategory}
+            filteredDivision={filteredDivision}
+            StorageLocation={StorageLocation}
+            AllMaterialType={MaterialType}
+            isMaterialCodeEdited={isMaterialCodeEdited}
+            setIsMaterialCodeEdited={setIsMaterialCodeEdited}
+            AllMaterialCodes={AllMaterialCodes}
+            setShouldShowAllFields={setShouldShowAllFields}
+            shouldShowAllFields={shouldShowAllFields}
+            setIsMatchedMaterial={setIsMatchedMaterial}
+            isZCAPMaterial={isZCAPMaterial}
+          />
+
+          {shouldShowAllFields && (role === "Material CP" || role === "Store") && (
+              <Storefields
+                companyInfo={companyInfo}
+                role={role}
+                form={form}
+                MaterialDetails={MaterialDetails}
+                MaterialOnboardingDetails={MaterialOnboardingDetails}
+                materialCompanyCode={materialCompanyCode}
+                setMaterialCompanyCode={setMaterialCompanyCode}
+                UnitOfMeasure={UnitOfMeasure}
+                MaterialType={MaterialType}
+                plantcode={plantcode}
+                AllMaterialType={MaterialType}
+                AvailabilityCheck={AvailabilityCheck}
+                MaterialGroup={MaterialGroup}
+                SerialProfile={SerialProfile}
+                ClassType={ClassType}
+                isZCAPMaterial={isZCAPMaterial}
+              />
           )}
         </div>
       </div>

@@ -23,18 +23,14 @@ const FormItemContext = React.createContext<FormItemContextValue>(null)
 
 // ------------------- Components -------------------
 
-const FormField = ({ name, control, ...props }: any) => {
+const FormField = React.memo(function FormField({ name, control, render }: any) {
   return (
     <FormFieldContext.Provider value={{ name }}>
-      {/* <Controller name={name} control={control} {...props} /> */}
-      <Controller
-        name={name}
-        control={control}
-        render={props.render}
-      />
+      <Controller name={name} control={control} render={render} />
     </FormFieldContext.Provider>
-  )
-}
+  );
+});
+
 
 // ------------------- Hooks -------------------
 

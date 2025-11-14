@@ -5,20 +5,13 @@ import { Input } from "@/components/ui/input";
 interface UOMConversionModalProps {
   open: boolean;
   onClose: () => void;
-  baseUOM: string;
+  baseUOM?: string;
   purchaseUOM?: string;
   issueUOM?: string;
   onSubmit: (values: { numerator: string; denominator: string }) => void;
 }
 
-const UOMConversionModal: React.FC<UOMConversionModalProps> = ({
-  open,
-  onClose,
-  baseUOM,
-  purchaseUOM,
-  issueUOM,
-  onSubmit,
-}) => {
+const UOMConversionModal: React.FC<UOMConversionModalProps> = ({open, onClose, baseUOM, purchaseUOM, issueUOM, onSubmit }) => {
   const [numerator, setNumerator] = useState<string>("");
   const [denominator, setDenominator] = useState<string>("");
 

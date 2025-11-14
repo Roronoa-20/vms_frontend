@@ -12,41 +12,25 @@ interface MaterialRequesterDetailsFormProps {
   MaterialOnboardingDetails?: MaterialRegistrationFormData;
 }
 
-const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> = ({ onSubmit, MaterialOnboardingDetails }) => {
-  // console.log("Material Onboardging Details in requestor form CP role:--->", MaterialOnboardingDetails)
-
-  const form = useForm({
-    defaultValues: {
-      request_date: "",
-      requested_by: "",
-      company: "",
-      department: "",
-      sub_department: "",
-      hod: "",
-      immediate_reporting_head: "",
-      contact_information_email: "",
-      contact_information_phone: "",
-    },
-  });
-
-
-  const details = Array.isArray(MaterialOnboardingDetails)
-    ? MaterialOnboardingDetails[0]
-    : MaterialOnboardingDetails;
-
+const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> = ({
+  form,
+  onSubmit,
+  MaterialOnboardingDetails,
+}) => {
   useEffect(() => {
-    if (details) {
-      form.setValue("request_date", details.request_date || "");
-      form.setValue("requested_by", details.requested_by || "");
-      form.setValue("company", details.material_company_name || "");
-      form.setValue("department", details.department || "");
-      form.setValue("sub_department", details.sub_department || "");
-      form.setValue("hod", details.hod || "");
-      form.setValue("immediate_reporting_head", details.immediate_reporting_head || "");
-      form.setValue("contact_information_email", details.contact_information_email || "");
-      form.setValue("contact_information_phone", details.contact_information_phone || "");
+    if (MaterialOnboardingDetails) {
+      const d = MaterialOnboardingDetails;
+      form.setValue("request_date", d.request_date || "");
+      form.setValue("requested_by", d.requested_by || "");
+      form.setValue("company", d.material_company_name || "");
+      form.setValue("department", d.department || "");
+      form.setValue("sub_department", d.sub_department || "");
+      form.setValue("hod", d.hod || "");
+      form.setValue("immediate_reporting_head", d.immediate_reporting_head || "");
+      form.setValue("contact_information_email", d.contact_information_email || "");
+      form.setValue("contact_information_phone", d.contact_information_phone || "");
     }
-  }, [details, form]);
+  }, [MaterialOnboardingDetails, form]);
 
 
   return (

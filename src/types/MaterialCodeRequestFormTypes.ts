@@ -90,10 +90,10 @@ export interface CostCenter {
 // Profit Center
 export interface ProfitCenter {
   name: string;
-  profit_center_code: string;
-  profit_center_name: string;
+  profit_center_code?: string;
+  profit_center_name?: string;
   description: string;
-  company_code: string;
+  company_code?: string;
 }
 
 // GL Account Number
@@ -121,6 +121,7 @@ export interface StorageLocation {
   storage_location: string;
   description: string;
   company: string;
+  plant_code: string;
 }
 
 export interface ValuationClass {
@@ -134,6 +135,7 @@ export interface MRPType {
   name: string;
   mrp_type_code: string;
   mrp_type_name: string;
+  mrp_name: string;
   description: string;
 }
 
@@ -145,11 +147,11 @@ export interface MaterialCodeResponse {
 }
 
 export interface division {
-  name: string;
-  division_code: string;
-  division_name: string;
-  description: string;
-  company: string
+  name?: string;
+  division_code?: string;
+  division_name?: string;
+  description?: string;
+  company?: string
 }
 
 export interface industry {
@@ -185,6 +187,7 @@ export interface MRPController {
   mrp_controller_code: string;
   mrp_controller_name: string;
   description: string;
+  mrp_controller: string;
 }
 
 export interface InspectionType {
@@ -214,8 +217,10 @@ export interface AvailabilityCheck {
 }
 
 export interface ClassType {
+  name: string
   class_type: string;
   class_name: string;
+  class_number: string
   description: string;
 }
 
@@ -263,3 +268,193 @@ export interface ExpirationDate {
   expiration_date_name: string;
   description: string;
 }
+
+// Material Request Item (used inside requestor_master.material_request)
+export interface MaterialRequestItem {
+  name: string;
+  owner: string;
+  creation: string;
+  modified: string;
+  modified_by: string;
+  docstatus: number;
+  idx: number;
+  company_name: string;
+  material_type: string;
+  material_type_code: string;
+  material_category: string;
+  required_by: string | null;
+  material_name_description: string;
+  material_group: string | null;
+  material_image: string | null;
+  quantity: number | null;
+  unit_of_measure: string;
+  rate: number | null;
+  amount: number | null;
+  manufacturer: string | null;
+  plant: string;
+  material_code_revised: string;
+  is_revised_code_new: number;
+  comment_by_user: string | null;
+  parent: string;
+  parentfield: string;
+  parenttype: string;
+  doctype: string;
+  material_type_name: string;
+  company_name_display?: string;
+  material_specifications?:string
+}
+
+export interface RequestorMaster {
+  name: string;
+  owner: string;
+  creation: string;
+  modified: string;
+  modified_by: string;
+  docstatus: number;
+  idx: number;
+  material_master_ref_no: string | null;
+  approval_status: string;
+  revert_remark: string | null;
+  material_onboarding_ref_no: string | null;
+  request_id: string;
+  request_date: string;
+  requestor_company: string | null;
+  sub_department: string | null;
+  immediate_reporting_head: string | null;
+  contact_information_phone: string | null;
+  requested_by: string;
+  requestor_department: string;
+  requestor_hod: string;
+  contact_information_email: string;
+  requested_by_place: string | null;
+  zmsg: string | null;
+  maktx: string | null;
+  ztext: string | null;
+  sap_summary: string | null;
+  doctype: string;
+  material_request: MaterialRequestItem[];
+}
+
+export interface MaterialMaster {
+  name: string;
+  owner: string;
+  creation: string;
+  modified: string;
+  modified_by: string;
+  docstatus: number;
+  idx: number;
+  naming_series: string;
+  basic_data_ref_no: string;
+  old_material_code: string;
+  division: string | null;
+  division_code: string | null;
+  storage_location: string | null;
+  storage_location_code: string | null;
+  inactive: number;
+  company: string | null;
+  plant: string | null;
+  valuation_class: string | null;
+  valuation_class_code: string | null;
+  price_control: string | null;
+  valuation_type: string | null;
+  price_unit: string | null;
+  currency: string;
+  created_by: string | null;
+  batch_requirements_yn: string | null;
+  brand_make: string | null;
+  availability_check: string | null;
+  serialization_level: string | null;
+  class_type: string | null;
+  class_number: string | null;
+  serial_number_profile: string | null;
+  purchasing_group: string | null;
+  gr_processing_time: string | null;
+  purchase_uom: string | null;
+  lead_time: string | null;
+  purchasing_value_key: string | null;
+  min_lot_size: string | null;
+  purchase_order_text: string | null;
+  numerator_for_conversion: string | null;
+  denominator_for_conversion: string | null;
+  mrp_type: string | null;
+  mrp_group: string | null;
+  mrp_controller_revised: string | null;
+  lot_size_key: string | null;
+  procurement_type: string | null;
+  scheduling_margin_key: string | null;
+  base_uom: string | null;
+  numerator_issue_uom: string | null;
+  denominator_issue_uom: string | null;
+  requestor_ref_no: string | null;
+  material_code: string | null;
+  material_group: string | null;
+  material_name: string | null;
+  material_category: string | null;
+  material_onboarding_ref_no: string | null;
+  material_code_revised: string | null;
+  material_type: string | null;
+  material_image: string | null;
+  description: string | null;
+  industry: string | null;
+  default_material_manufacturer: string | null;
+  doctype: string;
+  children: any[];
+}
+
+export interface MaterialOnboarding {
+  name: string;
+  owner: string;
+  creation: string;
+  modified: string;
+  modified_by: string;
+  docstatus: number;
+  idx: number;
+  requestor_ref_no: string;
+  material_master_ref_no: string;
+  material_code_latest: string | null;
+  minimum_remaining_shell_life: string | null;
+  total_shell_life: string | null;
+  expiration_date: string | null;
+  inspection_require: string | null;
+  inspection_interval: string | null;
+  incoming_inspection_01: number;
+  incoming_inspection_09: number;
+  intended_usage_application: string | null;
+  storage_requirements: string | null;
+  hazardous_material: string | null;
+  profit_center: string | null;
+  valuation_class: string | null;
+  price_control: string | null;
+  hsn_code: string | null;
+  do_not_cost: string | null;
+  material_information: string | null;
+  hsn_status: string | null;
+  comment_by_store: string | null;
+  special_instructionsnotes: string | null;
+  requested_by_name: string | null;
+  requested_by: string | null;
+  requested_by_place: string | null;
+  approval_date: string | null;
+  approved_by_name: string | null;
+  approved_by: string | null;
+  approved_by_place: string | null;
+  approval_stage: string | null;
+  doctype: string;
+  children: any[];
+}
+
+export interface MaterialRequestData {
+  requestor_master: RequestorMaster;
+  material_request_item: MaterialRequestItem;
+  material_master: MaterialMaster;
+  material_onboarding: MaterialOnboarding;
+}
+
+// Final API response
+export interface MaterialRequestAPIResponse {
+  message: {
+    message: string;
+    data: MaterialRequestData;
+  };
+}
+
