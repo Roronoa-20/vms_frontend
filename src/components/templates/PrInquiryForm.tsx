@@ -16,8 +16,8 @@ import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle2 } from "lucide-react";
-import { toast, ToastContainer } from 'react-toastify'
+import { CheckCircle2, XIcon } from "lucide-react";
+import { toast, ToastContainer } from 'react-toastify';
 
 
 interface Props {
@@ -544,7 +544,35 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">
                   Attachment
                 </h1>
-                <Input type='file' onChange={(e) => { setSingleTableRow((prev: any) => ({ ...prev, file: e.target?.files?.[0] })) }} />
+                {!singleTableRow?.file && (
+                  <Input
+                    type="file"
+                    accept="application/pdf,image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setSingleTableRow((prev: any) => ({ ...prev, file }));
+                      }
+                    }}
+                  />
+                )}
+
+                {singleTableRow?.file && (
+                  <div className="flex items-center gap-3 border p-2 rounded-md bg-gray-50">
+                    <span className="text-sm">{singleTableRow.file.name}</span>
+
+                    <XIcon
+                      size={20}
+                      className="text-red-500 cursor-pointer hover:text-red-700 transition"
+                      onClick={() => {
+                        setSingleTableRow((prev: any) => ({
+                          ...prev,
+                          file: null,
+                        }));
+                      }}
+                    />
+                  </div>
+                )}
               </div>
               {
                 <div className="col-span-1 mt-8">
@@ -614,12 +642,12 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
                     </div>
                     </TableCell>
                     <TableCell>
-                      <>
-                        {
-                          PRInquiryData?.asked_to_modify ?
-                            <PencilIcon className='cursor-pointer' onClick={() => { handleEdit(item, index) }} /> : null
-                        }
-                      </>
+                      {(PRInquiryData?.asked_to_modify || !PRInquiryData?.is_submited) ? (
+                        <PencilIcon
+                          className="cursor-pointer"
+                          onClick={() => handleEdit(item, index)}
+                        />
+                      ) : null}
                     </TableCell>
                   </TableRow>
                 ))}

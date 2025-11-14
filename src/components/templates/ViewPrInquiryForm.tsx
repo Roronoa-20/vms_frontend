@@ -173,7 +173,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
     setComment(value)
   }
 
-  const { designation } = useAuth()
+  const { designation } = useAuth();
 
   const handleTableInput = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -236,7 +236,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
   const today = new Date().toISOString().split("T")[0];
 
   const handleNumberInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const allowedKeys = [ "Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
+    const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
     if (allowedKeys.includes(e.key)) return;
     if (e.key === ".") {
       if (e.currentTarget.value.includes(".")) {
@@ -426,7 +426,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
         {
           PRInquiryData?.second_stage_approval_by &&
           <div className="col-span-1">
-            <h1 className="text-[14px] font-normal text-[#000000] pb-2">Second Stage Approval Email</h1>
+            <h1 className="text-[14px] font-normal text-[#000000] pb-2">Additional Approval Email</h1>
             <Input placeholder="" value={PRInquiryData?.second_stage_approval_by} disabled />
           </div>
         }
@@ -463,7 +463,12 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
               {tableData?.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
-                  <TableCell className={`flex justify-center`}><Input type='checkbox' onChange={(e) => { handleTableCheckChange(index, e.target.checked) }} disabled={(PRInquiryData?.purchase_team && item?.assest_code == "") ? false : true} checked={item?.need_asset_code} className='w-5' /></TableCell>
+                  <TableCell className={`flex justify-center`}><Input type='checkbox' onChange={(e) => { handleTableCheckChange(index, e.target.checked) }} disabled={
+                    designation === "Enquirer" ||
+                    item?.assest_code !== "" ||
+                    PRInquiryData?.purchase_team_acknowledgement === 1 ||
+                    PRInquiryData?.asked_to_modify === 1
+                  } checked={item?.need_asset_code} className='w-5' /></TableCell>
                   <TableCell className='text-center'>{item?.assest_code}</TableCell>
                   <TableCell>
                     {/* {item?.product_name} */}

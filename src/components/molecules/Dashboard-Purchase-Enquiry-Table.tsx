@@ -162,7 +162,12 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
             <TableBody className="text-center text-black">
               {table ? (
                 table?.map((item, index) => {
-                  const url = (item?.asked_to_modify || !item?.is_submited) ? `/pr-inquiry?cart_Id=${item?.name}` : `/view-pr-inquiry?cart_Id=${item?.name}`;
+                  const url =
+                    designation === "Purchase Team"
+                      ? `/view-pr-inquiry?cart_Id=${item?.name}`
+                      : (item?.asked_to_modify || !item?.is_submited)
+                        ? `/pr-inquiry?cart_Id=${item?.name}`
+                        : `/view-pr-inquiry?cart_Id=${item?.name}`;
                   return (
                     <TableRow key={index}>
                       <TableCell className="font-medium text-center whitespace-nowrap">{(currentPage - 1) * record_per_page + index + 1}</TableCell>

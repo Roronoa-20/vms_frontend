@@ -36,7 +36,8 @@ export type TableData = {
       final_price_by_purchase_team?:number,
       name?:string
       file:File
-      attachment?:FileAttachment
+      attachment?:FileAttachment,
+      
 }
 
 export type TPRInquiry = {
@@ -48,11 +49,11 @@ export type TPRInquiry = {
     cart_product:TableData[]
     hod:boolean,
     purchase_team:boolean
-    purchase_team_acknowledgement:boolean
+    purchase_team_acknowledgement:boolean | 0 | 1, 
     purchase_type:string,
     purchase_group:string,
     plant:string,
-    asked_to_modify:boolean,
+    asked_to_modify:boolean | 0 | 1,
     purchase_team_approved:boolean,
     acknowledged_date:string,
     is_submited:number,
