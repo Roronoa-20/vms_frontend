@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Input } from '../atoms/input'
 import { Button } from '../atoms/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
@@ -60,6 +60,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
   const router = useRouter();
   const param = useSearchParams();
   const refno = param.get("cart_Id");
+
+  const fileUploadRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (PRInquiryData?.company) {
@@ -280,6 +282,14 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
       // router.push(`pr-inquiry?cart_Id=${refno}`);
       location.reload();
     }
+  }
+
+  const handleFileDelete = ()=>{
+    if(fileUploadRef?.current){
+      fileUploadRef.current.value = "";
+      setSingleTableRow((prev:any)=>({...prev,file:null}));
+    }
+    return;
   }
 
   return (
@@ -518,7 +528,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">
                   Product Quantity <span className='text-red-400 text-[20px]'>*</span>
                 </h1>
-                <Input placeholder="" name='product_quantity' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_quantity ?? ""} />
+                <Input placeholder="" name='product_quantity' type='number' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_quantity ?? ""} />
               </div>
               <div className="col-span-1">
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">
@@ -530,7 +540,10 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">
                   Attachment
                 </h1>
-                <Input type='file' onChange={(e) => { setSingleTableRow((prev: any) => ({ ...prev, file: e.target?.files?.[0] })) }} />
+                <div className='flex gap-3 items-center'>
+                <Input ref={fileUploadRef} type='file' onChange={(e) => { setSingleTableRow((prev: any) => ({ ...prev, file: e.target?.files?.[0] })) }} />
+                <Trash2 className={`text-red-400 ${singleTableRow?.file?"":"hidden"} hover:cursor-pointer`} onClick={()=>{handleFileDelete()}}/>
+                </div>
               </div>
               {
                 <div className="col-span-1 mt-8">

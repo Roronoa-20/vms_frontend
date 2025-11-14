@@ -66,6 +66,18 @@ export type TPRInquiry = {
     purchase_team_status:string
 }
 
+export type ProductHistory = {
+  cart_id:string,
+  user:string,
+  cart_date:string,
+  purchase_requisition_form_created:number,
+  purchase_requisition_form:string,
+  product_name:string,
+  price:number,
+  final_price:number,
+  qty:number
+}
+
 const PrInquiryPage = async ({ refno }: Props) => {
 
     const cookieStore = await cookies();

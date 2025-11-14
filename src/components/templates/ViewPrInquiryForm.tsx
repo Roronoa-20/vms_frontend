@@ -10,7 +10,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import Cookies from 'js-cookie'
-import { purchaseInquiryDropdown, TableData, TPRInquiry } from '../pages/Pr-Inquiry'
+import { purchaseInquiryDropdown, TableData, TPRInquiry,ProductHistory } from '../pages/Pr-Inquiry'
 import Comment_box from '../molecules/CommentBox'
 import { Value } from '@radix-ui/react-select'
 import { useRouter } from 'next/navigation'
@@ -28,7 +28,11 @@ interface Props {
   companyDropdown: { name: string, description: string }[]
   purchaseTypeDropdown: { name: string, purchase_requisition_type_name: string, description: string }[]
   AllcompanyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
+  productHistory:ProductHistory[]
 }
+
+
+
 
 
 type ProductNameDropdown = {
@@ -42,6 +46,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
   const [formData, setFormData] = useState<TPRInquiry | null>(PRInquiryData ?? null);
   const [singleTableRow, setSingleTableRow] = useState<TableData | null>(null);
   const [tableData, setTableData] = useState<TableData[]>(PRInquiryData?.cart_product ?? []);
+  const [productHistroytableData, setProductHistoryTable] = useState<ProductHistory[]>([]);
   const [productNameDropdown, setProductNameDropdown] = useState<ProductNameDropdown[]>([]);
   const [index, setIndex] = useState<number>(-1)
   const [isApproved, setIsApproved] = useState(false);
@@ -503,6 +508,46 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
             }
           </div>
       )}
+
+      <div className='pb-4'>
+        <h1 className="border-b-2 sticky top-0 bg-white text-lg font-semibold z-30">
+          Product History
+        </h1>
+        <div className="shadow- bg-[#f6f6f7] mt-4 p-4 rounded-2xl">
+          <Table className="max-h-40">
+            <TableHeader className="text-center">
+              <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
+                <TableHead className="w-[100px]">Cart Id</TableHead>
+                <TableHead className="text-center">User</TableHead>
+                <TableHead className="text-center">Cart Date</TableHead>
+                <TableHead className="text-center">Purchase Requisition Form</TableHead>
+                <TableHead className="text-center">Product Name</TableHead>
+                <TableHead className="text-center">Price</TableHead>
+                <TableHead className="text-center">Final Price</TableHead>
+                <TableHead className="text-center">Quantity</TableHead>
+                <TableHead className="text-center">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="text-center">
+              {productHistroytableData?.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell >{item?.cart_id}</TableCell>
+                  <TableCell className='text-center'>{item?.user}</TableCell>
+                  <TableCell>{item?.cart_date}</TableCell>
+                  <TableCell>{item?.purchase_requisition_form}</TableCell>
+                  <TableCell>{item?.product_name}</TableCell>
+                  <TableCell>{item?.price}</TableCell>
+                  <TableCell>{item?.final_price}</TableCell>
+                  <TableCell>{item?.qty}</TableCell>
+                  <TableCell>
+                    <Button className='bg-blue-400 hover:bg-blue-400' onClick={()=>{router.push(`/product-history?cart_id=${refno}&product_name=${item?.product_name}`)}}>View</Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
 
       {isDialog &&
         <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
