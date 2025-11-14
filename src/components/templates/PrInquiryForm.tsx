@@ -284,19 +284,28 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     }
   };
 
-  const handleNumberInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
-    if (allowedKeys.includes(e.key)) return;
-    if (e.key === ".") {
-      if (e.currentTarget.value.includes(".")) {
-        e.preventDefault();
-      }
-      return;
+  // const handleNumberInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //   const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
+  //   if (allowedKeys.includes(e.key)) return;
+  //   if (e.key === ".") {
+  //     if (e.currentTarget.value.includes(".")) {
+  //       e.preventDefault();
+  //     }
+  //     return;
+  //   }
+  //   if (!/^\d$/.test(e.key)) {
+  //     e.preventDefault();
+  //   }
+  // };
+
+  const handleFileDelete = () => {
+    if (fileUploadRef?.current) {
+      fileUploadRef.current.value = "";
+      setSingleTableRow((prev: any) => ({ ...prev, file: null }));
     }
-    if (!/^\d$/.test(e.key)) {
-      e.preventDefault();
-    }
+    return;
   };
+
 
   return (
     <>
@@ -534,7 +543,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">
                   Product Quantity <span className='text-red-400 text-[20px]'>*</span>
                 </h1>
-                <Input placeholder="" name='product_quantity' onChange={(e) => { handleFieldChange(true, e) }} onKeyDown={handleNumberInputKeyDown} inputMode="decimal" value={singleTableRow?.product_quantity ?? ""} />
+                <Input placeholder="" name='product_quantity' type='number' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_quantity ?? ""} />
+                {/* <Input placeholder="" name='product_quantity' onChange={(e) => { handleFieldChange(true, e) }} onKeyDown={handleNumberInputKeyDown} inputMode="decimal" value={singleTableRow?.product_quantity ?? ""} /> */}
               </div>
               <div className="col-span-1">
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">
@@ -542,7 +552,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
                 </h1>
                 <Input placeholder="" name='user_specifications' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.user_specifications ?? ""} />
               </div>
-              <div className="col-span-1">
+              {/* <div className="col-span-1">
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">
                   Attachment
                 </h1>
@@ -575,6 +585,15 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
                     />
                   </div>
                 )}
+              </div> */}
+              <div className="col-span-1">
+                <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+                  Attachment
+                </h1>
+                <div className='flex gap-3 items-center'>
+                  <Input ref={fileUploadRef} type='file' onChange={(e) => { setSingleTableRow((prev: any) => ({ ...prev, file: e.target?.files?.[0] })) }} />
+                  <XIcon className={`text-red-400 ${singleTableRow?.file ? "" : "hidden"} hover:cursor-pointer`} onClick={() => { handleFileDelete() }} />
+                </div>
               </div>
               {
                 <div className="col-span-1 mt-8">
