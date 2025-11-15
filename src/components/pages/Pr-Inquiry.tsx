@@ -60,8 +60,8 @@ export type TPRInquiry = {
     hod_approved: boolean,
     second_stage_approval_by: string
     second_stage_approved: boolean,
-    cost_center: string,
-    gl_account: string,
+    cost_center: any,
+    gl_account: any,
     purchase_requisition_form_created: boolean
     purchase_team_approval_status: string
     purchase_team_status: string
