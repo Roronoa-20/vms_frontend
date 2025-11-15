@@ -80,7 +80,9 @@ export interface PurchaseRequisitionDataItem {
   material_group_head_desc: string;
   purchase_group_head_desc: string;
   valuation_area_head_desc: string;
+  material_code_head_desc: string;
   plant_head_desc: string;
+  product_full_name_head: string;
 }
 
 export interface MaterialGroup {

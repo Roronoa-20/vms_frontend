@@ -569,7 +569,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
                   <TableCell>{item?.product_name}</TableCell>
                   <TableCell>{item?.price}</TableCell>
                   <TableCell>{item?.final_price}</TableCell>
-                  <TableCell>{item?.qty}</TableCell>
+                  <TableCell>{item?.quantity}</TableCell>
                   <TableCell>
                     <Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { router.push(`/product-history?cart_id=${refno}&product_name=${item?.product_name}`) }}>View</Button>
                   </TableCell>
