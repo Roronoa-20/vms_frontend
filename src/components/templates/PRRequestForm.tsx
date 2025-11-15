@@ -69,9 +69,9 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
   const [itemCategoryDropdown, setitemCategoryDropdown] = useState<ItemCategoryMaster[]>([])
   const [currentValue, setCurrentValue] = useState<number>(10);
 
-  const [sendEmailDialog,setSendEmailDialog] = useState<boolean>(false);
+  const [sendEmailDialog, setSendEmailDialog] = useState<boolean>(false);
 
-  const [comment,setComment] = useState<string>("");
+  const [comment, setComment] = useState<string>("");
 
   const deleteSubItem = async (subItemId: string) => {
     console.log(subItemId, "subItemId", pur_req, "pur_req")
@@ -207,8 +207,8 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
   }
 
   const handleEmailToPurchaseTeam = async () => {
-    
-    const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.prToPurchaseTeam, params: { name: pur_req,enquirer_remarks:comment }, method: "POST" });
+
+    const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.prToPurchaseTeam, params: { name: pur_req, enquirer_remarks: comment }, method: "POST" });
     if (response?.status == 200) {
       alert("Email sent to purchase team successfully");
       handleClose();
@@ -217,7 +217,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     }
   }
 
-  const handleClose = ()=>{
+  const handleClose = () => {
     setSendEmailDialog(false);
   }
 
@@ -227,6 +227,8 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     }
     fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "")
   }, [pur_req, PRData?.purchase_requisition_type])
+
+  console.log("Main Items0------->", mainItems)
 
   return (
     <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
@@ -383,16 +385,18 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                           </Button>
                         </CollapsibleTrigger>
                         <div>
-                          <div className="font-semibold text-lg">{mainItem?.product_name_head}</div>
+                          <div className="font-semibold text-lg">{`${mainItem?.product_full_name_head} (${mainItem?.product_name_head})`}</div>
                           <div className="text-sm text-muted-foreground">
                             {/* Item No: {mainItem?.item_number_of_purchase_requisition_head} | Category: {mainItem?.category} */}
                             Item No: {mainItem?.item_number_of_purchase_requisition_head}
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                            {mainItem?.subhead_fields.length} sub-items
-                          </Badge>
+                          {mainItem?.purchase_requisition_type === "SB" && (
+                            <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                              {mainItem?.subhead_fields.length} sub-items
+                            </Badge>
+                          )}
                           <Badge variant="outline">
                             {mainItem?.purchase_requisition_type}
                           </Badge>
@@ -439,7 +443,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                           <div className="flex items-center justify-between mb-4">
                             <h4 className="font-semibold text-lg">Sub Items ({mainItem?.subhead_fields.length})</h4>
 
-                            {((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
+                            {mainItems?.sap_status === "Success" && ((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -493,7 +497,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                                         <TableCell className="text-center text-nowrap">{subItem?.cost_center_subhead || "N/A"}</TableCell>
                                         <TableCell className="text-center">{subItem?.gl_account_number_subhead || "N/A"}</TableCell>
                                         {/* Sticky Actions Cell */}
-                                        {((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) &&
+                                        {mainItems?.sap_status === "Success" && ((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) &&
                                           <TableCell className="text-center sticky right-0 bg-white z-20">
                                             <div className='flex gap-2'>
                                               <Button
@@ -546,7 +550,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                               </div>
                             </div>
                           ) : (
-                            mainItem?.purchase_requisition_type === "SB" &&
+                            (mainItem?.purchase_requisition_type === "SB") && (mainItems?.sap_status === "Success") &&
                             ((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
                               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                                 <p className="text-gray-500 mb-4">No sub-items added yet</p>
@@ -622,32 +626,32 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
       }
 
       {mainItems?.docname && (
-        <div className="flex justify-end py-6 gap-4">
+        <div className="flex justify-end py-6 gap-4 mr-3">
           {(!mainItems?.mail_sent_to_purchase_team) && (designation === "Enquirer") ? (
             <>
               {(mainItems?.sap_status == "Failed") && (
                 <Button
                   className="py-2.5"
                   variant={"nextbtn"}
-                  size={"nextbtnsize"} 
+                  size={"nextbtnsize"}
                   onClick={() => { setSendEmailDialog(true) }}>Send Email To Purchase Team</Button>
               )}
               {(mainItems?.sap_status == "Failed") && (
-              <Button
-                type="button"
-                className="py-2.5"
-                variant={"nextbtn"}
-                size={"nextbtnsize"}
-                onClick={() => handleSubmit()}
-              >
-                Submit
-              </Button>
+                <Button
+                  type="button"
+                  className="py-2.5"
+                  variant={"nextbtn"}
+                  size={"nextbtnsize"}
+                  onClick={() => handleSubmit()}
+                >
+                  Submit
+                </Button>
               )}
             </>
           ) : (
             // Show Final Submit button if designation is Purchase Team
-            
-            (designation === "Purchase Team" && !mainItems?.form_is_submitted) && (mainItems?.mail_sent_to_purchase_team) && (
+
+            (mainItems?.sap_status == "Failed") && (designation === "Purchase Team" && !mainItems?.form_is_submitted) && (mainItems?.mail_sent_to_purchase_team) && (
               <Button
                 type="button"
                 className="py-2.5"
@@ -673,9 +677,9 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
 
       {
         sendEmailDialog && (
-        <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
-          <Comment_box handleClose={handleClose} Submitbutton={handleEmailToPurchaseTeam} handleComment={setComment} />
-        </div>
+          <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
+            <Comment_box handleClose={handleClose} Submitbutton={handleEmailToPurchaseTeam} handleComment={setComment} />
+          </div>
         )
       }
     </div>
