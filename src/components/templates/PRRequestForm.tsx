@@ -632,7 +632,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                   size={"nextbtnsize"} 
                   onClick={() => { setSendEmailDialog(true) }}>Send Email To Purchase Team</Button>
               )}
-
+              {(mainItems?.sap_status == "Failed") && (
               <Button
                 type="button"
                 className="py-2.5"
@@ -642,9 +642,11 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
               >
                 Submit
               </Button>
+              )}
             </>
           ) : (
             // Show Final Submit button if designation is Purchase Team
+            
             (designation === "Purchase Team" && !mainItems?.form_is_submitted) && (mainItems?.mail_sent_to_purchase_team) && (
               <Button
                 type="button"
