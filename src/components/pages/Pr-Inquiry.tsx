@@ -76,7 +76,7 @@ export type ProductHistory = {
     product_name: string,
     price: number,
     final_price: number,
-    qty: number
+    quantity: number
 }
 
 const PrInquiryPage = async ({ refno }: Props) => {
