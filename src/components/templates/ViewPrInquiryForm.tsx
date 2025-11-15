@@ -10,7 +10,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import Cookies from 'js-cookie'
-import { purchaseInquiryDropdown, TableData, TPRInquiry,ProductHistory } from '../pages/Pr-Inquiry'
+import { purchaseInquiryDropdown, TableData, TPRInquiry, ProductHistory } from '../pages/Pr-Inquiry'
 import Comment_box from '../molecules/CommentBox'
 import { Value } from '@radix-ui/react-select'
 import { useRouter } from 'next/navigation'
@@ -28,7 +28,7 @@ interface Props {
   companyDropdown: { name: string, description: string }[]
   purchaseTypeDropdown: { name: string, purchase_requisition_type_name: string, description: string }[]
   AllcompanyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
-  productHistory:ProductHistory[]
+  productHistory: ProductHistory[]
 }
 
 
@@ -41,7 +41,7 @@ type ProductNameDropdown = {
 }
 const currentDate = new Date();
 
-const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purchaseTypeDropdown, AllcompanyDropdown,productHistory }: Props) => {
+const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purchaseTypeDropdown, AllcompanyDropdown, productHistory }: Props) => {
   const user = Cookies.get("user_id");
   const [formData, setFormData] = useState<TPRInquiry | null>(PRInquiryData ?? null);
   const [singleTableRow, setSingleTableRow] = useState<TableData | null>(null);
@@ -84,7 +84,14 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
     }
   }, [tableData]);
 
-
+  const formatDate = (dateStr: string | null | undefined) => {
+    if (!dateStr) return "-";
+    const cleanDate = dateStr.trim().split(" ")[0];
+    if (!cleanDate) return "-";
+    const [year, month, day] = cleanDate.split("-");
+    if (!year || !month || !day) return "-";
+    return `${day}-${month}-${year}`;
+  };
 
   const handleSelectChange = (value: any, name: string, isTable: boolean) => {
     if (isTable) {
@@ -258,7 +265,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
   console.log(PRInquiryData)
   console.log(productNameDropdown, "this is dropdown");
 
-  console.log(productHistroytableData,"this is table")
+  console.log(productHistroytableData, "this is table")
 
   return (
     <div className="flex flex-col bg-white rounded-lg p-2 max-h-[90vh] w-full">
@@ -539,7 +546,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
           <Table className="max-h-40">
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                <TableHead className="w-[100px]">Cart Id</TableHead>
+                <TableHead className="text-center">Sr.No</TableHead>
+                <TableHead className="text-center">Cart Id</TableHead>
                 <TableHead className="text-center">User</TableHead>
                 <TableHead className="text-center">Cart Date</TableHead>
                 <TableHead className="text-center">Purchase Requisition Form</TableHead>
@@ -553,16 +561,17 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
             <TableBody className="text-center">
               {productHistroytableData?.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell >{item?.cart_id}</TableCell>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{item?.cart_id}</TableCell>
                   <TableCell className='text-center'>{item?.user}</TableCell>
-                  <TableCell>{item?.cart_date}</TableCell>
+                  <TableCell>{formatDate(item?.cart_date)}</TableCell>
                   <TableCell>{item?.purchase_requisition_form}</TableCell>
                   <TableCell>{item?.product_name}</TableCell>
                   <TableCell>{item?.price}</TableCell>
                   <TableCell>{item?.final_price}</TableCell>
                   <TableCell>{item?.qty}</TableCell>
                   <TableCell>
-                    <Button className='bg-blue-400 hover:bg-blue-400' onClick={()=>{router.push(`/product-history?cart_id=${refno}&product_name=${item?.product_name}`)}}>View</Button>
+                    <Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { router.push(`/product-history?cart_id=${refno}&product_name=${item?.product_name}`) }}>View</Button>
                   </TableCell>
                 </TableRow>
               ))}
