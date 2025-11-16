@@ -39,8 +39,9 @@ export const sidebarMenu: SidebarItem[] = [
     // href: "/create-rfq",
     children: [
       { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Create RFQ", href: "/create-rfq" },
-      { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Shipment Status", href: "/shipment-status-dashboard" },
-      { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Service Bill", href: "/service-bill-dashboard" },
+      //{ logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Shipment Status", href: "/view-shipment-status" },
+      { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Shipment Status", href: "/shipment-dashboard" },
+      { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Service Bill", href: "/view-service-bill" },
     ],
   },
   {
@@ -391,6 +392,12 @@ export const QASideBarMenu: SidebarItem[] = [
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "QMS Form List",
     href:"/all-qms-forms",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "ASL",
+    href:"/view-asl",
     children: []
   },
 ];
