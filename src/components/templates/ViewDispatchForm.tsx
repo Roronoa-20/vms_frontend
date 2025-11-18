@@ -18,6 +18,7 @@ import Link from 'next/link'
 import { updateQueryParam } from './PRRequestForm'
 import PopUp from '../molecules/PopUp'
 import { ApiError } from 'next/dist/server/api-utils'
+import Image from 'next/image'
 
 interface TPoDropdown{
     name:string
@@ -326,8 +327,34 @@ const ViewDispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
     }
   }
 
+ const downloadHexImage = () => {
+  const hex = DispatchDetails?.hex_qr_code;
+
+  if (!hex) {
+    console.error("QR code hex data is missing");
+    return;
+  }
+
+  const bytes = new Uint8Array(
+    hex.match(/.{1,2}/g)!.map((byte:string) => parseInt(byte, 16))
+  );
+
+  const blob = new Blob([bytes], { type: "image/png" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "qr_code.png";
+  a.click();
+
+  URL.revokeObjectURL(url);
+};
+
+
+
+
   console.log(vehicalForm, "this is vehical form Data")
-  console.log(Vehicaltable, "this is vehical table Data")
+  console.log(DispatchDetails, "this is dispatch Details")
       
   return (
     <>
@@ -440,6 +467,17 @@ const ViewDispatchForm = ({DispatchDetails,refno,StateAndPlant}:Props) => {
           // <Input placeholder="" type='file' name='user' onChange={(e)=>{setFormData((prev:any)=>({...prev,test_certificates_attachment:e.target.files?.[0]}))}} />
           "NA"
           }
+        </div>
+        {/* <div>
+          {
+            DispatchDetails?.qr_code_image &&
+            <img src={process.env.NEXT_PUBLIC_BACKEND_END + DispatchDetails?.qr_code_image} alt=''
+             style={{ width: "25%", height: "auto", objectFit: "contain" }}
+            />
+          }
+        </div> */}
+        <div className='flex justify-start items-baseline'>
+        <Button onClick={()=>{downloadHexImage()}}>Download QR</Button>
         </div>
         {/* <div className='col-span-1 flex items-end gap-4'>
         <Button className={`bg-blue-400 hover:bg-blue-400 ${DispatchDetails?.dispatch_form_submitted?"hidden":""}`} onClick={()=>{handleAdd()}} >Add</Button>
