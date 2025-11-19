@@ -57,7 +57,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
   const [MaterialCodeDropdown, setMaterialCodeDropdown] = useState<MaterialCode[]>()
   const [PlantCodeDropdown, setPlantCodeDropdown] = useState<Plant[]>()
   const [materialCode, setMaterialCode] = useState<string>("");
-  const [plantCode, setPlantCode] = useState<string>("");
+  const [plantCode, setPlantCode] = useState<string>(plant);
   const [requiredField, setRequiredField] = useState<Record<string, any>>({});
   const [GLAccountDropdown, setGLAccountDropdown] = useState<GLAccountNumber[]>()
   const [GLAccount, setGLAccount] = useState<string>("");
@@ -327,7 +327,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
   const fetchStoreLocationData = async (query?: string): Promise<[]> => {
     console.log(query)
     const baseUrl = API_END_POINTS?.StorageLocationSearchApi;
-    const plant_name = plantCode ?? plant;
+    const plant_name = plantCode;
     const params = new URLSearchParams();
     if (plant_name) params.append("plant_name", plant_name);
     // if (query) params.append("search_term", query);
@@ -421,7 +421,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
 
   useEffect(() => {
     if (plantCode) {
-      fetchStoreLocationData();
+      fetchStoreLocationData(plantCode);
     }
   }, [plantCode, formData?.plant_head]);
 
