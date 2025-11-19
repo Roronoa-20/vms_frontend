@@ -172,10 +172,10 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     const url = `${API_END_POINTS?.fetchPRTableData}?name=${pur_req}`
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
-      console.log(response, "response of table data")
+      console.log(response, "response of table data------------------------------------------")
       setMainItems(response.data.message)
     } else {
-      alert("error");
+      alert("error888888888888888888888888888");
     }
   };
 
