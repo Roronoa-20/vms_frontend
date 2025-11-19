@@ -538,47 +538,49 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
         </div>
       )}
 
-      <div className='pb-4'>
-        <h1 className="border-b-2 sticky top-0 bg-white text-lg font-semibold z-30">
-          Product History
-        </h1>
-        <div className="shadow- bg-[#f6f6f7] mt-4 p-4 rounded-2xl">
-          <Table className="max-h-40">
-            <TableHeader className="text-center">
-              <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                <TableHead className="text-center">Sr.No</TableHead>
-                <TableHead className="text-center">Cart Id</TableHead>
-                <TableHead className="text-center">User</TableHead>
-                <TableHead className="text-center">Cart Date</TableHead>
-                <TableHead className="text-center">Purchase Requisition Form</TableHead>
-                <TableHead className="text-center">Product Name</TableHead>
-                <TableHead className="text-center">Price</TableHead>
-                <TableHead className="text-center">Final Price</TableHead>
-                <TableHead className="text-center">Quantity</TableHead>
-                <TableHead className="text-center">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="text-center">
-              {productHistroytableData?.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{item?.cart_id}</TableCell>
-                  <TableCell className='text-center'>{item?.user}</TableCell>
-                  <TableCell>{formatDate(item?.cart_date)}</TableCell>
-                  <TableCell>{item?.purchase_requisition_form}</TableCell>
-                  <TableCell>{item?.product_name}</TableCell>
-                  <TableCell>{item?.price}</TableCell>
-                  <TableCell>{item?.final_price}</TableCell>
-                  <TableCell>{item?.quantity}</TableCell>
-                  <TableCell>
-                    <Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { router.push(`/product-history?cart_id=${refno}&product_name=${item?.product_name}`) }}>View</Button>
-                  </TableCell>
+      {designation !== "Enquirer" && (
+        <div className='pb-4'>
+          <h1 className="border-b-2 sticky top-0 bg-white text-lg font-semibold z-30">
+            Product History
+          </h1>
+          <div className="shadow- bg-[#f6f6f7] mt-4 p-4 rounded-2xl">
+            <Table className="max-h-40">
+              <TableHeader className="text-center">
+                <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
+                  <TableHead className="text-center">Sr.No</TableHead>
+                  <TableHead className="text-center">Cart Id</TableHead>
+                  <TableHead className="text-center">User</TableHead>
+                  <TableHead className="text-center">Cart Date</TableHead>
+                  <TableHead className="text-center">Purchase Requisition Form</TableHead>
+                  <TableHead className="text-center">Product Name</TableHead>
+                  <TableHead className="text-center">Price</TableHead>
+                  <TableHead className="text-center">Final Price</TableHead>
+                  <TableHead className="text-center">Quantity</TableHead>
+                  <TableHead className="text-center">Action</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody className="text-center">
+                {productHistroytableData?.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{item?.cart_id}</TableCell>
+                    <TableCell className='text-center'>{item?.user}</TableCell>
+                    <TableCell>{formatDate(item?.cart_date)}</TableCell>
+                    <TableCell>{item?.purchase_requisition_form}</TableCell>
+                    <TableCell>{item?.product_name}</TableCell>
+                    <TableCell>{item?.price}</TableCell>
+                    <TableCell>{item?.final_price}</TableCell>
+                    <TableCell>{item?.quantity}</TableCell>
+                    <TableCell>
+                      <Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { router.push(`/product-history?cart_id=${refno}&product_name=${item?.product_name}`) }}>View</Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
-      </div>
+      )}
 
       {isDialog &&
         <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">

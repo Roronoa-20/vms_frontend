@@ -275,7 +275,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                             <Link href={`/pr-request?cart_id=${item?.name}`}>
                               <button
                                 title="Raise PR"
-                                className="py-2 px-4 text-white rounded-[16px] bg-[#5291CD] hover:bg-white hover:text-black rounded-[16px]"
+                                className="py-2 px-4 text-white bg-[#5291CD] hover:bg-white hover:text-black rounded-[16px]"
                               >
                                 PR
                               </button>
