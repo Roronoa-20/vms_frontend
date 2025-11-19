@@ -330,7 +330,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
     const plant_name = plantCode ?? plant;
     const params = new URLSearchParams();
     if (plant_name) params.append("plant_name", plant_name);
-    if (query) params.append("search_term", query);
+    // if (query) params.append("search_term", query);
     const url = `${baseUrl}?${params.toString()}`;
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
@@ -444,7 +444,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
     if (storeLocation) {
       fetchStoreLocationData(storeLocation);
     }
-  }, [plantCode, GLAccount, CostCenter, ValuationArea, MaterialGroup]);
+  }, [plantCode, GLAccount, CostCenter, ValuationArea, MaterialGroup, storeLocation]);
 
   const renderInput = (name: string, label: string, type = 'text', inputProps: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
     <div className="col-span-1">
@@ -536,6 +536,8 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
       console.log("Unexpected error:", error);
     }
   };
+
+  console.log(formData?.store_location_head,"_________")
 
   return (
     <PopUp headerText='Purchase Request Items' classname='overflow-y-scroll md:max-w-[1000px] md:max-h-[600px]' handleClose={onClose} isSubmit={true} Submitbutton={handleSubmit} disableSubmit={isAssetValid === false}
