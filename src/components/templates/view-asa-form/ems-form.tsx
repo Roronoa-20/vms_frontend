@@ -156,7 +156,7 @@ export default function Environmental_Management_System() {
         </div>
 
         {/* Next Button */}
-        <div className="space-x-4 flex justify-end">
+        {/* <div className="space-x-4 flex justify-end">
           <Button
             className="py-2.5"
             variant="backbtn"
@@ -173,7 +173,7 @@ export default function Environmental_Management_System() {
           >
             Next
           </Button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

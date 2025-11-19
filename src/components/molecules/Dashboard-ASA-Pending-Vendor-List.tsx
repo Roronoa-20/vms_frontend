@@ -10,6 +10,8 @@ import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "./Pagination";
+import Cookies from "js-cookie";
+
 
 type Props = {
     dashboardTableData: ASAFormResponse;
@@ -36,11 +38,9 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
     const [table, setTable] = useState<ASAForm[]>(dashboardTableData?.pending_asa_vendors || []);
     const [selectedCompany, setSelectedCompany] = useState<string>("")
     const [search, setSearch] = useState<string>("");
-
-    const [totalCount, setTotalCount] = useState<number>(dashboardTableData?.total_count || 0);
-    const [recordPerPage, setRecordPerPage] = useState<number>(dashboardTableData?.page_length || 5);
+    const [total_event_list, settotalEventList] = useState(0);
+    const [record_per_page, setRecordPerPage] = useState<number>(5);
     const [currentPage, setCurrentPage] = useState<number>(1);
-
     const debouncedSearchName = useDebounce(search, 300);
 
     useEffect(() => {
@@ -52,24 +52,19 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
         setSearch(e.target.value);
     };
 
-    const fetchTable = async () => {
-        const params = new URLSearchParams({
-            page_no: String(currentPage),
-            page_length: String(recordPerPage)
-        });
-        if (debouncedSearchName.trim()) {
-            params.append("vendor_name", debouncedSearchName.trim());
-        }
-        const url = `${API_END_POINTS.asavendorListdashboard}?${params.toString()}`;
-        const res: AxiosResponse = await requestWrapper({ url, method: "GET" });
 
-        if (res?.status === 200 && res.data?.status === "success") {
-            console.log("ASA Table Data--->", res.data);
-            setTable(res.data.data || []);
-            setTotalCount(res.data.total_count || 0);
-            setRecordPerPage(res.data.page_length || 5);
+    const fetchTable = async () => {
+        const dashboardASAPendingVendorTableDataApi: AxiosResponse = await requestWrapper({
+            url: `${API_END_POINTS?.asapendingVendorList}?vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
+            method: "GET",
+        });
+        if (dashboardASAPendingVendorTableDataApi?.status == 200) {
+            setTable(dashboardASAPendingVendorTableDataApi?.data?.message?.pending_vendors);
+            settotalEventList(dashboardASAPendingVendorTableDataApi?.data?.message?.overall_count)
+            setRecordPerPage(5);
         }
     };
+
     const sendReminderEmail = async (name: string) => {
         try {
             const res: AxiosResponse = await requestWrapper({
@@ -146,7 +141,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
                         {table.length > 0 ? (
                             table.map((item, index) => (
                                 <TableRow key={item.name}>
-                                    <TableCell>{(currentPage - 1) * recordPerPage + index + 1}</TableCell>
+                                    <TableCell>{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                                     <TableCell>{item.name}</TableCell>
                                     <TableCell>{item.vendor_name}</TableCell>
                                     <TableCell>{item.office_email_primary}</TableCell>
@@ -155,7 +150,9 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
                                     <TableCell className="text-center">{formatDate(item?.registered_date)}</TableCell>
                                     <TableCell className="text-center">
                                         <Button
-                                            className="bg-blue-400 text-white hover:bg-white hover:text-black"
+                                            className="py-2.5 rounded-[20px] text-white hover:bg-white hover:border hover:border-[#5291CD] hover:text-black"
+                                            variant={"nextbtn"}
+                                            size={"nextbtnsize"}
                                             onClick={() => {
                                                 if (item?.name) {
                                                     sendReminderEmail(item.name);
@@ -179,9 +176,9 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
             </div>
             <Pagination
                 currentPage={currentPage}
-                record_per_page={recordPerPage}
+                record_per_page={record_per_page}
                 setCurrentPage={setCurrentPage}
-                total_event_list={totalCount}
+                total_event_list={total_event_list}
             />
         </>
     );

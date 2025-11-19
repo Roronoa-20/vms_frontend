@@ -40,7 +40,7 @@ export type ASAForm = {
     environmental_management_certification?: string;
     regular_audits_conducted?: string;
     energy_consumption_tracking?: string;
-    total_energy_consumed?: number;
+    total_energy_consumed?: string;
     company_track_greenhouse_gas?: string;
     scope_wise_chg_emission?: string;
     consume_renewable_energy?: string;
@@ -133,6 +133,8 @@ export type ASAForm = {
     details_7?: string;
     vendor_name?: string;
     creation?: string,
+    form_is_submitted?: boolean | undefined | number,
+    verify_by_asa_team?: boolean | undefined | number,
 };
 
 export type TasaformDetail = {

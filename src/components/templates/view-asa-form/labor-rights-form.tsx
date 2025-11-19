@@ -235,7 +235,7 @@ export default function Labor_Rights_And_Working_Conditions() {
                         onFileChange={handleFileChange}
                         disabled={true}
                     />
-                    <div className="space-x-4 flex justify-end">
+                    {/* <div className="space-x-4 flex justify-end">
                         <Button
                             className="py-2.5"
                             variant="backbtn"
@@ -252,7 +252,7 @@ export default function Labor_Rights_And_Working_Conditions() {
                         >
                             Next
                         </Button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>

@@ -82,7 +82,7 @@ const Dashboard = async () => {
   });
   const dashboardRejectedVendorTableData: DashboardTableType["rejected_vendor_onboarding"] =
     dashboardRejectedVendorTableDataApi?.status == 200 ? dashboardRejectedVendorTableDataApi?.data?.message : "";
-  
+
   const dropdownUrl = API_END_POINTS?.vendorRegistrationDropdown;
   const dropDownApi: AxiosResponse = await requestWrapper({
     url: dropdownUrl,
@@ -104,13 +104,13 @@ const Dashboard = async () => {
       cookie: cookieHeaderString
     }
   });
-  console.log("YYYYYYYYY---->",RegisteredByApi)
+  console.log("YYYYYYYYY---->", RegisteredByApi)
 
   const RegisteredByData: TuserRegistrationDropdown["message"]["data"] =
     RegisteredByApi?.status == 200 ? RegisteredByApi?.data?.message : "";
   const filterregisteredby = RegisteredByData?.users_list
 
-  console.log("YYYYYYYYY---->",RegisteredByData)
+  console.log("YYYYYYYYY---->", RegisteredByData)
 
 
   const prInquiryDashboardUrl = API_END_POINTS?.prInquiryDashboardTable;
@@ -133,7 +133,7 @@ const Dashboard = async () => {
   const rfqData: RFQTable = rfqApi?.status == 200 ? rfqApi?.data?.message : "";
   console.log(rfqData, "this is rfqData");
 
-// ASA API's
+  // ASA API's
   const dashboardASAFormTableDataApi: AxiosResponse = await requestWrapper({
     url: API_END_POINTS?.asavendorListdashboard,
     method: "GET",
@@ -144,15 +144,15 @@ const Dashboard = async () => {
   const dashboardASAFormTableData: DashboardTableType["asa_form_data"] =
     dashboardASAFormTableDataApi?.status == 200 ? dashboardASAFormTableDataApi?.data?.message : "";
 
-  const dashboardPendingASAFormTableDataApi: AxiosResponse = await requestWrapper({
-    url: API_END_POINTS?.asapendingVendorcount,
-    method: "GET",
-    headers: {
-      cookie: cookieHeaderString
-    }
-  });
-  const dashboardPendingASAFormTableData: DashboardTableType["asa_form_data"] =
-    dashboardPendingASAFormTableDataApi?.status == 200 ? dashboardPendingASAFormTableDataApi?.data?.message : "";
+  // const dashboardPendingASAFormTableDataApi: AxiosResponse = await requestWrapper({
+  //   url: API_END_POINTS?.asapendingVendorcount,
+  //   method: "GET",
+  //   headers: {
+  //     cookie: cookieHeaderString
+  //   }
+  // });
+  // const dashboardPendingASAFormTableData: DashboardTableType["asa_form_data"] =
+  //   dashboardPendingASAFormTableDataApi?.status == 200 ? dashboardPendingASAFormTableDataApi?.data?.message : "";
 
   const dashboardASAPendingVendorListTableDataApi: AxiosResponse = await requestWrapper({
     url: API_END_POINTS?.asapendingVendorList,
@@ -161,18 +161,18 @@ const Dashboard = async () => {
       cookie: cookieHeaderString
     }
   });
-  const dashboardASAPendingVendorListTableData: DashboardTableType["asa_form_data"] = 
-  dashboardASAPendingVendorListTableDataApi?.status == 200 ? dashboardASAPendingVendorListTableDataApi?.data?.message : "";
+  const dashboardASAPendingVendorListTableData: DashboardTableType["asa_form_data"] =
+    dashboardASAPendingVendorListTableDataApi?.status == 200 ? dashboardASAPendingVendorListTableDataApi?.data?.message : "";
 
-  const ASAdashboardOnboardedVendorCountTableDataApi: AxiosResponse = await requestWrapper({
-    url: API_END_POINTS?.asaonboardedvendorcount,
-    method: "GET",
-    headers: {
-      cookie: cookieHeaderString
-    }
-  });
-  const ASAdashboardOnboardedVendorcountTableData: DashboardTableType["asa_form_data"] = 
-  ASAdashboardOnboardedVendorCountTableDataApi?.status == 200 ? ASAdashboardOnboardedVendorCountTableDataApi?.data?.message : "";
+  // const ASAdashboardOnboardedVendorCountTableDataApi: AxiosResponse = await requestWrapper({
+  //   url: API_END_POINTS?.asaonboardedvendorlist,
+  //   method: "GET",
+  //   headers: {
+  //     cookie: cookieHeaderString
+  //   }
+  // });
+  // const ASAdashboardOnboardedVendorcountTableData: DashboardTableType["asa_form_data"] =
+  //   ASAdashboardOnboardedVendorCountTableDataApi?.status == 200 ? ASAdashboardOnboardedVendorCountTableDataApi?.data?.message : "";
 
   const ASAdashboardOnboardedVendorListTableDataApi: AxiosResponse = await requestWrapper({
     url: API_END_POINTS?.asaonboardedvendorlist,
@@ -181,8 +181,8 @@ const Dashboard = async () => {
       cookie: cookieHeaderString
     }
   });
-  const ASAdashboardOnboardedVendorListTableData: DashboardTableType["asa_form_data"] = 
-  ASAdashboardOnboardedVendorListTableDataApi?.status == 200 ? ASAdashboardOnboardedVendorListTableDataApi?.data?.message : "";
+  const ASAdashboardOnboardedVendorListTableData: DashboardTableType["asa_form_data"] =
+    ASAdashboardOnboardedVendorListTableDataApi?.status == 200 ? ASAdashboardOnboardedVendorListTableDataApi?.data?.message : "";
 
   // SAP error
   const dashboardSAPErrorTable: AxiosResponse = await requestWrapper({
@@ -196,49 +196,50 @@ const Dashboard = async () => {
   const sapErrorDashboardData = dashboardSAPErrorTable?.status == 200 ? dashboardSAPErrorTable?.data?.message?.sap_error_vendor_onboarding : ""
 
 
-  const dashboardPendingVendorAccounts:AxiosResponse = await requestWrapper({
-    url:API_END_POINTS?.dashboardPendingVendorsAccounts,
-    method:"GET",
-    headers:{
+  const dashboardPendingVendorAccounts: AxiosResponse = await requestWrapper({
+    url: API_END_POINTS?.dashboardPendingVendorsAccounts,
+    method: "GET",
+    headers: {
       cookie: cookieHeaderString
     }
   })
 
-  const dashboardOnboardedVendorAccounts:AxiosResponse = await requestWrapper({
-    url:API_END_POINTS?.dashboardOnboardedVendorsAccounts,
-    method:"GET",
-    headers:{
+  const dashboardOnboardedVendorAccounts: AxiosResponse = await requestWrapper({
+    url: API_END_POINTS?.dashboardOnboardedVendorsAccounts,
+    method: "GET",
+    headers: {
       cookie: cookieHeaderString
     }
   })
-  const dashboardRejectedVendorAccounts:AxiosResponse = await requestWrapper({
-    url:API_END_POINTS?.dashboardRejectedVendorsAccounts,
-    method:"GET",
-    headers:{
+  const dashboardRejectedVendorAccounts: AxiosResponse = await requestWrapper({
+    url: API_END_POINTS?.dashboardRejectedVendorsAccounts,
+    method: "GET",
+    headers: {
       cookie: cookieHeaderString
     }
   })
-  const dashboardSapErrorAccounts:AxiosResponse = await requestWrapper({
-    url:API_END_POINTS?.dashboardSapErrorAcounts,
-    method:"GET",
-    headers:{
+  const dashboardSapErrorAccounts: AxiosResponse = await requestWrapper({
+    url: API_END_POINTS?.dashboardSapErrorAcounts,
+    method: "GET",
+    headers: {
       cookie: cookieHeaderString
     }
   })
 
-  const dashboardAccountsPending = dashboardPendingVendorAccounts?.status == 200?dashboardPendingVendorAccounts?.data?.message : ""
-  const dashboardAccountsOnboarded = dashboardOnboardedVendorAccounts?.status == 200?dashboardOnboardedVendorAccounts?.data?.message : ""
-  const dashboardAccountsRejected = dashboardRejectedVendorAccounts?.status == 200?dashboardRejectedVendorAccounts?.data?.message : ""
-  const dashboardAccountsSapErrors = dashboardSapErrorAccounts?.status == 200?dashboardSapErrorAccounts?.data?.message : ""
+  const dashboardAccountsPending = dashboardPendingVendorAccounts?.status == 200 ? dashboardPendingVendorAccounts?.data?.message : ""
+  const dashboardAccountsOnboarded = dashboardOnboardedVendorAccounts?.status == 200 ? dashboardOnboardedVendorAccounts?.data?.message : ""
+  const dashboardAccountsRejected = dashboardRejectedVendorAccounts?.status == 200 ? dashboardRejectedVendorAccounts?.data?.message : ""
+  const dashboardAccountsSapErrors = dashboardSapErrorAccounts?.status == 200 ? dashboardSapErrorAccounts?.data?.message : ""
 
-console.log(filterregisteredby,"prData")
+  console.log(filterregisteredby, "prData");
+
   return (
     <div className="p-4">
       {/* Cards */}
       <DashboardCardCounter
         cardData={CardData}
         companyDropdown={companyDropdown}
-        filterregisteredby={filterregisteredby} 
+        filterregisteredby={filterregisteredby}
         dashboardPOTableData={dashboardPOTableData}
         // dashboardDispatchVendorTableData={dashboardTotalVendorTableData}
         dashboardTotalVendorTableData={dashboardTotalVendorTableData}
@@ -249,8 +250,8 @@ console.log(filterregisteredby,"prData")
         prData={prData}
         rfqData={rfqData}
         dashboardASAFormTableData={dashboardASAFormTableData}
-        dashboardPendingASAFormTableData={dashboardPendingASAFormTableData}
-        ASAdashboardOnboardedVendorcountTableData={ASAdashboardOnboardedVendorcountTableData}
+        // dashboardPendingASAFormTableData={dashboardPendingASAFormTableData}
+        // ASAdashboardOnboardedVendorcountTableData={ASAdashboardOnboardedVendorcountTableData}
         dashboardASAPendingVendorListTableData={dashboardASAPendingVendorListTableData}
         sapErrorDashboardData={sapErrorDashboardData}
         dashboardAccountsPending={dashboardAccountsPending}

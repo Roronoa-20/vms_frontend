@@ -54,10 +54,10 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
   const handleClose = () => {
     setIsVendorCodeDialog(false);
     setSelectedVendorcodes([]);
-  }
+  };
+
   const [isVendorCodeDialog, setIsVendorCodeDialog] = useState<boolean>();
   const [selectedVendorCodes, setSelectedVendorcodes] = useState<ASAForm["company_vendor_codes"]>([]);
-  
 
   const openVendorCodes = (data: any) => {
     setSelectedVendorcodes(data);
@@ -73,7 +73,6 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const user = Cookies?.get("user_id");
-  console.log(user, "this is user");
 
   const debouncedSearchName = useDebounce(search, 300);
 
@@ -84,20 +83,31 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
 
   const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    console.log(value, "this is search name")
     setSearch(value);
   }
 
   const fetchTable = async () => {
     const dashboardASAOnboardedVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.asaonboardedvendorlist}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
+      url: `${API_END_POINTS?.asaonboardedvendorlist}?vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
       method: "GET",
     });
     if (dashboardASAOnboardedVendorTableDataApi?.status == 200) {
       setTable(dashboardASAOnboardedVendorTableDataApi?.data?.message?.approved_vendors);
-      settotalEventList(dashboardASAOnboardedVendorTableDataApi?.data?.message?.total_count)
+      settotalEventList(dashboardASAOnboardedVendorTableDataApi?.data?.message?.overall_count)
       setRecordPerPage(5);
     }
+  };
+
+  const formatDate = (dateStr: string | undefined) => {
+    if (!dateStr) return '-';
+    const dateObj = new Date(dateStr);
+    if (isNaN(dateObj.getTime())) return '-';
+
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const year = dateObj.getFullYear();
+
+    return `${day}-${month}-${year}`;
   };
 
   if (!dashboardTableData) { return <div>Loading...</div>; }
@@ -149,10 +159,10 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
                   <TableCell className="text-nowrap">{item?.name}</TableCell>
                   <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
                   <TableCell className="text-nowrap">{item?.office_email_primary}</TableCell>
-                  <TableCell><Button className="bg-blue-400 hover:bg-blue-300" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
+                  <TableCell><Button className="bg-blue-400 hover:bg-blue-300 rounded-[24px] font-semibold" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
                   <TableCell>{item?.country}</TableCell>
-                  <TableCell>{item?.registered_date}</TableCell>
-                  {/* <TableCell>{item?.registered_by}</TableCell> */}
+                  <TableCell>{formatDate(item?.registered_date)}</TableCell>
+                  <TableCell>{item?.register_by_emp}</TableCell>
                 </TableRow>
               ))
             ) : (
@@ -170,11 +180,11 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
         isVendorCodeDialog &&
         <PopUp handleClose={handleClose}>
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-blue-200">
               <TableRow>
-                <TableHead>State</TableHead>
-                <TableHead>GST No</TableHead>
-                <TableHead>Vendor Code</TableHead>
+                <TableHead className="text-black text-center">State</TableHead>
+                <TableHead className="text-black text-center">GST No.</TableHead>
+                <TableHead className="text-black text-center">Vendor Code</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -188,9 +198,9 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
                       key={vIdx}
                       className={vIdx % 2 === 0 ? "bg-gray-100" : ""}
                     >
-                      <TableCell>{vendor.state}</TableCell>
-                      <TableCell>{vendor.gst_no}</TableCell>
-                      <TableCell>{vendor.vendor_code || "-"}</TableCell>
+                      <TableCell className="text-black text-center">{vendor.state}</TableCell>
+                      <TableCell className="text-black text-center">{vendor.gst_no}</TableCell>
+                      <TableCell className="text-black text-center">{vendor.vendor_code || "-"}</TableCell>
                     </TableRow>
                   ))}
                 </React.Fragment>

@@ -158,8 +158,8 @@ const API_END_POINTS = {
   POItemsApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_order.update_vendor_approval_status`,
 
   // ASA Form API:
-  getASAFormSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.get_data_ann_ass_form`,
-  asaformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_annual_ass_form`,
+  getASAFormSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.get_data_ann_asa_form`,
+  asaformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_annual_asa_form`,
   asagrovernanceformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_gov_asa_form`,
   asasocialformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_social_asa_form`,
   asaenvformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_env_asa_form`,
@@ -169,6 +169,7 @@ const API_END_POINTS = {
   asapendingVendorList: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.pending_asa_vendor_list`,
   asasendremindermail: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.send_asa_reminder_email`,
   asaonboardedvendorlist: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.approved_vendor_list`,
+  verifyasaform: `${url}/api/method/vms.APIs.assessment_apis.asa.verify_asa_form`,
 
   // All Approved Vendors Speicfy Detail API
   allvendorsdetails: `${url}/api/method/vms.APIs.dashboard_api.vendor_brief.get_vendors_with_pagination_next`,

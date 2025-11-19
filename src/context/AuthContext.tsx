@@ -8,11 +8,23 @@ interface AuthContextType {
   name: string | null | undefined;
   userid: string | null | undefined;
   designation?: string | null | undefined;
-  user_email?: string | null | undefined;
   vendorRef?: string | null | undefined;
-  setAuthData: (role: string | null | undefined, name: string | null | undefined, userid: string | null | undefined, VendorRefNo: string | null | undefined, designation?: string | null | undefined) => void;
+  user_email?: string | null | undefined;
+  asaReqd?: number | null;
+
+  setAuthData: (
+    role: string | null | undefined,
+    name: string | null | undefined,
+    userid: string | null | undefined,
+    designation?: string | null | undefined,
+    VendorRefNo?: string | null | undefined,
+    user_email?: string | null | undefined,
+    asaReqd?: number | null
+  ) => void;
+
   clearAuthData: () => void;
 }
+
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -23,6 +35,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [designation, setDesignation] = useState<string | null | undefined>(null);
   const [user_email, setUser_Email] = useState<string | null | undefined>(null);
   const [vendorRef, setvendorRef] = useState<string | null | undefined>(null);
+  const [asaReqd, setAsaReqd] = useState<number | null>(null);
+
   useEffect(() => {
     setcontextfunction();
   }, []);
@@ -34,6 +48,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const savedDesignation = Cookies.get("designation");
     const user_email = Cookies.get("user_id");
     const vendorRef = Cookies.get("VendorRef") ?? null;
+    const savedAsaReqd = Cookies.get("VendorASA");
 
     if (savedRole) setRole(savedRole);
     if (savedName) setName(savedName);
@@ -41,15 +56,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (savedDesignation) setDesignation(savedDesignation);
     if (user_email) setUser_Email(user_email);
     if (vendorRef) setvendorRef(vendorRef);
+    if (savedAsaReqd) setAsaReqd(Number(savedAsaReqd));
   }
 
-  const setAuthData = (newRole: string | null | undefined, newName: string | null | undefined, userid: string | null | undefined, designation?: string | null | undefined, VendorRefNo?: string | null | undefined,  user_email?: string | null | undefined) => {
+  const setAuthData = (newRole: string | null | undefined, newName: string | null | undefined, userid: string | null | undefined, designation?: string | null | undefined, VendorRefNo?: string | null | undefined,  user_email?: string | null | undefined, asaReqd?: number | null) => {
     setRole(newRole);
     setName(newName);
     setUserId(userid);
     if (designation) setDesignation(designation);
     if (VendorRefNo) setvendorRef(VendorRefNo);
     if (user_email) setUser_Email(user_email);
+    if (asaReqd !== undefined) setAsaReqd(asaReqd);
 
   };
 
@@ -60,10 +77,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setDesignation(null);
     setvendorRef(null);
     setUser_Email(null);
+    setAsaReqd(null);
   };
 
   return (
-    <AuthContext.Provider value={{ role, name, userid, designation, vendorRef, user_email, setAuthData, clearAuthData }}>
+    <AuthContext.Provider value={{ role, name, userid, designation, vendorRef, user_email, asaReqd, setAuthData, clearAuthData }}>
       {children}
     </AuthContext.Provider>
   );

@@ -10,7 +10,9 @@ export default function General_Disclosure_Form() {
     const router = useRouter();
     const params = useSearchParams();
     const vmsRefNo = params.get("vms_ref_no") || "";
-    const { generalDisclosure, updateGeneralDisclosure, submitForm, refreshFormData, updateCompanyInfo } = useASAForm();
+    const { generalDisclosure, updateGeneralDisclosure, submitForm, refreshFormData, updateCompanyInfo, asaFormSubmitData } = useASAForm();
+    const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+
     console.log("General Disclosure Form Data:", generalDisclosure);
 
     const handleSelectionChange = (name: string, selection: "Yes" | "No" | "NA" | "") => {
@@ -43,6 +45,13 @@ export default function General_Disclosure_Form() {
         });
     };
 
+    const isValid = Object.values(generalDisclosure).every((item) => {
+        if (!item.selection) return false;
+        if (item.selection === "Yes" && !item.comment.trim()) return false;
+        return true;
+    });
+
+
     const handleSubmit = async () => {
         await submitForm();
         refreshFormData();
@@ -70,6 +79,8 @@ export default function General_Disclosure_Form() {
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         customYesInputType="date"
+                        required={true}
+                        disabled={isverified === 1}
                     />
 
                     <YesNoNA
@@ -79,6 +90,8 @@ export default function General_Disclosure_Form() {
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
+                        required={true}
+                        disabled={isverified === 1}
                     />
 
                     <YesNoNA
@@ -87,27 +100,32 @@ export default function General_Disclosure_Form() {
                         value={generalDisclosure.plans_for_recycle_materials}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
+                        required={true}
                         onFileChange={handleFileChange}
+                        disabled={isverified === 1}
                     />
 
-                    <div className="flex justify-end gap-4">
-                        <Button
-                            className="py-2.5"
-                            variant="backbtn"
-                            size="backbtnsize"
-                            onClick={handleBack}
-                        >
-                            Back
-                        </Button>
-                        <Button
-                            className="py-2.5"
-                            variant="nextbtn"
-                            size="nextbtnsize"
-                            onClick={handleSubmit}
-                        >
-                            Submit & Next
-                        </Button>
-                    </div>
+                    {isverified !== 1 && (
+                        <div className="flex justify-end gap-4">
+                            <Button
+                                className="py-2.5"
+                                variant="backbtn"
+                                size="backbtnsize"
+                                onClick={handleBack}
+                            >
+                                Back
+                            </Button>
+                            <Button
+                                className="py-2.5"
+                                variant="nextbtn"
+                                size="nextbtnsize"
+                                onClick={handleSubmit}
+                                disabled={!isValid}
+                            >
+                                Submit & Next
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

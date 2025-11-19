@@ -11,7 +11,15 @@ import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
 export default function BiodiversityForm() {
   const searchParams = useSearchParams();
   const vmsRefNo = searchParams.get("vms_ref_no") || "";
-  const { biodiversityForm, updateBiodiversityForm, submitEnvironmentForm, refreshFormData, updateGreenProductsForm } = useASAForm();
+  const { biodiversityForm, updateBiodiversityForm, submitEnvironmentForm, refreshFormData, updateGreenProductsForm, asaFormSubmitData } = useASAForm();
+  const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+
+
+  const isValid = Object.values(biodiversityForm).every((item) => {
+    if (!item.selection) return false;
+    if (item.selection === "Yes" && !item.comment.trim()) return false;
+    return true;
+  });
 
   const handleSelectionChange = (name: string, selection: "Yes" | "No" | "NA" | "") => {
     updateBiodiversityForm({
@@ -69,25 +77,31 @@ export default function BiodiversityForm() {
             onSelectionChange={handleSelectionChange}
             onCommentChange={handleCommentChange}
             onFileChange={handleFileChange}
+            required={true}
+            disabled={isverified === 1}
           />
-          <div className="space-x-4 flex justify-end">
-            <Button
-              className="py-2.5"
-              variant="backbtn"
-              size="backbtnsize"
-              onClick={handleBack}
-            >
-              Back
-            </Button>
-            <Button
-              className="py-2.5"
-              variant="nextbtn"
-              size="nextbtnsize"
-              onClick={handleSubmit}
-            >
-              Submit & Next
-            </Button>
-          </div>
+          
+          {isverified !== 1 && (
+            <div className="space-x-4 flex justify-end">
+              <Button
+                className="py-2.5"
+                variant="backbtn"
+                size="backbtnsize"
+                onClick={handleBack}
+              >
+                Back
+              </Button>
+              <Button
+                className="py-2.5"
+                variant="nextbtn"
+                size="nextbtnsize"
+                disabled={!isValid}
+                onClick={handleSubmit}
+              >
+                Submit & Next
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
