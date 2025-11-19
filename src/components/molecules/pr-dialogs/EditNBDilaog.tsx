@@ -211,9 +211,9 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
       setMaterialCodeDropdown(response?.data?.message?.data)
       return response.data.message.data
     } else {
-      alert("error");
+      return []
+      alert("error--------------------------------");
     }
-    return []
   };
 
   const fetchPlantCodeData = async (query?: string): Promise<[]> => {
@@ -231,9 +231,10 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
       setPlantCodeDropdown(response?.data?.message?.data)
       return response.data.message.data
     } else {
-      alert("error");
+      setPlantCodeDropdown([])
+      return []
+      alert("error+++++++++++++++++++++++");
     }
-    return []
   }
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -285,7 +286,8 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
       fetchTableData(pur_req);
       onClose();
     } else {
-      alert("error");
+      return
+      alert("error ((((((((((((((((((((((");
     }
   };
 
@@ -317,9 +319,9 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
       setGLAccountDropdown(response?.data?.message?.data)
       return response.data.message.data
     } else {
-      alert("error");
+      return []
+      alert("error)))))))))))))))))))");
     }
-    return []
   };
 
   const fetchStoreLocationData = async (query?: string): Promise<[]> => {
@@ -336,9 +338,9 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
       setStoreLocationDropdown(response?.data?.message?.data)
       return response.data.message.data
     } else {
-      alert("error");
+      return []
+      alert("error<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }
-    return []
   };
 
   const fetchMaterialGroupData = async (query?: string): Promise<[]> => {
@@ -362,9 +364,9 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
       setMaterialGroupDropdown(response?.data?.message?.data)
       return response.data.message.data
     } else {
-      alert("error");
+      return []
+      alert("error????????????????????????");
     }
-    return []
   };
 
   const fetchCostCenterData = async (query?: string): Promise<[]> => {
@@ -387,9 +389,9 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
       setCostCenterDropdown(response?.data?.message?.data)
       return response.data.message.data
     } else {
-      alert("error");
+      return []
+      alert("error%%%%%%%%%%%%%%");
     }
-    return []
   };
 
   const fetchValuationAreaData = async (query?: string): Promise<[]> => {
@@ -412,9 +414,9 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
       setValuationAreaDropdown(response?.data?.message?.data)
       return response.data.message.data
     } else {
-      alert("error");
+      return []
+      alert("error###############");
     }
-    return []
   };
 
   useEffect(() => {
@@ -442,7 +444,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
     if (storeLocation) {
       fetchStoreLocationData(storeLocation);
     }
-  }, [plantCode, GLAccount, CostCenter, ValuationArea, MaterialGroup, storeLocation]);
+  }, [plantCode, GLAccount, CostCenter, ValuationArea, MaterialGroup]);
 
   const renderInput = (name: string, label: string, type = 'text', inputProps: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
     <div className="col-span-1">
