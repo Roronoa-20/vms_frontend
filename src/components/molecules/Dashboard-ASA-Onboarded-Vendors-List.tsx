@@ -64,7 +64,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
     setIsVendorCodeDialog(true);
   };
 
-  const [table, setTable] = useState<ASAForm[]>(dashboardTableData?.approved_vendors || []);
+  const [table, setTable] = useState<ASAForm[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<string>("")
   const [search, setSearch] = useState<string>("");
 
