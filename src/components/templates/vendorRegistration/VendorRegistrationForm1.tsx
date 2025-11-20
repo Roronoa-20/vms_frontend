@@ -32,6 +32,7 @@ interface Props {
   ) => void;
   handleSelectChange: (value: any, name: string) => void;
   setMultiVendor: (data: any) => void;
+  VendorNameCheckApi:(value:string)=>void
 }
 
 const VendorRegistration1 = ({
@@ -42,6 +43,7 @@ const VendorRegistration1 = ({
   handlefieldChange,
   handleSelectChange,
   setMultiVendor,
+  VendorNameCheckApi
 }: Props) => {
   const [newVendorTypeDropdown, setNewVendorTypeDropdown] = useState<OptionType[]>([]);
   const [countryMobileCode, setCountryMobileCode] = useState<string>("");
@@ -151,7 +153,7 @@ const VendorRegistration1 = ({
                 placeholder="Enter Vendor Name"
                 name="vendor_name"
                 value={formData?.vendor_name ?? ""}
-                onChange={handlefieldChange}
+                onChange={(e)=>{handlefieldChange(e),VendorNameCheckApi(e.target.value)}}
               />
             </div>
           </div>
