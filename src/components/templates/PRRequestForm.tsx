@@ -172,10 +172,10 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     const url = `${API_END_POINTS?.fetchPRTableData}?name=${pur_req}`
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
-      console.log(response, "response of table data")
+      console.log(response, "response of table data------------------------------------------")
       setMainItems(response.data.message)
     } else {
-      alert("error");
+      alert("error888888888888888888888888888");
     }
   };
 
@@ -207,7 +207,6 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
   }
 
   const handleEmailToPurchaseTeam = async () => {
-
     const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.prToPurchaseTeam, params: { name: pur_req, enquirer_remarks: comment }, method: "POST" });
     if (response?.status == 200) {
       alert("Email sent to purchase team successfully");
@@ -219,7 +218,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
 
   const handleClose = () => {
     setSendEmailDialog(false);
-  }
+  };
 
   useEffect(() => {
     if (pur_req) {
@@ -228,7 +227,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "")
   }, [pur_req, PRData?.purchase_requisition_type])
 
-  console.log("Main Items0------->", mainItems)
+  console.log("Main ITem Status SAP------------->",mainItems);
 
   return (
     <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
@@ -636,7 +635,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                   size={"nextbtnsize"}
                   onClick={() => { setSendEmailDialog(true) }}>Send Email To Purchase Team</Button>
               )}
-              {(mainItems?.sap_status == "Failed") && (
+              {(mainItems?.sap_status == "Failed" || mainItems?.sap_status == "Pending") && (
                 <Button
                   type="button"
                   className="py-2.5"

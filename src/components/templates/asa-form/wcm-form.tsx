@@ -12,8 +12,16 @@ export default function Water_Consumption_And_Management() {
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
     const router = useRouter();
-    const { wcmform, updateWcmForm, refreshFormData, updateEceForm } = useASAForm();
+    const { wcmform, updateWcmForm, refreshFormData, updateEceForm, asaFormSubmitData } = useASAForm();
+    const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+
     console.log("Energy Consumption and Emission Form Data:", wcmform);
+
+    const isValid = Object.values(wcmform).every((item) => {
+        if (!item.selection) return false;
+        if (item.selection === "Yes" && !item.comment.trim()) return false;
+        return true;
+    });
 
     const base64ToBlob = (base64: string): Blob => {
         const arr = base64.split(",");
@@ -126,6 +134,8 @@ export default function Water_Consumption_And_Management() {
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
+                        required={true}
+                        disabled={isverified === 1}
                     />
 
                     <YesNoNA
@@ -135,6 +145,8 @@ export default function Water_Consumption_And_Management() {
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
+                        required={true}
+                        disabled={isverified === 1}
                     />
 
                     <YesNoNA
@@ -144,6 +156,8 @@ export default function Water_Consumption_And_Management() {
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
+                        required={true}
+                        disabled={isverified === 1}
                     />
 
                     <YesNoNA
@@ -153,6 +167,8 @@ export default function Water_Consumption_And_Management() {
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
+                        required={true}
+                        disabled={isverified === 1}
                     />
 
                     <YesNoNA
@@ -162,6 +178,8 @@ export default function Water_Consumption_And_Management() {
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
+                        required={true}
+                        disabled={isverified === 1}
                     />
 
                     <YesNoNA
@@ -171,6 +189,8 @@ export default function Water_Consumption_And_Management() {
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
+                        required={true}
+                        disabled={isverified === 1}
                     />
 
                     <YesNoNA
@@ -180,25 +200,31 @@ export default function Water_Consumption_And_Management() {
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
+                        required={true}
+                        disabled={isverified === 1}
                     />
-                    <div className="space-x-4 flex justify-end">
-                        <Button
-                            className="py-2.5"
-                            variant="backbtn"
-                            size="backbtnsize"
-                            onClick={handleBack}
-                        >
-                            Back
-                        </Button>
-                        <Button
-                            className="py-2.5"
-                            variant="nextbtn"
-                            size="nextbtnsize"
-                            onClick={handleNext}
-                        >
-                            Next
-                        </Button>
-                    </div>
+                    
+                    {isverified !== 1 && (
+                        <div className="space-x-4 flex justify-end">
+                            <Button
+                                className="py-2.5"
+                                variant="backbtn"
+                                size="backbtnsize"
+                                onClick={handleBack}
+                            >
+                                Back
+                            </Button>
+                            <Button
+                                className="py-2.5"
+                                variant="nextbtn"
+                                size="nextbtnsize"
+                                onClick={handleNext}
+                                disabled={!isValid}
+                            >
+                                Next
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

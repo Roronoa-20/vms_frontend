@@ -101,7 +101,7 @@ export default function General_Disclosure_Form() {
                         disabled={true}
                     />
 
-                    <div className="flex justify-end gap-4">
+                    {/* <div className="flex justify-end gap-4">
                         <Button
                             className="py-2.5"
                             variant="backbtn"
@@ -118,7 +118,7 @@ export default function General_Disclosure_Form() {
                         >
                             Next
                         </Button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>

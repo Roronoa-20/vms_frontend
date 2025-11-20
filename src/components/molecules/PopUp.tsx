@@ -73,7 +73,7 @@ const PopUp = ({ handleClose, children, headerText, isSubmit, Submitbutton, clas
       <div
         ref={!disableRef ? null : DialogRef}
         className={cn(
-          `bg-white rounded-xl border p-4 w-full md:max-w-[700px] md:max-h-[350px] text-black font-light shadow-lg`,
+          `bg-white rounded-xl border p-4 w-full md:max-w-[700px] md:max-h-[500px] text-black font-light shadow-lg`,
           classname
         )}
       >

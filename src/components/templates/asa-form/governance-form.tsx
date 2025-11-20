@@ -1,48 +1,76 @@
 import YesNoNA from "@/src/components/common/YesNoNAwithFile";
 import { Button } from "@/components/ui/button"
-import { Governance } from "@/src/types/asatypes";
+import { Governance, EmployeeSatisfaction } from "@/src/types/asatypes";
 import { useState } from "react";
 import { useASAForm } from "@/src/hooks/useASAForm";
+import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+
+
 
 export default function GovernanceForm() {
 
-   const {governanceform, updateGovernanceForm, submitGoveranceForm, refreshFormData } = useASAForm();
-   console.log("Governance web Form Data:", governanceform);
+   const searchParams = useSearchParams();
+   const vmsRefNo = searchParams.get("vms_ref_no") || "";
+   const { governanceform, updateGovernanceForm, submitGoveranceForm, refreshFormData, updateEmpSatisactionForm, asaFormSubmitData } = useASAForm();
+   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+   const isverified = asaFormSubmitData.verify_by_asa_team || 0;
 
-   const handleSelectionChange = ( name: string, selection: "Yes" | "No" | "NA" | "") => {
-           updateGovernanceForm({
-               ...governanceform,
-               [name]: {
-                   ...governanceform[name as keyof Governance],
-                   selection,
-               },
-           });
-       };
-   
-       const handleCommentChange = (name: string, comment: string) => {
-           updateGovernanceForm({
-               ...governanceform,
-               [name]: {
-                   ...governanceform[name as keyof Governance],
-                   comment,
-               },
-           });
-       };
-   
-       const handleFileChange = (name: string, file: File | null) => {
-           updateGovernanceForm({
-               ...governanceform,
-               [name]: {
-                   ...governanceform[name as keyof Governance],
-                   file,
-               },
-           });
-       };
+   console.log("Governance web Form Data:", governanceform);
+   const router = useRouter();
+
+   const isValid = Object.values(governanceform).every((item) => {
+      if (!item.selection) return false;
+      if (item.selection === "Yes" && !item.comment.trim()) return false;
+      return true;
+   });
+
+   const handleSelectionChange = (name: string, selection: "Yes" | "No" | "NA" | "") => {
+      updateGovernanceForm({
+         ...governanceform,
+         [name]: {
+            ...governanceform[name as keyof Governance],
+            selection,
+         },
+      });
+   };
+
+   const handleCommentChange = (name: string, comment: string) => {
+      updateGovernanceForm({
+         ...governanceform,
+         [name]: {
+            ...governanceform[name as keyof Governance],
+            comment,
+         },
+      });
+   };
+
+   const handleFileChange = (name: string, file: File | null) => {
+      updateGovernanceForm({
+         ...governanceform,
+         [name]: {
+            ...governanceform[name as keyof Governance],
+            file,
+         },
+      });
+   };
+
 
    const handleSubmit = async () => {
-        await submitGoveranceForm();
-        refreshFormData();
-    };
+      const success = await submitGoveranceForm();
+      if (success) {
+         setShowSuccessPopup(true);
+      }
+      refreshFormData();
+   };
+
+   const handleBack = useBackNavigation<EmployeeSatisfaction>(
+      "EmpSatisfactionForm",
+      updateEmpSatisactionForm,
+      "employee_satisfaction",
+      vmsRefNo
+   );
 
 
    return (
@@ -59,6 +87,8 @@ export default function GovernanceForm() {
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
+                  required={true}
+                  disabled={isverified === 1}
                />
 
                <YesNoNA
@@ -68,6 +98,8 @@ export default function GovernanceForm() {
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
+                  required={true}
+                  disabled={isverified === 1}
                />
 
                <YesNoNA
@@ -77,6 +109,8 @@ export default function GovernanceForm() {
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
+                  required={true}
+                  disabled={isverified === 1}
                />
 
                <YesNoNA
@@ -86,6 +120,8 @@ export default function GovernanceForm() {
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
+                  required={true}
+                  disabled={isverified === 1}
                />
 
                <YesNoNA
@@ -95,6 +131,8 @@ export default function GovernanceForm() {
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
+                  required={true}
+                  disabled={isverified === 1}
                />
 
                <YesNoNA
@@ -104,6 +142,8 @@ export default function GovernanceForm() {
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
+                  required={true}
+                  disabled={isverified === 1}
                />
 
                <YesNoNA
@@ -113,6 +153,8 @@ export default function GovernanceForm() {
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
+                  required={true}
+                  disabled={isverified === 1}
                />
 
                <YesNoNA
@@ -122,19 +164,52 @@ export default function GovernanceForm() {
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
+                  required={true}
+                  disabled={isverified === 1}
                />
-               <div className="flex justify-end">
+
+               {isverified !== 1 && (
+                  <div className="flex space-x-4 justify-end">
+                     <Button
+                        className="py-2.5"
+                        variant="backbtn"
+                        size="backbtnsize"
+                        onClick={handleBack}
+                     >
+                        Back
+                     </Button>
+                     <Button
+                        className="py-2.5"
+                        variant="nextbtn"
+                        size="nextbtnsize"
+                        disabled={!isValid}
+                        onClick={handleSubmit}
+                     >
+                        Submit
+                     </Button>
+                  </div>
+               )}
+            </div>
+         </div>
+
+         {showSuccessPopup && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+               <div className="bg-white p-6 rounded-xl shadow-xl w-[350px] text-center">
+                  <h2 className="text-xl font-semibold mb-4">
+                     ASA Form Submitted Successfully
+                  </h2>
                   <Button
-                     className="py-2.5"
-                     variant="nextbtn"
-                     size="nextbtnsize"
-                     onClick={handleSubmit}
+                     className="mt-2 py-2.5 hover:bg-white hover:text-black hover:border hover:border-[#5291CD]"
+                     variant={"nextbtn"}
+                     size={"nextbtnsize"}
+                     onClick={() => router.push("/vendor-dashboard")}
                   >
-                     Submit
+                     OK
                   </Button>
                </div>
             </div>
-         </div>
+         )}
+
       </div>
    )
 }

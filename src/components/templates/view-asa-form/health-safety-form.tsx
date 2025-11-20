@@ -30,6 +30,7 @@ export default function Health_And_Safety() {
 
    useEffect(() => {
       const stored = localStorage.getItem("HealthSafetyForm");
+      const extrastored = localStorage.getItem("mention_behavior_base_safety");
       if (stored) {
          const parsed = JSON.parse(stored);
 
@@ -42,6 +43,9 @@ export default function Health_And_Safety() {
          }
          updateHealthSafetyForm(parsed);
          refreshFormData();
+      }
+      if (extrastored) {
+         setMentionBehaviorBaseSafety(extrastored);
       }
    }, []);
 
@@ -191,13 +195,14 @@ export default function Health_And_Safety() {
                      id="mention_behavior_base_safety"
                      name="mention_behavior_base_safety"
                      rows={2}
+                     value={mentionBehaviorBaseSafety}
                      placeholder="Mention behavior-based safety training details if any"
                      className="w-full px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                     onChange={(e) => {
-                        setMentionBehaviorBaseSafety(e.target.value);
-                        localStorage.setItem("mention_behavior_base_safety", e.target.value);
-                     }}
-                     disabled={true}
+                     // onChange={(e) => {
+                     //    setMentionBehaviorBaseSafety(e.target.value);
+                     //    localStorage.setItem("mention_behavior_base_safety", e.target.value);
+                     // }}
+                     readOnly={true}
 
                   />
                </div>
@@ -225,7 +230,7 @@ export default function Health_And_Safety() {
 
                />
 
-               <div className="space-x-4 flex justify-end">
+               {/* <div className="space-x-4 flex justify-end">
                   <Button
                      className="py-2.5"
                      variant="backbtn"
@@ -242,7 +247,7 @@ export default function Health_And_Safety() {
                   >
                      Next
                   </Button>
-               </div>
+               </div> */}
             </div>
          </div>
       </div>

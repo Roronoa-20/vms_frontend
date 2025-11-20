@@ -8,13 +8,23 @@ type FormInputProps = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   label?: string;
+  required?: boolean;
+  disabled?: boolean;
 };
 
-export default function Form_Input({ label, name, value, onChange, placeholder }: FormInputProps) {
+export default function Form_Input({ label, name, value, onChange, placeholder, required = false, disabled }: FormInputProps) {
   return (
     <>
       <div className="mb-3">
-        <Label htmlFor={name} className="font-semibold text-[16px] leading-[19px] text-[#03111F]">{label}</Label>
+        {label && (
+          <Label
+            htmlFor={name}
+            className="font-semibold text-[16px] leading-[19px] text-[#03111F]"
+          >
+            {label}
+            {required && <span className="text-red-600 ml-1">*</span>}
+          </Label>
+        )}
         <Input
           type="text"
           id={name}
@@ -22,8 +32,9 @@ export default function Form_Input({ label, name, value, onChange, placeholder }
           value={value}
           onChange={onChange}
           placeholder={placeholder}
+          disabled={disabled}
           className="w-full border border-gray-300 p-2 mt-2"
-          // className="block w-80 p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500"
+        // className="block w-80 p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500"
         />
       </div>
     </>

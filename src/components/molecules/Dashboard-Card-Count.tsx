@@ -61,9 +61,9 @@ type Props = {
   prData: PurchaseRequisition[];
   rfqData: RFQTable;
   dashboardASAFormTableData: DashboardTableType["asa_form_data"];
-  dashboardPendingASAFormTableData: DashboardTableType["asa_form_data"];
+  // dashboardPendingASAFormTableData: DashboardTableType["asa_form_data"];
   dashboardASAPendingVendorListTableData: DashboardTableType["asa_form_data"];
-  ASAdashboardOnboardedVendorcountTableData: DashboardTableType["asa_form_data"];
+  // ASAdashboardOnboardedVendorcountTableData: DashboardTableType["asa_form_data"];
   sapErrorDashboardData: DashboardTableType["sapErrorDashboardData"];
   dashboardAccountsPending: any;
   dashboardAccountsOnboarded: any;
@@ -89,8 +89,8 @@ const DashboardCards = ({ ...Props }: Props) => {
       {
         name: "Total Onboarded Vendor",
         count:
-          Props.ASAdashboardOnboardedVendorcountTableData
-            ?.approved_vendor_count ?? 0,
+          Props.ASAdashboardOnboardedVendorListTableData
+            ?.overall_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-emerald-800",
         bg_color: "bg-emerald-100",
@@ -106,7 +106,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       },
       {
         name: "Pending ASA Form",
-        count: Props.dashboardPendingASAFormTableData?.pending_asa_count ?? 0,
+        count: Props.dashboardASAPendingVendorListTableData?.overall_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-rose-800",
         bg_color: "bg-rose-100",
@@ -414,12 +414,12 @@ const DashboardCards = ({ ...Props }: Props) => {
                 )}
                 {item.name === "Submitted ASA Form" && (
                   <>
-                    <ASAVendorMonthWiseChart
-                      tableData={Props.dashboardASAFormTableData.data || []}
-                    />
                     <DashboardASAFormTable
                       dashboardTableData={Props.dashboardASAFormTableData}
                       companyDropdown={Props?.companyDropdown}
+                    />
+                    <ASAVendorMonthWiseChart
+                      tableData={Props.dashboardASAFormTableData.data || []}
                     />
                   </>
                 )}

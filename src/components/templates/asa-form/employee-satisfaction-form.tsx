@@ -12,8 +12,16 @@ export default function Employee_Satisfaction() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
-    const { EmpSatisfactionForm, updateEmpSatisactionForm, refreshFormData, submitSocialForm, updateHealthSafetyForm } = useASAForm();
+    const { EmpSatisfactionForm, updateEmpSatisactionForm, refreshFormData, submitSocialForm, updateHealthSafetyForm, asaFormSubmitData } = useASAForm();
+    const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+
     console.log("Emp Satisfaction Form Data:", EmpSatisfactionForm);
+
+    const isValid = Object.values(EmpSatisfactionForm).every((item) => {
+        if (!item.selection) return false;
+        if (item.selection === "Yes" && !item.comment.trim()) return false;
+        return true;
+    });
 
     const handleSelectionChange = (name: string, selection: "Yes" | "No" | "NA" | "") => {
         updateEmpSatisactionForm({
@@ -72,25 +80,31 @@ export default function Employee_Satisfaction() {
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
+                        required={true}
+                        disabled={isverified === 1}
                     />
-                    <div className="space-x-4 flex justify-end">
-                        <Button
-                            className="py-2.5"
-                            variant="backbtn"
-                            size="backbtnsize"
-                            onClick={handleBack}
-                        >
-                            Back
-                        </Button>
-                        <Button
-                            className="py-2.5"
-                            variant="nextbtn"
-                            size="nextbtnsize"
-                            onClick={handleSubmit}
-                        >
-                            Submit & Next
-                        </Button>
-                    </div>
+
+                    {isverified !== 1 && (
+                        <div className="space-x-4 flex justify-end">
+                            <Button
+                                className="py-2.5"
+                                variant="backbtn"
+                                size="backbtnsize"
+                                onClick={handleBack}
+                            >
+                                Back
+                            </Button>
+                            <Button
+                                className="py-2.5"
+                                variant="nextbtn"
+                                size="nextbtnsize"
+                                onClick={handleSubmit}
+                                disabled={!isValid}
+                            >
+                                Submit & Next
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

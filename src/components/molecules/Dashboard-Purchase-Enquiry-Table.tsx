@@ -156,7 +156,9 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                 <TableHead className="text-center text-black whitespace-nowrap">Requestor HOD Status</TableHead>
                 <TableHead className="text-center text-black whitespace-nowrap">Additional Approval Status</TableHead>
                 <TableHead className="text-center text-black whitespace-nowrap">View Cart</TableHead>
-                <TableHead className="text-center text-black whitespace-nowrap">Raise PR</TableHead>
+                {designation === "Enquirer" && (
+                  <TableHead className="text-center text-black whitespace-nowrap">Raise PR</TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody className="text-center text-black">
@@ -234,17 +236,9 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                         </div>
                       </TableCell>
                       <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={url}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View</Button></Link></TableCell>
-                      <TableCell className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show ? "" : "hidden"}`}>
-                        {item?.pr_created ? (
-                          <button
-                            title={designation == "Purchase Team" ? "cannot raise pr" : "Raise PR"}
-                            className={`py-2 px-4 text-white rounded-[16px] bg-[#5291CD] ${designation != "Purchase Team" ? "hover:bg-white hover:text-black" : "cursor-not-allowed"}`}
-                            disabled={designation == "Purchase Team" ? true : false}
-                          >
-                            PR
-                          </button>
-                        ) : (
-                          <Link href={`/pr-request?cart_id=${item?.name}`}>
+                      {/* {designation === "Enquirer" && (
+                        <TableCell className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show ? "" : "hidden"}`}>
+                          {item?.pr_created ? (
                             <button
                               title={designation == "Purchase Team" ? "cannot raise pr" : "Raise PR"}
                               className={`py-2 px-4 text-white rounded-[16px] bg-[#5291CD] ${designation != "Purchase Team" ? "hover:bg-white hover:text-black" : "cursor-not-allowed"}`}
@@ -252,9 +246,43 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                             >
                               PR
                             </button>
-                          </Link>
-                        )}
-                      </TableCell>
+                          ) : (
+                            <Link href={`/pr-request?cart_id=${item?.name}`}>
+                              <button
+                                title={designation == "Purchase Team" ? "cannot raise pr" : "Raise PR"}
+                                className={`py-2 px-4 text-white rounded-[16px] bg-[#5291CD] ${designation != "Purchase Team" ? "hover:bg-white hover:text-black" : "cursor-not-allowed"}`}
+                                disabled={designation == "Purchase Team" ? true : false}
+                              >
+                                PR
+                              </button>
+                            </Link>
+                          )}
+                        </TableCell>
+                      )} */}
+                      {designation === "Enquirer" && (
+                        <TableCell
+                          className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show ? "" : "hidden"}`}
+                        >
+                          {item?.pr_created ? (
+                            <button
+                              title="PR already created"
+                              className="py-2 px-4 text-white rounded-[16px] bg-gray-400 cursor-not-allowed"
+                              disabled
+                            >
+                              PR
+                            </button>
+                          ) : (
+                            <Link href={`/pr-request?cart_id=${item?.name}`}>
+                              <button
+                                title="Raise PR"
+                                className="py-2 px-4 text-white bg-[#5291CD] hover:bg-white hover:text-black rounded-[16px]"
+                              >
+                                PR
+                              </button>
+                            </Link>
+                          )}
+                        </TableCell>
+                      )}
                     </TableRow>
                   )
                 })

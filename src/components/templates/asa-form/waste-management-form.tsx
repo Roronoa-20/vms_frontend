@@ -13,7 +13,14 @@ export default function Waste_Management() {
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
     const router = useRouter();
-    const { wastemanagementForm, updateWasteManagementForm, updateWcmForm, refreshFormData } = useASAForm();
+    const { wastemanagementForm, updateWasteManagementForm, updateWcmForm, refreshFormData, asaFormSubmitData } = useASAForm();
+    const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+
+    const isValid = Object.values(wastemanagementForm).every((item) => {
+        if (!item.selection) return false;
+        if (item.selection === "Yes" && !item.comment.trim()) return false;
+        return true;
+    });
 
     const base64ToBlob = (base64: string): Blob => {
         const arr = base64.split(",");
@@ -125,6 +132,8 @@ export default function Waste_Management() {
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
+                        required={true}
+                        disabled={isverified === 1}
                     />
 
                     <YesNoNA
@@ -134,6 +143,8 @@ export default function Waste_Management() {
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
+                        required={true}
+                        disabled={isverified === 1}
                     />
 
                     <YesNoNA
@@ -142,7 +153,9 @@ export default function Waste_Management() {
                         value={wastemanagementForm.vendor_audits_for_waste_management}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
+                        required={true}
                         onFileChange={handleFileChange}
+                        disabled={isverified === 1}
                     />
 
                     <YesNoNA
@@ -151,7 +164,9 @@ export default function Waste_Management() {
                         value={wastemanagementForm.have_epr_for_waste_management}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
+                        required={true}
                         onFileChange={handleFileChange}
+                        disabled={isverified === 1}
                     />
 
                     <YesNoNA
@@ -160,27 +175,32 @@ export default function Waste_Management() {
                         value={wastemanagementForm.have_goals_to_reduce_waste}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
+                        required={true}
                         onFileChange={handleFileChange}
+                        disabled={isverified === 1}
                     />
 
-                    <div className="space-x-4 flex justify-end">
-                        <Button
-                            className="py-2.5"
-                            variant="backbtn"
-                            size="backbtnsize"
-                            onClick={handleBack}
-                        >
-                            Back
-                        </Button>
-                        <Button
-                            className="py-2.5"
-                            variant="nextbtn"
-                            size="nextbtnsize"
-                            onClick={handleNext}
-                        >
-                            Next
-                        </Button>
-                    </div>
+                    {isverified !== 1 && (
+                        <div className="space-x-4 flex justify-end">
+                            <Button
+                                className="py-2.5"
+                                variant="backbtn"
+                                size="backbtnsize"
+                                onClick={handleBack}
+                            >
+                                Back
+                            </Button>
+                            <Button
+                                className="py-2.5"
+                                variant="nextbtn"
+                                size="nextbtnsize"
+                                onClick={handleNext}
+                                disabled={!isValid}
+                            >
+                                Next
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

@@ -32,12 +32,12 @@ export default function Company_Information_Form() {
         updateCompanyInfo(updatedInfo);
     };
 
-    const handleNext = () => {
-        // console.log("Submitting Company Info and navigating to next tab:", companyInfo);
-        // updateCompanyInfo(companyInfo);
-        // localStorage.setItem("companyInfo", JSON.stringify(companyInfo));
-        router.push(`/view-asa-form?tabtype=general_disclosures_sub&vms_ref_no=${vmsRefNo}`);
-    };
+    // const handleNext = () => {
+    //     // console.log("Submitting Company Info and navigating to next tab:", companyInfo);
+    //     // updateCompanyInfo(companyInfo);
+    //     // localStorage.setItem("companyInfo", JSON.stringify(companyInfo));
+    //     router.push(`/view-asa-form?tabtype=general_disclosures_sub&vms_ref_no=${vmsRefNo}`);
+    // };
 
     return (
         <div className="mt-1 p-2 bg-white rounded-xl shadow-sm border border-gray-200">
@@ -69,7 +69,7 @@ export default function Company_Information_Form() {
                     label="3. Name of the product/products/services supplied/provided to Meril"
                 />
 
-                <div className="flex justify-end">
+                {/* <div className="flex justify-end">
                     <Button
                         className="py-2.5"
                         variant="nextbtn"
@@ -78,7 +78,7 @@ export default function Company_Information_Form() {
                     >
                         Next
                     </Button>
-                </div>
+                </div> */}
             </div>
         </div>
     );

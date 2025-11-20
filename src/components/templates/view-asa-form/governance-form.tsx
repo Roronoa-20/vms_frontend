@@ -10,7 +10,7 @@ export default function GovernanceForm() {
    const router = useRouter();
    const searchParams = useSearchParams();
    const vmsRefNo = searchParams.get("vms_ref_no") || "";
-   const { governanceform, updateGovernanceForm, submitGoveranceForm, refreshFormData } = useASAForm();
+   const { governanceform, updateGovernanceForm, VerifyASAForm, ASAformName, asaFormSubmitData } = useASAForm();
    console.log("Governance web Form Data:", governanceform);
 
    const handleSelectionChange = (name: string, selection: "Yes" | "No" | "NA" | "") => {
@@ -43,18 +43,17 @@ export default function GovernanceForm() {
       });
    };
 
-   // const handleSubmit = async () => {
-   //      await submitGoveranceForm();
-   //      refreshFormData();
-   //  };
-
    const handleBack = () => {
       router.push(`/view-asa-form?tabtype=employee_satisfaction&vms_ref_no=${vmsRefNo}`);
    };
 
-   const handleNext = () => {
-      router.push(`/view-vendor-asa`);
+   const handleNext = async () => {
+      const res = await VerifyASAForm(ASAformName);
+
+
+      console.log("verify result:", res);
    };
+
 
 
    return (
@@ -135,24 +134,26 @@ export default function GovernanceForm() {
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                />
-               <div className="space-x-4 flex justify-end">
-                  <Button
+               {asaFormSubmitData.verify_by_asa_team !== 1 && (
+                  <div className="space-x-4 flex justify-end">
+                     {/* <Button
                      className="py-2.5"
                      variant="backbtn"
                      size="backbtnsize"
                      onClick={handleBack}
                   >
                      Back
-                  </Button>
-                  <Button
-                     className="py-2.5"
-                     variant="nextbtn"
-                     size="nextbtnsize"
-                     onClick={handleNext}
-                  >
-                     Next
-                  </Button>
-               </div>
+                  </Button> */}
+                     <Button
+                        className="py-2.5"
+                        variant="nextbtn"
+                        size="nextbtnsize"
+                        onClick={handleNext}
+                     >
+                        Verify
+                     </Button>
+                  </div>
+               )}
             </div>
          </div>
       </div>

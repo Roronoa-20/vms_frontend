@@ -220,7 +220,7 @@ export default function Energy_Consumption_And_Emission() {
                         disabled={true}
 
                     />
-                    <div className="space-x-4 flex justify-end">
+                    {/* <div className="space-x-4 flex justify-end">
                         <Button
                             className="py-2.5"
                             variant="backbtn"
@@ -237,7 +237,7 @@ export default function Energy_Consumption_And_Emission() {
                         >
                             Next
                         </Button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>
