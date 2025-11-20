@@ -119,7 +119,7 @@ const ViewASAEntry = ({ ASAData }: Props) => {
                                 <TableHead className="text-black text-center">Sr No.</TableHead>
                                 <TableHead className="text-black text-center">Vendor Name</TableHead>
                                 <TableHead className="text-black text-center">Vendor Ref No.</TableHead>
-                                <TableHead className="text-black text-center">Date when Created</TableHead>
+                                <TableHead className="text-black text-center">Form Submitted On</TableHead>
                                 <TableHead className="text-black text-center">View Form</TableHead>
                             </TableRow>
                         </TableHeader>

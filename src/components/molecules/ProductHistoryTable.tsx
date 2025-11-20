@@ -68,29 +68,29 @@ const ProductHistoryTable = ({ tableData, refno, product_name }: Props) => {
         <Table className="max-h-40">
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-              <TableHead className="text-center">Sr. No.</TableHead>
-              <TableHead className="text-center">Cart Id</TableHead>
-              <TableHead className="text-center">User</TableHead>
-              <TableHead className="text-center">Cart Date</TableHead>
-              <TableHead className="text-center">Purchase Requisition Form</TableHead>
-              <TableHead className="text-center">Product Name</TableHead>
-              <TableHead className="text-center">Price</TableHead>
-              <TableHead className="text-center">Final Price</TableHead>
-              <TableHead className="text-center">Quantity</TableHead>
+              <TableHead className="text-black text-center text-nowrap">Sr. No.</TableHead>
+              <TableHead className="text-black text-center text-nowrap">Cart Id</TableHead>
+              <TableHead className="text-black text-center text-nowrap">User</TableHead>
+              <TableHead className="text-black text-center text-nowrap">Cart Date</TableHead>
+              <TableHead className="text-black text-center text-nowrap">Purchase Requisition Form</TableHead>
+              <TableHead className="text-black text-center text-nowrap">Product Name</TableHead>
+              <TableHead className="text-black text-center text-nowrap">Price</TableHead>
+              <TableHead className="text-black text-center text-nowrap">Final Price</TableHead>
+              <TableHead className="text-black text-center text-nowrap">Quantity</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="text-center">
             {productHistroytableData?.map((item, index) => (
               <TableRow key={index}>
-                <TableCell >{index + 1}</TableCell>
-                <TableCell >{item?.cart_id}</TableCell>
-                <TableCell className='text-center'>{item?.user}</TableCell>
-                <TableCell>{formatDate(item?.cart_date)}</TableCell>
-                <TableCell>{item?.purchase_requisition_form}</TableCell>
-                <TableCell>{item?.product_name}</TableCell>
-                <TableCell>{item?.price}</TableCell>
-                <TableCell>{item?.final_price}</TableCell>
-                <TableCell>{item?.quantity}</TableCell>
+                <TableCell className="text-center text-nowrap">{index + 1}</TableCell>
+                <TableCell className="text-center text-nowrap">{item?.cart_id}</TableCell>
+                <TableCell className="text-center text-nowrap">{item?.user}</TableCell>
+                <TableCell className="text-center text-nowrap">{formatDate(item?.cart_date)}</TableCell>
+                <TableCell className="text-center text-nowrap">{item?.purchase_requisition_form}</TableCell>
+                <TableCell className="text-center text-nowrap">{item?.product_name}</TableCell>
+                <TableCell className="text-center text-nowrap">{item?.price}</TableCell>
+                <TableCell className="text-center text-nowrap">{item?.final_price}</TableCell>
+                <TableCell className="text-center text-nowrap">{item?.quantity}</TableCell>
                 {/* <TableCell>
                     <Button className='bg-blue-400 hover:bg-blue-400' onClick={()=>{router.push(`/product-history?cart_id=${refno}&product_name=${item?.product_name}`)}}>View</Button>
                   </TableCell> */}

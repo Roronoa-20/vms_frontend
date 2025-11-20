@@ -117,7 +117,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
               <TableHead className="text-center">Ref No.</TableHead>
               <TableHead className="text-center">Vendor Name</TableHead>
               <TableHead className="text-center">Vendor Ref No</TableHead>
-              <TableHead className="text-center">Created On</TableHead>
+              <TableHead className="text-center">Form Submitted On</TableHead>
               <TableHead className="text-center">View Detials</TableHead>
             </TableRow>
           </TableHeader>

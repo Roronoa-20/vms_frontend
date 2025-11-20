@@ -36,22 +36,24 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
     console.log("Dashboard Pending table ASA---->", dashboardTableData)
 
     const [table, setTable] = useState<ASAForm[]>(dashboardTableData?.pending_asa_vendors || []);
-    const [selectedCompany, setSelectedCompany] = useState<string>("")
+    const [selectedCompany, setSelectedCompany] = useState<string>("");
     const [search, setSearch] = useState<string>("");
     const [total_event_list, settotalEventList] = useState(0);
     const [record_per_page, setRecordPerPage] = useState<number>(5);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const debouncedSearchName = useDebounce(search, 300);
+    const [isCommentOpen, setIsCommentOpen] = useState(false);
+    const [selectedName, setSelectedName] = useState<string>("");
+    const [remarks, setremarks] = useState<string>("");
+
 
     useEffect(() => {
         fetchTable();
     }, [debouncedSearchName, selectedCompany, currentPage])
 
-
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
     };
-
 
     const fetchTable = async () => {
         const dashboardASAPendingVendorTableDataApi: AxiosResponse = await requestWrapper({
@@ -65,19 +67,24 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
         }
     };
 
-    const sendReminderEmail = async (name: string) => {
+    console.log("Register Table--->",table)
+
+    const sendReminderEmail = async () => {
         try {
             const res: AxiosResponse = await requestWrapper({
                 url: API_END_POINTS.asasendremindermail,
                 method: "POST",
                 data: {
-                    name: name,
+                    name: selectedName,
+                    remarks: remarks,
                 },
             });
 
             if (res?.status === 200) {
                 console.log("Email sent successfully", res.data);
                 alert("Reminder email sent!");
+                setIsCommentOpen(false);
+                setremarks("");
             }
         } catch (err) {
             console.error("Error sending email", err);
@@ -133,7 +140,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
                             <TableHead className="text-center">Email Address</TableHead>
                             <TableHead className="text-center">Mobile Number</TableHead>
                             <TableHead className="text-center">Country</TableHead>
-                            <TableHead className="text-center">Created On</TableHead>
+                            <TableHead className="text-center">Register Date</TableHead>
                             <TableHead className="text-center">Send Email</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -154,9 +161,8 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
                                             variant={"nextbtn"}
                                             size={"nextbtnsize"}
                                             onClick={() => {
-                                                if (item?.name) {
-                                                    sendReminderEmail(item.name);
-                                                }
+                                                setSelectedName(item.name);
+                                                setIsCommentOpen(true);
                                             }}
                                         >
                                             Send Email
@@ -180,6 +186,40 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
                 setCurrentPage={setCurrentPage}
                 total_event_list={total_event_list}
             />
+            {isCommentOpen && (
+                <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+                    <div className="bg-white p-5 rounded-xl shadow-xl w-[500px]">
+                        <h2 className="text-lg font-semibold mb-3">Add Remarks</h2>
+
+                        <textarea
+                            className="w-full h-32 border rounded p-2 mb-4"
+                            placeholder="Enter your remarks..."
+                            value={remarks}
+                            onChange={(e) => setremarks(e.target.value)}
+                        />
+
+                        <div className="flex justify-end gap-3">
+                            <Button
+                                className="py-2"
+                                variant={"backbtn"}
+                                size={"backbtnsize"}
+                                onClick={() => setIsCommentOpen(false)}
+                            >
+                                Cancel
+                            </Button>
+
+                            <Button
+                                className="py-2"
+                                variant={"nextbtn"}
+                                size={"nextbtnsize"}
+                                onClick={sendReminderEmail}
+                            >
+                                Send
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 };

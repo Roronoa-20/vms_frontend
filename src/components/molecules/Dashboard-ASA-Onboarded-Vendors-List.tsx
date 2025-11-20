@@ -161,8 +161,8 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
                   <TableCell className="text-nowrap">{item?.office_email_primary}</TableCell>
                   <TableCell><Button className="bg-blue-400 hover:bg-blue-300 rounded-[24px] font-semibold" onClick={() => { openVendorCodes(item?.company_vendor_codes) }}>View</Button></TableCell>
                   <TableCell>{item?.country}</TableCell>
-                  <TableCell>{formatDate(item?.registered_date)}</TableCell>
                   <TableCell>{item?.register_by_emp}</TableCell>
+                  <TableCell>{formatDate(item?.registered_date)}</TableCell>
                 </TableRow>
               ))
             ) : (
@@ -179,34 +179,36 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
       {
         isVendorCodeDialog &&
         <PopUp handleClose={handleClose}>
-          <Table>
-            <TableHeader className="bg-blue-200">
-              <TableRow>
-                <TableHead className="text-black text-center">State</TableHead>
-                <TableHead className="text-black text-center">GST No.</TableHead>
-                <TableHead className="text-black text-center">Vendor Code</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {selectedVendorCodes?.map((company) => (
-                <React.Fragment key={company.company_code}>
-                  <TableRow className="bg-gray-700 hover:bg-gray-700 text-white font-semibold">
-                    <TableCell colSpan={3}>Company Code: {company.company_code}</TableCell>
-                  </TableRow>
-                  {company.vendor_codes.map((vendor, vIdx) => (
-                    <TableRow
-                      key={vIdx}
-                      className={vIdx % 2 === 0 ? "bg-gray-100" : ""}
-                    >
-                      <TableCell className="text-black text-center">{vendor.state}</TableCell>
-                      <TableCell className="text-black text-center">{vendor.gst_no}</TableCell>
-                      <TableCell className="text-black text-center">{vendor.vendor_code || "-"}</TableCell>
+          <div className="max-h-[250px] overflow-y-auto mt-3 pr-2">
+            <Table>
+              <TableHeader className="bg-blue-200">
+                <TableRow>
+                  <TableHead className="text-black text-center">State</TableHead>
+                  <TableHead className="text-black text-center">GST No.</TableHead>
+                  <TableHead className="text-black text-center">Vendor Code</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {selectedVendorCodes?.map((company) => (
+                  <React.Fragment key={company.company_code}>
+                    <TableRow className="bg-gray-700 hover:bg-gray-700 text-white font-semibold">
+                      <TableCell colSpan={3}>Company Code: {company.company_code}</TableCell>
                     </TableRow>
-                  ))}
-                </React.Fragment>
-              ))}
-            </TableBody>
-          </Table>
+                    {company.vendor_codes.map((vendor, vIdx) => (
+                      <TableRow
+                        key={vIdx}
+                        className={vIdx % 2 === 0 ? "bg-gray-100" : ""}
+                      >
+                        <TableCell className="text-black text-center">{vendor.state}</TableCell>
+                        <TableCell className="text-black text-center">{vendor.gst_no}</TableCell>
+                        <TableCell className="text-black text-center">{vendor.vendor_code || "-"}</TableCell>
+                      </TableRow>
+                    ))}
+                  </React.Fragment>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </PopUp>
       }
       <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />

@@ -31,10 +31,6 @@ interface Props {
   productHistory: ProductHistory[]
 }
 
-
-
-
-
 type ProductNameDropdown = {
   name: string,
   product_name: string
@@ -460,7 +456,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
           <Table className="max-h-40">
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                <TableHead className="w-[100px]">Sr No.</TableHead>
+                <TableHead className="w-[100px] text-center">Sr No.</TableHead>
                 <TableHead className="text-center">Is Assest Code ?</TableHead>
                 <TableHead className="text-center">Assest Code</TableHead>
                 <TableHead className="text-center">Product Name</TableHead>
@@ -477,20 +473,20 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
               {tableData?.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
-                  <TableCell className={`flex justify-center`}><Input type='checkbox' onChange={(e) => { handleTableCheckChange(index, e.target.checked) }} disabled={
+                  <TableCell className={`flex justify-center text-nowrap`}><Input type='checkbox' onChange={(e) => { handleTableCheckChange(index, e.target.checked) }} disabled={
                     designation === "Enquirer" ||
                     item?.assest_code !== "" ||
                     PRInquiryData?.purchase_team_acknowledgement === 1 ||
                     PRInquiryData?.asked_to_modify === 1
                   } checked={item?.need_asset_code} className='w-5' /></TableCell>
-                  <TableCell className='text-center'>{item?.assest_code}</TableCell>
-                  <TableCell>
+                  <TableCell className='text-center text-nowrap'>{item?.assest_code}</TableCell>
+                  <TableCell className='text-nowrap'>
                     {/* {item?.product_name} */}
                     <Select
                       disabled
                       value={item?.product_name ?? ""}
                     >
-                      <SelectTrigger className='disabled:opacity-100'>
+                      <SelectTrigger className='text-nowrap disabled:opacity-100'>
                         <SelectValue placeholder="Select" />
                       </SelectTrigger>
                       <SelectContent>
@@ -504,13 +500,13 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
                       </SelectContent>
                     </Select>
                   </TableCell>
-                  <TableCell>{item?.product_price}</TableCell>
-                  <TableCell>{item?.uom}</TableCell>
-                  <TableCell>{item?.lead_time}</TableCell>
-                  <TableCell>{item?.product_quantity}</TableCell>
-                  <TableCell>{item?.user_specifications}</TableCell>
-                  <TableCell><Link href={item?.attachment?.url ?? ""}>{item?.attachment?.file_name}</Link></TableCell>
-                  <TableCell className='flex justify-center'>
+                  <TableCell className='text-nowrap'>{item?.product_price}</TableCell>
+                  <TableCell className='text-nowrap'>{item?.uom}</TableCell>
+                  <TableCell className='text-nowrap'>{item?.lead_time}</TableCell>
+                  <TableCell className='text-nowrap'>{item?.product_quantity}</TableCell>
+                  <TableCell className='text-nowrap'>{item?.user_specifications}</TableCell>
+                  <TableCell className='text-nowrap'><Link href={item?.attachment?.url ?? ""}>{item?.attachment?.file_name}</Link></TableCell>
+                  <TableCell className='text-nowrap flex justify-center'>
                     <Input disabled={PRInquiryData?.purchase_team_approved == Boolean(0) && PRInquiryData?.purchase_team == Boolean(1) ? false : true} value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e) => { handleTableInput(index, e) }} onKeyDown={handleNumberInputKeyDown} inputMode="decimal" pattern="^[0-9]*\.?[0-9]*$" className={`text-center w-28 ${PRInquiryData?.purchase_team_acknowledgement ? "" : "hidden"}`} />
                   </TableCell>
                   {/* <TableCell className='flex justify-center'><Input className='text-center w-28' type='checked' onChange={(e)=>{handleTableCheck(index,e.target.checked)}}/></TableCell> */}
@@ -547,30 +543,30 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
             <Table className="max-h-40">
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                  <TableHead className="text-center">Sr.No</TableHead>
-                  <TableHead className="text-center">Cart Id</TableHead>
-                  <TableHead className="text-center">User</TableHead>
-                  <TableHead className="text-center">Cart Date</TableHead>
-                  <TableHead className="text-center">Purchase Requisition Form</TableHead>
-                  <TableHead className="text-center">Product Name</TableHead>
-                  <TableHead className="text-center">Price</TableHead>
-                  <TableHead className="text-center">Final Price</TableHead>
-                  <TableHead className="text-center">Quantity</TableHead>
-                  <TableHead className="text-center">Action</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">Sr.No</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">Cart Id</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">User</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">Cart Date</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">Purchase Requisition Form</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">Product Name</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">Price</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">Final Price</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">Quantity</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
                 {productHistroytableData?.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{item?.cart_id}</TableCell>
+                    <TableCell className="text-center text-nowrap">{index + 1}</TableCell>
+                    <TableCell className="text-center text-nowrap">{item?.cart_id}</TableCell>
                     <TableCell className='text-center'>{item?.user}</TableCell>
-                    <TableCell>{formatDate(item?.cart_date)}</TableCell>
-                    <TableCell>{item?.purchase_requisition_form}</TableCell>
-                    <TableCell>{item?.product_name}</TableCell>
-                    <TableCell>{item?.price}</TableCell>
-                    <TableCell>{item?.final_price}</TableCell>
-                    <TableCell>{item?.quantity}</TableCell>
+                    <TableCell className="text-center text-nowrap">{formatDate(item?.cart_date)}</TableCell>
+                    <TableCell className="text-center text-nowrap">{item?.purchase_requisition_form}</TableCell>
+                    <TableCell className="text-center text-nowrap">{item?.product_name}</TableCell>
+                    <TableCell className="text-center text-nowrap">{item?.price}</TableCell>
+                    <TableCell className="text-center text-nowrap">{item?.final_price}</TableCell>
+                    <TableCell className="text-center text-nowrap">{item?.quantity}</TableCell>
                     <TableCell>
                       <Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { router.push(`/product-history?cart_id=${refno}&product_name=${item?.product_name}`) }}>View</Button>
                     </TableCell>
