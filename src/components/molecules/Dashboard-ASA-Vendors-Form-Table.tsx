@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/src/components/atoms/table";
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/src/components/atoms/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/src/components/atoms/table";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/src/components/atoms/select";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Input } from "../atoms/input";
@@ -31,14 +31,14 @@ const useDebounce = (value: any, delay: any) => {
 };
 
 const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Props) => {
-  console.log("Dashboard tabe ASA---->",dashboardTableData)
+  console.log("Dashboard tabe ASA---->", dashboardTableData)
 
   const [table, setTable] = useState<ASAForm[]>(dashboardTableData?.data || []);
   const [selectedCompany, setSelectedCompany] = useState<string>("")
   const [search, setSearch] = useState<string>("");
 
-  const [totalCount, setTotalCount] = useState<number>(dashboardTableData?.total_count || 0);
-  const [recordPerPage, setRecordPerPage] = useState<number>(dashboardTableData?.page_length || 5);
+  const [total_event_list, settotalEventList] = useState(0);
+  const [record_per_page, setRecordPerPage] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const debouncedSearchName = useDebounce(search, 300);
@@ -48,40 +48,22 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
   }, [debouncedSearchName, selectedCompany, currentPage])
 
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
-  };
-
-  // const fetchTable = async () => {
-  //   const url = `${API_END_POINTS.asavendorListdashboard}`;
-  //   const res: AxiosResponse = await requestWrapper({ url, method: "GET" });
-
-  //   if (res?.status === 200 && res.data?.message) {
-  //     const msg = res.data.message;
-  //     console.log("ASA Table Data--->", msg)
-  //     setTable(msg.data || []);
-  //     setTotalCount(msg.total_count || 0);
-  //     setRecordPerPage(msg.page_length || 5);
-  //   }
-  // };
-
+  const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    console.log(value, "this is search name")
+    setSearch(value);
+  }
 
   const fetchTable = async () => {
-    const params = new URLSearchParams({
-      page_no: String(currentPage),
-      page_length: String(recordPerPage)
+    const dashboardASAOnboardedVendorTableDataApi: AxiosResponse = await requestWrapper({
+      url: `${API_END_POINTS?.asavendorListdashboard}?vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
+      method: "GET",
     });
-    if (debouncedSearchName.trim()) {
-      params.append("vendor_name", debouncedSearchName.trim());
-    }
-    const url = `${API_END_POINTS.asavendorListdashboard}?${params.toString()}`;
-    const res: AxiosResponse = await requestWrapper({ url, method: "GET" });
-
-    if (res?.status === 200 && res.data?.status === "success") {
-      console.log("ASA Table Data--->", res.data);
-      setTable(res.data.data || []);
-      setTotalCount(res.data.total_count || 0);
-      setRecordPerPage(res.data.page_length || 5);
+    console.log("Response--------->", dashboardASAOnboardedVendorTableDataApi)
+    if (dashboardASAOnboardedVendorTableDataApi?.status == 200) {
+      setTable(dashboardASAOnboardedVendorTableDataApi?.data?.message?.data);
+      settotalEventList(dashboardASAOnboardedVendorTableDataApi?.data?.message?.overall_total_asa)
+      setRecordPerPage(5);
     }
   };
 
@@ -104,13 +86,13 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Total Annual Supplier Assessment Form
+            Submitted ASA Form
           </h1>
           <div className="flex gap-4">
             <Input
-              placeholder="Search..."
+              placeholder="Search Vendor Name..."
               value={search}
-              onChange={handleSearchChange}
+              onChange={handlesearchname}
             />
             {/* <Select onValueChange={(value) => { setSelectedCompany(value) }}>
               <SelectTrigger className="w-96">
@@ -135,7 +117,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
               <TableHead className="text-center">Ref No.</TableHead>
               <TableHead className="text-center">Vendor Name</TableHead>
               <TableHead className="text-center">Vendor Ref No</TableHead>
-              <TableHead className="text-center">Created On</TableHead>
+              <TableHead className="text-center">Form Submitted On</TableHead>
               <TableHead className="text-center">View Detials</TableHead>
             </TableRow>
           </TableHeader>
@@ -143,7 +125,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
             {table.length > 0 ? (
               table.map((item, index) => (
                 <TableRow key={item.name}>
-                  <TableCell>{(currentPage - 1) * recordPerPage + index + 1}</TableCell>
+                  <TableCell>{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                   <TableCell>{item.name}</TableCell>
                   <TableCell>{item.vendor_name}</TableCell>
                   <TableCell>{item.vendor_ref_no}</TableCell>
@@ -155,7 +137,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
                           localStorage.setItem("vendor_name", item.vendor_name);
                         }
                       }}>
-                      <Button className="bg-blue-400 text-white hover:bg-white hover:text-black">
+                      <Button variant={"nextbtn"} size={"nextbtnsize"} className="py-2.5 text-white hover:bg-white hover:border hover:border-[#5291CD] hover:text-black">
                         View
                       </Button>
                     </Link>
@@ -174,9 +156,9 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
       </div>
       <Pagination
         currentPage={currentPage}
-        record_per_page={recordPerPage}
+        record_per_page={record_per_page}
         setCurrentPage={setCurrentPage}
-        total_event_list={totalCount}
+        total_event_list={total_event_list}
       />
     </>
   );

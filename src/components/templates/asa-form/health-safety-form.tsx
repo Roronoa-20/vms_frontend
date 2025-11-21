@@ -13,9 +13,16 @@ export default function Health_And_Safety() {
    const router = useRouter();
    const searchParams = useSearchParams();
    const vmsRefNo = searchParams.get("vms_ref_no") || "";
-   const { refreshFormData, updateEmpWellBeingForm, HealthSafetyForm, updateHealthSafetyForm } = useASAForm();
+   const { refreshFormData, updateEmpWellBeingForm, HealthSafetyForm, updateHealthSafetyForm, asaFormSubmitData } = useASAForm();
    const [mentionBehaviorBaseSafety, setMentionBehaviorBaseSafety] = useState("");
+   const isverified = asaFormSubmitData.verify_by_asa_team || 0;
    console.log("Health Safety Form Data:", HealthSafetyForm);
+
+   const isValid = Object.values(HealthSafetyForm).every((item) => {
+      if (!item.selection) return false;
+      if (item.selection === "Yes" && !item.comment.trim()) return false;
+      return true;
+   });
 
    const base64ToBlob = (base64: string): Blob => {
       const arr = base64.split(",");
@@ -30,6 +37,7 @@ export default function Health_And_Safety() {
 
    useEffect(() => {
       const stored = localStorage.getItem("HealthSafetyForm");
+      const extrastored = localStorage.getItem("mention_behavior_base_safety");
       if (stored) {
          const parsed = JSON.parse(stored);
 
@@ -42,6 +50,9 @@ export default function Health_And_Safety() {
          }
          updateHealthSafetyForm(parsed);
          refreshFormData();
+      }
+      if (extrastored) {
+         setMentionBehaviorBaseSafety(extrastored);
       }
    }, []);
 
@@ -128,6 +139,8 @@ export default function Health_And_Safety() {
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
+                  required={true}
+                  disabled={isverified === 1}
                />
 
                <YesNoNA
@@ -137,6 +150,8 @@ export default function Health_And_Safety() {
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
+                  required={true}
+                  disabled={isverified === 1}
                />
 
                <YesNoNA
@@ -146,6 +161,8 @@ export default function Health_And_Safety() {
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
+                  required={true}
+                  disabled={isverified === 1}
                />
 
                <YesNoNA
@@ -155,6 +172,8 @@ export default function Health_And_Safety() {
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
+                  required={true}
+                  disabled={isverified === 1}
                />
 
                <YesNoNA
@@ -164,22 +183,26 @@ export default function Health_And_Safety() {
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
+                  required={true}
+                  disabled={isverified === 1}
                />
 
                <div className="flex flex-col space-y-1">
                   <Label htmlFor="mention_behavior_base_safety" className="text-sm font-medium text-black">
-                     Also, please mention if behavior-based safety training is provided.
+                     Also, please mention if behavior-based safety training is provided.<span className="text-red-600 ml-1">*</span>
                   </Label>
                   <textarea
                      id="mention_behavior_base_safety"
                      name="mention_behavior_base_safety"
                      rows={2}
                      placeholder="Mention behavior-based safety training details if any"
+                     value={mentionBehaviorBaseSafety}
                      className="w-full px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                      onChange={(e) => {
                         setMentionBehaviorBaseSafety(e.target.value);
                         localStorage.setItem("mention_behavior_base_safety", e.target.value);
                      }}
+                     disabled={isverified === 1}
                   />
                </div>
 
@@ -191,6 +214,8 @@ export default function Health_And_Safety() {
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
+                  required={true}
+                  disabled={isverified === 1}
                />
 
                <YesNoNA
@@ -200,26 +225,31 @@ export default function Health_And_Safety() {
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
+                  required={true}
+                  disabled={isverified === 1}
                />
 
-               <div className="space-x-4 flex justify-end">
-                  <Button
-                     className="py-2.5"
-                     variant="backbtn"
-                     size="backbtnsize"
-                     onClick={handleBack}
-                  >
-                     Back
-                  </Button>
-                  <Button
-                     className="py-2.5"
-                     variant="nextbtn"
-                     size="nextbtnsize"
-                     onClick={handleNext}
-                  >
-                     Next
-                  </Button>
-               </div>
+               {isverified !== 1 && (
+                  <div className="space-x-4 flex justify-end">
+                     <Button
+                        className="py-2.5"
+                        variant="backbtn"
+                        size="backbtnsize"
+                        onClick={handleBack}
+                     >
+                        Back
+                     </Button>
+                     <Button
+                        className="py-2.5"
+                        variant="nextbtn"
+                        size="nextbtnsize"
+                        onClick={handleNext}
+                        disabled={!isValid}
+                     >
+                        Next
+                     </Button>
+                  </div>
+               )}
             </div>
          </div>
       </div>

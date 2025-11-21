@@ -11,8 +11,16 @@ export default function Grievance_Mechanism() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
-    const { GrievanceMechForm, updateGrievnaceMechForm, refreshFormData, updateLaborRightsForm } = useASAForm();
+    const { GrievanceMechForm, updateGrievnaceMechForm, refreshFormData, updateLaborRightsForm, asaFormSubmitData } = useASAForm();
+    const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+
     console.log("General Disclosure Form Data:", GrievanceMechForm);
+
+    const isValid = Object.values(GrievanceMechForm).every((item) => {
+        if (!item.selection) return false;
+        if (item.selection === "Yes" && !item.comment.trim()) return false;
+        return true;
+    });
 
     const base64ToBlob = (base64: string): Blob => {
         const arr = base64.split(",");
@@ -98,7 +106,7 @@ export default function Grievance_Mechanism() {
             }
         }
         updateGrievnaceMechForm(GrievanceMechFormCopy);
-        localStorage.setItem("GrivanceMechForm", JSON.stringify(GrievanceMechFormCopy));
+        localStorage.setItem("GrievanceMechForm", JSON.stringify(GrievanceMechFormCopy));
         router.push(`asa-form?tabtype=employee_wellbeing&vms_ref_no=${vmsRefNo}`);
     };
 
@@ -124,25 +132,31 @@ export default function Grievance_Mechanism() {
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
+                        required={true}
+                        disabled={isverified === 1}
                     />
-                    <div className="space-x-4 flex justify-end">
-                        <Button
-                            className="py-2.5"
-                            variant="backbtn"
-                            size="backbtnsize"
-                            onClick={handleBack}
-                        >
-                            Next
-                        </Button>
-                        <Button
-                            className="py-2.5"
-                            variant="nextbtn"
-                            size="nextbtnsize"
-                            onClick={handleNext}
-                        >
-                            Next
-                        </Button>
-                    </div>
+
+                    {isverified !== 1 && (
+                        <div className="space-x-4 flex justify-end">
+                            <Button
+                                className="py-2.5"
+                                variant="backbtn"
+                                size="backbtnsize"
+                                onClick={handleBack}
+                            >
+                                Back
+                            </Button>
+                            <Button
+                                className="py-2.5"
+                                variant="nextbtn"
+                                size="nextbtnsize"
+                                onClick={handleNext}
+                                disabled={!isValid}
+                            >
+                                Next
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

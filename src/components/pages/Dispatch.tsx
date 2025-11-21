@@ -47,6 +47,8 @@ export interface TDisptachDetails {
     coa_document_upload:File,
     msds_document_upload:File
   }[]
+  qr_code:string
+  hex_qr_code:string
   vehicle_details:{
     name:string
     vehicle_no:string,

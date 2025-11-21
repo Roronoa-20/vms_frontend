@@ -18,6 +18,7 @@ const API_END_POINTS = {
   vendorRegistrationSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration.vendor_registration`,
   vendorOnboardingDetail: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_onboarding_get_data.get_vendor_onboarding_data`,
   companyDetailDropdown: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration_masters.vendor_onboarding_company_dropdown_master`,
+  VendorNameCheckApi:`${url}/api/method/vms.APIs.vendor_onboarding.get_vendor_master_data.get_vendors_by_name`,
   companyDetailSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_company_details.update_vendor_onboarding_company_details`,
   companyAddressSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_company_details.update_vendor_onboarding_company_address`,
   companyAddressDropdown: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration_masters.all_address_masters`,
@@ -69,6 +70,8 @@ const API_END_POINTS = {
   prInquiryHodApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.hod_approval_check`,
   prInquiryPurchaseApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.purchase_approval_check`,
   prTableData: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pr_w`,
+  prInquiryProductHistory:`${url}/api/method/vms.APIs.purchase_api.product_inquiry_details_report.get_latest_product_inquiry`,
+  FullProductHistory:`${url}/api/method/vms.APIs.purchase_api.product_inquiry_details_report.get_product_inquiry_report`,
   qmsformdetails: `${url}/api/method/vms.APIs.assessment_apis.qms_api.get_qms_details_without_label`,
   qmsformapproval: `${url}/api/method/vms.APIs.assessment_apis.qms_api.approve_qms_form`,
   qmsformsubmit: `${url}/api/method/vms.APIs.assessment_apis.save_qms_assessment.save_qms_assessment_complete`,
@@ -156,8 +159,8 @@ const API_END_POINTS = {
   POItemsApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_order.update_vendor_approval_status`,
 
   // ASA Form API:
-  getASAFormSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.get_data_ann_ass_form`,
-  asaformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_annual_ass_form`,
+  getASAFormSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.get_data_ann_asa_form`,
+  asaformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_annual_asa_form`,
   asagrovernanceformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_gov_asa_form`,
   asasocialformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_social_asa_form`,
   asaenvformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_env_asa_form`,
@@ -167,6 +170,7 @@ const API_END_POINTS = {
   asapendingVendorList: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.pending_asa_vendor_list`,
   asasendremindermail: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.send_asa_reminder_email`,
   asaonboardedvendorlist: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.approved_vendor_list`,
+  verifyasaform: `${url}/api/method/vms.APIs.assessment_apis.asa.verify_asa_form`,
 
   // All Approved Vendors Speicfy Detail API
   allvendorsdetails: `${url}/api/method/vms.APIs.dashboard_api.vendor_brief.get_vendors_with_pagination_next`,
@@ -314,8 +318,8 @@ const API_END_POINTS = {
   getlotSizeMaster: `${resourceurl}/Lot Sizes?fields=["*"]&limit_page_length=999`,
   getschedulingMarginKeyMaster: `${resourceurl}/Scheduling Margin Key?fields=["*"]&limit_page_length=999`,
   getexpirationDateMaster: `${resourceurl}/Expiration Date Master?fields=["*"]&limit_page_length=999`,
-
-  prToPurchaseTeam:`${url}/api/method/vms.APIs.purchase_api.purchase_requisition_approval.sent_approval_to_purchase_team`
+  prToPurchaseTeam:`${url}/api/method/vms.APIs.purchase_api.purchase_requisition_approval.sent_approval_to_purchase_team`,
+  checkassetcode: `${url}/api/method/vms.APIs.purchase_api.check_asset_code.check_asset_code_availability`
 
 }
 

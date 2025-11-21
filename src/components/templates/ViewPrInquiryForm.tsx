@@ -10,7 +10,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import Cookies from 'js-cookie'
-import { purchaseInquiryDropdown, TableData, TPRInquiry } from '../pages/Pr-Inquiry'
+import { purchaseInquiryDropdown, TableData, TPRInquiry, ProductHistory } from '../pages/Pr-Inquiry'
 import Comment_box from '../molecules/CommentBox'
 import { Value } from '@radix-ui/react-select'
 import { useRouter } from 'next/navigation'
@@ -28,8 +28,8 @@ interface Props {
   companyDropdown: { name: string, description: string }[]
   purchaseTypeDropdown: { name: string, purchase_requisition_type_name: string, description: string }[]
   AllcompanyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
+  productHistory: ProductHistory[]
 }
-
 
 type ProductNameDropdown = {
   name: string,
@@ -37,11 +37,12 @@ type ProductNameDropdown = {
 }
 const currentDate = new Date();
 
-const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purchaseTypeDropdown, AllcompanyDropdown }: Props) => {
+const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purchaseTypeDropdown, AllcompanyDropdown, productHistory }: Props) => {
   const user = Cookies.get("user_id");
   const [formData, setFormData] = useState<TPRInquiry | null>(PRInquiryData ?? null);
   const [singleTableRow, setSingleTableRow] = useState<TableData | null>(null);
   const [tableData, setTableData] = useState<TableData[]>(PRInquiryData?.cart_product ?? []);
+  const [productHistroytableData, setProductHistoryTable] = useState<ProductHistory[]>(productHistory);
   const [productNameDropdown, setProductNameDropdown] = useState<ProductNameDropdown[]>([]);
   const [index, setIndex] = useState<number>(-1)
   const [isApproved, setIsApproved] = useState(false);
@@ -79,7 +80,14 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
     }
   }, [tableData]);
 
-
+  const formatDate = (dateStr: string | null | undefined) => {
+    if (!dateStr) return "-";
+    const cleanDate = dateStr.trim().split(" ")[0];
+    if (!cleanDate) return "-";
+    const [year, month, day] = cleanDate.split("-");
+    if (!year || !month || !day) return "-";
+    return `${day}-${month}-${year}`;
+  };
 
   const handleSelectChange = (value: any, name: string, isTable: boolean) => {
     if (isTable) {
@@ -173,7 +181,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
     setComment(value)
   }
 
-  const { designation } = useAuth()
+  const { designation } = useAuth();
 
   const handleTableInput = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -235,8 +243,25 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
 
   const today = new Date().toISOString().split("T")[0];
 
+  const handleNumberInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
+    if (allowedKeys.includes(e.key)) return;
+    if (e.key === ".") {
+      if (e.currentTarget.value.includes(".")) {
+        e.preventDefault();
+      }
+      return;
+    }
+    if (!/^\d$/.test(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+
   console.log(PRInquiryData)
   console.log(productNameDropdown, "this is dropdown");
+
+  console.log(productHistroytableData, "this is table")
 
   return (
     <div className="flex flex-col bg-white rounded-lg p-2 max-h-[90vh] w-full">
@@ -245,11 +270,11 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
       </h1>
       <div className="grid grid-cols-3 gap-6 p-3">
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">User</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">User</h1>
           <Input placeholder="" name='user' onChange={(e) => { handleFieldChange(false, e) }} value={formData?.user ?? user ?? ""} disabled />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
             Cart Use
           </h1>
           <Select disabled value={formData?.cart_use ?? ""} onValueChange={(value) => { handleSelectChange(value, "cart_use", false) }}>
@@ -265,11 +290,11 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
           </Select>
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">Cart Date</h1>
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Cart Date</h1>
           <Input placeholder="" name='cart_date' onChange={(e) => { handleFieldChange(false, e) }} value={formData?.cart_date ?? currentDate?.toLocaleDateString() ?? ""} disabled />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
             Category Type
           </h1>
           <Select disabled value={formData?.category_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "category_type", false); fetchProductName(value) }}>
@@ -404,14 +429,14 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
         </div>
         {PRInquiryData?.acknowledged_date && (
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">Early Delivery Date</h1>
+            <h1 className="text-[14px] font-normal text-[#000000] pb-2">Early Delivery Date</h1>
             <Input placeholder="" value={PRInquiryData?.acknowledged_date} disabled />
           </div>
         )}
         {
           PRInquiryData?.second_stage_approval_by &&
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">Second Stage Approval Email</h1>
+            <h1 className="text-[14px] font-normal text-[#000000] pb-2">Additional Approval Email</h1>
             <Input placeholder="" value={PRInquiryData?.second_stage_approval_by} disabled />
           </div>
         }
@@ -431,7 +456,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
           <Table className="max-h-40">
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                <TableHead className="w-[100px]">Sr No.</TableHead>
+                <TableHead className="w-[100px] text-center">Sr No.</TableHead>
                 <TableHead className="text-center">Is Assest Code ?</TableHead>
                 <TableHead className="text-center">Assest Code</TableHead>
                 <TableHead className="text-center">Product Name</TableHead>
@@ -448,15 +473,20 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
               {tableData?.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
-                  <TableCell className={`flex justify-center`}><Input type='checkbox' onChange={(e) => { handleTableCheckChange(index, e.target.checked) }} disabled={(PRInquiryData?.purchase_team && item?.assest_code == "") ? false : true} checked={item?.need_asset_code} className='w-5' /></TableCell>
-                  <TableCell className='text-center'>{item?.assest_code}</TableCell>
-                  <TableCell>
+                  <TableCell className={`flex justify-center text-nowrap`}><Input type='checkbox' onChange={(e) => { handleTableCheckChange(index, e.target.checked) }} disabled={
+                    designation === "Enquirer" ||
+                    item?.assest_code !== "" ||
+                    PRInquiryData?.purchase_team_acknowledgement === 1 ||
+                    PRInquiryData?.asked_to_modify === 1
+                  } checked={item?.need_asset_code} className='w-5' /></TableCell>
+                  <TableCell className='text-center text-nowrap'>{item?.assest_code}</TableCell>
+                  <TableCell className='text-nowrap'>
                     {/* {item?.product_name} */}
                     <Select
                       disabled
                       value={item?.product_name ?? ""}
                     >
-                      <SelectTrigger className='disabled:opacity-100'>
+                      <SelectTrigger className='text-nowrap disabled:opacity-100'>
                         <SelectValue placeholder="Select" />
                       </SelectTrigger>
                       <SelectContent>
@@ -470,14 +500,14 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
                       </SelectContent>
                     </Select>
                   </TableCell>
-                  <TableCell>{item?.product_price}</TableCell>
-                  <TableCell>{item?.uom}</TableCell>
-                  <TableCell>{item?.lead_time}</TableCell>
-                  <TableCell>{item?.product_quantity}</TableCell>
-                  <TableCell>{item?.user_specifications}</TableCell>
-                  <TableCell><Link href={item?.attachment?.url ?? ""}>{item?.attachment?.file_name}</Link></TableCell>
-                  <TableCell className='flex justify-center'>
-                    <Input disabled={PRInquiryData?.purchase_team_approved == Boolean(0) && PRInquiryData?.purchase_team == Boolean(1) ? false : true} value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e) => { handleTableInput(index, e) }} className={`text-center w-28 ${PRInquiryData?.purchase_team_acknowledgement ? "" : "hidden"}`} />
+                  <TableCell className='text-nowrap'>{item?.product_price}</TableCell>
+                  <TableCell className='text-nowrap'>{item?.uom}</TableCell>
+                  <TableCell className='text-nowrap'>{item?.lead_time}</TableCell>
+                  <TableCell className='text-nowrap'>{item?.product_quantity}</TableCell>
+                  <TableCell className='text-nowrap'>{item?.user_specifications}</TableCell>
+                  <TableCell className='text-nowrap'><Link href={item?.attachment?.url ?? ""}>{item?.attachment?.file_name}</Link></TableCell>
+                  <TableCell className='text-nowrap flex justify-center'>
+                    <Input disabled={PRInquiryData?.purchase_team_approved == Boolean(0) && PRInquiryData?.purchase_team == Boolean(1) ? false : true} value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e) => { handleTableInput(index, e) }} onKeyDown={handleNumberInputKeyDown} inputMode="decimal" pattern="^[0-9]*\.?[0-9]*$" className={`text-center w-28 ${PRInquiryData?.purchase_team_acknowledgement ? "" : "hidden"}`} />
                   </TableCell>
                   {/* <TableCell className='flex justify-center'><Input className='text-center w-28' type='checked' onChange={(e)=>{handleTableCheck(index,e.target.checked)}}/></TableCell> */}
                 </TableRow>
@@ -487,20 +517,65 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
         </div>
       </div>
       {/* purchase team approval buttons */}
-      {((PRInquiryData?.purchase_team == Boolean(0) || PRInquiryData?.asked_to_modify == Boolean(0)) && PRInquiryData?.purchase_team_approval_status != "Rejected") && (
-          <div className={`flex justify-end pr-4 pb-4 gap-4 ${designation != "Enquirer" ? "" : "hidden"}`}>
-            <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${PRInquiryData?.purchase_team_acknowledgement ? "hidden" : ""}`} onClick={() => { setIsModifyDialog(true) }}>Modify</Button>
 
-            {
-              PRInquiryData?.purchase_team_acknowledgement == Boolean(1) ?
-                <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsApproved(true); setIsDialog(true) }}>Approve</Button>
-                :
-                <Button variant={"nextbtn"} size={"nextbtnsize"} className='py-2.5 hover:bg-white hover:text-black' ref={acknowledgeButtonRef} onClick={() => { setIsAcknowledgeDialog(true) }}>Acknowledge</Button>
-            }
-            {
-              <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:text-black ${designation != "Enquirer" && PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsReject(true); setIsDialog(true) }}>Reject</Button>
-            }
+      {PRInquiryData?.purchase_team_approval_status != "Rejected" && (PRInquiryData?.purchase_team == Boolean(0) || PRInquiryData?.asked_to_modify == Boolean(0)) && (
+        <div className={`flex justify-end pr-4 pb-4 gap-4 ${designation != "Enquirer" ? "" : "hidden"}`}>
+          <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:border border-[#5291CD] hover:text-black ${PRInquiryData?.purchase_team_acknowledgement ? "hidden" : ""}`} onClick={() => { setIsModifyDialog(true) }}>Modify</Button>
+
+          {
+            PRInquiryData?.purchase_team_acknowledgement == Boolean(1) ?
+              <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:border border-[#5291CD] hover:text-black ${PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsApproved(true); setIsDialog(true) }}>Proceed</Button>
+              :
+              <Button variant={"nextbtn"} size={"nextbtnsize"} className='py-2.5 hover:bg-white hover:border border-[#5291CD] hover:text-black' ref={acknowledgeButtonRef} onClick={() => { setIsAcknowledgeDialog(true) }}>Acknowledge</Button>
+          }
+          {
+            <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:border border-[#5291CD] hover:text-black ${designation != "Enquirer" && PRInquiryData?.purchase_team_approved == Boolean(0) && PRInquiryData?.purchase_team_acknowledgement == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsReject(true); setIsDialog(true) }}>Reject</Button>
+          }
+        </div>
+      )}
+
+      {designation !== "Enquirer" && (
+        <div className='pb-4'>
+          <h1 className="border-b-2 sticky top-0 bg-white text-lg font-semibold z-30">
+            Product History
+          </h1>
+          <div className="shadow- bg-[#f6f6f7] mt-4 p-4 rounded-2xl">
+            <Table className="max-h-40">
+              <TableHeader className="text-center">
+                <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
+                  <TableHead className="text-black text-center text-nowrap">Sr.No</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">Cart Id</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">User</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">Cart Date</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">Purchase Requisition Form</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">Product Name</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">Price</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">Final Price</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">Quantity</TableHead>
+                  <TableHead className="text-black text-center text-nowrap">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="text-center">
+                {productHistroytableData?.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="text-center text-nowrap">{index + 1}</TableCell>
+                    <TableCell className="text-center text-nowrap">{item?.cart_id}</TableCell>
+                    <TableCell className='text-center'>{item?.user}</TableCell>
+                    <TableCell className="text-center text-nowrap">{formatDate(item?.cart_date)}</TableCell>
+                    <TableCell className="text-center text-nowrap">{item?.purchase_requisition_form}</TableCell>
+                    <TableCell className="text-center text-nowrap">{item?.product_name}</TableCell>
+                    <TableCell className="text-center text-nowrap">{item?.price}</TableCell>
+                    <TableCell className="text-center text-nowrap">{item?.final_price}</TableCell>
+                    <TableCell className="text-center text-nowrap">{item?.quantity}</TableCell>
+                    <TableCell>
+                      <Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { router.push(`/product-history?cart_id=${refno}&product_name=${item?.product_name}`) }}>View</Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
+        </div>
       )}
 
       {isDialog &&
@@ -520,7 +595,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
               <h1 className="text-[12px] font-normal text-[#626973] pb-2">Expected Delivery</h1>
               <Input className='w-44' type='Date' onChange={(e) => { setDate(e.target.value) }} min={today} />
               <div className='pt-3 italic'>
-                <h1 className='text-[10px] bg-slate-400 font-mono'>Disclaimer: The Expected Delivery Date can be changed based on the Purchase Order and Purchase Requisition.</h1>
+                <h1 className='text-[10px] bg-slate-400 font-mono'>Disclaimer: The Expected Delivery Date can be changed based on the receipt of Purchase Order and Purchase Requisition.</h1>
               </div>
             </div>
           </Comment_box>

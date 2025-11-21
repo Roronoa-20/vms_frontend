@@ -11,8 +11,16 @@ export default function Environmental_Management_System() {
   const router = useRouter();
   const params = useSearchParams();
   const vmsRefNo = params.get("vms_ref_no") || "";
-  const { emsform, updateEmsForm, refreshFormData } = useASAForm();
+  const { emsform, updateEmsForm, refreshFormData, asaFormSubmitData } = useASAForm();
+  const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+
   console.log("General Disclosure Form Data:", emsform);
+
+  const isValid = Object.values(emsform).every((item) => {
+    if (!item.selection) return false;
+    if (item.selection === "Yes" && !item.comment.trim()) return false;
+    return true;
+  });
 
   const base64ToBlob = (base64: string): Blob => {
     const arr = base64.split(",");
@@ -23,7 +31,6 @@ export default function Environmental_Management_System() {
     while (n--) u8arr[n] = bstr.charCodeAt(n);
     return new Blob([u8arr], { type: mime });
   };
-
 
   useEffect(() => {
     const stored = localStorage.getItem("EMSForm");
@@ -103,8 +110,8 @@ export default function Environmental_Management_System() {
   };
 
   const handleBack = () => {
-        router.push(`asa-form?tabtype=general_disclosures_sub&vms_ref_no=${vmsRefNo}`);
-    };
+    router.push(`asa-form?tabtype=general_disclosures_sub&vms_ref_no=${vmsRefNo}`);
+  };
 
   return (
     <div className="min-h-screen w-full bg-white dark:bg-gray-950 p-3 flex flex-col items-center">
@@ -126,7 +133,10 @@ export default function Environmental_Management_System() {
               onCommentChange={handleCommentChange}
               onFileChange={handleFileChange}
               label="i. Environment/Sustainability Policy in place?"
+              required={true}
+              disabled={isverified === 1}
             />
+
             <YesNoNA
               name="environmental_management_certification"
               value={emsform.environmental_management_certification}
@@ -134,7 +144,10 @@ export default function Environmental_Management_System() {
               onCommentChange={handleCommentChange}
               onFileChange={handleFileChange}
               label="ii. Environment Management System certified to standards like ISO 14001, ISO 5001, etc.?"
+              required={true}
+              disabled={isverified === 1}
             />
+
             <YesNoNA
               name="regular_audits_conducted"
               value={emsform.regular_audits_conducted}
@@ -142,29 +155,34 @@ export default function Environmental_Management_System() {
               onCommentChange={handleCommentChange}
               onFileChange={handleFileChange}
               label="iii. Do you conduct regular energy, water, and waste audits?"
+              required={true}
+              disabled={isverified === 1}
             />
           </div>
         </div>
 
         {/* Next Button */}
-        <div className="flex justify-end">
-          <Button
-            className="py-2.5"
-            variant="backbtn"
-            size="backbtnsize"
-            onClick={handleBack}
-          >
-            Back
-          </Button>
-          <Button
-            className="py-2.5"
-            variant="nextbtn"
-            size="nextbtnsize"
-            onClick={handleNext}
-          >
-            Next
-          </Button>
-        </div>
+        {isverified !== 1 && (
+          <div className="flex space-x-4 justify-end">
+            <Button
+              className="py-2.5"
+              variant="backbtn"
+              size="backbtnsize"
+              onClick={handleBack}
+            >
+              Back
+            </Button>
+            <Button
+              className="py-2.5"
+              variant="nextbtn"
+              size="nextbtnsize"
+              onClick={handleNext}
+              disabled={!isValid}
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

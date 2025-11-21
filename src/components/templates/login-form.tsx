@@ -50,6 +50,7 @@ export default function LoginForm() {
       const savedid = Cookies.get("user_id");
       const designation = data?.message?.employee?.designation as string;
       const designationVendor = data?.message?.designation as string;
+      const VendorASA = data?.message?.asa_reqd as string;
       const VendorRefNo = data?.message?.ref_no as string;
       console.log("Vendor Ref---->", VendorRefNo);
       if (designationVendor) {
@@ -61,7 +62,8 @@ export default function LoginForm() {
       }
       Cookies.set("designation", designation || designationVendor);
       Cookies.set("VendorRef", VendorRefNo);
-      setAuthData(savedRole, savedName, savedid, designation || designationVendor, VendorRefNo);
+      Cookies.set("VendorASA", VendorASA);
+      setAuthData(savedRole, savedName, savedid, designation || designationVendor, VendorRefNo, VendorASA);
       if (designationVendor) {
         router.push("/vendor-dashboard");
         return

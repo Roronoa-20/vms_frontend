@@ -18,16 +18,25 @@ interface YesNoNAProps {
   label: string;
   customYesInputType?: "date" | "text" | "textarea";
   disabled?: boolean;
+  required?: boolean;
 }
 
-export default function YesNoNA({ name, value, onSelectionChange, onCommentChange, onFileChange, label, customYesInputType, disabled }: YesNoNAProps) {
+export default function YesNoNA({ name, value, onSelectionChange, onCommentChange, onFileChange, label, customYesInputType, disabled, required = false }: YesNoNAProps) {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   return (
     <div className="mb-6">
       {/* Main Question Label */}
-      <Label className="font-semibold text-[16px] leading-[19px] text-[#03111F]">{label}</Label>
+      {label && (
+        <Label
+          htmlFor={name}
+          className="font-semibold text-[16px] leading-[19px] text-[#03111F]"
+        >
+          {label}
+          {required && <span className="text-red-600 ml-1">*</span>}
+        </Label>
+      )}
 
       {/* Radio Selection */}
       <div className="flex gap-24 mt-4">
@@ -56,7 +65,7 @@ export default function YesNoNA({ name, value, onSelectionChange, onCommentChang
       {value.selection === "Yes" && (
         <div className="mt-4">
           <Label htmlFor={`${name}-comment`} className="font-semibold text-[12px] leading-[19px] text-[#03111F] mb-1">
-            {customYesInputType === "date" ? "If Yes, provide expiry date" : "Please Specify"}
+            {customYesInputType === "date" ? "If Yes, provide expiry date" : "Please Specify"}{required && <span className="text-red-600 ml-1">*</span>}
           </Label>
 
           {customYesInputType === "date" ? (

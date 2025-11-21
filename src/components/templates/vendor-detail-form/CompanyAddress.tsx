@@ -107,6 +107,11 @@ const CompanyAddress = ({
         url: pincodeChangeUrl,
         method: "GET",
       });
+      if(pincodeChangeResponse?.status == 404){
+        alert("No Pincode Found please contact the admin to update the pincode");
+        updatebillingAddress("pincode", "");
+        return;
+      }
       const data: pincodeBasedData["message"] =
         pincodeChangeResponse?.status == 200
           ? pincodeChangeResponse?.data?.message

@@ -388,6 +388,7 @@ export type ASAForm = {
   registered_date: string,
   pending_asa_count: string,
   approved_vendor_count: string,
+  register_by_emp: string,
   company_vendor_codes: {
     company_name: string,
     company_code: string,
@@ -1373,6 +1374,7 @@ export type ASAFormResponse = {
   overall_total_asa: number;
   pending_asa_count: number,
   approved_vendor_count: number,
+  overall_count: number,
   page_no: number;
   page_length: number;
   pending_asa_vendors: ASAForm[];
@@ -1457,7 +1459,8 @@ export type TPRInquiryTable = {
     second_stage_approval_status: string
     pr_created: string,
     pur_req: string,
-    is_submited:boolean
+    is_submited:boolean,
+    company: string
   }[]
 }
 
@@ -1512,7 +1515,8 @@ export type CartDetails = {
   second_stage_approval_status: string,
   pr_created: string,
   pur_req: string,
-  is_submited:boolean
+  is_submited:boolean,
+  company: string,
 }
 
 export interface PurchaseRequisition {

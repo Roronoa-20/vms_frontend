@@ -135,7 +135,7 @@ export default function Grievance_Mechanism() {
                         disabled={true}
 
                     />
-                    <div className="space-x-4 flex justify-end">
+                    {/* <div className="space-x-4 flex justify-end">
                         <Button
                             className="py-2.5"
                             variant="backbtn"
@@ -152,7 +152,7 @@ export default function Grievance_Mechanism() {
                         >
                             Next
                         </Button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>

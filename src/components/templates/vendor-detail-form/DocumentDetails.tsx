@@ -875,40 +875,40 @@ const DocumentDetails = ({
             <Table className=" max-h-40 overflow-y-scroll">
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                  <TableHead className="text-center text-black">Sr.No.</TableHead>
-                  <TableHead className="text-center text-black">GST Type</TableHead>
-                  <TableHead className="text-center text-black">Meril Company</TableHead>
-                  <TableHead className="text-center text-black">GST State</TableHead>
-                  <TableHead className="text-center text-black">GST Pincode</TableHead>
-                  <TableHead className="text-center text-black">GST Number</TableHead>
-                  <TableHead className="text-center text-black">GST Date</TableHead>
-                  <TableHead className="text-center text-black">File</TableHead>
-                  <TableHead className="text-center text-black">Action</TableHead>
+                  <TableHead className="text-center text-black text-nowrap">Sr.No.</TableHead>
+                  <TableHead className="text-center text-black text-nowrap">GST Type</TableHead>
+                  <TableHead className="text-center text-black text-nowrap">Meril Company</TableHead>
+                  <TableHead className="text-center text-black text-nowrap">GST State</TableHead>
+                  <TableHead className="text-center text-black text-nowrap">GST Pincode</TableHead>
+                  <TableHead className="text-center text-black text-nowrap">GST Number</TableHead>
+                  <TableHead className="text-center text-black text-nowrap">GST Date</TableHead>
+                  <TableHead className="text-center text-black text-nowrap">File</TableHead>
+                  <TableHead className="text-center text-black text-nowrap">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {GSTTable?.map((item, index) => (
                   <TableRow key={item?.name ? item?.name : ""}>
-                    <TableCell className="text-center">{index + 1}</TableCell>
-                    <TableCell className="text-center">
+                    <TableCell className="text-center text-nowrap">{index + 1}</TableCell>
+                    <TableCell className="text-center text-nowrap">
                       {item?.gst_ven_type}
                     </TableCell>
-                    <TableCell className="text-center">
+                    <TableCell className="text-center text-nowrap">
                       {item?.company}
                     </TableCell>
-                    <TableCell className="text-center">
+                    <TableCell className="text-center text-nowrap">
                       {item?.gst_state}
                     </TableCell>
-                    <TableCell className="text-center">
+                    <TableCell className="text-center text-nowrap">
                       {item?.pincode}
                     </TableCell>
-                    <TableCell className="text-center">
+                    <TableCell className="text-center text-nowrap">
                       {item?.gst_number}
                     </TableCell>
-                    <TableCell className="text-center">
+                    <TableCell className="text-center text-nowrap">
                       {item?.gst_registration_date}
                     </TableCell>
-                    <TableCell className="text-center">
+                    <TableCell className="text-center text-nowrap">
                       <Link href={item?.gst_document?.url} target="blank">
                         {item?.gst_document?.file_name}
                       </Link>

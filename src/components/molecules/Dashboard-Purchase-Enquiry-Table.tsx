@@ -51,7 +51,7 @@ const useDebounce = (value: any, delay: any) => {
 
 const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
 
-  console.log("DashboardTableData PPRRRPRR--->", dashboardTableData);
+  // console.log("DashboardTableData PPRRRPRR--->", dashboardTableData);
   const { designation } = useAuth();
 
   const formatDate = (date: Date): string => {
@@ -65,7 +65,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [search, setSearch] = useState<string>("");
   const [total_event_list, settotalEventList] = useState(0);
-  const [record_per_page, setRecordPerPage] = useState<number>(5);
+  const [record_per_page, setRecordPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const user = Cookies?.get("user_id");
@@ -79,17 +79,17 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
 
   const fetchTable = async () => {
     const dashboardPurchaseEnquiryTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.prInquiryDashboardTable}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
+      url: `${API_END_POINTS?.prInquiryDashboardTable}?usr=${user}&company=${selectedCompany}&cart_id=${debouncedSearchName}&page_no=${currentPage}&page_length=${record_per_page}`,
       method: "GET",
     });
     if (dashboardPurchaseEnquiryTableDataApi?.status == 200) {
-      setTable(dashboardPurchaseEnquiryTableDataApi?.data?.message?.cart_details
-      );
+      setTable(dashboardPurchaseEnquiryTableDataApi?.data?.message?.cart_details);
       settotalEventList(dashboardPurchaseEnquiryTableDataApi?.data?.message?.total_count);
-      settotalEventList(dashboardPurchaseEnquiryTableDataApi?.data?.message?.total_count)
-      // setRecordPerPage(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding?.length)
-      setRecordPerPage(5);
+      // setRecordPerPage(10);
     }
+    console.log("rows returned:", dashboardPurchaseEnquiryTableDataApi?.data?.message?.cart_details?.length);
+    console.log("total_count:", dashboardPurchaseEnquiryTableDataApi?.data?.message?.total_count);
+    console.log("page_length sent:", record_per_page);
   };
 
   const handleSelectChange = (
@@ -103,7 +103,8 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
     }
   };
 
-  console.log(table, "table")
+
+
   return (
     <>
       <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
@@ -112,18 +113,21 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
             Purchase Enquiry
           </h1>
           <div className="flex gap-4">
-            <Input placeholder="Search..." />
+            <Input
+              placeholder="Search Cart-ID..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
             <Select
               value={selectedCompany}
-              onValueChange={(value) => handleSelectChange(value, setSelectedCompany)
-              }
+              onValueChange={(value) => handleSelectChange(value, setSelectedCompany)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup className="w-full">
-                  <SelectItem value="--Select--">--Select--</SelectItem>
+                  <SelectItem value="--Select--">All</SelectItem>
                   {
                     companyDropdown?.map((item, index) => (
                       <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
@@ -134,36 +138,44 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
             </Select>
           </div>
         </div>
-        <div className="max-h-[55vh]">
+        <div className="max-h-[110vh]">
           <Table className="">
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                 <TableHead className="text-center text-black whitespace-nowrap">Sr No.</TableHead>
-                <TableHead className="text-center text-black whitespace-nowrap">Ref No.</TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">Cart ID</TableHead>
                 <TableHead className="text-center text-black whitespace-nowrap">Cart Date</TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">Company</TableHead>
                 {designation !== "Enquirer" && (
                   <TableHead className="text-center text-black whitespace-nowrap">Created By</TableHead>
                 )}
-
                 <TableHead className="text-center text-black whitespace-nowrap">Transfer Status</TableHead>
                 <TableHead className="text-center text-black whitespace-nowrap">Category Type</TableHead>
                 <TableHead className="text-center text-black whitespace-nowrap">PR Type</TableHead>
                 <TableHead className="text-center text-black whitespace-nowrap">Purchase Team Status</TableHead>
-                <TableHead className="text-center text-black whitespace-nowrap">HOD Status</TableHead>
-                <TableHead className="text-center text-black whitespace-nowrap">Additional Status</TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">Requestor HOD Status</TableHead>
+                <TableHead className="text-center text-black whitespace-nowrap">Additional Approval Status</TableHead>
                 <TableHead className="text-center text-black whitespace-nowrap">View Cart</TableHead>
-                <TableHead className="text-center text-black whitespace-nowrap">Raise PR</TableHead>
+                {designation === "Enquirer" && (
+                  <TableHead className="text-center text-black whitespace-nowrap">Raise PR</TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody className="text-center text-black">
               {table ? (
                 table?.map((item, index) => {
-                  const url = (item?.asked_to_modify || !item?.is_submited) ? `/pr-inquiry?cart_Id=${item?.name}` : `/view-pr-inquiry?cart_Id=${item?.name}`;
+                  const url =
+                    designation === "Purchase Team"
+                      ? `/view-pr-inquiry?cart_Id=${item?.name}`
+                      : (item?.asked_to_modify || !item?.is_submited)
+                        ? `/pr-inquiry?cart_Id=${item?.name}`
+                        : `/view-pr-inquiry?cart_Id=${item?.name}`;
                   return (
                     <TableRow key={index}>
                       <TableCell className="font-medium text-center whitespace-nowrap">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                       <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.name}</TableCell>
                       <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.cart_date ? formatDate(new Date(item.cart_date)) : "-"}</TableCell>
+                      <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.company}</TableCell>
                       {designation !== "Enquirer" && (
                         <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.created_by_user_name}</TableCell>
                       )}
@@ -191,7 +203,11 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                               : "bg-red-100 text-red-800"
                             }`}
                         >
-                          {item?.purchase_team_approval_status}
+                          {
+                            item?.purchase_team_approval_status === "Approved"
+                              ? "Proceed to PR"
+                              : item?.purchase_team_approval_status
+                          }
                         </div>
                       </TableCell>
                       {/* <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.hod_approval_status}</TableCell> */}
@@ -220,27 +236,53 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                         </div>
                       </TableCell>
                       <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={url}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View</Button></Link></TableCell>
-                      <TableCell className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show ? "" : "hidden"}`}>
-                        {item?.pr_created ? (
-                          <button
-                            title={designation == "Purchase Team"?"cannot raise pr":"Raise PR"}
-                            className={`py-2 px-4 text-white rounded-[16px] bg-[#5291CD] ${designation != "Purchase Team"?"hover:bg-white hover:text-black":"cursor-not-allowed"}`}
-                            disabled={designation == "Purchase Team"?true:false}
-                          >
-                            PR
-                          </button>
-                        ) : (
-                          <Link href={`/pr-request?cart_id=${item?.name}`}>
+                      {/* {designation === "Enquirer" && (
+                        <TableCell className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show ? "" : "hidden"}`}>
+                          {item?.pr_created ? (
                             <button
-                              title={designation == "Purchase Team"?"cannot raise pr":"Raise PR"}
-                              className={`py-2 px-4 text-white rounded-[16px] bg-[#5291CD] ${designation != "Purchase Team"?"hover:bg-white hover:text-black":"cursor-not-allowed"}`}
-                              disabled={designation == "Purchase Team"?true:false}
+                              title={designation == "Purchase Team" ? "cannot raise pr" : "Raise PR"}
+                              className={`py-2 px-4 text-white rounded-[16px] bg-[#5291CD] ${designation != "Purchase Team" ? "hover:bg-white hover:text-black" : "cursor-not-allowed"}`}
+                              disabled={designation == "Purchase Team" ? true : false}
                             >
                               PR
                             </button>
-                          </Link>
-                        )}
-                      </TableCell>
+                          ) : (
+                            <Link href={`/pr-request?cart_id=${item?.name}`}>
+                              <button
+                                title={designation == "Purchase Team" ? "cannot raise pr" : "Raise PR"}
+                                className={`py-2 px-4 text-white rounded-[16px] bg-[#5291CD] ${designation != "Purchase Team" ? "hover:bg-white hover:text-black" : "cursor-not-allowed"}`}
+                                disabled={designation == "Purchase Team" ? true : false}
+                              >
+                                PR
+                              </button>
+                            </Link>
+                          )}
+                        </TableCell>
+                      )} */}
+                      {designation === "Enquirer" && (
+                        <TableCell
+                          className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show ? "" : "hidden"}`}
+                        >
+                          {item?.pr_created ? (
+                            <button
+                              title="PR already created"
+                              className="py-2 px-4 text-white rounded-[16px] bg-gray-400 cursor-not-allowed"
+                              disabled
+                            >
+                              PR
+                            </button>
+                          ) : (
+                            <Link href={`/pr-request?cart_id=${item?.name}`}>
+                              <button
+                                title="Raise PR"
+                                className="py-2 px-4 text-white bg-[#5291CD] hover:bg-white hover:text-black rounded-[16px]"
+                              >
+                                PR
+                              </button>
+                            </Link>
+                          )}
+                        </TableCell>
+                      )}
                     </TableRow>
                   )
                 })

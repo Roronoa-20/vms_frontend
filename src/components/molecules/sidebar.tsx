@@ -13,12 +13,49 @@ const Sidebar = () => {
   const pathname = usePathname();
   const { designation } = useAuth();
   const { vendorRef } = useAuth();
+  const { asaReqd } = useAuth();
 
   if (designation?.toLowerCase() === "security") {
     return null;
   }
 
-  const sideBar = designation === "Vendor" ? VendorsidebarMenu : designation === "Enquirer" ? EnquirysidebarMenu : designation === "ASA" ? ASASideBarMenu : designation === "Accounts Team" ? AccountSideBarMenu : designation === "Accounts Head" ? AccountHeadSideBarMenu : designation === "Purchase Head" ? PurchaseHeadsidebarMenu : designation === "QA Team" ? QASideBarMenu : designation === "Super Head" ? SuperHeadSidebarMenu : designation === "Treasury" ? TreasurySideBarMenu : designation === "Material User" ? MaterialUserSideBar : designation === "Material CP" ? MaterialCPSideBar : sidebarMenu;
+  // const sideBar = designation === "Vendor" ? VendorsidebarMenu : designation === "Enquirer" ? EnquirysidebarMenu : designation === "ASA" ? ASASideBarMenu : designation === "Accounts Team" ? AccountSideBarMenu : designation === "Accounts Head" ? AccountHeadSideBarMenu : designation === "Purchase Head" ? PurchaseHeadsidebarMenu : designation === "QA Team" ? QASideBarMenu : designation === "Super Head" ? SuperHeadSidebarMenu : designation === "Treasury" ? TreasurySideBarMenu : designation === "Material User" ? MaterialUserSideBar : designation === "Material CP" ? MaterialCPSideBar : sidebarMenu;
+
+  let sideBar =
+    designation === "Vendor"
+      ? VendorsidebarMenu
+      : designation === "Enquirer"
+        ? EnquirysidebarMenu
+        : designation === "ASA"
+          ? ASASideBarMenu
+          : designation === "Accounts Team"
+            ? AccountSideBarMenu
+            : designation === "Accounts Head"
+              ? AccountHeadSideBarMenu
+              : designation === "Purchase Head"
+                ? PurchaseHeadsidebarMenu
+                : designation === "QA Team"
+                  ? QASideBarMenu
+                  : designation === "Super Head"
+                    ? SuperHeadSidebarMenu
+                    : designation === "Treasury"
+                      ? TreasurySideBarMenu
+                      : designation === "Material User"
+                        ? MaterialUserSideBar
+                        : designation === "Material CP"
+                          ? MaterialCPSideBar
+                          : sidebarMenu;
+
+  if (designation === "Vendor") {
+    sideBar = sideBar.filter((item) => {
+      if (item.name === "ASA Form") {
+        return asaReqd === 1;
+      }
+      return true;
+    });
+  }
+
+  console.log("SIdebar ASA requeisred---->", asaReqd);
 
   const getSidebarWidth = (designation: string) => {
     const compactRoles = ["Vendor", "Enquirer", "ASA", "QA Team", "Material User", "Material CP"];
@@ -39,10 +76,8 @@ const Sidebar = () => {
         const btnRect = btn.getBoundingClientRect();
         const sidebarRect = sidebar.getBoundingClientRect();
 
-        // compute position relative to sidebar container
         const top = btn.offsetTop + 15 - sidebar.scrollTop;
         const left = sidebarRect.width - 10 + offset;
-
         setSubmenuPos({ top, left });
       }
       setOpenMenu(openMenu?.name === item.name ? null : item);
@@ -51,7 +86,6 @@ const Sidebar = () => {
     }
   };
 
-  // Keep submenu aligned when scrolling
   useEffect(() => {
     const sidebar = document.querySelector(".sidebar-scroll") as HTMLElement;
     if (!sidebar) return;
@@ -86,11 +120,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        submenuRef.current &&
-        !submenuRef.current.contains(event.target as Node) &&
-        !buttonRefs.current.some(btn => btn?.contains(event.target as Node))
-      ) {
+      if (submenuRef.current && !submenuRef.current.contains(event.target as Node) && !buttonRefs.current.some(btn => btn?.contains(event.target as Node))) {
         setOpenMenu(null);
       }
     };
@@ -129,7 +159,6 @@ const Sidebar = () => {
         ))}
       </div>
 
-      {/* FLOATING ADJACENT SUBMENU (inside relative wrapper) */}
       {openMenu?.children && openMenu.children.length > 0 && (
         <div
           ref={submenuRef}

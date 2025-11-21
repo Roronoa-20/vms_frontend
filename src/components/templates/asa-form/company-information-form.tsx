@@ -11,20 +11,32 @@ export default function Company_Information_Form() {
     const router = useRouter();
     const params = useSearchParams();
     const vmsRefNo = params.get("vms_ref_no") || "";
-    const { companyInfo, updateCompanyInfo, refreshFormData } = useASAForm();
+    const { companyInfo, updateCompanyInfo, refreshFormData, asaFormSubmitData } = useASAForm();
+
+    const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+
+    const requiredFields: (keyof typeof companyInfo)[] = [
+        "name_of_the_company",
+        "location",
+        "name_of_product"
+    ];
+
+    const isFormValid = requiredFields.every(
+        (field) => companyInfo[field]?.trim()?.length > 0
+    );
 
     useEffect(() => {
         const stored = localStorage.getItem("companyInfo");
         if (stored) {
-          const parsed = JSON.parse(stored);
-    
-          for (const key in parsed) {
-            const entry = parsed[key];
-          }
-          updateCompanyInfo(parsed);
-          refreshFormData();
+            const parsed = JSON.parse(stored);
+
+            for (const key in parsed) {
+                const entry = parsed[key];
+            }
+            updateCompanyInfo(parsed);
+            refreshFormData();
         }
-      }, []);
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -39,6 +51,7 @@ export default function Company_Information_Form() {
         router.push(`asa-form?tabtype=general_disclosures_sub&vms_ref_no=${vmsRefNo}`);
     };
 
+
     return (
         <div className="mt-1 p-2 bg-white rounded-xl shadow-sm border border-gray-200">
             <h2 className="text-2xl font-semibold text-gray-800 mb-2">Company Information</h2>
@@ -51,6 +64,8 @@ export default function Company_Information_Form() {
                     onChange={handleChange}
                     placeholder="Enter company name"
                     label="1. Name of the Company"
+                    required={true}
+                    disabled={isverified === 1}
                 />
 
                 <Textarea_Input
@@ -59,6 +74,8 @@ export default function Company_Information_Form() {
                     value={companyInfo.location}
                     onChange={handleChange}
                     placeholder="Enter full address"
+                    disabled={isverified === 1}
+                    required={true}
                 />
 
                 <Form_Input
@@ -67,18 +84,22 @@ export default function Company_Information_Form() {
                     onChange={handleChange}
                     placeholder="e.g., Medical devices, logistics services"
                     label="3. Name of the product/products/services supplied/provided to Meril"
+                    disabled={isverified === 1}
+                    required={true}
                 />
-
+                {isverified !== 1 && (
                 <div className="flex justify-end">
                     <Button
                         className="py-2.5"
                         variant="nextbtn"
                         size="nextbtnsize"
                         onClick={handleNext}
+                        disabled={!isFormValid}
                     >
                         Next
                     </Button>
                 </div>
+                )}
             </div>
         </div>
     );
