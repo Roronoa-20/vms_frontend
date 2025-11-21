@@ -493,8 +493,8 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                                         <TableCell className="text-center">{subItem?.currency_subhead || "N/A"}</TableCell>
                                         <TableCell className="text-center">{subItem?.service_type_subhead || "N/A"}</TableCell>
                                         <TableCell className="text-center">{subItem?.net_value_subhead || "N/A"}</TableCell>
-                                        <TableCell className="text-center text-nowrap">{subItem?.cost_center_subhead || "N/A"}</TableCell>
-                                        <TableCell className="text-center">{subItem?.gl_account_number_subhead || "N/A"}</TableCell>
+                                        <TableCell className="text-center text-nowrap">{subItem?.cost_center_subhead_desc || "N/A"}</TableCell>
+                                        <TableCell className="text-center text-nowrap">{subItem?.gl_account_number_subhead_desc || "N/A"}</TableCell>
                                         {/* Sticky Actions Cell */}
                                         {mainItems?.sap_status === "Success" && ((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) &&
                                           <TableCell className="text-center sticky right-0 bg-white z-20">

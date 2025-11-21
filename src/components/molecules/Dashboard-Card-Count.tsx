@@ -353,9 +353,6 @@ const DashboardCards = ({ ...Props }: Props) => {
     return <div>Loading...</div>;
   }
 
-  console.log(Props?.prInquiryData, "this is PR table");
-  console.log(Props?.dashboardApprovedVendorTableData, "this is RFQ table");
-
   return (
     <div className="">
       {user === "Vendor" && (

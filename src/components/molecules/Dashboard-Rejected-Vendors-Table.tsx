@@ -46,7 +46,7 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
   const [selectedCompany, setSelectedCompany] = useState<string>("")
   const [search, setSearch] = useState<string>("");
   const [total_event_list, settotalEventList] = useState(0);
-  const [record_per_page, setRecordPerPage] = useState<number>(5);
+  const [record_per_page, setRecordPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<string | null>(null);
@@ -84,7 +84,7 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
 
   const fetchTable = async () => {
     const dashboardRejectedVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.dashboardRejectedVendorTableURL}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}`,
+      url: `${API_END_POINTS?.dashboardRejectedVendorTableURL}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_length=${record_per_page}`,
       method: "GET",
     });
     console.log("dashboardRejectedVendorTableDataApi---->", dashboardRejectedVendorTableDataApi)
@@ -93,7 +93,7 @@ const DashboardRejectedVendorsTable = ({ dashboardTableData, companyDropdown }: 
       settotalEventList(dashboardRejectedVendorTableDataApi?.data?.message?.total_count);
       settotalEventList(dashboardRejectedVendorTableDataApi?.data?.message?.total_count);
       // setRecordPerPage(dashboardRejectedVendorTableDataApi?.data?.message?.rejected_vendor_onboarding?.length);
-      setRecordPerPage(5)
+      setRecordPerPage(10)
     }
   };
 

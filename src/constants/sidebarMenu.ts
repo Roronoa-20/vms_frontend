@@ -504,3 +504,31 @@ export const TreasurySideBarMenu: SidebarItem[] = [
     children: []
   },
 ];
+
+export const FinanceSideBarMenu: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/finance-dashboard",
+    defaultActive: true,
+    children: []
+  },
+   {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "All Vendors",
+    href:"/all-vendors",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "View PR",
+    href: "/view-purchase-requisition",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/po-details.svg",
+    name: "View PO",
+    href: "/view-po",
+    children: []
+  },
+];

@@ -75,6 +75,7 @@ const API_END_POINTS = {
   qmsformdetails: `${url}/api/method/vms.APIs.assessment_apis.qms_api.get_qms_details_without_label`,
   qmsformapproval: `${url}/api/method/vms.APIs.assessment_apis.qms_api.approve_qms_form`,
   qmsformsubmit: `${url}/api/method/vms.APIs.assessment_apis.save_qms_assessment.save_qms_assessment_complete`,
+  getusersignature: `${url}/api/method/vms.APIs.assessment_apis.qms_api.send_signature_image`,
   qmstablemultiselect: `${url}/api/method/vms.APIs.assessment_apis.get_or_create_qms_multiselect_data.get_all_multiselect_masters`,
   qmsqadocumenttypelist: `${url}/api/method/vms.APIs.assessment_apis.get_or_create_qms_multiselect_data.get_quality_agreement_list`,
   poBasedOnVendorCode: `${url}/api/method/vms.APIs.purchase_api.dispatch_item.list_purchase_order`,

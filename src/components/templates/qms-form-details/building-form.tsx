@@ -9,12 +9,7 @@ import { useQMSForm } from '@/src/hooks/useQMSForm';
 export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "building";
-  const {
-    formData,
-    handleTextareaChange,
-    handleCheckboxChange,
-    handleBacktab, handleNextTab
-  } = useQMSForm(vendor_onboarding, currentTab);
+  const { formData, handleTextareaChange, handleCheckboxChange, handleBacktab, handleNextTab} = useQMSForm(vendor_onboarding, currentTab);
 
   return (
     <div className='bg-white pt-4 rounded-[8px]'>
@@ -29,7 +24,6 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           rows={1}
           // onChange={(e) => handleTextareaChange(e, 'area_of_facility')}
           onChange={() => { }}
-
         />
 
         <TextareaWithLabel
