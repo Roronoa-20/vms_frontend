@@ -55,9 +55,7 @@ const DashboardAllQMSForm = ({
   companyDropdown,
 }: Props) => {
   const [isVendorCodeDialog, setIsVendorCodeDialog] = useState(false);
-  const [selectedVendorCodes, setSelectedVendorCodes] = useState<
-    CompanyVendorCodes[]
-  >([]);
+  const [selectedVendorCodes, setSelectedVendorCodes] = useState<CompanyVendorCodes[]>([]);
   const [table, setTable] = useState<QMSOnboardingRecord[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [search, setSearch] = useState<string>("");
@@ -120,7 +118,7 @@ const DashboardAllQMSForm = ({
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e) => setSearch(e.target.value)} />
-            <Select onValueChange={(value) => setSelectedCompany(value)}>
+            {/* <Select onValueChange={(value) => setSelectedCompany(value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
@@ -133,7 +131,7 @@ const DashboardAllQMSForm = ({
                   ))}
                 </SelectGroup>
               </SelectContent>
-            </Select>
+            </Select> */}
           </div>
         </div>
 

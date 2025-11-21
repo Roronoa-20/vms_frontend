@@ -13,13 +13,12 @@ export const QASForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) =
   const { formData, handleBacktab, handleNextTab } = useQMSForm(vendor_onboarding, currentTab);
 
   return (
-    <div>
+    <div  className='bg-white pt-4 rounded-[8px]'>
       <h2 className="text-lg font-bold bg-gray-200 border border-gray-300 p-3">
         SECTION – II: QUALITY ASSURANCE SYSTEMS AND PROCEDURES
       </h2>
 
       <div className="border border-gray-300 p-3 mb-6 rounded-md">
-
         <MultiCheckboxGroup
           name="quality_control_system"
           label="1. The Quality Control System is derived to comply with the following(s):"
@@ -134,7 +133,7 @@ export const QASForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) =
           onChange={() => { }}
         />
       </div>
-      <div className="flex justify-end space-x-5 items-center">
+      {/* <div className="flex justify-end space-x-5 items-center">
         <Button
           variant="backbtn"
           size="backbtnsize"
@@ -151,7 +150,7 @@ export const QASForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) =
         >
           Next
         </Button>
-      </div>
-    </div >
+      </div> */}
+    </div>
   );
 };

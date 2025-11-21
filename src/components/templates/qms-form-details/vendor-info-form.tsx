@@ -21,7 +21,7 @@ export const VendorInfoForm = ({ vendor_onboarding, company_code }: { vendor_onb
 
     return (
         <div>
-            <div className='bg-white p-2 rounded-[8px]'>
+            <div className='bg-white pt-4 rounded-[8px]'>
                 <h2 className="text-lg font-bold bg-gray-200 border border-gray-300 p-3">
                     SECTION – I: VENDOR INFORMATION
                 </h2>
@@ -113,7 +113,7 @@ export const VendorInfoForm = ({ vendor_onboarding, company_code }: { vendor_onb
                     )}
                 </div>
             </div>
-            <div className="flex justify-end gap-4">
+            {/* <div className="flex justify-end gap-4">
                 <Button
                     variant="nextbtn"
                     size="nextbtnsize"
@@ -122,7 +122,7 @@ export const VendorInfoForm = ({ vendor_onboarding, company_code }: { vendor_onb
                 >
                     Next
                 </Button>
-            </div>
+            </div> */}
         </div>
     );
 };

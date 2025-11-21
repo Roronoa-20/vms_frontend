@@ -46,5 +46,6 @@ export const NavbarConstant:Record<string,string> = {
     "/vendor-dispatch-table":"Dispatch Details",
     "/view-material-code-request":"Material Code Request",
     "/material-onboarding-details":"Material Code Details",
-    "/product-history":"Product History"
+    "/product-history":"Product History",
+    "/all-qms-forms": "QMS Forms"
 }

@@ -1,11 +1,12 @@
 import React from 'react'
+import AllQMSForm from '@/src/components/pages/all-qms-form';
 
-import DashboardAllQMSForm from '@/src/components/molecules/Dashboard-All-QMS-Form';
 
-const AllQMSForm = () => {
+const ViewAllQMSForm = () => {
+
   return (
-    <DashboardAllQMSForm/>
+    <AllQMSForm />
   )
 }
 
-export default AllQMSForm
+export default ViewAllQMSForm

@@ -15,7 +15,7 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
   const {formData, handleBacktab, handleNextTab} = useQMSForm(vendor_onboarding, currentTab);
 
   return (
-    <div>
+    <div className='bg-white pt-4 rounded-[8px]'>
       <h2 className="text-lg font-bold bg-gray-200 border border-gray-300 p-3">
         SECTION – VII: PRODUCTION AND PROCESS CONTROL
       </h2>
@@ -148,7 +148,7 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           rows={1}
         />
       </div>
-      <div className="flex justify-end space-x-5 items-center">
+      {/* <div className="flex justify-end space-x-5 items-center">
         <Button
           variant="backbtn"
           size="backbtnsize"
@@ -165,7 +165,7 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
         >
           Next
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 };
