@@ -17,7 +17,7 @@ export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; 
 
 
   return (
-    <div>
+    <div className='bg-white pt-4 rounded-[8px]'>
       <h2 className="text-lg font-bold bg-gray-200 border border-gray-300 p-3">
         SECTION – VI: QUALITY CONTROL
       </h2>
@@ -59,7 +59,7 @@ export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; 
 
         />
       </div>
-      <div className="flex justify-end space-x-5 items-center">
+      {/* <div className="flex justify-end space-x-5 items-center">
         <Button
           variant="backbtn"
           size="backbtnsize"
@@ -76,7 +76,7 @@ export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; 
         >
           Next
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 };

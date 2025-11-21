@@ -18,23 +18,22 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
 
 
     return (
-        <div>
-            <div className="pb-3">
-                <h2 className="border-b border-slate-500 text-[20px] font-semibold text-[#03111F]">
-                    SECTION – X: Outcome of Supplier Assessment
-                </h2>
-                <div>
-                    <Label htmlFor="conclusion_by_meril" className="font-semibold text-[16px] text-[#03111F]">
-                        Assessment remarks:
-                    </Label>
-                    <textarea
-                        className="w-full mt-2 border border-gray-300 p-2 rounded-md text-[14px]"
-                        rows={2}
-                        placeholder="Enter your remarks here"
-                        value={formData.conclusion_by_meril || ""}
-                        onChange={(e) => handleTextareaChange(e, 'conclusion_by_meril')}
-                    />
-                </div>
+        <div className='bg-white pt-4 rounded-[8px]'>
+
+            <h2 className="text-lg font-bold bg-gray-200 border border-gray-300 p-3">
+                SECTION – X: Outcome of Supplier Assessment
+            </h2>
+            <div>
+                <Label htmlFor="conclusion_by_meril" className="font-semibold text-[16px] text-[#03111F]">
+                    Assessment remarks:
+                </Label>
+                <textarea
+                    className="w-full mt-2 border border-gray-300 p-2 rounded-md text-[14px]"
+                    rows={2}
+                    placeholder="Enter your remarks here"
+                    value={formData.conclusion_by_meril || ""}
+                    onChange={(e) => handleTextareaChange(e, 'conclusion_by_meril')}
+                />
             </div>
 
             {/* Section 2 */}
@@ -141,7 +140,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                                     variant="nextbtn"
                                     size="nextbtnsize"
                                     onClick={(e) => {
-                                        handleSignatureUpload(e,"performer_esignature");
+                                        handleSignatureUpload(e, "performer_esignature");
                                         setShowSignatureCanvas(false);
                                     }}
                                 >
