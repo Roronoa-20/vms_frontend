@@ -319,7 +319,13 @@ const API_END_POINTS = {
   getschedulingMarginKeyMaster: `${resourceurl}/Scheduling Margin Key?fields=["*"]&limit_page_length=999`,
   getexpirationDateMaster: `${resourceurl}/Expiration Date Master?fields=["*"]&limit_page_length=999`,
   prToPurchaseTeam:`${url}/api/method/vms.APIs.purchase_api.purchase_requisition_approval.sent_approval_to_purchase_team`,
-  checkassetcode: `${url}/api/method/vms.APIs.purchase_api.check_asset_code.check_asset_code_availability`
+  checkassetcode: `${url}/api/method/vms.APIs.purchase_api.check_asset_code.check_asset_code_availability`,
+
+  submitgrwaiver: `${url}/api/method/vms.APIs.gr_waiver.create_gr_waiver.create_gr_waiver`,
+  dropdownmaterial: `${url}/api/resource/Company%20Master`,
+  dropdownrequestor: `${url}/api/method/vms.APIs.master_apis.employee_master.get_employee_list`,
+  dropdownrequest: `${url}/api/resource/Request Type`,
+  requestorDetailsBasedOnReuqstorName:`${url}/api/method/vms.APIs.master_apis.employee_master.get_employee_details`,
 
 }
 
