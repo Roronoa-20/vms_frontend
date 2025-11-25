@@ -11,10 +11,14 @@ import Pagination from "./Pagination";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
+import { serviceItem } from "@/src/types/serviceBill-Item";
+
 
 interface Props {
   company: string;
   tableTitle?: string;
+  // serviceData: serviceItem[];
+
 }
 
 export default function ViewServiceBillTable({ company, tableTitle }: Props) {

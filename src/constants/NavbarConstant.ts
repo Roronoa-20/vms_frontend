@@ -49,5 +49,6 @@ export const NavbarConstant:Record<string,string> = {
     "/product-history":"Product History",
     "/all-qms-forms": "QMS Forms",
     "/finance-dashboard" : "Dashboard",
-    "/view-quality-agreement" : "Quality Agreement"
+    "/view-quality-agreement" : "Quality Agreement",
+    "/view-asl": "Approved Supplier List"
 }

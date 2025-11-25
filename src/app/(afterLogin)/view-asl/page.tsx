@@ -1,10 +1,12 @@
-import ViewASl from '@/src/components/molecules/View-ASl'
-import React from 'react'
+import ViewASL from '@/src/components/pages/view-asl'
+import React from 'react';
+
+
 const ViewAsl = () => {
     return(
         <>
-        <ViewASl/>
+        <ViewASL />
         </>
     )
 }
-export default ViewAsl
+export default ViewAsl;
