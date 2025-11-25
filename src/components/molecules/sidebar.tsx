@@ -36,7 +36,7 @@ const Sidebar = () => {
 
   const getSidebarWidth = (designation: string) => {
     const compactRoles = ["Vendor", "Enquirer", "ASA", "QA Team", "Material User", "Material CP", "Finance", "Finance Head"];
-    return compactRoles.includes(designation) ? "w-[95px]" : "w-[110px]";
+    return compactRoles.includes(designation) ? "w-[100px]" : "w-[115px]";
   };
 
   const [openMenu, setOpenMenu] = useState<SidebarItem | null>(null);
@@ -49,7 +49,7 @@ const Sidebar = () => {
       const btn = buttonRefs.current[idx];
       const sidebar = document.querySelector(".sidebar-scroll") as HTMLElement;
       if (btn && sidebar) {
-        const offset = getSidebarWidth(designation || "") === "w-[95px]" ? 0 : 0;
+        const offset = getSidebarWidth(designation || "") === "w-[100px]" ? 0 : 0;
         const btnRect = btn.getBoundingClientRect();
         const sidebarRect = sidebar.getBoundingClientRect();
 
@@ -72,7 +72,7 @@ const Sidebar = () => {
         const idx = sideBar.findIndex((item) => item.name === openMenu.name);
         const btn = buttonRefs.current[idx];
         if (btn) {
-          const offset = getSidebarWidth(designation || "") === "w-[95px]" ? 0 : 0;
+          const offset = getSidebarWidth(designation || "") === "w-[100px]" ? 0 : 0;
           const top = btn.offsetTop + 15 - sidebar.scrollTop;
           const left = sidebar.clientWidth + offset;
 
@@ -114,7 +114,7 @@ const Sidebar = () => {
       <div
         className={`${getSidebarWidth(designation || "")} bg-[#0C2741] flex flex-col items-center gap-3 overflow-y-auto no-scrollbar h-screen sidebar-scroll`}
       >
-        <div className="w-3 h-3 pb-6 pt-5">
+        <div className="pb-3 pt-2.5">
           <Logo />
         </div>
         {sideBar?.map((item, idx) => (
@@ -130,8 +130,8 @@ const Sidebar = () => {
               }`}
             onClick={() => handleClick(item, idx)}
           >
-            <Image src={item?.logo} alt="" width={25} height={20} />
-            <h1 className="text-center text-[14px] break-words">{item?.name}</h1>
+            <Image src={item?.logo} alt="" width={30} height={25} />
+            <h1 className="text-center text-[16px] break-words">{item?.name}</h1>
           </button>
         ))}
       </div>
@@ -151,7 +151,7 @@ const Sidebar = () => {
               className={`flex items-center gap-2 px-3 py-2 rounded text-sm text-white ${pathname === child.href ? "bg-[#2C567E]" : "hover:bg-[#2C567E]"}`}
               onClick={() => navigateTo(child)}
             >
-              {child.logo && <Image src={child.logo} alt={child.name} width={16} height={16} />}
+              {child.logo && <Image src={child.logo} alt={child.name} width={18} height={18} />}
               <span>{child.name}</span>
             </button>
           ))}
