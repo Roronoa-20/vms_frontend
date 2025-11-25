@@ -20,6 +20,37 @@ const Form7 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
             <div className='space-y-2 text-justify pr-16'>
               <h1 className='text-center font-bold text-[17px]'>Annex II – Contact person details</h1>
               <div className='mt-5'>
+                <h1 className='font-semibold text-[18px]'>Meril Diagnostics Pvt. Ltd.</h1>
+                <div className='grid grid-cols-2 mt-3 border-[1px] border-black font-semibold'>
+                  <div className='border-r-[1px] border-black p-1'>
+                    <p>Mr. Punesh Rohit</p>
+                    <p className='font-medium'>Additional General Manager (Purchase)<br />
+                      <a href="mailto:punesh.rohit@merillife.com" className="underline text-blue-600">
+                        punesh.rohit@merillife.com
+                      </a><br />
+                      Contact No.:  +91 9924019593 </p>
+                    {/* <textarea
+                      className='w-full h-full p-1 outline-none'
+                      placeholder='Write here'
+                      name="contact_person_1"
+                      value={formData.contact_person_1 || ""}
+                      onChange={e => {
+                        handleChange('contact_person_1', e.target.value);
+                        localStorage.setItem("contact_person_1", e.target.value);
+                      }}
+                    /> */}
+                  </div>
+                  <div className='p-1'>
+                    <p>Mr. Ram S. Kanoje</p>
+                    <p className='font-medium'>Additional General Manager (Quality Assurance)<br />
+                      <a href="mailto:ram.kanoje@merillife.com" className="underline text-blue-600">
+                        ram.kanoje@merillife.com
+                      </a><br />
+                      Contact No.: +91 9879916169</p>
+                  </div>
+                </div>
+              </div>
+              <div className='mt-5'>
                 <h1 className='font-semibold text-[18px]'> [Supplier contact person details] </h1>
                 <div className='grid grid-cols-2 mt-3 border-[1px] border-black font-semibold'>
                   <div className='border-r-[1px] border-black p-1'>

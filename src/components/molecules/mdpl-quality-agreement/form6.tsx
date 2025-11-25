@@ -6,25 +6,38 @@ import { useQMSForm } from "@/src/hooks/useQMSForm";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
+type QAProduct = {
+  material_process_name: string;
+  specification: string;
+  isNew: boolean;
+};
+
+
 export const Form6 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "vendor_information";
-  const { formData, setFormData } = useQMSForm(vendor_onboarding, currentTab);
+  const { qualityagreementData, formData, setFormData } = useQMSForm(vendor_onboarding, currentTab);
 
-  const products: Array<any> = Array.isArray(formData?.products_in_qa)
-    ? formData.products_in_qa
+  const rawProducts: QAProduct[] = Array.isArray(qualityagreementData?.products_in_qa)
+    ? qualityagreementData.products_in_qa.map((p: any) => ({
+      material_process_name: p.material_process_name || p.material_description || "",
+      specification: p.specification || p.specifications || "",
+      isNew: p.isNew ?? false,
+    }))
     : [];
 
+  const products = rawProducts;
+
+
   const handleInputChange = (index: number, field: string, value: string) => {
-    const updatedProducts = [...products];
-    updatedProducts[index] = {
-      ...updatedProducts[index],
+    const updated = [...rawProducts];
+    updated[index] = {
+      ...updated[index],
       [field]: value,
-      isNew: updatedProducts[index]?.isNew ?? false,
     };
     setFormData((prev: any) => ({
       ...prev,
-      products_in_qa: updatedProducts,
+      products_in_qa: updated,
     }));
   };
 
@@ -33,7 +46,7 @@ export const Form6 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
       ...prev,
       products_in_qa: [
         ...(prev.products_in_qa || []),
-        { material_description: "", specification: "", isNew: true },
+        { material_process_name: "", specification: "", isNew: true },
       ],
     }));
   };
@@ -82,9 +95,9 @@ export const Form6 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
                         <TableCell className="text-center border-r border-black">
                           <input
                             type="text"
-                            value={product.material_description}
+                            value={product.material_process_name}
                             onChange={e =>
-                              handleInputChange(index, "material_description", e.target.value)
+                              handleInputChange(index, "material_process_name", e.target.value)
                             }
                             className="w-full px-2 py-1 border border-gray-400 rounded"
                             placeholder="Enter material name"

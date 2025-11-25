@@ -72,12 +72,17 @@ const API_END_POINTS = {
   prTableData: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pr_w`,
   prInquiryProductHistory:`${url}/api/method/vms.APIs.purchase_api.product_inquiry_details_report.get_latest_product_inquiry`,
   FullProductHistory:`${url}/api/method/vms.APIs.purchase_api.product_inquiry_details_report.get_product_inquiry_report`,
+
+  // QMS Related APIs
   qmsformdetails: `${url}/api/method/vms.APIs.assessment_apis.qms_api.get_qms_details_without_label`,
   qmsformapproval: `${url}/api/method/vms.APIs.assessment_apis.qms_api.approve_qms_form`,
+  qmsformapprovalmatrix: `${url}/api/method/vms.APIs.approval.approve_qms.approve_qms`,
   qmsformsubmit: `${url}/api/method/vms.APIs.assessment_apis.save_qms_assessment.save_qms_assessment_complete`,
   getusersignature: `${url}/api/method/vms.APIs.assessment_apis.qms_api.send_signature_image`,
   qmstablemultiselect: `${url}/api/method/vms.APIs.assessment_apis.get_or_create_qms_multiselect_data.get_all_multiselect_masters`,
   qmsqadocumenttypelist: `${url}/api/method/vms.APIs.assessment_apis.get_or_create_qms_multiselect_data.get_quality_agreement_list`,
+  getqualityagreementdetails: `${url}/api/method/vms.APIs.assessment_apis.qms_api.get_qms_quality_agreement`,
+
   poBasedOnVendorCode: `${url}/api/method/vms.APIs.purchase_api.dispatch_item.list_purchase_order`,
   PODetailsBasedOnPOCode: `${url}/api/method/vms.APIs.purchase_api.dispatch_item.get_poitem_against_po`,
   PurchaseEnquiryModify: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.modified_peq`,
@@ -108,6 +113,7 @@ const API_END_POINTS = {
   approvePR: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition_approval.purchase_team_approval_check`,
   sapprcreated: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_purchase_requisition_form`,
   fetchAccountAssignmentData:`${url}/api/method/vms.APIs.purchase_api.handle_req_field_pr.return_acc_ass_category_list`,
+
   //rfq apis
   fetchVendorListBasedOnRFQType: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.vendor_list`,
   CreateImportRFQ: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.create_import_logistic_rfq`,
@@ -136,6 +142,7 @@ const API_END_POINTS = {
   ProcessToken: `${url}/api/method/vms.purchase.doctype.request_for_quotation.request_for_quotation.process_token`,
   SubmitPublicQuatation: `${url}/api/method/vms.APIs.quotation.create_quotation.create_or_update_quotation_non_onboarded`,
   QuotationDetail: `${url}/api/method/vms.APIs.quotation.quotation.get_quotation_details`,
+
   // Amend APIs
   AmendAPI: `${url}/api/method/vms.APIs.vendor_onboarding.onboarding_amendment.create_vendor_onboarding_amendment`,
 
@@ -291,7 +298,6 @@ const API_END_POINTS = {
   materialonboardingdashboard: `${url}/api/method/vms.APIs.requestor_master.get_requestor_master.get_requestor_statistics`,
   getMaterialOnboardingTableList: `${url}/api/method/vms.APIs.material_onboarding.get_material_onboarding.get_material_onboarding_list`,
   getRequestorMasterTableList: `${url}/api/method/vms.APIs.requestor_master.get_requestor_master.get_requestor_master_list`,
-  // getAllMaterialDescriptionsAndCodes: `${url}/api/method/vms_app.APIs.material_onboarding.get_all_material_code.get_all_material_descriptions_and_codes`,
   createRequestorMaster: `${url}/api/method/vms.APIs.requestor_master.create_requestor_master.create_requestor_master`,
   updateRequestorMaster: `${url}/api/method/vms.APIs.requestor_master.create_requestor_master.update_requestor_master`,
   getAllMaterialTypeMasterDetails: `${url}/api/method/vms.APIs.master_apis.material_type.get_material_type_master_details`,

@@ -67,7 +67,7 @@ const DashboardTotalQMSTable = ({ dashboardTableData, companyDropdown }: Props) 
 
     useEffect(() => {
         fetchTable();
-      }, [debouncedSearchName, selectedCompany, currentPage])
+    }, [debouncedSearchName, selectedCompany, currentPage])
 
     const handlesearchname = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
@@ -125,6 +125,7 @@ const DashboardTotalQMSTable = ({ dashboardTableData, companyDropdown }: Props) 
                             <TableHead className="text-center text-nowrap">Register By</TableHead>
                             <TableHead className="text-center text-nowrap">View Details</TableHead>
                             <TableHead className="text-center text-nowrap">QMS Form</TableHead>
+                            <TableHead className="text-center text-nowrap">Quality Agreement</TableHead>
                         </TableRow>
                     </TableHeader>
 
@@ -151,7 +152,7 @@ const DashboardTotalQMSTable = ({ dashboardTableData, companyDropdown }: Props) 
                                             View
                                         </Button>
                                     </TableCell>
-                                    <TableCell>{item?.vendor_country}</TableCell>
+                                    <TableCell className="text-center text-nowrap">{item?.vendor_country}</TableCell>
                                     <TableCell>{item?.registered_by}</TableCell>
                                     <TableCell>
                                         <Link href={`/view-onboarding-details?tabtype=Company Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}>
@@ -165,7 +166,13 @@ const DashboardTotalQMSTable = ({ dashboardTableData, companyDropdown }: Props) 
                                             </Link>
                                         </div>
                                     </TableCell>
-
+                                    <TableCell>
+                                        <div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}>
+                                            <Link href={`/view-quality-agreement?tabtype=quality_agreement&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}>
+                                                <Button className="bg-[#5291CD] hover:bg-white hover:border hover:border-[#5291CD] hover:text-black rounded-[8px] font-semibold">View</Button>
+                                            </Link>
+                                        </div>
+                                    </TableCell>
                                 </TableRow>
                             ))
                         ) : (

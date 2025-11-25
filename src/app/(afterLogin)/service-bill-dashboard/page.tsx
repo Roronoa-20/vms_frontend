@@ -1,12 +1,13 @@
 export const dynamic = "force-dynamic";
 
 import React from 'react'
-import ServicesDashboard from '@/src/components/pages/service-bill-dashboard';
+import ServiceBillHome from '@/src/components/molecules/ServiceBill-Dashboard';
 
-const ServicesDashboardPaGE = () => {
+const ServiceBill = () => {
   return (
-    <ServicesDashboard/>
+    <ServiceBillHome/>
   )
 }
 
-export default ServicesDashboardPaGE;
+export default ServiceBill;
+

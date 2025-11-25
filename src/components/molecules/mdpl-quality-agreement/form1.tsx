@@ -3,34 +3,49 @@ import Header from "@/src/components/molecules/mdpl-quality-agreement/header";
 import { useQMSForm } from '@/src/hooks/useQMSForm';
 import { useSearchParams } from "next/navigation";
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/src/context/AuthContext';
+
 
 const form1 = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
-  console.log("Vendor Master Data--->", vendor_onboarding);
+
+  console.log("Form 1 Vendor Master Data--->", vendor_onboarding);
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "vendor information";
-  const { formData, setFormData } = useQMSForm(vendor_onboarding, currentTab);
+  const { qualityagreementData, formData, setFormData } = useQMSForm(vendor_onboarding, currentTab);
   const today = new Date().toISOString().split('T')[0];
-  const [selectedDate, setSelectedDate] = React.useState(today);
+
+  console.log("Form 1 Vendor Master Data--->", qualityagreementData);
+
+  const mdplqualityagreementform = qualityagreementData.mdpl_quality_agreement || "";
+  const backendDate = mdplqualityagreementform?.mdpl_qa_date;
+  const initialDate = backendDate ? backendDate : today;
+  const [selectedDate, setSelectedDate] = React.useState(initialDate);
+  const { designation } = useAuth();
+  const isReadOnly = designation === "QA Team" || designation === "Purchase Team";
+
 
   useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      mdpl_qa_date: selectedDate,
-    }));
-  }, [selectedDate]);
+    setSelectedDate(initialDate);
+    if (!backendDate) {
+      setFormData((prev) => ({
+        ...prev,
+        mdpl_qa_date: today,
+      }));
+    }
+  }, [backendDate]);
 
   useEffect(() => {
-  if (formData.vendor_title && formData.vendor_name1 && selectedDate) {
-    const agreementData = {
-      vendor_title: formData.vendor_title,
-      vendor_name1: formData.vendor_name1,
-      mdpl_qa_date: selectedDate,
-    };
+    if (formData.vendor_title && mdplqualityagreementform.vendor_name && selectedDate) {
+      const agreementData = {
+        vendor_title: formData.vendor_title,
+        vendor_name1: mdplqualityagreementform.vendor_name,
+        mdpl_qa_date: selectedDate,
+      };
 
-    localStorage.setItem("QualityAgreementInfo", JSON.stringify(agreementData));
-    console.log("🧾 Stored Quality Agreement Info:", agreementData);
-  }
-}, [formData.vendor_title, formData.vendor_name1, selectedDate]);
+      localStorage.setItem("QualityAgreementInfo", JSON.stringify(agreementData));
+      console.log("🧾 Stored Quality Agreement Info:", agreementData);
+    }
+  }, [formData.vendor_title, mdplqualityagreementform.vendor_name, selectedDate]);
 
 
 
@@ -45,12 +60,20 @@ const form1 = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
             <p className='text-[16px]'>
               This Quality Agreement has entered on{" "}
               <input
-                type='date'
-                name='date'
-                className='font-bold border-b-2 border-black focus:outline-none p-0 leading-tight appearance-none'
-                defaultValue={today}
-                onChange={(e) => setSelectedDate(e.target.value)}
-              />{" "}
+                type="date"
+                name="date"
+                className="font-bold border-b-2 border-black focus:outline-none p-0 leading-tight appearance-none"
+                value={selectedDate}
+                disabled={isReadOnly}
+                onChange={(e) => {
+                  if (isReadOnly) return;
+                  setSelectedDate(e.target.value);
+                  setFormData((prev) => ({
+                    ...prev,
+                    mdpl_qa_date: e.target.value,
+                  }));
+                }}
+              />
               between Meril Diagnostics Pvt. Ltd.,
               having its registered office at 2nd Floor, D1-D3, Meril Park, Survey No. 135/2/B & 174/2, Muktanand Marg, Chala, Vapi – 396191, Gujarat, India (hereinafter referred to as “Meril”) represented by Mr. Ram Kanoje (Additional General Manager – Quality Assurance)
             </p>
@@ -58,7 +81,7 @@ const form1 = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
               And
             </p>
             <p className='text-[16px]'>
-              <span className='font-bold underline'>{formData.vendor_title} {formData.vendor_name1}</span><span className='text-[14px]'> (Hereinafter referred as “Supplier”)</span><br></br>
+              <span className='font-bold underline'>{formData.vendor_title} {mdplqualityagreementform.vendor_name}</span><span className='text-[14px]'> (Hereinafter referred as “Supplier”)</span><br></br>
               Whereas, the parties have entered into the quality agreement pursuant to which supplier has agreed to manufacture/supply raw material/packing materials for Meril accordingly. Whereas, the parties wish to set terms and conditions on which they will assure the quality of products to be manufactured/supplied by the supplier.
             </p>
           </section>
@@ -109,7 +132,7 @@ const form1 = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
           </section>
           {/* <Button
             onClick={() => {
-              console.log("🔥 Form 5 Data Preview:", formData);
+              console.log("🔥 Form 5 Data Preview:", mdplqualityagreementform);
               alert("Check the console! 🔍");
             }}
             className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"

@@ -89,7 +89,7 @@ export const VendorInfoForm = ({ vendor_onboarding, ref_no, company_code }: { ve
                                             }}
                                         />
                                         <div className="flex gap-2">
-                                            <Button variant="nextbtn" size="nextbtnsize" onClick={(e) => handleSaveSignature(e,("vendor_signature"))}>
+                                            <Button variant="nextbtn" size="nextbtnsize" onClick={(e) => handleSaveSignature(e, ("vendor_signature"))}>
                                                 Save
                                             </Button>
                                             <Button variant="backbtn" size="backbtnsize" onClick={() => handleClearSignature("vendor_signature")}>
@@ -101,7 +101,7 @@ export const VendorInfoForm = ({ vendor_onboarding, ref_no, company_code }: { ve
                             </div>
                         </>
                     )}
-                    
+
                     {(is2000 || is7000) && (
                         <div className="col-span-3 space-y-[5px]">
                             <Label htmlFor="name_of_parent_company" className="font-semibold text-[16px] text-[#03111F]">
@@ -138,20 +138,19 @@ export const VendorInfoForm = ({ vendor_onboarding, ref_no, company_code }: { ve
                             </div>
                         </div>
                     )}
+                    <div className="col-span-2 flex justify-end pt-4">
+                        <Button variant="nextbtn" size="nextbtnsize" className="py-2.5"
+                            // onClick={() => {
+                            //     console.log('Saving form data locally for vendor info tab:', currentTab, 'formData:', formData);
+                            //     saveFormDataLocally(currentTab, formData);
+                            //     handleNext();
+                            // }}>
+                            onClick={handleSubmit}
+                        >
+                            Next
+                        </Button>
+                    </div>
                 </div>
-            </div>
-
-            <div className="flex justify-end gap-4">
-                <Button variant="nextbtn" size="nextbtnsize" className="py-2.5"
-                    // onClick={() => {
-                    //     console.log('Saving form data locally for vendor info tab:', currentTab, 'formData:', formData);
-                    //     saveFormDataLocally(currentTab, formData);
-                    //     handleNext();
-                    // }}>
-                    onClick={handleSubmit}
-                >
-                    Next
-                </Button>
             </div>
         </div>
     );
