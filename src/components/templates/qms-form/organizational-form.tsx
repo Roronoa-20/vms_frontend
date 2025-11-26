@@ -9,7 +9,7 @@ import { useQMSForm } from '@/src/hooks/useQMSForm';
 export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "organizational";
-  const {formData,handleCheckboxChange,handleBack,handleNext,saveFormDataLocally, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
+  const { formData, handleCheckboxChange, handleBack, handleNext, saveFormDataLocally, handleSubmit } = useQMSForm(vendor_onboarding, currentTab);
 
   return (
     <div className="bg-white">
@@ -23,7 +23,7 @@ export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: s
           label="1. Do you have an organizational chart?"
           value={formData.organizational_chart || ""}
           onChange={(e) => handleCheckboxChange(e, 'organizational_chart')}
-          
+
         />
 
         <YesNoNAGroup
@@ -57,30 +57,30 @@ export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: s
           onChange={(e) => handleCheckboxChange(e, 'written_authority')}
 
         />
-      </div>
-      
-      <div className="flex justify-end space-x-5 items-center">
-        <Button
-          variant="backbtn"
-          size="backbtnsize"
-          className="py-2"
-          onClick={handleBack}
-        >
-          Back
-        </Button>
-        <Button
-          variant="nextbtn"
-          size="nextbtnsize"
-          className="py-2.5"
-          // onClick={() => {
-          //   console.log('Saving form data locally for Organizational tab:', currentTab, 'formData:', formData);
-          //   saveFormDataLocally(currentTab, formData);
-          //   handleNext();
-          // }}
-          onClick={handleSubmit}
+
+        <div className="flex justify-end space-x-5 items-center">
+          <Button
+            variant="backbtn"
+            size="backbtnsize"
+            className="py-2"
+            onClick={handleBack}
           >
-          Next
-        </Button>
+            Back
+          </Button>
+          <Button
+            variant="nextbtn"
+            size="nextbtnsize"
+            className="py-2.5"
+            // onClick={() => {
+            //   console.log('Saving form data locally for Organizational tab:', currentTab, 'formData:', formData);
+            //   saveFormDataLocally(currentTab, formData);
+            //   handleNext();
+            // }}
+            onClick={handleSubmit}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );

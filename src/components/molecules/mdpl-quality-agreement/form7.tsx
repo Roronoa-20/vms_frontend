@@ -29,16 +29,6 @@ const Form7 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
                         punesh.rohit@merillife.com
                       </a><br />
                       Contact No.:  +91 9924019593 </p>
-                    {/* <textarea
-                      className='w-full h-full p-1 outline-none'
-                      placeholder='Write here'
-                      name="contact_person_1"
-                      value={formData.contact_person_1 || ""}
-                      onChange={e => {
-                        handleChange('contact_person_1', e.target.value);
-                        localStorage.setItem("contact_person_1", e.target.value);
-                      }}
-                    /> */}
                   </div>
                   <div className='p-1'>
                     <p>Mr. Ram S. Kanoje</p>
@@ -81,15 +71,6 @@ const Form7 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
               </div>
             </div>
           </section>
-          {/* <Button
-            onClick={() => {
-              console.log("🔥 Form 5 Data Preview:", formData);
-              alert("Check the console! 🔍");
-            }}
-            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Preview Form 5 Data
-          </Button> */}
           <section className="items-center">
             <div className="text-center text-lg font-semibold mt-[400px]">Page 7 of 7</div>
           </section>

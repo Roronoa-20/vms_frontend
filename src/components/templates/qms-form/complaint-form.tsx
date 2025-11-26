@@ -8,7 +8,7 @@ import { useQMSForm } from '@/src/hooks/useQMSForm';
 export const ComplaintForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "complaint";
-  const {formData,handleCheckboxChange,handleBack,handleNext, saveFormDataLocally, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
+  const { formData, handleCheckboxChange, handleBack, handleNext, saveFormDataLocally, handleSubmit } = useQMSForm(vendor_onboarding, currentTab);
 
   return (
     <div className="bg-white">
@@ -51,28 +51,29 @@ export const ComplaintForm = ({ vendor_onboarding }: { vendor_onboarding: string
           onChange={(e) => handleCheckboxChange(e, 'reporting_environmental_accident')}
 
         />
-      </div>
-      <div className="flex justify-end space-x-5 items-center">
-        <Button
-          variant="backbtn"
-          size="backbtnsize"
-          className="py-2"
-          onClick={handleBack}
-        >
-          Back
-        </Button>
-        <Button
-          variant="nextbtn"
-          size="nextbtnsize"
-          className="py-2.5"
-          // onClick={() => {
-          //   console.log('Saving form data locally for Building tab:', currentTab, 'formData:', formData);
-          //   saveFormDataLocally(currentTab, formData);
-          //   handleNext();
-          // }}
-          onClick={handleSubmit}>
-          Next
-        </Button>
+
+        <div className="flex justify-end space-x-5 items-center">
+          <Button
+            variant="backbtn"
+            size="backbtnsize"
+            className="py-2"
+            onClick={handleBack}
+          >
+            Back
+          </Button>
+          <Button
+            variant="nextbtn"
+            size="nextbtnsize"
+            className="py-2.5"
+            // onClick={() => {
+            //   console.log('Saving form data locally for Building tab:', currentTab, 'formData:', formData);
+            //   saveFormDataLocally(currentTab, formData);
+            //   handleNext();
+            // }}
+            onClick={handleSubmit}>
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );

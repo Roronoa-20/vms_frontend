@@ -99,29 +99,30 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           onChange={(e) => handleCheckboxChange(e, 'safety_committee')}
 
         />
-      </div>
-      <div className="flex justify-end space-x-5 items-center">
-        <Button
-          variant="backbtn"
-          size="backbtnsize"
-          className="py-2"
-          onClick={handleBack}
-        >
-          Back
-        </Button>
-        <Button
-          variant="nextbtn"
-          size="nextbtnsize"
-          className="py-2.5"
-          // onClick={() => {
-          //   console.log('Saving form data locally for Building tab:', currentTab, 'formData:', formData);
-          //   saveFormDataLocally(currentTab, formData);
-          //   handleNext();
-          // }}
-          onClick={handleSubmit}
+
+        <div className="flex justify-end space-x-5 items-center">
+          <Button
+            variant="backbtn"
+            size="backbtnsize"
+            className="py-2"
+            onClick={handleBack}
           >
-          Next
-        </Button>
+            Back
+          </Button>
+          <Button
+            variant="nextbtn"
+            size="nextbtnsize"
+            className="py-2.5"
+            // onClick={() => {
+            //   console.log('Saving form data locally for Building tab:', currentTab, 'formData:', formData);
+            //   saveFormDataLocally(currentTab, formData);
+            //   handleNext();
+            // }}
+            onClick={handleSubmit}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -81,7 +81,12 @@ const API_END_POINTS = {
   getusersignature: `${url}/api/method/vms.APIs.assessment_apis.qms_api.send_signature_image`,
   qmstablemultiselect: `${url}/api/method/vms.APIs.assessment_apis.get_or_create_qms_multiselect_data.get_all_multiselect_masters`,
   qmsqadocumenttypelist: `${url}/api/method/vms.APIs.assessment_apis.get_or_create_qms_multiselect_data.get_quality_agreement_list`,
+  createsubmitQualityAgreement: `${url}/api/method/vms.APIs.assessment_apis.qms_api.create_qms_quality_agreement`,
+  submitform5MDPLQualityAgreement: `${url}/api/method/vms.APIs.assessment_apis.qms_api.create_products_in_qa_table`,
+  submitMLSPLProductsQualityAgreement: `${url}/api/method/vms.APIs.assessment_apis.qms_api.create_mlspl_qa_list_table`,
   getqualityagreementdetails: `${url}/api/method/vms.APIs.assessment_apis.qms_api.get_qms_quality_agreement`,
+  deleteform5Products: `${url}/api/method/vms.APIs.assessment_apis.qms_api.delete_products_in_qa_table`,
+  deletemlsplproducts: `${url}/api/method/vms.APIs.assessment_apis.qms_api.delete_mlspl_qa_list_table`,
 
   poBasedOnVendorCode: `${url}/api/method/vms.APIs.purchase_api.dispatch_item.list_purchase_order`,
   PODetailsBasedOnPOCode: `${url}/api/method/vms.APIs.purchase_api.dispatch_item.get_poitem_against_po`,
