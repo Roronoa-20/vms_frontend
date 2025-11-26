@@ -44,7 +44,7 @@ export default function ViewGrWaiver({ GRData = [] }: ViewGrWaiverProps) {
   }, [GRData, searchTerm]);
 
   const onNewGR = () => {
-    router.push("/gr-waiver");
+    router.push("/new-gr-waiver");
   };
 
 
