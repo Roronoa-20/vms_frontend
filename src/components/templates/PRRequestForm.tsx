@@ -25,6 +25,7 @@ import { useAuth } from '@/src/context/AuthContext'
 import { Alert, AlertDescription, AlertTitle, AlertFooter } from "@/components/ui/alert"
 import { ApproveConfirmationDialog } from '../common/ApproveConfirmationDialog';
 import Comment_box from '../molecules/CommentBox'
+import { clearPreviewData } from 'next/dist/server/api-utils'
 
 
 interface Props {
@@ -51,7 +52,7 @@ export const updateQueryParam = (key: string, value: string) => {
 };
 
 const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, ProfitCenterDropdown, PurchaseOrgDropdown, prf_name }: Props) => {
-
+  console.log("PR Data for PRF NAme---->", PRData)
   const user = Cookies.get("user_id");
   const { designation } = useAuth();
   const router = useRouter()
@@ -178,9 +179,9 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
       } else {
         url = `${API_END_POINTS?.fetchPRFDoctypeData}?prf_name=${prf_name}`;
       }
-      const response: AxiosResponse = await requestWrapper({url,method: "GET",});
+      const response: AxiosResponse = await requestWrapper({ url, method: "GET", });
       if (response?.status === 200) {
-        console.log(response,"response of table data------------------------------------------");
+        console.log(response, "response of table data------------------------------------------");
         setMainItems(response.data.message);
       } else {
         alert("Error fetching PR data");
@@ -193,17 +194,24 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
 
 
   const handleNext = async () => {
-    const url = API_END_POINTS?.createPR;
-    const response: AxiosResponse = await requestWrapper({ url: url, data: { ...formData }, method: "POST" });
-    if (response?.status == 200) {
-      console.log(response.data.message.name, "reposne dxcfgvbhjnkmjhgvfcdxcfvgbh")
-      updateQueryParam("pur_req", response.data.message.name)
-      fetchTableData(response.data.message.name)
-      alert("Submitted Successfully");
-    } else {
-      alert("error");
+    try {
+      const url = API_END_POINTS.createPR;
+      const response: AxiosResponse = await requestWrapper({url,data: { ...formData },method: "POST"});
+
+      if (response?.status === 200) {
+        const purReqName = response.data.message.name;
+        updateQueryParam("pur_req", purReqName);
+        fetchTableData(purReqName, "");
+        alert("Submitted Successfully");
+      } else {
+        alert("Error");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong.");
     }
   };
+
 
   const handleModel = (purchase_requisition_type: string) => purchase_requisition_type === "SB" ? setEditModalOpen(true) : setNBEditModalOpen(true);
 
@@ -234,11 +242,12 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
   };
 
   useEffect(() => {
-    if (pur_req) {
-      fetchTableData(pur_req);
+    if (pur_req || prf_name) {
+      fetchTableData(pur_req ?? "", prf_name ?? "");
     }
-    fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "")
-  }, [pur_req, PRData?.purchase_requisition_type])
+    fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "");
+  }, [pur_req, prf_name, PRData?.purchase_requisition_type]);
+
 
   console.log("Main ITem Status SAP------------->", mainItems);
 
