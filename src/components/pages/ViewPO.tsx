@@ -45,7 +45,7 @@ interface Props {
 
 
 const ViewPO = ({ po_name }: Props) => {
-  const [prDetails, setPRDetails] = useState();
+  const [prDetails, setPRDetails] = useState<any>();
   const [isSuccessDialog, setIsSuccessDialog] = useState(false);
 
   const [PRNumber, setPRNumber] = useState<string | undefined>(po_name);
@@ -313,7 +313,7 @@ const ViewPO = ({ po_name }: Props) => {
       {isPrintFormat &&
         <POPrintFormat contentRef={contentRef} prDetails={prDetails} Heading={selectedPODropdown} />
       }
-      {isPrintFormat &&
+      {isPrintFormat && Boolean(prDetails?.sent_to_vendor) &&
         <div className="flex justify-end items-center"><Button variant={"nextbtn"} size={"nextbtnsize"} className="px-4 py-2.5 transition" onClick={() => { setIsEmailDialog(true) }}>Send Email</Button></div>
       }
 
