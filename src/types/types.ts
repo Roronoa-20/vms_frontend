@@ -1065,6 +1065,7 @@ export interface DashboardPOTableItem {
   _comments: string | null;
   _assign: string | null;
   _liked_by: string | null;
+  sent_to_vendor:boolean
 }
 
 export interface DashboardPOTableData {

@@ -19,6 +19,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../atoms/table";
+import { Button } from "../atoms/button";
 
 interface Props {
   vendorTitleDropdown: TvendorRegistrationDropdown["message"]["data"]["vendor_title"]
@@ -68,6 +69,7 @@ const VendorRegistration = ({ ...Props }: Props) => {
   const [tableData, setTableData] = useState<TtableData[]>([]);
   const [vendorNameDialog,setVendorNameDialog] = useState<boolean>(false);
   const [vendorNameDialogData,setVendorNameDialogData] = useState<vendorNameDialogDataType[]>([]);
+  const [fieldDisable,setFieldDisable] = useState<boolean>(false);
   
   const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
 
@@ -231,8 +233,14 @@ const VendorRegistration = ({ ...Props }: Props) => {
 
 
   const toggleRow = (index: number) => {
-    setExpandedRows((s) => ({ ...s, [index]: !s[index] }));
+    setExpandedRows((row) => ({ ...row, [index]: !row[index] }));
   };
+
+  const handleVendorAdd = (data:vendorNameDialogDataType)=>{
+    setFormData((prev:any)=>({...prev,office_email_primary:data?.office_email_primary,mobile_number:data?.mobile_number,search_term:data?.search_term,vendor_name:data?.vendor_name,country:data?.country}))
+    handleClose();
+    setFieldDisable(true);
+  }
 
 
   return (
@@ -247,6 +255,7 @@ const VendorRegistration = ({ ...Props }: Props) => {
         handleSelectChange={handleSelectChange}
         setMultiVendor={setMultiVendor}
         VendorNameCheckApi={VendorNameCheckApi}
+        fieldDisable={fieldDisable}
       />
       <VendorRegistration2
         companyDropdown={companyDropdown}
@@ -266,10 +275,11 @@ const VendorRegistration = ({ ...Props }: Props) => {
       {
         vendorNameDialog && 
   <PopUp handleClose={handleClose} classname="overflow-y-scroll md:max-w-[1000px] w-full">
-   <div className="overflow-auto">
+   <div className="overflow-auto bg-slate-100 rounded-xl">
       <table className="min-w-full">
         <thead className="border-b">
-          <tr>
+          <tr className="bg-blue-100 rounded-t-md">
+            <th className="text-left p-3"></th>
             <th className="text-left p-3">Name</th>
             <th className="text-left p-3">Vendor Name</th>
             <th className="text-left p-3">Email</th>
@@ -286,6 +296,7 @@ const VendorRegistration = ({ ...Props }: Props) => {
               <React.Fragment key={i}>
                 {/* MAIN ROW */}
                 <tr className="align-top border-b">
+                  <td className="p-3 align-top"><Button className="bg-blue-400 hover:bg-blue-300" onClick={()=>{handleVendorAdd(item)}}>Select</Button></td>
                   <td className="p-3 align-top">{item.name}</td>
                   <td className="p-3 align-top">{item.vendor_name}</td>
                   <td className="p-3 align-top">{item.office_email_primary}</td>

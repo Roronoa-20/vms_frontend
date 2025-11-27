@@ -33,6 +33,7 @@ interface Props {
   handleSelectChange: (value: any, name: string) => void;
   setMultiVendor: (data: any) => void;
   VendorNameCheckApi:(value:string)=>void
+  fieldDisable:boolean
 }
 
 const VendorRegistration1 = ({
@@ -43,7 +44,8 @@ const VendorRegistration1 = ({
   handlefieldChange,
   handleSelectChange,
   setMultiVendor,
-  VendorNameCheckApi
+  VendorNameCheckApi,
+  fieldDisable
 }: Props) => {
   const [newVendorTypeDropdown, setNewVendorTypeDropdown] = useState<OptionType[]>([]);
   const [countryMobileCode, setCountryMobileCode] = useState<string>("");
@@ -154,6 +156,7 @@ const VendorRegistration1 = ({
                 name="vendor_name"
                 value={formData?.vendor_name ?? ""}
                 onChange={(e)=>{handlefieldChange(e),VendorNameCheckApi(e.target.value)}}
+                disabled={fieldDisable}
               />
             </div>
           </div>
@@ -168,6 +171,7 @@ const VendorRegistration1 = ({
             value={formData?.office_email_primary ?? ""}
             name="office_email_primary"
             placeholder="Enter Email Address"
+            disabled={fieldDisable}
           />
           {emailError && (
             <span className="text-red-500 text-[12px] mt-1">{emailError}</span>
@@ -184,6 +188,7 @@ const VendorRegistration1 = ({
               handleSelectChange(value, "country");
               fetchCountryCode(value);
             }}
+            disabled={fieldDisable}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select Country" />
@@ -218,6 +223,7 @@ const VendorRegistration1 = ({
                 required
                 value={formData?.mobile_number ?? ""}
                 onChange={handlefieldChange}
+                disabled={fieldDisable}
               />
             </div>
           </div>
@@ -232,6 +238,7 @@ const VendorRegistration1 = ({
             value={formData?.search_term ?? ""}
             required
             onChange={handlefieldChange}
+            disabled={fieldDisable}
           />
         </div>
       </div>
