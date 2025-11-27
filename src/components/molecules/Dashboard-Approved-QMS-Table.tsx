@@ -47,7 +47,6 @@ const useDebounce = (value: any, delay: number) => {
 };
 
 const DashboardApprovedQMSTable = ({ dashboardTableData, companyDropdown }: Props) => {
-  console.log(dashboardTableData, "this is approved table onboarded");
   const [isVendorCodeDialog, setIsVendorCodeDialog] = useState<boolean>(false);
   const [selectedVendorCodes, setSelectedVendorcodes] = useState<CompanyVendorCodes[]>([]);
   const handleClose = () => {
@@ -73,19 +72,8 @@ const DashboardApprovedQMSTable = ({ dashboardTableData, companyDropdown }: Prop
   const debouncedSearchName = useDebounce(search, 300);
 
   useEffect(() => {
-    if (dashboardTableData && dashboardTableData.length > 0) {
-      setTable(dashboardTableData);
-    }
-  }, [dashboardTableData]);
-
-  useEffect(() => {
-    if (!debouncedSearchName && !selectedCompany && currentPage === 1) {
-      setTable(dashboardTableData || []);
-      return;
-    }
-
     fetchTable();
-  }, [debouncedSearchName, selectedCompany, currentPage, dashboardTableData]);
+  }, [debouncedSearchName, selectedCompany, currentPage])
 
   const handlesearchname = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -96,9 +84,10 @@ const DashboardApprovedQMSTable = ({ dashboardTableData, companyDropdown }: Prop
       url: `${API_END_POINTS?.ApprovedQMSDocs}?company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
       method: "GET",
     });
+    console.log("ijbnivjnsifvnesivnoer---->",dashboardApprovedVendorTableDataApi)
     if (dashboardApprovedVendorTableDataApi?.status == 200) {
       const data = dashboardApprovedVendorTableDataApi?.data?.message;
-      setTable(data?.approved_vendor_onboarding || []);
+      setTable(data?.approved_supplier_qms || []);
       settotalEventList(data?.total_count || 0);
       setRecordPerPage(5);
     }
@@ -114,7 +103,7 @@ const DashboardApprovedQMSTable = ({ dashboardTableData, companyDropdown }: Prop
           <h1 className="text-[20px] text-[#03111F] font-semibold">Approved QMS Vendors</h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={handlesearchname} />
-            <Select onValueChange={(value) => setSelectedCompany(value)}>
+            {/* <Select onValueChange={(value) => setSelectedCompany(value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
@@ -125,7 +114,7 @@ const DashboardApprovedQMSTable = ({ dashboardTableData, companyDropdown }: Prop
                   ))}
                 </SelectGroup>
               </SelectContent>
-            </Select>
+            </Select> */}
           </div>
         </div>
 
@@ -151,7 +140,7 @@ const DashboardApprovedQMSTable = ({ dashboardTableData, companyDropdown }: Prop
               table.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
-                  <TableCell className="text-nowrap">{item?.name}</TableCell>
+                  <TableCell className="text-nowrap">{item?.ref_no}</TableCell>
                   <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
                   <TableCell className="text-nowrap">{item?.company_name}</TableCell>
                   <TableCell>

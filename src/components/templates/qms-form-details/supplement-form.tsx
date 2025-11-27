@@ -17,7 +17,7 @@ export const SupplementForm = ({ vendor_onboarding, company_code }: { vendor_onb
   const is7000 = companyCodes.includes('7000');
 
   return (
-    <div>
+    <div className='bg-white pt-4 rounded-[8px]'>
       <h2 className="text-lg font-bold bg-gray-200 border border-gray-300 p-3">
         SECTION – IX: SUPPLEMENTAL INFORMATION (Attach separate sheet if required.)
       </h2>
@@ -114,7 +114,7 @@ export const SupplementForm = ({ vendor_onboarding, company_code }: { vendor_onb
         </div>
       )}
 
-      <div className="flex justify-end space-x-5 items-center">
+      {/* <div className="flex justify-end space-x-5 items-center">
         <Button
           variant="backbtn"
           size="backbtnsize"
@@ -131,7 +131,7 @@ export const SupplementForm = ({ vendor_onboarding, company_code }: { vendor_onb
         >
           Next
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 };

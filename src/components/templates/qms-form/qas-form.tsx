@@ -13,7 +13,7 @@ import { useMultiSelectOptions } from "@/src/hooks/useMultiSelectOptions";
 export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: string; ref_no: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "qas";
-  const { formData, handleBack, handleNext, saveFormDataLocally, handleMultipleCheckboxChange, handleTextareaChange, handleSingleCheckboxChange, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
+  const { formData, handleBack, handleNext, saveFormDataLocally, handleMultipleCheckboxChange, handleTextareaChange, handleSingleCheckboxChange, handleSubmit } = useQMSForm(vendor_onboarding, currentTab);
   const multiSelectOptions = useMultiSelectOptions(vendor_onboarding);
 
   return (
@@ -45,6 +45,7 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           onChange={(e) => { handleMultipleCheckboxChange(e, "quality_control_system") }}
           columns={3}
         />
+
         <ConditionalTextareaGroup
           name="others_certificates"
           label=""
@@ -111,6 +112,7 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           onChange={(e) => { handleSingleCheckboxChange(e, "prior_notification") }}
           value={formData.prior_notification || ""}
         />
+
         {formData.prior_notification === "Yes" && (
           <MultiCheckboxGroup
             name="if_yes_for_prior_notification"
@@ -148,6 +150,7 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           value={formData.regular_review_of_quality_system || ""}
           onChange={(e) => { handleSingleCheckboxChange(e, "regular_review_of_quality_system") }}
         />
+        
         <ConditionalTextareaGroup
           name="review_frequency"
           label="If yes, please provide the frequency of review and what is the agenda of the review:"
@@ -156,29 +159,30 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           placeholder="Enter the details"
           onChange={(e) => { handleTextareaChange(e, "review_frequency") }}
         />
-      </div>
-      <div className="flex justify-end space-x-5 items-center">
-        <Button
-          variant="backbtn"
-          size="backbtnsize"
-          className="py-2"
-          onClick={handleBack}
-        >
-          Back
-        </Button>
-        <Button
-          variant="nextbtn"
-          size="nextbtnsize"
-          className="py-2.5"
-          // onClick={() => {
-          //   console.log('Saving form data locally for qas tab:', currentTab, 'formData:', formData);
-          //   saveFormDataLocally(currentTab, formData);
-          //   handleNext();
-          // }}
-          onClick={handleSubmit}
+
+        <div className="flex justify-end space-x-5 items-center">
+          <Button
+            variant="backbtn"
+            size="backbtnsize"
+            className="py-2"
+            onClick={handleBack}
           >
-          Next
-        </Button>
+            Back
+          </Button>
+          <Button
+            variant="nextbtn"
+            size="nextbtnsize"
+            className="py-2.5"
+            // onClick={() => {
+            //   console.log('Saving form data locally for qas tab:', currentTab, 'formData:', formData);
+            //   saveFormDataLocally(currentTab, formData);
+            //   handleNext();
+            // }}
+            onClick={handleSubmit}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div >
   );

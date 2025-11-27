@@ -79,6 +79,7 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
     }
   };
 
+  console.log("Table Data of PR PT----->",table);
 
   return (
     <>

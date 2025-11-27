@@ -64,7 +64,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
   const [selectedCompany, setSelectedCompany] = useState<string>("");
 
   const [total_event_list, settotalEventList] = useState(0);
-  const [record_per_page, setRecordPerPage] = useState<number>(0);
+  const [record_per_page, setRecordPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const { designation } = useAuth();
@@ -76,7 +76,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
 
   useEffect(() => {
     const fetchPoTable = async () => {
-      const POUrl = `${API_END_POINTS?.poTable}?vendor_name=${search}`
+      const POUrl = `${API_END_POINTS?.poTable}?vendor_name=${search}&page_no=${currentPage}&page_length=${record_per_page}`
       const dashboardPOTableDataApi: AxiosResponse = await requestWrapper({
         url: POUrl,
         method: "GET",
@@ -84,6 +84,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
 
       if (dashboardPOTableDataApi?.status == 200) {
         setTableData(dashboardPOTableDataApi?.data?.message?.total_po)
+        settotalEventList(dashboardPOTableDataApi?.data?.message?.total_count)
       }
     }
     if (selectedVendorCode || debouncedSearchName || currentPage) {

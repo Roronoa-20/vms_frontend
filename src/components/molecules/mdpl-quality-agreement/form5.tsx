@@ -6,15 +6,18 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { useQMSForm } from '@/src/hooks/useQMSForm';
 import { useSearchParams } from 'next/navigation';
+import { useAuth } from '@/src/context/AuthContext';
 
 export const Form5 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "vendor_information";
-  const { formData, setFormData, handleSaveSignature, handleClearSignature, sigRefs, signaturePreviews, handleTextareaChange, handleDateChange } = useQMSForm(vendor_onboarding, currentTab);
+  const { qualityagreementData, formData, setFormData, handleSaveSignature, handleClearSignature, sigRefs, signaturePreviews, handleTextareaChange, handleDateChange, handleVendorSignatureUpload } = useQMSForm(vendor_onboarding, currentTab);
   const [signedDate, setSignedDate] = useState(formData?.signed_date || '');
   const [merilSignedDate, setMerilSignedDate] = useState(formData?.meril_signed_date || '');
-
   const vendorNameInputValue = formData.mdpl_qa_vendor_name || formData.vendor_name1 || '';
+  const { designation } = useAuth();
+
+  console.log("Form 5 quality Agreement Data--->", qualityagreementData);
 
   useEffect(() => {
     setFormData((prev) => ({
@@ -61,8 +64,6 @@ export const Form5 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
       });
     }
   }, [formData, signaturePreviews]);
-
-
 
 
   return (
@@ -146,80 +147,81 @@ export const Form5 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
                 </div>
 
                 {/* Signatures */}
+                {/* Vendor Signature Upload */}
                 <div className="border-b-[1px] border-black p-1 flex flex-col">
-                  <Label className='p-1 text-[14px]'>Vendor Signature:</Label>
-                  <div className="flex flex-col mt-4">
-                    {!signaturePreviews["person_signature"] && (
-                      <SignatureCanvas
-                        ref={sigRefs.person_signature}
-                        penColor="black"
-                        canvasProps={{ width: 400, height: 150, className: 'border border-gray-300' }}
+                  <Label className="p-1 text-[14px]">Vendor Signature:</Label>
+
+                  {/* Show file input if no signature */}
+                  {!signaturePreviews.person_signature && (
+                    <div className="mt-2">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleVendorSignatureUpload(e)}
+                        className="cursor-pointer"
                       />
-                    )}
+                    </div>
+                  )}
 
-                    {!signaturePreviews["person_signature"] && (
-                      <div className="mt-2 space-x-2">
-                        <Button variant="esignbtn" size="esignsize" onClick={(e) => handleSaveSignature(e, ("person_signature"))} className="py-2">
-                          Save Signature
-                        </Button>
-                        <Button variant="clearesignbtn" size="clearesignsize"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleClearSignature("person_signature");
-                          }}
-                          className="py-2">
-                          Clear Signature
-                        </Button>
-                      </div>
-                    )}
-
-                    {signaturePreviews["person_signature"] && (
-                      <div className="flex items-center mt-2">
-                        <img src={signaturePreviews["person_signature"]} alt="Signature Preview" className="w-40 h-20 object-contain" />
-                        <Button onClick={() => handleClearSignature("person_signature")} className="ml-2 text-red-500 cursor-pointer">
-                          &#x2715;
-                        </Button>
-                      </div>
-                    )}
-                  </div>
+                  {/* Show preview if uploaded */}
+                  {signaturePreviews.person_signature && (
+                    <div className="flex items-center mt-4">
+                      <img
+                        src={signaturePreviews.person_signature}
+                        alt="Vendor Signature"
+                        className="w-40 h-20 object-contain border"
+                      />
+                      <Button
+                        onClick={() => handleClearSignature("person_signature")}
+                        className="ml-2 text-red-600"
+                      >
+                        ✕
+                      </Button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="border-b-[1px] border-l-[1px] border-black p-1 flex flex-col">
-                  <Label className='p-1 text-[14px]'>Signature:</Label>
-                  <div className="flex flex-col mt-4">
-                    {!signaturePreviews["meril_signature"] && (
-                      <SignatureCanvas
-                        ref={sigRefs.meril_signature}
-                        penColor="black"
-                        canvasProps={{ width: 400, height: 150, className: 'border border-gray-300' }}
-                      />
-                    )}
+                  {designation === "QA Head" && (
+                    <>
+                      <Label className='p-1 text-[14px]'>Signature:</Label>
+                      <div className="flex flex-col mt-4">
+                        {!signaturePreviews["meril_signature"] && (
+                          <SignatureCanvas
+                            ref={sigRefs.meril_signature}
+                            penColor="black"
+                            canvasProps={{ width: 400, height: 150, className: 'border border-gray-300' }}
+                          />
+                        )}
 
-                    {!signaturePreviews["meril_signature"] && (
-                      <div className="mt-2 space-x-2">
-                        <Button variant="esignbtn" size="esignsize" onClick={(e) => handleSaveSignature(e, ("meril_signature"))} className="py-2">
-                          Save Signature
-                        </Button>
-                        <Button variant="clearesignbtn" size="clearesignsize"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleClearSignature("meril_signature");
-                          }}
-                          className="py-2">
-                          Clear Signature
-                        </Button>
-                      </div>
-                    )}
+                        {!signaturePreviews["meril_signature"] && (
+                          <div className="mt-2 space-x-2">
+                            <Button variant="esignbtn" size="esignsize" onClick={(e) => handleSaveSignature(e, ("meril_signature"))} className="py-2">
+                              Save Signature
+                            </Button>
+                            <Button variant="clearesignbtn" size="clearesignsize"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleClearSignature("meril_signature");
+                              }}
+                              className="py-2">
+                              Clear Signature
+                            </Button>
+                          </div>
+                        )}
 
-                    {signaturePreviews["meril_signature"] && (
-                      <div className="flex items-center mt-2">
-                        <img src={signaturePreviews["meril_signature"]} alt="Signature Preview" className="w-40 h-20 object-contain" />
-                        <Button onClick={() => handleClearSignature("meril_signature")} className="ml-2 text-red-500 cursor-pointer">
-                          &#x2715;
-                        </Button>
+                        {signaturePreviews["meril_signature"] && (
+                          <div className="flex items-center mt-2">
+                            <img src={signaturePreviews["meril_signature"]} alt="Signature Preview" className="w-40 h-20 object-contain" />
+                            <Button onClick={() => handleClearSignature("meril_signature")} className="ml-2 text-red-500 cursor-pointer">
+                              &#x2715;
+                            </Button>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
+                    </>
+                  )}
+
                 </div>
 
                 {/* Dates */}
@@ -234,19 +236,24 @@ export const Form5 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
                   />
                 </div>
                 <div className="border-l-[1px] border-black p-1 flex space-x-2 items-center">
-                  <Label>Date:</Label>
-                  <Input
-                    type="date"
-                    name="meril_signed_date"
-                    className='w-full min-h-auto outline-none'
-                    value={formData.meril_signed_date ?? ''}
-                    onChange={(e) => handleDateChange("meril_signed_date", e.target.value)}
-                  />
+                  {designation === "QA Head" && (
+                    <>
+                      <Label>Date:</Label>
+                      <Input
+                        type="date"
+                        name="meril_signed_date"
+                        className='w-full min-h-auto outline-none'
+                        value={formData.meril_signed_date ?? ''}
+                        onChange={(e) => handleDateChange("meril_signed_date", e.target.value)}
+                      />
+                    </>
+                  )}
                 </div>
+
               </div>
             </div>
           </section>
-          <Button
+          {/* <Button
             onClick={() => {
               console.log("🔥 Form 5 Data Preview:", formData);
               alert("Check the console! 🔍");
@@ -254,7 +261,7 @@ export const Form5 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
             className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
           >
             Preview Form 5 Data
-          </Button>
+          </Button> */}
 
           <section className="items-center">
             <div className="text-center text-lg font-semibold mt-[400px]">Page 5 of 7</div>

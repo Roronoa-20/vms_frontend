@@ -1,11 +1,11 @@
 export const dynamic = "force-dynamic";
 
 import React from 'react'
-import GRHome from '@/src/components/molecules/Dashboard-GR-Waiver';
+import GRWaiverDashboard from '@/src/components/pages/GR-Waiver-Dashboard';
 
 const GRwaiverHome = () => {
   return (
-        <GRHome/>
+        <GRWaiverDashboard />
   )
 }
 

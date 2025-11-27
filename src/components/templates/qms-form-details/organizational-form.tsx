@@ -17,7 +17,7 @@ export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: s
   } = useQMSForm(vendor_onboarding, currentTab);
 
   return (
-    <div>
+    <div className='bg-white pt-4 rounded-[8px]'>
       <h2 className="text-lg font-bold bg-gray-200 border border-gray-300 p-3">
         SECTION – III: ORGANIZATIONAL STRUCTURE & TRAINING
       </h2>
@@ -69,7 +69,7 @@ export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: s
         />
       </div>
       
-      <div className="flex justify-end space-x-5 items-center">
+      {/* <div className="flex justify-end space-x-5 items-center">
         <Button
           variant="backbtn"
           size="backbtnsize"
@@ -86,7 +86,7 @@ export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: s
         >
           Next
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 };

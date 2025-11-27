@@ -9,15 +9,10 @@ import { useQMSForm } from '@/src/hooks/useQMSForm';
 export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "building";
-  const {
-    formData,
-    handleTextareaChange,
-    handleCheckboxChange,
-    handleBacktab, handleNextTab
-  } = useQMSForm(vendor_onboarding, currentTab);
+  const { formData, handleTextareaChange, handleCheckboxChange, handleBacktab, handleNextTab} = useQMSForm(vendor_onboarding, currentTab);
 
   return (
-    <div>
+    <div className='bg-white pt-4 rounded-[8px]'>
       <h2 className="text-lg font-bold bg-gray-200 border border-gray-300 p-3">
         SECTION – IV: BUILDING & FACILITY
       </h2>
@@ -29,7 +24,6 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           rows={1}
           // onChange={(e) => handleTextareaChange(e, 'area_of_facility')}
           onChange={() => { }}
-
         />
 
         <TextareaWithLabel
@@ -115,7 +109,7 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
 
         />
       </div>
-      <div className="flex justify-end space-x-5 items-center">
+      {/* <div className="flex justify-end space-x-5 items-center">
         <Button
           variant="backbtn"
           size="backbtnsize"
@@ -132,7 +126,7 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
         >
           Next
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 };

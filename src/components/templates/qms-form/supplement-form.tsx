@@ -12,7 +12,7 @@ import SignatureCanvas from "react-signature-canvas";
 export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { vendor_onboarding: string; ref_no: string; company_code: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "supplement";
-  const { formData, handleBack, handleNext, saveFormDataLocally, handleTextareaChange, signaturePreviews, sigRefs, handleClearSignature, handleSaveSignature, handleFileUpload, fileName, handleRemoveFile, handleSubmit } = useQMSForm(vendor_onboarding, currentTab);
+  const { formData, handleBack, handleNext, saveFormDataLocally, handleTextareaChange, signaturePreviews, sigRefs, handleClearSignature, handleSaveSignature, handleFileUpload, fileName, handleRemoveFile, handleSubmit, handleSignatureUpload } = useQMSForm(vendor_onboarding, currentTab);
 
   const companyCodes = company_code.split(',').map((code) => code.trim());
   const is2000 = companyCodes.includes('2000');
@@ -129,39 +129,39 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
             </div>
 
             <div className="grid grid-cols-2 gap-8 mt-2">
-              <div className="flex flex-col mt-4">
-                {!signaturePreviews["ssignature"] && (
-                  <SignatureCanvas
-                    ref={sigRefs.ssignature} 
-                    penColor="black"
-                    canvasProps={{ width: 400, height: 150, className: 'border border-gray-300' }}
-                  />
-                )}
+              <div className="col-span-1 space-y-[5px]">
+                {signaturePreviews["signature"] ? (
+                  <div className="relative w-fit">
+                    <img
+                      src={signaturePreviews["signature"]}
+                      alt="Signature Preview"
+                      className="w-[400px] h-[170px] object-contain border border-gray-300 rounded-md"
+                    />
 
-                {!signaturePreviews["ssignature"] && (
-                  <div className="mt-2 space-x-2">
-                    <Button variant="esignbtn" size="esignsize" onClick={(e) => handleSaveSignature(e,("ssignature"))} className="py-2">
-                      Save Signature
-                    </Button>
-                    <Button variant="clearesignbtn" size="clearesignsize"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleClearSignature("ssignature");
-                      }}
-                      className="py-2">
-                      Clear Signature
-                    </Button>
+                    {/* Cross Icon */}
+                    <button
+                      onClick={() => handleClearSignature("signature")}
+                      className="absolute top-1 right-1 bg-white rounded-full p-1 shadow text-red-600"
+                    >
+                      ✖
+                    </button>
                   </div>
-                )}
+                ) : (
+                  <label className="flex flex-col items-center justify-center w-[450px] h-[170px] border-2 border-dashed border-gray-400 rounded-md cursor-pointer hover:bg-gray-50">
+                    <div className="flex flex-col items-center text-gray-600">
+                      📎
+                      <p className="text-xs mt-1">Attach Signature (PDF/PNG/JPG/JPEG)</p>
+                    </div>
 
-                {signaturePreviews["ssignature"] && (
-                  <div className="flex items-center mt-2">
-                    <img src={signaturePreviews["ssignature"]} alt="Signature Preview" className="w-40 h-20 object-contain" />
-                    <Button onClick={() => handleClearSignature("ssignature")} className="ml-2 text-red-500 cursor-pointer">
-                      &#x2715;
-                    </Button>
-                  </div>
+                    <input
+                      type="file"
+                      accept="image/png, image/jpeg, image/jpg, application/pdf"
+                      className="hidden"
+                      onChange={(e) => handleSignatureUpload(e, "signature")}
+                    />
+                  </label>
                 )}
+                <Label className="text-[13px]">Vendor Signature</Label>
               </div>
 
               {/* Date Input with Calendar */}
@@ -178,30 +178,31 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
             </div>
           </div>
         )}
-      </div>
 
-      <div className="flex justify-end space-x-5 items-center">
-        <Button
-          variant="backbtn"
-          size="backbtnsize"
-          className="py-2"
-          onClick={handleBack}
-        >
-          Back
-        </Button>
-        <Button
-          variant="nextbtn"
-          size="nextbtnsize"
-          className="py-2.5"
-          // onClick={() => {
-          //   console.log('Saving form data locally for Supplement tab:', currentTab, 'formData:', formData);
-          //   saveFormDataLocally(currentTab, formData);
-          //   handleNext();
-          // }}
-          onClick={handleSubmit}
+        <div className="flex justify-end space-x-5 pt-2 items-center">
+          <Button
+            variant="backbtn"
+            size="backbtnsize"
+            className="py-2"
+            onClick={handleBack}
           >
-          {is7000 ? 'Submit' : 'Next'}
-        </Button>
+            Back
+          </Button>
+          <Button
+            variant="nextbtn"
+            size="nextbtnsize"
+            className="py-2.5"
+            // onClick={() => {
+            //   console.log('Saving form data locally for Supplement tab:', currentTab, 'formData:', formData);
+            //   saveFormDataLocally(currentTab, formData);
+            //   handleNext();
+            // }}
+            onClick={handleSubmit}
+          >
+            {/* {is7000 ? 'Submit' : 'Next'} */}
+            Submit & Next
+          </Button>
+        </div>
       </div>
     </div>
   );

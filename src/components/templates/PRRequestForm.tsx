@@ -25,6 +25,7 @@ import { useAuth } from '@/src/context/AuthContext'
 import { Alert, AlertDescription, AlertTitle, AlertFooter } from "@/components/ui/alert"
 import { ApproveConfirmationDialog } from '../common/ApproveConfirmationDialog';
 import Comment_box from '../molecules/CommentBox'
+import { clearPreviewData } from 'next/dist/server/api-utils'
 
 
 interface Props {
@@ -32,6 +33,7 @@ interface Props {
   PRData: PurchaseRequestData["message"]["data"] | null
   cartId?: string
   pur_req?: string
+  prf_name?: string
   PurchaseGroupDropdown: PurchaseGroup[]
   // StorageLocationDropdown: StorageLocation[]
   // ValuationClassDropdown: ValuationClass[]
@@ -49,7 +51,8 @@ export const updateQueryParam = (key: string, value: string) => {
   window.history.pushState({}, '', url.toString());
 };
 
-const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, ProfitCenterDropdown, PurchaseOrgDropdown }: Props) => {
+const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, ProfitCenterDropdown, PurchaseOrgDropdown, prf_name }: Props) => {
+  console.log("PR Data for PRF NAme---->", PRData)
   const user = Cookies.get("user_id");
   const { designation } = useAuth();
   const router = useRouter()
@@ -167,30 +170,48 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     }
   };
 
-  const fetchTableData = async (pur_req: string) => {
-    console.log(pur_req, "pur_req in table code")
-    const url = `${API_END_POINTS?.fetchPRTableData}?name=${pur_req}`
-    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
-    if (response?.status == 200) {
-      console.log(response, "response of table data------------------------------------------")
-      setMainItems(response.data.message)
-    } else {
-      alert("error888888888888888888888888888");
+  const fetchTableData = async (pur_req: string, prf_name?: string) => {
+    console.log(pur_req, "pur_req in table code");
+    try {
+      let url = "";
+      if (pur_req) {
+        url = `${API_END_POINTS?.fetchPRTableData}?name=${pur_req}`;
+      } else {
+        url = `${API_END_POINTS?.fetchPRFDoctypeData}?prf_name=${prf_name}`;
+      }
+      const response: AxiosResponse = await requestWrapper({ url, method: "GET", });
+      if (response?.status === 200) {
+        console.log(response, "response of table data------------------------------------------");
+        setMainItems(response.data.message);
+      } else {
+        alert("Error fetching PR data");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong while fetching PR data.");
     }
   };
 
+
   const handleNext = async () => {
-    const url = API_END_POINTS?.createPR;
-    const response: AxiosResponse = await requestWrapper({ url: url, data: { ...formData }, method: "POST" });
-    if (response?.status == 200) {
-      console.log(response.data.message.name, "reposne dxcfgvbhjnkmjhgvfcdxcfvgbh")
-      updateQueryParam("pur_req", response.data.message.name)
-      fetchTableData(response.data.message.name)
-      alert("Submitted Successfully");
-    } else {
-      alert("error");
+    try {
+      const url = API_END_POINTS.createPR;
+      const response: AxiosResponse = await requestWrapper({url,data: { ...formData },method: "POST"});
+
+      if (response?.status === 200) {
+        const purReqName = response.data.message.name;
+        updateQueryParam("pur_req", purReqName);
+        fetchTableData(purReqName, "");
+        alert("Submitted Successfully");
+      } else {
+        alert("Error");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong.");
     }
   };
+
 
   const handleModel = (purchase_requisition_type: string) => purchase_requisition_type === "SB" ? setEditModalOpen(true) : setNBEditModalOpen(true);
 
@@ -221,13 +242,14 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
   };
 
   useEffect(() => {
-    if (pur_req) {
-      fetchTableData(pur_req);
+    if (pur_req || prf_name) {
+      fetchTableData(pur_req ?? "", prf_name ?? "");
     }
-    fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "")
-  }, [pur_req, PRData?.purchase_requisition_type])
+    fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "");
+  }, [pur_req, prf_name, PRData?.purchase_requisition_type]);
 
-  console.log("Main ITem Status SAP------------->",mainItems);
+
+  console.log("Main ITem Status SAP------------->", mainItems);
 
   return (
     <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
@@ -493,8 +515,8 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                                         <TableCell className="text-center">{subItem?.currency_subhead || "N/A"}</TableCell>
                                         <TableCell className="text-center">{subItem?.service_type_subhead || "N/A"}</TableCell>
                                         <TableCell className="text-center">{subItem?.net_value_subhead || "N/A"}</TableCell>
-                                        <TableCell className="text-center text-nowrap">{subItem?.cost_center_subhead || "N/A"}</TableCell>
-                                        <TableCell className="text-center">{subItem?.gl_account_number_subhead || "N/A"}</TableCell>
+                                        <TableCell className="text-center text-nowrap">{subItem?.cost_center_subhead_desc || "N/A"}</TableCell>
+                                        <TableCell className="text-center text-nowrap">{subItem?.gl_account_number_subhead_desc || "N/A"}</TableCell>
                                         {/* Sticky Actions Cell */}
                                         {mainItems?.sap_status === "Success" && ((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) &&
                                           <TableCell className="text-center sticky right-0 bg-white z-20">

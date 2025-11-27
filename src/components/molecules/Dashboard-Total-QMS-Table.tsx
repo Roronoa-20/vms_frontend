@@ -40,7 +40,7 @@ const useDebounce = (value: any, delay: number) => {
 };
 
 const DashboardTotalQMSTable = ({ dashboardTableData, companyDropdown }: Props) => {
-    console.log(dashboardTableData, "this is approved table onboarded");
+
     const [isVendorCodeDialog, setIsVendorCodeDialog] = useState<boolean>(false);
     const [selectedVendorCodes, setSelectedVendorcodes] = useState<CompanyVendorCodes[]>([]);
     const handleClose = () => {
@@ -66,19 +66,8 @@ const DashboardTotalQMSTable = ({ dashboardTableData, companyDropdown }: Props) 
     const debouncedSearchName = useDebounce(search, 300);
 
     useEffect(() => {
-        if (dashboardTableData && dashboardTableData.length > 0) {
-            setTable(dashboardTableData);
-        }
-    }, [dashboardTableData]);
-
-    useEffect(() => {
-        if (!debouncedSearchName && !selectedCompany && currentPage === 1) {
-            setTable(dashboardTableData || []);
-            return;
-        }
-
         fetchTable();
-    }, [debouncedSearchName, selectedCompany, currentPage, dashboardTableData]);
+    }, [debouncedSearchName, selectedCompany, currentPage])
 
     const handlesearchname = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
@@ -91,8 +80,8 @@ const DashboardTotalQMSTable = ({ dashboardTableData, companyDropdown }: Props) 
         });
         if (dashboardApprovedVendorTableDataApi?.status == 200) {
             const data = dashboardApprovedVendorTableDataApi?.data?.message;
-            setTable(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding);
-            settotalEventList(data?.total_count);
+            setTable(dashboardApprovedVendorTableDataApi?.data?.message?.total_qms_onboarding);
+            settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count);
             setRecordPerPage(5);
         }
     };
@@ -107,7 +96,7 @@ const DashboardTotalQMSTable = ({ dashboardTableData, companyDropdown }: Props) 
                     <h1 className="text-[20px] text-[#03111F] font-semibold">Total QMS Vendors</h1>
                     <div className="flex gap-4">
                         <Input placeholder="Search..." onChange={handlesearchname} />
-                        <Select onValueChange={(value) => setSelectedCompany(value)}>
+                        {/* <Select onValueChange={(value) => setSelectedCompany(value)}>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select Company" />
                             </SelectTrigger>
@@ -118,7 +107,7 @@ const DashboardTotalQMSTable = ({ dashboardTableData, companyDropdown }: Props) 
                                     ))}
                                 </SelectGroup>
                             </SelectContent>
-                        </Select>
+                        </Select> */}
                     </div>
                 </div>
 
@@ -127,15 +116,16 @@ const DashboardTotalQMSTable = ({ dashboardTableData, companyDropdown }: Props) 
                     <TableHeader className="text-center">
                         <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                             <TableHead className="w-[100px]">Sr No.</TableHead>
-                            <TableHead className="text-center">Ref No.</TableHead>
-                            <TableHead className="text-center">Vendor Name</TableHead>
-                            <TableHead className="text-center">Company Name</TableHead>
-                            <TableHead className="text-center">Status</TableHead>
-                            <TableHead className="text-center">Vendor Code</TableHead>
-                            <TableHead className="text-center">Country</TableHead>
-                            <TableHead className="text-center">Register By</TableHead>
-                            <TableHead className="text-center">View Details</TableHead>
-                            <TableHead className="text-center">QMS Form</TableHead>
+                            <TableHead className="text-center text-nowrap">Ref No.</TableHead>
+                            <TableHead className="text-center text-nowrap">Vendor Name</TableHead>
+                            <TableHead className="text-center text-nowrap">Company Name</TableHead>
+                            <TableHead className="text-center text-nowrap">Status</TableHead>
+                            <TableHead className="text-center text-nowrap">Vendor Code</TableHead>
+                            <TableHead className="text-center text-nowrap">Country</TableHead>
+                            <TableHead className="text-center text-nowrap">Register By</TableHead>
+                            <TableHead className="text-center text-nowrap">View Details</TableHead>
+                            <TableHead className="text-center text-nowrap">QMS Form</TableHead>
+                            <TableHead className="text-center text-nowrap">Quality Agreement</TableHead>
                         </TableRow>
                     </TableHeader>
 
@@ -144,7 +134,7 @@ const DashboardTotalQMSTable = ({ dashboardTableData, companyDropdown }: Props) 
                             table.map((item, index) => (
                                 <TableRow key={index}>
                                     <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
-                                    <TableCell className="text-nowrap">{item?.name}</TableCell>
+                                    <TableCell className="text-nowrap">{item?.ref_no}</TableCell>
                                     <TableCell className="text-nowrap">{item?.vendor_name}</TableCell>
                                     <TableCell className="text-nowrap">{item?.company_name}</TableCell>
                                     <TableCell>
@@ -158,25 +148,31 @@ const DashboardTotalQMSTable = ({ dashboardTableData, companyDropdown }: Props) 
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Button className="bg-blue-400 hover:bg-blue-300" onClick={() => openVendorCodes(item?.company_vendor_codes as any)}>
+                                        <Button className="bg-[#5291CD] hover:bg-[#5291CD] rounded-[16px]" onClick={() => openVendorCodes(item?.company_vendor_codes as any)}>
                                             View
                                         </Button>
                                     </TableCell>
-                                    <TableCell>{item?.vendor_country}</TableCell>
+                                    <TableCell className="text-center text-nowrap">{item?.vendor_country}</TableCell>
                                     <TableCell>{item?.registered_by}</TableCell>
                                     <TableCell>
                                         <Link href={`/view-onboarding-details?tabtype=Company Detail&vendor_onboarding=${item?.name}&refno=${item?.ref_no}`}>
-                                            <Button className="bg-blue-400 hover:bg-blue-300">View</Button>
+                                            <Button className="bg-[#5291CD] hover:bg-[#5291CD] rounded-[16px]">View</Button>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
                                         <div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}>
                                             <Link href={`/qms-form-details?tabtype=vendor_information&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}>
-                                                <Button variant={"outline"}>View</Button>
+                                                <Button className="bg-[#5291CD] hover:bg-white hover:border hover:border-[#5291CD] hover:text-black rounded-[8px] font-semibold">View</Button>
                                             </Link>
                                         </div>
                                     </TableCell>
-
+                                    <TableCell>
+                                        <div className={`${(item?.qms_form_filled && item?.sent_qms_form_link) && (item?.company_name == "2000" || item?.company_name == "7000") ? "" : "hidden"}`}>
+                                            <Link href={`/view-quality-agreement?tabtype=quality_agreement&vendor_onboarding=${item?.name}&ref_no=${item?.ref_no}&company_code=${item?.company_name}`}>
+                                                <Button className="bg-[#5291CD] hover:bg-white hover:border hover:border-[#5291CD] hover:text-black rounded-[8px] font-semibold">View</Button>
+                                            </Link>
+                                        </div>
+                                    </TableCell>
                                 </TableRow>
                             ))
                         ) : (

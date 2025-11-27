@@ -23,7 +23,7 @@ export const MLSPLQualityAgreementForm = ({ vendor_onboarding, ref_no, company_c
     const is2000 = companyCodes.includes('2000');
     const is7000 = companyCodes.includes('7000');
 
-    console.log(tableData,"--------tabledata")
+    console.log(tableData, "--------tabledata")
 
 
     return (
@@ -79,7 +79,7 @@ export const MLSPLQualityAgreementForm = ({ vendor_onboarding, ref_no, company_c
                         </div>
                     )}
                 </div>
-                <div className="flex justify-start ml-1 mt-4 mb-1">
+                <div className="flex justify-start ml-1 mt-4 mb-2">
                     <Button
                         type="button"
                         variant="nextbtn"
@@ -129,26 +129,26 @@ export const MLSPLQualityAgreementForm = ({ vendor_onboarding, ref_no, company_c
                         </TableBody>
                     </Table>
                 )}
-            </div>
 
-            <div className="flex justify-end space-x-5 items-center pt-[20px]">
-                <Button
-                    variant="backbtn"
-                    className="py-2.5"
-                    size="backbtnsize"
-                    onClick={(handleBack)}
-                >
-                    Back
-                </Button>
+                <div className="flex border-t border-gray-300 justify-end space-x-4 items-center pt-[10px] pr-2 mb-2">
+                    <Button
+                        variant="backbtn"
+                        className="py-2.5"
+                        size="backbtnsize"
+                        onClick={(handleBack)}
+                    >
+                        Back
+                    </Button>
 
-                <Button
-                    variant="nextbtn"
-                    size="nextbtnsize"
-                    className="py-2.5"
-                    onClick={handleSubmit}
-                >
-                    Submit
-                </Button>
+                    <Button
+                        variant="nextbtn"
+                        size="nextbtnsize"
+                        className="py-2.5"
+                        onClick={handleSubmit}
+                    >
+                        Submit
+                    </Button>
+                </div>
             </div>
         </div>
     );

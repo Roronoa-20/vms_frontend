@@ -32,7 +32,7 @@ const formComponents: { [key: string]: React.ComponentType<any> } = {
   production: ProductionForm,
   complaint: ComplaintForm,
   supplement: SupplementForm,
-  "quality_agreement": QualityForm,
+  // "quality_agreement": QualityForm,
   conclusion: ConclusionForm,
 };
 
@@ -49,21 +49,21 @@ const ViewQMSFormClient = ({ }) => {
       <div>
         <ViewQMSFormDetails vendor_onboarding={vendor_onboarding} company_code={company_code}/>
         <div className="pt-14 p-2">
-          {codes.includes("2000") && (
+          {/* {codes.includes("2000") && (
             <div className="mb-6">
-              {/* <h2 className="text-lg font-semibold mb-2">MLSPL Quality Agreement</h2> */}
+              <h2 className="text-lg font-semibold mb-2">MLSPL Quality Agreement</h2>
               <MLSPLQualityAgreementForm vendor_onboarding={vendor_onboarding} company_code={company_code} />
             </div>
           )}
           {codes.includes("7000") && (
             <div>
-              {/* <h2 className="text-lg font-semibold mb-2">MDPL Quality Agreement</h2> */}
+               <h2 className="text-lg font-semibold mb-2">MDPL Quality Agreement</h2>
               <MDPLQualityAgreementForm vendor_onboarding={vendor_onboarding} company_code={company_code} />
             </div>
           )}
           {!codes.includes("2000") && !codes.includes("7000") && (
             <div className="text-red-500">No valid company code for Quality Agreement.</div>
-          )}
+          )} */}
         </div>
       </div>
     );

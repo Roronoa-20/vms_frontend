@@ -80,9 +80,14 @@ export interface PurchaseRequisitionDataItem {
   material_group_head_desc: string;
   purchase_group_head_desc: string;
   valuation_area_head_desc: string;
+  gl_account_number_head_desc: string;
+  cost_center_head_desc: string;
   material_code_head_desc: string;
   plant_head_desc: string;
   product_full_name_head: string;
+  form_status: string;
+  status: string;
+  pr_created_from_sap: number;
 }
 
 export interface MaterialGroup {
@@ -149,5 +154,7 @@ export interface SubheadField {
   original_quantity: string
   original_delivery_date: string
   doc_name: string;
-  name: string
+  name: string;
+  cost_center_subhead_desc: string;
+  gl_account_number_subhead_desc: string;
 }

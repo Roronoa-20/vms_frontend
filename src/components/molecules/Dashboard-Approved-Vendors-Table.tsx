@@ -73,7 +73,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
   const [search, setSearch] = useState<string>("");
 
   const [total_event_list, settotalEventList] = useState(0);
-  const [record_per_page, setRecordPerPage] = useState<number>(5);
+  const [record_per_page, setRecordPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const user = Cookies?.get("user_id");
@@ -92,13 +92,13 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
 
   const fetchTable = async () => {
     const dashboardApprovedVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.dashboardApprovedVendorTableURL}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
+      url: `${API_END_POINTS?.dashboardApprovedVendorTableURL}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_length=${record_per_page}`,
       method: "GET",
     });
     if (dashboardApprovedVendorTableDataApi?.status == 200) {
       setTable(dashboardApprovedVendorTableDataApi?.data?.message?.approved_vendor_onboarding);
       settotalEventList(dashboardApprovedVendorTableDataApi?.data?.message?.total_count)
-      setRecordPerPage(5);
+      setRecordPerPage(10);
     }
   };
 
@@ -109,7 +109,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData, companyDropdown }: 
     setter: (val: string) => void
   ) => {
     if (value === "--Select--") {
-      setter(""); // reset filter
+      setter("");
     } else {
       setter(value);
     }

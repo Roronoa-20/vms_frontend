@@ -44,6 +44,8 @@
     "embla-carousel-react": "^8.6.0",
     "env-cmd": "^10.1.0",
     "es-toolkit": "^1.39.9",
+    "fernet": "^0.3.3",
+    "fernet-web": "^1.0.1",
     "framer-motion": "^12.23.12",
     "html2canvas": "^1.4.1",
     "html5-qrcode": "^2.3.8",

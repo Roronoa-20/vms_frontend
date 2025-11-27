@@ -15,7 +15,7 @@ import { useMultiSelectOptions } from "@/src/hooks/useMultiSelectOptions";
 export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "production";
-  const { formData, handleTextareaChange, handleBack, handleNext, handleCheckboxChange, handleSingleCheckboxChange, handleMultipleCheckboxChange, handleRadioboxChange, saveFormDataLocally, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
+  const { formData, handleTextareaChange, handleBack, handleNext, handleCheckboxChange, handleSingleCheckboxChange, handleMultipleCheckboxChange, handleRadioboxChange, saveFormDataLocally, handleSubmit } = useQMSForm(vendor_onboarding, currentTab);
 
   const items: { name: keyof VendorQMSForm; label: string }[] = [
     { name: 'handling_of_start_materials', label: 'A. Handling of starting materials' },
@@ -86,14 +86,14 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           name="identification_number"
           label=" 4. Does each lot /batch have an identification number?"
           value={formData.identification_number ?? ""}
-          onChange={(e) => {handleSingleCheckboxChange(e, "identification_number") }}
+          onChange={(e) => { handleSingleCheckboxChange(e, "identification_number") }}
         />
 
         <YesNoNAGroup
           name="product_identifiable"
           label="5. Is the product identifiable throughout the manufacturing process?"
           value={formData.product_identifiable || ""}
-          onChange={(e) => {handleSingleCheckboxChange(e, "product_identifiable") }}
+          onChange={(e) => { handleSingleCheckboxChange(e, "product_identifiable") }}
         />
 
         <YesNoNAGroup
@@ -120,7 +120,7 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
 
         />
 
-        <div className="mb-3 border-b border-gray-300 pb-4">
+        <div className="mb-3">
           <YesNoNAGroup
             name="batch_record"
             label="9. Do you have a batch record for each batch / lot manufactured?"
@@ -151,37 +151,39 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
             />
           )}
         </div>
+        <div className="mb-3 border-b border-gray-300">
+          <TextareaWithLabel
+            name="duration_of_batch_records"
+            label="10. For how long do you keep the batch records? (Year / Month)"
+            value={formData.duration_of_batch_records || ""}
+            onChange={(e) => { handleTextareaChange(e, "duration_of_batch_records") }}
+            rows={1}
+          />
+        </div>
 
-        <TextareaWithLabel
-          name="duration_of_batch_records"
-          label="10. For how long do you keep the batch records? (Year / Month)"
-          value={formData.duration_of_batch_records || ""}
-          onChange={(e) => { handleTextareaChange(e, "duration_of_batch_records") }}
-          rows={1}
-        />
-      </div>
-      <div className="flex justify-end space-x-5 items-center">
-        <Button
-          variant="backbtn"
-          size="backbtnsize"
-          className="py-2"
-          onClick={handleBack}
-        >
-          Back
-        </Button>
-        <Button
-          variant="nextbtn"
-          size="nextbtnsize"
-          className="py-2.5"
-          // onClick={() => {
-          //   console.log('Saving form data locally for Production tab:', currentTab, 'formData:', formData);
-          //   saveFormDataLocally(currentTab, formData);
-          //   handleNext();
-          // }}
-          onClick={handleSubmit}
+        <div className="flex pt-2 justify-end space-x-5 items-center">
+          <Button
+            variant="backbtn"
+            size="backbtnsize"
+            className="py-2"
+            onClick={handleBack}
           >
-          Next
-        </Button>
+            Back
+          </Button>
+          <Button
+            variant="nextbtn"
+            size="nextbtnsize"
+            className="py-2.5"
+            // onClick={() => {
+            //   console.log('Saving form data locally for Production tab:', currentTab, 'formData:', formData);
+            //   saveFormDataLocally(currentTab, formData);
+            //   handleNext();
+            // }}
+            onClick={handleSubmit}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );

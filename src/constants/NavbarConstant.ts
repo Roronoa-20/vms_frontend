@@ -35,7 +35,7 @@ export const NavbarConstant:Record<string,string> = {
     "/shipment-status-dashboard": "Shipment Status(DSR) Dashboard",
     "/view-vendor-po": "Purchase Order (PO)",
     "/gr-waiver-dashboard": "GR Waiver Dashboard",
-    "/new-gr-waiver": "New GR Waiver",
+    "/gr-waiver": "GR Waiver",
     "/view-gr-waiver": "GR Waiver",
     "/view-dispatch-table":"Dispatch Orders",
     "/view-pr-inquiry-table": "Purchase Enquiry",
@@ -46,5 +46,9 @@ export const NavbarConstant:Record<string,string> = {
     "/vendor-dispatch-table":"Dispatch Details",
     "/view-material-code-request":"Material Code Request",
     "/material-onboarding-details":"Material Code Details",
-    "/product-history":"Product History"
+    "/product-history":"Product History",
+    "/all-qms-forms": "QMS Forms",
+    "/finance-dashboard" : "Dashboard",
+    "/view-quality-agreement" : "Quality Agreement",
+    "/view-asl": "Approved Supplier List"
 }
