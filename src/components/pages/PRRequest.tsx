@@ -10,11 +10,14 @@ import { cookies } from 'next/headers';
 interface PageProps {
   pur_req?: string
   cart_id?: string
+  prf_name?: string
 }
 
-export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
+export const PRRequest = async ({ pur_req, cart_id, prf_name }: PageProps) => {
+
   let PRDataUrl;
   let PRData: PurchaseRequestData["message"]["data"] | null = null;
+
   const cookieStore = await cookies();
   const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
   if (cart_id) {
@@ -63,8 +66,9 @@ export const PRRequest = async ({ pur_req, cart_id }: PageProps) => {
     }
   });
   const PurchaseOrgDropdown = PurchaseOrgResponse?.status == 200 ? PurchaseOrgResponse?.data.message?.purchase_org : "";
+
   return (
     <PRRequestForm Dropdown={Dropdown} PRData={PRData} cartId={cart_id} pur_req={pur_req} PurchaseGroupDropdown={PurchaseGroupDropdown}
-      ProfitCenterDropdown={ProfitCenterDropdown} PurchaseOrgDropdown={PurchaseOrgDropdown} company={company}/>
+      ProfitCenterDropdown={ProfitCenterDropdown} PurchaseOrgDropdown={PurchaseOrgDropdown} company={company} prf_name={prf_name}/>
   )
 }

@@ -32,6 +32,7 @@ interface Props {
   PRData: PurchaseRequestData["message"]["data"] | null
   cartId?: string
   pur_req?: string
+  prf_name?: string
   PurchaseGroupDropdown: PurchaseGroup[]
   // StorageLocationDropdown: StorageLocation[]
   // ValuationClassDropdown: ValuationClass[]
@@ -49,7 +50,8 @@ export const updateQueryParam = (key: string, value: string) => {
   window.history.pushState({}, '', url.toString());
 };
 
-const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, ProfitCenterDropdown, PurchaseOrgDropdown }: Props) => {
+const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, ProfitCenterDropdown, PurchaseOrgDropdown, prf_name }: Props) => {
+
   const user = Cookies.get("user_id");
   const { designation } = useAuth();
   const router = useRouter()
@@ -167,17 +169,28 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     }
   };
 
-  const fetchTableData = async (pur_req: string) => {
-    console.log(pur_req, "pur_req in table code")
-    const url = `${API_END_POINTS?.fetchPRTableData}?name=${pur_req}`
-    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
-    if (response?.status == 200) {
-      console.log(response, "response of table data------------------------------------------")
-      setMainItems(response.data.message)
-    } else {
-      alert("error888888888888888888888888888");
+  const fetchTableData = async (pur_req: string, prf_name?: string) => {
+    console.log(pur_req, "pur_req in table code");
+    try {
+      let url = "";
+      if (pur_req) {
+        url = `${API_END_POINTS?.fetchPRTableData}?name=${pur_req}`;
+      } else {
+        url = `${API_END_POINTS?.fetchPRFDoctypeData}?prf_name=${prf_name}`;
+      }
+      const response: AxiosResponse = await requestWrapper({url,method: "GET",});
+      if (response?.status === 200) {
+        console.log(response,"response of table data------------------------------------------");
+        setMainItems(response.data.message);
+      } else {
+        alert("Error fetching PR data");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong while fetching PR data.");
     }
   };
+
 
   const handleNext = async () => {
     const url = API_END_POINTS?.createPR;
@@ -227,7 +240,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "")
   }, [pur_req, PRData?.purchase_requisition_type])
 
-  console.log("Main ITem Status SAP------------->",mainItems);
+  console.log("Main ITem Status SAP------------->", mainItems);
 
   return (
     <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">

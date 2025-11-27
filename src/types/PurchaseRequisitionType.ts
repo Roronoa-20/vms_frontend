@@ -85,6 +85,9 @@ export interface PurchaseRequisitionDataItem {
   material_code_head_desc: string;
   plant_head_desc: string;
   product_full_name_head: string;
+  form_status: string;
+  status: string;
+  pr_created_from_sap: number;
 }
 
 export interface MaterialGroup {

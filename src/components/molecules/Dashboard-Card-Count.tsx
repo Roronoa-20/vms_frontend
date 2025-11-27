@@ -183,6 +183,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       },
       {
         name: "Purchase Requisition Request",
+        subname: "Generated through VMS",
         count: Props.cardData?.pr_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-rose-800",
@@ -385,8 +386,15 @@ const DashboardCards = ({ ...Props }: Props) => {
                 <div
                   className={`group w-full h-full rounded-2xl ${item.bg_color} flex flex-col p-3 ${item.text_color} h-28 justify-between border-2 ${item.hover} hover:scale-105 transition duration-300 transform cursor-pointer shadow-md`}
                 >
-                  <div className="flex w-full justify-between">
-                    <h1 className="text-[13px]">{item.name}</h1>
+                  <div className="flex w-full justify-between items-center">
+                    <div className="flex flex-col">
+                      <h1 className="text-[14px] leading-none">{item.name}</h1>
+
+                      {item.subname && (
+                        <span className="text-[12px] text-gray-600">({item.subname})</span>
+                      )}
+                    </div>
+
                     <Image src={item.icon} alt="" width={25} height={30} />
                   </div>
                   <div className="text-[20px] text-start font-bold">

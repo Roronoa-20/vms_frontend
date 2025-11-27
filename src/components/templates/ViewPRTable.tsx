@@ -12,7 +12,8 @@ import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import SubItemViewComponent from "../molecules/view-pr/SubItemViewComponent";
 import Pagination from "../molecules/Pagination";
-import { PurchaseRequisitionDataItem, PurchaseRequisitionResponse, SubheadField } from '@/src/types/PurchaseRequisitionType'
+import { PurchaseRequisitionDataItem, PurchaseRequisitionResponse, SubheadField } from '@/src/types/PurchaseRequisitionType';
+import { Label } from "@/components/ui/label";
 
 
 interface PRItemsType {
@@ -163,11 +164,11 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
 
   return (
     <>
-      <div className="shadow- bg-[#f6f6f7] p-3 rounded-2xl flex gap-4 flex-wrap">
+      <div className="shadow- bg-[#f6f6f7] p-3 rounded-2xl flex flex-wrap">
         <div className="flex items-center justify-end">
           {/* Left section - Filter */}
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium">Filter by PR Type:</label>
+            <Label className="text-sm font-medium">Filter by PR Type:</Label>
             <Select onValueChange={(value) => setFilterType(value)} value={filterType}>
               <SelectTrigger className="w-[150px]">
                 <SelectValue placeholder="Select Type" />
@@ -182,7 +183,6 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
               </SelectContent>
             </Select>
           </div>
-
           {/* Right section - Create RFQ */}
           {selectedData.length > 0 && (
             <Button
@@ -196,6 +196,12 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
             </Button>
           )}
         </div>
+        <div className="w-full">
+          <p className="text-[12px] text-center text-gray-600 italic bg-gray-100 py-1 rounded-md underline">
+            {/* Disclaimer: All PRs are visible here, whether created through VMS Portal or SAP. */}
+            Disclaimer: This list displays all Purchase Requisitions (PRs), regardless of whether they were generated via the VMS Portal or synchronized from SAP.
+          </p>
+        </div>
         <Table>
           <TableHeader className="bg-blue-100 text-center">
             <TableRow>
@@ -207,6 +213,7 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
               <TableHead className="text-center">PR No</TableHead>
               <TableHead className="text-center">Date</TableHead>
               <TableHead className="text-center">Plant</TableHead>
+              <TableHead className="text-center">Status</TableHead>
               <TableHead className="text-center">View</TableHead>
             </TableRow>
           </TableHeader>
@@ -234,27 +241,35 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
                   <TableCell className="text-center">{pr.sap_pr_code}</TableCell>
                   <TableCell className="text-center">{pr.purchase_requisition_date ? formatDate(new Date(pr.purchase_requisition_date)) : ""}</TableCell>
                   <TableCell className="text-center">{pr.plant}</TableCell>
+                  <TableCell>
+                    <div
+                      className={`text-center px-2 py-3 rounded-xl ${pr?.status === "Failed"
+                        ? "bg-red-100 text-red-800"
+                        : pr?.status === "Success"
+                          ? "bg-green-100 text-green-800" : pr?.status === "Released"
+                            ? "bg-green-100 text-green-800" : pr?.status === "Revoked"
+                              ? "bg-orange-100 text-orange-800"
+                              : "bg-yellow-100 text-yellow-800"
+                        }`}
+                    >
+                      {pr?.status || "--"}
+                    </div>
+                  </TableCell>
                   <TableCell className="text-center">
                     <Button
                       variant="nextbtn"
                       size="nextbtnsize"
                       className="py-2.5 hover:bg-white hover:text-black hover:border border-blue-500 w-[70px] rounded-[16px]"
-                      // onClick={async () => {
-                      //   await fetchPRItems(pr.name);
-                      //   setSelectedPRDetails(pr);
-
-                      //   if (pr.purchase_requisition_type === "SB") {
-                      //     setShowSubItemComponent(true);
-                      //     setShowPRPopup(false);
-                      //   } else {
-                      //     setShowPRPopup(true);
-                      //     setShowSubItemComponent(false);
-                      //   }
-                      // }}
                       onClick={() => {
-                        const cartId = pr.cart_id;
-                        const purReq = pr?.pur_req_webform_name;
-                        router.push(`/pr-request?cart_id=${cartId}&pur_req=${purReq}`);
+                        if (pr?.pr_created_from_sap === 1) {
+                          const prfName = pr?.name;
+                          router.push(`/pr-request?prf_name=${prfName}`);
+                        } else {
+                          // Normal PR → use cart_id + pur_req
+                          const cartId = pr?.cart_id;
+                          const purReq = pr?.pur_req_webform_name;
+                          router.push(`/pr-request?cart_id=${cartId}&pur_req=${purReq}`);
+                        }
                       }}
                     >
                       View
@@ -267,7 +282,7 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
           </TableBody>
         </Table>
 
-        {selectedPRDetails && (
+        {/* {selectedPRDetails && (
           <>
             {showPRPopup && selectedPRDetails.purchase_requisition_type !== "SB" && (
               <PopUp classname="w-full md:max-w-[70vw] md:max-h-[60vh] h-full overflow-y-scroll" handleClose={() => setShowPRPopup(false)}>
@@ -312,7 +327,7 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
               />
             )}
           </>
-        )}
+        )} */}
       </div>
       {totalCount > 0 && (
         <Pagination

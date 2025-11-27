@@ -118,6 +118,7 @@ const API_END_POINTS = {
   approvePR: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition_approval.purchase_team_approval_check`,
   sapprcreated: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_purchase_requisition_form`,
   fetchAccountAssignmentData:`${url}/api/method/vms.APIs.purchase_api.handle_req_field_pr.return_acc_ass_category_list`,
+  fetchPRFDoctypeData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition_form.get_pur_req_form_table_data`,
 
   //rfq apis
   fetchVendorListBasedOnRFQType: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.vendor_list`,
@@ -333,11 +334,15 @@ const API_END_POINTS = {
   prToPurchaseTeam:`${url}/api/method/vms.APIs.purchase_api.purchase_requisition_approval.sent_approval_to_purchase_team`,
   checkassetcode: `${url}/api/method/vms.APIs.purchase_api.check_asset_code.check_asset_code_availability`,
 
-  submitgrwaiver: `${url}/api/method/vms.APIs.gr_waiver.create_gr_waiver.create_gr_waiver`,
-  dropdownmaterial: `${url}/api/resource/Company%20Master`,
+  // GR Waiver APIs
+  creategrwaiver: `${url}/api/method/vms.APIs.gr_waiver.create_gr_waiver.create_gr_waiver`,
+  dropdowncompany: `${url}/api/resource/Company%20Master`,
   dropdownrequestor: `${url}/api/method/vms.APIs.master_apis.employee_master.get_employee_list`,
-  dropdownrequest: `${url}/api/resource/Request Type`,
+  dropdownrequest: `${url}/api/resource/Request%20Type`,
   requestorDetailsBasedOnReuqstorName:`${url}/api/method/vms.APIs.master_apis.employee_master.get_employee_details`,
+  GRWaiverDashboard: `${url}/api/method/vms.APIs.gr_waiver.get_gr_waiver.get_gr_waiver_statistics`,
+  GRwaiverDashboardTable: `${url}/api/method/vms.APIs.gr_waiver.get_gr_waiver.get_gr_waiver_list`,
+  fetchGRWaiverDetails: `${url}/api/method/vms.APIs.gr_waiver.get_gr_waiver.get_gr_waiver_details`,
 
 }
 
