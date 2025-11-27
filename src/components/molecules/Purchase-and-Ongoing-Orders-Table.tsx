@@ -301,7 +301,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                       View
                     </Button>
                   </TableCell>
-                  <TableCell><Button onClick={() => { setIsEmailDialog(true); setEmail((prev: any) => ({ ...prev, to: item?.email })) }} className={`bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px] `} disabled={item?.sent_to_vendor}>Send</Button></TableCell>
+                  <TableCell><Button onClick={() => { setIsEmailDialog(true); setEmail((prev: any) => ({ ...prev, to: item?.email,cc:item?.email2 })) }} className={`bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px] `} disabled={item?.sent_to_vendor}>Send</Button></TableCell>
                 </TableRow>
               ))
             ) : (
@@ -328,13 +328,13 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               To
             </h1>
-            <Input disabled value={email?.to ?? ""} />
+            <Input onChange={(e) => { setEmail((prev: any) => ({ ...prev, to: e.target.value })) }} value={email?.to ?? ""} />
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               CC
             </h1>
-            <Input onChange={(e) => { setEmail((prev: any) => ({ ...prev, cc: e.target.value })) }} />
+            <Input onChange={(e) => { setEmail((prev: any) => ({ ...prev, cc: e.target.value })) }} value={email?.cc ?? ""} />
           </div>
           <Input onChange={(e) => { setPOFile(e.target.files && e.target.files[0]) }} className="mt-4" type="file" />
         </PopUp>
