@@ -51,6 +51,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
   const [isAcknowledgeDialog, setIsAcknowledgeDialog] = useState(false);
   const [comment, setComment] = useState<string>("")
   const [date, setDate] = useState<string>("")
+  const [acknowlegedFile, setAcknowlegedFile] = useState<File | null>(null)
   const [isModifyDialog, setIsModifyDialog] = useState<boolean>(false);
   const [plantDropdown, setPlantDropdown] = useState<{ name: string, plant_name: string, description: string }[]>();
   const [purchaseGroupDropdown, setPurchaseGroupDropdown] = useState<{ name: string, purchase_group_code: string, purchase_group_name: string, description: string }[]>();
@@ -152,12 +153,19 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
 
 
   const handleAcknowledge = async () => {
+    const formData = new FormData();
+    const data = { cart_id: refno, acknowledged_remarks: comment, acknowledged_date: date };
+    formData?.append("data",JSON.stringify(data));
+    if(acknowlegedFile){
+      formData?.append("file",acknowlegedFile);
+    }
     const url = API_END_POINTS?.PurchaseEnquiryAcknowledge;
-    const response: AxiosResponse = await requestWrapper({ url: url, method: "POST", data: { data: { cart_id: refno, acknowledged_remarks: comment, acknowledged_date: date } } });
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "POST", data: { data: formData } });
     if (response?.status == 200) {
       alert("Acknowledge Sent Successfully");
       setComment("");
       setIsAcknowledgeDialog(false);
+      setAcknowlegedFile(null);
       setDate("");
       location.reload();
     }
@@ -590,10 +598,11 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
       }
       {isAcknowledgeDialog &&
         <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
-          <Comment_box className='' handleClose={handleClose} Submitbutton={handleAcknowledge} handleComment={handleComment}>
+          <Comment_box className='md:max-h-fit' handleClose={handleClose} Submitbutton={handleAcknowledge} handleComment={handleComment}>
             <div className="">
               <h1 className="text-[12px] font-normal text-[#626973] pb-2">Expected Delivery</h1>
               <Input className='w-44' type='Date' onChange={(e) => { setDate(e.target.value) }} min={today} />
+              <Input className='mt-2' type='file' onChange={(e) => { setAcknowlegedFile(e?.target?.files?.[0] as File) }} />
               <div className='pt-3 italic'>
                 <h1 className='text-[10px] bg-slate-400 font-mono'>Disclaimer: The Expected Delivery Date can be changed based on the receipt of Purchase Order and Purchase Requisition.</h1>
               </div>

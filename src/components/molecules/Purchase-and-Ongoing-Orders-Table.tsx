@@ -266,7 +266,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
               <TableHead className="text-center text-black text-nowrap">Status</TableHead>
               <TableHead className="text-center text-black text-nowrap">Tentative Delivery</TableHead>
               <TableHead className="text-center text-black text-nowrap">View details</TableHead>
-              <TableHead className="text-center text-black text-nowrap">Send Email</TableHead>
+              {/* <TableHead className="text-center text-black text-nowrap">Send Email</TableHead> */}
             </TableRow>
           </TableHeader>
           <TableBody className="text-center text-black">
@@ -301,7 +301,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                       View
                     </Button>
                   </TableCell>
-                  <TableCell><Button onClick={() => { setIsEmailDialog(true); setEmail((prev: any) => ({ ...prev, to: item?.email,cc:item?.email2 })) }} className={`bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px] `} disabled={item?.sent_to_vendor}>Send</Button></TableCell>
+                  {/* <TableCell><Button onClick={() => { setIsEmailDialog(true); setEmail((prev: any) => ({ ...prev, to: item?.email,cc:item?.email2 })) }} className={`bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px] `} disabled={item?.sent_to_vendor}>Send</Button></TableCell> */}
                 </TableRow>
               ))
             ) : (
