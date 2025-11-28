@@ -245,6 +245,8 @@ const ViewPO = ({ po_name }: Props) => {
     setEmail((prev: any) => ({ ...prev, cc: emailList }));
   }
 
+  console.log(POItemsTable,"this is po table")
+
   return (
     <div className="min-h-screen bg-[#f8fafc] space-y-6 text-sm text-black font-sans m-5">
       {/* Header Section */}
@@ -347,7 +349,7 @@ const ViewPO = ({ po_name }: Props) => {
 
       {/* End of Print Format */}
       {isEarlyDeliveryDialog &&
-        <PopUp classname="w-full md:max-w-[60vw] md:max-h-[60vh] h-full overflow-y-scroll" handleClose={handleClose}>
+        <PopUp classname="w-full md:max-w-[60vw] md:max-h-[60vh] h-full overflow-y-scroll" handleClose={handleClose} isSubmit={true} Submitbutton={handlePoItemsSubmit}>
           <h1 className="pl-5">Purchase Inquiry Items</h1>
           <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
             <Table className=" max-h-40 overflow-y-scroll overflow-x-scroll">
@@ -380,7 +382,6 @@ const ViewPO = ({ po_name }: Props) => {
               </TableBody>
             </Table>
           </div>
-          <Button onClick={() => { handlePoItemsSubmit() }}>Submit</Button>
         </PopUp>
       }
 
