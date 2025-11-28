@@ -325,7 +325,7 @@ const ViewPO = ({ po_name }: Props) => {
             <h1 className="text-[14px] font-normal text-[#626973] pb-2">
               To
             </h1>
-            <Input disabled value={email?.to ?? ""} />
+           <Input onChange={(e)=>{setEmail((prev: any) => ({ ...prev, to: e.target.value }));}} value={email?.to ?? ""} />
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">
