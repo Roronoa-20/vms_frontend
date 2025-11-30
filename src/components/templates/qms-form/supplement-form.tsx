@@ -6,13 +6,15 @@ import TextareaWithLabel from '@/src/components/common/TextareaWithLabel';
 import { useQMSForm } from '@/src/hooks/useQMSForm';
 import { Button } from "../../atoms/button";
 import { Input } from "@/components/ui/input";
-import SignatureCanvas from "react-signature-canvas";
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import requestWrapper from "@/src/services/apiCall";
+import { Paperclip } from "lucide-react";
 
 
 export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { vendor_onboarding: string; ref_no: string; company_code: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "supplement";
-  const { formData, handleBack, handleNext, saveFormDataLocally, handleTextareaChange, signaturePreviews, sigRefs, handleClearSignature, handleSaveSignature, handleFileUpload, fileName, handleRemoveFile, handleSubmit, handleSignatureUpload } = useQMSForm(vendor_onboarding, currentTab);
+  const { formData, handleBack, handleNext, handleTextareaChange, signaturePreviews, handleClearSignature, handleFileUpload, handleRemoveFile, handleSignatureUpload } = useQMSForm(vendor_onboarding, currentTab);
 
   const companyCodes = company_code.split(',').map((code) => code.trim());
   const is2000 = companyCodes.includes('2000');
@@ -20,8 +22,15 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
 
   const getFileURL = (fileOrUrl?: string | File): string => {
     if (!fileOrUrl) return "";
-    if (typeof fileOrUrl === "string") return fileOrUrl;
-    return URL.createObjectURL(fileOrUrl);
+    if (fileOrUrl instanceof File) {
+      return URL.createObjectURL(fileOrUrl);
+    }
+    if (typeof fileOrUrl === "string") {
+      if (fileOrUrl.startsWith("http")) return fileOrUrl;
+      return `${process.env.NEXT_PUBLIC_BACKEND_END}${fileOrUrl}`;
+    }
+
+    return "";
   };
 
   const getFileName = (fileOrUrl?: string | File): string => {
@@ -31,6 +40,48 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
       return parts[parts.length - 1];
     }
     return fileOrUrl.name;
+  };
+
+  const isQATeamApproved = formData?.qa_team_approved === 1;
+
+  const handleSubmit = async () => {
+    try {
+      if (isQATeamApproved) {
+        console.log("QA already approved → skipping API");
+        handleNext();
+        return;
+      }
+      const form = new FormData();
+      const payload = {
+        vendor_onboarding,
+        qms_form: formData?.name,
+        ...formData,
+      };
+      form.append("data", JSON.stringify(payload));
+      if (formData?.quality_manual instanceof File) {
+        form.append("quality_manual", formData.quality_manual);
+      }
+
+      if (formData?.signature instanceof File) {
+        form.append("signature", formData.signature);
+      }
+
+      console.log("Submitting FormData bfeofre---->", payload)
+      const response = await requestWrapper({
+        url: API_END_POINTS.updateSupplementForm,
+        method: "POST",
+        data: form,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("API response:", response);
+      if (response?.status === 200) {
+        // handleNext();
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+    }
   };
 
   return (
@@ -45,7 +96,9 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
           value={formData?.additional_or_supplement_information ?? ""}
           onChange={(e) => { handleTextareaChange(e, "additional_or_supplement_information") }}
           rows={2}
+          disabled={isQATeamApproved}
         />
+
         {is7000 && (
           <div className="mt-4">
             <Label className="block mb-2 text-sm font-medium text-gray-700">
@@ -60,6 +113,7 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
                   accept=".pdf,.doc,.docx"
                   onChange={(e) => handleFileUpload(e, "quality_manual")}
                   className="flex-1"
+                  disabled={isQATeamApproved}
                 />
               ) : (
                 <>
@@ -76,6 +130,7 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
                     onClick={() => handleRemoveFile("quality_manual")}
                     className="text-red-600 text-xl font-bold ml-3 hover:text-red-800"
                     title="Remove File"
+                    disabled={isQATeamApproved}
                   >
                     &times;
                   </button>
@@ -108,6 +163,7 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
                   name="name1"
                   value={formData?.name1 ?? ""}
                   onChange={(e) => handleTextareaChange(e, 'name1')}
+                  disabled={isQATeamApproved}
 
                 />
                 <span className='text-left text-[14px] mt-2'>Name</span>
@@ -122,8 +178,9 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
                   name="title"
                   value={formData?.title ?? ""}
                   onChange={(e) => handleTextareaChange(e, 'title')}
-
+                  disabled={isQATeamApproved}
                 />
+
                 <span className='text-left text-[14px] mt-2'>Title</span>
               </div>
             </div>
@@ -137,19 +194,27 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
                       alt="Signature Preview"
                       className="w-[400px] h-[170px] object-contain border border-gray-300 rounded-md"
                     />
-
-                    {/* Cross Icon */}
                     <button
                       onClick={() => handleClearSignature("signature")}
                       className="absolute top-1 right-1 bg-white rounded-full p-1 shadow text-red-600"
+                      disabled={isQATeamApproved}
                     >
                       ✖
                     </button>
                   </div>
+
+                ) : formData.signature && typeof formData.signature === "string" ? (
+                  <div className="relative w-fit">
+                    <img
+                      src={getFileURL(formData.signature)}
+                      alt="Saved Signature"
+                      className="w-[400px] h-[170px] object-contain border border-gray-300 rounded-md"
+                    />
+                  </div>
                 ) : (
                   <label className="flex flex-col items-center justify-center w-[450px] h-[170px] border-2 border-dashed border-gray-400 rounded-md cursor-pointer hover:bg-gray-50">
                     <div className="flex flex-col items-center text-gray-600">
-                      📎
+                      <Paperclip className="w-6 h-6 mb-2" />
                       <p className="text-xs mt-1">Attach Signature (PDF/PNG/JPG/JPEG)</p>
                     </div>
 
@@ -158,6 +223,7 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
                       accept="image/png, image/jpeg, image/jpg, application/pdf"
                       className="hidden"
                       onChange={(e) => handleSignatureUpload(e, "signature")}
+                      disabled={isQATeamApproved}
                     />
                   </label>
                 )}
@@ -172,7 +238,9 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
                   value={formData?.date ?? ""}
                   onChange={(e) => handleTextareaChange(e, 'date')}
                   className="w-3/4 border-0 border-b-2 border-black focus:ring-0 focus:outline-none cursor-pointer"
+                  disabled={isQATeamApproved}
                 />
+
                 <span className='text-left text-[14px] mt-2'>Date</span>
               </div>
             </div>
@@ -192,11 +260,6 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
             variant="nextbtn"
             size="nextbtnsize"
             className="py-2.5"
-            // onClick={() => {
-            //   console.log('Saving form data locally for Supplement tab:', currentTab, 'formData:', formData);
-            //   saveFormDataLocally(currentTab, formData);
-            //   handleNext();
-            // }}
             onClick={handleSubmit}
           >
             {/* {is7000 ? 'Submit' : 'Next'} */}

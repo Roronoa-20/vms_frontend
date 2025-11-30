@@ -61,9 +61,7 @@ type Props = {
   prData: PurchaseRequisition[];
   rfqData: RFQTable;
   dashboardASAFormTableData: DashboardTableType["asa_form_data"];
-  // dashboardPendingASAFormTableData: DashboardTableType["asa_form_data"];
   dashboardASAPendingVendorListTableData: DashboardTableType["asa_form_data"];
-  // ASAdashboardOnboardedVendorcountTableData: DashboardTableType["asa_form_data"];
   sapErrorDashboardData: DashboardTableType["sapErrorDashboardData"];
   dashboardAccountsPending: any;
   dashboardAccountsOnboarded: any;
@@ -75,22 +73,18 @@ type Props = {
 const DashboardCards = ({ ...Props }: Props) => {
   console.log(Props?.cardData, "this is card data");
   const { MultipleVendorCode } = useMultipleVendorCodeStore();
-  // const cookieStore = await cookies();
   const { designation } = useAuth();
   const user = designation;
   const [loading, setLoading] = useState<boolean>(true);
 
   console.log(user, "this is desingation");
-  // const user = cookieStore.get("designation")?.value;
   let allCardData: any[] = [];
 
   if (user === "ASA") {
     allCardData = [
       {
         name: "Total Onboarded Vendor",
-        count:
-          Props.ASAdashboardOnboardedVendorListTableData
-            ?.overall_count ?? 0,
+        count: Props.ASAdashboardOnboardedVendorListTableData?.overall_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-emerald-800",
         bg_color: "bg-emerald-100",
@@ -123,14 +117,6 @@ const DashboardCards = ({ ...Props }: Props) => {
         bg_color: "bg-rose-100",
         hover: "hover:border-rose-400",
       },
-      // {
-      //   name: "Total Vendors",
-      //   count: Props.cardData?.total_vendor_count ?? 0,
-      //   icon: "/dashboard-assests/cards_icon/total_count.svg",
-      //   text_color: "text-yellow-800",
-      //   bg_color: "bg-yellow-100",
-      //   hover: "hover:border-yellow-400",
-      // },
       {
         name: "Onboarded Vendors",
         count: Props.cardData?.approved_vendor_count ?? 0,
@@ -338,7 +324,26 @@ const DashboardCards = ({ ...Props }: Props) => {
     },
   ];
 
-  let cardData = user === "Enquirer" ? EnquirerCard : allCardData;
+  let CategoryTypeCard = [
+    {
+      name: "Purchase Enquiry",
+      count: Props.cardData?.cart_count ?? 0,
+      icon: "/dashboard-assests/cards_icon/doc.svg",
+      text_color: "text-rose-800",
+      bg_color: "bg-rose-100",
+      hover: "hover:border-rose-400",
+    },
+    {
+      name: "Purchase Requisition Request",
+      count: Props.cardData?.pr_count ?? 0,
+      icon: "/dashboard-assests/cards_icon/file-search.svg",
+      text_color: "text-rose-800",
+      bg_color: "bg-green-200",
+      hover: "hover:border-rose-400",
+    },
+  ];
+
+  let cardData = user === "Enquirer" ? EnquirerCard : user === "Category Master" ? CategoryTypeCard : allCardData;
 
   useEffect(() => {
     if (user) {
@@ -486,14 +491,14 @@ const DashboardCards = ({ ...Props }: Props) => {
                 />
               )}
               {item.name === "Purchase Enquiry" &&
-                (user === "Enquirer" || user === "Purchase Team" || user == "Purchase Head") && (
+                (user === "Enquirer" || user === "Purchase Team" || user == "Purchase Head" || user === "Category Master") && (
                   <DashboardPurchaseEnquiryTable
                     dashboardTableData={Props?.prInquiryData?.cart_details}
                     companyDropdown={Props?.companyDropdown}
                   />
                 )}
               {item.name === "Purchase Requisition Request" &&
-                (user === "Enquirer" || user === "Purchase Team" || user == "Purchase Head") && (
+                (user === "Enquirer" || user === "Purchase Team" || user == "Purchase Head" || user === "Category Master") && (
                   <DashboardPurchaseRequisitionTable
                     dashboardTableData={Props?.prData}
                     companyDropdown={Props?.companyDropdown}

@@ -88,6 +88,10 @@ export default function LoginForm() {
         router.push("/gate-entry-dashboard");
         return;
       }
+      if(designation === "Category Master"){
+        router.push("/category-master-dashboard");
+        return;
+      }
       router.push("/dashboard");
     }
   };

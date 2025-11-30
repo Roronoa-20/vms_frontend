@@ -372,7 +372,8 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         setFormData((prev: any) => ({
             ...prev,
             vendor_sign_attachment: file,
-            signature: file
+            signature: file,
+            vendor_signature: file
         }));
     };
 
@@ -385,6 +386,9 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
 
         setFormData((prev) => ({
             ...prev,
+            vendor_sign_attachment: "",
+            signature: "",
+            vendor_signature: "",
             [field]: "",
         }));
     };

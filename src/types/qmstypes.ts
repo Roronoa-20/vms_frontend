@@ -202,12 +202,10 @@ export type VendorQMSForm = {
   retain_complaints_records?: string;
   any_recalls?: string;
   additional_or_supplement_information?: string;
-  quality_manual?: string | File;
   name1?: string;
   title?: string;
   date?: string;
   ssignature?: string;
-  signature?: string;
   mdpl_qa_date?: string;
   // mlspl_qa_list?: string | string[];
   mlspl_qa_list?: MLSPLQAItem[];
@@ -236,6 +234,9 @@ export type VendorQMSForm = {
   qms_prior_notification?: string | string[];
   qms_procedure_doc?: string | string[];
   qa_team_approved?: number;
+  vendor_sign_attachment?: File | string;
+  signature?: string | File | null;
+  quality_manual?: string | File | null;
 };
 
 export type VendorQualityAgreementForm = {

@@ -38,7 +38,7 @@ const form1 = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
     if (formData.vendor_title && mdplqualityagreementform.vendor_name && selectedDate) {
       const agreementData = {
         vendor_title: formData.vendor_title,
-        vendor_name1: mdplqualityagreementform.vendor_name,
+        vendor_name: formData.vendor_name1,
         mdpl_qa_date: selectedDate,
       };
 
@@ -81,7 +81,7 @@ const form1 = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
               And
             </p>
             <p className='text-[16px]'>
-              <span className='font-bold underline'>{formData.vendor_title} {mdplqualityagreementform.vendor_name}</span><span className='text-[14px]'> (Hereinafter referred as “Supplier”)</span><br></br>
+              <span className='font-bold underline'>{formData.vendor_title} {formData.vendor_name1}</span><span className='text-[14px]'> (Hereinafter referred as “Supplier”)</span><br></br>
               Whereas, the parties have entered into the quality agreement pursuant to which supplier has agreed to manufacture/supply raw material/packing materials for Meril accordingly. Whereas, the parties wish to set terms and conditions on which they will assure the quality of products to be manufactured/supplied by the supplier.
             </p>
           </section>

@@ -30,7 +30,8 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 
 type Props = {
   dashboardTableData?: TPRInquiryTable["cart_details"]
-  companyDropdown: { description: string; name: string; }[]
+  companyDropdown: { description: string; name: string; }[];
+  categoryType: string;
 }
 
 const useDebounce = (value: any, delay: any) => {
@@ -48,11 +49,9 @@ const useDebounce = (value: any, delay: any) => {
   return debouncedValue;
 };
 
-const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropdown }: Props) => {
-
-  // console.log("DashboardTableData PPRRRPRR--->", dashboardTableData);
+const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropdown, categoryType }: Props) => {
+  console.log("kjrgbksdvbksbvksdnfskdjb first API------>", dashboardTableData)
   const { designation } = useAuth();
-
   const formatDate = (date: Date): string => {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -60,7 +59,8 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
     return `${day}-${month}-${year}`;
   };
 
-  const [table, setTable] = useState<DashboardTableType["cart_details"]>(dashboardTableData || []);
+  // const [table, setTable] = useState(dashboardTableData || []);
+  const [table, setTable] = useState(Array.isArray(dashboardTableData) ? dashboardTableData : []);
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [search, setSearch] = useState<string>("");
   const [total_event_list, settotalEventList] = useState(0);
@@ -73,22 +73,32 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
   const debouncedSearchName = useDebounce(search, 300);
 
   useEffect(() => {
+    setCurrentPage(1);
+  }, [categoryType]);
+
+  useEffect(() => {
     fetchTable();
-  }, [debouncedSearchName, selectedCompany, currentPage])
+  }, [debouncedSearchName, selectedCompany, currentPage, categoryType]);
+
 
   const fetchTable = async () => {
     const dashboardPurchaseEnquiryTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.prInquiryDashboardTable}?usr=${user}&company=${selectedCompany}&cart_id=${debouncedSearchName}&page_no=${currentPage}&page_length=${record_per_page}`,
+      url: `${API_END_POINTS?.CategoryMasterDashboardAPI}?company=${selectedCompany}&cart_id=${debouncedSearchName}&page_no=${currentPage}&page_size=${record_per_page}`,
       method: "GET",
     });
     if (dashboardPurchaseEnquiryTableDataApi?.status == 200) {
-      setTable(dashboardPurchaseEnquiryTableDataApi?.data?.message?.cart_details);
-      settotalEventList(dashboardPurchaseEnquiryTableDataApi?.data?.message?.total_count);
-      // setRecordPerPage(10);
+      const allData = dashboardPurchaseEnquiryTableDataApi?.data?.message?.data;
+      console.log("Using Category:", categoryType);
+      console.log("All data:", allData);
+      const categoryObj = allData?.[categoryType];
+
+      const tableRows = Array.isArray(categoryObj?.records)
+        ? categoryObj.records
+        : [];
+
+      setTable(tableRows);
+      settotalEventList(categoryObj?.total || 0);
     }
-    console.log("rows returned:", dashboardPurchaseEnquiryTableDataApi?.data?.message?.cart_details?.length);
-    console.log("total_count:", dashboardPurchaseEnquiryTableDataApi?.data?.message?.total_count);
-    console.log("page_length sent:", record_per_page);
   };
 
   const handleSelectChange = (
@@ -102,7 +112,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
     }
   };
 
-
+  console.log("table data check------>", table);
 
   return (
     <>

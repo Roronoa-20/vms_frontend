@@ -364,6 +364,22 @@ export const EnquirysidebarMenu: SidebarItem[] = [
   },
 ];
 
+export const CategoryMastersidebarMenu: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/category-master-dashboard",
+    defaultActive: true,
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "View PR",
+    href: "/view-purchase-requisition",
+    children: []
+  },
+];
+
 export const ASASideBarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/home-logo.svg",

@@ -7,11 +7,11 @@ import { DashboardPOTableData, dashboardCardData, DashboardTableType, TvendorReg
 import { cookies } from "next/headers";
 
 const Dashboard = async () => {
-  // const cookie = await cookies()
   const cookieStore = await cookies();
   const user = cookieStore.get("user_id")?.value
   console.log(user, "user")
   const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
+  
   //card data
   const dashboardCardApi: AxiosResponse = await requestWrapper({
     url: `${API_END_POINTS?.dashboardCardURL}?usr=${user}`,
@@ -144,16 +144,6 @@ const Dashboard = async () => {
   const dashboardASAFormTableData: DashboardTableType["asa_form_data"] =
     dashboardASAFormTableDataApi?.status == 200 ? dashboardASAFormTableDataApi?.data?.message : "";
 
-  // const dashboardPendingASAFormTableDataApi: AxiosResponse = await requestWrapper({
-  //   url: API_END_POINTS?.asapendingVendorcount,
-  //   method: "GET",
-  //   headers: {
-  //     cookie: cookieHeaderString
-  //   }
-  // });
-  // const dashboardPendingASAFormTableData: DashboardTableType["asa_form_data"] =
-  //   dashboardPendingASAFormTableDataApi?.status == 200 ? dashboardPendingASAFormTableDataApi?.data?.message : "";
-
   const dashboardASAPendingVendorListTableDataApi: AxiosResponse = await requestWrapper({
     url: API_END_POINTS?.asapendingVendorList,
     method: "GET",
@@ -163,16 +153,6 @@ const Dashboard = async () => {
   });
   const dashboardASAPendingVendorListTableData: DashboardTableType["asa_form_data"] =
     dashboardASAPendingVendorListTableDataApi?.status == 200 ? dashboardASAPendingVendorListTableDataApi?.data?.message : "";
-
-  // const ASAdashboardOnboardedVendorCountTableDataApi: AxiosResponse = await requestWrapper({
-  //   url: API_END_POINTS?.asaonboardedvendorlist,
-  //   method: "GET",
-  //   headers: {
-  //     cookie: cookieHeaderString
-  //   }
-  // });
-  // const ASAdashboardOnboardedVendorcountTableData: DashboardTableType["asa_form_data"] =
-  //   ASAdashboardOnboardedVendorCountTableDataApi?.status == 200 ? ASAdashboardOnboardedVendorCountTableDataApi?.data?.message : "";
 
   const ASAdashboardOnboardedVendorListTableDataApi: AxiosResponse = await requestWrapper({
     url: API_END_POINTS?.asaonboardedvendorlist,
@@ -250,8 +230,6 @@ const Dashboard = async () => {
         prData={prData}
         rfqData={rfqData}
         dashboardASAFormTableData={dashboardASAFormTableData}
-        // dashboardPendingASAFormTableData={dashboardPendingASAFormTableData}
-        // ASAdashboardOnboardedVendorcountTableData={ASAdashboardOnboardedVendorcountTableData}
         dashboardASAPendingVendorListTableData={dashboardASAPendingVendorListTableData}
         sapErrorDashboardData={sapErrorDashboardData}
         dashboardAccountsPending={dashboardAccountsPending}

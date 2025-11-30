@@ -8,13 +8,49 @@ import MultiCheckboxGroup from '@/src/components/common/MultiCheckboxGroup';
 import { useQMSForm } from '@/src/hooks/useQMSForm';
 import SingleCheckboxGroup from '@/src/components/common/SingleCheckboxGroup';
 import { useMultiSelectOptions } from "@/src/hooks/useMultiSelectOptions";
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import requestWrapper from "@/src/services/apiCall";
 
 
 export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: string; ref_no: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "qas";
-  const { formData, handleBack, handleNext, saveFormDataLocally, handleMultipleCheckboxChange, handleTextareaChange, handleSingleCheckboxChange, handleSubmit } = useQMSForm(vendor_onboarding, currentTab);
+  const { formData, handleBack, handleNext, handleMultipleCheckboxChange, handleTextareaChange, handleSingleCheckboxChange } = useQMSForm(vendor_onboarding, currentTab);
   const multiSelectOptions = useMultiSelectOptions(vendor_onboarding);
+  const isQATeamApproved = formData?.qa_team_approved === 1;
+
+  const handleSubmit = async () => {
+    try {
+      if (isQATeamApproved) {
+        console.log("QA already approved → skipping API");
+        handleNext();
+        return;
+      }
+      const form = new FormData();
+      const payload = {
+        vendor_onboarding,
+        qms_form: formData?.name,
+        ...formData,
+      };
+      form.append("data", JSON.stringify(payload));
+      console.log("Submitting FormData bfeofre---->", payload)
+      const response = await requestWrapper({
+        url: API_END_POINTS.updateQASForm,
+        method: "POST",
+        data: form,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("API response:", response);
+      if (response?.status === 200) {
+        handleNext();
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+    }
+  };
+
 
   return (
     <div className="bg-white">
@@ -44,6 +80,7 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           }
           onChange={(e) => { handleMultipleCheckboxChange(e, "quality_control_system") }}
           columns={3}
+          disabled={isQATeamApproved}
         />
 
         <ConditionalTextareaGroup
@@ -61,6 +98,8 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           }
           placeholder="Enter the Other Certificates details here"
           onChange={(e) => { handleTextareaChange(e, "others_certificates") }}
+          disabled={isQATeamApproved}
+
         />
 
         <SingleCheckboxGroup
@@ -69,6 +108,8 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           options={["Local health authorities", "Others"]}
           value={formData.sites_inspected_by || ""}
           onChange={(e) => { handleSingleCheckboxChange(e, "sites_inspected_by") }}
+          disabled={isQATeamApproved}
+
         />
 
         <ConditionalTextareaGroup
@@ -82,6 +123,8 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           }
           placeholder="Enter the details here"
           onChange={(e) => { handleTextareaChange(e, "inspected_by_others") }}
+          disabled={isQATeamApproved}
+
         />
 
         <MultiCheckboxGroup
@@ -104,6 +147,8 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           }
           onChange={(e) => { handleMultipleCheckboxChange(e, "have_documentsprocedure") }}
           columns={3}
+          disabled={isQATeamApproved}
+
         />
 
         <YesNoNAGroup
@@ -111,6 +156,8 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           label="4. Do you agree to provide prior notification before any of the major changes are implemented in the system?"
           onChange={(e) => { handleSingleCheckboxChange(e, "prior_notification") }}
           value={formData.prior_notification || ""}
+          disabled={isQATeamApproved}
+
         />
 
         {formData.prior_notification === "Yes" && (
@@ -134,6 +181,8 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
             }
             onChange={(e) => { handleMultipleCheckboxChange(e, "if_yes_for_prior_notification") }}
             columns={2}
+          disabled={isQATeamApproved}
+
           />
         )}
 
@@ -142,6 +191,8 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           label="5. Are calibrations performed as per the procedure and is the calibration schedule in place?"
           value={formData.calibrations_performed || ""}
           onChange={(e) => { handleSingleCheckboxChange(e, "calibrations_performed") }}
+          disabled={isQATeamApproved}
+
         />
 
         <YesNoNAGroup
@@ -149,8 +200,10 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           label="6. Do you undertake regular review of the Quality System?"
           value={formData.regular_review_of_quality_system || ""}
           onChange={(e) => { handleSingleCheckboxChange(e, "regular_review_of_quality_system") }}
+          disabled={isQATeamApproved}
+
         />
-        
+
         <ConditionalTextareaGroup
           name="review_frequency"
           label="If yes, please provide the frequency of review and what is the agenda of the review:"
@@ -158,6 +211,8 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           condition={formData.regular_review_of_quality_system === "Yes"}
           placeholder="Enter the details"
           onChange={(e) => { handleTextareaChange(e, "review_frequency") }}
+          disabled={isQATeamApproved}
+
         />
 
         <div className="flex justify-end space-x-5 items-center">

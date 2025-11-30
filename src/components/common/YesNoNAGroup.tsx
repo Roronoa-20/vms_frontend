@@ -7,10 +7,10 @@ interface YesNoNAGroupProps {
   label?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>, field: string) => void;
-  // disabled?: boolean
+  disabled?: boolean
 }
 
-const YesNoNAGroup: React.FC<YesNoNAGroupProps> = ({ name, label, value, onChange }) => {
+const YesNoNAGroup: React.FC<YesNoNAGroupProps> = ({ name, label, value, onChange, disabled }) => {
   const options = ["Yes", "No", "N/A"];
 
   return (
@@ -28,7 +28,7 @@ const YesNoNAGroup: React.FC<YesNoNAGroupProps> = ({ name, label, value, onChang
               value={val}
               checked={value === val}
               onChange={(e) => onChange(e, name)}
-              // disabled={disabled}
+              disabled={disabled}
             />
             <span className="text-[14px]">{val}</span>
           </Label>

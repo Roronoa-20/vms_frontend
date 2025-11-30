@@ -26,7 +26,7 @@ export type TvendorRegistrationDropdown = {
 }
 
 export type TuserRegistrationDropdown = {
-   message: {
+  message: {
     data: {
       users_list: { user_id: string, full_name: string }[],
     }
@@ -528,7 +528,7 @@ export type VendorOnboardingResponse = {
     document_details_tab: DocumentDetailsTab;
     payment_details_tab: PaymentDetailsTab;
     contact_details_tab: ContactDetails[];
-    product_details_tab:ProductDetailsTab[]
+    product_details_tab: ProductDetailsTab[]
     manufacturing_details_tab: ManufacturingDetailsTab;
     employee_details_tab: EmployeeDetail[];
     machinery_details_tab: MachineryDetail[];
@@ -542,13 +542,13 @@ export type VendorOnboardingResponse = {
   };
 };
 export type ProductDetailsTab = {
-  material_name:string,
-  critical:number,
-  "on-critical":number,
-  material_description:string,
-  annual_capacity:string,
-  hsnsac_code:string
-  
+  material_name: string,
+  critical: number,
+  "on-critical": number,
+  material_description: string,
+  annual_capacity: string,
+  hsnsac_code: string
+
 }
 
 interface IvalidationChecks {
@@ -1065,7 +1065,7 @@ export interface DashboardPOTableItem {
   _comments: string | null;
   _assign: string | null;
   _liked_by: string | null;
-  sent_to_vendor:boolean
+  sent_to_vendor: boolean
 }
 
 export interface DashboardPOTableData {
@@ -1460,7 +1460,7 @@ export type TPRInquiryTable = {
     second_stage_approval_status: string
     pr_created: string,
     pur_req: string,
-    is_submited:boolean,
+    is_submited: boolean,
     company: string
   }[]
 }
@@ -1516,7 +1516,7 @@ export type CartDetails = {
   second_stage_approval_status: string,
   pr_created: string,
   pur_req: string,
-  is_submited:boolean,
+  is_submited: boolean,
   company: string,
 }
 
@@ -1560,9 +1560,20 @@ export interface PurchaseRequisition {
   purchase_group: string | null;
   pr_created: string,
   pur_req: string,
-  sap_status:string,
-  sap_summary:string,
-  zmsg:string,
+  sap_status: string,
+  sap_summary: string,
+  zmsg: string,
+  category_type: string;
+
+}
+
+export interface CategoryPRCount {
+  data: PurchaseRequisition[];
+  page_lenth: number,
+  page_no: number,
+  total_count: number,
+  total_pages: number,
+
 }
 
 export interface RFQTable {
