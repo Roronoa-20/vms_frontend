@@ -141,7 +141,7 @@ const ViewPO = ({ po_name }: Props) => {
   }
 
 
-  const handleTableChange = (index: number, name: string, value: string) => {
+  const handleTableChange = (index: number, name: string, value: string | boolean) => {
     // const { name, value } = e.target;
     setPOItemsTable((prev) => {
       const updated = [...prev];
@@ -245,6 +245,8 @@ const ViewPO = ({ po_name }: Props) => {
     setEmail((prev: any) => ({ ...prev, cc: emailList }));
   }
 
+  console.log(POItemsTable,"this is po table")
+
   return (
     <div className="min-h-screen bg-[#f8fafc] space-y-6 text-sm text-black font-sans m-5">
       {/* Header Section */}
@@ -323,7 +325,7 @@ const ViewPO = ({ po_name }: Props) => {
             <h1 className="text-[14px] font-normal text-[#626973] pb-2">
               To
             </h1>
-            <Input disabled value={email?.to ?? ""} />
+           <Input onChange={(e)=>{setEmail((prev: any) => ({ ...prev, to: e.target.value }));}} value={email?.to ?? ""} />
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">
@@ -347,12 +349,13 @@ const ViewPO = ({ po_name }: Props) => {
 
       {/* End of Print Format */}
       {isEarlyDeliveryDialog &&
-        <PopUp classname="w-full md:max-w-[60vw] md:max-h-[60vh] h-full overflow-y-scroll" handleClose={handleClose}>
+        <PopUp classname="w-full md:max-w-[60vw] md:max-h-[60vh] h-full overflow-y-scroll" handleClose={handleClose} isSubmit={true} Submitbutton={handlePoItemsSubmit}>
           <h1 className="pl-5">Purchase Inquiry Items</h1>
           <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
             <Table className=" max-h-40 overflow-y-scroll overflow-x-scroll">
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
+                  <TableHead className="text-center"></TableHead>
                   <TableHead className="text-center">Product Name</TableHead>
                   <TableHead className="text-center">Material Code</TableHead>
                   <TableHead className="text-center">Plant</TableHead>
@@ -366,19 +369,19 @@ const ViewPO = ({ po_name }: Props) => {
               <TableBody className="text-center">
                 {POItemsTable?.map((item, index) => (
                   <TableRow key={index}>
+                    <TableCell><input type="checkbox" name="requested_for_earlydelivery" onChange={(e) => { handleTableChange(index, e.target.name, e.target.checked) }} checked={item?.requested_for_earlydelivery ?? ""}  /></TableCell>
                     <TableCell>{item?.product_name}</TableCell>
                     <TableCell className='text-center'>{item?.material_code}</TableCell>
                     <TableCell>{item?.plant}</TableCell>
                     <TableCell>{item?.schedule_date}</TableCell>
-                    <TableCell>{item?.quantity}</TableCell>
-                    <TableCell className={`flex justify-center`}><Input disabled={item?.requested_for_earlydelivery ? true : false} type="date" name="early_delivery_date" onChange={(e) => { handleTableChange(index, e.target.name, e.target.value) }} value={item?.early_delivery_date ?? ""} className='w-36 disabled:opacity-100' /></TableCell>
-                    <TableCell><div className={`flex justify-center`}> <Input disabled={item?.requested_for_earlydelivery ? true : false} name="purchase_team_remarks" onChange={(e) => { handleTableChange(index, e.target.name, e.target.value) }} value={item?.purchase_team_remarks ?? ""} className='disabled:opacity-100' /></div></TableCell>
+                    <TableCell><div className={`flex justify-center`}> <Input type="number" name="quantity" onChange={(e) => { handleTableChange(index, e.target.name, e.target.value) }} value={item?.quantity ?? ""} className='w-36 disabled:opacity-100' /></div></TableCell>
+                    <TableCell className={`flex justify-center`}><Input type="date" name="early_delivery_date" onChange={(e) => { handleTableChange(index, e.target.name, e.target.value) }} value={item?.early_delivery_date ?? ""} className='w-36 disabled:opacity-100' /></TableCell>
+                    <TableCell><div className={`flex justify-center`}> <Input name="purchase_team_remarks" onChange={(e) => { handleTableChange(index, e.target.name, e.target.value) }} value={item?.purchase_team_remarks ?? ""} className='disabled:opacity-100' /></div></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
-          <Button onClick={() => { handlePoItemsSubmit() }}>Submit</Button>
         </PopUp>
       }
 
