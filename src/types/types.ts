@@ -543,8 +543,15 @@ export type VendorOnboardingResponse = {
     multi_company_data: { company: string }[]
     is_multi_company: boolean
     validation_check: IvalidationChecks
+    version_changes: version[]
   };
 };
+
+type version = {
+  date_and_time: string;
+  field_json: string;
+};
+
 export type ProductDetailsTab = {
   material_name: string,
   critical: number,

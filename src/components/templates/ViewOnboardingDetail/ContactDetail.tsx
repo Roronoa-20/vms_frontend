@@ -65,7 +65,7 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendmen
     const submitResponse: AxiosResponse = await requestWrapper({ url: submitUrl, data: { data: { contact_details: contactDetail, ref_no: ref_no, vendor_onboarding: onboarding_ref_no } }, method: "POST" });
     if (submitResponse?.status == 200) {
       alert("Contact Details Updated Successfully!!!");
-      router.push(`/view-onboarding-details?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+      router.push(`/view-onboarding-details?tabtype=Product%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
       // location.reload();
     }
   }

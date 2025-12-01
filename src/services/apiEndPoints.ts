@@ -72,6 +72,7 @@ const API_END_POINTS = {
   prTableData: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pr_w`,
   prInquiryProductHistory:`${url}/api/method/vms.APIs.purchase_api.product_inquiry_details_report.get_latest_product_inquiry`,
   FullProductHistory:`${url}/api/method/vms.APIs.purchase_api.product_inquiry_details_report.get_product_inquiry_report`,
+  purchasingDetailsSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_purchase_details.update_vendor_onboarding_purchase_details`,
 
   // QMS Related APIs
   qmsformdetails: `${url}/api/method/vms.APIs.qms_api.qms_api.get_qms_details_without_label`,
