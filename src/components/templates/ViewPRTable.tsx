@@ -243,16 +243,16 @@ const ViewPRTable = ({ data, loading, pageNo, pageLength, totalCount, onPageChan
                   <TableCell className="text-center">{pr.plant}</TableCell>
                   <TableCell>
                     <div
-                      className={`text-center px-2 py-3 rounded-xl ${pr?.status === "Failed"
+                      className={`text-center px-2 py-3 rounded-xl ${pr?.sap_status === "Failed"
                         ? "bg-red-100 text-red-800"
-                        : pr?.status === "Success"
-                          ? "bg-green-100 text-green-800" : pr?.status === "Released"
-                            ? "bg-green-100 text-green-800" : pr?.status === "Revoked"
+                        : pr?.sap_status === "Success"
+                          ? "bg-green-100 text-green-800" : pr?.sap_status === "Released"
+                            ? "bg-green-100 text-green-800" : pr?.sap_status === "Revoked"
                               ? "bg-orange-100 text-orange-800"
                               : "bg-yellow-100 text-yellow-800"
                         }`}
                     >
-                      {pr?.status || "--"}
+                      {pr?.sap_status || "--"}
                     </div>
                   </TableCell>
                   <TableCell className="text-center">

@@ -316,6 +316,7 @@ const DashboardCards = ({ ...Props }: Props) => {
     },
     {
       name: "Purchase Requisition Request",
+      subname: "Generated through VMS",
       count: Props.cardData?.pr_count ?? 0,
       icon: "/dashboard-assests/cards_icon/file-search.svg",
       text_color: "text-rose-800",
@@ -324,26 +325,8 @@ const DashboardCards = ({ ...Props }: Props) => {
     },
   ];
 
-  let CategoryTypeCard = [
-    {
-      name: "Purchase Enquiry",
-      count: Props.cardData?.cart_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/doc.svg",
-      text_color: "text-rose-800",
-      bg_color: "bg-rose-100",
-      hover: "hover:border-rose-400",
-    },
-    {
-      name: "Purchase Requisition Request",
-      count: Props.cardData?.pr_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/file-search.svg",
-      text_color: "text-rose-800",
-      bg_color: "bg-green-200",
-      hover: "hover:border-rose-400",
-    },
-  ];
 
-  let cardData = user === "Enquirer" ? EnquirerCard : user === "Category Master" ? CategoryTypeCard : allCardData;
+  let cardData = user === "Enquirer" ? EnquirerCard : allCardData;
 
   useEffect(() => {
     if (user) {
@@ -386,20 +369,15 @@ const DashboardCards = ({ ...Props }: Props) => {
               <TabsTrigger
                 key={item.name || index}
                 value={item.name}
-                className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-black text-gray-500 rounded-2xl p-0 transition-all duration-300 ease-in-out"
-              >
-                <div
-                  className={`group w-full h-full rounded-2xl ${item.bg_color} flex flex-col p-3 ${item.text_color} h-28 justify-between border-2 ${item.hover} hover:scale-105 transition duration-300 transform cursor-pointer shadow-md`}
-                >
+                className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-black text-gray-500 rounded-2xl p-0 transition-all duration-300 ease-in-out">
+                <div className={`group w-full h-full rounded-2xl ${item.bg_color} flex flex-col p-3 ${item.text_color} h-28 justify-between border-2 ${item.hover} hover:scale-105 transition duration-300 transform cursor-pointer shadow-md`}>
                   <div className="flex w-full justify-between items-center">
                     <div className="flex flex-col">
                       <h1 className="text-[14px] leading-none">{item.name}</h1>
-
                       {item.subname && (
-                        <span className="text-[12px] text-gray-600">({item.subname})</span>
+                        <span className="text-left text-[12px] text-gray-600">({item.subname})</span>
                       )}
                     </div>
-
                     <Image src={item.icon} alt="" width={25} height={30} />
                   </div>
                   <div className="text-[20px] text-start font-bold">

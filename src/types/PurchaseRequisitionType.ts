@@ -87,6 +87,7 @@ export interface PurchaseRequisitionDataItem {
   product_full_name_head: string;
   form_status: string;
   status: string;
+  sap_status: string;
   pr_created_from_sap: number;
 }
 

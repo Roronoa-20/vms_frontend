@@ -5,13 +5,33 @@ import ViewPRTable from '@/src/components/templates/ViewPRTable';
 import API_END_POINTS from '@/src/services/apiEndPoints';
 import requestWrapper from '@/src/services/apiCall';
 import { PurchaseRequisitionDataItem } from '@/src/types/PurchaseRequisitionType';
+import { TvendorRegistrationDropdown } from "@/src/types/types";
+import { AxiosResponse } from "axios";
 
 const ViewPurchaseRequisitionPage = () => {
   const [prData, setPrData] = useState<PurchaseRequisitionDataItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [pageNo, setPageNo] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+
   const pageLength = 10;
+
+  const fetchDropdown = async () => {
+    try {
+      const dropDownApi: AxiosResponse = await requestWrapper({
+        url: API_END_POINTS.vendorRegistrationDropdown,
+        method: "GET",
+      });
+
+      const dropdownData: TvendorRegistrationDropdown["message"]["data"] =
+        dropDownApi?.status === 200 ? dropDownApi?.data?.message?.data : "";
+
+      return dropdownData?.company_master || [];
+    } catch (err) {
+      console.error("Error fetching dropdown:", err);
+      return [];
+    }
+  };
 
   const fetchPRData = async (page = 1) => {
     setLoading(true);
@@ -20,7 +40,7 @@ const ViewPurchaseRequisitionPage = () => {
         url: `${API_END_POINTS.sapprcreated}?page_no=${page}&page_length=${pageLength}`,
         method: 'GET',
       });
-      console.log(response, "this is response of API")
+
       if (response?.status === 200) {
         const msg = response?.data?.message;
         setPrData(msg?.data || []);
@@ -36,6 +56,7 @@ const ViewPurchaseRequisitionPage = () => {
   };
 
   useEffect(() => {
+    fetchDropdown();
     fetchPRData(pageNo);
   }, [pageNo]);
 
@@ -48,6 +69,7 @@ const ViewPurchaseRequisitionPage = () => {
         pageLength={pageLength}
         totalCount={totalCount}
         onPageChange={setPageNo}
+      
       />
     </div>
   );
