@@ -41,7 +41,7 @@ const Navbar = () => {
 
       const data: NotificationListResponse = res.data;
 
-      if (data.message.success) {
+      if (data?.message?.success) {
         const allNotifs = data.message.data.notifications;
         setNotifications(allNotifs);
 

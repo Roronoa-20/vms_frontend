@@ -48,9 +48,10 @@ interface EditNBModalProps {
   plant: string
   company: string
   purchase_group: string
+  disabled?:boolean
 }
 
-const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableData, Dropdown, defaultData, pur_req, PurchaseGroupDropdown, ProfitCenterDropdown,accountAssigmentDropdown, itemCategoryDropdown, plant, company, purchase_group }) => {
+const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen,disabled, onClose, fetchTableData, Dropdown, defaultData, pur_req, PurchaseGroupDropdown,accountAssigmentDropdown, itemCategoryDropdown, plant, company, purchase_group }) => {
 
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, any>>({});
@@ -73,7 +74,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
   const [isAssetValid, setIsAssetValid] = useState<boolean | null>(null);
   const { designation } = useAuth();
   const isPurchaseTeam = designation === "Purchase Team";
-  const isEnquirer = designation === "Enquirer";
 
   useEffect(() => {
     if (isOpen) {
@@ -212,7 +212,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
       return response.data.message.data
     } else {
       return []
-      alert("error--------------------------------");
     }
   };
 
@@ -233,7 +232,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
     } else {
       setPlantCodeDropdown([])
       return []
-      alert("error+++++++++++++++++++++++");
     }
   }
   const validate = () => {
@@ -274,7 +272,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
     }
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
-      // alert(JSON.stringify(validationErrors));
       return;
     }
     const updateformdata = { ...formData, name: pur_req }
@@ -287,7 +284,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
       onClose();
     } else {
       return
-      alert("error ((((((((((((((((((((((");
     }
   };
 
@@ -320,7 +316,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
       return response.data.message.data
     } else {
       return []
-      alert("error)))))))))))))))))))");
     }
   };
 
@@ -339,7 +334,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
       return response.data.message.data
     } else {
       return []
-      alert("error<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }
   };
 
@@ -365,7 +359,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
       return response.data.message.data
     } else {
       return []
-      alert("error????????????????????????");
     }
   };
 
@@ -390,7 +383,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
       return response.data.message.data
     } else {
       return []
-      alert("error%%%%%%%%%%%%%%");
     }
   };
 
@@ -415,7 +407,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
       return response.data.message.data
     } else {
       return []
-      alert("error###############");
     }
   };
 
@@ -495,7 +486,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {options?.map((item, idx) => (
+              {options.length > 0 && options?.map((item, idx) => (
                 <SelectItem key={idx} value={getValue(item)}>
                   {getLabel(item)}
                 </SelectItem>
@@ -543,15 +534,15 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
     <PopUp headerText='Purchase Request Items' classname='overflow-y-scroll md:max-w-[1000px] md:max-h-[600px]' handleClose={onClose} isSubmit={true} Submitbutton={handleSubmit} disableSubmit={isAssetValid === false}
     >
       <div className="grid grid-cols-3 gap-6 pt-2">
-        {renderInput('item_number_of_purchase_requisition_head', 'Item Number of Purchase Requisition', 'text', { disabled: true })}
-        {renderInput('purchase_requisition_date_head', 'Purchase Requisition Date', 'date', { disabled: true })}
+        {renderInput('item_number_of_purchase_requisition_head', 'Item Number of Purchase Requisition', 'text', { disabled: disabled })}
+        {renderInput('purchase_requisition_date_head', 'Purchase Requisition Date', 'date', { disabled: disabled })}
         {renderSelect(
           'purchase_group_head',
           'Purchase Group',
           PurchaseGroupDropdown,
           (item) => item.name,
           (item) => `${item.purchase_group_code} - ${item.purchase_group_name}`,
-          true
+          disabled
         )}
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#626973] pb-1 flex items-center gap-1 ">
@@ -576,7 +567,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
             {"Select Store Location"}
-            {/* {error && <span className="text-red-600">*</span>} */}
           </h1>
           <SearchSelectComponent
             setData={(value) => {
@@ -620,13 +610,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
           (item) => item.name,
           (item) => `${item.account_assignment_category_code} - ${item.account_assignment_category_name}`
         )}
-        {/* {renderSelect(
-          'store_location_head',
-          'Store Location',
-          StorageLocationDropdown,
-          (item) => item.name,
-          (item) => `${item.storage_name}`
-        )} */}
         {renderSelect(
           'item_category_head',
           'Item Category',
@@ -635,16 +618,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
           (item) => `${item.item_code} - ${item.item_name}`,
           itemCategoryDropdown?.length > 0 ? false : true
         )}
-        {/* 
-        {renderSelect(
-          'material_group_head',
-          'Material Group',
-          MaterialGroupDropdown,
-          (item) => item.name,
-          (item) => `${item.material_group_name} - ${item.material_group_description}`
-        )} */}
-
-
         {renderSelect(
           'uom_head',
           'UOM',
@@ -656,19 +629,9 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
         {renderInput('delivery_date_head', 'Delivery Date', 'date', { disabled: isPurchaseTeam })}
         {renderInput('short_text_head', 'Description')}
         {renderInput('price_of_purchase_requisition_head', 'Price Of Purchase Requisition', 'number', { disabled: isPurchaseTeam })}
-        {/* {renderSelect(
-          'cost_center_head',
-          'Cost Center',
-          CostCenterDropdown,
-          (item) => item.name,
-          (item) => `${item.cost_center_code} - ${item.cost_center_name}`,
-          formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true : false
-        )} */}
-
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#626973] pb-1 flex items-center gap-1 ">
             {"Select Material Code"}
-            {/* {error && <span className="text-red-600">*</span>} */}
           </h1>
           <SearchSelectComponent
             setData={(value) => {
@@ -701,7 +664,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
             {"Cost Center"}
-            {/* {error && <span className="text-red-600">*</span>} */}
           </h1>
           <SearchSelectComponent
             setData={(value) => {
@@ -718,53 +680,9 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, onClose, fetchTableDa
           />
           {renderError("cost_center_head")}
         </div>
-
-        {/* {renderSelect(
-          'profit_ctr_head',
-          'Profit Center',
-          ProfitCenterDropdown,
-          (item) => item.name,
-          (item) => `${item.profit_center_code} - ${item.profit_center_name}`
-        )} */}
-        {/* {renderSelect(
-          'valuation_area_head',
-          'Valuation Area',
-          ValuationClassDropdown,
-          (item) => item.name,
-          (item) => `${item.valuation_class_code} - ${item.valuation_class_name}`
-        )} */}
-        {/* <div className='w-full'>
-          <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
-            {"Valuation Area"}
-          </h1>
-          <SearchSelectComponent
-            setData={(value) => {
-              setValuationArea(value ?? "");
-              setFormData(prev => ({ ...prev, valuation_area_head: value ?? "" }));
-            }}
-            data={ValuationArea ?? ""}
-            getLabel={(item) => `${item?.valuation_class_code} - ${item?.valuation_class_name}`}
-            getValue={(item) => item?.name}
-            dropdown={ValuationAreaDropdown ? ValuationAreaDropdown : []}
-            searchApi={fetchValuationAreaData}
-            setDropdown={setValuationAreaDropdown}
-            placeholder='Select Valuation Area'
-          />
-          {renderError("valuation_area_head")}
-        </div> */}
-        {/* {renderSelect(
-          'gl_account_number_head',
-          'GL Account Number',
-          GLAccountDropdwon,
-          (item) => item.name,
-          (item) => `${item.gl_account_code} - ${item.gl_account_name}`,
-          formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true : false
-        )} */}
-
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
             {"GL Account Number"}
-            {/* {error && <span className="text-red-600">*</span>} */}
           </h1>
           <SearchSelectComponent
             setData={(value) => {
