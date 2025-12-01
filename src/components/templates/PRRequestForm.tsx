@@ -5,7 +5,7 @@ import { Input } from '../atoms/input'
 import { Button } from '../atoms/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../atoms/select'
-import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ProfitCenter, PurchaseGroup, PurchaseOrganisation, PurchaseRequestData, PurchaseRequestDropdown, StorageLocation, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType'
+import { AccountAssignmentCategory, ItemCategoryMaster, ProfitCenter, PurchaseGroup, PurchaseOrganisation, PurchaseRequestData, PurchaseRequestDropdown, StorageLocation, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType'
 import { AlertCircleIcon, CheckCircle2Icon, Edit2Icon } from 'lucide-react'
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
@@ -25,8 +25,6 @@ import { useAuth } from '@/src/context/AuthContext'
 import { Alert, AlertDescription, AlertTitle, AlertFooter } from "@/components/ui/alert"
 import { ApproveConfirmationDialog } from '../common/ApproveConfirmationDialog';
 import Comment_box from '../molecules/CommentBox'
-import { clearPreviewData } from 'next/dist/server/api-utils'
-
 
 interface Props {
   Dropdown: PurchaseRequestDropdown["message"]
@@ -35,12 +33,7 @@ interface Props {
   pur_req?: string
   prf_name?: string
   PurchaseGroupDropdown: PurchaseGroup[]
-  // StorageLocationDropdown: StorageLocation[]
-  // ValuationClassDropdown: ValuationClass[]
   ProfitCenterDropdown: ProfitCenter[]
-  // MaterialGroupDropdown: MaterialGroupMaster[]
-  // GLAccountDropdwon: GLAccountNumber[]
-  // CostCenterDropdown: CostCenter[]
   PurchaseOrgDropdown: PurchaseOrganisation[]
   company: string
 }
@@ -112,7 +105,6 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     ) => {
       const { name, value } = e.target;
       setFormData((prev) => ({ ...prev, [name]: value }) as PurchaseRequestData["message"]["data"]);
-      // Clear error for the field
       if (value.trim() !== "") {
         setErrors((prev) => {
           const newErrors = { ...prev };
@@ -128,7 +120,6 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     (value: any, name: string) => {
 
       setFormData((prev) => ({ ...prev, [name]: value }) as PurchaseRequestData["message"]["data"]);
-      // Clear error for the field
       if (value !== "") {
         setErrors((prev) => {
           const newErrors = { ...prev };
@@ -194,9 +185,10 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
 
 
   const handleNext = async () => {
+    console.log(formData,"formData")
     try {
       const url = API_END_POINTS.createPR;
-      const response: AxiosResponse = await requestWrapper({url,data: { ...formData },method: "POST"});
+      const response: AxiosResponse = await requestWrapper({ url, data: {data : {...formData , requisitioner:user} }, method: "POST" });
 
       if (response?.status === 200) {
         const purReqName = response.data.message.name;
@@ -245,12 +237,10 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     if (pur_req || prf_name) {
       fetchTableData(pur_req ?? "", prf_name ?? "");
     }
-    fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "");
+    if (PRData?.purchase_requisition_type) {
+      fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "");
+    }
   }, [pur_req, prf_name, PRData?.purchase_requisition_type]);
-
-
-  console.log("Main ITem Status SAP------------->", mainItems);
-
   return (
     <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
       <div className="grid grid-cols-3 gap-6 p-3">
@@ -261,7 +251,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           <Select
             onValueChange={(value) => { handleSelectChange(value, "purchase_requisition_type") }}
             value={formData?.purchase_requisition_type ?? ""}
-            disabled
+            disabled={cartId ? true : false}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select" />
@@ -284,7 +274,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           <Select
             value={formData?.company ?? ""}
             onValueChange={(value) => { handleSelectChange(value, "company") }}
-            disabled
+            disabled={cartId ? true : false}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select" />
@@ -304,7 +294,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Plant <span className="text-red-600 ml-1">*</span>
           </h1>
-          <Select value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant") }} disabled>
+          <Select value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant") }} disabled={cartId ? true : false}>
             <SelectTrigger className={`${errors?.plant
               ? `border border-red-600`
               : ``
@@ -330,7 +320,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Purchase Group <span className="text-red-600 ml-1">*</span>
           </h1>
-          <Select onValueChange={(value) => { handleSelectChange(value, "purchase_group") }} value={formData?.purchase_group ?? ""} disabled>
+          <Select onValueChange={(value) => { handleSelectChange(value, "purchase_group") }} value={formData?.purchase_group ?? ""} disabled={cartId ? true : false}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -345,10 +335,10 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
             </SelectContent>
           </Select>
         </div>
-        <div className="col-span-1">
+        {cartId && <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">Cart Id</h1>
           <Input placeholder="" name='requisitioner' value={formData?.cart_id ?? ""} disabled />
-        </div>
+        </div>}
       </div>
       {!(mainItems?.docname && mainItems?.docname) && <div className={`flex justify-end p-2`}><Button type='button' className='py-2' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => handleNext()}>Next</Button></div>}
 
@@ -463,7 +453,6 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                         {mainItem.purchase_requisition_type == "SB" && <div className="mt-4">
                           <div className="flex items-center justify-between mb-4">
                             <h4 className="font-semibold text-lg">Sub Items ({mainItem?.subhead_fields.length})</h4>
-
                             {mainItems?.sap_status === "Success" && ((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
                               <Button
                                 variant="outline"
@@ -541,29 +530,6 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                                             </div>
                                           </TableCell>
                                         }
-                                        {/* {(designation === "Purchase Team" && !mainItems?.form_is_submitted) &&
-                                          <TableCell className="text-center sticky right-0 bg-white z-20">
-                                            <div className='flex gap-2'>
-                                              <Button
-                                                size="sm"
-                                                onClick={() => {
-                                                  setEditSubItemRow(subItem);
-                                                  setIsSubItemModalOpen(true);
-                                                  setEditAction(true)
-                                                }}
-                                              >
-                                                <Edit2Icon className="w-4 h-4" />
-                                              </Button>
-                                              <Button
-                                                variant="destructive"
-                                                size="sm"
-                                                onClick={() => deleteSubItem(subItem.row_name)}
-                                              >
-                                                <Trash2 className="w-4 h-4" />
-                                              </Button>
-                                            </div>
-                                          </TableCell>
-                                        } */}
                                       </TableRow>
                                     ))}
                                   </TableBody>
@@ -643,6 +609,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           plant={formData?.plant ? formData?.plant : ''}
           company={formData?.company ? formData?.company : ""}
           purchase_group={formData?.purchase_group ? formData?.purchase_group : ""}
+          disabled ={true}
         />
       }
 
@@ -670,8 +637,6 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
               )}
             </>
           ) : (
-            // Show Final Submit button if designation is Purchase Team
-
             (mainItems?.sap_status == "Failed") && (designation === "Purchase Team" && !mainItems?.form_is_submitted) && (mainItems?.mail_sent_to_purchase_team) && (
               <Button
                 type="button"

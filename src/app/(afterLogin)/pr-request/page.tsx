@@ -12,7 +12,6 @@ interface PageProps {
 
 const page = async ({ searchParams }: PageProps) => {
   const params = await searchParams;
-  console.log(params, "params in servr");
   const pur_req = params["pur_req"];
   const cart_id = params["cart_id"];
   const prf_name = params["prf_name"];

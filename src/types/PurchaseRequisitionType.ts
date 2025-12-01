@@ -13,6 +13,7 @@ export interface PurchaseRequisitionResponse {
   sap_status: string;
   mail_sent_to_purchase_team:boolean;
   data: PurchaseRequisitionDataItem[];
+  plant:Plant[]
 }
 
 export interface CompanyInfo {
