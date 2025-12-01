@@ -185,10 +185,10 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
 
 
   const handleNext = async () => {
-    console.log(formData,"formData")
+    console.log(formData, "formData")
     try {
       const url = API_END_POINTS.createPR;
-      const response: AxiosResponse = await requestWrapper({ url, data: {data : {...formData , requisitioner:user} }, method: "POST" });
+      const response: AxiosResponse = await requestWrapper({ url, data: { data: { ...formData, requisitioner: user } }, method: "POST" });
 
       if (response?.status === 200) {
         const purReqName = response.data.message.name;
@@ -241,6 +241,8 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
       fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "");
     }
   }, [pur_req, prf_name, PRData?.purchase_requisition_type]);
+
+  console.log("Main INTems wrughwirhoerg----------->",mainItems)
   return (
     <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
       <div className="grid grid-cols-3 gap-6 p-3">
@@ -335,35 +337,39 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
             </SelectContent>
           </Select>
         </div>
-        {cartId && <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">Cart Id</h1>
-          <Input placeholder="" name='requisitioner' value={formData?.cart_id ?? ""} disabled />
-        </div>}
+        {cartId &&
+          <div className="col-span-1">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">Cart Id</h1>
+            <Input placeholder="" name='requisitioner' value={formData?.cart_id ?? ""} disabled />
+          </div>}
       </div>
-      {!(mainItems?.docname && mainItems?.docname) && <div className={`flex justify-end p-2`}><Button type='button' className='py-2' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => handleNext()}>Next</Button></div>}
 
-      {(mainItems?.sap_status == "Failed" || mainItems?.sap_status == "Success") &&
+      {!(mainItems?.docname && mainItems?.docname) &&
+        <div className={`flex justify-end p-2`}><Button type='button' className='py-2' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => handleNext()}>Next</Button>
+        </div>
+      }
+
+      {(mainItems?.sap_status == "Failed" || mainItems?.sap_status == "Success" || mainItems?.sap_status == "RELEASED") &&
         <div className='p-2'>
-          {
-            mainItems?.sap_status == "Failed" ?
-              <Alert variant="destructive">
-                <AlertCircleIcon />
-                <AlertTitle className='pl-1'>SAP Error!!!</AlertTitle>
-                <AlertDescription>
-                  Error: {mainItems?.sap_response}
-                </AlertDescription>
-                <AlertFooter className='mt-2 text-sm italic'>
-                  Kindly review and Re-Submit the Request.
-                </AlertFooter>
-              </Alert>
-              :
-              <Alert variant="success">
-                <CheckCircle2Icon />
-                <AlertTitle>Success! </AlertTitle>
-                <AlertDescription>
-                  {mainItems?.sap_response}
-                </AlertDescription>
-              </Alert>
+          {mainItems?.sap_status == "Failed" ?
+            <Alert variant="destructive">
+              <AlertCircleIcon />
+              <AlertTitle className='pl-1'>SAP Error!!!</AlertTitle>
+              <AlertDescription>
+                Error: {mainItems?.sap_response}
+              </AlertDescription>
+              <AlertFooter className='mt-2 text-sm italic'>
+                Kindly review and Re-Submit the Request.
+              </AlertFooter>
+            </Alert>
+            :
+            <Alert variant="success">
+              <CheckCircle2Icon />
+              <AlertTitle>Success! </AlertTitle>
+              <AlertDescription>
+                {mainItems?.sap_response}
+              </AlertDescription>
+            </Alert>
           }
         </div>
       }
@@ -609,7 +615,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           plant={formData?.plant ? formData?.plant : ''}
           company={formData?.company ? formData?.company : ""}
           purchase_group={formData?.purchase_group ? formData?.purchase_group : ""}
-          disabled ={true}
+          disabled={true}
         />
       }
 

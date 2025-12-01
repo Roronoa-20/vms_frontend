@@ -105,8 +105,7 @@ export const PRRequest = async ({ pur_req, cart_id, prf_name }: PageProps) => {
   const PurchaseOrgDropdown = PurchaseOrgResponse?.status == 200 ? PurchaseOrgResponse?.data.message?.purchase_org : "";
   return (
     <>
-      {
-        cart_id ?
+      {cart_id ?
           <PRRequestForm Dropdown={Dropdown} PRData={PRData} cartId={cart_id} pur_req={pur_req} PurchaseGroupDropdown={PurchaseGroupDropdown}
             ProfitCenterDropdown={ProfitCenterDropdown} PurchaseOrgDropdown={PurchaseOrgDropdown} company={company} prf_name={prf_name} />
           :

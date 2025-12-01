@@ -1,78 +1,47 @@
-'use client';
-
-import React, { useEffect, useState } from 'react';
-import ViewPRTable from '@/src/components/templates/ViewPRTable';
-import API_END_POINTS from '@/src/services/apiEndPoints';
-import requestWrapper from '@/src/services/apiCall';
-import { PurchaseRequisitionDataItem } from '@/src/types/PurchaseRequisitionType';
-import { TvendorRegistrationDropdown } from "@/src/types/types";
+import { cookies } from "next/headers";
+import ViewPRTable from "@/src/components/templates/ViewPRTable";
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
+import { TvendorRegistrationDropdown } from "@/src/types/types";
 
-const ViewPurchaseRequisitionPage = () => {
-  const [prData, setPrData] = useState<PurchaseRequisitionDataItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [pageNo, setPageNo] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
+export default async function ViewPurchaseRequisitionPage() {
 
-  const pageLength = 10;
+  const cookieStore = await cookies();
+  const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
 
-  const fetchDropdown = async () => {
-    try {
-      const dropDownApi: AxiosResponse = await requestWrapper({
-        url: API_END_POINTS.vendorRegistrationDropdown,
-        method: "GET",
-      });
+  const dropdownUrl = API_END_POINTS.vendorRegistrationDropdown;
+  const dropDownApi: AxiosResponse = await requestWrapper({
+    url: dropdownUrl,
+    method: "GET",
+    headers: {
+      cookie: cookieHeaderString,
+    },
+  });
 
-      const dropdownData: TvendorRegistrationDropdown["message"]["data"] =
-        dropDownApi?.status === 200 ? dropDownApi?.data?.message?.data : "";
+  const dropdownData: TvendorRegistrationDropdown["message"]["data"] =
+    dropDownApi?.status === 200 ? dropDownApi?.data?.message?.data : "";
 
-      return dropdownData?.company_master || [];
-    } catch (err) {
-      console.error("Error fetching dropdown:", err);
-      return [];
-    }
-  };
+  const companyDropdown = dropdownData?.company_master || [];
 
-  const fetchPRData = async (page = 1) => {
-    setLoading(true);
-    try {
-      const response = await requestWrapper({
-        url: `${API_END_POINTS.sapprcreated}?page_no=${page}&page_length=${pageLength}`,
-        method: 'GET',
-      });
+  const prResponse = await requestWrapper({
+    url: `${API_END_POINTS.sapprcreated}`,
+    method: "GET",
+    headers: {
+      cookie: cookieHeaderString,
+    },
+  });
 
-      if (response?.status === 200) {
-        const msg = response?.data?.message;
-        setPrData(msg?.data || []);
-        setTotalCount(msg?.total_count || 0);
-      } else {
-        console.error('Failed to fetch PR data.');
-      }
-    } catch (error) {
-      console.error('Error fetching PR data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchDropdown();
-    fetchPRData(pageNo);
-  }, [pageNo]);
+  const msg = prResponse?.status === 200 ? prResponse?.data?.message : {};
+  const prData = msg?.data || [];
 
   return (
     <div className="p-4">
       <ViewPRTable
         data={prData}
-        loading={loading}
-        pageNo={pageNo}
-        pageLength={pageLength}
-        totalCount={totalCount}
-        onPageChange={setPageNo}
-      
+        loading={false}
+        companyDropdown={companyDropdown}
       />
     </div>
   );
-};
-
-export default ViewPurchaseRequisitionPage;
+}

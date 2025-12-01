@@ -46,11 +46,11 @@ export const updateQueryParam = (key: string, value: string) => {
 
 const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, ProfitCenterDropdown, PurchaseOrgDropdown, prf_name }: Props) => {
     const user = Cookies.get("user_id");
-    console.log(PRData,"kjnmjnhghjngfghbfgvbnhfdgvb")
+    console.log(PRData, "kjnmjnhghjngfghbfgvbnhfdgvb")
     const { designation } = useAuth();
     const router = useRouter()
     const [open, setOpen] = useState(false);
-    const [formData, setFormData] = useState<PurchaseRequestData["message"]["data"] | null>(PRData ? { ...PRData, requisitioner: PRData?.requisitioner} : null);
+    const [formData, setFormData] = useState<PurchaseRequestData["message"]["data"] | null>(PRData ? { ...PRData, requisitioner: PRData?.requisitioner } : null);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [expandedRowNames, setExpandedRowNames] = useState<string[]>([]);
     const [editRow, setEditRow] = useState<PurchaseRequisitionDataItem>()
@@ -241,8 +241,8 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
         }
     }, [pur_req, prf_name, PRData?.purchase_requisition_type]);
 
-    console.log(formData, "maiformDataformDataformDatanItemsmainItemsmainItemsmainItemsmainItems")
-    console.log(PRData,"pr drardtafdtf")
+    console.log(mainItems, "pr drardtafdtf")
+
     return (
         <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
             <div className="grid grid-cols-3 gap-6 p-3">
@@ -252,7 +252,7 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                     </h1>
                     <Select
                         onValueChange={(value) => { handleSelectChange(value, "purchase_requisition_type") }}
-                        value={formData?.purchase_requisition_type ?formData?.purchase_requisition_type:mainItems?.purchase_requisition_type ?? ""}
+                        value={formData?.purchase_requisition_type ? formData?.purchase_requisition_type : mainItems?.purchase_requisition_type ?? ""}
                         disabled={mainItems?.docname ? true : false}
                     >
                         <SelectTrigger>
@@ -260,11 +260,9 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                {
-                                    Dropdown?.purchase_requisition_type?.map((item, index) => (
-                                        <SelectItem key={index} value={item?.name}>{item?.purchase_requisition_type_code} - {item?.description}</SelectItem>
-                                    ))
-                                }
+                                {Dropdown?.purchase_requisition_type?.map((item, index) => (
+                                    <SelectItem key={index} value={item?.name}>{item?.purchase_requisition_type_code} - {item?.description}</SelectItem>
+                                ))}
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -274,7 +272,7 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                         Company Code Area <span className="text-red-600 ml-1">*</span>
                     </h1>
                     <Select
-                        value={formData?.company ?formData?.company: mainItems?.Company[0].name ?? ""}
+                        value={formData?.company ? formData?.company : mainItems?.Company[0].name ?? ""}
                         onValueChange={(value) => { handleSelectChange(value, "company") }}
                         disabled={mainItems?.docname ? true : false}
                     >
@@ -283,11 +281,9 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                {
-                                    Dropdown?.company?.map((item, index) => (
-                                        <SelectItem key={index} value={item?.name}>{item?.company_name}</SelectItem>
-                                    ))
-                                }
+                                {Dropdown?.company?.map((item, index) => (
+                                    <SelectItem key={index} value={item?.name}>{item?.company_name}</SelectItem>
+                                ))}
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -297,19 +293,14 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                         Plant <span className="text-red-600 ml-1">*</span>
                     </h1>
                     <Select value={formData?.plant ? formData?.plant : mainItems?.plant[0].name ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant") }} disabled={mainItems?.docname ? true : false}>
-                        <SelectTrigger className={`${errors?.plant
-                            ? `border border-red-600`
-                            : ``
-                            }`}>
+                        <SelectTrigger className={`${errors?.plant ? `border border-red-600` : ``}`}>
                             <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                {
-                                    Dropdown?.plant?.map((item, index) => (
-                                        <SelectItem key={index} value={item?.name}>{item?.plant_name}</SelectItem>
-                                    ))
-                                }
+                                {Dropdown?.plant?.map((item, index) => (
+                                    <SelectItem key={index} value={item?.name}>{item?.plant_name}</SelectItem>
+                                ))}
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -322,17 +313,15 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                     <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                         Purchase Group <span className="text-red-600 ml-1">*</span>
                     </h1>
-                    <Select onValueChange={(value) => { handleSelectChange(value, "purchase_group") }} value={formData?.purchase_group ? formData?.purchase_group: mainItems?.['Purchase Group'] ?? ""} disabled={mainItems?.docname ? true : false}>
+                    <Select onValueChange={(value) => { handleSelectChange(value, "purchase_group") }} value={formData?.purchase_group ? formData?.purchase_group : mainItems?.['Purchase Group'] ?? ""} disabled={mainItems?.docname ? true : false}>
                         <SelectTrigger>
                             <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                {
-                                    Dropdown?.purchase_group?.map((item, index) => (
-                                        <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                                    ))
-                                }
+                                {Dropdown?.purchase_group?.map((item, index) => (
+                                    <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                                ))}
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -344,28 +333,27 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
             </div>
             {!(mainItems?.docname && mainItems?.docname) && <div className={`flex justify-end p-2`}><Button type='button' className='py-2' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => handleNext()}>Next</Button></div>}
 
-            {(mainItems?.sap_status == "Failed" || mainItems?.sap_status == "Success") &&
+            {(mainItems?.sap_status == "Failed" || mainItems?.sap_status == "Success" || mainItems?.sap_status == "RELEASED") &&
                 <div className='p-2'>
-                    {
-                        mainItems?.sap_status == "Failed" ?
-                            <Alert variant="destructive">
-                                <AlertCircleIcon />
-                                <AlertTitle className='pl-1'>SAP Error!!!</AlertTitle>
-                                <AlertDescription>
-                                    Error: {mainItems?.sap_response}
-                                </AlertDescription>
-                                <AlertFooter className='mt-2 text-sm italic'>
-                                    Kindly review and Re-Submit the Request.
-                                </AlertFooter>
-                            </Alert>
-                            :
-                            <Alert variant="success">
-                                <CheckCircle2Icon />
-                                <AlertTitle>Success! </AlertTitle>
-                                <AlertDescription>
-                                    {mainItems?.sap_response}
-                                </AlertDescription>
-                            </Alert>
+                    {mainItems?.sap_status == "Failed" ?
+                        <Alert variant="destructive">
+                            <AlertCircleIcon />
+                            <AlertTitle className='pl-1'>SAP Error!!!</AlertTitle>
+                            <AlertDescription>
+                                Error: {mainItems?.sap_response}
+                            </AlertDescription>
+                            <AlertFooter className='mt-2 text-sm italic'>
+                                Kindly review and Re-Submit the Request.
+                            </AlertFooter>
+                        </Alert>
+                        :
+                        <Alert variant="success">
+                            <CheckCircle2Icon />
+                            <AlertTitle>Success! </AlertTitle>
+                            <AlertDescription>
+                                {mainItems?.sap_response}
+                            </AlertDescription>
+                        </Alert>
                     }
                 </div>
             }
@@ -470,7 +458,7 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                                                 {mainItem.purchase_requisition_type == "SB" && <div className="mt-4">
                                                     <div className="flex items-center justify-between mb-4">
                                                         <h4 className="font-semibold text-lg">Sub Items ({mainItem?.subhead_fields.length})</h4>
-                                                        {mainItems?.sap_status === "Success" && ((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
+                                                        {mainItems?.sap_status !== "Failed" && ((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
                                                             <Button
                                                                 variant="outline"
                                                                 size="sm"
@@ -626,7 +614,7 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                     plant={formData?.plant ? formData?.plant : ''}
                     company={formData?.company ? formData?.company : ""}
                     purchase_group={formData?.purchase_group ? formData?.purchase_group : ""}
-                    disabled ={false}
+                    disabled={false}
                 />
             }
 
