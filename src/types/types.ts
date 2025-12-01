@@ -517,6 +517,10 @@ export type TPurchaseDetails = {
     name: string,
     description: string,
   },
+  account_group_details: {
+    name: string,
+    account_group_description: string,
+  },
 }
 
 export type VendorOnboardingResponse = {
