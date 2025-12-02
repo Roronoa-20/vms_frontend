@@ -39,15 +39,11 @@ const MaterialReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
     const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
     const [VendorList, setVendorList] = useState<VendorApiResponse>();
     const [loading, setLoading] = useState(true);
-    const [selectedRows, setSelectedRows] = useState<VendorSelectType>(
-        {
-            vendors: []
-        }
-    );
+    const [selectedRows, setSelectedRows] = useState<VendorSelectType>({ vendors: [] });
     const [availablePRs, setAvailablePRs] = useState<SAPPRData[]>([])
     const [selectedMaterials, setSelectedMaterials] = useState<SelectedMaterial[]>([])
     const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
-    const [files, setFiles] = useState<Record<string, File | null>>({});
+    const [files, setFiles] = useState<File[]>([]);
     const [isDialog, setIsDialog] = useState<boolean>(false);
     const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([])
     const router = useRouter()
@@ -95,8 +91,10 @@ const MaterialReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
         };
         formdata.append('data', JSON.stringify(fullData));
         // Append file only if exists
-        if (files && files['file']) {
-            formdata.append('file', files['file']);
+        if (files) {
+            files?.forEach((file) => {
+                formdata.append("file", file);
+            });
         }
         const url = `${API_END_POINTS?.ReviseRFQ}`;
         const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" });
@@ -151,7 +149,7 @@ const MaterialReviseRFQ = ({ open, onClose, Dropdown, RFQData }: Props) => {
                         <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
                     </div>
                     <div className='py-6'>
-                        <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen} setNewVendorTable={setNewVendorTable}/>
+                        <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen} setNewVendorTable={setNewVendorTable} />
                     </div>
                     {
                         isDialog &&
