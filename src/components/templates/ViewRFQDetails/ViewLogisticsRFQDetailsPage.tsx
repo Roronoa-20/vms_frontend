@@ -77,7 +77,8 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
     const [open, setOpen] = useState(false);
     const [finalNegotation, setFinalNegotation] = useState(false);
     const [reviseDialog, setReviseDialog] = useState(false);
-    const router = useRouter()
+    const router = useRouter();
+
     useEffect(() => {
         const fetchVendorTableData = async () => {
             const url = `${API_END_POINTS?.fetchQuatationVendorList}?rfq_number=${RFQData?.name}`
@@ -90,10 +91,12 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
         }
         fetchVendorTableData();
     }, [currentVendorPage, debouncedDoctorSearchName, RFQData?.name]);
+
     const handleVendorSearch = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         setVendorCurrentPage(1)
         setVendorSearchName(e.target.value);
-    }
+    };
+
     const handleSubmit = async () => {
         const formdata = new FormData();
         const fullData = {
@@ -112,7 +115,8 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
             alert("Not able to Submit");
             location.reload();
         }
-    }
+    };
+
     const handleNegotationSubmit = async () => {
         const formdata = new FormData();
         const fullData = {
@@ -132,8 +136,11 @@ const ViewLogisticsRFQDetailsPage = ({ RFQData, refno, Dropdown }: Props) => {
             alert("Not able to Submit");
             location.reload();
         }
-    }
+    };
+
     console.log(QuatationVendorList, 'QuatationVendorList')
+
+    
     return (
         <div className='px-4 pb-6 bg-white'>
             <section className='flex justify-between py-4'>

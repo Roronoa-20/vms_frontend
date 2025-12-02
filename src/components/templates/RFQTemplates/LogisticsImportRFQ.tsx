@@ -133,7 +133,7 @@ const LogisticsImportRFQ = ({ Dropdown }: Props) => {
     return (
         <div className='bg-white h-full w-full pb-6'>
             <div className='flex justify-between items-center pr-2'>
-                <h1 className='font-bold text-[24px] p-5'>RFQ Data for Import</h1>
+                <h1 className='font-bold text-[24px] p-2'>RFQ Data for Import</h1>
             </div>
             <LogisticsImportRFQFormFields
                 formData={formData}

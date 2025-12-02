@@ -300,10 +300,10 @@ const ViewPO = ({ po_name }: Props) => {
       {/* Early Delivery Button */}
       {isPrintFormat &&
         <div className="flex justify-start text-left space-x-4">
-          <Button onClick={() => { handleOpen() }} variant={"nextbtn"} size={"nextbtnsize"} className="px-4 py-2.5 transition">
+          <Button onClick={() => { handleOpen() }} variant={"nextbtn"} size={"nextbtnsize"} className="py-2.5 transition">
             Early Delivery
           </Button>
-          <Button variant={"nextbtn"} size={"nextbtnsize"} className="px-4 py-2.5 transition" onClick={() => { handleDownloadPDF() }}>Download</Button>
+          <Button variant={"nextbtn"} size={"nextbtnsize"} className="py-2.5 transition" onClick={() => { handleDownloadPDF() }}>Download</Button>
 
         </div>
       }

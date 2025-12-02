@@ -262,11 +262,10 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
               <TableHead className="text-center text-black">Vendor Name</TableHead>
               <TableHead className="text-center text-black text-nowrap">PO Date</TableHead>
               <TableHead className="text-center text-black text-nowrap">Delivery Date</TableHead>
-              <TableHead className="text-center text-black text-nowrap">PO Amount</TableHead>
               <TableHead className="text-center text-black text-nowrap">Status</TableHead>
               <TableHead className="text-center text-black text-nowrap">Tentative Delivery</TableHead>
-              <TableHead className="text-center text-black text-nowrap">View details</TableHead>
-              {/* <TableHead className="text-center text-black text-nowrap">Send Email</TableHead> */}
+              <TableHead className="text-center text-black text-nowrap">View PO</TableHead>
+              <TableHead className="text-center text-black text-nowrap">View Dispatch</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="text-center text-black">
@@ -278,7 +277,6 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                   <TableCell className="text-center text-nowrap">{item?.supplier_name ? item.supplier_name : "-"}</TableCell>
                   <TableCell className="text-center text-nowrap">{formatDate(item?.po_date)}</TableCell>
                   <TableCell className="text-center text-nowrap">{formatDate(item?.delivery_date)}</TableCell>
-                  <TableCell className="text-center text-nowrap">{item?.total_gross_amount}</TableCell>
                   <TableCell>
                     <div
                       className={`px-2 py-3 rounded-xl text-nowrap ${item?.status === "Pending by Vendor"
@@ -301,7 +299,15 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                       View
                     </Button>
                   </TableCell>
-                  {/* <TableCell><Button onClick={() => { setIsEmailDialog(true); setEmail((prev: any) => ({ ...prev, to: item?.email,cc:item?.email2 })) }} className={`bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px] `} disabled={item?.sent_to_vendor}>Send</Button></TableCell> */}
+                  <TableCell>
+                    <Button
+                      className={`bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px] `}
+                      onClick={() => router.push(`/view-dispatch-table`)}
+                      // onClick={() => router.push(`/view-dispatch-table?po_name=${item?.name}`)}
+                    >
+                      View
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (

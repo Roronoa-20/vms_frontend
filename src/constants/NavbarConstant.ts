@@ -1,7 +1,7 @@
 export const NavbarConstant:Record<string,string> = {
     "/vendor-registration":"Vendor Registration",
     "/dashboard":"Dashboard",
-    "/pr-request":"Create Purchase Requisition (PR)",
+    "/pr-request":"Purchase Requisition (PR)",
     "/pr-inquiry":"Purchase Enquiry",
     "/view-pr-inquiry":"View Purchase Enquiry",
     "/dispatch":"Create Dispatch",

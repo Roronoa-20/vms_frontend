@@ -138,7 +138,7 @@ const LogisticsExportRFQ = ({ Dropdown }: Props) => {
     return (
         <div className='bg-white h-full w-full pb-6'>
             <div className='flex justify-between items-center pr-4'>
-                <h1 className='font-bold text-[24px] p-5'>RFQ Data for Export</h1>
+                <h1 className='font-bold text-[24px] p-2'>RFQ Data for Export</h1>
             </div>
             <LogisticsExportRFQFormFields
                 formData={formData}

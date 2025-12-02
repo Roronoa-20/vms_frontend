@@ -38,7 +38,8 @@ interface TableData {
   coa_document: File,
   msds_document: File,
   product_name: string,
-  quantity: number
+  quantity: number,
+  description: string;
 }
 
 interface formData {
@@ -83,6 +84,7 @@ interface tablerow {
   name: string,
   po_number: string,
   product_name: string,
+  description: string;
   quantity: number,
   uom: string,
   coa_document_upload: File,
@@ -131,19 +133,11 @@ const DispatchForm = ({ DispatchDetails, refno, StateAndPlant }: Props) => {
 
     if (DispatchDetails?.purchase_number) {
       const data = DispatchDetails?.purchase_number?.map((item) => {
-        return ({
-          label: item?.purchase_number, value: item?.purchase_number
-        }
-        )
+        return ({label: item?.purchase_number, value: item?.purchase_number})
       })
       setSelectedPOMultiple(data)
     }
-
-    console.log(DispatchDetails?.purchase_number, "this is po")
-
   }, [])
-
-  console.log(DispatchDetails?.vehicle_details, "this is dispatch details")
 
   const handleVendorCodeChange = async (value: string) => {
     setFormData((prev: any) => ({ ...prev, vendor_code: value }))
@@ -157,9 +151,7 @@ const DispatchForm = ({ DispatchDetails, refno, StateAndPlant }: Props) => {
       })
       setPODropdown(() => ([...newDropdown]))
     }
-  }
-
-
+  };
 
   const handlePOChange = async (value: MultiValue<OptionType>) => {
     const newArray = await Promise.all(
@@ -329,10 +321,11 @@ const DispatchForm = ({ DispatchDetails, refno, StateAndPlant }: Props) => {
 
   console.log(vehicalForm, "this is vehical form Data")
   console.log(Vehicaltable, "this is vehical table Data")
+  console.log(table, "this is PO Items table Data")
 
   return (
     <>
-      <div className="flex flex-col bg-white rounded-lg px-3 pb-2 max-h-[80vh] overflow-y-scroll w-full">
+      <div className="flex flex-col bg-white rounded-lg px-3 pb-2 overflow-y-scroll w-full">
         <div className="grid grid-cols-3 gap-6 p-3">
           <div className="col-span-1">
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
@@ -492,24 +485,28 @@ const DispatchForm = ({ DispatchDetails, refno, StateAndPlant }: Props) => {
           <Table className=" max-h-40 overflow-y-scroll">
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                <TableHead className="text-center">Items Name</TableHead>
-                <TableHead className="text-center">Total Quantity</TableHead>
-                <TableHead className="text-center">Dispatch Quantity</TableHead>
-                <TableHead className="text-center">Pending Quantity</TableHead>
-                <TableHead className="text-center">UOM</TableHead>
-                <TableHead className="text-center">COA</TableHead>
-                <TableHead className="text-center">MSDS</TableHead>
-                <TableHead className="text-center">Action</TableHead>
+                <TableHead className="text-center text-black">Sr. No.</TableHead>
+                <TableHead className="text-center text-black">Items Name</TableHead>
+                <TableHead className="text-center text-black">Items Description</TableHead>
+                <TableHead className="text-center text-black">Total Quantity</TableHead>
+                <TableHead className="text-center text-black">Dispatch Quantity</TableHead>
+                <TableHead className="text-center text-black">Pending Quantity</TableHead>
+                <TableHead className="text-center text-black">UOM</TableHead>
+                <TableHead className="text-center text-black">COA</TableHead>
+                <TableHead className="text-center text-black">MSDS</TableHead>
+                <TableHead className="text-center text-black">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="text-center">
               {table?.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell>{item?.product_name}</TableCell>
-                  <TableCell>{item?.quantity}</TableCell>
+                  <TableCell className="text-center">{index + 1}</TableCell>
+                  <TableCell className="text-center">{item?.material_code}</TableCell>
+                  <TableCell className="text-center">{item?.description}</TableCell>
+                  <TableCell className="text-center">{item?.quantity}</TableCell>
                   <TableCell className='flex justify-center'><Input disabled={DispatchDetails?.dispatch_form_submitted ? true : false} value={table[index]?.dispatch_qty ?? 0} onChange={(e) => { handleTableInput(index, Number(e.target.value), Number(item?.quantity)) }} min={0} className='w-24' type='number' /></TableCell>
-                  <TableCell>{item?.pending_qty}</TableCell>
-                  <TableCell>{item?.uom}</TableCell>
+                  <TableCell className="text-center">{item?.pending_qty}</TableCell>
+                  <TableCell className="text-center">{item?.uom}</TableCell>
                   <TableCell className='flex justify-center'>
                     {
                       item?.coa_document_upload ?
@@ -519,7 +516,7 @@ const DispatchForm = ({ DispatchDetails, refno, StateAndPlant }: Props) => {
                           <input onChange={(e) => { handleTableFile(index, e) }} name='coa_document_upload' type='file' className='w-24' />
                     }
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">
                     {
                       item?.msds_document_upload ?
                         <div className='flex gap-4 justify-center'><h1>{item?.msds_document_upload?.name}</h1><Trash2 onClick={() => { handleTableFileDelete(index, "msds_document_upload") }} className={`cursor-pointer text-red-500 ${DispatchDetails?.dispatch_form_submitted ? "hidden" : ""}`} /></div> :
@@ -528,7 +525,11 @@ const DispatchForm = ({ DispatchDetails, refno, StateAndPlant }: Props) => {
                           <input type='file' name='msds_document_upload' onChange={(e) => { handleTableFile(index, e) }} className='w-24' />
                     }
                   </TableCell>
-                  <TableCell><Button className={`bg-blue-400 hover:bg-blue-300 ${DispatchDetails?.dispatch_form_submitted ? "hidden" : ""}`} onClick={() => { handleTableRowUpdate(item) }}>Update</Button></TableCell>
+                  <TableCell className="text-center">
+                    <Button className={`bg-blue-400 hover:bg-blue-300 ${DispatchDetails?.dispatch_form_submitted ? "hidden" : ""}`} onClick={() => { handleTableRowUpdate(item) }}>
+                      Update
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -537,9 +538,8 @@ const DispatchForm = ({ DispatchDetails, refno, StateAndPlant }: Props) => {
 
         <div className={`flex justify-end pr-4 gap-4`}>
           {/* <Button className='bg-blue-400 hover:bg-blue-400' >Save As Draft</Button> */}
-          {
-            table?.length > 0 &&
-            <Button className={`bg-blue-400 hover:bg-blue-400 ${DispatchDetails?.dispatch_form_submitted ? "hidden" : ""}`} onClick={() => { handleSubmit() }} >Submit</Button>
+          {table?.length > 0 &&
+            <Button className={`py-2.5 hover:border hover:border-[#5291CD] ${DispatchDetails?.dispatch_form_submitted ? "hidden" : ""}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }} >Submit</Button>
           }
         </div>
       </div>

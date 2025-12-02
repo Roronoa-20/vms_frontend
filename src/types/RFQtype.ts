@@ -47,6 +47,7 @@ export interface UploadedFile {
   name: string;
   file_name: string;
   file_url:string;
+  file_id: string;
 }
 
 export type RFQDetails = {

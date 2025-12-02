@@ -65,23 +65,20 @@ export interface newVendorTable {
 
 const ServiceRFQ = ({ Dropdown,pr_codes }: Props) => {
   const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Service Vendor" });
-  const [vendorSearchName, setVendorSearchName] = useState('')
+  const [vendorSearchName, setVendorSearchName] = useState('');
   const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
   const [VendorList, setVendorList] = useState<VendorApiResponse>();
   const [loading, setLoading] = useState(true);
-  const [selectedRows, setSelectedRows] = useState<VendorSelectType>(
-    {
-      vendors: []
-    }
-  );
-  const [availablePRs, setAvailablePRs] = useState<SAPPRData[]>([])
-  const [selectedMaterials, setSelectedMaterials] = useState<SelectedMaterial[]>([])
+  const [selectedRows, setSelectedRows] = useState<VendorSelectType>({vendors: []});
+  const [availablePRs, setAvailablePRs] = useState<SAPPRData[]>([]);
+  const [selectedMaterials, setSelectedMaterials] = useState<SelectedMaterial[]>([]);
   const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
   // const [files, setFiles] = useState<Record<string, File | null>>({});
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isDialog, setIsDialog] = useState<boolean>(false);
-  const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([])
-  const router = useRouter()
+  const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([]);
+  const router = useRouter();
+
   useEffect(() => {
     const fetchVendorTableData = async (rfq_type: string) => {
       const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&company=${formData?.company_name}`
@@ -96,6 +93,7 @@ const ServiceRFQ = ({ Dropdown,pr_codes }: Props) => {
       fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Service Vendor");
     }
   }, [currentVendorPage, debouncedDoctorSearchName, formData?.company_name]);
+
   useEffect(() => {
     const fetchPRDropdown = async (rfq_type: string) => {
       const url = `${API_END_POINTS?.fetchPRDropdown}?rfq_type=${rfq_type}`
@@ -112,7 +110,7 @@ const ServiceRFQ = ({ Dropdown,pr_codes }: Props) => {
   const handleVendorSearch = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setVendorCurrentPage(1)
     setVendorSearchName(e.target.value);
-  }
+  };
 
   const handleSubmit = async () => {
     const formdata = new FormData();
@@ -139,27 +137,28 @@ const ServiceRFQ = ({ Dropdown,pr_codes }: Props) => {
     } else {
       alert("error");
     }
+  };
 
-  }
   const setItems = async (materials: SelectedMaterial[]) => {
     setSelectedMaterials(materials)
-  }
+  };
 
   const handleOpen = () => {
     setIsDialog(true);
-  }
+  };
 
   const handleClose = () => {
     setIsDialog(false);
-  }
+  };
+
   return (
     <div className='bg-white h-full w-full pb-6'>
       <div className='flex justify-between items-center pr-4'>
-        <h1 className='font-bold text-[24px] p-5'>RFQ Data for Service</h1>
+        <h1 className='font-bold text-[24px] p-3'>RFQ Data for Service</h1>
         {/* <Button onClick={handleOpen}>Add New Vendor</Button> */}
       </div>
 
-      <div className="w-full mx-auto space-y-6 p-5">
+      <div className="w-full mx-auto space-y-6 p-3">
         {/* PR Materials Manager Component */}
         <PRServiceManager 
           prNumbers={availablePRs}

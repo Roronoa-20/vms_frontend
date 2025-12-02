@@ -66,18 +66,15 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
   const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
   const [VendorList, setVendorList] = useState<VendorApiResponse>();
   const [loading, setLoading] = useState(true);
-  const [selectedRows, setSelectedRows] = useState<VendorSelectType>(
-    {
-      vendors: []
-    }
-  );
+  const [selectedRows, setSelectedRows] = useState<VendorSelectType>({ vendors: [] });
   const [availablePRs, setAvailablePRs] = useState<SAPPRData[]>([])
   const [selectedMaterials, setSelectedMaterials] = useState<SelectedMaterial[]>([])
   const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
-  const [files, setFiles] = useState<Record<string, File | null>>({});
+  const [files, setFiles] = useState<File[]>([]);
   const [isDialog, setIsDialog] = useState<boolean>(false);
-  const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([])
-  const router = useRouter()
+  const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([]);
+  const router = useRouter();
+
   useEffect(() => {
     const fetchVendorTableData = async (rfq_type: string) => {
       const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&company=${formData?.company_name}`
@@ -118,7 +115,7 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
   const handleVendorSearch = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setVendorCurrentPage(1)
     setVendorSearchName(e.target.value);
-  }
+  };
 
   const handleSubmit = async () => {
     const formdata = new FormData();
@@ -130,8 +127,10 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
     };
     formdata.append('data', JSON.stringify(fullData));
     // Append file only if exists
-    if (files && files['file']) {
-      formdata.append('file', files['file']);
+    if (files) {
+      files?.forEach((file) => {
+        formdata.append("file", file);
+      });
     }
     const url = `${API_END_POINTS?.CreateMaterialRFQ}`;
     const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" });
@@ -142,27 +141,28 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
     } else {
       alert("error");
     }
-  }
+  };
+
   const setPRItems = async (materials: SelectedMaterial[]) => {
     setSelectedMaterials(materials)
-  }
+  };
 
   const handleOpen = () => {
     setIsDialog(true);
-  }
+  };
 
   const handleClose = () => {
     setIsDialog(false);
-  }
+  };
 
   return (
     <div className='bg-white h-full w-full pb-6'>
       <div className='flex justify-between items-center pr-4'>
-        <h1 className='font-bold text-[24px] p-5'>RFQ Data for Material</h1>
+        <h1 className='font-bold text-[24px] p-2'>RFQ Data for Material</h1>
         {/* <Button onClick={handleOpen}>Add New Vendor</Button> */}
       </div>
 
-      <div className="w-full mx-auto space-y-6 p-5">
+      <div className="w-full mx-auto space-y-6 p-2">
         {/* PR Materials Manager Component */}
         <PRMaterialsManager
           prNumbers={availablePRs}
@@ -193,7 +193,7 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
         </Button>
       </div> */}
       <div className='py-6'>
-        <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen} setNewVendorTable={setNewVendorTable}/>
+        <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen} setNewVendorTable={setNewVendorTable} />
       </div>
       {
         isDialog &&

@@ -52,9 +52,9 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
   return (
     <div
       ref={contentRef}
-      className="bg-white border border-gray-300 rounded-md px-16 py-10 space-y-6 overflow-x-auto"
+      className="bg-white border border-gray-300 rounded-md px-16 py-10 overflow-x-auto"
     >
-      <h1 className="text-center font-medium">
+      <h1 className="text-center font-semibold text-[16px]">
         {prDetails?.purchase_order_format && Heading}
       </h1>
       {/* Grid with 2 Columns */}

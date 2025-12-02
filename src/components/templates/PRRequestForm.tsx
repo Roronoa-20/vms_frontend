@@ -1,5 +1,10 @@
 
+
+// To CREATE AND VIEW THE PR FORM CREATED WITH PURCHASE ENQUIRY
+
+
 "use client"
+
 import React, { useState, useEffect, useCallback } from 'react'
 import { Input } from '../atoms/input'
 import { Button } from '../atoms/button'
@@ -243,6 +248,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
   }, [pur_req, prf_name, PRData?.purchase_requisition_type]);
 
   console.log("Main INTems wrughwirhoerg----------->",mainItems)
+
   return (
     <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
       <div className="grid grid-cols-3 gap-6 p-3">
@@ -420,7 +426,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                           {/* <Badge variant="outline">${mainItem?.estimatedPrice}</Badge> */}
                         </div>
                       </div>
-                      {mainItems?.sap_status != "Success" && (
+                      {mainItems?.sap_status == "Failed" && (
                         <div className="flex items-center gap-2">
                           {((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
                             <>

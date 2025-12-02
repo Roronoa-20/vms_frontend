@@ -1,5 +1,8 @@
 
+// To CREATE AND VIEW THE PR FORM CREATED WITHOUT PURCHASE ENQUIRY
+
 "use client"
+
 import React, { useState, useEffect, useCallback } from 'react'
 import { Input } from '../atoms/input'
 import { Button } from '../atoms/button'
@@ -367,17 +370,19 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                                     Manage your main items and sub-items. Click the arrow to expand and see sub-items.
                                 </CardDescription>
                             </div>
-                            <div>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => handleModel()}
-                                    className="flex items-center gap-2 bg-green-50 hover:bg-green-100 border-green-200"
-                                >
-                                    <Plus className="w-4 h-4" />
-                                    Add New
-                                </Button>
-                            </div>
+                            {mainItems?.sap_status == "Failed" || mainItems?.sap_status == "" && (
+                                <div>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => handleModel()}
+                                        className="flex items-center gap-2 bg-green-50 hover:bg-green-100 border-green-200"
+                                    >
+                                        <Plus className="w-4 h-4" />
+                                        Add New
+                                    </Button>
+                                </div>
+                            )}
                         </section>
                     </CardHeader>
                     <CardContent>
@@ -419,7 +424,7 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                                                     {/* <Badge variant="outline">${mainItem?.estimatedPrice}</Badge> */}
                                                 </div>
                                             </div>
-                                            {mainItems?.sap_status != "Success" && (
+                                            {mainItems?.sap_status == "Failed" && (
                                                 <div className="flex items-center gap-2">
                                                     {((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
                                                         <>

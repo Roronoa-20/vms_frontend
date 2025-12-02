@@ -356,14 +356,14 @@ export default function PRMaterialsManager({
                       <TableHead className="w-12">
                         <Checkbox checked={isAllSelected} onCheckedChange={handleSelectAll} disabled={disabled} />
                       </TableHead>
-                      <TableHead className="w-16">Sr No.</TableHead>
-                      <TableHead>Requisition No.</TableHead>
-                      <TableHead>Item Code</TableHead>
-                      <TableHead className="min-w-[200px]">Item Description</TableHead>
-                      <TableHead>Quantity</TableHead>
-                      <TableHead>UOM</TableHead>
-                      <TableHead>Price</TableHead>
-                      <TableHead>Delivery Date</TableHead>
+                      <TableHead className="text-nowrap text-center w-16">Sr No.</TableHead>
+                      <TableHead className="text-nowrap text-center">Requisition No.</TableHead>
+                      <TableHead className="text-nowrap text-center">Item Code</TableHead>
+                      <TableHead className="text-nowrap text-center min-w-[200px]">Item Description</TableHead>
+                      <TableHead className="text-nowrap text-center">Quantity</TableHead>
+                      <TableHead className="text-nowrap text-center">UOM</TableHead>
+                      <TableHead className="text-nowrap text-center">Price</TableHead>
+                      <TableHead className="text-nowrap text-center">Delivery Date</TableHead>
                       {!disabled && <TableHead className="w-20">Actions</TableHead>}
                     </TableRow>
                   </TableHeader>
@@ -388,13 +388,13 @@ export default function PRMaterialsManager({
                               disabled={disabled}
                             />
                           </TableCell>
-                          <TableCell className="font-medium">{index + 1}</TableCell>
-                          <TableCell>{material?.requisition_no}</TableCell>
-                          <TableCell className="font-mono text-sm">{material?.material_code_head}</TableCell>
-                          <TableCell>{material?.material_name_head}</TableCell>
+                          <TableCell className="text-center font-medium">{index + 1}</TableCell>
+                          <TableCell className="text-center">{material?.requisition_no}</TableCell>
+                          <TableCell className="text-center font-mono text-sm">{material?.material_code_head}</TableCell>
+                          <TableCell className="text-center">{material?.material_name_head}</TableCell>
 
                           {/* Quantity Cell */}
-                          <TableCell>
+                          <TableCell className="text-center">
                             {isEditing ? (
                               <Input
                                 type="number"
@@ -412,11 +412,11 @@ export default function PRMaterialsManager({
                             )}
                           </TableCell>
 
-                          <TableCell>{material?.uom_head}</TableCell>
-                          <TableCell>₹{material?.price_head}</TableCell>
+                          <TableCell className="text-center">{material?.uom_head}</TableCell>
+                          <TableCell className="text-center">₹{material?.price_head}</TableCell>
 
                           {/* Delivery Date Cell */}
-                          <TableCell>
+                          <TableCell className="text-center">
                             {isEditing ? (
                               <Input
                                 type="date"
@@ -439,13 +439,13 @@ export default function PRMaterialsManager({
 
                           {/* Actions Cell */}
                           {!disabled && (
-                            <TableCell>
+                            <TableCell className="text-center">
                               {isEditing ? (
                                 <div className="flex gap-1">
                                   <Button
                                     size="sm"
                                     variant="ghost"
-                                    className="h-8 w-8 p-0"
+                                    className="h-8 w-8"
                                     onClick={() => saveEdit(material.head_unique_field)}
                                   >
                                     <Check className="h-3 w-3" />
@@ -458,7 +458,7 @@ export default function PRMaterialsManager({
                                 <Button
                                   size="sm"
                                   variant="ghost"
-                                  className="h-8 w-8 p-0"
+                                  className="h-8 w-8"
                                   onClick={() =>
                                     startEdit(
                                       material.head_unique_field,

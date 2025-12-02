@@ -190,7 +190,7 @@ const ViewPRTable = ({ data, loading, companyDropdown }: Props) => {
 
         </div>
         <div className="w-full">
-          <p className="text-[12px] text-center text-gray-600 italic bg-gray-100 py-1 rounded-md underline mt-4">
+          <p className="text-[14px] text-center text-gray-600 italic bg-gray-100 py-1 rounded-md underline mt-4">
             {/* Disclaimer: All PRs are visible here, whether created through VMS Portal or SAP. */}
             Disclaimer: This list displays all Purchase Requisitions (PRs), regardless of whether they were generated via the VMS Portal or synchronized from SAP.
           </p>

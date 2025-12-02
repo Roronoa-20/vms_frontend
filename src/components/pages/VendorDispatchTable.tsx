@@ -8,10 +8,7 @@ import requestWrapper from '@/src/services/apiCall'
 const DispatchTable = async () => {
 
   const cookieStore = await cookies();
-  const cookieHeaderString = cookieStore
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ");
+  const cookieHeaderString = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
   const tableResponse: AxiosResponse = await requestWrapper({
     url: API_END_POINTS?.dispatchTable,
@@ -19,10 +16,7 @@ const DispatchTable = async () => {
     headers: { cookie: cookieHeaderString },
   })
 
-  const dispatchTableData =
-    tableResponse?.status === 200
-      ? tableResponse?.data?.message?.dispatches
-      : [];
+  const dispatchTableData = tableResponse?.status === 200 ? tableResponse?.data?.message?.dispatches : [];
 
   return (
     <>
