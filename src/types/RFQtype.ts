@@ -8,6 +8,7 @@ export interface VendorDataRFQ {
   country: string;
   service_provider_type: string;
   vendor_code: string[];
+  secondary_emails: string[];
 }
 
 export interface VendorApiResponse {
@@ -107,8 +108,8 @@ export type RFQDetails = {
   logistic_type: string | null;
   pr_items: PurchaseRequisitionRow[];
   vendor_details: VendorDetail[];
-  non_onboarded_vendors: any[]; 
-  attachments: UploadedFile[]; 
+  non_onboarded_vendors: any[];
+  attachments: UploadedFile[];
   total_quotation_received: number;
   total_rfq_sent: number;
   status: string;
@@ -135,16 +136,16 @@ export type RFQDetails = {
   final_freight_total: string;
   final_remarks: string;
   final_tat: string;
-  final_mode_of_shipment:string;
-  is_negotiated:string;
-  requestor_name:string;
-  first_remainder:string,
-  second_remainder:string,
-  third_remainder:string,
-  service_location:string,
-  onboarded_vendors:VendorOnboarded[],
-  quotation_received_by_cutoff:QuotationCutoff[];
-  prev_quotation_id:string;
+  final_mode_of_shipment: string;
+  is_negotiated: string;
+  requestor_name: string;
+  first_remainder: string,
+  second_remainder: string,
+  third_remainder: string,
+  service_location: string,
+  onboarded_vendors: VendorOnboarded[],
+  quotation_received_by_cutoff: QuotationCutoff[];
+  prev_quotation_id: string;
 };
 
 export type QuotationCutoff = {
@@ -167,7 +168,7 @@ export type VendorOnboarded = {
 };
 
 export interface PurchaseRequisitionRow {
-  rfq_type:string;
+  rfq_type: string;
   row_id: string;
   head_unique_field: string;
   purchase_requisition_number: string;
@@ -185,14 +186,14 @@ export interface PurchaseRequisitionRow {
   uom_subhead: string | null;
   price_subhead: string | null;
   delivery_date_subhead: string | null;
-  lead_time_head:string;
-  remarks:string;
+  lead_time_head: string;
+  remarks: string;
   subhead_fields: SubheadField[];
 }
 export interface ExportPort {
   country: string;
   port_code: string;
   port_name: string;
-  name:string;
+  name: string;
 }
 

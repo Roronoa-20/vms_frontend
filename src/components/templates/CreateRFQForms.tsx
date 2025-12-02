@@ -17,9 +17,6 @@ interface Props {
 
 const CreateRFQForms = ({ Dropdown }: Props) => {
   const searchParams = useSearchParams();
-  // const prCodeParam = searchParams.get("pr_codes");
-  // const decodedValue = decodeURIComponent(prCodeParam ?? "");
-  // const resultPRArray = decodedValue.trim() === "" ? [] : decodedValue.split(",");
   const [resultPRArray, setResultPRArray] = useState<string[]>([]);
   const prTypeParam = searchParams.get('pr_type');
   const [currentSlide, setCurrentSlide] = useState(1);
