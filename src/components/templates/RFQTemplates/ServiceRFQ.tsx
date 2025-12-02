@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { AccountAssignmentCategory, Company, CostCenter, Country, Currency, DestinationPort, GLAccountNumber, IncoTerms, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ModeOfShipment, PackageType, Plant, plantCode, PortCode, PortOfLoading, ProductCategory, ProfitCenter, PurchaseGroup, PurchaseOrganisation, quantityUnit, RFQType, serviceCategory, serviceCode, ShipmentType, StoreLocation, UOMMaster, ValuationArea } from '@/src/types/PurchaseRequestType';
-import VendorTable from '../../molecules/rfq/VendorTable';
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
@@ -13,6 +12,7 @@ import NewVendorTable from '../../molecules/rfq/NewVendorTable';
 import AddNewVendorRFQDialog from '../../molecules/AddNewVendorRFQDialog';
 import { useRouter } from 'next/navigation';
 import ServiceRFQFormFields from './ServiceRFQFormFields';
+import MultiSelectVendorTable from '../../molecules/rfq/MultiSelectVendorTable';
 
 export interface DropdownDataService {
   account_assignment_category: AccountAssignmentCategory[];
@@ -135,7 +135,7 @@ const ServiceRFQ = ({ Dropdown,pr_codes }: Props) => {
     const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" });
     if (response?.status == 200) {
       alert("Submit Successfull");
-      router.push("/dashboard")
+      // router.push("/dashboard")
     } else {
       alert("error");
     }
@@ -175,20 +175,10 @@ const ServiceRFQ = ({ Dropdown,pr_codes }: Props) => {
         setUploadedFiles={setUploadedFiles}
         uploadedFiles={uploadedFiles}
       />
-      <VendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />
+      <MultiSelectVendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />
       <div className='px-4 pb-5'>
         <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
       </div>
-
-      {/* <div className='flex justify-end items-center pr-5'>
-        <Button
-          className='bg-[#5291CD] font-medium text-[14px] inline-flex items-center gap-2'
-          onClick={() => handleOpen()}
-        >
-          <Plus className="w-4 h-4" />
-          Add New Vendor
-        </Button>
-      </div> */}
 
       <div className='py-6'>
         <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen} setNewVendorTable={setNewVendorTable}/>

@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button";
 import { AccountAssignmentCategory, Company, CostCenter, Country, Currency, DestinationPort, GLAccountNumber, IncoTerms, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ModeOfShipment, PackageType, PortCode, PortOfLoading, ProductCategory, ProfitCenter, PurchaseGroup, PurchaseOrganisation, RFQType, ShipmentType, StoreLocation, UOMMaster, ValuationArea } from '@/src/types/PurchaseRequestType';
-import VendorTable from '../../molecules/rfq/VendorTable';
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
@@ -14,6 +13,7 @@ import NewVendorTable from '../../molecules/rfq/NewVendorTable';
 import AddNewVendorRFQDialog from '../../molecules/AddNewVendorRFQDialog';
 import { useRouter } from 'next/navigation';
 import MaterialRFQFormFields from './MaterialRFQFormFields';
+import MultiSelectVendorTable from '../../molecules/rfq/MultiSelectVendorTable';
 
 export interface DropdownDataMaterial {
   account_assignment_category: AccountAssignmentCategory[];
@@ -106,15 +106,6 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
     fetchPRDropdown(formData?.rfq_type ? formData?.rfq_type : "Material Vendor");
   }, []);
 
-  // useEffect(() => {
-  //   if (pr_codes) {
-  //     setFormData((prev) => ({
-  //       ...prev,
-  //       pr_number: pr_codes
-  //     }));
-  //   }
-  // }, [pr_codes ?? null]);
-
   const handleVendorSearch = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setVendorCurrentPage(1)
     setVendorSearchName(e.target.value);
@@ -154,7 +145,6 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
   const handleClose = () => {
     setIsDialog(false);
   }
-
   return (
     <div className='bg-white h-full w-full pb-6'>
       <div className='flex justify-between items-center pr-4'>
@@ -179,21 +169,12 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
         setFiles={setFiles}
         files={files}
       />
-      <VendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />
+      <MultiSelectVendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />
       <div className='px-4 pb-5'>
         <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
       </div>
-      {/* <div className='flex justify-end items-center pr-5'>
-        <Button
-          className='bg-[#5291CD] font-medium text-[14px] inline-flex items-center gap-2'
-          onClick={() => handleOpen()}
-        >
-          <Plus className="w-4 h-4" />
-          Add New Vendor
-        </Button>
-      </div> */}
       <div className='py-6'>
-        <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen} setNewVendorTable={setNewVendorTable}/>
+        <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen} setNewVendorTable={setNewVendorTable} />
       </div>
       {
         isDialog &&
