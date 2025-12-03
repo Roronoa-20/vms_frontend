@@ -18,7 +18,7 @@ const ViewFileAttachment = ({ RFQData }: Props) => {
     console.log(RFQData, "RFQData in file attachment")
 
     const viewFile = (fileId: string) => {
-        const url = `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.utils.file_handling.secure_file?file_id=${fileId}`;
+        const url = `${API_END_POINTS.securefileview}?file_id=${fileId}`;
         window.open(url, "_blank");
     };
 

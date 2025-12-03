@@ -53,11 +53,15 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
   const [rowNamesMapping, setRowNamesMapping] = useState<{ [key: string]: string }>({});
   const isTreasuryUser = designation?.toLowerCase() === "treasury";
 
-  const [remarks,setRemarks] = useState<string>("");
-  const [isAmendCommentDialog,setIsAmendCommentDialog] = useState<boolean>(false);
+  const [remarks, setRemarks] = useState<string>("");
+  const [isAmendCommentDialog, setIsAmendCommentDialog] = useState<boolean>(false);
+  const router = useRouter();
 
+  const viewFile = (fileId: string) => {
+    const url = `${API_END_POINTS.securefileview}?file_id=${fileId}`;
+    window.open(url, "_blank");
+  };
 
-  const router = useRouter()
   useEffect(() => {
     const fetchBank = async () => {
 
@@ -114,20 +118,22 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
     return errors;
   };
 
-   const handleAmend = async()=>{
-    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.AmendAPI,method:"POST",data:{
-      data:{
-        vendor_onboarding:onboarding_ref_no,
-        remarks:remarks
+  const handleAmend = async () => {
+    const response: AxiosResponse = await requestWrapper({
+      url: API_END_POINTS?.AmendAPI, method: "POST", data: {
+        data: {
+          vendor_onboarding: onboarding_ref_no,
+          remarks: remarks
+        }
       }
-    }});
-    if(response?.status == 200){
+    });
+    if (response?.status == 200) {
       alert("Amend Successfully");
       router.push("dashboard");
     }
   }
 
-  const handleClose = ()=>{
+  const handleClose = () => {
     setIsAmendCommentDialog(false);
     setRemarks("");
   }
@@ -377,13 +383,21 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
               !bankProofFile &&
               OnboardingDetail?.bank_proof?.url && (
                 <div className="flex gap-2">
-                  <Link
+                  {/* <Link
                     target="blank"
                     href={OnboardingDetail?.bank_proof?.url}
                     className="underline text-blue-300 max-w-44 truncate"
                   >
                     <span>{OnboardingDetail?.bank_proof?.file_name}</span>
-                  </Link>
+                  </Link> */}
+                  <span
+                    className="underline text-blue-500 max-w-44 truncate cursor-pointer"
+                    onClick={() => {
+                      viewFile(OnboardingDetail.bank_proof.name);
+                    }}
+                  >
+                    {OnboardingDetail.bank_proof.file_name}
+                  </span>
                   <X
                     className={`cursor-pointer ${isDisabled ? "hidden" : ""}`}
                     onClick={() => {
@@ -405,13 +419,21 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
               {/* Old File Preview */}
               <div className="flex flex-col gap-2">
                 {OnboardingDetail?.bank_proof_by_purchase_team?.url ? (
-                  <a
-                    href={OnboardingDetail.bank_proof_by_purchase_team?.url}
-                    target="_blank"
-                    className="text-blue-500 underline text-sm max-w-[200px] truncate"
+                  // <a
+                  //   href={OnboardingDetail.bank_proof_by_purchase_team?.url}
+                  //   target="_blank"
+                  //   className="text-blue-500 underline text-sm max-w-[200px] truncate"
+                  // >
+                  //   {OnboardingDetail.bank_proof_by_purchase_team?.file_name || "View File"}
+                  // </a>
+                  <span
+                    className="underline text-blue-500 max-w-44 truncate cursor-pointer"
+                    onClick={() => {
+                      viewFile(OnboardingDetail.bank_proof_by_purchase_team.name);
+                    }}
                   >
-                    {OnboardingDetail.bank_proof_by_purchase_team?.file_name || "View File"}
-                  </a>
+                    {OnboardingDetail.bank_proof_by_purchase_team.file_name}
+                  </span>
                 ) : (
                   <span className="text-gray-400 text-sm">No file uploaded</span>
                 )}
@@ -447,19 +469,27 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
                 <div className="flex gap-2 flex-wrap items-center">
                   {OnboardingDetail.bank_proofs_by_purchase_team.map((item, index) => (
                     <div key={index} className="flex items-center gap-2">
-                      <Link
+                      {/* <Link
                         href={item?.url}
                         target="_blank"
                         className="underline text-blue-300 max-w-[150px] truncate text-sm"
                       >
                         {item?.file_name}
-                      </Link>
+                      </Link> */}
+                      <span
+                        className="underline text-blue-500 max-w-44 truncate cursor-pointer"
+                        onClick={() => {
+                          viewFile(item.name);
+                        }}
+                      >
+                        {item.file_name}
+                      </span>
 
                       {/* Show delete only for Purchase/Accounts team */}
                       {((isAccountTeam === 0 && designation === "Purchase Team") ||
                         (isAccountTeam === 1 && designation === "Accounts Team")) && (
                           <X
-                            className="cursor-pointer mt-1"
+                            className={`cursor-pointer mt-1`}
                             onClick={() => {
                               const rowName =
                                 rowNamesMapping[item?.url] || (item as any)?.row_name || item?.name;
@@ -497,16 +527,16 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
         </div>
       </div>
       {
-      isAmendCommentDialog && 
-      <PopUp handleClose={handleClose} isSubmit={true} headerText="Amend" Submitbutton={handleAmend}>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            {/* Comment */}
-          </h1>
-          <Textarea className="disabled:opacity-100" placeholder="" onChange={(e) => { setRemarks(e.target.value)}} />
-        </div>
-      </PopUp>
-    }
+        isAmendCommentDialog &&
+        <PopUp handleClose={handleClose} isSubmit={true} headerText="Amend" Submitbutton={handleAmend}>
+          <div className="col-span-1">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+              {/* Comment */}
+            </h1>
+            <Textarea className="disabled:opacity-100" placeholder="" onChange={(e) => { setRemarks(e.target.value) }} />
+          </div>
+        </PopUp>
+      }
       <div className={`flex justify-end pr-4 pb-4 ${isDisabled ? "hidden" : ""} `}><Button className="py-2" variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleSubmit() }}>Next</Button></div>
       <Toaster richColors position="top-right" />
     </div>

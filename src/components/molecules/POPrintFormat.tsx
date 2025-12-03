@@ -8,6 +8,19 @@ interface Props {
 }
 
 const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
+
+  const formatDate = (dateStr: string | undefined) => {
+    if (!dateStr) return '-';
+    const dateObj = new Date(dateStr);
+    if (isNaN(dateObj.getTime())) return '-';
+
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const year = dateObj.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  };
+
   const VendorInfoList = [
     ["VENDOR GSTIN NO:", prDetails?.vendor_gst_no],
     ["Contact Person :", prDetails?.contact_person],
@@ -20,10 +33,10 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
   ];
 
   const rightColumnAddressConst1 = [
-    ["P.O. No.", prDetails?.name, "Date", prDetails?.po_date],
+    ["P.O. No.", prDetails?.name, "Date", formatDate(prDetails?.po_date)],
     ["Amd. Ver No.", "0", "Date", ""],
     ["Purchase Grp.", prDetails?.purchase_group, "", ""],
-    ["Ref. PR No", prDetails?.ref_pr_no, "Ref. PR Date", prDetails?.ref_pr_date],
+    ["Ref. PR No", prDetails?.ref_pr_no, "Ref. PR Date", formatDate(prDetails?.ref_pr_date)],
     ["Ref. PR Person", prDetails?.ref_pr_person, "", ""],
     ["Contact Person", prDetails?.contact_person, "Phone No.", prDetails?.phonemobile_no],
   ];
@@ -32,7 +45,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
     ["E-mail", prDetails?.email2],
     ["D/L No", prDetails?.dl_no],
     ["GSTIN No.", prDetails?.gstin_no],
-    ["SSI Regn No.", ""],
+    ["MSME No.", prDetails?.msme_no],
   ];
 
   const Header = ["Sr No.", "Material Code", "Description", "HSN/SAC", "UOM", "Quantity", "Rate", "Amount", "Sche. Date", "Sche. Qty"];
@@ -62,15 +75,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
         {/* Left Column */}
         <div className="border-r border-black">
           <div className="flex justify-center border-b border-black py-4">
-            {
-              prDetails?.company_logo?.base64 &&
-              // <img
-              // src={`data:image/png;base64,${prDetails && prDetails?.company_logo?prDetails?.company_logo?.base64:""}`}
-              // alt="Signature"
-              // //  crossOrigin="anonymous"
-              // style={{ width: "25%", height: "auto", objectFit: "contain" }}
-              // // content="contain"
-              // />
+            {prDetails?.company_logo?.base64 &&
               <img
                 src={`data:${prDetails?.company_logo?.mime_type};base64,${prDetails?.company_logo?.base64}`}
                 alt="Company Logo"
@@ -174,27 +179,27 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
                 <td className="border border-black px-2 py-1 text-center">
                   {index + 1}
                 </td>
-                <td className="border border-black px-2 py-1">
+                <td className="border border-black px-2 py-1 text-center">
                   {item?.material_code}
                 </td>
-                <td className="border border-black px-2 py-1">
-                  {item?.description}
+                <td className="border border-black px-2 py-1 text-center">
+                  {item?.short_text}
                 </td>
-                <td className="border border-black px-2 py-1">
+                <td className="border border-black px-2 py-1 text-center">
                   {item?.hsnsac}
                 </td>
-                <td className="border border-black px-2 py-1">{item?.uom}</td>
-                <td className="border border-black px-2 py-1">
+                <td className="border border-black px-2 py-1 text-center">{item?.uom}</td>
+                <td className="border border-black px-2 py-1 text-center">
                   {item?.quantity}
                 </td>
-                <td className="border border-black px-2 py-1">{item?.rate}</td>
-                <td className="border border-black px-2 py-1">
+                <td className="border border-black px-2 py-1 text-center">{item?.rate}</td>
+                <td className="border border-black px-2 py-1 text-center">
                   {item?.base_amount}
                 </td>
-                <td className="border border-black px-2 py-1">
-                  {item?.schedule_date}
+                <td className="border border-black px-2 py-1 text-center">
+                  {formatDate(item?.schedule_date)}
                 </td>
-                <td className="border border-black px-2 py-1">
+                <td className="border border-black px-2 py-1 text-center">
                   {item?.quantity}
                 </td>
               </tr>
