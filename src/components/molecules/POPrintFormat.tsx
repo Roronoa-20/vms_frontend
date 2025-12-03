@@ -41,7 +41,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
   ];
 
   const rightsidecontactDetails = [
-    ["Contact Person", prDetails?.contact_person, "Phone No.", prDetails?.phonemobile_no],
+    ["Contact Person", prDetails?.contact_person2, "Phone No.", prDetails?.phonemobile_no],
     ["E-mail", prDetails?.email2],
     ["D/L No", prDetails?.dl_no],
     ["GSTIN No.", prDetails?.gstin_no],
@@ -86,15 +86,15 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
 
           {/* Supplier and Address */}
           <div className="grid grid-cols-4 border-b border-black">
-            <div className="text-[16px] col-span-2 border-r border-black p-2 font-bold">
+            <div className="text-[16px] col-span-2 border-r border-black px-2 py-1 font-bold flex items-center">
               Supplier
             </div>
-            <div className="col-span-2 p-2 justify-start font-bold">
+            <div className="col-span-2 px-2 py-1 font-bold items-center justify-start">
               <span className="text-[16px] font-bold">Code: </span>
               {prDetails?.vendor_code}
             </div>
           </div>
-          <div className="border-b border-black p-2 leading-6 text-[16px]">
+          <div className="border-b border-black p-1 leading-6 text-[16px]">
             <span className="font-semibold">{prDetails?.vendor_address_details?.vendor_name}</span><br />
             {prDetails?.vendor_address_details?.address_line_1},<br />
             {prDetails?.vendor_address_details?.address_line_2},<br />
@@ -108,10 +108,10 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
             const isGSTField = label.includes("GST");
             return (
               <div className="grid grid-cols-2 border-b border-black" key={idx}>
-                <div className="border-r border-black pl-1 font-bold">
+                <div className="border-r border-black px-2 py-1 font-bold flex items-center">
                   {label}
                 </div>
-                <div className={`p-1 ${isGSTField ? "font-bold" : "font-medium"}`}>
+                <div className={`px-2 py-1 flex items-center ${isGSTField ? "font-bold" : ""}`}>
                   {value}
                 </div>
               </div>
@@ -133,27 +133,66 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
             <div className="text-[14px]">Phone No: {prDetails?.bill_to_company_details?.contact_no}</div>
           </div>
 
-          {rightsidePOPRDetails?.map((row, idx) => (
-            <div className="grid grid-cols-4 border-b border-black" key={idx}>
-              <div className="border-r border-black pl-1 font-bold">
-                {row[0]}
-              </div>
-              <div className="border-r border-black pl-1 font-medium">{row[1]}</div>
-              <div className="border-r border-black pl-1 font-bold">
-                {row[2]}
-              </div>
-              <div className="p-1 font-medium">{row[3]}</div>
-            </div>
-          ))}
+          {rightsidePOPRDetails?.map((row, idx) => {
+            const isTwoColumn = row.length === 2;
 
-          {rightsidecontactDetails.map((item, idx) => (
-            <div className="grid grid-cols-4 border-b border-black" key={idx}>
-              <div className="border-r border-black pl-1 font-bold">
-                {item[0]}
+            return (
+              <div className="grid grid-cols-4 border-b border-black" key={idx}>
+                <div className="border-r border-black px-2 py-1 font-bold flex items-center">
+                  {row[0]}
+                </div>
+                {isTwoColumn ? (
+                  <div className="col-span-3 px-2 py-1 flex items-center">
+                    {row[1]}
+                  </div>
+                ) : (
+                  <>
+                    <div className="border-r border-black px-2 py-1 flex items-center">
+                      {row[1]}
+                    </div>
+
+                    <div className="border-r border-black px-2 py-1 font-bold flex items-center">
+                      {row[2]}
+                    </div>
+
+                    <div className="px-2 py-1 flex items-center">
+                      {row[3]}
+                    </div>
+                  </>
+                )}
               </div>
-              <div className="col-span-3 p-1">{item[1]}</div>
-            </div>
-          ))}
+            );
+          })}
+
+
+          {rightsidecontactDetails.map((item, idx) => {
+            const hasPhone = item.length === 4;
+
+            return (
+              <div className="grid grid-cols-4 border-b border-black" key={idx}>
+
+                <div className="border-r border-black px-2 py-1 font-bold flex items-center">
+                  {item[0]}
+                </div>
+
+                <div className={`${hasPhone ? "border-r" : "col-span-3"} border-black px-2 py-1 flex items-center`}>
+                  {item[1]}
+                </div>
+
+                {hasPhone && (
+                  <>
+                    <div className="border-r border-black px-2 py-1 font-bold flex items-center">
+                      {item[2]}
+                    </div>
+                    <div className="px-2 py-1 flex items-center">
+                      {item[3]}
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })}
+
 
           {/* Ship To */}
           <div className="border-t border-black p-1">
@@ -161,8 +200,8 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
               Ship To : {prDetails?.ship_to_company_details?.company_name}
             </div>
             <div className="text-[14px] leading-6">
-              <span>{prDetails?.ship_to_company_details?.street_1}<br/>
-                {prDetails?.ship_to_company_details?.street_2}<br/>
+              <span>{prDetails?.ship_to_company_details?.street_1}<br />
+                {prDetails?.ship_to_company_details?.street_2}<br />
                 {prDetails?.ship_to_company_details?.city} - {prDetails?.ship_to_company_details?.pincode} ({prDetails?.ship_to_company_details?.state_full})</span>
             </div>
             <div>Phone No: {prDetails?.ship_to_company_details?.contact_no}</div>
@@ -185,31 +224,98 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
           <tbody>
             {prDetails?.po_items?.map((item: any, index: any) => (
               <tr key={index} className={index % 2 ? "bg-gray-50" : ""}>
-                <td className="border border-black px-2 py-1 text-center">
+                <td className="border border-black px-2 py-1 align-top">
                   {index + 1}
                 </td>
-                <td className="border border-black px-2 py-1 text-center">
+                <td className="border border-black px-2 py-1 align-top">
                   {item?.material_code}
                 </td>
-                <td className="border border-black px-2 py-1 text-center">
+                <td className="border border-black px-2 py-1 align-top">
                   {item?.short_text}
                 </td>
-                <td className="border border-black px-2 py-1 text-center">
+                <td className="border border-black px-2 py-1 align-top text-center">
                   {item?.hsnsac}
                 </td>
-                <td className="border border-black px-2 py-1 text-center">{item?.uom}</td>
-                <td className="border border-black px-2 py-1 text-center">
-                  {item?.quantity}
+                <td className="border border-black px-2 py-1 align-top text-center">{item?.uom}</td>
+                {/* QUANTITY COLUMN */}
+                <td className="border border-black px-2 py-1 align-top">
+                  <div className="flex flex-col gap-1">
+                    <div className="font-semibold text-right">{item?.quantity}</div>
+
+                    <div className="text-black">
+                      {item?.discount_on_net && "Discount on Net:"}
+                    </div>
+
+                    <div className="text-black">
+                      {item?.igst_rate_percent && "Input IGST:"}
+                    </div>
+                  </div>
                 </td>
-                <td className="border border-black px-2 py-1 text-center">{item?.rate}</td>
-                <td className="border border-black px-2 py-1 text-center">
-                  {item?.base_amount}
+
+                {/* RATE COLUMN */}
+                <td className="border border-black px-2 py-1 align-top text-right">
+                  <div className="flex flex-col gap-1 w-full">
+                    <div className="font-semibold">{item?.rate && Number(item.rate).toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    })}</div>
+
+                    {/* Empty gap to align with Discount */}
+                    <div className="h-5"></div>
+
+                    <div className="text-black">
+                      {item?.igst_rate_percent && <span className="font-medium">{item.igst_rate_percent}</span>}
+                    </div>
+                    <div className="h-5"></div>
+
+                    {/* NET with top border */}
+                    <div className="w-full border-t border-black pt-1 text-left font-bold">
+                      {item?.price && "NET:"}
+                    </div>
+                  </div>
                 </td>
-                <td className="border border-black px-2 py-1 text-center">
+
+                {/* AMOUNT COLUMN */}
+                <td className="border border-black px-2 py-1 align-top text-right">
+                  <div className="flex flex-col gap-1 w-full">
+                    <div className="font-semibold">{item?.base_amount &&
+                      Number(item.base_amount).toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      })}</div>
+                    <div className="text-black">
+                      {item?.discount_on_net && <span className="font-medium">{Number(item.discount_on_net).toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      })}</span>}
+                    </div>
+
+                    {/* Empty gap to align with IGST*/}
+                    <div className="text-black">
+                      {item?.total_input_igst && <span className="font-medium">{Number(item.total_input_igst).toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      })}</span>}
+                    </div>
+
+                    <div className="h-5"></div>
+
+                    {/* NET value with top border (aligned with RATE NET) */}
+                    <div className="w-full border-t border-black pt-1 font-semibold">
+                      {item?.price &&
+                        Number(item.price).toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2
+                        })}
+                    </div>
+                  </div>
+                </td>
+
+                <td className="border border-black px-2 py-1 align-top text-center">
                   {formatDate(item?.schedule_date)}
                 </td>
-                <td className="border border-black px-2 py-1 text-center">
-                  {item?.quantity}
+                <td className="border border-black px-2 py-1 align-top text-center">
+                  {item?.schedule_quantity}
                 </td>
               </tr>
             ))}
@@ -233,7 +339,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
         </table>
       </div>
       <div className="border border-black bg-white text-left text-xs font-semibold p-2">
-        Totals Value in Words :{" "}
+        Totals Value in Words :
         <span className="font-normal">{prDetails?.total_value_in_words}</span>
       </div>
 
