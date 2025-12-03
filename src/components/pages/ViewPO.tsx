@@ -226,6 +226,12 @@ const ViewPO = ({ po_name }: Props) => {
   };
 
   const handlePOChange = async (value: string) => {
+    if (!value) {
+      setPRNumber("");
+      setIPrintFormat(false);
+      setPRDetails(null);
+      return;
+    }
     setPRNumber(value);
     const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.dataBasedOnPo, method: "GET", params: { po_number: value } });
     if (response?.status == 200) {
@@ -258,7 +264,7 @@ const ViewPO = ({ po_name }: Props) => {
           type="text"
           className="w-full md:w-1/2 border border-gray-300 rounded px-4 py-2 focus:outline-none hover:border-blue-700 transition"
         /> */}
-        <Select onValueChange={(value) => { handlePOChange(value) }} value={PRNumber ?? ""}>
+        {/* <Select onValueChange={(value) => { handlePOChange(value) }} value={PRNumber ?? ""}>
           <SelectTrigger className="w-60">
             <SelectValue placeholder="Select PO Number" />
           </SelectTrigger>
@@ -271,7 +277,26 @@ const ViewPO = ({ po_name }: Props) => {
               }
             </SelectGroup>
           </SelectContent>
-        </Select>
+        </Select> */}
+        <MultiSelect
+          className="w-60 text-sm"
+          instanceId="po-search-select"
+          options={PONumberDropdown.map(po => ({
+            value: po.name,
+            label: `${po.name} - ${po.company_code || ""}`
+          }))}
+          placeholder="Search PO Number…"
+          isSearchable
+          isClearable
+          onChange={(selectedOption: any) => {
+            handlePOChange(selectedOption?.value || "");
+          }}
+          value={
+            PRNumber
+              ? { value: PRNumber, label: PRNumber }
+              : null
+          }
+        />
         <div className="flex justify-end gap-5 w-full">
           <Select onValueChange={(value) => { setSelectedPODropdown(value) }}>
             <SelectTrigger className="w-60">

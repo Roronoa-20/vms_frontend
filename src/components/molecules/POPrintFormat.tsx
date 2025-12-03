@@ -32,16 +32,16 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
     ["Supplier Quote Ref :", prDetails?.supplier_quote_ref],
   ];
 
-  const rightColumnAddressConst1 = [
+  const rightsidePOPRDetails = [
     ["P.O. No.", prDetails?.name, "Date", formatDate(prDetails?.po_date)],
     ["Amd. Ver No.", "0", "Date", ""],
-    ["Purchase Grp.", prDetails?.purchase_group, "", ""],
+    ["Purchase Grp.", prDetails?.purchase_group],
     ["Ref. PR No", prDetails?.ref_pr_no, "Ref. PR Date", formatDate(prDetails?.ref_pr_date)],
-    ["Ref. PR Person", prDetails?.ref_pr_person, "", ""],
-    ["Contact Person", prDetails?.contact_person, "Phone No.", prDetails?.phonemobile_no],
+    ["Ref. PR Person", prDetails?.ref_pr_person],
   ];
 
-  const rightColumnAddressConst2 = [
+  const rightsidecontactDetails = [
+    ["Contact Person", prDetails?.contact_person, "Phone No.", prDetails?.phonemobile_no],
     ["E-mail", prDetails?.email2],
     ["D/L No", prDetails?.dl_no],
     ["GSTIN No.", prDetails?.gstin_no],
@@ -58,7 +58,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
     ["Total Value of Purchase Order / Service Order", prDetails?.total_value_of_po__so,],
   ];
 
-  
+
 
   console.log(prDetails, "this is pr details")
 
@@ -74,7 +74,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 border border-black ">
         {/* Left Column */}
         <div className="border-r border-black">
-          <div className="flex justify-center border-b border-black py-4">
+          <div className="flex justify-center border-b border-black">
             {prDetails?.company_logo?.base64 &&
               <img
                 src={`data:${prDetails?.company_logo?.mime_type};base64,${prDetails?.company_logo?.base64}`}
@@ -86,76 +86,85 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
 
           {/* Supplier and Address */}
           <div className="grid grid-cols-4 border-b border-black">
-            <div className="col-span-2 border-r border-black p-2 font-semibold">
+            <div className="text-[16px] col-span-2 border-r border-black p-2 font-bold">
               Supplier
             </div>
-            <div className="col-span-2 p-2">
-              <span className="font-semibold">Code :</span>{" "}
+            <div className="col-span-2 p-2 justify-start font-bold">
+              <span className="text-[16px] font-bold">Code: </span>
               {prDetails?.vendor_code}
             </div>
           </div>
-          <div className="border-b border-black p-2 leading-4 text-sm">
-             <span className="font-semibold">{prDetails?.vendor_address_details?.vendor_name}</span><br/>
+          <div className="border-b border-black p-2 leading-6 text-[16px]">
+            <span className="font-semibold">{prDetails?.vendor_address_details?.vendor_name}</span><br />
             {prDetails?.vendor_address_details?.address_line_1},<br />
             {prDetails?.vendor_address_details?.address_line_2},<br />
             {prDetails?.vendor_address_details?.city} - {prDetails?.vendor_address_details?.zip_code}, {prDetails?.vendor_address_details?.state}, {prDetails?.vendor_address_details?.country}<br />
           </div>
 
           {/* Vendor Info List */}
-          {VendorInfoList?.map((item, idx) => (
-            <div className="grid grid-cols-2 border-b border-black" key={idx}>
-              <div className="border-r border-black p-2 font-semibold">
-                {item[0]}
+          {VendorInfoList?.map((item, idx) => {
+            const label = item[0];
+            const value = item[1];
+            const isGSTField = label.includes("GST");
+            return (
+              <div className="grid grid-cols-2 border-b border-black" key={idx}>
+                <div className="border-r border-black pl-1 font-bold">
+                  {label}
+                </div>
+                <div className={`p-1 ${isGSTField ? "font-bold" : "font-medium"}`}>
+                  {value}
+                </div>
               </div>
-              <div className="p-2">{item[1]}</div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Right Column */}
         <div>
-          <div className="border-b border-black p-2">
-            <div className="font-semibold">
+          <div className="border-b border-black p-1">
+            <div className="text-[17px] font-semibold">
               Bill To : {prDetails?.bill_to_company_details?.company_name}
             </div>
-            <div>{prDetails?.bill_to_company_details?.street_1}</div>
-            <div>{prDetails?.bill_to_company_details?.street_2}</div>
-            {/* <div>Muktanand Marg, Chala,</div> */}
-            <div>{prDetails?.bill_to_company_details?.city} - {prDetails?.bill_to_company_details?.pincode} ({prDetails?.bill_to_company_details?.state_full})</div>
-            <div>Phone No: {prDetails?.bill_to_company_details?.contact_no}</div>
+            <div className="text-[14px] leading-6">
+              <span className="text-black">{prDetails?.bill_to_company_details?.street_1}<br />
+                {prDetails?.bill_to_company_details?.street_2}<br />
+                {prDetails?.bill_to_company_details?.city} - {prDetails?.bill_to_company_details?.pincode} ({prDetails?.bill_to_company_details?.state_full})</span>
+            </div>
+            <div className="text-[14px]">Phone No: {prDetails?.bill_to_company_details?.contact_no}</div>
           </div>
 
-          {rightColumnAddressConst1?.map((row, idx) => (
+          {rightsidePOPRDetails?.map((row, idx) => (
             <div className="grid grid-cols-4 border-b border-black" key={idx}>
-              <div className="border-r border-black p-2 font-semibold">
+              <div className="border-r border-black pl-1 font-bold">
                 {row[0]}
               </div>
-              <div className="border-r border-black p-2">{row[1]}</div>
-              <div className="border-r border-black p-2 font-semibold">
+              <div className="border-r border-black pl-1 font-medium">{row[1]}</div>
+              <div className="border-r border-black pl-1 font-bold">
                 {row[2]}
               </div>
-              <div className="p-2">{row[3]}</div>
+              <div className="p-1 font-medium">{row[3]}</div>
             </div>
           ))}
 
-          {rightColumnAddressConst2.map((item, idx) => (
+          {rightsidecontactDetails.map((item, idx) => (
             <div className="grid grid-cols-4 border-b border-black" key={idx}>
-              <div className="border-r border-black p-2 font-semibold">
+              <div className="border-r border-black pl-1 font-bold">
                 {item[0]}
               </div>
-              <div className="col-span-3 p-2">{item[1]}</div>
+              <div className="col-span-3 p-1">{item[1]}</div>
             </div>
           ))}
 
           {/* Ship To */}
-          <div className="border-t border-black p-2">
-            <div className="font-semibold">
+          <div className="border-t border-black p-1">
+            <div className="text-[17px] font-semibold">
               Ship To : {prDetails?.ship_to_company_details?.company_name}
             </div>
-            <div>{prDetails?.ship_to_company_details?.street_1}</div>
-            <div>{prDetails?.ship_to_company_details?.street_2}</div>
-            {/* <div>Muktanand Marg, Chala,</div> */}
-            <div>{prDetails?.ship_to_company_details?.city} - {prDetails?.ship_to_company_details?.pincode} ({prDetails?.ship_to_company_details?.state_full})</div>
+            <div className="text-[14px] leading-6">
+              <span>{prDetails?.ship_to_company_details?.street_1}<br/>
+                {prDetails?.ship_to_company_details?.street_2}<br/>
+                {prDetails?.ship_to_company_details?.city} - {prDetails?.ship_to_company_details?.pincode} ({prDetails?.ship_to_company_details?.state_full})</span>
+            </div>
             <div>Phone No: {prDetails?.ship_to_company_details?.contact_no}</div>
           </div>
         </div>
