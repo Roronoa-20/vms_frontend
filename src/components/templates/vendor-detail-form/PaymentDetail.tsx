@@ -86,6 +86,7 @@ const PaymentDetail = ({
   }, []);
 
   const [errors, setErrors] = useState<any>({});
+  
   const validate = () => {
     const errors: any = {};
     if (!paymentDetail?.bank_name && !OnboardingDetail?.bank_name) {

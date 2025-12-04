@@ -408,7 +408,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                           </Button>
                         </CollapsibleTrigger>
                         <div>
-                          <div className="font-semibold text-lg">{`${mainItem?.product_full_name_head} (${mainItem?.product_name_head})`}</div>
+                          <div className="font-semibold text-lg">{`${mainItem?.product_full_name_head} (${mainItem?.product_name_head})`|| mainItem?.short_text_head }</div>
                           <div className="text-sm text-muted-foreground">
                             {/* Item No: {mainItem?.item_number_of_purchase_requisition_head} | Category: {mainItem?.category} */}
                             Item No: {mainItem?.item_number_of_purchase_requisition_head}
