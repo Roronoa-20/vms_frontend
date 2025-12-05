@@ -25,43 +25,23 @@ interface MaterialQAQCFormProps {
     MaterialDetails?: MaterialRequestData;
 }
 
-const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({
-    form,
-    ExpirationDate,
-    MaterialDetails,
-}) => {
+const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, ExpirationDate, MaterialDetails }) => {
+    console.log("QA QC ExpirationDate Details---->", ExpirationDate)
     const prevDataRef = React.useRef<string>("");
-
-    // watch inspection_require to conditionally render fields
     const inspectionRequire = useWatch({
         control: form.control,
         name: "inspection_require",
     });
 
-    // memoize options list so <SelectItem> list doesn't get recreated each render
     const expirationMemo = React.useMemo(() => ExpirationDate ?? [], [ExpirationDate]);
 
-    // ensure inspection_require has a default (only once)
-    useEffect(() => {
-        const cur = form.getValues("inspection_require");
-        if (cur === undefined || cur === null || cur === "") {
-            form.setValue("inspection_require", "No", {
-                shouldDirty: false,
-                shouldTouch: false,
-                shouldValidate: false,
-            });
-        }
-        // run only once on mount
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    // Sync incoming MaterialDetails.material_onboarding -> only set changed fields (no reset)
     useEffect(() => {
         const data = MaterialDetails?.material_onboarding;
+        console.log("Data of MaterialOnbarding---->", data)
         if (!data) return;
 
         const dataString = JSON.stringify(data);
-        if (dataString === prevDataRef.current) return; // already applied
+        if (dataString === prevDataRef.current) return;
         prevDataRef.current = dataString;
 
         const fields: (keyof MaterialOnboardingData)[] = [
@@ -74,16 +54,13 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({
             "incoming_inspection_09",
         ];
 
-        // Read current values once
         const currentValues = form.getValues();
 
-        // For each field, if different, setValue (with options that avoid validation/dirty/touch reflow)
         let didUpdate = false;
         for (const field of fields) {
             const incoming = (data as any)[field];
             const current = (currentValues as any)[field];
 
-            // treat undefined / null as "no update"
             if (incoming !== undefined && incoming !== null && incoming !== current) {
                 form.setValue(field as any, incoming, {
                     shouldDirty: false,
@@ -94,11 +71,9 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({
             }
         }
 
-        // guard: if nothing changed, do nothing further
         if (!didUpdate) return;
     }, [MaterialDetails, form]);
 
-    // Helper used in Controller render to guard onValueChange & avoid redundant updates
     const makeOnValueChangeGuarded = (field: ControllerRenderProps<FieldValues, string>) => {
         return (val: string) => {
             if (val !== field.value) field.onChange(val);
@@ -118,6 +93,7 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({
                         <FormField
                             control={form.control}
                             name="minimum_remaining_shell_life"
+                            key="minimum_remaining_shell_life"
                             render={({ field }: { field: ControllerRenderProps<FieldValues, "minimum_remaining_shell_life"> }) => (
                                 <FormItem>
                                     <FormLabel>Minimum Remaining Shell Life</FormLabel>
@@ -162,7 +138,10 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({
                                 <FormItem>
                                     <FormLabel>Period Indicator for Shelf Life Expiration Date</FormLabel>
                                     <FormControl>
-                                        <Select value={field.value ?? ""} onValueChange={makeOnValueChangeGuarded(field as any)}>
+                                        <Select value={field.value ?? undefined} onValueChange={(val) => {
+                                            if (val !== field.value) field.onChange(val);
+                                        }}
+                                        >
                                             <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
                                                 <SelectValue placeholder="Select Expiration Date Type" />
                                             </SelectTrigger>

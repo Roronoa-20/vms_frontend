@@ -3,27 +3,13 @@
 
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import UOMConversionModal from "@/src/components/molecules/material-onboarding-modal/UOMConversionModal";
 import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
 import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialRequestData, MaterialType, MaterialMaster } from "@/src/types/MaterialCodeRequestFormTypes";
 
 
-// Type definitions for props
 interface OptionType {
   name: string;
   description?: string;
@@ -53,19 +39,23 @@ interface MaterialMRPFormProps {
 
 const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType, MaterialOnboardingDetails, LotSize, UnitOfMeasure, MRPType, MRPController, MaterialDetails, SMK, isZCAPMaterial, }) => {
 
-  console.log("MRP Type----->",MaterialDetails)
+  console.log("MRP Type----->", MaterialDetails)
 
   const [showConversionModal, setShowConversionModal] = useState<boolean>(false);
   const [conversionRatio, setConversionRatio] = useState<string>("");
   const [initialLoadDone, setInitialLoadDone] = useState<boolean>(false);
-  const issueUOM = form.watch("issue_unit");
+  const issueUOM = form.watch("base_uom");
   const baseUOM = MaterialDetails?.material_request_item?.unit_of_measure;
   const showConversionUOM = baseUOM && issueUOM && baseUOM !== issueUOM;
   const [issueUOMSearch, setIssueUOMSearch] = useState<string>("");
   const [MRPControllerSearch, setMRPControllerSearch] = useState<string>("");
   const [lotsizeSearch, setlotsizeSearch] = useState<string>("");
 
+  console.log("MRP Issue UOM--->", issueUOM);
+  console.log("MRP Base UOM--->", baseUOM);
   const MRPTypeValue = form.watch("mrp_type");
+  console.log("MRP Value--->", MRPTypeValue);
+
 
   useEffect(() => {
     if (MRPTypeValue === "ND") {
@@ -75,13 +65,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
     }
   }, [MRPTypeValue, form]);
 
-  const handleUOMConversionSubmit = ({
-    numerator,
-    denominator,
-  }: {
-    numerator: string;
-    denominator: string;
-  }) => {
+  const handleUOMConversionSubmit = ({ numerator, denominator }: { numerator: string; denominator: string; }) => {
     form.setValue("numerator_issue_uom", numerator);
     form.setValue("denominator_issue_uom", denominator);
     if (baseUOM && issueUOM) {
@@ -90,48 +74,65 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
   };
 
   useEffect(() => {
-    if (!initialLoadDone) return;
+    if (!baseUOM || !issueUOM) return;
 
-    const numerator = form.getValues("numerator_issue_uom");
-    const denominator = form.getValues("denominator_issue_uom");
+    const { numerator_issue_uom, denominator_issue_uom } = form.getValues();
 
-    if (showConversionUOM && !numerator && !denominator && !showConversionModal) {
+    if (numerator_issue_uom && denominator_issue_uom) return;
+
+    if (issueUOM !== baseUOM) {
       setShowConversionModal(true);
     }
-  }, [issueUOM, baseUOM, initialLoadDone]);
+  }, [issueUOM]);
+
+  useEffect(() => {
+    const { numerator_issue_uom, denominator_issue_uom } = form.getValues();
+
+    if (baseUOM && issueUOM && numerator_issue_uom && denominator_issue_uom) {
+      setConversionRatio(
+        `${numerator_issue_uom} ${baseUOM} = ${denominator_issue_uom} ${issueUOM}`
+      );
+    }
+  }, [MaterialDetails]);
 
   const IssueUOMOptions = issueUOMSearch ? UnitOfMeasure?.filter((group) =>
-        group.description?.toLowerCase().includes(issueUOMSearch.toLowerCase()) ||
-        group.name?.toLowerCase().includes(issueUOMSearch.toLowerCase())) : UnitOfMeasure;
+    group.description?.toLowerCase().includes(issueUOMSearch.toLowerCase()) ||
+    group.name?.toLowerCase().includes(issueUOMSearch.toLowerCase())) : UnitOfMeasure;
 
   const filteredMRPControllerOptions = MRPControllerSearch ? MRPController?.filter((group) =>
-        group.description?.toLowerCase().includes(MRPControllerSearch.toLowerCase()) ||
-        group.name?.toLowerCase().includes(MRPControllerSearch.toLowerCase())) : MRPController;
+    group.description?.toLowerCase().includes(MRPControllerSearch.toLowerCase()) ||
+    group.name?.toLowerCase().includes(MRPControllerSearch.toLowerCase())) : MRPController;
 
   const filteredLotSizeOptions = lotsizeSearch ? LotSize?.filter((group) =>
-        group.description?.toLowerCase().includes(lotsizeSearch.toLowerCase()) ||
-        group.name?.toLowerCase().includes(lotsizeSearch.toLowerCase())) : LotSize;
+    group.description?.toLowerCase().includes(lotsizeSearch.toLowerCase()) ||
+    group.name?.toLowerCase().includes(lotsizeSearch.toLowerCase())) : LotSize;
 
   useEffect(() => {
     const data = MaterialDetails?.material_master;
     if (!data) return;
 
-    if (!initialLoadDone) {
-      setInitialLoadDone(true);
-    }
-
-    const fields = [ "mrp_type", "mrp_group", "mrp_controller_revised", "lot_size_key", "procurement_type", "scheduling_margin_key", "base_uom", "numerator_issue_uom", "denominator_issue_uom"] as const;
+    const fields = [
+      "mrp_type",
+      "mrp_group",
+      "mrp_controller_revised",
+      "lot_size_key",
+      "procurement_type",
+      "scheduling_margin_key",
+      "base_uom",
+      "numerator_issue_uom",
+      "denominator_issue_uom",
+    ] as const;
 
     fields.forEach((field) => {
-      if (data[field]) {
-        form.setValue(field, data[field]);
+      if (data[field] !== undefined && data[field] !== null) {
+        form.setValue(field, data[field], {
+          shouldDirty: false,
+          shouldValidate: false,
+        });
       }
     });
+  }, [MaterialDetails?.material_master]);
 
-    if (data.numerator_issue_uom && data.denominator_issue_uom && baseUOM && issueUOM) {
-      setConversionRatio(`${data.numerator_issue_uom} ${baseUOM} = ${data.denominator_issue_uom} ${issueUOM}`);
-    }
-  }, [MaterialDetails, baseUOM, issueUOM]);
 
   return (
     <div className="bg-[#F4F4F6]">
@@ -154,7 +155,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
-                        value={field.value || undefined}
+                        value={field.value ?? undefined}
                       >
                         <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
                           <SelectValue placeholder="Select Type of MRP" />
@@ -213,7 +214,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                               field.onChange(val);
                               setMRPControllerSearch("");
                             }}
-                            value={field.value || ""}
+                            value={field.value ?? undefined}
                           >
                             <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
                               <SelectValue placeholder="Select MRP Controller" />
@@ -334,7 +335,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
-                        value={field.value || undefined}
+                        value={field.value ?? undefined}
                       >
                         <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
                           <SelectValue placeholder="Select Procurement Type" />
@@ -369,7 +370,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                         <FormControl>
                           <Select
                             onValueChange={field.onChange}
-                            value={field.value || undefined}
+                            value={field.value ?? undefined}
                           >
                             <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
                               <SelectValue placeholder="Select scheduling margin key" />
@@ -404,7 +405,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                               field.onChange(val);
                               setIssueUOMSearch("");
                             }}
-                            value={field.value || ""}
+                            value={field.value ?? undefined}
                           >
                             <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
                               <SelectValue placeholder="Select Issue Unit" />
@@ -463,7 +464,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
 
             {/* Conversion Ratio */}
             {conversionRatio && (
-              <div className="col-span-3 text-sm text-blue-600 mt-2 font-medium">
+              <div className="col-span-3 text-sm text-blue-600 mt-2 font-bold">
                 Conversion Ratio: {conversionRatio}
               </div>
             )}

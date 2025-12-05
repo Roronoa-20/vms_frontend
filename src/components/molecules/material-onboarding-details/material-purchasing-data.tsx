@@ -102,6 +102,16 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
 
   }, [MaterialDetails, filteredPurchaseGroup, form]);
 
+  useEffect(() => {
+    const numerator = form.getValues("numerator_purchase_uom");
+    const denominator = form.getValues("denominator_purchase_uom");
+
+    if (numerator && denominator && baseUOM && purchaseUOM) {
+      setConversionRatio(`${numerator} ${baseUOM} = ${denominator} ${purchaseUOM}`);
+    }
+  }, [form.watch("numerator_purchase_uom"), form.watch("denominator_purchase_uom"), baseUOM, purchaseUOM]);
+
+
 
   return (
     <div className="bg-[#F4F4F6]">
