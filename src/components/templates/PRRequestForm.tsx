@@ -1,11 +1,16 @@
 
+
+// To CREATE AND VIEW THE PR FORM CREATED WITH PURCHASE ENQUIRY
+
+
 "use client"
+
 import React, { useState, useEffect, useCallback } from 'react'
 import { Input } from '../atoms/input'
 import { Button } from '../atoms/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../atoms/select'
-import { AccountAssignmentCategory, CostCenter, GLAccountNumber, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ProfitCenter, PurchaseGroup, PurchaseOrganisation, PurchaseRequestData, PurchaseRequestDropdown, StorageLocation, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType'
+import { AccountAssignmentCategory, ItemCategoryMaster, ProfitCenter, PurchaseGroup, PurchaseOrganisation, PurchaseRequestData, PurchaseRequestDropdown, StorageLocation, ValuationArea, ValuationClass } from '@/src/types/PurchaseRequestType'
 import { AlertCircleIcon, CheckCircle2Icon, Edit2Icon } from 'lucide-react'
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
@@ -26,19 +31,14 @@ import { Alert, AlertDescription, AlertTitle, AlertFooter } from "@/components/u
 import { ApproveConfirmationDialog } from '../common/ApproveConfirmationDialog';
 import Comment_box from '../molecules/CommentBox'
 
-
 interface Props {
   Dropdown: PurchaseRequestDropdown["message"]
   PRData: PurchaseRequestData["message"]["data"] | null
   cartId?: string
   pur_req?: string
+  prf_name?: string
   PurchaseGroupDropdown: PurchaseGroup[]
-  // StorageLocationDropdown: StorageLocation[]
-  // ValuationClassDropdown: ValuationClass[]
   ProfitCenterDropdown: ProfitCenter[]
-  // MaterialGroupDropdown: MaterialGroupMaster[]
-  // GLAccountDropdwon: GLAccountNumber[]
-  // CostCenterDropdown: CostCenter[]
   PurchaseOrgDropdown: PurchaseOrganisation[]
   company: string
 }
@@ -49,7 +49,8 @@ export const updateQueryParam = (key: string, value: string) => {
   window.history.pushState({}, '', url.toString());
 };
 
-const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, ProfitCenterDropdown, PurchaseOrgDropdown }: Props) => {
+const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGroupDropdown, ProfitCenterDropdown, PurchaseOrgDropdown, prf_name }: Props) => {
+  console.log("PR Data for PRF NAme---->", PRData)
   const user = Cookies.get("user_id");
   const { designation } = useAuth();
   const router = useRouter()
@@ -69,9 +70,9 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
   const [itemCategoryDropdown, setitemCategoryDropdown] = useState<ItemCategoryMaster[]>([])
   const [currentValue, setCurrentValue] = useState<number>(10);
 
-  const [sendEmailDialog,setSendEmailDialog] = useState<boolean>(false);
+  const [sendEmailDialog, setSendEmailDialog] = useState<boolean>(false);
 
-  const [comment,setComment] = useState<string>("");
+  const [comment, setComment] = useState<string>("");
 
   const deleteSubItem = async (subItemId: string) => {
     console.log(subItemId, "subItemId", pur_req, "pur_req")
@@ -109,7 +110,6 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     ) => {
       const { name, value } = e.target;
       setFormData((prev) => ({ ...prev, [name]: value }) as PurchaseRequestData["message"]["data"]);
-      // Clear error for the field
       if (value.trim() !== "") {
         setErrors((prev) => {
           const newErrors = { ...prev };
@@ -125,7 +125,6 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     (value: any, name: string) => {
 
       setFormData((prev) => ({ ...prev, [name]: value }) as PurchaseRequestData["message"]["data"]);
-      // Clear error for the field
       if (value !== "") {
         setErrors((prev) => {
           const newErrors = { ...prev };
@@ -167,30 +166,49 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     }
   };
 
-  const fetchTableData = async (pur_req: string) => {
-    console.log(pur_req, "pur_req in table code")
-    const url = `${API_END_POINTS?.fetchPRTableData}?name=${pur_req}`
-    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
-    if (response?.status == 200) {
-      console.log(response, "response of table data")
-      setMainItems(response.data.message)
-    } else {
-      alert("error");
+  const fetchTableData = async (pur_req: string, prf_name?: string) => {
+    console.log(pur_req, "pur_req in table code");
+    try {
+      let url = "";
+      if (pur_req) {
+        url = `${API_END_POINTS?.fetchPRTableData}?name=${pur_req}`;
+      } else {
+        url = `${API_END_POINTS?.fetchPRFDoctypeData}?prf_name=${prf_name}`;
+      }
+      const response: AxiosResponse = await requestWrapper({ url, method: "GET", });
+      if (response?.status === 200) {
+        console.log(response, "response of table data------------------------------------------");
+        setMainItems(response.data.message);
+      } else {
+        alert("Error fetching PR data");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong while fetching PR data.");
     }
   };
 
+
   const handleNext = async () => {
-    const url = API_END_POINTS?.createPR;
-    const response: AxiosResponse = await requestWrapper({ url: url, data: { ...formData }, method: "POST" });
-    if (response?.status == 200) {
-      console.log(response.data.message.name, "reposne dxcfgvbhjnkmjhgvfcdxcfvgbh")
-      updateQueryParam("pur_req", response.data.message.name)
-      fetchTableData(response.data.message.name)
-      alert("Submitted Successfully");
-    } else {
-      alert("error");
+    console.log(formData, "formData")
+    try {
+      const url = API_END_POINTS.createPR;
+      const response: AxiosResponse = await requestWrapper({ url, data: { data: { ...formData, requisitioner: user } }, method: "POST" });
+
+      if (response?.status === 200) {
+        const purReqName = response.data.message.name;
+        updateQueryParam("pur_req", purReqName);
+        fetchTableData(purReqName, "");
+        alert("Submitted Successfully");
+      } else {
+        alert("Error");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong.");
     }
   };
+
 
   const handleModel = (purchase_requisition_type: string) => purchase_requisition_type === "SB" ? setEditModalOpen(true) : setNBEditModalOpen(true);
 
@@ -207,8 +225,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
   }
 
   const handleEmailToPurchaseTeam = async () => {
-    
-    const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.prToPurchaseTeam, params: { name: pur_req,enquirer_remarks:comment }, method: "POST" });
+    const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.prToPurchaseTeam, params: { name: pur_req, enquirer_remarks: comment }, method: "POST" });
     if (response?.status == 200) {
       alert("Email sent to purchase team successfully");
       handleClose();
@@ -217,16 +234,20 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     }
   }
 
-  const handleClose = ()=>{
+  const handleClose = () => {
     setSendEmailDialog(false);
-  }
+  };
 
   useEffect(() => {
-    if (pur_req) {
-      fetchTableData(pur_req);
+    if (pur_req || prf_name) {
+      fetchTableData(pur_req ?? "", prf_name ?? "");
     }
-    fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "")
-  }, [pur_req, PRData?.purchase_requisition_type])
+    if (PRData?.purchase_requisition_type) {
+      fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "");
+    }
+  }, [pur_req, prf_name, PRData?.purchase_requisition_type]);
+
+  console.log("Main INTems wrughwirhoerg----------->",mainItems)
 
   return (
     <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
@@ -238,7 +259,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           <Select
             onValueChange={(value) => { handleSelectChange(value, "purchase_requisition_type") }}
             value={formData?.purchase_requisition_type ?? ""}
-            disabled
+            disabled={cartId ? true : false}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select" />
@@ -261,7 +282,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           <Select
             value={formData?.company ?? ""}
             onValueChange={(value) => { handleSelectChange(value, "company") }}
-            disabled
+            disabled={cartId ? true : false}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select" />
@@ -281,7 +302,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Plant <span className="text-red-600 ml-1">*</span>
           </h1>
-          <Select value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant") }} disabled>
+          <Select value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant") }} disabled={cartId ? true : false}>
             <SelectTrigger className={`${errors?.plant
               ? `border border-red-600`
               : ``
@@ -307,7 +328,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Purchase Group <span className="text-red-600 ml-1">*</span>
           </h1>
-          <Select onValueChange={(value) => { handleSelectChange(value, "purchase_group") }} value={formData?.purchase_group ?? ""} disabled>
+          <Select onValueChange={(value) => { handleSelectChange(value, "purchase_group") }} value={formData?.purchase_group ?? ""} disabled={cartId ? true : false}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -322,35 +343,39 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
             </SelectContent>
           </Select>
         </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">Cart Id</h1>
-          <Input placeholder="" name='requisitioner' value={formData?.cart_id ?? ""} disabled />
-        </div>
+        {cartId &&
+          <div className="col-span-1">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">Cart Id</h1>
+            <Input placeholder="" name='requisitioner' value={formData?.cart_id ?? ""} disabled />
+          </div>}
       </div>
-      {!(mainItems?.docname && mainItems?.docname) && <div className={`flex justify-end p-2`}><Button type='button' className='py-2' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => handleNext()}>Next</Button></div>}
 
-      {(mainItems?.sap_status == "Failed" || mainItems?.sap_status == "Success") &&
+      {!(mainItems?.docname && mainItems?.docname) &&
+        <div className={`flex justify-end p-2`}><Button type='button' className='py-2' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => handleNext()}>Next</Button>
+        </div>
+      }
+
+      {(mainItems?.sap_status == "Failed" || mainItems?.sap_status == "Success" || mainItems?.sap_status == "RELEASED") &&
         <div className='p-2'>
-          {
-            mainItems?.sap_status == "Failed" ?
-              <Alert variant="destructive">
-                <AlertCircleIcon />
-                <AlertTitle className='pl-1'>SAP Error!!!</AlertTitle>
-                <AlertDescription>
-                  Error: {mainItems?.sap_response}
-                </AlertDescription>
-                <AlertFooter className='mt-2 text-sm italic'>
-                  Kindly review and Re-Submit the Request.
-                </AlertFooter>
-              </Alert>
-              :
-              <Alert variant="success">
-                <CheckCircle2Icon />
-                <AlertTitle>Success! </AlertTitle>
-                <AlertDescription>
-                  {mainItems?.sap_response}
-                </AlertDescription>
-              </Alert>
+          {mainItems?.sap_status == "Failed" ?
+            <Alert variant="destructive">
+              <AlertCircleIcon />
+              <AlertTitle className='pl-1'>SAP Error!!!</AlertTitle>
+              <AlertDescription>
+                Error: {mainItems?.sap_response}
+              </AlertDescription>
+              <AlertFooter className='mt-2 text-sm italic'>
+                Kindly review and Re-Submit the Request.
+              </AlertFooter>
+            </Alert>
+            :
+            <Alert variant="success">
+              <CheckCircle2Icon />
+              <AlertTitle>Success! </AlertTitle>
+              <AlertDescription>
+                {mainItems?.sap_response}
+              </AlertDescription>
+            </Alert>
           }
         </div>
       }
@@ -383,23 +408,25 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                           </Button>
                         </CollapsibleTrigger>
                         <div>
-                          <div className="font-semibold text-lg">{mainItem?.product_name_head}</div>
+                          <div className="font-semibold text-lg">{`${mainItem?.product_full_name_head} (${mainItem?.product_name_head})`|| mainItem?.short_text_head }</div>
                           <div className="text-sm text-muted-foreground">
                             {/* Item No: {mainItem?.item_number_of_purchase_requisition_head} | Category: {mainItem?.category} */}
                             Item No: {mainItem?.item_number_of_purchase_requisition_head}
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                            {mainItem?.subhead_fields.length} sub-items
-                          </Badge>
+                          {mainItem?.purchase_requisition_type === "SB" && (
+                            <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                              {mainItem?.subhead_fields.length} sub-items
+                            </Badge>
+                          )}
                           <Badge variant="outline">
                             {mainItem?.purchase_requisition_type}
                           </Badge>
                           {/* <Badge variant="outline">${mainItem?.estimatedPrice}</Badge> */}
                         </div>
                       </div>
-                      {mainItems?.sap_status != "Success" && (
+                      {mainItems?.sap_status == "Failed" && (
                         <div className="flex items-center gap-2">
                           {((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
                             <>
@@ -438,8 +465,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                         {mainItem.purchase_requisition_type == "SB" && <div className="mt-4">
                           <div className="flex items-center justify-between mb-4">
                             <h4 className="font-semibold text-lg">Sub Items ({mainItem?.subhead_fields.length})</h4>
-
-                            {((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
+                            {mainItems?.sap_status === "Success" && ((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -490,10 +516,10 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                                         <TableCell className="text-center">{subItem?.currency_subhead || "N/A"}</TableCell>
                                         <TableCell className="text-center">{subItem?.service_type_subhead || "N/A"}</TableCell>
                                         <TableCell className="text-center">{subItem?.net_value_subhead || "N/A"}</TableCell>
-                                        <TableCell className="text-center text-nowrap">{subItem?.cost_center_subhead || "N/A"}</TableCell>
-                                        <TableCell className="text-center">{subItem?.gl_account_number_subhead || "N/A"}</TableCell>
+                                        <TableCell className="text-center text-nowrap">{subItem?.cost_center_subhead_desc || "N/A"}</TableCell>
+                                        <TableCell className="text-center text-nowrap">{subItem?.gl_account_number_subhead_desc || "N/A"}</TableCell>
                                         {/* Sticky Actions Cell */}
-                                        {((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) &&
+                                        {mainItems?.sap_status === "Success" && ((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) &&
                                           <TableCell className="text-center sticky right-0 bg-white z-20">
                                             <div className='flex gap-2'>
                                               <Button
@@ -516,29 +542,6 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                                             </div>
                                           </TableCell>
                                         }
-                                        {/* {(designation === "Purchase Team" && !mainItems?.form_is_submitted) &&
-                                          <TableCell className="text-center sticky right-0 bg-white z-20">
-                                            <div className='flex gap-2'>
-                                              <Button
-                                                size="sm"
-                                                onClick={() => {
-                                                  setEditSubItemRow(subItem);
-                                                  setIsSubItemModalOpen(true);
-                                                  setEditAction(true)
-                                                }}
-                                              >
-                                                <Edit2Icon className="w-4 h-4" />
-                                              </Button>
-                                              <Button
-                                                variant="destructive"
-                                                size="sm"
-                                                onClick={() => deleteSubItem(subItem.row_name)}
-                                              >
-                                                <Trash2 className="w-4 h-4" />
-                                              </Button>
-                                            </div>
-                                          </TableCell>
-                                        } */}
                                       </TableRow>
                                     ))}
                                   </TableBody>
@@ -546,7 +549,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                               </div>
                             </div>
                           ) : (
-                            mainItem?.purchase_requisition_type === "SB" &&
+                            (mainItem?.purchase_requisition_type === "SB") && (mainItems?.sap_status === "Success") &&
                             ((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
                               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                                 <p className="text-gray-500 mb-4">No sub-items added yet</p>
@@ -618,34 +621,35 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           plant={formData?.plant ? formData?.plant : ''}
           company={formData?.company ? formData?.company : ""}
           purchase_group={formData?.purchase_group ? formData?.purchase_group : ""}
+          disabled={true}
         />
       }
 
       {mainItems?.docname && (
-        <div className="flex justify-end py-6 gap-4">
+        <div className="flex justify-end py-6 gap-4 mr-3">
           {(!mainItems?.mail_sent_to_purchase_team) && (designation === "Enquirer") ? (
             <>
               {(mainItems?.sap_status == "Failed") && (
                 <Button
                   className="py-2.5"
                   variant={"nextbtn"}
-                  size={"nextbtnsize"} 
+                  size={"nextbtnsize"}
                   onClick={() => { setSendEmailDialog(true) }}>Send Email To Purchase Team</Button>
               )}
-
-              <Button
-                type="button"
-                className="py-2.5"
-                variant={"nextbtn"}
-                size={"nextbtnsize"}
-                onClick={() => handleSubmit()}
-              >
-                Submit
-              </Button>
+              {(mainItems?.sap_status == "Failed" || mainItems?.sap_status == "Pending") && (
+                <Button
+                  type="button"
+                  className="py-2.5"
+                  variant={"nextbtn"}
+                  size={"nextbtnsize"}
+                  onClick={() => handleSubmit()}
+                >
+                  Submit
+                </Button>
+              )}
             </>
           ) : (
-            // Show Final Submit button if designation is Purchase Team
-            (designation === "Purchase Team" && !mainItems?.form_is_submitted) && (mainItems?.mail_sent_to_purchase_team) && (
+            (mainItems?.sap_status == "Failed") && (designation === "Purchase Team" && !mainItems?.form_is_submitted) && (mainItems?.mail_sent_to_purchase_team) && (
               <Button
                 type="button"
                 className="py-2.5"
@@ -671,9 +675,9 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
 
       {
         sendEmailDialog && (
-        <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
-          <Comment_box handleClose={handleClose} Submitbutton={handleEmailToPurchaseTeam} handleComment={setComment} />
-        </div>
+          <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
+            <Comment_box handleClose={handleClose} Submitbutton={handleEmailToPurchaseTeam} handleComment={setComment} />
+          </div>
         )
       }
     </div>

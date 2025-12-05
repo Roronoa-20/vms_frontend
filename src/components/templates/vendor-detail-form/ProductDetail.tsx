@@ -98,11 +98,6 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
 
   const handleAdd = async () => {
 
-    if (materialsTable?.length < 1) {
-      alert("Please Enter At Least 1 Material Details")
-      return;
-    }
-
     const formdata = new FormData();
     if(productImage){
       formdata.append("material_images",productImage);
@@ -133,6 +128,10 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
   };
 
   const handleNext = ()=>{
+    if (materialsTable?.length == 0) {
+      alert("Please Enter At Least 1 Material Details")
+      return;
+    }
     router.push(
       `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
     )

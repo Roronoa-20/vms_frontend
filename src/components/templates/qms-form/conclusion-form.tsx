@@ -7,13 +7,15 @@ import { Input } from "../../atoms/input";
 import { useSearchParams } from "next/navigation";
 import { useQMSForm } from '@/src/hooks/useQMSForm';
 import SignatureCanvas from 'react-signature-canvas';
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import requestWrapper from "@/src/services/apiCall";
 
 
 export const ConclusionForm = ({ vendor_onboarding, ref_no, company_code }: { vendor_onboarding: string; ref_no:string; company_code:string }) => {
     const params = useSearchParams();
     const currentTab = params.get("tabtype")?.toLowerCase() || "conclusion";
     const [showSignatureCanvas, setShowSignatureCanvas] = useState(true);
-    const { formData, handleCheckboxChange, sigRefs, signaturePreview, handleTextareaChange, handleSaveSignature, handleSignatureUpload, handleClearSignature, handleBack, handleApproval
+    const { formData, handleCheckboxChange, sigRefs, signaturePreview, handleTextareaChange, handleSignatureUpload, handleClearSignature, handleBack, handleApproval
     } = useQMSForm(vendor_onboarding, currentTab);
 
 
@@ -128,7 +130,7 @@ export const ConclusionForm = ({ vendor_onboarding, ref_no, company_code }: { ve
                                 variant="nextbtn"
                                 size="nextbtnsize"
                                 onClick={(e) => {
-                                    handleSaveSignature(e,("performer_esignature"));
+                                    // handleSaveSignature(e,("performer_esignature"));
                                     setShowSignatureCanvas(false);
                                 }}
                             >

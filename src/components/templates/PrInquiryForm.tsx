@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Input } from '../atoms/input'
 import { Button } from '../atoms/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
@@ -16,8 +16,11 @@ import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle2 } from "lucide-react";
-import { toast, ToastContainer } from 'react-toastify'
+import { CheckCircle2, XIcon } from "lucide-react";
+import { toast, ToastContainer } from 'react-toastify';
+import MultiSelect, { GroupBase, MultiValue } from "react-select";
+import { multiSelectStyles } from "@/src/components/common/sharedStyles";
+
 
 
 interface Props {
@@ -36,6 +39,12 @@ type ProductNameDropdown = {
   product_price: string,
   lead_time: string,
 }
+
+type OptionType = {
+  value: string;
+  label: string;
+};
+
 const currentDate = new Date();
 
 const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeDropdown }: Props) => {
@@ -53,19 +62,21 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [purchaseGroupDropdown, setPurchaseGroupDropdown] = useState<{ name: string, purchase_group_code: string, purchase_group_name: string, description: string }[]>();
-  const [costCenterDropdown, setCostCenterDropdown] = useState<{ name: string, cost_center_code: string, cost_center_name: string, description: string }[]>([]);
-  const [glAccountDropdown, setGLAccountDropdown] = useState<{ name: string, gl_account_code: string, gl_account_name: string, description: string }[]>([]);
+  const [costCenterDropdown, setCostCenterDropdown] = useState<readonly (string | GroupBase<string>)[]>([]);
+  const [glAccountDropdown, setGLAccountDropdown] = useState<readonly (string | GroupBase<string>)[]>([]);
 
   const [toEmail, setToEmail] = useState<string>("");
   const router = useRouter();
   const param = useSearchParams();
   const refno = param.get("cart_Id");
 
+  const fileUploadRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (PRInquiryData?.company) {
       handleCompanyChange(PRInquiryData?.company);
     }
-
+    
     if (PRInquiryData?.category_type) {
       fetchProductName(PRInquiryData?.category_type);
     }
@@ -89,7 +100,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
       setFormData((prev: any) => ({ ...prev, [name]: value }));
     }
   }
-
+  console.log(formData,"this is form data")
   const requiredTableFields = {
     product_name: "Please Select Product",
     uom: "Please Select UOM",
@@ -213,8 +224,26 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     if (response?.status == 200) {
       setPlantDropdown(response?.data?.message?.plants?.data);
       setPurchaseGroupDropdown(response?.data?.message?.purchase_groups?.data);
-      setCostCenterDropdown(response?.data?.message?.cost_centers?.data);
-      setGLAccountDropdown(response?.data?.message?.gl_accounts?.data);
+      console.log(response?.data?.message?.purchase_groups?.data,"jdjfdjfjdhfj")
+      // setCostCenterDropdown(response?.data?.message?.cost_centers?.data);
+      // setGLAccountDropdown(response?.data?.message?.gl_accounts?.data);
+
+      console.log(response?.data?.message?.cost_centers?.data,"this is cost center")
+
+      setCostCenterDropdown(
+        response?.data?.message?.cost_centers?.data?.map((item:any) => ({
+          label: item?.cost_center_code+item?.cost_center_name,
+          value: item?.name,
+        }))
+      );
+
+      setGLAccountDropdown(
+        response?.data?.message?.gl_accounts?.data?.map((item:any) => ({
+          label: item?.description,
+          value: item?.name,
+        }))
+      );
+
     }
   }
 
@@ -240,7 +269,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
     }
   };
 
-  let requiredFields : { [key: string]: string } = {
+  let requiredFields: { [key: string]: string } = {
     cart_use: "Please Select Cart Use",
     category_type: "Please Select Category Type",
     company: "Please Select Company",
@@ -253,7 +282,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
 
 
   const handleNext = async () => {
-    
+
     //validation
     // if(formData?.purchase_type == "SB"){
     //   requiredFields.cost_center = "Please Select Cost Center";
@@ -267,7 +296,9 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
       }
     }
 
-    const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.submitPrInquiryNextButton, data: { data: { ...formData, cart_date: formData?.cart_date ?? formatDateISO(new Date()), user: user, } }, method: "POST" });
+    const updatedData = {...formData,gl_account:formData?.gl_account?.value,cost_center:formData?.cost_center?.value}
+
+    const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.submitPrInquiryNextButton, data: { data: { ...updatedData, cart_date: formData?.cart_date ?? formatDateISO(new Date()), user: user, } }, method: "POST" });
     if (response?.status == 200) {
       router.push(`/pr-inquiry?cart_Id=${response?.data?.message?.name}`);
     }
@@ -280,7 +311,30 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
       // router.push(`pr-inquiry?cart_Id=${refno}`);
       location.reload();
     }
-  }
+  };
+
+  // const handleNumberInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //   const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
+  //   if (allowedKeys.includes(e.key)) return;
+  //   if (e.key === ".") {
+  //     if (e.currentTarget.value.includes(".")) {
+  //       e.preventDefault();
+  //     }
+  //     return;
+  //   }
+  //   if (!/^\d$/.test(e.key)) {
+  //     e.preventDefault();
+  //   }
+  // };
+
+  const handleFileDelete = () => {
+    if (fileUploadRef?.current) {
+      fileUploadRef.current.value = "";
+      setSingleTableRow((prev: any) => ({ ...prev, file: null }));
+    }
+    return;
+  };
+
 
   return (
     <>
@@ -403,7 +457,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
               Cost Center <span className='text-red-400 text-[20px]'>*</span>
             </h1>
-            <Select
+            {/* <Select
               value={formData?.cost_center ?? ""}
               onValueChange={(value) => handleSelectChange(value, "cost_center", false)}
               disabled={refno ? true : false}
@@ -418,7 +472,16 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
                   ))}
                 </SelectGroup>
               </SelectContent>
-            </Select>
+            </Select> */}
+            <MultiSelect
+              onChange={(value)=>{handleSelectChange(value, "cost_center", false)}}
+              instanceId="multiselect"
+              options={costCenterDropdown}
+              value={formData?.cost_center}
+              className="text-[12px] text-black"
+              menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+              styles={multiSelectStyles}
+            />
           </div>
 
           {/* G/L Account */}
@@ -426,7 +489,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
             <h1 className="text-[14px] font-normal text-[#000000] pb-2">
               G/L Account <span className='text-red-400 text-[20px]'>*</span>
             </h1>
-            <Select
+            {/* <Select
               value={formData?.gl_account ?? ""}
               onValueChange={(value) => handleSelectChange(value, "gl_account", false)}
               disabled={refno ? true : false}
@@ -441,7 +504,16 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
                   ))}
                 </SelectGroup>
               </SelectContent>
-            </Select>
+            </Select> */}
+            <MultiSelect
+              onChange={(value)=>{handleSelectChange(value, "gl_account", false)}}
+              instanceId="multiselect2"
+              options={glAccountDropdown}
+              value={formData?.gl_account}
+              className="text-[12px] text-black"
+              menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+              styles={multiSelectStyles}
+            />
           </div>
           <div className='col-span-1 flex items-end gap-4'>
             <Button className={`py-1.5 ${refno ? "hidden" : ""}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={(e) => { handleNext() }}>Next</Button>
@@ -518,7 +590,8 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">
                   Product Quantity <span className='text-red-400 text-[20px]'>*</span>
                 </h1>
-                <Input placeholder="" name='product_quantity' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_quantity ?? ""} />
+                <Input placeholder="" name='product_quantity' type='number' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.product_quantity ?? ""} />
+                {/* <Input placeholder="" name='product_quantity' onChange={(e) => { handleFieldChange(true, e) }} onKeyDown={handleNumberInputKeyDown} inputMode="decimal" value={singleTableRow?.product_quantity ?? ""} /> */}
               </div>
               <div className="col-span-1">
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">
@@ -526,11 +599,48 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
                 </h1>
                 <Input placeholder="" name='user_specifications' onChange={(e) => { handleFieldChange(true, e) }} value={singleTableRow?.user_specifications ?? ""} />
               </div>
+              {/* <div className="col-span-1">
+                <h1 className="text-[14px] font-normal text-[#000000] pb-2">
+                  Attachment
+                </h1>
+                {!singleTableRow?.file && (
+                  <Input
+                    type="file"
+                    accept="application/pdf,image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setSingleTableRow((prev: any) => ({ ...prev, file }));
+                      }
+                    }}
+                  />
+                )}
+
+                {singleTableRow?.file && (
+                  <div className="flex items-center gap-3 border p-2 rounded-md bg-gray-50">
+                    <span className="text-sm">{singleTableRow.file.name}</span>
+
+                    <XIcon
+                      size={20}
+                      className="text-red-500 cursor-pointer hover:text-red-700 transition"
+                      onClick={() => {
+                        setSingleTableRow((prev: any) => ({
+                          ...prev,
+                          file: null,
+                        }));
+                      }}
+                    />
+                  </div>
+                )}
+              </div> */}
               <div className="col-span-1">
                 <h1 className="text-[14px] font-normal text-[#000000] pb-2">
                   Attachment
                 </h1>
-                <Input type='file' onChange={(e) => { setSingleTableRow((prev: any) => ({ ...prev, file: e.target?.files?.[0] })) }} />
+                <div className='flex gap-3 items-center'>
+                  <Input ref={fileUploadRef} type='file' onChange={(e) => { setSingleTableRow((prev: any) => ({ ...prev, file: e.target?.files?.[0] })) }} />
+                  <XIcon className={`text-red-400 ${singleTableRow?.file ? "" : "hidden"} hover:cursor-pointer`} onClick={() => { handleFileDelete() }} />
+                </div>
               </div>
               {
                 <div className="col-span-1 mt-8">
@@ -600,12 +710,12 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, companyDropdown, purchaseTypeD
                     </div>
                     </TableCell>
                     <TableCell>
-                      <>
-                        {
-                          PRInquiryData?.asked_to_modify ?
-                            <PencilIcon className='cursor-pointer' onClick={() => { handleEdit(item, index) }} /> : null
-                        }
-                      </>
+                      {(PRInquiryData?.asked_to_modify || !PRInquiryData?.is_submited) ? (
+                        <PencilIcon
+                          className="cursor-pointer"
+                          onClick={() => handleEdit(item, index)}
+                        />
+                      ) : null}
                     </TableCell>
                   </TableRow>
                 ))}

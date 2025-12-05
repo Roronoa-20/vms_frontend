@@ -68,17 +68,7 @@ const CompanyAddress = ({
 }: Props) => {
 
   const router = useRouter();
-
-  const {
-    billingAddress,
-    shippingAddress,
-    multiple_location_table,
-    updatebillingAddress,
-    updateshippingAddress,
-    updateLocationAtIndex,
-    addMultipleLocation,
-    resetMultiple
-  } = useCompanyAddressFormStore();
+  const { billingAddress, shippingAddress, multiple_location_table, updatebillingAddress, updateshippingAddress, updateLocationAtIndex, addMultipleLocation, resetMultiple} = useCompanyAddressFormStore();
   const [pincodeFetchData, setPincodeData] = useState<pincodeFetchData>();
   const [isShippingSame, setIsShippingSame] = useState<boolean>(OnboardingDetail?.same_as_above == 1 ? true : false);
   const [shippingData, setShippingData] = useState<shippingData>();
@@ -117,6 +107,11 @@ const CompanyAddress = ({
         url: pincodeChangeUrl,
         method: "GET",
       });
+      if(pincodeChangeResponse?.status == 404){
+        alert("No Pincode Found please contact the admin to update the pincode");
+        updatebillingAddress("pincode", "");
+        return;
+      }
       const data: pincodeBasedData["message"] =
         pincodeChangeResponse?.status == 200
           ? pincodeChangeResponse?.data?.message
@@ -348,7 +343,7 @@ const CompanyAddress = ({
           />
           {/* Helper note */}
           <p className="text-xs text-gray-500 pt-2">
-            Enter the Pincode/Postal Code/ZipCode in the global format for your state or country. <br />
+            Enter the Pincode/Postal Code/ZipCode in the global format for your state or country expect India.<br />
             <span className="underline text-black font-medium">(For Eg.- Country: <span className="underline text-blue-500 font-medium">Sweden</span>, ZipCode: <span className="underline text-blue-500 font-medium">123 45</span>)</span>
           </p>
 
@@ -366,6 +361,7 @@ const CompanyAddress = ({
             value={billingAddress?.district?.district_name ?? OnboardingDetail?.billing_address?.district_details?.district_name ?? ""}
             // defaultValue={}
             readOnly
+            
           />
         </div>
         <div className="grid grid-cols-3 col-span-4 gap-4">

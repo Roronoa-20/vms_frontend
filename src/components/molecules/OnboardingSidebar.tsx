@@ -25,7 +25,7 @@ const OnboardingSidebar = ({ onboarding_refno, refno, isAccountsTeam, vendor_typ
     tabs = !isMaterialType ? sidebarTabsWithoutMaterialType : OnboardingTabs
   }
   return (
-    <div className="p-3 flex flex-col bg-white rounded-xl gap-3 h-fit max-h-[80vh] overflow-y-scroll no-scrollbar">
+    <div className="p-3 flex flex-col bg-white rounded-xl gap-3 h-fit max-h-[80vh] w-1/4 overflow-y-scroll no-scrollbar">
       {tabs?.map((item, index) => (
         <div
           // onClick={() => {

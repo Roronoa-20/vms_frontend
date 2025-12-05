@@ -18,15 +18,16 @@ const API_END_POINTS = {
   vendorRegistrationSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration.vendor_registration`,
   vendorOnboardingDetail: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_onboarding_get_data.get_vendor_onboarding_data`,
   companyDetailDropdown: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration_masters.vendor_onboarding_company_dropdown_master`,
+  VendorNameCheckApi: `${url}/api/method/vms.APIs.vendor_onboarding.get_vendor_master_data.get_vendors_by_name`,
   companyDetailSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_company_details.update_vendor_onboarding_company_details`,
   companyAddressSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_company_details.update_vendor_onboarding_company_address`,
   companyAddressDropdown: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration_masters.all_address_masters`,
   districtchangeUrl: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_registration_masters.address_filter`,
   contactDetailSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_contact_details.update_vendor_onboarding_contact_details`,
   manufacturingDetailSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_manufacturing_details.update_vendor_onboarding_manufacturing_details`,
-  addProductDetail:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_manufacturing_details.update_supplied_material_data`,
-  criticalNonCritical:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_manufacturing_details.update_supplied_material_data`,
-  deleteProductDetailItem:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_manufacturing_details.delete_supplied_material_row`,
+  addProductDetail: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_manufacturing_details.update_supplied_material_data`,
+  criticalNonCritical: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_manufacturing_details.update_supplied_material_data`,
+  deleteProductDetailItem: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_manufacturing_details.delete_supplied_material_row`,
   employeeDetailSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.production_facility.update_vendor_onboarding_production_facility_details`,
   machineDetailSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.production_facility.update_vendor_onboarding_machinery_detail`,
   testingDetailSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_testing_details.update_vendor_onboarding_testing_details`,
@@ -69,11 +70,36 @@ const API_END_POINTS = {
   prInquiryHodApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.hod_approval_check`,
   prInquiryPurchaseApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.purchase_approval_check`,
   prTableData: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pr_w`,
-  qmsformdetails: `${url}/api/method/vms.APIs.assessment_apis.qms_api.get_qms_details_without_label`,
-  qmsformapproval: `${url}/api/method/vms.APIs.assessment_apis.qms_api.approve_qms_form`,
-  qmsformsubmit: `${url}/api/method/vms.APIs.assessment_apis.save_qms_assessment.save_qms_assessment_complete`,
-  qmstablemultiselect: `${url}/api/method/vms.APIs.assessment_apis.get_or_create_qms_multiselect_data.get_all_multiselect_masters`,
-  qmsqadocumenttypelist: `${url}/api/method/vms.APIs.assessment_apis.get_or_create_qms_multiselect_data.get_quality_agreement_list`,
+  prInquiryProductHistory: `${url}/api/method/vms.APIs.purchase_api.product_inquiry_details_report.get_latest_product_inquiry`,
+  FullProductHistory: `${url}/api/method/vms.APIs.purchase_api.product_inquiry_details_report.get_product_inquiry_report`,
+  purchasingDetailsSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_purchase_details.update_vendor_onboarding_purchase_details`,
+  checkfileuser: `${url}/api/method/vms.utils.file_handling.check_user`,
+  securefileview: `${url}/api/method/vms.utils.file_handling.secure_file`,
+
+  // QMS Related APIs
+  qmsformdetails: `${url}/api/method/vms.APIs.qms_api.qms_api.get_qms_details_without_label`,
+  qmsformapproval: `${url}/api/method/vms.APIs.qms_api.qms_api.approve_qms_form`,
+  qmsformapprovalmatrix: `${url}/api/method/vms.APIs.approval.approve_qms.approve_qms`,
+  qmsformsubmit: `${url}/api/method/vms.APIs.qms_api.save_qms_assessment.save_qms_assessment_complete`,
+  CreateQMSvendorInfoForm: `${url}/api/method/vms.APIs.qms_api.create_qms_form.create_update_qms_form`,
+  updateQASForm: `${url}/api/method/vms.APIs.qms_api.update_qas_details.update_qas_details`,
+  updateOrganizationForm: `${url}/api/method/vms.APIs.qms_api.update_organization_struc_details.update_org_struc_details`,
+  updateBuildingForm: `${url}/api/method/vms.APIs.qms_api.update_building_facility_details.update_building_facility_details`,
+  updateMaterialForm: `${url}/api/method/vms.APIs.qms_api.update_material_control_details.update_materil_details`,
+  updateQualityForm: `${url}/api/method/vms.APIs.qms_api.update_quality_control_details.update_quality_control_details`,
+  updateProductionForm: `${url}/api/method/vms.APIs.qms_api.update_production_control_details.update_production_details`,
+  updateComplaintForm: `${url}/api/method/vms.APIs.qms_api.update_complaint_details.update_complaint_details`,
+  updateSupplementForm: `${url}/api/method/vms.APIs.qms_api.update_supplemental_details.update_supplemental_details`,
+  getusersignature: `${url}/api/method/vms.APIs.qms_apis.qms_api.send_signature_image`,
+  qmstablemultiselect: `${url}/api/method/vms.APIs.qms_api.get_or_create_qms_multiselect_data.get_all_multiselect_masters`,
+  qmsqadocumenttypelist: `${url}/api/method/vms.APIs.qms_api.get_or_create_qms_multiselect_data.get_quality_agreement_list`,
+  createsubmitQualityAgreement: `${url}/api/method/vms.APIs.qms_api.update_quality_agreement.create_qms_quality_agreement`,
+  submitform5MDPLQualityAgreement: `${url}/api/method/vms.APIs.qms_api.update_quality_agreement.create_products_in_qa_table`,
+  submitMLSPLProductsQualityAgreement: `${url}/api/method/vms.APIs.qms_api.update_quality_agreement.create_mlspl_qa_list_table`,
+  getqualityagreementdetails: `${url}/api/method/vms.APIs.qms_api.qms_api.get_qms_quality_agreement`,
+  deleteform5Products: `${url}/api/method/vms.APIs.qms_api.update_quality_agreement.delete_products_in_qa_table`,
+  deletemlsplproducts: `${url}/api/method/vms.APIs.qms_api.update_quality_agreement.delete_mlspl_qa_list_table`,
+
   poBasedOnVendorCode: `${url}/api/method/vms.APIs.purchase_api.dispatch_item.list_purchase_order`,
   PODetailsBasedOnPOCode: `${url}/api/method/vms.APIs.purchase_api.dispatch_item.get_poitem_against_po`,
   PurchaseEnquiryModify: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.modified_peq`,
@@ -91,19 +117,24 @@ const API_END_POINTS = {
   poTable: `${url}/api/method/vms.APIs.dashboard_api.filter_card.filtering_po_details`,
   dataBasedOnPo: `${url}/api/method/vms.APIs.purchase_api.po_get_mails.get_vendor_mails`,
 
+  // Category Master APIs
+  CategoryMasterDashboardAPI: `${url}/api/method/vms.APIs.category_filter.v1.get_filtered_records.get_filtered_records`,
+
   //pr api atul
   fetchDataCartId: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.get_cart_details`,
   createPR: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.create_purchase_requisition`,
   fetchPRTableData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.get_pur_req_table_data`,
   PRTableHeadSubmitData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.update_pr_table_head_form`,
   PRTableSubHeadSubmitData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.create_pr_table_subhead_form`,
-  PRTableSubHeadUpdateData:`${url}/api/method/vms.APIs.purchase_api.purchase_requisition.update_pr_table_subhead_form`,
+  PRTableSubHeadUpdateData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.update_pr_table_subhead_form`,
   PrSubHeadDeleteRow: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.delete_pr_table_row`,
   SubmitPR: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition.submit_pr_form`,
   getPRItemsTable: `${url}/api/method/vms.APIs.grn_apis.all_grn_details.get_pr_details_simple`,
   approvePR: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition_approval.purchase_team_approval_check`,
   sapprcreated: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_purchase_requisition_form`,
-  fetchAccountAssignmentData:`${url}/api/method/vms.APIs.purchase_api.handle_req_field_pr.return_acc_ass_category_list`,
+  fetchAccountAssignmentData: `${url}/api/method/vms.APIs.purchase_api.handle_req_field_pr.return_acc_ass_category_list`,
+  fetchPRFDoctypeData: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition_form.get_pur_req_form_table_data`,
+
   //rfq apis
   fetchVendorListBasedOnRFQType: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.vendor_list`,
   CreateImportRFQ: `${url}/api/method/vms.APIs.req_for_quotation.rfq_for_logistic.create_import_logistic_rfq`,
@@ -132,6 +163,7 @@ const API_END_POINTS = {
   ProcessToken: `${url}/api/method/vms.purchase.doctype.request_for_quotation.request_for_quotation.process_token`,
   SubmitPublicQuatation: `${url}/api/method/vms.APIs.quotation.create_quotation.create_or_update_quotation_non_onboarded`,
   QuotationDetail: `${url}/api/method/vms.APIs.quotation.quotation.get_quotation_details`,
+
   // Amend APIs
   AmendAPI: `${url}/api/method/vms.APIs.vendor_onboarding.onboarding_amendment.create_vendor_onboarding_amendment`,
 
@@ -156,8 +188,8 @@ const API_END_POINTS = {
   POItemsApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_order.update_vendor_approval_status`,
 
   // ASA Form API:
-  getASAFormSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.get_data_ann_ass_form`,
-  asaformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_annual_ass_form`,
+  getASAFormSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.get_data_ann_asa_form`,
+  asaformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_annual_asa_form`,
   asagrovernanceformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_gov_asa_form`,
   asasocialformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_social_asa_form`,
   asaenvformSubmit: `${url}/api/method/vms.APIs.assessment_apis.asa.create_env_asa_form`,
@@ -167,6 +199,7 @@ const API_END_POINTS = {
   asapendingVendorList: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.pending_asa_vendor_list`,
   asasendremindermail: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.send_asa_reminder_email`,
   asaonboardedvendorlist: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.approved_vendor_list`,
+  verifyasaform: `${url}/api/method/vms.APIs.assessment_apis.asa.verify_asa_form`,
 
   // All Approved Vendors Speicfy Detail API
   allvendorsdetails: `${url}/api/method/vms.APIs.dashboard_api.vendor_brief.get_vendors_with_pagination_next`,
@@ -204,7 +237,7 @@ const API_END_POINTS = {
   CostCenterSearchApi: `${url}/api/method/vms.APIs.master_apis.cost_center_master.get_cost_center_list_custom`,
   GLAccountSearchApi: `${url}/api/method/vms.APIs.master_apis.gl_account_master.get_gl_account_list_custom`,
   StorageLocationSearchApi: `${url}/api/method/vms.APIs.master_apis.storage_location_master.get_storage_location_list`,
-  FetchPlantSearchApi:`${url}/api/method/vms.APIs.master_apis.plant_master.get_plant_master_list`,
+  FetchPlantSearchApi: `${url}/api/method/vms.APIs.master_apis.plant_master.get_plant_master_list`,
   // bankProofByPurchaseTeam:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`,
 
   // QA Dashboard APIs
@@ -287,6 +320,7 @@ const API_END_POINTS = {
   getMaterialOnboardingTableList: `${url}/api/method/vms.APIs.material_onboarding.get_material_onboarding.get_material_onboarding_list`,
   getRequestorMasterTableList: `${url}/api/method/vms.APIs.requestor_master.get_requestor_master.get_requestor_master_list`,
   getMaterialOnboardingDetails: `${url}/api/method/vms.APIs.material_onboarding.get_material_onboarding.get_material_onboarding_details`,
+
   createRequestorMaster: `${url}/api/method/vms.APIs.requestor_master.create_requestor_master.create_requestor_master`,
   updateRequestorMaster: `${url}/api/method/vms.APIs.requestor_master.create_requestor_master.update_requestor_master`,
   getAllMaterialTypeMasterDetails: `${url}/api/method/vms.APIs.master_apis.material_type.get_material_type_master_details`,
@@ -314,8 +348,18 @@ const API_END_POINTS = {
   getlotSizeMaster: `${resourceurl}/Lot Sizes?fields=["*"]&limit_page_length=999`,
   getschedulingMarginKeyMaster: `${resourceurl}/Scheduling Margin Key?fields=["*"]&limit_page_length=999`,
   getexpirationDateMaster: `${resourceurl}/Expiration Date Master?fields=["*"]&limit_page_length=999`,
+  prToPurchaseTeam: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition_approval.sent_approval_to_purchase_team`,
+  checkassetcode: `${url}/api/method/vms.APIs.purchase_api.check_asset_code.check_asset_code_availability`,
 
-  prToPurchaseTeam:`${url}/api/method/vms.APIs.purchase_api.purchase_requisition_approval.sent_approval_to_purchase_team`
+  // GR Waiver APIs
+  creategrwaiver: `${url}/api/method/vms.APIs.gr_waiver.create_gr_waiver.create_gr_waiver`,
+  dropdowncompany: `${url}/api/resource/Company%20Master`,
+  dropdownrequestor: `${url}/api/method/vms.APIs.master_apis.employee_master.get_employee_list`,
+  dropdownrequest: `${url}/api/resource/Request%20Type`,
+  requestorDetailsBasedOnReuqstorName: `${url}/api/method/vms.APIs.master_apis.employee_master.get_employee_details`,
+  GRWaiverDashboard: `${url}/api/method/vms.APIs.gr_waiver.get_gr_waiver.get_gr_waiver_statistics`,
+  GRwaiverDashboardTable: `${url}/api/method/vms.APIs.gr_waiver.get_gr_waiver.get_gr_waiver_list`,
+  fetchGRWaiverDetails: `${url}/api/method/vms.APIs.gr_waiver.get_gr_waiver.get_gr_waiver_details`,
 
 }
 

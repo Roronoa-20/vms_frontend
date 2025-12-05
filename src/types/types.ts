@@ -26,7 +26,7 @@ export type TvendorRegistrationDropdown = {
 }
 
 export type TuserRegistrationDropdown = {
-   message: {
+  message: {
     data: {
       users_list: { user_id: string, full_name: string }[],
     }
@@ -389,6 +389,7 @@ export type ASAForm = {
   registered_date: string,
   pending_asa_count: string,
   approved_vendor_count: string,
+  register_by_emp: string,
   company_vendor_codes: {
     company_name: string,
     company_code: string,
@@ -517,6 +518,10 @@ export type TPurchaseDetails = {
     name: string,
     description: string,
   },
+  account_group_details: {
+    name: string,
+    account_group_description: string,
+  },
 }
 
 export type VendorOnboardingResponse = {
@@ -528,7 +533,7 @@ export type VendorOnboardingResponse = {
     document_details_tab: DocumentDetailsTab;
     payment_details_tab: PaymentDetailsTab;
     contact_details_tab: ContactDetails[];
-    product_details_tab:ProductDetailsTab[]
+    product_details_tab: ProductDetailsTab[]
     manufacturing_details_tab: ManufacturingDetailsTab;
     employee_details_tab: EmployeeDetail[];
     machinery_details_tab: MachineryDetail[];
@@ -539,16 +544,23 @@ export type VendorOnboardingResponse = {
     multi_company_data: { company: string }[]
     is_multi_company: boolean
     validation_check: IvalidationChecks
+    version_changes: version[]
   };
 };
+
+type version = {
+  date_and_time: string;
+  field_json: string;
+};
+
 export type ProductDetailsTab = {
-  material_name:string,
-  critical:number,
-  "on-critical":number,
-  material_description:string,
-  annual_capacity:string,
-  hsnsac_code:string
-  
+  material_name: string,
+  critical: number,
+  "on-critical": number,
+  material_description: string,
+  annual_capacity: string,
+  hsnsac_code: string
+
 }
 
 interface IvalidationChecks {
@@ -1065,6 +1077,7 @@ export interface DashboardPOTableItem {
   _comments: string | null;
   _assign: string | null;
   _liked_by: string | null;
+  sent_to_vendor: boolean
 }
 
 export interface DashboardPOTableData {
@@ -1374,6 +1387,7 @@ export type ASAFormResponse = {
   overall_total_asa: number;
   pending_asa_count: number,
   approved_vendor_count: number,
+  overall_count: number,
   page_no: number;
   page_length: number;
   pending_asa_vendors: ASAForm[];
@@ -1458,7 +1472,8 @@ export type TPRInquiryTable = {
     second_stage_approval_status: string
     pr_created: string,
     pur_req: string,
-    is_submited:boolean
+    is_submited: boolean,
+    company: string
   }[]
 }
 
@@ -1513,7 +1528,8 @@ export type CartDetails = {
   second_stage_approval_status: string,
   pr_created: string,
   pur_req: string,
-  is_submited:boolean
+  is_submited: boolean,
+  company: string,
 }
 
 export interface PurchaseRequisition {
@@ -1556,9 +1572,20 @@ export interface PurchaseRequisition {
   purchase_group: string | null;
   pr_created: string,
   pur_req: string,
-  sap_status:string,
-  sap_summary:string,
-  zmsg:string,
+  sap_status: string,
+  sap_summary: string,
+  zmsg: string,
+  category_type: string;
+
+}
+
+export interface CategoryPRCount {
+  data: PurchaseRequisition[];
+  page_lenth: number,
+  page_no: number,
+  total_count: number,
+  total_pages: number,
+
 }
 
 export interface RFQTable {

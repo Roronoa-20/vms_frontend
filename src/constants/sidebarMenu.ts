@@ -11,6 +11,12 @@ export const sidebarMenu: SidebarItem[] = [
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
+    name: "Material Onboarding",
+    href: "/material-onboarding-dashboard",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
     name: "Vendor Registration",
     href: "/vendor-registration",
     children: []
@@ -39,6 +45,7 @@ export const sidebarMenu: SidebarItem[] = [
     // href: "/create-rfq",
     children: [
       { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Create RFQ", href: "/create-rfq" },
+      //{ logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Shipment Status", href: "/view-shipment-status" },
       { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Shipment Status", href: "/shipment-status-dashboard" },
       { logo: "/sidebar-assests/raise-rfq-logo.svg", name: "Service Bill", href: "/service-bill-dashboard" },
     ],
@@ -363,6 +370,22 @@ export const EnquirysidebarMenu: SidebarItem[] = [
   },
 ];
 
+export const CategoryMastersidebarMenu: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/category-master-dashboard",
+    defaultActive: true,
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "View PR",
+    href: "/view-purchase-requisition",
+    children: []
+  },
+];
+
 export const ASASideBarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/home-logo.svg",
@@ -391,6 +414,12 @@ export const QASideBarMenu: SidebarItem[] = [
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "QMS Form List",
     href:"/all-qms-forms",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "ASL",
+    href:"/view-asl",
     children: []
   },
 ];
@@ -494,6 +523,34 @@ export const TreasurySideBarMenu: SidebarItem[] = [
     logo: "/sidebar-assests/view-grn.svg",
     name: "View GRN",
     href: "/view-grn",
+    children: []
+  },
+];
+
+export const FinanceSideBarMenu: SidebarItem[] = [
+  {
+    logo: "/sidebar-assests/home-logo.svg",
+    name: "Home",
+    href: "/finance-dashboard",
+    defaultActive: true,
+    children: []
+  },
+   {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "All Vendors",
+    href:"/all-vendors",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "View PR",
+    href: "/view-purchase-requisition",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/po-details.svg",
+    name: "View PO",
+    href: "/view-po",
     children: []
   },
 ];

@@ -10,12 +10,14 @@ import { useQMSForm } from '@/src/hooks/useQMSForm';
 import YesNoNAOptions from "../../common/YesNoNAOptions";
 import { VendorQMSForm } from "@/src/types/qmstypes";
 import { useMultiSelectOptions } from "@/src/hooks/useMultiSelectOptions";
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import requestWrapper from "@/src/services/apiCall";
 
 
 export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "production";
-  const { formData, handleTextareaChange, handleBack, handleNext, handleCheckboxChange, handleSingleCheckboxChange, handleMultipleCheckboxChange, handleRadioboxChange, saveFormDataLocally, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
+  const { formData, handleTextareaChange, handleBack, handleNext, handleCheckboxChange, handleSingleCheckboxChange, handleMultipleCheckboxChange, handleRadioboxChange } = useQMSForm(vendor_onboarding, currentTab);
 
   const items: { name: keyof VendorQMSForm; label: string }[] = [
     { name: 'handling_of_start_materials', label: 'A. Handling of starting materials' },
@@ -24,6 +26,40 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
     { name: 'storage_of_approved_finished_products', label: 'D. Storage of approved finished products' },
   ];
   const multiSelectOptions = useMultiSelectOptions(vendor_onboarding);
+
+  const isQATeamApproved = formData?.qa_team_approved === 1;
+
+  const handleSubmit = async () => {
+    try {
+      if (isQATeamApproved) {
+        console.log("QA already approved → skipping API");
+        handleNext();
+        return;
+      }
+      const form = new FormData();
+      const payload = {
+        vendor_onboarding,
+        qms_form: formData?.name,
+        ...formData,
+      };
+      form.append("data", JSON.stringify(payload));
+      console.log("Submitting FormData bfeofre---->", payload)
+      const response = await requestWrapper({
+        url: API_END_POINTS.updateProductionForm,
+        method: "POST",
+        data: form,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("API response:", response);
+      if (response?.status === 200) {
+        handleNext();
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+    }
+  };
 
 
 
@@ -39,7 +75,7 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           label="1. Are the manufacturing process validated?"
           value={formData.manufactruing_process_validate || ""}
           onChange={(e) => handleCheckboxChange(e, 'manufactruing_process_validate')}
-
+          disabled={isQATeamApproved}
         />
 
         <YesNoNAGroup
@@ -47,6 +83,7 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           label="2. Are nonconforming materials removed from the production areas and prominently identified or destroyed to preclude further usage?"
           value={formData.nonconforming_materials_removed || ""}
           onChange={(e) => handleCheckboxChange(e, 'nonconforming_materials_removed')}
+          disabled={isQATeamApproved}
 
         />
 
@@ -75,6 +112,7 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                     value={value}
                     disabled={false}
                     onChange={(e) => handleRadioboxChange(e, item.name)}
+                  // disabled={isQATeamApproved}
                   />
                 </div>
               );
@@ -86,14 +124,18 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           name="identification_number"
           label=" 4. Does each lot /batch have an identification number?"
           value={formData.identification_number ?? ""}
-          onChange={(e) => {handleSingleCheckboxChange(e, "identification_number") }}
+          onChange={(e) => { handleSingleCheckboxChange(e, "identification_number") }}
+          disabled={isQATeamApproved}
+
         />
 
         <YesNoNAGroup
           name="product_identifiable"
           label="5. Is the product identifiable throughout the manufacturing process?"
           value={formData.product_identifiable || ""}
-          onChange={(e) => {handleSingleCheckboxChange(e, "product_identifiable") }}
+          onChange={(e) => { handleSingleCheckboxChange(e, "product_identifiable") }}
+          disabled={isQATeamApproved}
+
         />
 
         <YesNoNAGroup
@@ -101,6 +143,8 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           label="6. Is traceability of all raw materials sed, maintained throughout manfacturing?"
           value={formData.traceability || ""}
           onChange={(e) => handleCheckboxChange(e, 'traceability')}
+          disabled={isQATeamApproved}
+
 
         />
 
@@ -109,6 +153,8 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           label="7. Is there a procedure in place to prevent cross-contamination?"
           value={formData.prevent_cross_contamination || ""}
           onChange={(e) => handleCheckboxChange(e, 'prevent_cross_contamination')}
+          disabled={isQATeamApproved}
+
 
         />
 
@@ -117,15 +163,18 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           label="8. Is testing or inspection performed between processes or manufacturing stages?"
           value={formData.testing_or_inspection || ""}
           onChange={(e) => handleCheckboxChange(e, 'testing_or_inspection')}
+          disabled={isQATeamApproved}
 
         />
 
-        <div className="mb-3 border-b border-gray-300 pb-4">
+        <div className="mb-3">
           <YesNoNAGroup
             name="batch_record"
             label="9. Do you have a batch record for each batch / lot manufactured?"
             value={formData.batch_record ?? ""}
             onChange={(e) => { handleSingleCheckboxChange(e, "batch_record") }}
+            disabled={isQATeamApproved}
+
           />
           {formData.batch_record === "Yes" && (
 
@@ -148,40 +197,41 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                   : []}
               onChange={(e) => { handleMultipleCheckboxChange(e, "details_of_batch_records") }}
               columns={3}
+              disabled={isQATeamApproved}
+
             />
           )}
         </div>
+        <div className="mb-3 border-b border-gray-300">
+          <TextareaWithLabel
+            name="duration_of_batch_records"
+            label="10. For how long do you keep the batch records? (Year / Month)"
+            value={formData.duration_of_batch_records || ""}
+            onChange={(e) => { handleTextareaChange(e, "duration_of_batch_records") }}
+            rows={1}
+            disabled={isQATeamApproved}
 
-        <TextareaWithLabel
-          name="duration_of_batch_records"
-          label="10. For how long do you keep the batch records? (Year / Month)"
-          value={formData.duration_of_batch_records || ""}
-          onChange={(e) => { handleTextareaChange(e, "duration_of_batch_records") }}
-          rows={1}
-        />
-      </div>
-      <div className="flex justify-end space-x-5 items-center">
-        <Button
-          variant="backbtn"
-          size="backbtnsize"
-          className="py-2"
-          onClick={handleBack}
-        >
-          Back
-        </Button>
-        <Button
-          variant="nextbtn"
-          size="nextbtnsize"
-          className="py-2.5"
-          // onClick={() => {
-          //   console.log('Saving form data locally for Production tab:', currentTab, 'formData:', formData);
-          //   saveFormDataLocally(currentTab, formData);
-          //   handleNext();
-          // }}
-          onClick={handleSubmit}
+          />
+        </div>
+
+        <div className="flex pt-2 justify-end space-x-5 items-center">
+          <Button
+            variant="backbtn"
+            size="backbtnsize"
+            className="py-2"
+            onClick={handleBack}
           >
-          Next
-        </Button>
+            Back
+          </Button>
+          <Button
+            variant="nextbtn"
+            size="nextbtnsize"
+            className="py-2.5"
+            onClick={handleSubmit}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );

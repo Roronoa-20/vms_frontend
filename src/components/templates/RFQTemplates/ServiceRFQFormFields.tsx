@@ -5,6 +5,7 @@ import { DropdownDataMaterial } from './MaterialRFQ';
 import MultipleFileUpload from '../../molecules/MultipleFileUpload';
 import { DropdownDataService } from './ServiceRFQ';
 import { useEffect } from 'react';
+
 interface Props {
     formData: Record<string, any>;
     setFormData: React.Dispatch<React.SetStateAction<Record<string, any>>>;
@@ -22,9 +23,11 @@ const ServiceRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFile
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
+
     const handleSelectChange = (value: string, field: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
+
     const renderInput = (name: string, label: string, type = 'text',isdisabled?:boolean) => (
         <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -79,6 +82,7 @@ const ServiceRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFile
             </Select>
         </div>
     );
+
     const renderTextarea = (name: string, label: string, rows = 4) => (
         <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -104,7 +108,7 @@ const ServiceRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFile
 
     return (
         <div>
-            <div className="grid grid-cols-3 gap-6 p-5">
+            <div className="grid grid-cols-3 gap-6 p-3">
                 {/* {renderInput('rfq_type', 'RFQ Type')} */}
                 {renderSelect(
                     'rfq_type',
@@ -144,8 +148,8 @@ const ServiceRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFile
                     (item) => `${item.currency_name}`
                 )}
             </div>
-            <h1 className='text-[24px] font-normal pt-5 px-5'>Administrative Fields</h1>
-            <div className="grid grid-cols-3 gap-6 p-5">
+            <h1 className='text-[24px] font-normal pt-5 px-3'>Administrative Fields</h1>
+            <div className="grid grid-cols-3 gap-6 p-3">
                 {renderSelect(
                     'service_code',
                     'Service Code',
@@ -185,14 +189,14 @@ const ServiceRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFile
                 {renderTextarea('service_location', 'Service Location')}
             </div>
 
-            <h1 className='text-[24px] font-normal pt-5 px-5'>Material/Item Details</h1>
-            <div className="grid grid-cols-3 gap-6 p-5">
+            <h1 className='text-[24px] font-normal pt-5 px-3'>Material/Item Details</h1>
+            <div className="grid grid-cols-3 gap-6 p-3">
                 {renderInput('collection_number', 'Collection No.')}
                 {renderInput('rfq_cutoff_date_logistic', 'Quotation Deadline', 'datetime-local')}
                 {renderInput('bidding_person', 'Bidding Person')}
             </div>
-            <h1 className='text-[24px] font-normal pt-5 px-5'>Quantity & Date</h1>
-            <div className="grid grid-cols-3 gap-6 p-5">
+            <h1 className='text-[24px] font-normal pt-5 px-3'>Quantity & Date</h1>
+            <div className="grid grid-cols-3 gap-6 p-3">
                 {renderInput('rfq_quantity', 'RFQ Quantity')}
 
                 {renderSelect(
@@ -206,7 +210,7 @@ const ServiceRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFile
                 {renderInput('estimated_price', 'Enter estimated Price', 'number')}
                 <div>
                     <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                        Uplaod Documents
+                        Uplaod Documents/Attachments
                     </h1>
                     <MultipleFileUpload
                         files={uploadedFiles}

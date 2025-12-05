@@ -11,10 +11,11 @@ interface PageProps {
     refno?: string
 }
 
-export const ViewRFQ = async ({refno}: PageProps) => {
+export const ViewRFQ = async ({ refno }: PageProps) => {
+
     const cookieStore = await cookies();
-    const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");  
-    console.log(refno,"refno-----------------") 
+    const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
+    console.log(refno, "refno-----------------")
     const RFQDataUrl = `${API_END_POINTS?.getRFQData}?unique_id=${refno}`;
     const RFQDataResponse: AxiosResponse = await requestWrapper({
         url: RFQDataUrl, method: "GET", headers: {
@@ -26,10 +27,8 @@ export const ViewRFQ = async ({refno}: PageProps) => {
     const resposne: AxiosResponse = await requestWrapper({ url: dropdownApiUrl, method: "GET", });
     const Dropdown = resposne?.status == 200 ? resposne?.data.message : "";
 
-    console.log(RFQData,"RFQData")
+    console.log(RFQData, "RFQData")
     return (
-        <ViewLogisticsRFQDetailsPage  RFQData={RFQData} refno={refno} Dropdown={Dropdown}/>
-        
-        
+        <ViewLogisticsRFQDetailsPage RFQData={RFQData} refno={refno} Dropdown={Dropdown} />
     )
 }

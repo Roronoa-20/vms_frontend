@@ -52,7 +52,10 @@ const DocumentDetails = ({
   const { designation } = useAuth();
   const isTreasuryUser = designation?.toLowerCase() === "treasury";
 
-  
+  const viewFile = (fileId: string) => {
+    const url = `${API_END_POINTS.securefileview}?file_id=${fileId}`;
+    window.open(url, "_blank");
+  };
 
   const handleSubmit = async () => {
     const url = API_END_POINTS?.documentDetailSubmit;
@@ -102,6 +105,7 @@ const DocumentDetails = ({
       setPreview: setIsIECProofPreview,
       url: OnboardingDetail?.iec_proof?.url,
       fileName: OnboardingDetail?.iec_proof?.file_name,
+      file_id: OnboardingDetail?.iec_proof?.name,
     },
     {
       label: "TRC Certificate Proof",
@@ -111,6 +115,8 @@ const DocumentDetails = ({
       setPreview: setIsTRCProofPreview,
       url: OnboardingDetail?.trc_certificate?.url,
       fileName: OnboardingDetail?.trc_certificate?.file_name,
+      file_id: OnboardingDetail?.trc_certificate?.name,
+
     },
     {
       label: "Digital Form 10F Proof",
@@ -120,6 +126,8 @@ const DocumentDetails = ({
       setPreview: setIs10FProofPreview,
       url: OnboardingDetail?.form_10f_proof?.url,
       fileName: OnboardingDetail?.form_10f_proof?.file_name,
+      file_id: OnboardingDetail?.form_10f_proof?.name,
+
     },
     {
       label: "Permanent Establishment Certificate",
@@ -129,6 +137,7 @@ const DocumentDetails = ({
       setPreview: setIsPEProofPreview,
       url: OnboardingDetail?.pe_certificate?.url,
       fileName: OnboardingDetail?.pe_certificate?.file_name,
+      file_id: OnboardingDetail?.pe_certificate?.name,
     },
   ];
 
@@ -164,14 +173,18 @@ const DocumentDetails = ({
         {/* Existing uploaded file (backend link) */}
         {config.previewState && !config.state && config.url && (
           <div className="flex items-center gap-2">
-            <Link
+            {/* <Link
               target="_blank"
               href={config.url}
               className="flex items-center gap-2 text-blue-600 underline max-w-44 truncate"
+            > */}
+            <div
+              className="flex items-center gap-2 text-blue-600 underline cursor-pointer max-w-44 truncate"
+              onClick={() => viewFile(config.file_id)}
             >
               <Paperclip className="w-4 h-4 text-blue-500" />
               <span>{config.fileName}</span>
-            </Link>
+            </div>
             {!isDisabled && (
               <X
                 className="w-4 h-4 text-red-500 cursor-pointer"
@@ -197,7 +210,7 @@ const DocumentDetails = ({
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 
 
@@ -205,7 +218,7 @@ const DocumentDetails = ({
     <div className="flex flex-col bg-white rounded-lg p-2 w-full max-h-[80vh]">
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Document Details</h1>
-        {designation == "Purchase Team" &&!isTreasuryUser && (isAmendment == 1 || re_release == 1) && (
+        {designation == "Purchase Team" && !isTreasuryUser && (isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled((prev) => !prev)}
             className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"

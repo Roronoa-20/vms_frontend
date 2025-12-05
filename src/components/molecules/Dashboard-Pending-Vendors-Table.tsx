@@ -70,7 +70,7 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown, fil
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [search, setSearch] = useState<string>("");
   const [total_event_list, settotalEventList] = useState(0);
-  const [record_per_page, setRecordPerPage] = useState<number>(5);
+  const [record_per_page, setRecordPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const router = useRouter();
@@ -93,13 +93,13 @@ const DashboardPendingVendorsTable = ({ dashboardTableData, companyDropdown, fil
 
   const fetchTable = async () => {
     const dashboardPendingVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.dashboardPendingVendorTableURL}?usr=${user}&company=${selectedCompany}&register_by=${selectedRegisteredBy}&vendor_name=${search}&page_no=${currentPage}`,
+      url: `${API_END_POINTS?.dashboardPendingVendorTableURL}?usr=${user}&company=${selectedCompany}&register_by=${selectedRegisteredBy}&vendor_name=${search}&page_no=${currentPage}&page_length=${record_per_page}`,
       method: "GET",
     });
     if (dashboardPendingVendorTableDataApi?.status == 200) {
       setTable(dashboardPendingVendorTableDataApi?.data?.message?.pending_vendor_onboarding);
       settotalEventList(dashboardPendingVendorTableDataApi?.data?.message?.total_count);
-      setRecordPerPage(5);
+      setRecordPerPage(10);
     }
   };
 

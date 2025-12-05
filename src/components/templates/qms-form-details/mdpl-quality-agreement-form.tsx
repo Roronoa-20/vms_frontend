@@ -12,45 +12,35 @@ import { Form5 } from "@/src/components/molecules/mdpl-quality-agreement/form5";
 import { Form6 } from "@/src/components/molecules/mdpl-quality-agreement/form6";
 import Form7 from "@/src/components/molecules/mdpl-quality-agreement/form7";
 
-export const MDPLQualityAgreementForm = ({
-  vendor_onboarding,
-  company_code,
-}: {
-  vendor_onboarding: string;
-  company_code: string;
-}) => {
+
+export const MDPLQualityAgreementForm = ({ vendor_onboarding, company_code }: { vendor_onboarding: string; company_code: string; }) => {
   const params = useSearchParams();
   const formRef = useRef<HTMLDivElement | null>(null);
-  const currentTab =
-    params.get("tabtype")?.toLowerCase() || "vendor information";
-
-  const { handleSubmit, handleBack } = useQMSForm(
-    vendor_onboarding,
-    currentTab
-  );
+  const currentTab = params.get("tabtype")?.toLowerCase() || "quality agreement";
+  const { handleBack } = useQMSForm(vendor_onboarding, currentTab);
 
   return (
-    <div className="flex flex-col items-center px-4 pt-[40px] pb-10 bg-gray-100 min-h-screen">
+    <div className="flex flex-col items-center px-4 pb-10 min-h-screen">
       {/* Each Form = 1 Page */}
-      <div className="page">
+      <div className="page w-[75%] mb-2">
         <Form1 vendor_onboarding={vendor_onboarding} />
       </div>
-      <div className="page">
+      <div className="page w-[75%] mb-2">
         <Form2 />
       </div>
-      <div className="page">
+      <div className="page w-[75%] mb-2">
         <Form3 />
       </div>
-      <div className="page">
+      <div className="page w-[75%] mb-2">
         <Form4 />
       </div>
-      <div className="page">
+      <div className="page w-[75%] mb-2">
         <Form5 vendor_onboarding={vendor_onboarding} />
       </div>
-      <div className="page">
+      <div className="page w-[75%] mb-2">
         <Form6 vendor_onboarding={vendor_onboarding} />
       </div>
-      <div className="page flex flex-col justify-between">
+      <div className="page w-[75%] mb-2">
         <Form7 vendor_onboarding={vendor_onboarding} />
 
         {/* Footer Buttons on last page */}
@@ -67,7 +57,7 @@ export const MDPLQualityAgreementForm = ({
             variant="nextbtn"
             size="nextbtnsize"
             className="py-2.5"
-            onClick={handleSubmit}
+            // onClick={handleSubmit}
           >
             Submit
           </Button>

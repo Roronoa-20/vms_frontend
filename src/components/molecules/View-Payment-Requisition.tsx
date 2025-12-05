@@ -85,7 +85,7 @@ export default function ViewPaymentRequisition({ pickupData = [] }: ViewPaymentR
       <div className="shadow bg-[#f6f6f7] p-4 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
-            GR Payment Requisition
+            Payment Requisition
           </h1>
           
           <Button
@@ -104,30 +104,14 @@ export default function ViewPaymentRequisition({ pickupData = [] }: ViewPaymentR
         <Table>
           <TableHeader>
             <TableRow className="bg-[#a4c0fb] text-[14px]">
-              <TableHead className="text-black text-center" scope="col">
-                Sr No.
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                Company
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                GRN No.
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                GRN Date
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                SAP Booking ID
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                SAP Status
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                View GRN
-              </TableHead>
-              <TableHead className="text-black text-center" scope="col">
-                View Invoice
-              </TableHead>
+              <TableHead className="text-black text-center">Sr No.</TableHead>
+              <TableHead className="text-black text-center">Company</TableHead>
+              <TableHead className="text-black text-center">Payment No.</TableHead>
+              <TableHead className="text-black text-center">Payment Date</TableHead>
+              <TableHead className="text-black text-center">SAP Booking ID</TableHead>
+              <TableHead className="text-black text-center">SAP Status</TableHead>
+              <TableHead className="text-black text-center">View Payment</TableHead>
+              <TableHead className="text-black text-center">View Invoice</TableHead>
             </TableRow>
           </TableHeader>
 

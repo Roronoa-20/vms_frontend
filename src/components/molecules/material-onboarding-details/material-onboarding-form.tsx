@@ -1,13 +1,13 @@
-"use client";
+// "use client";
 
-import React, { useEffect, useState } from "react";
-import { UseFormReturn } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { Form } from "@/components/ui/form";
-import { Save } from "lucide-react";
-import Alertbox from "@/src/components/common/vendor-onboarding-alertbox";
-import { useAuth } from "@/src/context/AuthContext";
+// import React, { useEffect, useState } from "react";
+// import { UseFormReturn } from "react-hook-form";
+// import { Button } from "@/components/ui/button";
+// import { useRouter } from "next/navigation";
+// import { Form } from "@/components/ui/form";
+// import { Save } from "lucide-react";
+// import Alertbox from "@/src/components/common/vendor-onboarding-alertbox";
+// import { useAuth } from "@/src/context/AuthContext";
 
 import MaterialInformation from "@/src/components/molecules/material-onboarding-details/material-information";
 import MaterialSpecifications from "@/src/components/molecules/material-onboarding-details/material-specifications";
@@ -23,10 +23,10 @@ import RevertRemarkModal from "@/src/components/molecules/material-onboarding-mo
 import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialRequestData, MaterialType } from "@/src/types/MaterialCodeRequestFormTypes";
 import { TcompanyNameBasedDropdown } from "@/src/types/types";
 
-interface FileRecord {
-  file: File;
-  fileURL: string;
-}
+// interface FileRecord {
+//   file: File;
+//   fileURL: string;
+// }
 
 interface MaterialOnboardingFormProps {
   form: UseFormReturn<MaterialRegistrationFormData>;
@@ -80,7 +80,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
 
   // console.log("Material Onboarding type------>",PurchaseGroup)
 
-  const router = useRouter();
+//   const router = useRouter();
 
   const [fileSelected, setFileSelected] = useState(false);
   const [fileName, setFileName] = useState("");
@@ -119,21 +119,21 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
       return;
     }
 
-    const employeeCompanyCodes = EmployeeDetailsJSON.company
-      .map((comp) => String(comp.company_code))
-      .filter(Boolean);
+//     const employeeCompanyCodes = EmployeeDetailsJSON.company
+//       .map((comp) => String(comp.company_code))
+//       .filter(Boolean);
 
-    const newFilteredProfit = ProfitCenter.filter((pc) =>
-      employeeCompanyCodes.includes(String(pc.company_code))
-    );
+//     const newFilteredProfit = ProfitCenter.filter((pc) =>
+//       employeeCompanyCodes.includes(String(pc.company_code))
+//     );
 
-    const hasChanged =
-      newFilteredProfit.length !== filteredProfit.length ||
-      newFilteredProfit.some(
-        (pc, i) =>
-          pc.profit_center_code !== filteredProfit[i]?.profit_center_code ||
-          pc.profit_center_name !== filteredProfit[i]?.profit_center_name
-      );
+//     const hasChanged =
+//       newFilteredProfit.length !== filteredProfit.length ||
+//       newFilteredProfit.some(
+//         (pc, i) =>
+//           pc.profit_center_code !== filteredProfit[i]?.profit_center_code ||
+//           pc.profit_center_name !== filteredProfit[i]?.profit_center_name
+//       );
 
     if (hasChanged) {
       setFilteredProfit(newFilteredProfit);
@@ -142,51 +142,51 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
     }
   }, [EmployeeDetailsJSON, ProfitCenter, filteredProfit]);
 
-  const onCancel = (e: React.MouseEvent) => {
-    e.preventDefault();
-    router.push("/material-onboarding-table");
-    window.location.reload();
-  };
+//   const onCancel = (e: React.MouseEvent) => {
+//     e.preventDefault();
+//     router.push("/material-onboarding-table");
+//     window.location.reload();
+//   };
 
-  const handleLabelClick = (inputId: string) => {
-    document.getElementById(inputId)?.click();
-  };
+//   const handleLabelClick = (inputId: string) => {
+//     document.getElementById(inputId)?.click();
+//   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
-    const file = e.target.files?.[0];
-    if (file && setLineItemFiles) {
-      const fileURL = URL.createObjectURL(file);
-      setLineItemFiles((prev) => ({
-        ...prev,
-        [key]: { file, fileURL },
-      }));
-      setFileSelected(true);
-      setFileName(file.name);
-    }
-  };
+//   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
+//     const file = e.target.files?.[0];
+//     if (file && setLineItemFiles) {
+//       const fileURL = URL.createObjectURL(file);
+//       setLineItemFiles((prev) => ({
+//         ...prev,
+//         [key]: { file, fileURL },
+//       }));
+//       setFileSelected(true);
+//       setFileName(file.name);
+//     }
+//   };
 
-  const handleRemoveFile = (inputId: string, clearFileNameFn: (v: string) => void) => {
-    if (!setLineItemFiles) return;
-    setLineItemFiles((prev) => {
-      const updated = { ...prev };
-      delete updated["material_information"];
-      return updated;
-    });
-    clearFileNameFn("");
-    setFileSelected(false);
-    const input = document.getElementById(inputId) as HTMLInputElement;
-    if (input) input.value = "";
-  };
+//   const handleRemoveFile = (inputId: string, clearFileNameFn: (v: string) => void) => {
+//     if (!setLineItemFiles) return;
+//     setLineItemFiles((prev) => {
+//       const updated = { ...prev };
+//       delete updated["material_information"];
+//       return updated;
+//     });
+//     clearFileNameFn("");
+//     setFileSelected(false);
+//     const input = document.getElementById(inputId) as HTMLInputElement;
+//     if (input) input.value = "";
+//   };
 
-  const getButtonLabel = (role: string, approvalStatus?: string): string => {
-    if (["Material CP", "Store"].includes(role)) {
-      if (approvalStatus === "Pending by CP" || approvalStatus === "Re-Opened by CP")
-        return "Send to SAP";
-      if (approvalStatus === "Sent to SAP") return "Update";
-    }
-    if (role === "SAP") return "Close";
-    return "Submit";
-  };
+//   const getButtonLabel = (role: string, approvalStatus?: string): string => {
+//     if (["Material CP", "Store"].includes(role)) {
+//       if (approvalStatus === "Pending by CP" || approvalStatus === "Re-Opened by CP")
+//         return "Send to SAP";
+//       if (approvalStatus === "Sent to SAP") return "Update";
+//     }
+//     if (role === "SAP") return "Close";
+//     return "Submit";
+//   };
 
   const handleApprovalStatus = async () => {
     if (role === "SAP") {
@@ -204,24 +204,24 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
     }
   };
 
-  const handleRejectStatus = (remark: string) => {
-    if (["Material CP", "Store"].includes(role)) {
-      form.setValue("approval_status", "Re-Opened by CP");
-      form.setValue("remark_by_cp", remark);
-    }
-  };
+//   const handleRejectStatus = (remark: string) => {
+//     if (["Material CP", "Store"].includes(role)) {
+//       form.setValue("approval_status", "Re-Opened by CP");
+//       form.setValue("remark_by_cp", remark);
+//     }
+//   };
 
-  const approvalStatus = MaterialOnboardingDetails?.approval_status;
-  const isSAPLockedStatus = [
-    "Sent to SAP",
-    "Code Generated by SAP",
-    "Pending by CP",
-    "Updated by CP",
-    "Re-Opened by CP",
-  ].includes(approvalStatus);
+//   const approvalStatus = MaterialOnboardingDetails?.approval_status;
+//   const isSAPLockedStatus = [
+//     "Sent to SAP",
+//     "Code Generated by SAP",
+//     "Pending by CP",
+//     "Updated by CP",
+//     "Re-Opened by CP",
+//   ].includes(approvalStatus);
 
-  const materialType = MaterialOnboardingDetails?.material_type_name;
-  const isZCAPMaterial = materialType === "ZCAP";
+//   const materialType = MaterialOnboardingDetails?.material_type_name;
+//   const isZCAPMaterial = materialType === "ZCAP";
 
   return (
     <Form {...form}>
@@ -261,7 +261,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
                   <>
                     <MaterialPurchasingData {...props} role={role} />
 
-                    <MaterialMRPData {...props} role={role} isZCAPMaterial={isZCAPMaterial} />
+//                     <MaterialMRPData {...props} role={role} isZCAPMaterial={isZCAPMaterial} />
 
                     {!isZCAPMaterial && (
                       <MaterialQAQCData {...props} MaterialDetails={memoizedMaterialDetails} />
@@ -290,93 +290,93 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
               </>
             )}
 
-            {/* === FOOTER BUTTONS === */}
-            <div className="flex justify-between items-center w-full mt-4">
-              {role === "User" && isSAPLockedStatus ? (
-                <div className="flex justify-end w-full">
-                  <Button variant="backbtn" size="backbtnsize" onClick={onCancel} type="button">
-                    Back to Home
-                  </Button>
-                </div>
-              ) : isMatchedMaterial ? (
-                <>
-                  <Button variant="backbtn" size="backbtnsize" onClick={onCancel} type="button">
-                    Back to Home
-                  </Button>
-                  <div className="flex space-x-5 items-center">
-                    <Button variant="backbtn" size="backbtnsize" type="button" onClick={() => setShowRemarkDialog(true)}>
-                      Revert
-                    </Button>
-                    <Button
-                      variant="nextbtn"
-                      size="nextbtnsize"
-                      type="button"
-                      onClick={() => {
-                        if (onCloseCallback && doc_name) onCloseCallback(doc_name);
-                      }}
-                    >
-                      {isLoading ? "Processing..." : "Use Existing Material Code"}
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <Button variant="backbtn" size="backbtnsize" onClick={onCancel} type="button">
-                    Back
-                  </Button>
-                  <div className="flex space-x-5 items-center">
-                    <Button variant="backbtn" size="backbtnsize" type="button" onClick={() => setShowRemarkDialog(true)}>
-                      Revert
-                    </Button>
-                    <Button
-                      variant="nextbtn"
-                      size="nextbtnsize"
-                      type="submit"
-                      onClick={handleApprovalStatus}
-                    >
-                      {isLoading ? "Processing..." : getButtonLabel(role, approvalStatus)}
-                    </Button>
-                  </div>
-                </>
-              )}
+//             {/* === FOOTER BUTTONS === */}
+//             <div className="flex justify-between items-center w-full mt-4">
+//               {role === "User" && isSAPLockedStatus ? (
+//                 <div className="flex justify-end w-full">
+//                   <Button variant="backbtn" size="backbtnsize" onClick={onCancel} type="button">
+//                     Back to Home
+//                   </Button>
+//                 </div>
+//               ) : isMatchedMaterial ? (
+//                 <>
+//                   <Button variant="backbtn" size="backbtnsize" onClick={onCancel} type="button">
+//                     Back to Home
+//                   </Button>
+//                   <div className="flex space-x-5 items-center">
+//                     <Button variant="backbtn" size="backbtnsize" type="button" onClick={() => setShowRemarkDialog(true)}>
+//                       Revert
+//                     </Button>
+//                     <Button
+//                       variant="nextbtn"
+//                       size="nextbtnsize"
+//                       type="button"
+//                       onClick={() => {
+//                         if (onCloseCallback && doc_name) onCloseCallback(doc_name);
+//                       }}
+//                     >
+//                       {isLoading ? "Processing..." : "Use Existing Material Code"}
+//                     </Button>
+//                   </div>
+//                 </>
+//               ) : (
+//                 <>
+//                   <Button variant="backbtn" size="backbtnsize" onClick={onCancel} type="button">
+//                     Back
+//                   </Button>
+//                   <div className="flex space-x-5 items-center">
+//                     <Button variant="backbtn" size="backbtnsize" type="button" onClick={() => setShowRemarkDialog(true)}>
+//                       Revert
+//                     </Button>
+//                     <Button
+//                       variant="nextbtn"
+//                       size="nextbtnsize"
+//                       type="submit"
+//                       onClick={handleApprovalStatus}
+//                     >
+//                       {isLoading ? "Processing..." : getButtonLabel(role, approvalStatus)}
+//                     </Button>
+//                   </div>
+//                 </>
+//               )}
 
-              {showAlert && (
-                <Alertbox
-                  content="Your Details have been submitted successfully!"
-                  submit={showAlert}
-                  url="/material-onboarding-table"
-                />
-              )}
+//               {showAlert && (
+//                 <Alertbox
+//                   content="Your Details have been submitted successfully!"
+//                   submit={showAlert}
+//                   url="/material-onboarding-table"
+//                 />
+//               )}
 
-              {showcompletealert && (
-                <Alertbox
-                  content="Your ticket to create new Material Code has been successfully closed!"
-                  submit={showcompletealert}
-                  url="/material-onboarding-table"
-                />
-              )}
+//               {showcompletealert && (
+//                 <Alertbox
+//                   content="Your ticket to create new Material Code has been successfully closed!"
+//                   submit={showcompletealert}
+//                   url="/material-onboarding-table"
+//                 />
+//               )}
 
-              <RevertRemarkModal
-                isOpen={showRemarkDialog}
-                onClose={() => setShowRemarkDialog(false)}
-                onConfirm={async (remark) => {
-                  handleRejectStatus(remark);
-                  if (sendRevertEmail && doc_name) {
-                    await sendRevertEmail(doc_name, remark);
-                    setShowRemarkDialog(false);
-                  }
-                }}
-              />
+//               <RevertRemarkModal
+//                 isOpen={showRemarkDialog}
+//                 onClose={() => setShowRemarkDialog(false)}
+//                 onConfirm={async (remark) => {
+//                   handleRejectStatus(remark);
+//                   if (sendRevertEmail && doc_name) {
+//                     await sendRevertEmail(doc_name, remark);
+//                     setShowRemarkDialog(false);
+//                   }
+//                 }}
+//               />
 
-              {showRevertAlert && (
-                <Alertbox
-                  content="Your ticket has been successfully re-opened with the remark!"
-                  submit={showRevertAlert}
-                  url="/material-onboarding-table"
-                />
-              )}
-            </div>
-          </div>
+//               {showRevertAlert && (
+//                 <Alertbox
+//                   content="Your ticket has been successfully re-opened with the remark!"
+//                   submit={showRevertAlert}
+//                   url="/material-onboarding-table"
+//                 />
+//               )}
+//             </div>
+//           </div>
 
           {/* === Floating Save Button === */}
           {/* {saveAsDraft && (
@@ -399,4 +399,4 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
   );
 };
 
-export default MaterialOnboardingForm;
+// export default MaterialOnboardingForm;

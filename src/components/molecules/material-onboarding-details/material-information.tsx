@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import React, { useEffect, useState, useCallback, ChangeEvent } from "react";
 import { useWatch } from "react-hook-form";
@@ -123,10 +123,10 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
   const handleMaterialSearch = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
 
-    if (val.trim().length > 3) {
-      const filtered = AllMaterialCodes?.filter((item) =>
-        item.material_description?.toLowerCase().includes(val.toLowerCase())
-      );
+//     if (val.trim().length > 3) {
+//       const filtered = AllMaterialCodes?.filter((item) =>
+//         item.material_description?.toLowerCase().includes(val.toLowerCase())
+//       );
 
       const mappedResults = filtered || [];
       setSearchResults(mappedResults);
@@ -136,25 +136,25 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
       setShowSuggestions(false);
     }
 
-    setMaterialSelectedFromList(false);
-  };
+//     setMaterialSelectedFromList(false);
+//   };
 
   const handleMaterialSelect = (item: MaterialCode) => {
     form.setValue("material_name_description", item.material_name_description || "");
 
-    if (item.material_code_revised && item.material_code_revised !== "null") {
-      form.setValue("material_code_revised", item.material_code_revised);
-    } else {
-      form.setValue("material_code_revised", "");
-    }
+//     if (item.material_code_revised && item.material_code_revised !== "null") {
+//       form.setValue("material_code_revised", item.material_code_revised);
+//     } else {
+//       form.setValue("material_code_revised", "");
+//     }
 
-    setMaterialSelectedFromList(true);
-    setShowSuggestions(false);
-  };
+//     setMaterialSelectedFromList(true);
+//     setShowSuggestions(false);
+//   };
 
-  useEffect(() => {
-    const data = MaterialDetails?.material_master;
-    if (!data || !filteredMaterialGroup.length) return;
+//   useEffect(() => {
+//     const data = MaterialDetails?.material_master;
+//     if (!data || !filteredMaterialGroup.length) return;
 
     const fields = [
       "material_group",
@@ -282,4 +282,4 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
   );
 };
 
-export default MaterialInformationForm;
+// export default MaterialInformationForm;

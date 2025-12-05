@@ -4,11 +4,47 @@ import { Button } from "../../atoms/button";
 import { useSearchParams } from "next/navigation";
 import YesNoNAGroup from '@/src/components/common/YesNoNAGroup';
 import { useQMSForm } from '@/src/hooks/useQMSForm';
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import requestWrapper from "@/src/services/apiCall";
 
 export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "quality";
-  const {formData,handleCheckboxChange,handleBack, handleNext, saveFormDataLocally, handleSubmit} = useQMSForm(vendor_onboarding, currentTab);
+  const { formData, handleCheckboxChange, handleBack, handleNext } = useQMSForm(vendor_onboarding, currentTab);
+
+  const isQATeamApproved = formData?.qa_team_approved === 1;
+
+  const handleSubmit = async () => {
+    try {
+      if (isQATeamApproved) {
+        console.log("QA already approved → skipping API");
+        handleNext();
+        return;
+      }
+      const form = new FormData();
+      const payload = {
+        vendor_onboarding,
+        qms_form: formData?.name,
+        ...formData,
+      };
+      form.append("data", JSON.stringify(payload));
+      console.log("Submitting FormData bfeofre---->", payload)
+      const response = await requestWrapper({
+        url: API_END_POINTS.updateQualityForm,
+        method: "POST",
+        data: form,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("API response:", response);
+      if (response?.status === 200) {
+        handleNext();
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+    }
+  };
 
 
   return (
@@ -23,6 +59,7 @@ export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; 
           label="1. Is Quality Control (QC) independent of Production?"
           value={formData.qc_independent_of_production || ""}
           onChange={(e) => handleCheckboxChange(e, 'qc_independent_of_production')}
+          disabled={isQATeamApproved}
 
         />
 
@@ -31,6 +68,8 @@ export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; 
           label="2. Are Analytical methods validated?"
           value={formData.analytical_methods_validated || ""}
           onChange={(e) => handleCheckboxChange(e, 'analytical_methods_validated')}
+          disabled={isQATeamApproved}
+
 
         />
 
@@ -39,7 +78,9 @@ export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; 
           label="3. Have you qualified / evaluated any contract / private testing laboratories?"
           value={formData.testing_laboratories || ""}
           onChange={(e) => handleCheckboxChange(e, 'testing_laboratories')}
-          
+          disabled={isQATeamApproved}
+
+
         />
 
         <YesNoNAGroup
@@ -47,31 +88,28 @@ export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; 
           label="4. Do you perform a failure investigation in case of a reject?"
           value={formData.failure_investigation || ""}
           onChange={(e) => handleCheckboxChange(e, 'failure_investigation')}
+          disabled={isQATeamApproved}
 
         />
-      </div>
-      <div className="flex justify-end space-x-5 items-center">
-        <Button
-          variant="backbtn"
-          size="backbtnsize"
-          className="py-2"
-          onClick={handleBack}
-        >
-          Back
-        </Button>
-        <Button
-          variant="nextbtn"
-          size="nextbtnsize"
-          className="py-2.5"
-          // onClick={() => {
-          //   console.log('Saving form data locally for Quality tab:', currentTab, 'formData:', formData);
-          //   saveFormDataLocally(currentTab, formData);
-          //   handleNext();
-          // }}
-          onClick={handleSubmit}
+
+        <div className="flex justify-end space-x-5 items-center">
+          <Button
+            variant="backbtn"
+            size="backbtnsize"
+            className="py-2"
+            onClick={handleBack}
           >
-          Next
-        </Button>
+            Back
+          </Button>
+          <Button
+            variant="nextbtn"
+            size="nextbtnsize"
+            className="py-2.5"
+            onClick={handleSubmit}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );

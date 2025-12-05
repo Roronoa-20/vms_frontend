@@ -15,7 +15,7 @@ export const ComplaintForm = ({ vendor_onboarding }: { vendor_onboarding: string
   } = useQMSForm(vendor_onboarding, currentTab);
 
   return (
-    <div>
+    <div className='bg-white pt-4 rounded-[8px]'>
       <h2 className="text-lg font-bold bg-gray-200 border border-gray-300 p-3">
         SECTION – VIII: COMPLAINT AND RECALLS
       </h2>
@@ -61,7 +61,7 @@ export const ComplaintForm = ({ vendor_onboarding }: { vendor_onboarding: string
 
         />
       </div>
-      <div className="flex justify-end space-x-5 items-center">
+      {/* <div className="flex justify-end space-x-5 items-center">
         <Button
           variant="backbtn"
           size="backbtnsize"
@@ -78,7 +78,7 @@ export const ComplaintForm = ({ vendor_onboarding }: { vendor_onboarding: string
         >
           Next
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 };

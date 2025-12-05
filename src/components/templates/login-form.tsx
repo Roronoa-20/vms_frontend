@@ -45,11 +45,15 @@ export default function LoginForm() {
 
     if (response.status == 200) {
       const data = await response.json();
+      const roles = data?.message?.employee?.roles || [];
+      Cookies.set("role", JSON.stringify(roles));
+
       const savedRole = Cookies.get("role");
       const savedName = Cookies.get("full_name");
       const savedid = Cookies.get("user_id");
       const designation = data?.message?.employee?.designation as string;
       const designationVendor = data?.message?.designation as string;
+      const VendorASA = data?.message?.asa_reqd as string;
       const VendorRefNo = data?.message?.ref_no as string;
       console.log("Vendor Ref---->", VendorRefNo);
       if (designationVendor) {
@@ -61,7 +65,9 @@ export default function LoginForm() {
       }
       Cookies.set("designation", designation || designationVendor);
       Cookies.set("VendorRef", VendorRefNo);
-      setAuthData(savedRole, savedName, savedid, designation || designationVendor, VendorRefNo);
+      Cookies.set("VendorASA", VendorASA);
+      console.log("Checking the saved role----->", savedRole)
+      setAuthData(savedRole, savedName, savedid, designation || designationVendor, VendorRefNo, VendorASA);
       if (designationVendor) {
         router.push("/vendor-dashboard");
         return
@@ -70,16 +76,24 @@ export default function LoginForm() {
         router.push("/qa-dashboard");
         return;
       }
-      if (designation === "Super Head"){
+      if (designation === "Super Head") {
         router.push("/head-dashboard");
         return;
       }
-      if (designation === "Material User" || designation === "Material CP"){
+      if (designation === "Finance" || designation === "Finance Head") {
+        router.push("/finance-dashboard");
+        return;
+      }
+      if (designation === "Material User" || designation === "Material CP") {
         router.push("/material-onboarding-dashboard");
         return;
       }
-      if(designation === "Security"){
+      if (designation === "Security") {
         router.push("/gate-entry-dashboard");
+        return;
+      }
+      if (designation === "Category Master") {
+        router.push("/category-master-dashboard");
         return;
       }
       router.push("/dashboard");

@@ -61,26 +61,19 @@ type Props = {
   Submitbutton?: () => void;
   classname?: string;
   disableRef?: boolean;
+  disableSubmit?: boolean;
 };
 
-const PopUp = ({
-  handleClose,
-  children,
-  headerText,
-  isSubmit,
-  Submitbutton,
-  classname,
-  disableRef,
-}: Props) => {
+const PopUp = ({ handleClose, children, headerText, isSubmit, Submitbutton, classname, disableRef, disableSubmit }: Props) => {
   const DialogRef = useOutsideClick<HTMLDivElement>(handleClose);
 
   return (
     // 👇 fixed instead of absolute
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" style={{"margin":"0"}}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" style={{ "margin": "0" }}>
       <div
         ref={!disableRef ? null : DialogRef}
         className={cn(
-          `bg-white rounded-xl border p-4 w-full md:max-w-[700px] md:max-h-[350px] text-black font-light shadow-lg`,
+          `bg-white rounded-xl border p-4 w-full md:max-w-[700px] md:max-h-[500px] text-black font-light shadow-lg`,
           classname
         )}
       >
@@ -109,7 +102,8 @@ const PopUp = ({
           </Button>
           {isSubmit && (
             <Button
-              className="py-2"
+              disabled={disableSubmit}
+              className={`py-2 ${disableSubmit ? "opacity-50 cursor-not-allowed" : ""}`}
               variant={"nextbtn"}
               size={"nextbtnsize"}
               onClick={() => {

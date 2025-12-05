@@ -70,9 +70,13 @@ const Certificate = ({
   const [certificateData, setCertificateData] = useState<Partial<certificateData>>({});
   const [multipleCertificateData, setMultipleCertificateData] = useState<certificateData[]>(OnboardingDetail || []);
   const fileInput = useRef<HTMLInputElement>(null);
-
   const router = useRouter();
   const { designation } = useAuth();
+
+  const viewFile = (fileId: string) => {
+    const url = `${API_END_POINTS.securefileview}?file_id=${fileId}`;
+    window.open(url, "_blank");
+  };
 
   // ---- Submit
   const handleSubmit = async () => {
@@ -314,9 +318,15 @@ const Certificate = ({
                 <TableCell className="text-center">{item?.certificate_body}</TableCell>
                 <TableCell className="text-center">{item?.valid_till}</TableCell>
                 <TableCell className="text-center">
-                  <Link href={item?.certificate_attach?.url || ""} target="_blank">
+                  {/* <Link href={item?.certificate_attach?.url || ""} target="_blank">
                     {item?.certificate_attach?.file_name}
-                  </Link>
+                  </Link> */}
+                  <span
+                    className="text-[13px] text-blue-600 underline cursor-pointer hover:text-blue-800 mt-1"
+                    onClick={() => viewFile(item?.certificate_attach?.name ?? "")}
+                  >
+                    {item?.certificate_attach?.file_name}
+                  </span>
                 </TableCell>
                 <TableCell className="text-center">
                   {!isDisabled && (

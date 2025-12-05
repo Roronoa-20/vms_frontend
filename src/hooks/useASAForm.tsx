@@ -37,9 +37,13 @@ type UseASAFormReturn = {
     updateHealthSafetyForm: (data: HealthAndSafety) => void;
     submitForm: () => Promise<void>;
     refreshFormData: () => void;
-    submitGoveranceForm: () => Promise<void>;
+    submitGoveranceForm: () => Promise<boolean>;
     submitEnvironmentForm: () => Promise<void>;
     submitSocialForm: () => Promise<void>;
+    ASAformName: string;
+    VerifyASAForm: (asaFormName: string) => Promise<any>;
+    asaFormSubmitData: ASAForm;
+
 };
 
 export const useASAForm = (): UseASAFormReturn => {
@@ -151,175 +155,7 @@ export const useASAForm = (): UseASAFormReturn => {
     const vms_ref_no = params.get("vms_ref_no") || "";
     const [shouldFetch, setShouldFetch] = useState(true);
     const [ASAformName, setASAFormName] = useState("");
-
-    // useEffect(() => {
-    //     const fetchFormData = async () => {
-    //         if (!vms_ref_no || !shouldFetch) return;
-
-    //         let localEMSData = null;
-    //         try {
-    //             const storedEMS = localStorage.getItem("EMSForm");
-    //             if (storedEMS) {
-    //                 localEMSData = JSON.parse(storedEMS);
-    //                 console.log("✅ Found EMS localStorage:", localEMSData);
-    //                 setEmsForm(localEMSData);
-    //             }
-    //         } catch (e) {
-    //             console.error("Error parsing EMS localStorage:", e);
-    //         }
-
-    //         try {
-    //             const response = await requestWrapper({
-    //                 url: `${API_END_POINTS.getASAFormSubmit}?vendor_ref_no=${encodeURIComponent(vms_ref_no)}`,
-    //                 method: 'GET',
-    //             });
-    //             console.log('Fetched ASA Form Data:', response);
-    //             const data = response?.data?.message || {};
-    //             const ASADoctypename = data?.name || "";
-    //             setASAFormName(ASADoctypename);
-    //             setCompanyInfo({
-    //                 name_of_the_company: data?.company_information?.name_of_the_company || "",
-    //                 location: data?.company_information?.location || "",
-    //                 name_of_product: data?.company_information?.name_of_product || "",
-    //             });
-
-    //             const generalDisclosureData = data?.general_disclosure || {};
-    //             console.log('General Disclosure Data:', generalDisclosureData);
-
-    //             setGeneralDisclosure(prev => {
-    //                 const updated: any = { ...prev };
-    //                 for (const key in prev) {
-    //                     const fileKey = fileKeys[key as keyof typeof fileKeys];
-    //                     const commentKey = commentFieldKeys[key as keyof typeof commentFieldKeys];
-    //                     updated[key] = {
-    //                         selection: generalDisclosureData[key] || "",
-    //                         comment: commentKey && generalDisclosureData[commentKey] || "",
-    //                         file: fileKey && generalDisclosureData[fileKey]?.url ? generalDisclosureData[fileKey] : null,
-    //                     };
-    //                 }
-    //                 return updated;
-    //             });
-
-    //             const governanceData = data?.governance || {};
-    //             console.log('Governance Data:', governanceData);
-    //             setgovernanceform(prev => {
-    //                 const updated: any = { ...prev };
-    //                 for (const key in prev) {
-    //                     const fileKey = fileKeys[key as keyof typeof fileKeys];
-    //                     const commentKey = commentFieldKeys[key as keyof typeof commentFieldKeys];
-    //                     updated[key] = {
-    //                         selection: governanceData[key] || "",
-    //                         comment: commentKey ? governanceData[commentKey] || "" : "",
-    //                         file: fileKey && governanceData[fileKey]?.url ? governanceData[fileKey] : null,
-    //                     };
-    //                 }
-    //                 return updated;
-    //             });
-    //             if (!localEMSData) {
-    //                 const emsData = data?.env_manage_system || {};
-    //                 console.log('Environmental Management System Data:', emsData);
-    //                 setEmsForm(prev => {
-    //                     const updated: any = { ...prev };
-    //                     for (const key in prev) {
-    //                         const fileKey = fileKeys[key as keyof typeof fileKeys];
-    //                         const commentKey = commentFieldKeys[key as keyof typeof commentFieldKeys];
-    //                         updated[key] = {
-    //                             selection: emsData[key] || "",
-    //                             comment: commentKey ? emsData[commentKey] || "" : "",
-    //                             file: fileKey && emsData[fileKey]?.url ? emsData[fileKey] : null,
-    //                         };
-    //                     }
-    //                     return updated;
-    //                 });
-    //             }
-
-    //             const eceData = data?.energy_cons_emis || {};
-    //             console.log('Energy Consumption and Emission Data:', eceData);
-    //             setEceForm(prev => {
-    //                 const updated: any = { ...prev };
-    //                 for (const key in prev) {
-    //                     const fileKey = fileKeys[key as keyof typeof fileKeys];
-    //                     const commentKey = commentFieldKeys[key as keyof typeof commentFieldKeys];
-    //                     updated[key] = {
-    //                         selection: eceData[key] || "",
-    //                         comment: commentKey ? eceData[commentKey] || "" : "",
-    //                         file: fileKey && eceData[fileKey]?.url ? eceData[fileKey] : null,
-    //                     };
-    //                 }
-    //                 return updated;
-    //             });
-
-    //             const wcmData = data?.water_cons_mang || {};
-    //             console.log('Water Consumption and Management Data:', wcmData);
-    //             setWcmForm(prev => {
-    //                 const updated: any = { ...prev };
-    //                 for (const key in prev) {
-    //                     const fileKey = fileKeys[key as keyof typeof fileKeys];
-    //                     const commentKey = commentFieldKeys[key as keyof typeof commentFieldKeys];
-    //                     updated[key] = {
-    //                         selection: wcmData[key] || "",
-    //                         comment: commentKey ? wcmData[commentKey] || "" : "",
-    //                         file: fileKey && wcmData[fileKey]?.url ? wcmData[fileKey] : null,
-    //                     };
-    //                 }
-    //                 return updated;
-    //             });
-
-    //             const wasteManagementData = data?.waste_management || {};
-    //             console.log('Waste Management Data:', wasteManagementData);
-    //             setWasteManagementForm(prev => {
-    //                 const updated: any = { ...prev };
-    //                 for (const key in prev) {
-    //                     const fileKey = fileKeys[key as keyof typeof fileKeys];
-    //                     const commentKey = commentFieldKeys[key as keyof typeof commentFieldKeys];
-    //                     updated[key] = {
-    //                         selection: wasteManagementData[key] || "",
-    //                         comment: commentKey ? wasteManagementData[commentKey] || "" : "",
-    //                         file: fileKey && wasteManagementData[fileKey]?.url ? wasteManagementData[fileKey] : null,
-    //                     };
-    //                 }
-    //                 return updated;
-    //             });
-
-    //             const greenProductsData = data?.green_products || {};
-    //             console.log('Green Products Data:', greenProductsData);
-    //             setGreenProductsForm(prev => {
-    //                 const updated: any = { ...prev };
-    //                 for (const key in prev) {
-    //                     const fileKey = fileKeys[key as keyof typeof fileKeys];
-    //                     const commentKey = commentFieldKeys[key as keyof typeof commentFieldKeys];
-    //                     updated[key] = {
-    //                         selection: greenProductsData[key] || "",
-    //                         comment: commentKey ? greenProductsData[commentKey] || "" : "",
-    //                         file: fileKey && greenProductsData[fileKey]?.url ? greenProductsData[fileKey] : null,
-    //                     };
-    //                 }
-    //                 return updated;
-    //             });
-
-    //             const biodiversityData = data?.biodiversity || {};
-    //             console.log('Biodiversity Data:', biodiversityData);
-    //             setBiodiversityForm(prev => {
-    //                 const updated: any = { ...prev };
-    //                 for (const key in prev) {
-    //                     const fileKey = fileKeys[key as keyof typeof fileKeys];
-    //                     const commentKey = commentFieldKeys[key as keyof typeof commentFieldKeys];
-    //                     updated[key] = {
-    //                         selection: biodiversityData[key] || "",
-    //                         comment: commentKey ? biodiversityData[commentKey] || "" : "",
-    //                         file: fileKey && biodiversityData[fileKey]?.url ? biodiversityData[fileKey] : null,
-    //                     };
-    //                 }
-    //                 return updated;
-    //             });
-    //             setShouldFetch(false);
-    //         } catch (error) {
-    //             console.error('Error fetching ASA form data:', error);
-    //         }
-    //     };
-
-    //     fetchFormData();
-    // }, [vms_ref_no, shouldFetch, ASAformName]);
+    const [asaFormSubmitData, setAsaFormSubmitData] = useState<ASAForm>({});
 
 
     useEffect(() => {
@@ -349,6 +185,7 @@ export const useASAForm = (): UseASAFormReturn => {
                 GrievanceMechForm: loadLocalStorage("GrivenanceForm"),
                 EmpWellBeingForm: loadLocalStorage("EmpWellBeingForm"),
                 HealthSafetyForm: loadLocalStorage("HealthSafetyForm"),
+                EmpSatisfactionForm: loadLocalStorage("EmpSatisfactionForm")
             };
 
             if (localForms.EMSForm) setEmsForm(localForms.EMSForm);
@@ -360,6 +197,7 @@ export const useASAForm = (): UseASAFormReturn => {
             if (localForms.GrievanceMechForm) setGrievanceMechForm(localForms.GrievanceMechForm);
             if (localForms.EmpWellBeingForm) setEmpWellBeingForm(localForms.EmpWellBeingForm);
             if (localForms.HealthSafetyForm) setHealthSafetyForm(localForms.HealthSafetyForm);
+            if (localForms.EmpSatisfactionForm) setEmpSatisfactionForm(localForms.EmpSatisfactionForm);
 
             try {
                 const response = await requestWrapper({
@@ -367,12 +205,11 @@ export const useASAForm = (): UseASAFormReturn => {
                     method: 'GET',
                 });
 
-                console.log('Fetched ASA Form Data:', response);
+                // console.log('Fetched ASA Form Data:', response);
                 const data = response?.data?.message || {};
-
+                setAsaFormSubmitData(data);
                 const ASADoctypename = data?.name || "";
                 setASAFormName(ASADoctypename);
-
                 setCompanyInfo({
                     name_of_the_company: data?.company_information?.name_of_the_company || "",
                     location: data?.company_information?.location || "",
@@ -418,6 +255,7 @@ export const useASAForm = (): UseASAFormReturn => {
                 parseSection(data?.griv_mechanism, setGrievanceMechForm, "GrievanceMechForm");
                 parseSection(data?.emp_well_being, setEmpWellBeingForm, "EmpWellBeingForm");
                 parseSection(data?.health_safety, setHealthSafetyForm, "HealthSafetyForm");
+                parseSection(data?.emp_satisfaction, setEmpSatisfactionForm, "EmpSatisfactionForm");
 
                 setShouldFetch(false);
             } catch (error) {
@@ -428,10 +266,25 @@ export const useASAForm = (): UseASAFormReturn => {
         fetchFormData();
     }, [vms_ref_no, shouldFetch, ASAformName]);
 
+    console.log("Complete ASA Form Data-->",asaFormSubmitData)
 
     useEffect(() => {
-        console.log("✅ Updated ASAformName from state:", ASAformName);
+        // console.log("Updated ASAformName from state:", ASAformName);
     }, [ASAformName]);
+
+    const VerifyASAForm = async (asaFormName: string) => {
+        try {
+            const response = await requestWrapper({
+                url: `${API_END_POINTS.verifyasaform}?asa_name=${asaFormName}`,
+                method: "POST",
+            });
+            // console.log("Verify ASA FOrm API response---->",response)
+            return response?.data || null;
+        } catch (error) {
+            console.error("VerifyASAForm error:", error);
+            return null;
+        }
+    };
 
     const refreshFormData = () => setShouldFetch(true);
 
@@ -568,87 +421,64 @@ export const useASAForm = (): UseASAFormReturn => {
         }
     };
 
-    // Governance Form Submit API
-    const submitGoveranceForm = async () => {
-        const formData = new FormData();
-
-        const dataPayload: ASAForm = {
-            vendor_ref_no: vms_ref_no,
-            name: ASAformName,
-            have_formal_governance_structure: governanceform.have_formal_governance_structure.selection,
-            details_1: governanceform.have_formal_governance_structure.comment,
-
-            esg_policies_coverage: governanceform.esg_policies_coverage.selection,
-            details_2: governanceform.esg_policies_coverage.comment,
-
-            esg_risk_integration: governanceform.esg_risk_integration.selection,
-            details_3: governanceform.esg_risk_integration.comment,
-
-            company_publish_sustainability_report: governanceform.company_publish_sustainability_report.selection,
-            details_4: governanceform.company_publish_sustainability_report.comment,
-
-            esg_rating_participated: governanceform.esg_rating_participated.selection,
-            esg_rating_score: governanceform.esg_rating_participated.comment,
-
-            esg_incentive_for_employee: governanceform.esg_incentive_for_employee.selection,
-            details_6: governanceform.esg_incentive_for_employee.comment,
-
-            csat_survey_conducted: governanceform.csat_survey_conducted.selection,
-            csat_score: governanceform.csat_survey_conducted.comment,
-
-            instance_of_loss_customer_data: governanceform.instance_of_loss_customer_data.selection,
-            no_of_loss_data_incidents: governanceform.instance_of_loss_customer_data.comment,
-        };
-        formData.append("data", JSON.stringify(dataPayload));
-
-        // Attach files separately, using expected field names
-        if (governanceform.have_formal_governance_structure.file) {
-            if (governanceform.have_formal_governance_structure.file instanceof File) {
-                formData.append("upload_file_1", governanceform.have_formal_governance_structure.file);
-            }
-        }
-        if (governanceform.esg_policies_coverage.file) {
-            if (governanceform.esg_policies_coverage.file instanceof File) {
-                formData.append("upload_file_2", governanceform.esg_policies_coverage.file);
-            }
-        }
-        if (governanceform.esg_risk_integration.file) {
-            if (governanceform.esg_risk_integration.file instanceof File) {
-                formData.append("upload_file_3", governanceform.esg_risk_integration.file);
-            }
-        }
-        if (governanceform.company_publish_sustainability_report.file) {
-            if (governanceform.company_publish_sustainability_report.file instanceof File) {
-                formData.append("upload_file_4", governanceform.company_publish_sustainability_report.file);
-            }
-        }
-        if (governanceform.esg_rating_participated.file) {
-            if (governanceform.esg_rating_participated.file instanceof File) {
-                formData.append("upload_file_5", governanceform.esg_rating_participated.file);
-            }
-        }
-        if (governanceform.esg_incentive_for_employee.file) {
-            if (governanceform.esg_incentive_for_employee.file instanceof File) {
-                formData.append("upload_file_6", governanceform.esg_incentive_for_employee.file);
-            }
-        }
-        if (governanceform.csat_survey_conducted.file) {
-            if (governanceform.csat_survey_conducted.file instanceof File) {
-                formData.append("upload_file_7", governanceform.csat_survey_conducted.file);
-            }
-        }
-        if (governanceform.instance_of_loss_customer_data.file) {
-            if (governanceform.instance_of_loss_customer_data.file instanceof File) {
-                formData.append("upload_file_8", governanceform.instance_of_loss_customer_data.file);
-            }
-        }
-
-        console.log("Submitting ASA Form Data:");
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}:`, value);
-        }
-
+    const submitGoveranceForm = async (): Promise<boolean> => {
         try {
+            const formData = new FormData();
+
+            const dataPayload: ASAForm = {
+                vendor_ref_no: vms_ref_no,
+                name: ASAformName,
+                form_is_submitted: 1,
+                have_formal_governance_structure: governanceform.have_formal_governance_structure.selection,
+                details_1: governanceform.have_formal_governance_structure.comment,
+
+                esg_policies_coverage: governanceform.esg_policies_coverage.selection,
+                details_2: governanceform.esg_policies_coverage.comment,
+
+                esg_risk_integration: governanceform.esg_risk_integration.selection,
+                details_3: governanceform.esg_risk_integration.comment,
+
+                company_publish_sustainability_report: governanceform.company_publish_sustainability_report.selection,
+                details_4: governanceform.company_publish_sustainability_report.comment,
+
+                esg_rating_participated: governanceform.esg_rating_participated.selection,
+                esg_rating_score: governanceform.esg_rating_participated.comment,
+
+                esg_incentive_for_employee: governanceform.esg_incentive_for_employee.selection,
+                details_6: governanceform.esg_incentive_for_employee.comment,
+
+                csat_survey_conducted: governanceform.csat_survey_conducted.selection,
+                csat_score: governanceform.csat_survey_conducted.comment,
+
+                instance_of_loss_customer_data: governanceform.instance_of_loss_customer_data.selection,
+                no_of_loss_data_incidents: governanceform.instance_of_loss_customer_data.comment,
+            };
+
+            formData.append("data", JSON.stringify(dataPayload));
+
+            // Attach files
+            const fileMap = [
+                { file: governanceform.have_formal_governance_structure.file, name: "upload_file_1" },
+                { file: governanceform.esg_policies_coverage.file, name: "upload_file_2" },
+                { file: governanceform.esg_risk_integration.file, name: "upload_file_3" },
+                { file: governanceform.company_publish_sustainability_report.file, name: "upload_file_4" },
+                { file: governanceform.esg_rating_participated.file, name: "upload_file_5" },
+                { file: governanceform.esg_incentive_for_employee.file, name: "upload_file_6" },
+                { file: governanceform.csat_survey_conducted.file, name: "upload_file_7" },
+                { file: governanceform.instance_of_loss_customer_data.file, name: "upload_file_8" },
+            ];
+
+            fileMap.forEach(({ file, name }) => {
+                if (file instanceof File) {
+                    formData.append(name, file);
+                }
+            });
+
+            console.log("Submitting ASA Form Data:");
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}:`, value);
+            }
+
             const response = await fetch(API_END_POINTS.asagrovernanceformSubmit, {
                 method: "POST",
                 body: formData,
@@ -661,13 +491,14 @@ export const useASAForm = (): UseASAFormReturn => {
                     typeof res.message === "string"
                         ? res.message
                         : res.message?.message || "Something went wrong while submitting the form.";
-                throw new Error(errMsg);
+                console.error("Form submission failed:", errMsg);
+                return false;
             }
             console.log("Governance Form submission successful:", res);
-            // router.push(`asa-form?tabtype=ems&vms_ref_no=${vms_ref_no}`);
-
+            return true;
         } catch (err) {
             console.error("Form submission failed:", err);
+            return false;
         }
     };
 
@@ -743,7 +574,7 @@ export const useASAForm = (): UseASAFormReturn => {
             details_25: greenProductsForm.certified_green_projects.comment,
             // ECE Form
             energy_consumption_tracking: formeceform.energy_consumption_tracking.selection,
-            details_4: formeceform.energy_consumption_tracking.comment,
+            total_energy_consumed: formeceform.energy_consumption_tracking.comment,
             company_track_greenhouse_gas: formeceform.company_track_greenhouse_gas.selection,
             scope_wise_chg_emission: formeceform.company_track_greenhouse_gas.comment,
             consume_renewable_energy: formeceform.consume_renewable_energy.selection,
@@ -1194,7 +1025,6 @@ export const useASAForm = (): UseASAFormReturn => {
     };
 
     return {
-        companyInfo, generalDisclosure, updateCompanyInfo, updateGeneralDisclosure, submitForm, refreshFormData, governanceform, submitGoveranceForm, updateGovernanceForm, emsform, updateEmsForm, submitEnvironmentForm, biodiversityForm, greenProductsForm, updateBiodiversityForm, updateGreenProductsForm, eceform, updateEceForm, wcmform, updateWcmForm, wastemanagementForm, updateWasteManagementForm, EmpSatisfactionForm, updateEmpSatisactionForm, LaborRightsForm, updateLaborRightsForm, submitSocialForm, GrievanceMechForm, updateGrievnaceMechForm, EmpWellBeingForm, updateEmpWellBeingForm, updateHealthSafetyForm,
-        HealthSafetyForm
+        companyInfo, generalDisclosure, updateCompanyInfo, updateGeneralDisclosure, submitForm, refreshFormData, governanceform, submitGoveranceForm, updateGovernanceForm, emsform, updateEmsForm, submitEnvironmentForm, biodiversityForm, greenProductsForm, updateBiodiversityForm, updateGreenProductsForm, eceform, updateEceForm, wcmform, updateWcmForm, wastemanagementForm, updateWasteManagementForm, EmpSatisfactionForm, updateEmpSatisactionForm, LaborRightsForm, updateLaborRightsForm, submitSocialForm, GrievanceMechForm, updateGrievnaceMechForm, EmpWellBeingForm, updateEmpWellBeingForm, updateHealthSafetyForm, HealthSafetyForm, VerifyASAForm, ASAformName, asaFormSubmitData
     };
 };

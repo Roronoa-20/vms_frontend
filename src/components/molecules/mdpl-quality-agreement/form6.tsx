@@ -1,52 +1,152 @@
 import React from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/src/components/molecules/mdpl-quality-agreement/header";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useQMSForm } from "@/src/hooks/useQMSForm";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/src/context/AuthContext";
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import requestWrapper from "@/src/services/apiCall";
+import { Trash2 } from "lucide-react";
+
+type QAProduct = {
+  name_of_the_purchased_material__processes: string;
+  specifications: string;
+  isNew: boolean;
+  name?: string;
+  idx?: number;
+};
+
 
 export const Form6 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "vendor_information";
-  const { formData, setFormData } = useQMSForm(vendor_onboarding, currentTab);
+  const { qualityagreementData, formData, setQualityAgreementData } = useQMSForm(vendor_onboarding, currentTab);
+  const { designation } = useAuth();
+  const [submitted, setSubmitted] = useState(false);
 
-  const products: Array<any> = Array.isArray(formData?.products_in_qa)
-    ? formData.products_in_qa
+  const isQATeamApproved = formData?.qa_team_approved === 1;
+
+
+  const products: QAProduct[] = Array.isArray(qualityagreementData?.products_in_qa)
+    ? qualityagreementData.products_in_qa.map((p: any) => ({
+      name_of_the_purchased_material__processes: p.name_of_the_purchased_material__processes || p.material_description || "",
+      specifications: p.specification || p.specifications || "",
+      isNew: p.isNew ?? false,
+      name: p.name,
+      idx: p.idx
+    }))
     : [];
 
-  const handleInputChange = (index: number, field: string, value: string) => {
-    const updatedProducts = [...products];
-    updatedProducts[index] = {
-      ...updatedProducts[index],
+  const handleInputChange = (index: number, field: keyof QAProduct, value: string) => {
+    const updated: QAProduct[] = [...products];
+    updated[index] = {
+      ...updated[index],
       [field]: value,
-      isNew: updatedProducts[index]?.isNew ?? false,
     };
-    setFormData((prev: any) => ({
+    setQualityAgreementData((prev: any) => ({
       ...prev,
-      products_in_qa: updatedProducts,
+      products_in_qa: updated,
     }));
   };
 
+
+  const deleteRow = async (index: number) => {
+    const row = products[index];
+
+    if (row.isNew) {
+      const updated = [...products];
+      updated.splice(index, 1);
+      setQualityAgreementData((prev: any) => ({
+        ...prev,
+        products_in_qa: updated as any,
+      }));
+      return;
+    }
+
+    try {
+      const payload = {
+        qms_form: formData.name,
+        name: row.name,
+      };
+
+      const response = await requestWrapper({
+        url: API_END_POINTS.deleteform5Products,
+        method: "POST",
+        data: { data: JSON.stringify(payload) },
+      });
+      if (response?.data?.message?.status === "success") {
+        const updated = [...products];
+        updated.splice(index, 1);
+
+        setQualityAgreementData((prev: any) => ({
+          ...prev,
+          products_in_qa: updated as any,
+        }));
+
+        alert("Product deleted!");
+      } else {
+        console.error("Delete failed:", response);
+        alert("Delete failed. Try again.");
+      }
+    } catch (err) {
+      console.error("Delete API error:", err);
+      alert("Something went wrong while deleting.");
+    }
+  };
+
   const addRow = () => {
-    setFormData((prev: any) => ({
+    setSubmitted(false);
+    setQualityAgreementData((prev: any) => ({
       ...prev,
       products_in_qa: [
         ...(prev.products_in_qa || []),
-        { material_description: "", specification: "", isNew: true },
+        { name_of_the_purchased_material__processes: "", specifications: "", isNew: true },
       ],
     }));
   };
 
+  const handleSubmit = async () => {
+    try {
+
+      const newRows = products.filter(p => p.isNew);
+
+      if (newRows.length === 0) {
+        alert("No new products to add.");
+        return;
+      }
+
+      const payload = {
+        qms_form: formData.name,
+        products_in_qa: newRows,
+      };
+
+      const response = await requestWrapper({
+        url: API_END_POINTS.submitform5MDPLQualityAgreement,
+        method: 'POST',
+        data: { data: JSON.stringify(payload) }
+      });
+      if (response?.data?.message?.status === "success") {
+        alert("Prodcuts Added!");
+        setSubmitted(true);
+      } else {
+        alert("Failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during form 5 submittion:", error);
+      alert("Something went wrong while submitting.");
+    }
+  };
+
   useEffect(() => {
-    const productsFromForm = formData?.products_in_qa || [];
+    const productsFromForm = qualityagreementData?.products_in_qa || [];
     if (productsFromForm.length > 0) {
       localStorage.setItem("QAProductList", JSON.stringify(productsFromForm));
-      console.log("Saved QA Product List to localStorage:", productsFromForm);
     }
   }, [formData.products_in_qa]);
 
-
+  const hasNewRows = products.some(p => p.isNew);
 
   return (
     <div className="space-y-[32px] flex flex-col justify-between min-h-[80vh]">
@@ -71,6 +171,11 @@ export const Form6 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
                       <TableHead className="w-[300px] text-center border-r border-black">
                         Specifications
                       </TableHead>
+                      {(designation !== "QA Team" && designation !== "Purchase Team") && (
+                        <TableHead className="w-[70px] text-center border-black">
+                          Delete
+                        </TableHead>
+                      )}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -82,10 +187,11 @@ export const Form6 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
                         <TableCell className="text-center border-r border-black">
                           <input
                             type="text"
-                            value={product.material_description}
+                            value={product.name_of_the_purchased_material__processes}
                             onChange={e =>
-                              handleInputChange(index, "material_description", e.target.value)
+                              handleInputChange(index, "name_of_the_purchased_material__processes", e.target.value)
                             }
+                            disabled={isQATeamApproved}
                             className="w-full px-2 py-1 border border-gray-400 rounded"
                             placeholder="Enter material name"
                           />
@@ -93,37 +199,47 @@ export const Form6 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
                         <TableCell className="text-center border-r border-black">
                           <input
                             type="text"
-                            value={product.specification}
+                            value={product.specifications}
                             onChange={e =>
-                              handleInputChange(index, "specification", e.target.value)
+                              handleInputChange(index, "specifications", e.target.value)
                             }
+                            disabled={isQATeamApproved}
                             className="w-full px-2 py-1 border border-gray-400 rounded"
                             placeholder="Enter specifications"
                           />
                         </TableCell>
+                        {!isQATeamApproved && (designation !== "QA Team" && designation !== "Purchase Team") && (
+                          <TableCell className="text-center">
+                            <Trash2
+                              size={20}
+                              className="cursor-pointer text-red-600 hover:text-red-800"
+                              onClick={() => deleteRow(index)}
+                            />
+                          </TableCell>
+                        )}
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
-                <button
-                  type="button"
-                  onClick={addRow}
-                  className="mt-4 flex items-center justify-center text-blue-600 hover:text-blue-800 font-semibold"
-                >
-                  ➕ Insert a new row if required
-                </button>
+                {!isQATeamApproved && (designation !== "QA Team" && designation !== "Purchase Team") && (
+                  <button
+                    type="button"
+                    onClick={addRow}
+                    className="mt-4 flex items-center justify-center text-blue-600 hover:text-blue-800 font-semibold"
+                  >
+                    ➕ Insert a new row if required
+                  </button>
+                )}
               </div>
             </div>
           </section>
-          {/* <Button
-            onClick={() => {
-              console.log("🔥 Form 5 Data Preview:", formData);
-              alert("Check the console! 🔍");
-            }}
-            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Preview Form 5 Data
-          </Button> */}
+          {(designation !== "QA Team" && designation !== "Purchase Team") && hasNewRows && !submitted && (
+            <div className="flex justify-end mt-4 pr-6">
+              <Button className="py-2.5" variant={"nextbtn"} size={"nextbtnsize"} onClick={handleSubmit}>
+                Submit
+              </Button>
+            </div>
+          )}
           <section className="items-center">
             <div className="text-center text-lg font-semibold mt-[400px]">
               Page 6 of 7

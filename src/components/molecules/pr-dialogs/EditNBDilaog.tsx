@@ -48,24 +48,17 @@ interface EditNBModalProps {
   plant: string
   company: string
   purchase_group: string
+  disabled?:boolean
 }
 
-const EditNBModal: React.FC<EditNBModalProps> = ({
-  isOpen,
-  onClose,
-  fetchTableData,
-  Dropdown,
-  defaultData,
-  pur_req,
-  PurchaseGroupDropdown,
-  ProfitCenterDropdown, accountAssigmentDropdown, itemCategoryDropdown, plant, company, purchase_group
-}) => {
+const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen,disabled, onClose, fetchTableData, Dropdown, defaultData, pur_req, PurchaseGroupDropdown,accountAssigmentDropdown, itemCategoryDropdown, plant, company, purchase_group }) => {
+
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, any>>({});
   const [MaterialCodeDropdown, setMaterialCodeDropdown] = useState<MaterialCode[]>()
   const [PlantCodeDropdown, setPlantCodeDropdown] = useState<Plant[]>()
   const [materialCode, setMaterialCode] = useState<string>("");
-  const [plantCode, setPlantCode] = useState<string>("");
+  const [plantCode, setPlantCode] = useState<string>(plant);
   const [requiredField, setRequiredField] = useState<Record<string, any>>({});
   const [GLAccountDropdown, setGLAccountDropdown] = useState<GLAccountNumber[]>()
   const [GLAccount, setGLAccount] = useState<string>("");
@@ -75,10 +68,13 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   const [MaterialGroup, setMaterialGroup] = useState<string>("");
   const [CostCenterDropdown, setCostCenterDropdown] = useState<CostCenter[]>()
   const [CostCenter, setCostCenter] = useState<string>("");
+  const [ProductPrice, setProductPrice] = useState<string>("");
   const [ValuationAreaDropdown, setValuationAreaDropdown] = useState<ValuationClass[]>()
   const [ValuationArea, setValuationArea] = useState<string>("");
+  const [isAssetValid, setIsAssetValid] = useState<boolean | null>(null);
   const { designation } = useAuth();
   const isPurchaseTeam = designation === "Purchase Team";
+
   useEffect(() => {
     if (isOpen) {
       setFormData(defaultData || {});
@@ -108,25 +104,45 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     if (defaultData?.valuation_area_head) {
       setValuationArea(defaultData?.valuation_area_head);
     }
+    if (defaultData?.final_price_by_purchase_team_head) {
+      setProductPrice(defaultData?.final_price_by_purchase_team_head);
+      setFormData(prev => ({
+        ...prev,
+        price_of_purchase_requisition_head: defaultData.final_price_by_purchase_team_head
+      }));
+    }
   }, [defaultData]);
-  console.log(PlantCodeDropdown, "PlantCodeDropdown PlantCodeDropdownPlantCodeDropdownPlantCodeDropdown")
+
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: false }));
     }
+    if (name === "main_asset_no_head") {
+      if (value.length === 12) {
+        checkAssetCode(value);
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          asset_validation_message: ""
+        }));
+      }
+    }
   };
+
   const renderError = (field: string) =>
     errors[field] ? (
       <p className="text-red-500 text-xs mt-1">{errors[field]}</p>
     ) : null;
+
   const handleSelectChange = (value: string, field: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: false }));
     }
   };
+
   const fetchRequiredData = async (company: string, pur_type: string, acct_cate: string) => {
     console.log(company, pur_type, acct_cate, "data rrquired before api")
     try {
@@ -149,9 +165,9 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       console.log(error, "something went wrong");
     }
   };
+
   useEffect(() => {
     const { company_code_area_head, purchase_requisition_type, account_assignment_category_head } = formData || {};
-    // Only call API if all three are present (non-empty)
     if (company_code_area_head && purchase_requisition_type && account_assignment_category_head) {
       fetchRequiredData(
         company_code_area_head,
@@ -170,7 +186,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     const baseUrl = API_END_POINTS?.MaterialCodeSearchApi;
     let url = baseUrl;
 
-    // Only include filters if company exists
     const filters = [];
 
     if (company) {
@@ -187,7 +202,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
 
     console.log(filters, "filters");
 
-    // Add search_term if query exists
     if (query) {
       url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
     }
@@ -197,17 +211,15 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       setMaterialCodeDropdown(response?.data?.message?.data)
       return response.data.message.data
     } else {
-      alert("error");
+      return []
     }
-    return []
   };
-  
+
   const fetchPlantCodeData = async (query?: string): Promise<[]> => {
     console.log(query)
     const baseUrl = API_END_POINTS?.FetchPlantSearchApi;
     let url = baseUrl;
 
-    // Add search_term if query exists
     if (query) {
       url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
     }
@@ -218,20 +230,19 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       setPlantCodeDropdown(response?.data?.message?.data)
       return response.data.message.data
     } else {
-      alert("error");
+      setPlantCodeDropdown([])
+      return []
     }
-    return []
   }
   const validate = () => {
     const newErrors: Record<string, string> = {};
 
-    // Helper: Convert field name to readable format
     const formatFieldName = (name: string) => {
       return name
-        .replace(/_/g, " ") // replace underscores with spaces
-        .replace(/([a-z])([A-Z])/g, "$1 $2") // split camelCase
-        .replace(/\b\w/g, (char) => char.toUpperCase()) // capitalize each word
-        .replace(/\bHead\b/gi, ""); // remove the word 'Head' if present
+        .replace(/_/g, " ")
+        .replace(/([a-z])([A-Z])/g, "$1 $2")
+        .replace(/\b\w/g, (char) => char.toUpperCase())
+        .replace(/\bHead\b/gi, "");
     };
 
     Object.entries(requiredField).forEach(([field, rule]) => {
@@ -252,6 +263,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     setErrors(newErrors);
     return newErrors;
   };
+
   const handleSubmit = async () => {
     console.log(errors, "errors before submit")
     if (!formData.account_assignment_category_head) {
@@ -260,7 +272,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     }
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
-      // alert(JSON.stringify(validationErrors));
       return;
     }
     const updateformdata = { ...formData, name: pur_req }
@@ -272,9 +283,10 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       fetchTableData(pur_req);
       onClose();
     } else {
-      alert("error");
+      return
     }
   };
+
   useEffect(() => {
     setFormData((prev) => ({ ...prev, purchase_requisition_date_head: formData?.purchase_requisition_date_head ? formData?.purchase_requisition_date_head : today, plant_head: plant, purchase_group_head: purchase_group }));
   }, [today, formData?.purchase_requisition_date_head, purchase_group]);
@@ -282,11 +294,11 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
   useEffect(() => {
     fetchMaterialCodeData();
   }, [formData?.company_code_area_head, formData?.plant_head]);
+
   const fetchGLNumberData = async (query?: string): Promise<[]> => {
     console.log(query)
     const baseUrl = API_END_POINTS?.GLAccountSearchApi;
     let url = baseUrl;
-    // Only include filters if company exists
     const filters = [];
     if (company) {
       filters.push({ "company": company });
@@ -295,7 +307,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
     }
 
-    // Add search_term if query exists
     if (query) {
       url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
     }
@@ -304,40 +315,32 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       setGLAccountDropdown(response?.data?.message?.data)
       return response.data.message.data
     } else {
-      alert("error");
+      return []
     }
-    return []
-  }
+  };
+
   const fetchStoreLocationData = async (query?: string): Promise<[]> => {
     console.log(query)
     const baseUrl = API_END_POINTS?.StorageLocationSearchApi;
-
-    // Determine which plant name to use
-    const plant_name = plantCode ?? plant;
-
-    // Build query parameters
+    const plant_name = plantCode;
     const params = new URLSearchParams();
-
     if (plant_name) params.append("plant_name", plant_name);
-    if (query) params.append("search_term", query);
-
+    // if (query) params.append("search_term", query);
     const url = `${baseUrl}?${params.toString()}`;
-
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
       console.log(response?.data?.message?.data, "response?.data?.message?.data store loaction")
       setStoreLocationDropdown(response?.data?.message?.data)
       return response.data.message.data
     } else {
-      alert("error");
+      return []
     }
-    return []
-  }
+  };
+
   const fetchMaterialGroupData = async (query?: string): Promise<[]> => {
     console.log(query)
     const baseUrl = API_END_POINTS?.MaterialGroupSearchApi;
     let url = baseUrl;
-    // Only include filters if company exists
     console.log(company, "company")
     const filters = [];
     if (company) {
@@ -347,7 +350,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
     }
 
-    // Add search_term if query exists
     if (query) {
       url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
     }
@@ -356,15 +358,14 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       setMaterialGroupDropdown(response?.data?.message?.data)
       return response.data.message.data
     } else {
-      alert("error");
+      return []
     }
-    return []
-  }
+  };
+
   const fetchCostCenterData = async (query?: string): Promise<[]> => {
-    console.log(query)
+    // console.log(query)
     const baseUrl = API_END_POINTS?.CostCenterSearchApi;
     let url = baseUrl;
-    // Only include filters if company exists
     const filters = [];
     if (company) {
       filters.push({ "company_code": company });
@@ -373,7 +374,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
     }
 
-    // Add search_term if query exists
     if (query) {
       url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
     }
@@ -382,15 +382,14 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       setCostCenterDropdown(response?.data?.message?.data)
       return response.data.message.data
     } else {
-      alert("error");
+      return []
     }
-    return []
-  }
+  };
+
   const fetchValuationAreaData = async (query?: string): Promise<[]> => {
     console.log(query)
     const baseUrl = API_END_POINTS?.ValuationAreaSearchApi;
     let url = baseUrl;
-    // Only include filters if company exists
     const filters = [];
     if (company) {
       filters.push({ "company": company });
@@ -399,7 +398,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
     }
 
-    // Add search_term if query exists
     if (query) {
       url += `${url.includes('?') ? '&' : '?'}search_term=${encodeURIComponent(query)}`;
     }
@@ -408,13 +406,13 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       setValuationAreaDropdown(response?.data?.message?.data)
       return response.data.message.data
     } else {
-      alert("error");
+      return []
     }
-    return []
-  }
+  };
+
   useEffect(() => {
     if (plantCode) {
-      fetchStoreLocationData();
+      fetchStoreLocationData(plantCode);
     }
   }, [plantCode, formData?.plant_head]);
 
@@ -437,14 +435,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
     if (storeLocation) {
       fetchStoreLocationData(storeLocation);
     }
-  }, [
-    plantCode,
-    GLAccount,
-    CostCenter,
-    ValuationArea,
-    MaterialGroup,
-    storeLocation,
-  ]);
+  }, [plantCode, GLAccount, CostCenter, ValuationArea, MaterialGroup, storeLocation]);
 
   const renderInput = (name: string, label: string, type = 'text', inputProps: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
     <div className="col-span-1">
@@ -460,17 +451,21 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
         {...inputProps}
       />
       {renderError(name)}
+      {name === "main_asset_no_head" && formData.asset_validation_message && (
+        <p
+          className={`text-xs mt-2 ${formData.asset_validation_status === "200"
+            ? "text-green-600"
+            : "text-red-600"
+            }`}
+        >
+          {formData.asset_validation_message}
+        </p>
+      )}
+
     </div>
   );
-  
-  const renderSelect = <T,>(
-    name: string,
-    label: string,
-    options: T[],
-    getValue: (item: T) => string,
-    getLabel: (item: T) => string,
-    disabled?: boolean
-  ) => {
+
+  const renderSelect = <T,>(name: string, label: string, options: T[], getValue: (item: T) => string, getLabel: (item: T) => string, disabled?: boolean) => {
     const selectedValue = formData[name] ?? "";
     return (
       <div className="col-span-1">
@@ -491,7 +486,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {options?.map((item, idx) => (
+              {options.length > 0 && options?.map((item, idx) => (
                 <SelectItem key={idx} value={getValue(item)}>
                   {getLabel(item)}
                 </SelectItem>
@@ -503,18 +498,51 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
       </div>
     );
   };
+
+  const checkAssetCode = async (asset_no: string) => {
+    try {
+      const url = `${API_END_POINTS?.checkassetcode}?asset_code=${asset_no}`;
+      const response: AxiosResponse = await requestWrapper({
+        url,
+        method: "GET",
+      });
+      const msg = response?.data?.message?.message ?? "";
+      if (response?.status === 200) {
+        setFormData(prev => ({
+          ...prev,
+          asset_validation_message: msg,
+          asset_validation_status: "200"
+        }));
+        setIsAssetValid(true);
+      }
+      if (response?.status === 400) {
+        setFormData(prev => ({
+          ...prev,
+          asset_validation_message: msg || "Asset code is already used.",
+          asset_validation_status: "400"
+        }));
+        setIsAssetValid(false);
+      }
+    } catch (error) {
+      console.log("Unexpected error:", error);
+    }
+  };
+
+  console.log(formData?.store_location_head,"_________")
+
   return (
-    <PopUp headerText='Purchase Request Items' classname='overflow-y-scroll md:max-w-[1000px] md:max-h-[600px]' handleClose={onClose} isSubmit={true} Submitbutton={handleSubmit}>
+    <PopUp headerText='Purchase Request Items' classname='overflow-y-scroll md:max-w-[1000px] md:max-h-[600px]' handleClose={onClose} isSubmit={true} Submitbutton={handleSubmit} disableSubmit={isAssetValid === false}
+    >
       <div className="grid grid-cols-3 gap-6 pt-2">
-        {renderInput('item_number_of_purchase_requisition_head', 'Item Number of Purchase Requisition', 'text', { disabled: true })}
-        {renderInput('purchase_requisition_date_head', 'Purchase Requisition Date', 'date', { disabled: true })}
+        {renderInput('item_number_of_purchase_requisition_head', 'Item Number of Purchase Requisition', 'text', { disabled: disabled })}
+        {renderInput('purchase_requisition_date_head', 'Purchase Requisition Date', 'date', { disabled: disabled })}
         {renderSelect(
           'purchase_group_head',
           'Purchase Group',
           PurchaseGroupDropdown,
           (item) => item.name,
           (item) => `${item.purchase_group_code} - ${item.purchase_group_name}`,
-          true
+          disabled
         )}
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#626973] pb-1 flex items-center gap-1 ">
@@ -539,7 +567,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
             {"Select Store Location"}
-            {/* {error && <span className="text-red-600">*</span>} */}
           </h1>
           <SearchSelectComponent
             setData={(value) => {
@@ -583,13 +610,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           (item) => item.name,
           (item) => `${item.account_assignment_category_code} - ${item.account_assignment_category_name}`
         )}
-        {/* {renderSelect(
-          'store_location_head',
-          'Store Location',
-          StorageLocationDropdown,
-          (item) => item.name,
-          (item) => `${item.storage_name}`
-        )} */}
         {renderSelect(
           'item_category_head',
           'Item Category',
@@ -598,16 +618,6 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           (item) => `${item.item_code} - ${item.item_name}`,
           itemCategoryDropdown?.length > 0 ? false : true
         )}
-        {/* 
-        {renderSelect(
-          'material_group_head',
-          'Material Group',
-          MaterialGroupDropdown,
-          (item) => item.name,
-          (item) => `${item.material_group_name} - ${item.material_group_description}`
-        )} */}
-        
-
         {renderSelect(
           'uom_head',
           'UOM',
@@ -615,23 +625,13 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           (item) => item.name,
           (item) => `${item.uom_code} - ${item.uom}`
         )}
-        {renderInput('quantity_head', 'Quantity','number', { disabled: isPurchaseTeam})}
-        {renderInput('delivery_date_head', 'Delivery Date', 'date', { disabled: isPurchaseTeam})}
+        {renderInput('quantity_head', 'Quantity', 'number', { disabled: isPurchaseTeam })}
+        {renderInput('delivery_date_head', 'Delivery Date', 'date', { disabled: isPurchaseTeam })}
         {renderInput('short_text_head', 'Description')}
-        {renderInput('price_of_purchase_requisition_head', 'Price Of Purchase Requisition', 'number', { disabled: isPurchaseTeam})}
-        {/* {renderSelect(
-          'cost_center_head',
-          'Cost Center',
-          CostCenterDropdown,
-          (item) => item.name,
-          (item) => `${item.cost_center_code} - ${item.cost_center_name}`,
-          formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true : false
-        )} */}
-
+        {renderInput('price_of_purchase_requisition_head', 'Price Of Purchase Requisition', 'number', { disabled: isPurchaseTeam })}
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#626973] pb-1 flex items-center gap-1 ">
             {"Select Material Code"}
-            {/* {error && <span className="text-red-600">*</span>} */}
           </h1>
           <SearchSelectComponent
             setData={(value) => {
@@ -659,12 +659,11 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
         </div>
         {renderInput('profit_ctr_head', 'Profit Center')}
         {renderInput('valuation_area_head', 'Valuation Area')}
-        {renderInput('main_asset_no_head', 'Main Asset No')}
-        {renderInput('asset_subnumber_head', 'Asset Subnumber')}
+        {renderInput('main_asset_no_head', 'Main Asset No.')}
+        {renderInput('asset_subnumber_head', 'Asset Sub No.')}
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
             {"Cost Center"}
-            {/* {error && <span className="text-red-600">*</span>} */}
           </h1>
           <SearchSelectComponent
             setData={(value) => {
@@ -681,53 +680,9 @@ const EditNBModal: React.FC<EditNBModalProps> = ({
           />
           {renderError("cost_center_head")}
         </div>
-
-        {/* {renderSelect(
-          'profit_ctr_head',
-          'Profit Center',
-          ProfitCenterDropdown,
-          (item) => item.name,
-          (item) => `${item.profit_center_code} - ${item.profit_center_name}`
-        )} */}
-        {/* {renderSelect(
-          'valuation_area_head',
-          'Valuation Area',
-          ValuationClassDropdown,
-          (item) => item.name,
-          (item) => `${item.valuation_class_code} - ${item.valuation_class_name}`
-        )} */}
-        {/* <div className='w-full'>
-          <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
-            {"Valuation Area"}
-          </h1>
-          <SearchSelectComponent
-            setData={(value) => {
-              setValuationArea(value ?? "");
-              setFormData(prev => ({ ...prev, valuation_area_head: value ?? "" }));
-            }}
-            data={ValuationArea ?? ""}
-            getLabel={(item) => `${item?.valuation_class_code} - ${item?.valuation_class_name}`}
-            getValue={(item) => item?.name}
-            dropdown={ValuationAreaDropdown ? ValuationAreaDropdown : []}
-            searchApi={fetchValuationAreaData}
-            setDropdown={setValuationAreaDropdown}
-            placeholder='Select Valuation Area'
-          />
-          {renderError("valuation_area_head")}
-        </div> */}
-        {/* {renderSelect(
-          'gl_account_number_head',
-          'GL Account Number',
-          GLAccountDropdwon,
-          (item) => item.name,
-          (item) => `${item.gl_account_code} - ${item.gl_account_name}`,
-          formData.account_assignment_category_head == "A" && formData.purchase_requisition_type == "NB" ? true : false
-        )} */}
-
         <div className='w-full'>
           <h1 className="text-[14px] font-normal text-[#626973] pb-2 flex items-center gap-1 ">
             {"GL Account Number"}
-            {/* {error && <span className="text-red-600">*</span>} */}
           </h1>
           <SearchSelectComponent
             setData={(value) => {

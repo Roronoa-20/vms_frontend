@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import React, { useEffect, useState } from "react";
 import MaterialOnboardingForm from "@/src/components/molecules/material-onboarding-details/material-onboarding-form";
@@ -257,7 +257,7 @@ export default function MaterialOnboardingDetails() {
   }, [MaterialOnboardingDetails?.material_company_code]);
 
 
-  if (loading) return <div className="p-4 text-gray-600">Loading...</div>;
+//   if (loading) return <div className="p-4 text-gray-600">Loading...</div>;
 
   return (
     <div>

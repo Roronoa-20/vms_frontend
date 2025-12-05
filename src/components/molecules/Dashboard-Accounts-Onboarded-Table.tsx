@@ -104,7 +104,7 @@ const DashboardAccountsApprovedVendorsTable = ({ dashboardTableData, companyDrop
 
   const fetchTable = async () => {
     const dashboardApprovedVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.dashboardOnboardedVendorsAccounts}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
+      url: `${API_END_POINTS?.dashboardOnboardedVendorsAccounts}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_length=${record_per_page}`,
       method: "GET",
     });
     if (dashboardApprovedVendorTableDataApi?.status == 200) {

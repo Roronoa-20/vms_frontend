@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -21,19 +21,19 @@ interface MaterialApprovalFormProps {
 const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({ form, role, EmployeeDetails, MaterialOnboardingDetails, MaterialDetails }) => {
   console.log("Approval MaterialOnboardingDetails--->", MaterialOnboardingDetails);
 
-  const [approvalStatusState, setApprovalStatusState] = useState<string | undefined>(undefined);
+//   const [approvalStatusState, setApprovalStatusState] = useState<string | undefined>(undefined);
 
-  function formatDate(date: string | Date): string {
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const year = String(d.getFullYear()).slice(-2);
-    return `${day}.${month}.${year}`;
-  }
+//   function formatDate(date: string | Date): string {
+//     const d = new Date(date);
+//     const day = String(d.getDate()).padStart(2, "0");
+//     const month = String(d.getMonth() + 1).padStart(2, "0");
+//     const year = String(d.getFullYear()).slice(-2);
+//     return `${day}.${month}.${year}`;
+//   }
 
-  useEffect(() => {
-    const data = MaterialDetails?.material_onboarding;
-    if (!data) return;
+//   useEffect(() => {
+//     const data = MaterialDetails?.material_onboarding;
+//     if (!data) return;
 
     const fields = [
       "special_instructionsnotes",
@@ -46,12 +46,12 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({ form, role,
 
     setApprovalStatusState(data.approval_stage || "");
 
-    fields.forEach((field) => {
-      if (data[field]) {
-        form.setValue(field, data[field]);
-      }
-    });
-  }, [MaterialDetails, form]);
+//     fields.forEach((field) => {
+//       if (data[field]) {
+//         form.setValue(field, data[field]);
+//       }
+//     });
+//   }, [MaterialDetails, form]);
 
   return (
     <div className="bg-[#F4F4F6]">
@@ -181,4 +181,4 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({ form, role,
   );
 };
 
-export default MaterialApprovalForm;
+// export default MaterialApprovalForm;

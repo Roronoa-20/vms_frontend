@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { AccountAssignmentCategory, Company, CostCenter, Country, Currency, DestinationPort, GLAccountNumber, IncoTerms, ItemCategoryMaster, MaterialCode, MaterialGroupMaster, ModeOfShipment, PackageType, Plant, plantCode, PortCode, PortOfLoading, ProductCategory, ProfitCenter, PurchaseGroup, PurchaseOrganisation, quantityUnit, RFQType, serviceCategory, serviceCode, ShipmentType, StoreLocation, UOMMaster, ValuationArea } from '@/src/types/PurchaseRequestType';
-import VendorTable from '../../molecules/rfq/VendorTable';
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
@@ -13,6 +12,7 @@ import NewVendorTable from '../../molecules/rfq/NewVendorTable';
 import AddNewVendorRFQDialog from '../../molecules/AddNewVendorRFQDialog';
 import { useRouter } from 'next/navigation';
 import ServiceRFQFormFields from './ServiceRFQFormFields';
+import MultiSelectVendorTable from '../../molecules/rfq/MultiSelectVendorTable';
 
 export interface DropdownDataService {
   account_assignment_category: AccountAssignmentCategory[];
@@ -65,23 +65,20 @@ export interface newVendorTable {
 
 const ServiceRFQ = ({ Dropdown,pr_codes }: Props) => {
   const [formData, setFormData] = useState<Record<string, string>>({ rfq_type: "Service Vendor" });
-  const [vendorSearchName, setVendorSearchName] = useState('')
+  const [vendorSearchName, setVendorSearchName] = useState('');
   const [currentVendorPage, setVendorCurrentPage] = useState<number>(1);
   const [VendorList, setVendorList] = useState<VendorApiResponse>();
   const [loading, setLoading] = useState(true);
-  const [selectedRows, setSelectedRows] = useState<VendorSelectType>(
-    {
-      vendors: []
-    }
-  );
-  const [availablePRs, setAvailablePRs] = useState<SAPPRData[]>([])
-  const [selectedMaterials, setSelectedMaterials] = useState<SelectedMaterial[]>([])
+  const [selectedRows, setSelectedRows] = useState<VendorSelectType>({vendors: []});
+  const [availablePRs, setAvailablePRs] = useState<SAPPRData[]>([]);
+  const [selectedMaterials, setSelectedMaterials] = useState<SelectedMaterial[]>([]);
   const debouncedDoctorSearchName = useDebounce(vendorSearchName, 500);
   // const [files, setFiles] = useState<Record<string, File | null>>({});
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isDialog, setIsDialog] = useState<boolean>(false);
-  const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([])
-  const router = useRouter()
+  const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([]);
+  const router = useRouter();
+
   useEffect(() => {
     const fetchVendorTableData = async (rfq_type: string) => {
       const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&company=${formData?.company_name}`
@@ -96,6 +93,7 @@ const ServiceRFQ = ({ Dropdown,pr_codes }: Props) => {
       fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Service Vendor");
     }
   }, [currentVendorPage, debouncedDoctorSearchName, formData?.company_name]);
+
   useEffect(() => {
     const fetchPRDropdown = async (rfq_type: string) => {
       const url = `${API_END_POINTS?.fetchPRDropdown}?rfq_type=${rfq_type}`
@@ -112,7 +110,7 @@ const ServiceRFQ = ({ Dropdown,pr_codes }: Props) => {
   const handleVendorSearch = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setVendorCurrentPage(1)
     setVendorSearchName(e.target.value);
-  }
+  };
 
   const handleSubmit = async () => {
     const formdata = new FormData();
@@ -135,31 +133,32 @@ const ServiceRFQ = ({ Dropdown,pr_codes }: Props) => {
     const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" });
     if (response?.status == 200) {
       alert("Submit Successfull");
-      router.push("/dashboard")
+      // router.push("/dashboard")
     } else {
       alert("error");
     }
+  };
 
-  }
   const setItems = async (materials: SelectedMaterial[]) => {
     setSelectedMaterials(materials)
-  }
+  };
 
   const handleOpen = () => {
     setIsDialog(true);
-  }
+  };
 
   const handleClose = () => {
     setIsDialog(false);
-  }
+  };
+
   return (
     <div className='bg-white h-full w-full pb-6'>
       <div className='flex justify-between items-center pr-4'>
-        <h1 className='font-bold text-[24px] p-5'>RFQ Data for Service</h1>
+        <h1 className='font-bold text-[24px] p-3'>RFQ Data for Service</h1>
         {/* <Button onClick={handleOpen}>Add New Vendor</Button> */}
       </div>
 
-      <div className="w-full mx-auto space-y-6 p-5">
+      <div className="w-full mx-auto space-y-6 p-3">
         {/* PR Materials Manager Component */}
         <PRServiceManager 
           prNumbers={availablePRs}
@@ -175,20 +174,10 @@ const ServiceRFQ = ({ Dropdown,pr_codes }: Props) => {
         setUploadedFiles={setUploadedFiles}
         uploadedFiles={uploadedFiles}
       />
-      <VendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />
+      <MultiSelectVendorTable VendorList={VendorList?.data ? VendorList?.data : []} loading={loading} setSelectedRows={setSelectedRows} selectedRows={selectedRows} handleVendorSearch={handleVendorSearch} />
       <div className='px-4 pb-5'>
         <Pagination currentPage={currentVendorPage} setCurrentPage={setVendorCurrentPage} record_per_page={VendorList?.data.length ? VendorList?.data.length : 0} total_event_list={VendorList?.total_count ? VendorList?.total_count : 0} />
       </div>
-
-      {/* <div className='flex justify-end items-center pr-5'>
-        <Button
-          className='bg-[#5291CD] font-medium text-[14px] inline-flex items-center gap-2'
-          onClick={() => handleOpen()}
-        >
-          <Plus className="w-4 h-4" />
-          Add New Vendor
-        </Button>
-      </div> */}
 
       <div className='py-6'>
         <NewVendorTable newVendorTable={newVendorTable} handleOpen={handleOpen} setNewVendorTable={setNewVendorTable}/>

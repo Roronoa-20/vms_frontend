@@ -64,7 +64,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
   const [selectedCompany, setSelectedCompany] = useState<string>("");
 
   const [total_event_list, settotalEventList] = useState(0);
-  const [record_per_page, setRecordPerPage] = useState<number>(0);
+  const [record_per_page, setRecordPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const { designation } = useAuth();
@@ -76,7 +76,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
 
   useEffect(() => {
     const fetchPoTable = async () => {
-      const POUrl = `${API_END_POINTS?.poTable}?vendor_name=${search}`
+      const POUrl = `${API_END_POINTS?.poTable}?vendor_name=${search}&page_no=${currentPage}&page_length=${record_per_page}`
       const dashboardPOTableDataApi: AxiosResponse = await requestWrapper({
         url: POUrl,
         method: "GET",
@@ -84,6 +84,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
 
       if (dashboardPOTableDataApi?.status == 200) {
         setTableData(dashboardPOTableDataApi?.data?.message?.total_po)
+        settotalEventList(dashboardPOTableDataApi?.data?.message?.total_count)
       }
     }
     if (selectedVendorCode || debouncedSearchName || currentPage) {
@@ -261,11 +262,10 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
               <TableHead className="text-center text-black">Vendor Name</TableHead>
               <TableHead className="text-center text-black text-nowrap">PO Date</TableHead>
               <TableHead className="text-center text-black text-nowrap">Delivery Date</TableHead>
-              <TableHead className="text-center text-black text-nowrap">PO Amount</TableHead>
               <TableHead className="text-center text-black text-nowrap">Status</TableHead>
               <TableHead className="text-center text-black text-nowrap">Tentative Delivery</TableHead>
-              <TableHead className="text-center text-black text-nowrap">View details</TableHead>
-              <TableHead className="text-center text-black text-nowrap">Send Email</TableHead>
+              <TableHead className="text-center text-black text-nowrap">View PO</TableHead>
+              <TableHead className="text-center text-black text-nowrap">View Dispatch</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="text-center text-black">
@@ -277,7 +277,6 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                   <TableCell className="text-center text-nowrap">{item?.supplier_name ? item.supplier_name : "-"}</TableCell>
                   <TableCell className="text-center text-nowrap">{formatDate(item?.po_date)}</TableCell>
                   <TableCell className="text-center text-nowrap">{formatDate(item?.delivery_date)}</TableCell>
-                  <TableCell className="text-center text-nowrap">{item?.total_gross_amount}</TableCell>
                   <TableCell>
                     <div
                       className={`px-2 py-3 rounded-xl text-nowrap ${item?.status === "Pending by Vendor"
@@ -300,7 +299,15 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                       View
                     </Button>
                   </TableCell>
-                  <TableCell><Button onClick={() => { setIsEmailDialog(true); setEmail((prev: any) => ({ ...prev, to: item?.email })) }} className="bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px]">Send</Button></TableCell>
+                  <TableCell>
+                    <Button
+                      className={`bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px] `}
+                      onClick={() => router.push(`/view-dispatch-table`)}
+                      // onClick={() => router.push(`/view-dispatch-table?po_name=${item?.name}`)}
+                    >
+                      View
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
@@ -327,13 +334,13 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               To
             </h1>
-            <Input disabled value={email?.to ?? ""} />
+            <Input onChange={(e) => { setEmail((prev: any) => ({ ...prev, to: e.target.value })) }} value={email?.to ?? ""} />
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               CC
             </h1>
-            <Input onChange={(e) => { setEmail((prev: any) => ({ ...prev, cc: e.target.value })) }} />
+            <Input onChange={(e) => { setEmail((prev: any) => ({ ...prev, cc: e.target.value })) }} value={email?.cc ?? ""} />
           </div>
           <Input onChange={(e) => { setPOFile(e.target.files && e.target.files[0]) }} className="mt-4" type="file" />
         </PopUp>

@@ -44,15 +44,15 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, ExpirationDat
         if (dataString === prevDataRef.current) return;
         prevDataRef.current = dataString;
 
-        const fields: (keyof MaterialOnboardingData)[] = [
-            "minimum_remaining_shell_life",
-            "total_shell_life",
-            "expiration_date",
-            "inspection_require",
-            "inspection_interval",
-            "incoming_inspection_01",
-            "incoming_inspection_09",
-        ];
+//         const fields: (keyof MaterialOnboardingData)[] = [
+//             "minimum_remaining_shell_life",
+//             "total_shell_life",
+//             "expiration_date",
+//             "inspection_require",
+//             "inspection_interval",
+//             "incoming_inspection_01",
+//             "incoming_inspection_09",
+//         ];
 
         const currentValues = form.getValues();
 

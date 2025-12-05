@@ -127,6 +127,7 @@ export default function Dashboard() {
                 : companyCounts.find((c) => c.company_code === activeTab)
                     ?.company_name || "Unknown Company"
             }
+            
           />
         )}
       </div>

@@ -185,7 +185,7 @@ const LogisticsImportRFQFormFields = ({ formData, setFormData, Dropdown, setUplo
     }, [formData?.port_code])
     return (
         <div>
-            <div className="grid grid-cols-3 gap-6 p-5">
+            <div className="grid grid-cols-3 gap-6 p-3">
                 {renderSelect(
                     'rfq_type',
                     'RFQ Type',

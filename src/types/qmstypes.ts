@@ -175,8 +175,8 @@ export type VendorQMSForm = {
     performer_signature?: string;
   };
   signatures?: {
-        [key: string]: { signature_data?: string; content?: string } | string;
-    };
+    [key: string]: { signature_data?: string; content?: string } | string;
+  };
   defined_areas?: string;
   qc_independent_of_production?: string;
   testing_laboratories?: string;
@@ -202,12 +202,10 @@ export type VendorQMSForm = {
   retain_complaints_records?: string;
   any_recalls?: string;
   additional_or_supplement_information?: string;
-  quality_manual?: string | File;
   name1?: string;
   title?: string;
   date?: string;
   ssignature?: string;
-  signature?: string;
   mdpl_qa_date?: string;
   // mlspl_qa_list?: string | string[];
   mlspl_qa_list?: MLSPLQAItem[];
@@ -235,7 +233,68 @@ export type VendorQMSForm = {
   qms_quality_control?: string | string[];
   qms_prior_notification?: string | string[];
   qms_procedure_doc?: string | string[];
+  qa_team_approved?: number;
+  vendor_sign_attachment?: File | string;
+  signature?: string | File | null;
+  quality_manual?: string | File | null;
+  attach_person_signature?: File | null;
+  attach_meril_signature?: File | null;
 };
+
+export type VendorQualityAgreementForm = {
+  mdpl_quality_agreement: {
+    mdpl_qa_date: string;
+    supplier_company_name: string;
+    vendor_name: string;
+    name_of_person: string;
+    signed_date: string;
+    meril_signed_date: string;
+    designation_of_person: string;
+  },
+  products_in_qa: [
+    {
+      material_process_name: string;
+      specifications: string;
+    }
+  ],
+  mlspl_qa: {
+    tissue_supplier: {
+      url: URL;
+      name: string;
+      file_name: string;
+    },
+    technical_agreement_labs: {
+      url: URL;
+      name: string;
+      file_name: string;
+    },
+    new_supplier: {
+      url: URL;
+      name: string;
+      file_name: string;
+    },
+    amendent_existing_supplier: {
+      url: URL;
+      name: string;
+      file_name: string;
+    },
+    qa_list: [
+      {
+        document_type: string;
+        document_template: {
+          url: URL;
+          name: string;
+          file_name: string;
+        },
+        qa_attachment: {
+          url: URL;
+          name: string;
+          file_name: string;
+        }
+      }
+    ]
+  };
+}
 
 export type Tqmsform = {
   message: {

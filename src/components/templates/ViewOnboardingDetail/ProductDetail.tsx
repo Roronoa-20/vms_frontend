@@ -38,31 +38,31 @@ type Props = {
   validation_check: VendorOnboardingResponse["message"]["validation_check"]
 };
 
-const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,validation_check }: Props) => {
+const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, validation_check }: Props) => {
   const router = useRouter();
 
-  const [singleRow,SetSingleRow] = useState<any>()
-  const [productImage,setProductImage] = useState<File | null>();
+  const [singleRow, SetSingleRow] = useState<any>()
+  const [productImage, setProductImage] = useState<File | null>();
   const [materialsTable, setMaterialsTable] = useState<any[]>(OnboardingDetail ?? []);
 
   const uploadProductImageRef = useRef<HTMLInputElement>(null);
 
-  console.log(OnboardingDetail,"this is console")
+  console.log(OnboardingDetail, "this is console")
 
-    const fetchTable = async()=>{
-      const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
-      const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: fetchOnboardingDetailUrl, method: "GET" });
-      const OnboardingDetail: VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message : "";
-      setMaterialsTable(OnboardingDetail?.product_details_tab)
-    }
+  const fetchTable = async () => {
+    const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
+    const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: fetchOnboardingDetailUrl, method: "GET" });
+    const OnboardingDetail: VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message : "";
+    setMaterialsTable(OnboardingDetail?.product_details_tab)
+  }
 
-    const handleDelete = async(index:number)=>{
-      const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.deleteProductDetailItem,data:{data:{ref_no:ref_no,vendor_onboarding:onboarding_ref_no,idx:index}},method:"DELETE"});
-      if(response?.status == 200){
-        alert("Record Deleted Successfully");
-        fetchTable();
-      }
+  const handleDelete = async (index: number) => {
+    const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.deleteProductDetailItem, data: { data: { ref_no: ref_no, vendor_onboarding: onboarding_ref_no, idx: index } }, method: "DELETE" });
+    if (response?.status == 200) {
+      alert("Record Deleted Successfully");
+      fetchTable();
     }
+  }
 
   const handleAdd = async () => {
 
@@ -72,31 +72,36 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,validation_
     }
 
     const formdata = new FormData();
-    if(productImage){
-      formdata.append("material_images",productImage);
+    if (productImage) {
+      formdata.append("material_images", productImage);
     }
-    const Data = {materials_supplied:singleRow,ref_no:ref_no,vendor_onboarding:onboarding_ref_no};
-    formdata.append("data",JSON.stringify(Data));
+    const Data = { materials_supplied: singleRow, ref_no: ref_no, vendor_onboarding: onboarding_ref_no };
+    formdata.append("data", JSON.stringify(Data));
     const submitUrl = API_END_POINTS?.addProductDetail;
     const submitResponse: AxiosResponse = await requestWrapper({
       url: submitUrl,
-      data:formdata ,
+      data: formdata,
       method: "POST",
     });
 
-    if(submitResponse?.status == 200){
+    if (submitResponse?.status == 200) {
       alert("data added successfully");
       fetchTable();
       SetSingleRow({});
       setProductImage(null);
       const imageinput = uploadProductImageRef?.current
-      if(imageinput){
-        imageinput.value = "" 
+      if (imageinput) {
+        imageinput.value = ""
       }
     }
   };
 
-  const handleNext = ()=>{
+  const viewFile = (fileId: string) => {
+    const url = `${API_END_POINTS.securefileview}?file_id=${fileId}`;
+    window.open(url, "_blank");
+  };
+
+  const handleNext = () => {
     router.push(
       `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
     )
@@ -108,35 +113,39 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,validation_
     );
   };
 
-  const handleTableCheckbox = async(value:boolean,type:"critical"|"non_critical",idx:number)=>{
+  const handleTableCheckbox = async (value: boolean, type: "critical" | "non_critical", idx: number) => {
 
-    let data:any = {
-      ref_no:ref_no,
-      vendor_onboarding:onboarding_ref_no,
-      idx:idx
+    let data: any = {
+      ref_no: ref_no,
+      vendor_onboarding: onboarding_ref_no,
+      idx: idx
     }
 
-      if( value && type == "critical"){
-        data = {...data,critical:1,"non_critical":0}
-      }else if(value &&  type == "non_critical"){
-        data = {...data,critical:0,"non_critical":1}
-      }else{
-        data = {...data,critical:0,"non_critical":0}
-      }
+    if (value && type == "critical") {
+      data = { ...data, critical: 1, "non_critical": 0 }
+    } else if (value && type == "non_critical") {
+      data = { ...data, critical: 0, "non_critical": 1 }
+    } else {
+      data = { ...data, critical: 0, "non_critical": 0 }
+    }
 
-      const formdata = new FormData();
-      formdata.append("data",JSON.stringify(data));
+    const formdata = new FormData();
+    formdata.append("data", JSON.stringify(data));
 
-    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.criticalNonCritical,method:"PATCH",
-      data:formdata});
-      if(response.status != 200){
-        console.log("error while updateing the products table");
-      }
-      fetchTable();
+    const response: AxiosResponse = await requestWrapper({
+      url: API_END_POINTS?.criticalNonCritical, method: "PATCH",
+      data: formdata
+    });
+    if (response.status != 200) {
+      console.log("error while updateing the products table");
+    }
+    fetchTable();
   }
 
+  console.log("Mamafbaeofb", validation_check);
+
   return (
-    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
+    <div className="flex flex-col bg-white rounded-lg p-2 max-h-[80vh] w-full">
       {/* <h1 className="border-b-2 pb-1 sticky top-0 bg-white py-2 text-lg font-semibold">
         Product Detail<span className="pl-1 text-red-400 text-2xl">*</span>
       </h1> */}
@@ -225,10 +234,10 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,validation_
         </div>
       </div> */}
       {materialsTable?.length > 0 && (
-        <div className="shadow- bg-[#f6f6f7] p-4 mb-4 mt-4 rounded-2xl">
+        <div className="shadow- bg-[#f6f6f7] p-3 mb-3 mt-3 rounded-2xl">
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
-              Multiple Product List Detail
+              Product Details
             </h1>
           </div>
           <div className="col-span-3 mt-4">
@@ -255,17 +264,24 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,validation_
                     <TableCell className="text-center">{material.annual_capacity}</TableCell>
                     <TableCell className="text-center">{material.material_description}</TableCell>
                     <TableCell className="text-center">
-                      <Link href={material?.material_images?.url} target="blank">{material?.material_images?.file_name ?? "-"}</Link>
+                      {/* <Link href={material?.material_images?.url} target="blank">{material?.material_images?.file_name ?? "-"}
+                      </Link> */}
+                      <span
+                        className="text-[13px] text-blue-600 underline cursor-pointer hover:text-blue-800 mt-1"
+                        onClick={() => viewFile(material?.material_images?.name ?? "")}
+                      >
+                        {material?.material_images?.file_name}
+                      </span>
                     </TableCell>
-                   <TableCell className="text-center">
+                    <TableCell className="text-center">
                       <div className="flex justify-center">
-                        <Input type="checkbox" className="w-5 h-5" onChange={(e)=>{handleTableCheckbox(e.target.checked,"critical",material?.idx)}} checked={material?.critical} disabled={validation_check?.is_purchase_approve == 1?true : false} />
+                        <Input type="checkbox" className="w-5 h-5" onChange={(e) => { handleTableCheckbox(e.target.checked, "critical", material?.idx) }} checked={material?.critical} disabled={validation_check?.purchase_team_undertaking == 1 ? true : false} />
                       </div>
                     </TableCell>
 
                     <TableCell className="text-center">
                       <div className="flex justify-center">
-                        <Input type="checkbox" className="w-5 h-5" checked={material?.non_critical} onChange={(e)=>{handleTableCheckbox(e.target.checked,"non_critical",material?.idx)}} disabled={validation_check?.is_purchase_approve == 1?true:false} />
+                        <Input type="checkbox" className="w-5 h-5" checked={material?.non_critical} onChange={(e) => { handleTableCheckbox(e.target.checked, "non_critical", material?.idx) }} disabled={validation_check?.purchase_team_undertaking == 1 ? true : false} />
                       </div>
                     </TableCell>
 
@@ -285,7 +301,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,validation_
           </div>
         </div>
       )}
-      
+
       {/* <div className={`flex justify-end pb-2`}>
         <Button
           className="py-2"
@@ -298,7 +314,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,validation_
           Add
         </Button>
       </div> */}
-      <div className="flex justify-end items-center space-x-3 mt-24">
+      {/* <div className="flex justify-end items-center space-x-3 mt-24">
         <Button onClick={handleBack} variant="backbtn" size="backbtnsize">
           Back
         </Button>
@@ -306,7 +322,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail,validation_
         <Button  variant="nextbtn" size="nextbtnsize" onClick={()=>{handleNext()}}>
           Next
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 };

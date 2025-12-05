@@ -8,15 +8,10 @@ interface SingleCheckboxGroupProps {
   value: string;
   options: string[];
   onChange: (e: React.ChangeEvent<HTMLInputElement>, field: string) => void;
+  disabled?: boolean;
 }
 
-const SingleCheckboxGroup: React.FC<SingleCheckboxGroupProps> = ({
-  name,
-  label,
-  value,
-  options,
-  onChange,
-}) => {
+const SingleCheckboxGroup: React.FC<SingleCheckboxGroupProps> = ({ name, label, value, options, onChange, disabled}) => {
   return (
     <div className="mb-3 border-b border-gray-300 pb-4">
       {label && (
@@ -42,6 +37,7 @@ const SingleCheckboxGroup: React.FC<SingleCheckboxGroupProps> = ({
               value={option}
               checked={value === option}
               onChange={(e) => onChange(e, name)}
+              disabled={disabled}
             />
             <span className="text-[14px]">{option}</span>
           </Label>

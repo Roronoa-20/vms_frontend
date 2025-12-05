@@ -1,48 +1,62 @@
 import { PurchaseRequisitionDataItem } from '@/src/types/PurchaseRequisitionType';
-import React from 'react'
+import React from 'react';
+
+
+
 const NBFields: Partial<Record<keyof PurchaseRequisitionDataItem, string>> = {
     item_number_of_purchase_requisition_head: "Line Item Number",
-    purchase_requisition_date_head: "Purchase Requisition Date",
-    purchase_requisitioner_name: "Purchase Requisition Name",
-    purchase_requisition_type: "Purchase Requisition Type",
-    purchase_group_head: "Purchase Group",
-    material_code_head: "Material Code",
+    purchase_requisition_date_head: "PR Date",
+    requisitioner_name_head: "Requisitioner Name",
+    purchase_requisition_type: "PR Type",
+    // purchase_group_head: "Purchase Group",
+    purchase_group_head_desc: "Purchase Group",
+    // material_code_head: "Material Code",
+    material_code_head_desc: "Material Code",
     short_text_head: "Short Text",
     plant_head: "Plant",
     quantity_head: "Quantity",
+    price_of_purchase_requisition_head: "Pirce of PR",
     delivery_date_head: "Delivery Date",
-    store_location_head: "Store Location",
-    material_group_head: "Material Group",
+    store_location_head_desc: "Store Location",
+    material_group_head_desc: "Material Group",
+    // store_location_head: "Store Location",
+    // material_group_head: "Material Group",
     uom_head: "UOM",
     account_assignment_category_head: "Account Assignment Category",
     item_category_head: "Item Category",
-    gl_account_number_head: "GL Account Number",
-    cost_center_head: "Cost Center",
+    // gl_account_number_head: "GL Account Number",
+    gl_account_number_head_desc: "GL Account Number",
+    // cost_center_head: "Cost Center",
+    cost_center_head_desc: "Cost Center",
     company_code_area_head: "Company Code Area",
-    valuation_area_head: "Valuation Area",
+    // valuation_area_head: "Valuation Area",
+    valuation_area_head_desc: "Valuation Area",
     // asset_number: "Asset Number",
     profit_ctr_head: "Profit Center",
     main_asset_no_head: "Main Asset No",
     asset_subnumber_head: "Asset Subnumber",
-    requisitioner_name_head: "Requistioner Name",
+    // requisitioner_name_head: "Requistioner Name",
 };
 
 const SBFields: Partial<Record<keyof PurchaseRequisitionDataItem, string>> = {
     // status_head: "Status",
     item_number_of_purchase_requisition_head: "Line Item Number",
+    requisitioner_name_head: "Requistioner Name",
+    purchase_requisition_type: "PR Type",
     account_assignment_category_head: "Account Assignment Category",
     item_category_head: "Item Category",
     short_text_head: "Short Text",
     quantity_head: "Quantity",
+    price_of_purchase_requisition_head: "Pirce of PR",
     uom_head: "UOM",
     c_delivery_date_head: "C/ Delivery Date",
     delivery_date_head: "Delivery Date",
+    plant_head: "Plant",
     store_location_head_desc: "Store Location",
     material_group_head_desc: "Material Group",
     purchase_group_head_desc: "Purchase Group",
     valuation_area_head_desc: "Valuation Area",
     // material_group_head: "Material Group",
-    plant_head: "Plant",
     // store_location_head: "Store Location",
     // purchase_group_head: "Purchase Group",
     tracking_id_head: "Tracking ID",
@@ -53,13 +67,37 @@ const SBFields: Partial<Record<keyof PurchaseRequisitionDataItem, string>> = {
     agreement_head: "Agreement",
     item_of_head: "Item Of...",
     mpn_number_head: "MPN Number",
-    purchase_requisition_type: "Purchase Requisition Type",
-    requisitioner_name_head: "Requistioner Name",
 };
 
+const formatDate = (dateStr: string) => {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr; // not a date, return as-is
+
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
+};
+
+const formatINRCurrency = (value: number | string) => {
+    const num = Number(value);
+    if (isNaN(num)) return value;
+
+    return num.toLocaleString("en-IN", {
+        style: "currency",
+        currency: "INR",
+        minimumFractionDigits: 2
+    });
+};
+
+
 // helper – makes *anything* JSX‑friendly
-const renderCellValue = (val: unknown) => {
+const renderCellValue = (val: unknown, key?: string) => {
     if (val == null || val === '') return "N/A";
+
+    if (key && key === "price_of_purchase_requisition_head") {
+        return formatINRCurrency(val as number);
+    }
 
     // array of objects → show a comma‑separated list of something meaningful
     if (Array.isArray(val)) {
@@ -69,6 +107,10 @@ const renderCellValue = (val: unknown) => {
                 {i < val.length - 1 && ", "}
             </span>
         ));
+    }
+
+    if (typeof val === "string" && /^\d{4}-\d{2}-\d{2}/.test(val)) {
+        return formatDate(val);
     }
 
     // primitives (string | number | boolean | Date)
@@ -89,13 +131,14 @@ const SummaryBlock = ({ mainItem }: Props) => {
 
     if (!fields) return null;
 
+
     return (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+        <div className="grid grid-cols-3 md:grid-cols-3 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
             {(Object.entries(fields) as [keyof PurchaseRequisitionDataItem, string][]).map(
                 ([key, label]) => (
                     <div key={key as string}>
                         <strong>{label}:</strong>{" "}
-                        {renderCellValue(mainItem[key])}
+                        {renderCellValue(mainItem[key], key)}
                     </div>
                 ))}
         </div>

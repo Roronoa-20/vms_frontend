@@ -118,8 +118,8 @@ const DocumentDetails = ({
   const [GSTTable, setGSTTable] = useState<gstRow[]>(OnboardingDetail?.gst_table);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const { designation } = useAuth();
-  const [remarks,setRemarks] = useState<string>("");
-    const [isAmendCommentDialog,setIsAmendCommentDialog] = useState<boolean>(false);
+  const [remarks, setRemarks] = useState<string>("");
+  const [isAmendCommentDialog, setIsAmendCommentDialog] = useState<boolean>(false);
   const isTreasuryUser = designation?.toLowerCase() === "treasury";
 
   const [gstStateDropdown, setGstStateDropdown] = useState<gstDropdown>();
@@ -127,7 +127,12 @@ const DocumentDetails = ({
     if (ref_no && onboarding_ref_no) {
       getState();
     }
-  }, [])
+  }, []);
+
+  const viewFile = (fileId: string) => {
+    const url = `${API_END_POINTS.securefileview}?file_id=${fileId}`;
+    window.open(url, "_blank");
+  };
 
   const getState = async () => {
     const url = `${API_END_POINTS?.gstVendorStateDropdown}?vendor_onboarding=${onboarding_ref_no}`;
@@ -251,7 +256,7 @@ const DocumentDetails = ({
     }
   }
 
-  const handleClose = ()=>{
+  const handleClose = () => {
     setIsAmendCommentDialog(false);
     setRemarks("");
   }
@@ -273,14 +278,16 @@ const DocumentDetails = ({
   }
 
 
-   const handleAmend = async()=>{
-    const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.AmendAPI,method:"POST",data:{
-      data:{
-        vendor_onboarding:onboarding_ref_no,
-        remarks:remarks
+  const handleAmend = async () => {
+    const response: AxiosResponse = await requestWrapper({
+      url: API_END_POINTS?.AmendAPI, method: "POST", data: {
+        data: {
+          vendor_onboarding: onboarding_ref_no,
+          remarks: remarks
+        }
       }
-    }});
-    if(response?.status == 200){
+    });
+    if (response?.status == 200) {
       alert("Amend Successfully");
       router.push("dashboard");
     }
@@ -290,332 +297,340 @@ const DocumentDetails = ({
 
   return (
     <>
-    <div className="flex flex-col bg-white rounded-lg p-3 w-full max-h-[80vh]">
-      <div className="flex justify-between items-center border-b-2">
-        <h1 className="font-semibold text-[18px]">Document Details</h1>
-        {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1 ? "" : "hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
-        {/* {
+      <div className="flex flex-col bg-white rounded-lg p-3 w-full max-h-[80vh]">
+        <div className="flex justify-between items-center border-b-2">
+          <h1 className="font-semibold text-[18px]">Document Details</h1>
+          {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1 ? "" : "hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
+          {/* {
           designation != "Purchase Team" && 
         <Button onClick={() => { setIsAmendCommentDialog(true)}} className={`mb-2 ${isAmendment == 0  ? "" : "hidden"}`}>Amend</Button>
         } */}
-        {designation == "Purchase Team" && !isTreasuryUser && (isAmendment == 1 || re_release == 1) && (
-          <div
-            onClick={() => setIsDisabled((prev) => !prev)}
-            className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
-          >
-            {isDisabled ? (
-              <>
-                <Lock className="w-5 h-5 text-red-500" />
-                <span className="text-[14px] font-medium text-white hover:text-black">
-                  Enable Edit
-                </span>
-              </>
-            ) : (
-              <>
-                <Pencil className="w-5 h-5 text-green-600" />
-                <span className="text-[14px] font-medium text-white hover:text-black">
-                  Disable Edit
-                </span>
-              </>
-            )}
-          </div>
-        )}
-      </div>
-      <div className="overflow-y-scroll">
-        <div className="grid grid-cols-3 gap-6 p-3">
-          <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Company PAN Number <span className="pl-2 text-red-400 text-2xl">*</span>
-            </h1>
-            <Input
-              disabled={isDisabled}
-              className="disabled:opacity-100"
-              placeholder="Enter Company Pan Number"
-              value={
-                documentDetails?.company_pan_number ??
-                OnboardingDetail?.company_pan_number ??
-                ""
-              }
-              onChange={(e) => {
-                setDocumentDetail((prev) => ({
-                  ...prev,
-                  company_pan_number: e.target.value,
-                }));
-              }}
-            />
-            {errors?.company_pan_number && !documentDetails?.company_pan_number && <span style={{ color: 'red' }}>{errors?.company_pan_number}</span>}
-          </div>
-          <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Name of Company on PAN Card <span className="pl-2 text-red-400 text-2xl">*</span>
-            </h1>
-            <Input
-              disabled={isDisabled}
-              className="disabled:opacity-100"
-              placeholder="Enter Pan Card"
-              value={
-                documentDetails?.name_on_company_pan ??
-                OnboardingDetail?.name_on_company_pan ??
-                ""
-              }
-              onChange={(e) => {
-                setDocumentDetail((prev) => ({
-                  ...prev,
-                  name_on_company_pan: e.target.value,
-                }));
-              }}
-            />
-            {errors?.name_on_company_pan && !documentDetails?.name_on_company_pan && <span style={{ color: 'red' }}>{errors?.name_on_company_pan}</span>}
-          </div>
-          <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Upload PAN Document <span className="pl-2 text-red-400 text-2xl">*</span>
-            </h1>
-            <div className="flex gap-4">
-
-              <Input
-                disabled={isDisabled}
-                className="disabled:opacity-100"
-                placeholder=""
-                type="file"
-                onChange={(e) => {
-                  setDocumentDetail((prev: any) => ({
-                    ...prev,
-                    panDocument: e.target.files,
-                  }));
-                }}
-              />
-              {/* file preview */}
-              {isPanFilePreview &&
-                !documentDetails?.panDocument &&
-                OnboardingDetail?.pan_proof?.url && (
-                  <div className="flex gap-2">
-                    <Link
-                      target="blank"
-                      href={OnboardingDetail?.pan_proof?.url}
-                      className={`underline text-blue-300 max-w-44 truncate`}
-                    >
-                      <span>{OnboardingDetail?.pan_proof?.file_name}</span>
-                    </Link>
-                    <X
-                      className={`cursor-pointer ${isDisabled ? "hidden" : ""}`}
-                      onClick={() => {
-                        setIsPanFilePreview((prev) => !prev);
-                      }}
-                    />
-                  </div>
-                )}
-              {errors?.panDocument && !documentDetails?.panDocument && <span style={{ color: 'red' }}>{errors?.panDocument}</span>}
+          {designation == "Purchase Team" && !isTreasuryUser && (isAmendment == 1 || re_release == 1) && (
+            <div
+              onClick={() => setIsDisabled((prev) => !prev)}
+              className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
+            >
+              {isDisabled ? (
+                <>
+                  <Lock className="w-5 h-5 text-red-500" />
+                  <span className="text-[14px] font-medium text-white hover:text-black">
+                    Enable Edit
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Pencil className="w-5 h-5 text-green-600" />
+                  <span className="text-[14px] font-medium text-white hover:text-black">
+                    Disable Edit
+                  </span>
+                </>
+              )}
             </div>
-          </div>
-          <div className={`col-span-3 grid grid-cols-3 gap-6 ${isDisabled ? "hidden" : ""}`}>
-            <div className="flex flex-col">
-              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                GST Vendor Type <span className="pl-2 text-red-400 text-2xl">*</span>
-              </h1>
-              <Select
-                disabled={isDisabled}
-                // onValueChange={(value) => {
-                //   setBusinessType(value);
-                //   setDocumentDetail((prev) => ({
-                //     ...prev,
-                //     gst_ven_type: value,
-                //   }));
-                // }}
-                onValueChange={(value) => {
-                  setSingleRow((prev: any) => ({
-                    ...prev,
-                    gst_ven_type: value,
-                  }));
-                }}
-                value={singlerow?.gst_ven_type ?? ""}
-              >
-                <SelectTrigger className="disabled:opacity-100">
-                  <SelectValue placeholder="Select Vendor Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {documentDetailDropdown?.gst_vendor_type?.map(
-                      (item, index) => (
-                        <SelectItem key={index} value={item?.name}>
-                          {item?.registration_ven_name}
-                        </SelectItem>
-                      )
-                    )}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              {errors?.gst_ven_type && !documentDetails?.gst_ven_type && <span style={{ color: 'red' }}>{errors?.gst_ven_type}</span>}
-            </div>
+          )}
+        </div>
+        <div>
+          <div className="grid grid-cols-3 gap-6 p-3">
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                Meril Company <span className="pl-2 text-red-400 text-2xl">*</span>
-              </h1>
-              <Select
-                disabled={isDisabled}
-                onValueChange={(value) => {
-                  setSingleRow((prev: any) => ({ ...prev, company: value }));
-                }}
-                value={singlerow?.company ?? ""}
-              >
-                <SelectTrigger className="disabled:opacity-100">
-                  <SelectValue placeholder="Select Company" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {gstStateDropdown?.company?.map((item, index) => (
-                      <SelectItem key={index} value={item?.name}>
-                        {item?.description}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                State <span className="pl-2 text-red-400 text-2xl">*</span>
-              </h1>
-              {/* <Input placeholder="Enter State" value={documentDetails?.gst_state ?? OnboardingDetail?.gst_table[0]?.gst_state} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,gst_state:e.target.value}))}}/> */}
-              <Select
-                disabled={isDisabled}
-                // onValueChange={(value) => {
-                //   setDocumentDetail((prev) => ({ ...prev, gst_state: value }));
-                // }}
-                onValueChange={(value) => {
-                  setSingleRow((prev: any) => ({ ...prev, gst_state: value }));
-                }}
-                value={
-                  singlerow?.gst_state ?? ""
-                }
-              >
-                <SelectTrigger className="disabled:opacity-100">
-                  <SelectValue placeholder="Select Vendor Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {gstStateDropdown?.states?.map((item, index) => (
-                      <SelectItem key={index} value={item?.name}>
-                        {item?.state_name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              {errors?.gst_state && !documentDetails?.gst_state && <span style={{ color: 'red' }}>{errors?.gst_state}</span>}
-            </div>
-            <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                Pincode <span className="pl-2 text-red-400 text-2xl">*</span>
+                Company PAN Number <span className="pl-2 text-red-400 text-xl">*</span>
               </h1>
               <Input
                 disabled={isDisabled}
                 className="disabled:opacity-100"
-                placeholder="Enter Pincode"
+                placeholder="Enter Company Pan Number"
                 value={
-                  singlerow?.pincode ??
+                  documentDetails?.company_pan_number ??
+                  OnboardingDetail?.company_pan_number ??
                   ""
                 }
-                // onChange={(e) => {
-                //   setDocumentDetail((prev) => ({
-                //     ...prev,
-                //     gst_number: e.target.value,
-                //   }));
-                // }}
                 onChange={(e) => {
-                  setSingleRow((prev: any) => ({
+                  setDocumentDetail((prev) => ({
                     ...prev,
-                    pincode: e.target.value,
+                    company_pan_number: e.target.value,
                   }));
                 }}
               />
-              {/* {errors?.gst_number && !documentDetails?.gst_number && <span style={{ color: 'red' }}>{errors?.gst_number}</span>} */}
+              {errors?.company_pan_number && !documentDetails?.company_pan_number && <span style={{ color: 'red' }}>{errors?.company_pan_number}</span>}
             </div>
-          </div>
-          <div
-            className={`col-span-3 grid grid-cols-3 gap-6 ${isDisabled ? "hidden" : ""}`}
-          >
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                GST Number <span className="pl-2 text-red-400 text-2xl">*</span>
+                Name of Company on PAN Card <span className="pl-2 text-red-400 text-xl">*</span>
               </h1>
               <Input
                 disabled={isDisabled}
                 className="disabled:opacity-100"
-                placeholder="Enter GST Number"
+                placeholder="Enter Pan Card"
                 value={
-                  singlerow?.gst_number ??
+                  documentDetails?.name_on_company_pan ??
+                  OnboardingDetail?.name_on_company_pan ??
                   ""
                 }
-                // onChange={(e) => {
-                //   setDocumentDetail((prev) => ({
-                //     ...prev,
-                //     gst_number: e.target.value,
-                //   }));
-                // }}
                 onChange={(e) => {
-                  setSingleRow((prev: any) => ({
+                  setDocumentDetail((prev) => ({
                     ...prev,
-                    gst_number: e.target.value,
+                    name_on_company_pan: e.target.value,
                   }));
                 }}
               />
-              {/* {errors?.gst_number && !documentDetails?.gst_number && <span style={{ color: 'red' }}>{errors?.gst_number}</span>} */}
+              {errors?.name_on_company_pan && !documentDetails?.name_on_company_pan && <span style={{ color: 'red' }}>{errors?.name_on_company_pan}</span>}
             </div>
             <div>
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                GST Registration Date <span className="pl-2 text-red-400 text-2xl">*</span>
-              </h1>
-              <Input
-                disabled={isDisabled}
-                className="disabled:opacity-100"
-                placeholder="Enter Registration Date"
-                value={
-                  singlerow?.gst_registration_date ??
-                  ""
-                }
-                type="date"
-                // onChange={(e) => {
-                //   setDocumentDetail((prev) => ({
-                //     ...prev,
-                //     gst_registration_date: e.target.value,
-                //   }));
-                // }}
-                onChange={(e) => {
-                  setSingleRow((prev: any) => ({
-                    ...prev,
-                    gst_registration_date: e.target.value,
-                  }));
-                }}
-              />
-              {errors?.gst_registration_date && !documentDetails?.gst_registration_date && <span style={{ color: 'red' }}>{errors?.gst_registration_date}</span>}
-            </div>
-            <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                Upload GST Document <span className="pl-2 text-red-400 text-2xl">*</span>
+                Upload PAN Document <span className="pl-2 text-red-400 text-xl">*</span>
               </h1>
               <div className="flex gap-4">
+
                 <Input
                   disabled={isDisabled}
                   className="disabled:opacity-100"
-                  ref={fileInput}
+                  placeholder=""
                   type="file"
-                  // onChange={(e) => {
-                  //   setDocumentDetail((prev: any) => ({
+                  onChange={(e) => {
+                    setDocumentDetail((prev: any) => ({
+                      ...prev,
+                      panDocument: e.target.files,
+                    }));
+                  }}
+                />
+                {/* file preview */}
+                {isPanFilePreview &&
+                  !documentDetails?.panDocument &&
+                  OnboardingDetail?.pan_proof?.url && (
+                    <div className="flex gap-2">
+                      {/* <Link
+                        target="blank"
+                        href={OnboardingDetail?.pan_proof?.url}
+                        className={`underline text-blue-300 max-w-44 truncate`}
+                      >
+                        <span>{OnboardingDetail?.pan_proof?.file_name}</span>
+                      </Link> */}
+                      <span
+                        className="underline text-blue-500 max-w-44 truncate cursor-pointer"
+                        onClick={() => {
+                          viewFile(OnboardingDetail.pan_proof.name);
+                        }}
+                      >
+                        {OnboardingDetail.pan_proof.file_name}
+                      </span>
+                      <X
+                        className={`cursor-pointer ${isDisabled ? "hidden" : ""}`}
+                        onClick={() => {
+                          setIsPanFilePreview((prev) => !prev);
+                        }}
+                      />
+                    </div>
+                  )}
+                {errors?.panDocument && !documentDetails?.panDocument && <span style={{ color: 'red' }}>{errors?.panDocument}</span>}
+              </div>
+            </div>
+            <div className={`col-span-3 grid grid-cols-3 gap-6 ${isDisabled ? "hidden" : ""}`}>
+              <div className="flex flex-col">
+                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                  GST Vendor Type <span className="pl-2 text-red-400 text-xl">*</span>
+                </h1>
+                <Select
+                  disabled={isDisabled}
+                  // onValueChange={(value) => {
+                  //   setBusinessType(value);
+                  //   setDocumentDetail((prev) => ({
                   //     ...prev,
-                  //     gstDocument: e.target.files,
+                  //     gst_ven_type: value,
+                  //   }));
+                  // }}
+                  onValueChange={(value) => {
+                    setSingleRow((prev: any) => ({
+                      ...prev,
+                      gst_ven_type: value,
+                    }));
+                  }}
+                  value={singlerow?.gst_ven_type ?? ""}
+                >
+                  <SelectTrigger className="disabled:opacity-100">
+                    <SelectValue placeholder="Select Vendor Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {documentDetailDropdown?.gst_vendor_type?.map(
+                        (item, index) => (
+                          <SelectItem key={index} value={item?.name}>
+                            {item?.registration_ven_name}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                {errors?.gst_ven_type && !documentDetails?.gst_ven_type && <span style={{ color: 'red' }}>{errors?.gst_ven_type}</span>}
+              </div>
+              <div>
+                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                  Meril Company <span className="pl-2 text-red-400 text-xl">*</span>
+                </h1>
+                <Select
+                  disabled={isDisabled}
+                  onValueChange={(value) => {
+                    setSingleRow((prev: any) => ({ ...prev, company: value }));
+                  }}
+                  value={singlerow?.company ?? ""}
+                >
+                  <SelectTrigger className="disabled:opacity-100">
+                    <SelectValue placeholder="Select Company" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {gstStateDropdown?.company?.map((item, index) => (
+                        <SelectItem key={index} value={item?.name}>
+                          {item?.description}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                  State <span className="pl-2 text-red-400 text-xl">*</span>
+                </h1>
+                {/* <Input placeholder="Enter State" value={documentDetails?.gst_state ?? OnboardingDetail?.gst_table[0]?.gst_state} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,gst_state:e.target.value}))}}/> */}
+                <Select
+                  disabled={isDisabled}
+                  // onValueChange={(value) => {
+                  //   setDocumentDetail((prev) => ({ ...prev, gst_state: value }));
+                  // }}
+                  onValueChange={(value) => {
+                    setSingleRow((prev: any) => ({ ...prev, gst_state: value }));
+                  }}
+                  value={
+                    singlerow?.gst_state ?? ""
+                  }
+                >
+                  <SelectTrigger className="disabled:opacity-100">
+                    <SelectValue placeholder="Select Vendor Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {gstStateDropdown?.states?.map((item, index) => (
+                        <SelectItem key={index} value={item?.name}>
+                          {item?.state_name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                {errors?.gst_state && !documentDetails?.gst_state && <span style={{ color: 'red' }}>{errors?.gst_state}</span>}
+              </div>
+              <div>
+                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                  Pincode <span className="pl-2 text-red-400 text-xl">*</span>
+                </h1>
+                <Input
+                  disabled={isDisabled}
+                  className="disabled:opacity-100"
+                  placeholder="Enter Pincode"
+                  value={
+                    singlerow?.pincode ??
+                    ""
+                  }
+                  // onChange={(e) => {
+                  //   setDocumentDetail((prev) => ({
+                  //     ...prev,
+                  //     gst_number: e.target.value,
                   //   }));
                   // }}
                   onChange={(e) => {
                     setSingleRow((prev: any) => ({
                       ...prev,
-                      gst_document_upload: e.target.files,
+                      pincode: e.target.value,
                     }));
                   }}
                 />
-                {/* {errors?.gstDocument && !documentDetails?.gstDocument && <span style={{ color: 'red' }}>{errors?.gstDocument}</span>} */}
-                {/* file preview */}
-                {/* {isGstFilePreview &&
+                {/* {errors?.gst_number && !documentDetails?.gst_number && <span style={{ color: 'red' }}>{errors?.gst_number}</span>} */}
+              </div>
+            </div>
+            <div
+              className={`col-span-3 grid grid-cols-3 gap-6 ${isDisabled ? "hidden" : ""}`}
+            >
+              <div>
+                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                  GST Number <span className="pl-2 text-red-400 text-xl">*</span>
+                </h1>
+                <Input
+                  disabled={isDisabled}
+                  className="disabled:opacity-100"
+                  placeholder="Enter GST Number"
+                  value={
+                    singlerow?.gst_number ??
+                    ""
+                  }
+                  // onChange={(e) => {
+                  //   setDocumentDetail((prev) => ({
+                  //     ...prev,
+                  //     gst_number: e.target.value,
+                  //   }));
+                  // }}
+                  onChange={(e) => {
+                    setSingleRow((prev: any) => ({
+                      ...prev,
+                      gst_number: e.target.value,
+                    }));
+                  }}
+                />
+                {/* {errors?.gst_number && !documentDetails?.gst_number && <span style={{ color: 'red' }}>{errors?.gst_number}</span>} */}
+              </div>
+              <div>
+                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                  GST Registration Date <span className="pl-2 text-red-400 text-xl">*</span>
+                </h1>
+                <Input
+                  disabled={isDisabled}
+                  className="disabled:opacity-100"
+                  placeholder="Enter Registration Date"
+                  value={
+                    singlerow?.gst_registration_date ??
+                    ""
+                  }
+                  type="date"
+                  // onChange={(e) => {
+                  //   setDocumentDetail((prev) => ({
+                  //     ...prev,
+                  //     gst_registration_date: e.target.value,
+                  //   }));
+                  // }}
+                  onChange={(e) => {
+                    setSingleRow((prev: any) => ({
+                      ...prev,
+                      gst_registration_date: e.target.value,
+                    }));
+                  }}
+                />
+                {errors?.gst_registration_date && !documentDetails?.gst_registration_date && <span style={{ color: 'red' }}>{errors?.gst_registration_date}</span>}
+              </div>
+              <div>
+                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                  Upload GST Document <span className="pl-2 text-red-400 text-xl">*</span>
+                </h1>
+                <div className="flex gap-4">
+                  <Input
+                    disabled={isDisabled}
+                    className="disabled:opacity-100"
+                    ref={fileInput}
+                    type="file"
+                    // onChange={(e) => {
+                    //   setDocumentDetail((prev: any) => ({
+                    //     ...prev,
+                    //     gstDocument: e.target.files,
+                    //   }));
+                    // }}
+                    onChange={(e) => {
+                      setSingleRow((prev: any) => ({
+                        ...prev,
+                        gst_document_upload: e.target.files,
+                      }));
+                    }}
+                  />
+                  {/* {errors?.gstDocument && !documentDetails?.gstDocument && <span style={{ color: 'red' }}>{errors?.gstDocument}</span>} */}
+                  {/* file preview */}
+                  {/* {isGstFilePreview &&
               !documentDetails?.gstDocument &&
               OnboardingDetail?.gst_table[0]?.gst_document?.url && (
                 <div className="flex gap-2">
@@ -634,293 +649,316 @@ const DocumentDetails = ({
                     />
                 </div>
               )} */}
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+          <div className={`flex justify-end pr-6 mb-4`}>
+            <Button
+              variant={"nextbtn"}
+              className={`py-2 ${isDisabled ? "hidden" : ""}`}
+              onClick={() => {
+                handleGSTTableAdd();
+              }}
+              size={"nextbtnsize"}
+            >
+              Add
+            </Button>
+          </div>
+          <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
+            <div className="flex w-full justify-between pb-4">
+              <h1 className="text-[20px] text-[#03111F] font-semibold">
+                Multiple GST Certificates
+              </h1>
+            </div>
+            <Table className=" max-h-40 overflow-y-scroll">
+              {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+              <TableHeader className="text-center">
+                <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
+                  <TableHead className="text-center">GST Type</TableHead>
+                  <TableHead className="text-center">Meril Company</TableHead>
+                  <TableHead className="text-center">GST State</TableHead>
+                  <TableHead className="text-center">GST Pincode</TableHead>
+                  <TableHead className="text-center">GST Number</TableHead>
+                  <TableHead className="text-center">GST Date</TableHead>
+                  <TableHead className="text-center">File</TableHead>
+                  <TableHead className="text-center">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {GSTTable?.map((item, index) => (
+
+                  <TableRow key={item?.name ? item?.name : ""}>
+                    <TableCell className="text-center">{item?.gst_ven_type}</TableCell>
+                    <TableCell className="text-center">{item?.company}</TableCell>
+                    <TableCell className="text-center">{item?.gst_state}</TableCell>
+                    <TableCell className="text-center">{item?.pincode}</TableCell>
+                    <TableCell className="text-center">{item?.gst_number}</TableCell>
+                    <TableCell className="text-center">{item?.gst_registration_date}</TableCell>
+                    <TableCell className="text-center">
+                      <span
+                        className="text-[13px] text-blue-600 underline cursor-pointer hover:text-blue-800 mt-1"
+                        onClick={() => viewFile(item?.gst_document?.name)}
+                      >
+                        {item?.gst_document?.file_name}
+                      </span>
+                    </TableCell>
+                    <TableCell className="flex justify-center items-center text-center"><Trash2 onClick={() => { handleGSTDelete(item?.name ? item?.name : "") }} className={` text-red-400 cursor-pointer ${isDisabled ? "hidden" : ""}`} /></TableCell>
+                  </TableRow>
+                ))
+
+                }
+              </TableBody>
+            </Table>
+          </div>
+          <div className="grid grid-cols-3 pl-5 gap-6">
+            <div className="flex flex-col col-span-1">
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                MSME Registered?<span className="pl-2 text-red-400 text-xl">*</span>
+              </h1>
+              <Select
+                disabled={isDisabled}
+                onValueChange={(value) => {
+                  setIsMSME(value);
+                  setDocumentDetail((prev) => ({
+                    ...prev,
+                    company_pan_number: value,
+                  }));
+                }}
+                value={isMSME ?? OnboardingDetail?.msme_registered ?? ""}
+              >
+                <SelectTrigger className="disabled:opacity-100">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="Yes">Yes</SelectItem>
+                    <SelectItem value="No">No</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            <div
+              className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}
+            >
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                MSME Enterprise Type <span className="pl-2 text-red-400 text-xl">*</span>
+              </h1>
+              <Select
+                disabled={isDisabled}
+                value={
+                  documentDetails?.msme_enterprise_type ??
+                  OnboardingDetail?.msme_enterprise_type
+                }
+                onValueChange={(value) => {
+                  setDocumentDetail((prev) => ({
+                    ...prev,
+                    msme_enterprise_type: value,
+                  }));
+                }}
+              >
+                <SelectTrigger className="disabled:opacity-100">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="MSME - Micro">MSME - Micro</SelectItem>
+                    <SelectItem value="MSME - Small">MSME - Small</SelectItem>
+                    <SelectItem value="MSME - Medium">MSME - Medium</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              {errors?.msme_enterprise_type && !documentDetails?.msme_enterprise_type && <span style={{ color: 'red' }}>{errors?.msme_enterprise_type}</span>}
+            </div>
+            <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                Udyam Registration No. <span className="pl-2 text-red-400 text-xl">*</span>
+              </h1>
+              <Input
+                disabled={isDisabled}
+                className="disabled:opacity-100"
+                placeholder=" Enter Udyam Registration No"
+                value={
+                  documentDetails?.udyam_number ??
+                  OnboardingDetail?.udyam_number ??
+                  ""
+                }
+                onChange={(e) => {
+                  setDocumentDetail((prev) => ({
+                    ...prev,
+                    udyam_number: e.target.value,
+                  }));
+                }}
+              />
+              {errors?.udyam_number && !documentDetails?.udyam_number && <span style={{ color: 'red' }}>{errors?.udyam_number}</span>}
+            </div>
+            <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                Name of Company in Udyam Certificate <span className="pl-2 text-red-400 text-xl">*</span>
+              </h1>
+              <Input
+                disabled={isDisabled}
+                className="disabled:opacity-100"
+                placeholder=""
+                value={
+                  documentDetails?.name_on_udyam_certificate ??
+                  OnboardingDetail?.name_on_udyam_certificate ??
+                  ""
+                }
+                onChange={(e) => {
+                  setDocumentDetail((prev) => ({
+                    ...prev,
+                    name_on_udyam_certificate: e.target.value,
+                  }));
+                }}
+              />
+              {errors?.name_on_udyam_certificate && !documentDetails?.name_on_udyam_certificate && <span style={{ color: 'red' }}>{errors?.name_on_udyam_certificate}</span>}
+            </div>
+            <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                Upload Udyam Certificate <span className="pl-2 text-red-400 text-xl">*</span>
+              </h1>
+              <div className="flex gap-4">
+                <Input
+                  disabled={isDisabled}
+                  className="disabled:opacity-100"
+                  placeholder=""
+                  type="file"
+                  onChange={(e) => {
+                    setDocumentDetail((prev: any) => ({
+                      ...prev,
+                      udyamCertificate: e.target.files,
+                    }));
+                  }}
+                />
+                {errors?.udyamCertificate && !documentDetails?.udyamCertificate && <span style={{ color: 'red' }}>{errors?.udyamCertificate}</span>}
+                {/* file preview */}
+                {isMsmeFilePreview &&
+                  !documentDetails?.udyamCertificate &&
+                  OnboardingDetail?.msme_proof?.url && (
+                    <div className="flex gap-2">
+                      {/* <Link
+                        target="blank"
+                        href={OnboardingDetail?.msme_proof?.url}
+                        className="underline text-blue-300 max-w-44 truncate"
+                      >
+                        <span>{OnboardingDetail?.msme_proof?.file_name}</span>
+                      </Link> */}
+                      <span
+                        className="underline text-blue-500 max-w-44 truncate cursor-pointer"
+                        onClick={() => {
+                          viewFile(OnboardingDetail.msme_proof.name);
+                        }}
+                      >
+                        {OnboardingDetail.msme_proof.file_name}
+                      </span>
+                      <X
+                        className={`cursor-pointer disabled:opacity-100 ${isDisabled ? "hidden" : ""}`}
+                        onClick={() => {
+                          setIsMsmeFilePreview((prev) => !prev);
+                        }}
+                      />
+                    </div>
+                  )}
+              </div>
+            </div>
+            <div className={``}>
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                Enterprise Registration Number <span className="pl-2 text-red-400 text-xl">*</span>
+              </h1>
+              <Input
+                disabled={isDisabled}
+                className="disabled:opacity-100"
+                placeholder="Enter Enterprise Registration Number"
+                value={
+                  documentDetails?.enterprise_registration_number ??
+                  OnboardingDetail?.enterprise_registration_number ??
+                  ""
+                }
+                onChange={(e) => {
+                  setDocumentDetail((prev) => ({
+                    ...prev,
+                    enterprise_registration_number: e.target.value,
+                  }));
+                }}
+              />
+              {errors?.enterprise_registration_number && !documentDetails?.enterprise_registration_number && <span style={{ color: 'red' }}>{errors?.enterprise_registration_number}</span>}
+            </div>
+            <div className={``}>
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                Upload Enterprise Registration Document <span className="pl-2 text-red-400 text-xl">*</span>
+              </h1>
+              <div className="flex gap-4 w-full">
+
+                <Input
+                  disabled={isDisabled}
+                  className="disabled:opacity-100"
+                  placeholder=""
+                  type="file"
+                  onChange={(e) => {
+                    setDocumentDetail((prev: any) => ({
+                      ...prev,
+                      registrationDocument: e.target.files,
+                    }));
+                  }}
+                />
+                {errors?.registrationDocument && !documentDetails?.registrationDocument && <span style={{ color: 'red' }}>{errors?.registrationDocument}</span>}
+                {/* file preview */}
+                {isRegistrationFilePreview &&
+                  !documentDetails?.registrationDocument &&
+                  OnboardingDetail?.entity_proof?.url && (
+                    <div className="flex gap-2">
+                      {/* <Link
+                        target="blank"
+                        href={OnboardingDetail?.entity_proof?.url}
+                        className="underline text-blue-300 max-w-44 truncate"
+                      >
+                        <span>{OnboardingDetail?.entity_proof?.file_name}</span>
+                      </Link> */}
+                      <span
+                        className="underline text-blue-500 max-w-44 truncate cursor-pointer"
+                        onClick={() => {
+                          viewFile(OnboardingDetail.entity_proof.name);
+                        }}
+                      >
+                        {OnboardingDetail.entity_proof.file_name}
+                      </span>
+                      <X
+                        className={`cursor-pointer ${isDisabled ? "hidden" : ""}`}
+                        onClick={() => {
+                          setIsRegistrationFilePreview((prev) => !prev);
+                        }}
+                      />
+                    </div>
+                  )}
               </div>
             </div>
           </div>
-
-
-        </div>
-        <div className={`flex justify-end pr-6 mb-4`}>
-          <Button
-            variant={"nextbtn"}
-            className={`py-2 ${isDisabled ? "hidden" : ""}`}
-            onClick={() => {
-              handleGSTTableAdd();
-            }}
-            size={"nextbtnsize"}
-          >
-            Add
-          </Button>
-        </div>
-        <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
-          <div className="flex w-full justify-between pb-4">
-            <h1 className="text-[20px] text-[#03111F] font-semibold">
-              Multiple GST Certificates
-            </h1>
-          </div>
-          <Table className=" max-h-40 overflow-y-scroll">
-            {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-            <TableHeader className="text-center">
-              <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                <TableHead className="text-center">GST Type</TableHead>
-                <TableHead className="text-center">Meril Company</TableHead>
-                <TableHead className="text-center">GST State</TableHead>
-                <TableHead className="text-center">GST Pincode</TableHead>
-                <TableHead className="text-center">GST Number</TableHead>
-                <TableHead className="text-center">GST Date</TableHead>
-                <TableHead className="text-center">File</TableHead>
-                <TableHead className="text-center">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {GSTTable?.map((item, index) => (
-
-                <TableRow key={item?.name ? item?.name : ""}>
-                  <TableCell className="text-center">{item?.gst_ven_type}</TableCell>
-                  <TableCell className="text-center">{item?.company}</TableCell>
-                  <TableCell className="text-center">{item?.gst_state}</TableCell>
-                  <TableCell className="text-center">{item?.pincode}</TableCell>
-                  <TableCell className="text-center">{item?.gst_number}</TableCell>
-                  <TableCell className="text-center">{item?.gst_registration_date}</TableCell>
-                  <TableCell className="text-center"><Link href={item?.gst_document?.url} target="blank">{item?.gst_document?.file_name}</Link></TableCell>
-                  <TableCell className="flex justify-center items-center text-center"><Trash2 onClick={() => { handleGSTDelete(item?.name ? item?.name : "") }} className={` text-red-400 cursor-pointer ${isDisabled ? "hidden" : ""}`} /></TableCell>
-                </TableRow>
-              ))
-
-              }
-            </TableBody>
-          </Table>
-        </div>
-        <div className="grid grid-cols-3 pl-5 gap-6">
-          <div className="flex flex-col col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              MSME Registered?
-            </h1>
-            <Select
-              disabled={isDisabled}
-              onValueChange={(value) => {
-                setIsMSME(value);
-                setDocumentDetail((prev) => ({
-                  ...prev,
-                  company_pan_number: value,
-                }));
-              }}
-              value={isMSME ?? OnboardingDetail?.msme_registered ?? ""}
-            >
-              <SelectTrigger className="disabled:opacity-100">
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="Yes">Yes</SelectItem>
-                  <SelectItem value="No">No</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div
-            className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}
-          >
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              MSME Enterprise Type <span className="pl-2 text-red-400 text-2xl">*</span>
-            </h1>
-            <Select
-              disabled={isDisabled}
-              value={
-                documentDetails?.msme_enterprise_type ??
-                OnboardingDetail?.msme_enterprise_type
-              }
-              onValueChange={(value) => {
-                setDocumentDetail((prev) => ({
-                  ...prev,
-                  msme_enterprise_type: value,
-                }));
+          <div className="flex justify-end pr-6">
+            <Button
+              className={`bg-blue-400 hover:bg-blue-400 ${isDisabled ? "hidden" : ""}`}
+              onClick={() => {
+                handleSubmit();
               }}
             >
-              <SelectTrigger className="disabled:opacity-100">
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="MSME - Micro">MSME - Micro</SelectItem>
-                  <SelectItem value="MSME - Small">MSME - Small</SelectItem>
-                  <SelectItem value="MSME - Medium">MSME - Medium</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            {errors?.msme_enterprise_type && !documentDetails?.msme_enterprise_type && <span style={{ color: 'red' }}>{errors?.msme_enterprise_type}</span>}
+              Next
+            </Button>
           </div>
-          <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Udyam Registration No. <span className="pl-2 text-red-400 text-2xl">*</span>
-            </h1>
-            <Input
-              disabled={isDisabled}
-              className="disabled:opacity-100"
-              placeholder=" Enter Udyam Registration No"
-              value={
-                documentDetails?.udyam_number ??
-                OnboardingDetail?.udyam_number ??
-                ""
-              }
-              onChange={(e) => {
-                setDocumentDetail((prev) => ({
-                  ...prev,
-                  udyam_number: e.target.value,
-                }));
-              }}
-            />
-            {errors?.udyam_number && !documentDetails?.udyam_number && <span style={{ color: 'red' }}>{errors?.udyam_number}</span>}
-          </div>
-          <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Name of Company in Udyam Certificate <span className="pl-2 text-red-400 text-2xl">*</span>
-            </h1>
-            <Input
-              disabled={isDisabled}
-              className="disabled:opacity-100"
-              placeholder=""
-              value={
-                documentDetails?.name_on_udyam_certificate ??
-                OnboardingDetail?.name_on_udyam_certificate ??
-                ""
-              }
-              onChange={(e) => {
-                setDocumentDetail((prev) => ({
-                  ...prev,
-                  name_on_udyam_certificate: e.target.value,
-                }));
-              }}
-            />
-            {errors?.name_on_udyam_certificate && !documentDetails?.name_on_udyam_certificate && <span style={{ color: 'red' }}>{errors?.name_on_udyam_certificate}</span>}
-          </div>
-          <div className={`${isMSME == "Yes" ? "" : "hidden"}`}>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Upload Udyam Certificate <span className="pl-2 text-red-400 text-2xl">*</span>
-            </h1>
-            <div className="flex gap-4">
-              <Input
-                disabled={isDisabled}
-                className="disabled:opacity-100"
-                placeholder=""
-                type="file"
-                onChange={(e) => {
-                  setDocumentDetail((prev: any) => ({
-                    ...prev,
-                    udyamCertificate: e.target.files,
-                  }));
-                }}
-              />
-              {errors?.udyamCertificate && !documentDetails?.udyamCertificate && <span style={{ color: 'red' }}>{errors?.udyamCertificate}</span>}
-              {/* file preview */}
-              {isMsmeFilePreview &&
-                !documentDetails?.udyamCertificate &&
-                OnboardingDetail?.msme_proof?.url && (
-                  <div className="flex gap-2">
-                    <Link
-                      target="blank"
-                      href={OnboardingDetail?.msme_proof?.url}
-                      className="underline text-blue-300 max-w-44 truncate"
-                    >
-                      <span>{OnboardingDetail?.msme_proof?.file_name}</span>
-                    </Link>
-                    <X
-                      className={`cursor-pointer disabled:opacity-100 ${isDisabled ? "hidden" : ""}`}
-                      onClick={() => {
-                        setIsMsmeFilePreview((prev) => !prev);
-                      }}
-                    />
-                  </div>
-                )}
-            </div>
-          </div>
-          <div className={``}>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Enterprise Registration Number <span className="pl-2 text-red-400 text-2xl">*</span>
-            </h1>
-            <Input
-              disabled={isDisabled}
-              className="disabled:opacity-100"
-              placeholder="Enter Enterprise Registration Number"
-              value={
-                documentDetails?.enterprise_registration_number ??
-                OnboardingDetail?.enterprise_registration_number ??
-                ""
-              }
-              onChange={(e) => {
-                setDocumentDetail((prev) => ({
-                  ...prev,
-                  enterprise_registration_number: e.target.value,
-                }));
-              }}
-            />
-            {errors?.enterprise_registration_number && !documentDetails?.enterprise_registration_number && <span style={{ color: 'red' }}>{errors?.enterprise_registration_number}</span>}
-          </div>
-          <div className={``}>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Upload Enterprise Registration Document <span className="pl-2 text-red-400 text-2xl">*</span>
-            </h1>
-            <div className="flex gap-4 w-full">
-
-              <Input
-                disabled={isDisabled}
-                className="disabled:opacity-100"
-                placeholder=""
-                type="file"
-                onChange={(e) => {
-                  setDocumentDetail((prev: any) => ({
-                    ...prev,
-                    registrationDocument: e.target.files,
-                  }));
-                }}
-              />
-              {errors?.registrationDocument && !documentDetails?.registrationDocument && <span style={{ color: 'red' }}>{errors?.registrationDocument}</span>}
-              {/* file preview */}
-              {isRegistrationFilePreview &&
-                !documentDetails?.registrationDocument &&
-                OnboardingDetail?.entity_proof?.url && (
-                  <div className="flex gap-2">
-                    <Link
-                      target="blank"
-                      href={OnboardingDetail?.entity_proof?.url}
-                      className="underline text-blue-300 max-w-44 truncate"
-                    >
-                      <span>{OnboardingDetail?.entity_proof?.file_name}</span>
-                    </Link>
-                    <X
-                      className={`cursor-pointer ${isDisabled ? "hidden" : ""}`}
-                      onClick={() => {
-                        setIsRegistrationFilePreview((prev) => !prev);
-                      }}
-                    />
-                  </div>
-                )}
-            </div>
-          </div>
-        </div>
-        <div className="flex justify-end pr-6">
-          <Button
-            className={`bg-blue-400 hover:bg-blue-400 ${isDisabled ? "hidden" : ""}`}
-            onClick={() => {
-              handleSubmit();
-            }}
-          >
-            Next
-          </Button>
         </div>
       </div>
-    </div>
-    {
-      isAmendCommentDialog && 
-      <PopUp handleClose={handleClose} isSubmit={true} headerText="Amend" Submitbutton={handleAmend}>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            {/* Comment */}
-          </h1>
-          <Textarea className="disabled:opacity-100" placeholder="" onChange={(e) => { setRemarks(e.target.value)}} />
-        </div>
-      </PopUp>
-    }
+      {
+        isAmendCommentDialog &&
+        <PopUp handleClose={handleClose} isSubmit={true} headerText="Amend" Submitbutton={handleAmend}>
+          <div className="col-span-1">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+              {/* Comment */}
+            </h1>
+            <Textarea className="disabled:opacity-100" placeholder="" onChange={(e) => { setRemarks(e.target.value) }} />
+          </div>
+        </PopUp>
+      }
     </>
   );
 };

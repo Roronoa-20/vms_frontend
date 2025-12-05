@@ -123,14 +123,17 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
     fetchBank();
     fetchCurrency();
   }, [])
+
   const handleSubmit = async () => {
     const submitUrl = API_END_POINTS?.bankSubmit;
     const updatedData = { ...formData, ref_no: ref_no, vendor_onboarding: onboarding_ref_no }
     const formdata = new FormData();
     formdata.append("data", JSON.stringify({ ...updatedData, international_bank_details: [updatedData?.international_bank_details], intermediate_bank_details: [updatedData?.intermediate_bank_details] }));
+    const oldBeneficiaryDoc = OnboardingDetail?.international_bank_details?.[0]?.bank_proof_for_beneficiary_bank;
+
     if (bankProofBeneficiaryFile) {
       formdata.append("bank_proof_for_beneficiary_bank", bankProofBeneficiaryFile[0])
-    }else{
+    } else if (!oldBeneficiaryDoc) {
       alert("Please Upload Beneficiary BankProof");
       return;
     }

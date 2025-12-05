@@ -52,49 +52,34 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [search, setSearch] = useState<string>("");
   const [total_event_list, settotalEventList] = useState(0);
-  const [record_per_page, setRecordPerPage] = useState<number>(5);
+  const [record_per_page, setRecordPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const user = Cookies?.get("user_id");
   console.log(user, "this is user");
-
   const debouncedSearchName = useDebounce(search, 300);
-
   useEffect(() => {
     fetchTable();
   }, [debouncedSearchName, selectedCompany, currentPage])
-
 
   const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     console.log(value, "this is search name")
     setSearch(value);
-  }
+  };
 
   const fetchTable = async () => {
     const dashboardPRTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.prTableData}?usr=${user}&company=${selectedCompany}&cart_id=${search}&page_no=${currentPage}&page_length=${record_per_page}`,
+      url: `${API_END_POINTS?.prTableData}?usr=${user}&company=${selectedCompany}&cart_id=${debouncedSearchName}&page_no=${currentPage}&page_length=${record_per_page}`,
       method: "GET",
     });
     if (dashboardPRTableDataApi?.status == 200) {
       setTable(dashboardPRTableDataApi?.data?.message?.data);
       settotalEventList(dashboardPRTableDataApi?.data?.message?.total_count);
-      setRecordPerPage(5)
+      // setRecordPerPage(5)
     }
   };
 
-  const handleSelectChange = (
-    value: string,
-    setter: (val: string) => void
-  ) => {
-    if (value === "--Select--") {
-      setter(""); // reset filter
-    } else {
-      setter(value);
-    }
-  };
-
-
-  console.log(table, "this is table");
+  console.log("Table Data of PR PT----->",table);
 
   return (
     <>
@@ -104,7 +89,10 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
             Purchase Requisition Request
           </h1>
           <div className="flex gap-4">
-            <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
+            <Input 
+              placeholder="Search Cart-ID..."
+              onChange={(e) => { handlesearchname(e) }} 
+            />
             <Select
               value={selectedCompany || "all"}
               onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
@@ -125,7 +113,7 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
             </Select>
           </div>
         </div>
-        <div className="max-h-[55vh]">
+        <div className="max-h-[110vh]">
           <Table className="">
             {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
             <TableHeader className="text-center">
@@ -133,8 +121,8 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
                 <TableHead className="text-center text-black">Sr No.</TableHead>
                 <TableHead className="text-center text-black">Ref No.</TableHead>
                 <TableHead className="text-center text-black">Cart No.</TableHead>
-                <TableHead className="text-center text-black">PR Type</TableHead>
                 <TableHead className="text-center text-black">Company</TableHead>
+                <TableHead className="text-center text-black">PR Type</TableHead>
                 <TableHead className="text-center text-black text-nowrap">Purchase Group</TableHead>
                 <TableHead className="text-center text-black">Requisitioner</TableHead>
                 <TableHead className="text-center text-black text-nowrap">Status</TableHead>
@@ -149,8 +137,8 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
                     <TableCell className="font-medium text-center">{(currentPage - 1) * record_per_page + (index + 1)}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.cart_details_id}</TableCell>
-                    <TableCell className="text-nowrap text-center">{item?.purchase_requisition_type}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.company}</TableCell>
+                    <TableCell className="text-nowrap text-center">{item?.purchase_requisition_type}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.purchase_group}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.requisitioner}</TableCell>
                     {/* <TableCell className="text-nowrap text-center">{item?.purchase_head_status}</TableCell> */}

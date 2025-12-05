@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -47,33 +47,33 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, onSu
       (item) => item.name === (currentPriceControl || "V")
     );
 
-    if (!currentPriceControl && matched) {
-      form.setValue("price_control", matched.name);
-    }
+//     if (!currentPriceControl && matched) {
+//       form.setValue("price_control", matched.name);
+//     }
 
-    if (matched?.do_not_cost !== undefined) {
-      form.setValue("do_not_cost", matched.do_not_cost);
-    } else {
-      form.setValue("do_not_cost", "");
-    }
-  }, [form.watch("price_control"), PriceControl, form]);
+//     if (matched?.do_not_cost !== undefined) {
+//       form.setValue("do_not_cost", matched.do_not_cost);
+//     } else {
+//       form.setValue("do_not_cost", "");
+//     }
+//   }, [form.watch("price_control"), PriceControl, form]);
 
   useEffect(() => {
     const materialType = MaterialDetails?.material_request_item?.material_type;
     const company = MaterialDetails?.material_request_item?.company_name;
 
-    if (!materialType || !company || !AllMaterialType?.length) return;
+//     if (!materialType || !company || !AllMaterialType?.length) return;
 
-    const matchedType = AllMaterialType.find(
-      (type) => type.name === materialType
-    );
+//     const matchedType = AllMaterialType.find(
+//       (type) => type.name === materialType
+//     );
 
-    if (matchedType && matchedType.valuation_and_profit?.length) {
-      const valuationProfit = matchedType.valuation_and_profit.filter(
-        (item) => item.company === company
-      );
-      const uniqueValuationClasses: ValuationClass[] = [];
-      const uniqueProfits: ProfitCenter[] = [];
+//     if (matchedType && matchedType.valuation_and_profit?.length) {
+//       const valuationProfit = matchedType.valuation_and_profit.filter(
+//         (item) => item.company === company
+//       );
+//       const uniqueValuationClasses: ValuationClass[] = [];
+//       const uniqueProfits: ProfitCenter[] = [];
 
       valuationProfit.forEach((item) => {
         if (
@@ -90,21 +90,21 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, onSu
           });
         }
 
-        if (
-          item.profit_center &&
-          !uniqueProfits.find((pc) => pc.name === item.profit_center)
-        ) {
-          uniqueProfits.push({
-            name: item.profit_center,
-            description: item.profit_center_description || "",
-          });
-        }
-      });
+//         if (
+//           item.profit_center &&
+//           !uniqueProfits.find((pc) => pc.name === item.profit_center)
+//         ) {
+//           uniqueProfits.push({
+//             name: item.profit_center,
+//             description: item.profit_center_description || "",
+//           });
+//         }
+//       });
 
-      setFilteredValuationClass(uniqueValuationClasses);
-      setFilteredProfitCenter(uniqueProfits);
-    }
-  }, [MaterialDetails, AllMaterialType, form]);
+//       setFilteredValuationClass(uniqueValuationClasses);
+//       setFilteredProfitCenter(uniqueProfits);
+//     }
+//   }, [MaterialDetails, AllMaterialType, form]);
 
   const filteredProfitCenterOptions = profitcenterSearch
     ? filteredProfitCenter.filter((profit) =>
@@ -118,37 +118,37 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, onSu
     const data = MaterialDetails?.material_onboarding;
     if (!data) return;
 
-    const fields = [
-      "price_control",
-      "hsn_code",
-      "do_not_cost",
-      "material_information",
-      "profit_center",
-      "valuation_class",
-    ];
+//     const fields = [
+//       "price_control",
+//       "hsn_code",
+//       "do_not_cost",
+//       "material_information",
+//       "profit_center",
+//       "valuation_class",
+//     ];
 
-    fields.forEach((field) => {
-      if ((data as any)[field]) {
-        form.setValue(field, (data as any)[field]);
-        if (field === "material_information") {
-          const fileUrl = (data as any)[field];
-          const fileNameFromUrl = fileUrl?.split("/").pop();
-          setFileName(fileNameFromUrl);
-          setFileSelected(true);
-        }
-      }
-    });
+//     fields.forEach((field) => {
+//       if ((data as any)[field]) {
+//         form.setValue(field, (data as any)[field]);
+//         if (field === "material_information") {
+//           const fileUrl = (data as any)[field];
+//           const fileNameFromUrl = fileUrl?.split("/").pop();
+//           setFileName(fileNameFromUrl);
+//           setFileSelected(true);
+//         }
+//       }
+//     });
 
-    if (
-      filteredProfitCenter.length &&
-      filteredValuationClass.length &&
-      data.profit_center &&
-      data.valuation_class
-    ) {
-      form.setValue("profit_center", data.profit_center);
-      form.setValue("valuation_class", data.valuation_class);
-    }
-  }, [MaterialDetails, filteredProfitCenter, filteredValuationClass, form]);
+//     if (
+//       filteredProfitCenter.length &&
+//       filteredValuationClass.length &&
+//       data.profit_center &&
+//       data.valuation_class
+//     ) {
+//       form.setValue("profit_center", data.profit_center);
+//       form.setValue("valuation_class", data.valuation_class);
+//     }
+//   }, [MaterialDetails, filteredProfitCenter, filteredValuationClass, form]);
 
 
   return (
@@ -373,47 +373,47 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, onSu
                               />
                             )}
 
-                            {!fileSelected ? (
-                              <span className="text-sm text-gray-500">
-                                No file selected
-                              </span>
-                            ) : (
-                              <>
-                                <a
-                                  href={`${process.env.NEXT_PUBLIC_BASE_URL}${form.getValues(
-                                    "material_information"
-                                  )}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-sm text-blue-600 underline"
-                                >
-                                  {fileName}
-                                </a>
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  className="text-red-500 font-bold p-0 h-auto"
-                                  onClick={() =>
-                                    handleRemoveFile("fileinput", setFileName)
-                                  }
-                                >
-                                  ✕
-                                </Button>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+//                             {!fileSelected ? (
+//                               <span className="text-sm text-gray-500">
+//                                 No file selected
+//                               </span>
+//                             ) : (
+//                               <>
+//                                 <a
+//                                   href={`${process.env.NEXT_PUBLIC_BASE_URL}${form.getValues(
+//                                     "material_information"
+//                                   )}`}
+//                                   target="_blank"
+//                                   rel="noopener noreferrer"
+//                                   className="text-sm text-blue-600 underline"
+//                                 >
+//                                   {fileName}
+//                                 </a>
+//                                 <Button
+//                                   type="button"
+//                                   variant="ghost"
+//                                   className="text-red-500 font-bold p-0 h-auto"
+//                                   onClick={() =>
+//                                     handleRemoveFile("fileinput", setFileName)
+//                                   }
+//                                 >
+//                                   ✕
+//                                 </Button>
+//                               </>
+//                             )}
+//                           </div>
+//                         </div>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 )}
+//               </>
+//             )}
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
 
-export default MaterialOthersData;
+// export default MaterialOthersData;

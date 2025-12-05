@@ -62,7 +62,7 @@ const TestingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendmen
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Testing Facility</h1>
         {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
-        { designation == "Purchase Team" && (isAmendment == 1 || re_release == 1) && (
+        {designation == "Purchase Team" && (isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled(prev => !prev)}
             className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
@@ -129,23 +129,31 @@ const TestingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAmendmen
             </TableRow>
           </TableHeader>
           <TableBody className="text-center">
-            {testingDetail?.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-medium">{index + 1}</TableCell>
-                <TableCell>{item?.equipment_name}</TableCell>
-                <TableCell>{item?.equipment_qty}</TableCell>
-                <TableCell>{item?.capacity}</TableCell>
-                <TableCell>{item?.remarks}</TableCell>
-                <TableCell className="flex justify-center">
-                  {!isDisabled && (
-                    <Trash2
-                      className="text-red-400 cursor-pointer"
-                      onClick={() => handleRowDelete(index)}
-                    />
-                  )}
+            {testingDetail && testingDetail.length > 0 ? (
+              testingDetail?.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium">{index + 1}</TableCell>
+                  <TableCell>{item?.equipment_name}</TableCell>
+                  <TableCell>{item?.equipment_qty}</TableCell>
+                  <TableCell>{item?.capacity}</TableCell>
+                  <TableCell>{item?.remarks}</TableCell>
+                  <TableCell className="flex justify-center">
+                    {!isDisabled && (
+                      <Trash2
+                        className="text-red-400 cursor-pointer"
+                        onClick={() => handleRowDelete(index)}
+                      />
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={9} className="text-center py-4 text-gray-500 italic">
+                  No Testing Facility Details mentioned by the Vendor
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>

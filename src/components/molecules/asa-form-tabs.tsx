@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { ASAFormTabs } from '@/src/constants/asaformtabs';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import { useAuth } from '@/src/context/AuthContext';
+import { useASAForm } from "@/src/hooks/useASAForm";
+
 
 export default function ASAFormTab() {
   const router = useRouter();
@@ -12,6 +15,12 @@ export default function ASAFormTab() {
   const currentTab = (params.get('tabtype') || '').toLowerCase();
   const vmsRefNo = params.get('vms_ref_no') || '';
   const [openTab, setOpenTab] = useState<string | null>(null);
+  const { designation } = useAuth();
+
+  const isVendor = designation?.toLowerCase() === "vendor";
+  const { asaFormSubmitData } = useASAForm();
+  const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+  const isVendorLocked = isVendor && isverified === 0;
 
   useEffect(() => {
     const parentTab = ASAFormTabs.find(tab =>
@@ -48,9 +57,10 @@ export default function ASAFormTab() {
         return (
           <div key={i}>
             <div
-              className={`flex items-center justify-between cursor-pointer p-2 rounded-lg font-medium transition-all duration-150 ${currentTab === tab.key ? 'bg-[#0C72F5] text-white' : 'bg-[#E8F0F7] text-[#0C72F5] hover:bg-[#d1e3f8]'
+              className={`flex items-center justify-between cursor-${isVendorLocked ? 'not-allowed' : 'pointer'} p-2 rounded-lg font-medium transition-all duration-150 ${currentTab === tab.key ? 'bg-[#0C72F5] text-white' : 'bg-[#E8F0F7] text-[#0C72F5] hover:bg-[#d1e3f8]'
                 }`}
               onClick={() => {
+                if (isVendorLocked) return;
                 if (isGovernance) {
                   handleTabClick(tab.key);
                 } else {
@@ -68,8 +78,11 @@ export default function ASAFormTab() {
                 {tab.children.map((child, ci) => (
                   <div
                     key={ci}
-                    onClick={() => handleTabClick(tab.key, child.key)}
-                    className={`cursor-pointer px-3 py-1 rounded text-sm font-medium transition ${currentTab === child.key
+                    onClick={() => {
+                      if (isVendorLocked) return;
+                      handleTabClick(tab.key, child.key);
+                    }}
+                    className={`cursor-${isVendorLocked ? 'not-allowed' : 'pointer'} px-3 py-1 rounded text-sm font-medium transition ${currentTab === child.key
                       ? 'bg-[#0C72F5] text-white'
                       : 'text-[#0C72F5] hover:bg-[#d1e3f8]'
                       }`}

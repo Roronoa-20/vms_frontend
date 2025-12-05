@@ -8,6 +8,19 @@ interface Props {
 }
 
 const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
+
+  const formatDate = (dateStr: string | undefined) => {
+    if (!dateStr) return '-';
+    const dateObj = new Date(dateStr);
+    if (isNaN(dateObj.getTime())) return '-';
+
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const year = dateObj.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  };
+
   const VendorInfoList = [
     ["VENDOR GSTIN NO:", prDetails?.vendor_gst_no],
     ["Contact Person :", prDetails?.contact_person],
@@ -19,20 +32,20 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
     ["Supplier Quote Ref :", prDetails?.supplier_quote_ref],
   ];
 
-  const rightColumnAddressConst1 = [
-    ["P.O. No.", prDetails?.name, "Date", prDetails?.po_date],
+  const rightsidePOPRDetails = [
+    ["P.O. No.", prDetails?.name, "Date", formatDate(prDetails?.po_date)],
     ["Amd. Ver No.", "0", "Date", ""],
-    ["Purchase Grp.", prDetails?.purchase_group, "", ""],
-    ["Ref. PR No", prDetails?.ref_pr_no, "Ref. PR Date", prDetails?.ref_pr_date],
-    ["Ref. PR Person", prDetails?.ref_pr_person, "", ""],
-    ["Contact Person", prDetails?.contact_person, "Phone No.", prDetails?.phonemobile_no],
+    ["Purchase Grp.", prDetails?.purchase_group],
+    ["Ref. PR No", prDetails?.ref_pr_no, "Ref. PR Date", formatDate(prDetails?.ref_pr_date)],
+    ["Ref. PR Person", prDetails?.ref_pr_person],
   ];
 
-  const rightColumnAddressConst2 = [
+  const rightsidecontactDetails = [
+    ["Contact Person", prDetails?.contact_person2, "Phone No.", prDetails?.phonemobile_no],
     ["E-mail", prDetails?.email2],
     ["D/L No", prDetails?.dl_no],
     ["GSTIN No.", prDetails?.gstin_no],
-    ["SSI Regn No.", ""],
+    ["MSME No.", prDetails?.msme_no],
   ];
 
   const Header = ["Sr No.", "Material Code", "Description", "HSN/SAC", "UOM", "Quantity", "Rate", "Amount", "Sche. Date", "Sche. Qty"];
@@ -45,32 +58,24 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
     ["Total Value of Purchase Order / Service Order", prDetails?.total_value_of_po__so,],
   ];
 
-  
+
 
   console.log(prDetails, "this is pr details")
 
   return (
     <div
       ref={contentRef}
-      className="bg-white border border-gray-300 rounded-md px-16 py-10 space-y-6 overflow-x-auto"
+      className="bg-white border border-gray-300 rounded-md px-16 py-10 overflow-x-auto"
     >
-      <h1 className="text-center font-medium">
+      <h1 className="text-center font-semibold text-[16px]">
         {prDetails?.purchase_order_format && Heading}
       </h1>
       {/* Grid with 2 Columns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 border border-black ">
         {/* Left Column */}
         <div className="border-r border-black">
-          <div className="flex justify-center border-b border-black py-4">
-            {
-              prDetails?.company_logo?.base64 &&
-              // <img
-              // src={`data:image/png;base64,${prDetails && prDetails?.company_logo?prDetails?.company_logo?.base64:""}`}
-              // alt="Signature"
-              // //  crossOrigin="anonymous"
-              // style={{ width: "25%", height: "auto", objectFit: "contain" }}
-              // // content="contain"
-              // />
+          <div className="flex justify-center border-b border-black">
+            {prDetails?.company_logo?.base64 &&
               <img
                 src={`data:${prDetails?.company_logo?.mime_type};base64,${prDetails?.company_logo?.base64}`}
                 alt="Company Logo"
@@ -81,76 +86,124 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
 
           {/* Supplier and Address */}
           <div className="grid grid-cols-4 border-b border-black">
-            <div className="col-span-2 border-r border-black p-2 font-semibold">
+            <div className="text-[16px] col-span-2 border-r border-black px-2 py-1 font-bold flex items-center">
               Supplier
             </div>
-            <div className="col-span-2 p-2">
-              <span className="font-semibold">Code :</span>{" "}
+            <div className="col-span-2 px-2 py-1 font-bold items-center justify-start">
+              <span className="text-[16px] font-bold">Code: </span>
               {prDetails?.vendor_code}
             </div>
           </div>
-          <div className="border-b border-black p-2 leading-4 text-sm">
-             <span className="font-semibold">{prDetails?.vendor_address_details?.vendor_name}</span><br/>
+          <div className="border-b border-black p-1 leading-6 text-[16px]">
+            <span className="font-semibold">{prDetails?.vendor_address_details?.vendor_name}</span><br />
             {prDetails?.vendor_address_details?.address_line_1},<br />
             {prDetails?.vendor_address_details?.address_line_2},<br />
             {prDetails?.vendor_address_details?.city} - {prDetails?.vendor_address_details?.zip_code}, {prDetails?.vendor_address_details?.state}, {prDetails?.vendor_address_details?.country}<br />
           </div>
 
           {/* Vendor Info List */}
-          {VendorInfoList?.map((item, idx) => (
-            <div className="grid grid-cols-2 border-b border-black" key={idx}>
-              <div className="border-r border-black p-2 font-semibold">
-                {item[0]}
+          {VendorInfoList?.map((item, idx) => {
+            const label = item[0];
+            const value = item[1];
+            const isGSTField = label.includes("GST");
+            return (
+              <div className="grid grid-cols-2 border-b border-black" key={idx}>
+                <div className="border-r border-black px-2 py-1 font-bold flex items-center">
+                  {label}
+                </div>
+                <div className={`px-2 py-1 flex items-center ${isGSTField ? "font-bold" : ""}`}>
+                  {value}
+                </div>
               </div>
-              <div className="p-2">{item[1]}</div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Right Column */}
         <div>
-          <div className="border-b border-black p-2">
-            <div className="font-semibold">
+          <div className="border-b border-black p-1">
+            <div className="text-[17px] font-semibold">
               Bill To : {prDetails?.bill_to_company_details?.company_name}
             </div>
-            <div>{prDetails?.bill_to_company_details?.street_1}</div>
-            <div>{prDetails?.bill_to_company_details?.street_2}</div>
-            {/* <div>Muktanand Marg, Chala,</div> */}
-            <div>{prDetails?.bill_to_company_details?.city} - {prDetails?.bill_to_company_details?.pincode} ({prDetails?.bill_to_company_details?.state_full})</div>
-            <div>Phone No: {prDetails?.bill_to_company_details?.contact_no}</div>
+            <div className="text-[14px] leading-6">
+              <span className="text-black">{prDetails?.bill_to_company_details?.street_1}<br />
+                {prDetails?.bill_to_company_details?.street_2}<br />
+                {prDetails?.bill_to_company_details?.city} - {prDetails?.bill_to_company_details?.pincode} ({prDetails?.bill_to_company_details?.state_full})</span>
+            </div>
+            <div className="text-[14px]">Phone No: {prDetails?.bill_to_company_details?.contact_no}</div>
           </div>
 
-          {rightColumnAddressConst1?.map((row, idx) => (
-            <div className="grid grid-cols-4 border-b border-black" key={idx}>
-              <div className="border-r border-black p-2 font-semibold">
-                {row[0]}
-              </div>
-              <div className="border-r border-black p-2">{row[1]}</div>
-              <div className="border-r border-black p-2 font-semibold">
-                {row[2]}
-              </div>
-              <div className="p-2">{row[3]}</div>
-            </div>
-          ))}
+          {rightsidePOPRDetails?.map((row, idx) => {
+            const isTwoColumn = row.length === 2;
 
-          {rightColumnAddressConst2.map((item, idx) => (
-            <div className="grid grid-cols-4 border-b border-black" key={idx}>
-              <div className="border-r border-black p-2 font-semibold">
-                {item[0]}
+            return (
+              <div className="grid grid-cols-4 border-b border-black" key={idx}>
+                <div className="border-r border-black px-2 py-1 font-bold flex items-center">
+                  {row[0]}
+                </div>
+                {isTwoColumn ? (
+                  <div className="col-span-3 px-2 py-1 flex items-center">
+                    {row[1]}
+                  </div>
+                ) : (
+                  <>
+                    <div className="border-r border-black px-2 py-1 flex items-center">
+                      {row[1]}
+                    </div>
+
+                    <div className="border-r border-black px-2 py-1 font-bold flex items-center">
+                      {row[2]}
+                    </div>
+
+                    <div className="px-2 py-1 flex items-center">
+                      {row[3]}
+                    </div>
+                  </>
+                )}
               </div>
-              <div className="col-span-3 p-2">{item[1]}</div>
-            </div>
-          ))}
+            );
+          })}
+
+
+          {rightsidecontactDetails.map((item, idx) => {
+            const hasPhone = item.length === 4;
+
+            return (
+              <div className="grid grid-cols-4 border-b border-black" key={idx}>
+
+                <div className="border-r border-black px-2 py-1 font-bold flex items-center">
+                  {item[0]}
+                </div>
+
+                <div className={`${hasPhone ? "border-r" : "col-span-3"} border-black px-2 py-1 flex items-center`}>
+                  {item[1]}
+                </div>
+
+                {hasPhone && (
+                  <>
+                    <div className="border-r border-black px-2 py-1 font-bold flex items-center">
+                      {item[2]}
+                    </div>
+                    <div className="px-2 py-1 flex items-center">
+                      {item[3]}
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })}
+
 
           {/* Ship To */}
-          <div className="border-t border-black p-2">
-            <div className="font-semibold">
+          <div className="border-t border-black p-1">
+            <div className="text-[17px] font-semibold">
               Ship To : {prDetails?.ship_to_company_details?.company_name}
             </div>
-            <div>{prDetails?.ship_to_company_details?.street_1}</div>
-            <div>{prDetails?.ship_to_company_details?.street_2}</div>
-            {/* <div>Muktanand Marg, Chala,</div> */}
-            <div>{prDetails?.ship_to_company_details?.city} - {prDetails?.ship_to_company_details?.pincode} ({prDetails?.ship_to_company_details?.state_full})</div>
+            <div className="text-[14px] leading-6">
+              <span>{prDetails?.ship_to_company_details?.street_1}<br />
+                {prDetails?.ship_to_company_details?.street_2}<br />
+                {prDetails?.ship_to_company_details?.city} - {prDetails?.ship_to_company_details?.pincode} ({prDetails?.ship_to_company_details?.state_full})</span>
+            </div>
             <div>Phone No: {prDetails?.ship_to_company_details?.contact_no}</div>
           </div>
         </div>
@@ -171,31 +224,98 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
           <tbody>
             {prDetails?.po_items?.map((item: any, index: any) => (
               <tr key={index} className={index % 2 ? "bg-gray-50" : ""}>
-                <td className="border border-black px-2 py-1 text-center">
+                <td className="border border-black px-2 py-1 align-top">
                   {index + 1}
                 </td>
-                <td className="border border-black px-2 py-1">
+                <td className="border border-black px-2 py-1 align-top">
                   {item?.material_code}
                 </td>
-                <td className="border border-black px-2 py-1">
-                  {item?.description}
+                <td className="border border-black px-2 py-1 align-top">
+                  {item?.short_text}
                 </td>
-                <td className="border border-black px-2 py-1">
+                <td className="border border-black px-2 py-1 align-top text-center">
                   {item?.hsnsac}
                 </td>
-                <td className="border border-black px-2 py-1">{item?.uom}</td>
-                <td className="border border-black px-2 py-1">
-                  {item?.quantity}
+                <td className="border border-black px-2 py-1 align-top text-center">{item?.uom}</td>
+                {/* QUANTITY COLUMN */}
+                <td className="border border-black px-2 py-1 align-top">
+                  <div className="flex flex-col gap-1">
+                    <div className="font-semibold text-right">{item?.quantity}</div>
+
+                    <div className="text-black">
+                      {item?.discount_on_net && "Discount on Net:"}
+                    </div>
+
+                    <div className="text-black">
+                      {item?.igst_rate_percent && "Input IGST:"}
+                    </div>
+                  </div>
                 </td>
-                <td className="border border-black px-2 py-1">{item?.rate}</td>
-                <td className="border border-black px-2 py-1">
-                  {item?.base_amount}
+
+                {/* RATE COLUMN */}
+                <td className="border border-black px-2 py-1 align-top text-right">
+                  <div className="flex flex-col gap-1 w-full">
+                    <div className="font-semibold">{item?.rate && Number(item.rate).toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    })}</div>
+
+                    {/* Empty gap to align with Discount */}
+                    <div className="h-5"></div>
+
+                    <div className="text-black">
+                      {item?.igst_rate_percent && <span className="font-medium">{item.igst_rate_percent}</span>}
+                    </div>
+                    <div className="h-5"></div>
+
+                    {/* NET with top border */}
+                    <div className="w-full border-t border-black pt-1 text-left font-bold">
+                      {item?.price && "NET:"}
+                    </div>
+                  </div>
                 </td>
-                <td className="border border-black px-2 py-1">
-                  {item?.schedule_date}
+
+                {/* AMOUNT COLUMN */}
+                <td className="border border-black px-2 py-1 align-top text-right">
+                  <div className="flex flex-col gap-1 w-full">
+                    <div className="font-semibold">{item?.base_amount &&
+                      Number(item.base_amount).toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      })}</div>
+                    <div className="text-black">
+                      {item?.discount_on_net && <span className="font-medium">{Number(item.discount_on_net).toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      })}</span>}
+                    </div>
+
+                    {/* Empty gap to align with IGST*/}
+                    <div className="text-black">
+                      {item?.total_input_igst && <span className="font-medium">{Number(item.total_input_igst).toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      })}</span>}
+                    </div>
+
+                    <div className="h-5"></div>
+
+                    {/* NET value with top border (aligned with RATE NET) */}
+                    <div className="w-full border-t border-black pt-1 font-semibold">
+                      {item?.price &&
+                        Number(item.price).toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2
+                        })}
+                    </div>
+                  </div>
                 </td>
-                <td className="border border-black px-2 py-1">
-                  {item?.quantity}
+
+                <td className="border border-black px-2 py-1 align-top text-center">
+                  {formatDate(item?.schedule_date)}
+                </td>
+                <td className="border border-black px-2 py-1 align-top text-center">
+                  {item?.schedule_quantity}
                 </td>
               </tr>
             ))}
@@ -219,7 +339,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
         </table>
       </div>
       <div className="border border-black bg-white text-left text-xs font-semibold p-2">
-        Totals Value in Words :{" "}
+        Totals Value in Words :
         <span className="font-normal">{prDetails?.total_value_in_words}</span>
       </div>
 

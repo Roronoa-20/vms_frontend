@@ -10,11 +10,10 @@ interface ConditionalTextareaGroupProps {
   condition: boolean;
   placeholder?: string;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  disabled?: boolean;
 }
 
-const ConditionalTextareaGroup: React.FC<ConditionalTextareaGroupProps> = ({
-  name, label, value, condition, placeholder, onChange
-}) => condition ? (
+const ConditionalTextareaGroup: React.FC<ConditionalTextareaGroupProps> = ({ name, label, value, condition, placeholder, onChange, disabled}) => condition ? (
   <div className="mt-1">
     <Label htmlFor={name} className="font-semibold text-[16px]">{label}</Label>
     <textarea
@@ -23,6 +22,7 @@ const ConditionalTextareaGroup: React.FC<ConditionalTextareaGroupProps> = ({
       placeholder={placeholder}
       value={value}
       onChange={onChange}
+      disabled={disabled}
     />
   </div>
 ) : null;

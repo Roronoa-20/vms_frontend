@@ -89,8 +89,13 @@ const CompanyAddress = ({
   const [file, setFile] = useState<FileList | null>(null);
   const [isFilePreview, setIsFilePreview] = useState<boolean>(true);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
-
+  const [hideAttachLabel, setHideAttachLabel] = useState(false);
+  const viewFile = (fileId: string) => {
+    const url = `${API_END_POINTS.securefileview}?file_id=${fileId}`;
+    window.open(url, "_blank");
+  };
   const [isMultipleLocation, setIsMultipleLocation] = useState<boolean>(OnboardingDetail?.multiple_locations ? true : false);
+
   useEffect(() => {
     resetMultiple();
     OnboardingDetail?.multiple_location_table?.map((item) => {
@@ -309,7 +314,7 @@ const CompanyAddress = ({
       <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-[18px]">Company Address</h1>
         {/* <Button onClick={() => { setIsDisabled(prev => !prev) }} className={`mb-2 ${isAmendment == 1?"":"hidden"}`}>{isDisabled ? "Enable Edit" : "Disable Edit"}</Button> */}
-        {designation == "Purchase Team" &&(isAmendment == 1 || re_release == 1) && (
+        {designation == "Purchase Team" && (isAmendment == 1 || re_release == 1) && (
           <div
             onClick={() => setIsDisabled(prev => !prev)}
             className="mb-2 inline-flex items-center gap-2 cursor-pointer rounded-[28px] border px-3 py-2 shadow-sm bg-[#5e90c0] hover:bg-gray-100 transition"
@@ -711,21 +716,23 @@ const CompanyAddress = ({
         </>
       )}
 
-      <div className="flex flex-col gap-2 justify-center pl-4 pt-2">
+      <div className="flex flex-col gap-2 justify-center p-4 pt-2">
         <h1 className="font-medium">Main Office Address Proof</h1>
         <h1 className="text-[12px] font-normal text-[#626973]">
           Upload Address Proof (Light Bill, Telephone Bill, etc.)
         </h1>
 
         {/* Paperclip upload */}
-        <label
-          htmlFor="addressProofUpload"
-          className={`flex items-center gap-2 w-fit cursor-pointer text-blue-500 hover:text-blue-700 ${isDisabled ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-        >
-          <Paperclip size={18} />
-          <span className="text-sm">Attach File</span>
-        </label>
+        {!hideAttachLabel && (
+          <label
+            htmlFor="addressProofUpload"
+            className={`flex items-center gap-2 w-fit cursor-pointer text-blue-500 hover:text-blue-700 ${isDisabled ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+          >
+            <Paperclip size={18} />
+            <span className="text-sm">Attach File</span>
+          </label>
+        )}
         <input
           id="addressProofUpload"
           type="file"
@@ -747,13 +754,15 @@ const CompanyAddress = ({
           isFilePreview &&
           OnboardingDetail?.address_proofattachment?.url && (
             <div className="flex gap-2 items-center">
-              <Link
-                target="_blank"
-                href={OnboardingDetail.address_proofattachment.url}
-                className="underline text-blue-500 max-w-44 truncate"
+              <span
+                className="underline text-blue-500 max-w-44 truncate cursor-pointer"
+                onClick={() => {
+                  setHideAttachLabel(true);
+                  viewFile(OnboardingDetail.address_proofattachment.name);
+                }}
               >
                 {OnboardingDetail.address_proofattachment.file_name}
-              </Link>
+              </span>
               {!isDisabled && (
                 <X
                   className="cursor-pointer"

@@ -9,23 +9,23 @@ interface MaterialRemarksFormProps {
     MaterialDetails?: MaterialRequestData;
 }
 
-const MaterialRemarksForm: React.FC<MaterialRemarksFormProps> = ({
-    form,
-    MaterialDetails,
-}) => {
-    useEffect(() => {
-        const onboardingData = MaterialDetails?.material_onboarding;
-        const requestItem = MaterialDetails?.material_request_item;
+// const MaterialRemarksForm: React.FC<MaterialRemarksFormProps> = ({
+//     form,
+//     MaterialDetails,
+// }) => {
+//     useEffect(() => {
+//         const onboardingData = MaterialDetails?.material_onboarding;
+//         const requestItem = MaterialDetails?.material_request_item;
 
         if (onboardingData) {
             const fields: (keyof MaterialOnboarding)[] = ["comment_by_store"];
 
-            fields.forEach((field) => {
-                if (onboardingData[field]) {
-                    form.setValue(field, onboardingData[field]);
-                }
-            });
-        }
+//             fields.forEach((field) => {
+//                 if (onboardingData[field]) {
+//                     form.setValue(field, onboardingData[field]);
+//                 }
+//             });
+//         }
 
         if (requestItem?.comment_by_user) {
             form.setValue("comment_by_user", requestItem.comment_by_user);
@@ -107,4 +107,4 @@ const MaterialRemarksForm: React.FC<MaterialRemarksFormProps> = ({
     );
 };
 
-export default MaterialRemarksForm;
+// export default MaterialRemarksForm;

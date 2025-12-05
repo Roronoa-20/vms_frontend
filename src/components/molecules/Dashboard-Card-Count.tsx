@@ -61,9 +61,7 @@ type Props = {
   prData: PurchaseRequisition[];
   rfqData: RFQTable;
   dashboardASAFormTableData: DashboardTableType["asa_form_data"];
-  dashboardPendingASAFormTableData: DashboardTableType["asa_form_data"];
   dashboardASAPendingVendorListTableData: DashboardTableType["asa_form_data"];
-  ASAdashboardOnboardedVendorcountTableData: DashboardTableType["asa_form_data"];
   sapErrorDashboardData: DashboardTableType["sapErrorDashboardData"];
   dashboardAccountsPending: any;
   dashboardAccountsOnboarded: any;
@@ -75,22 +73,18 @@ type Props = {
 const DashboardCards = ({ ...Props }: Props) => {
   console.log(Props?.cardData, "this is card data");
   const { MultipleVendorCode } = useMultipleVendorCodeStore();
-  // const cookieStore = await cookies();
   const { designation } = useAuth();
   const user = designation;
   const [loading, setLoading] = useState<boolean>(true);
 
   console.log(user, "this is desingation");
-  // const user = cookieStore.get("designation")?.value;
   let allCardData: any[] = [];
 
   if (user === "ASA") {
     allCardData = [
       {
         name: "Total Onboarded Vendor",
-        count:
-          Props.ASAdashboardOnboardedVendorcountTableData
-            ?.approved_vendor_count ?? 0,
+        count: Props.ASAdashboardOnboardedVendorListTableData?.overall_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-emerald-800",
         bg_color: "bg-emerald-100",
@@ -106,7 +100,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       },
       {
         name: "Pending ASA Form",
-        count: Props.dashboardPendingASAFormTableData?.pending_asa_count ?? 0,
+        count: Props.dashboardASAPendingVendorListTableData?.overall_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-rose-800",
         bg_color: "bg-rose-100",
@@ -123,14 +117,6 @@ const DashboardCards = ({ ...Props }: Props) => {
         bg_color: "bg-rose-100",
         hover: "hover:border-rose-400",
       },
-      // {
-      //   name: "Total Vendors",
-      //   count: Props.cardData?.total_vendor_count ?? 0,
-      //   icon: "/dashboard-assests/cards_icon/total_count.svg",
-      //   text_color: "text-yellow-800",
-      //   bg_color: "bg-yellow-100",
-      //   hover: "hover:border-yellow-400",
-      // },
       {
         name: "Onboarded Vendors",
         count: Props.cardData?.approved_vendor_count ?? 0,
@@ -183,6 +169,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       },
       {
         name: "Purchase Requisition Request",
+        subname: "Generated through VMS",
         count: Props.cardData?.pr_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-rose-800",
@@ -329,6 +316,7 @@ const DashboardCards = ({ ...Props }: Props) => {
     },
     {
       name: "Purchase Requisition Request",
+      subname: "Generated through VMS",
       count: Props.cardData?.pr_count ?? 0,
       icon: "/dashboard-assests/cards_icon/file-search.svg",
       text_color: "text-rose-800",
@@ -336,6 +324,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       hover: "hover:border-rose-400",
     },
   ];
+
 
   let cardData = user === "Enquirer" ? EnquirerCard : allCardData;
 
@@ -352,9 +341,6 @@ const DashboardCards = ({ ...Props }: Props) => {
   if (loading) {
     return <div>Loading...</div>;
   }
-
-  console.log(Props?.prInquiryData, "this is PR table");
-  console.log(Props?.dashboardApprovedVendorTableData, "this is RFQ table");
 
   return (
     <div className="">
@@ -383,13 +369,15 @@ const DashboardCards = ({ ...Props }: Props) => {
               <TabsTrigger
                 key={item.name || index}
                 value={item.name}
-                className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-black text-gray-500 rounded-2xl p-0 transition-all duration-300 ease-in-out"
-              >
-                <div
-                  className={`group w-full h-full rounded-2xl ${item.bg_color} flex flex-col p-3 ${item.text_color} h-28 justify-between border-2 ${item.hover} hover:scale-105 transition duration-300 transform cursor-pointer shadow-md`}
-                >
-                  <div className="flex w-full justify-between">
-                    <h1 className="text-[13px]">{item.name}</h1>
+                className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-black text-gray-500 rounded-2xl p-0 transition-all duration-300 ease-in-out">
+                <div className={`group w-full h-full rounded-2xl ${item.bg_color} flex flex-col p-3 ${item.text_color} h-28 justify-between border-2 ${item.hover} hover:scale-105 transition duration-300 transform cursor-pointer shadow-md`}>
+                  <div className="flex w-full justify-between items-center">
+                    <div className="flex flex-col">
+                      <h1 className="text-[14px] leading-none">{item.name}</h1>
+                      {item.subname && (
+                        <span className="text-left text-[12px] text-gray-600">({item.subname})</span>
+                      )}
+                    </div>
                     <Image src={item.icon} alt="" width={25} height={30} />
                   </div>
                   <div className="text-[20px] text-start font-bold">
@@ -414,12 +402,12 @@ const DashboardCards = ({ ...Props }: Props) => {
                 )}
                 {item.name === "Submitted ASA Form" && (
                   <>
-                    <ASAVendorMonthWiseChart
-                      tableData={Props.dashboardASAFormTableData.data || []}
-                    />
                     <DashboardASAFormTable
                       dashboardTableData={Props.dashboardASAFormTableData}
                       companyDropdown={Props?.companyDropdown}
+                    />
+                    <ASAVendorMonthWiseChart
+                      tableData={Props.dashboardASAFormTableData.data || []}
                     />
                   </>
                 )}
@@ -481,14 +469,14 @@ const DashboardCards = ({ ...Props }: Props) => {
                 />
               )}
               {item.name === "Purchase Enquiry" &&
-                (user === "Enquirer" || user === "Purchase Team") && (
+                (user === "Enquirer" || user === "Purchase Team" || user == "Purchase Head" || user === "Category Master") && (
                   <DashboardPurchaseEnquiryTable
                     dashboardTableData={Props?.prInquiryData?.cart_details}
                     companyDropdown={Props?.companyDropdown}
                   />
                 )}
               {item.name === "Purchase Requisition Request" &&
-                (user === "Enquirer" || user === "Purchase Team") && (
+                (user === "Enquirer" || user === "Purchase Team" || user == "Purchase Head" || user === "Category Master") && (
                   <DashboardPurchaseRequisitionTable
                     dashboardTableData={Props?.prData}
                     companyDropdown={Props?.companyDropdown}

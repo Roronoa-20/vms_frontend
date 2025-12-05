@@ -24,7 +24,7 @@ const GateEntry = async({refno}:Props) => {
   });
   const inwardLocationDropdown:{name:string,inward_location:string}[]  = inwardLocationDropdownResponse?.status == 200 ? inwardLocationDropdownResponse?.data?.message : "";
   if(refno){
-    const gateEntryResponse:AxiosResponse = await requestWrapper({url:API_END_POINTS?.fetchGateEntry,method:"POST",params:{name:refno},
+    const gateEntryResponse:AxiosResponse = await requestWrapper({url:API_END_POINTS?.fetchGateEntry,method:"GET",params:{name:refno},
       headers: {
             cookie: cookieHeaderString
         },

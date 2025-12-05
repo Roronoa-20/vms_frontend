@@ -62,9 +62,9 @@ const useDebounce = (value: any, delay: any) => {
 };
 
 const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) => {
-  console.log("SAP ERROR TABLE___>", dashboardTableData);
+  // console.log("SAP ERROR TABLE___>", dashboardTableData);
   const [total_event_list, settotalEventList] = useState(0);
-  const [record_per_page, setRecordPerPage] = useState<number>(5);
+  const [record_per_page, setRecordPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [table, setTable] = useState<DashboardTableType["sapErrorDashboardData"]["sap_error_vendor_onboarding"]>(dashboardTableData?.sap_error_vendor_onboarding || []);
   const [searchVendor, setSearchVendor] = useState<string>("");
@@ -88,15 +88,13 @@ const DashboardSAPErrorTable = ({ dashboardTableData, companyDropdown }: Props) 
 
   const fetchTable = async () => {
     const dashboardTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.sapApiDashboardDetails}?page_no=${currentPage}&company=${selectedCompany}&vendor_name=${debouncedSearchName}`,
+      url: `${API_END_POINTS?.sapApiDashboardDetails}?page_no=${currentPage}&company=${selectedCompany}&vendor_name=${debouncedSearchName}&page_length=${record_per_page}`,
       method: "GET",
     });
     if (dashboardTableDataApi?.status == 200) {
       setTable(dashboardTableDataApi?.data?.message?.sap_error_vendor_onboarding);
-      console.log(dashboardTableDataApi?.data?.message?.sap_error_vendor_onboarding, "this is data")
       settotalEventList(dashboardTableDataApi?.data?.message?.total_count);
-      // setRecordPerPage(dashboardPRTableDataApi?.data?.message?.rejected_vendor_onboarding?.length);
-      setRecordPerPage(5)
+      setRecordPerPage(10);
     }
   };
 

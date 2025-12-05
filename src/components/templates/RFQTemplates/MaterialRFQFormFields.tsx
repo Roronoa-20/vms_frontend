@@ -3,12 +3,14 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from "@/components/ui/select";
 import { DropdownDataMaterial } from './MaterialRFQ';
 import { useEffect } from 'react';
+import MultipleFileUpload from '../../molecules/MultipleFileUpload';
+
 interface Props {
     formData: Record<string, any>;
     setFormData: React.Dispatch<React.SetStateAction<Record<string, any>>>;
     Dropdown: DropdownDataMaterial;
-    files: Record<string, File | null>;
-    setFiles: React.Dispatch<React.SetStateAction<Record<string, File | null>>>;
+    files: File[];
+    setFiles: React.Dispatch<React.SetStateAction<File[]>>;
 }
 
 // RFQ current date
@@ -23,7 +25,7 @@ const MaterialRFQFormFields = ({ formData, setFormData, Dropdown, setFiles, file
     const handleSelectChange = (value: string, field: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
-    const renderInput = (name: string, label: string, type = 'text',isdisabled?:boolean) => (
+    const renderInput = (name: string, label: string, type = 'text', isdisabled?: boolean) => (
         <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 {label}
@@ -95,15 +97,15 @@ const MaterialRFQFormFields = ({ formData, setFormData, Dropdown, setFiles, file
     );
 
     //RFQ date
-        useEffect(() => {
-            setFormData((prev) => ({ ...prev, rfq_date: formData?.rfq_date?formData?.rfq_date:today }));
-          }, [today,formData?.rfq_date]);
-        
-          console.log(formData, "formData");
-    
+    useEffect(() => {
+        setFormData((prev) => ({ ...prev, rfq_date: formData?.rfq_date ? formData?.rfq_date : today }));
+    }, [today, formData?.rfq_date]);
+
+    console.log(formData, "formData");
+
     return (
         <div>
-            <div className="grid grid-cols-3 gap-6 p-5">
+            <div className="grid grid-cols-3 gap-6 p-3">
                 {renderSelect(
                     'rfq_type',
                     'RFQ Type',
@@ -112,7 +114,7 @@ const MaterialRFQFormFields = ({ formData, setFormData, Dropdown, setFiles, file
                     (item) => `${item.vendor_type_name}`,
                     true
                 )}
-                {renderInput('rfq_date', 'RFQ Date', 'date',true)}
+                {renderInput('rfq_date', 'RFQ Date', 'date', true)}
                 {renderSelect(
                     'company_name',
                     'Company Name',
@@ -142,15 +144,25 @@ const MaterialRFQFormFields = ({ formData, setFormData, Dropdown, setFiles, file
                     (item) => `${item.currency_name}`
                 )}
             </div>
-            <h1 className='text-[24px] font-normal pt-5 px-5'>Administrative Fields</h1>
-            <div className="grid grid-cols-3 gap-6 p-5">
+            <h1 className='text-[24px] font-normal pt-5 px-3'>Administrative Fields</h1>
+            <div className="grid grid-cols-3 gap-6 p-3">
                 {renderInput('collection_number', 'Collection No.')}
                 {renderInput('rfq_cutoff_date_logistic', 'Quotation Deadline', 'datetime-local')}
                 {renderInput('requestor_name', 'Requestor Name')}
-                {renderFileInput('file', 'Upload Document')}
+                {/* {renderFileInput('file', 'Upload Document')} */}
+                <div>
+                    <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                        Uplaod Documents/Attachments
+                    </h1>
+                    <MultipleFileUpload
+                        files={files}
+                        setFiles={setFiles}
+                        buttonText="Attach Files"
+                    />
+                </div>
             </div>
-            <h1 className='text-[24px] font-normal pt-5 px-5'>Deadline Monitoring</h1>
-            <div className="grid grid-cols-3 gap-6 p-5">
+            <h1 className='text-[24px] font-normal pt-5 px-3'>Deadline Monitoring</h1>
+            <div className="grid grid-cols-3 gap-6 p-3">
                 {renderInput('first_reminder', '1st Reminder', 'date')}
                 {renderInput('second_reminder', '2nd Reminder', 'date')}
                 {renderInput('third_reminder', '3rd Reminder', 'date')}

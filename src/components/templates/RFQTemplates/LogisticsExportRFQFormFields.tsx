@@ -172,9 +172,10 @@ export const LogisticsExportRFQFormFields = ({
     }, [today, formData?.rfq_date_logistic]);
 
     console.log(Dropdown?.incoterm_master,"Dropdown?.incoterm_master")
+
     return (
         <div>
-            <div className="grid grid-cols-3 gap-6 p-5">
+            <div className="grid grid-cols-3 gap-6 p-3">
                 {renderSelect("rfq_type", "RFQ Type", Dropdown?.rfq_type, (i) => i.name, (i) => i.vendor_type_name, true)}
                 {renderSelect(
                     "company_name_logistic",

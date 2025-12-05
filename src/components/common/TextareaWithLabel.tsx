@@ -9,13 +9,21 @@ interface TextareaWithLabelProps {
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   placeholder?: string;
   rows?: number;
+  required?: boolean;
+  disabled?: boolean;
 }
 
-const TextareaWithLabel: React.FC<TextareaWithLabelProps> = ({
-  name, label, value, onChange, placeholder, rows = 4
-}) => (
+const TextareaWithLabel: React.FC<TextareaWithLabelProps> = ({ name, label, value, onChange, placeholder, rows = 4, required = false, disabled }) => (
   <div className="mt-3">
-    <Label htmlFor={name} className="font-semibold text-[16px] leading-[19px] text-[#03111F]">{label}</Label>
+    {label && (
+      <Label
+        htmlFor={name}
+        className="font-semibold text-[16px] leading-[19px] text-[#03111F]"
+      >
+        {label}
+        {required && <span className="text-red-600 ml-1">*</span>}
+      </Label>
+    )}
     <textarea
       name={name}
       placeholder={placeholder}
@@ -23,6 +31,7 @@ const TextareaWithLabel: React.FC<TextareaWithLabelProps> = ({
       value={value}
       rows={rows}
       onChange={onChange}
+      disabled={disabled}
     />
   </div>
 );
