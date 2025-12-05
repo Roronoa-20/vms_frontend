@@ -22,6 +22,8 @@ const form1 = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
   const [selectedDate, setSelectedDate] = React.useState(initialDate);
   const { designation } = useAuth();
   const isReadOnly = designation === "QA Team" || designation === "Purchase Team";
+  const isQATeamApproved = formData?.qa_team_approved === 1;
+
 
 
   useEffect(() => {
@@ -58,13 +60,13 @@ const form1 = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
 
           <section className="text-sm leading-relaxed space-y-1 px-8 text-justify">
             <p className='text-[16px]'>
-              This Quality Agreement has entered on{" "}
+              This Quality Agreement has entered on{"   "}
               <input
                 type="date"
                 name="date"
                 className="font-bold border-b-2 border-black focus:outline-none p-0 leading-tight appearance-none"
                 value={selectedDate}
-                disabled={isReadOnly}
+                disabled={isQATeamApproved}
                 onChange={(e) => {
                   if (isReadOnly) return;
                   setSelectedDate(e.target.value);
@@ -81,7 +83,7 @@ const form1 = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
               And
             </p>
             <p className='text-[16px]'>
-              <span className='font-bold underline'>{formData.vendor_title} {formData.vendor_name1}</span><span className='text-[14px]'> (Hereinafter referred as “Supplier”)</span><br></br>
+              <span className='font-bold underline'>{formData.vendor_title} {formData.vendor_name1}</span><span className='text-[13px]'>{"      "}(Hereinafter referred as “Supplier”)</span><br></br>
               Whereas, the parties have entered into the quality agreement pursuant to which supplier has agreed to manufacture/supply raw material/packing materials for Meril accordingly. Whereas, the parties wish to set terms and conditions on which they will assure the quality of products to be manufactured/supplied by the supplier.
             </p>
           </section>

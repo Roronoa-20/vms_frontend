@@ -24,9 +24,7 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         performer_signature: useRef<SignatureCanvas | null>(null),
     };
     const [signaturePreview, setSignaturePreview] = useState<string | null>(null);
-    const [signaturePreviews, setSignaturePreviews] = useState<{
-        [key: string]: string;
-    }>({});
+    const [signaturePreviews, setSignaturePreviews] = useState<{ [key: string]: string }>({});
 
     const router = useRouter();
     const { designation } = useAuth();
@@ -85,7 +83,10 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
 
                 const data = response?.data?.message?.qms_details || {};
                 console.log('Fetched QMS Form Data:', data);
-                setFormData(data);
+                setFormData(prev => ({
+                    ...prev,
+                    ...data,
+                }));
             } catch (error) {
                 console.error('Error fetching QMS form data:', error);
             }
@@ -105,7 +106,10 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
 
                 const data = response?.data?.message || {};
                 console.log('Fetched QMS Form Data:', data);
-                setQualityAgreementData(data);
+                setQualityAgreementData(prev => ({
+                    ...prev,
+                    ...data,
+                }));
             } catch (error) {
                 console.error('Error fetching QMS form data:', error);
             }
@@ -120,6 +124,7 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
             console.log(`Hydrated form data from savedFormsData for tab: ${currentTab}`);
         }
     }, [currentTab]);
+
 
     useEffect(() => {
         if (Array.isArray(formData?.mlspl_qa_list)) {
@@ -277,79 +282,6 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         }
     };
 
-    const handleSaveSignature = (
-        e: unknown, field: "performer_signature" | "performer_esignature" | "vendor_signature" | "ssignature" | "meril_signature", isFile = false) => {
-        const canvasRef = sigRefs[field];
-        if (canvasRef.current) {
-            const trimmedCanvas = canvasRef.current.getTrimmedCanvas();
-            const signatureData = trimmedCanvas.toDataURL('image/png');
-
-            setSignaturePreviews((prev) => ({
-                ...prev,
-                [field]: signatureData,
-            }));
-
-            setFormData((prev) => {
-                const newFormData = { ...prev };
-
-                if (field === "performer_signature") {
-                    newFormData.attachments = {
-                        ...(prev.attachments || {}),
-                        [field]: signatureData,
-                    };
-                } else if (field === "performer_esignature") {
-                    newFormData.signatures = {
-                        ...(prev.signatures || {}),
-                        [field]: signatureData,
-                    };
-                } else if (field === "ssignature") {
-                    newFormData.signatures = {
-                        ...(prev.signatures || {}),
-                        [field]: {
-                            content: signatureData,
-                        },
-                    };
-                } else {
-                    newFormData.signatures = {
-                        ...(prev.signatures || {}),
-                        [field]: {
-                            signature_data: signatureData,
-                        },
-                    };
-                }
-                formDataRef.current = newFormData
-                return newFormData;
-            });
-        }
-    };
-
-
-    const handleVendorSignatureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = () => {
-            const base64 = reader.result as string;
-
-            setSignaturePreviews((prev) => ({
-                ...prev,
-                person_signature: base64,
-            }));
-
-            setFormData((prev) => ({
-                ...prev,
-                signatures: {
-                    ...(prev.signatures || {}),
-                    person_signature: {
-                        signature_data: base64,
-                    },
-                },
-            }));
-        };
-
-        reader.readAsDataURL(file);
-    };
 
     const handleSignatureUpload = (e: React.ChangeEvent<HTMLInputElement>, fieldName: string) => {
         const file = e.target.files?.[0];
@@ -357,24 +289,31 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         if (file.type.startsWith("image/")) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setSignaturePreviews((prev: any) => ({
+                setSignaturePreviews((prev) => ({
                     ...prev,
-                    [fieldName]: reader.result
+                    [fieldName]: reader.result as string
                 }));
             };
             reader.readAsDataURL(file);
         } else {
-            setSignaturePreviews((prev: any) => ({
+            setSignaturePreviews((prev) => ({
                 ...prev,
                 [fieldName]: "PDF_UPLOADED"
             }));
         }
+        // setFormData((prev: any) => ({
+        //     ...prev,
+        //     vendor_sign_attachment: file,
+        //     signature: file,
+        //     vendor_signature: file,
+        //     attach_person_signature: file,
+        //     attach_meril_signature: file,
+        // }));
         setFormData((prev: any) => ({
             ...prev,
-            vendor_sign_attachment: file,
-            signature: file,
-            vendor_signature: file
+            [fieldName]: file,   // only update the field that was actually uploaded
         }));
+
     };
 
 
@@ -412,7 +351,6 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         }));
     };
 
-
     const handleSingleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof VendorQMSForm) => {
         const { value, checked } = e.target;
         setFormData((prev) => ({ ...prev, [field]: checked ? value : '' }));
@@ -446,165 +384,6 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
         }));
     };
 
-    const convertToBase64 = (file: File | Blob): Promise<string> =>
-        new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = (err) => reject(err);
-        });
-
-    const handleSubmit = async () => {
-        const localProducts = JSON.parse(localStorage.getItem("QAProductList") || "[]");
-        const contactPerson1 = localStorage.getItem("contact_person_1") || "";
-        const contactPerson2 = localStorage.getItem("contact_person_2") || "";
-        const form5mdplqa = JSON.parse(localStorage.getItem("QualityAgreementSignatures") || "[]");
-        const agreementInfo = JSON.parse(localStorage.getItem("QualityAgreementInfo") || "{}");
-
-        try {
-            let qualityManualPayload = null;
-            let qualityManualFile: File | null = null;
-
-            if (
-                formData.quality_manual &&
-                typeof formData.quality_manual !== "string"
-            ) {
-                qualityManualFile = formData.quality_manual as File;
-            }
-
-            if (qualityManualFile) {
-                const base64 = await convertToBase64(qualityManualFile);
-                qualityManualPayload = {
-                    content: base64.split(",")[1],
-                    filename: qualityManualFile.name,
-                    content_type: qualityManualFile.type,
-                    attached_to_doctype: "Supplier QMS Assessment Form",
-                    attached_to_name: formData.name,
-                };
-            }
-
-            const qaList = await Promise.all(
-                tableData.map(async (item) => {
-                    const response = await fetch(item.fileURL);
-                    const blob = await response.blob();
-                    const base64 = await convertToBase64(blob);
-
-                    return {
-                        document_type: item.document_type,
-                        qa_attachment: {
-                            content: base64.split(",")[1],
-                            filename: item.fileName,
-                            content_type: blob.type,
-                        },
-                    };
-                })
-            );
-
-            const companyCodes = company_code.split(",").map(code => code.trim());
-            const companyPayload: Record<string, string> = {};
-
-            if (companyCodes.includes("2000")) {
-                companyPayload.for_company_2000 = "1";
-            }
-
-            if (companyCodes.includes("7000")) {
-                companyPayload.for_company_7000 = "1";
-            }
-
-            let effectiveLastTabKey = QMSFormTabs[QMSFormTabs.length - 1].key.toLowerCase();
-
-            if (company_code === "2000") {
-                const supplementTab = QMSFormTabs.find(tab => tab.key.toLowerCase() === "supplement");
-                if (supplementTab) {
-                    effectiveLastTabKey = supplementTab.key.toLowerCase();
-                }
-            }
-
-            const isLastTab = effectiveLastTabKey === currentTab.toLowerCase();
-
-            if (isLastTab) {
-                companyPayload.form_fully_submitted = "1";
-            }
-            console.log("Formdata--->", formData);
-            console.log("Formdata--->", companyPayload);
-            console.log("Formdata--->", formData.date);
-            console.log("Formdata--->", qaList);
-            console.log("Formdata Quaity Manual--->", qualityManualFile);
-            console.log("Formdata--->", formData.products_in_qa);
-            console.log("Local Storage Form1--->", localProducts);
-            console.log("Local Storage Form5--->", form5mdplqa);
-            console.log("Local Storage Form6--->", agreementInfo);
-            console.log("Local Storage Form7--->", contactPerson1, contactPerson2);
-
-            const payload = {
-                vendor_onboarding,
-                ref_no,
-                data: {
-                    ...formData,
-                    ...companyPayload,
-                    ...agreementInfo,
-                    // mdpl_qa_date: formData.date,
-                    // products_in_qa: localProducts,
-                    // contact_person_1: contactPerson1,
-                    // contact_person_2: contactPerson2,
-                    mlspl_qa_list: qaList,
-                    // name_of_person: form5mdplqa.name_of_person,
-                    // designation_of_person: form5mdplqa.designation_of_person,
-                    // signed_date: form5mdplqa.signed_date,
-                    // meril_signed_date: form5mdplqa.meril_signed_date,
-                },
-                attachments: {
-                    ...(qualityManualPayload ? { quality_manual: qualityManualPayload } : {}),
-                },
-                // signatures: formData.signatures || {},
-                signatures: Object.entries(formData.signatures || {}).reduce((acc, [key, value]) => {
-                    if (typeof value === 'string') {
-                        acc[key] = value;
-                    } else if (value?.signature_data) {
-                        acc[key] = value.signature_data;
-                    } else if (value?.content) {
-                        acc[key] = value.content;
-                    }
-                    return acc;
-                }, {} as Record<string, string>),
-                // ...(form5mdplqa?.person_signature ? { person_signature: form5mdplqa.person_signature } : {}),
-                // ...(form5mdplqa?.meril_signature ? { meril_signature: form5mdplqa.meril_signature } : {})
-            };
-
-            console.log("Final Payload to backend:", payload);
-            // return
-            const res = await fetch(API_END_POINTS.qmsformsubmit, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
-            });
-
-            const result = await res.json();
-            console.log("REsult of API--->", result)
-
-            if (result?.message?.status === "success") {
-                localStorage.removeItem("QAProductList");
-                localStorage.removeItem("contact_person_1");
-                localStorage.removeItem("contact_person_2");
-                localStorage.removeItem("QualityAgreementSignatures");
-                localStorage.removeItem("QualityAgreementInfo");
-                if (isLastTab) {
-                    alert("This is the last tab and your QMS Form is fully submitted.");
-                    window.location.href = "/qms-form/success";
-                } else {
-                    handleNext();
-                }
-            }
-            else {
-                alert("Something went wrong.");
-            }
-        } catch (error) {
-            console.error("Error submitting form:", error);
-            alert("Unexpected error occurred.");
-        }
-    };
 
     const handleNext = () => {
         saveFormDataLocally(currentTab, formData);
@@ -666,6 +445,6 @@ export const useQMSForm = (vendor_onboarding: string, currentTab: string) => {
     };
 
     return {
-        formData, setFormData, handleTextareaChange, handleSingleCheckboxChange, handleMultipleCheckboxChange, handleRadioboxChange: handleSingleCheckboxChange, handleSubmit, handleBack, handleCheckboxChange, handleSaveSignature, handleClearSignature, handleSignatureUpload, signaturePreview, sigRefs, handleApproval, handleNewMultipleCheckboxChange, setSignaturePreview, documentTypes, selectedDocumentType, setSelectedDocumentType, handleDocumentTypeChange, handleAdd, clearFileSelection, handleFileUpload, handleDelete, tableData, fileSelected, fileName, handleRemoveFile, signaturePreviews, setSignaturePreviews, handleNext, savedFormsData, setSavedFormsData, saveFormDataLocally, handleDateChange, sigCanvas, handleNextTab, handleBacktab, handleChange, approvalRemark, setApprovalRemark, handleApporvalMatrix, setQualityAgreementData, qualityagreementData, handleVendorSignatureUpload
+        formData, setFormData, handleTextareaChange, handleSingleCheckboxChange, handleMultipleCheckboxChange, handleRadioboxChange: handleSingleCheckboxChange, handleBack, handleCheckboxChange, handleClearSignature, handleSignatureUpload, signaturePreview, sigRefs, handleApproval, handleNewMultipleCheckboxChange, setSignaturePreview, documentTypes, selectedDocumentType, setSelectedDocumentType, handleDocumentTypeChange, handleAdd, clearFileSelection, handleFileUpload, handleDelete, tableData, fileSelected, fileName, handleRemoveFile, signaturePreviews, setSignaturePreviews, handleNext, savedFormsData, setSavedFormsData, saveFormDataLocally, handleDateChange, sigCanvas, handleNextTab, handleBacktab, handleChange, approvalRemark, setApprovalRemark, handleApporvalMatrix, setQualityAgreementData, qualityagreementData
     };
 };

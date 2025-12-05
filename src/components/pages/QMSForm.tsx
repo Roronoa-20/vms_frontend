@@ -72,16 +72,16 @@ export default function QMSForm() {
                 <div>
                     <VMSLogo />
                 </div>
-                <h1 className="text-[24px] font-semibold text-gray-800">QMS Questionnaire</h1>
+                <h1 className="text-[24px] font-semibold text-gray-800">QMS Questionnaire & Quality Agreement</h1>
             </div>
 
             <div className="flex px-10 gap-6 py-6 min-h-screen">
-                <div className="w-1/4 border-r pr-4">
-                    <div className="sticky top-[100px] max-h-[80vh] overflow-y-auto no-scrollbar">
+                <div className="w-[24%] border-r pr-4">
+                    <div className="sticky top-[95px] max-h-[80vh] overflow-y-auto no-scrollbar">
                         <QMSFormTab />
                     </div>
                 </div>
-                <div className="w-3/4 pt-2">
+                <div className="w-[76%] pt-2">
                     {renderFormComponent()}
                 </div>
             </div>

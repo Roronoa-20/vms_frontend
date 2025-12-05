@@ -27,9 +27,6 @@ export const MDPLQualityAgreementForm = ({ vendor_onboarding, ref_no, company_co
     try {
       const storageKeys = [
         "QualityAgreementInfo",
-        "Form2Data",
-        "Form3Data",
-        "Form4Data",
         "Form5Data",
         "Form6Data",
         "Form7Data",
@@ -43,24 +40,31 @@ export const MDPLQualityAgreementForm = ({ vendor_onboarding, ref_no, company_co
             const parsed = JSON.parse(raw);
             Object.assign(mergedLocalStorageData, parsed);
           } catch (err) {
-            console.warn(`⚠️ Could not parse ${key}`, err);
+            console.warn(`Could not parse ${key}`, err);
           }
         }
       });
 
-      // 2️⃣ Create final payload
       const finalPayload = {
         vendor_onboarding,
         qms_form: formData?.name,
-        ...formData,              // existing hook values
-        ...mergedLocalStorageData // merged saved values
+        ...mergedLocalStorageData,
       };
 
-      console.log("🔥 Final Payload Being Submitted →", finalPayload);
+      console.log("Final LocalStorage Being Submitted →", mergedLocalStorageData);
+      console.log("Attach Person Singature", formData?.attach_person_signature)
 
-      // 3️⃣ Create FormData wrapper
       const form = new FormData();
       form.append("data", JSON.stringify(finalPayload));
+      if (formData.attach_person_signature instanceof File) {
+        form.append("attach_person_signature", formData.attach_person_signature);
+      }
+
+      if (formData.attach_meril_signature instanceof File) {
+        form.append("attach_meril_signature", formData.attach_meril_signature);
+      }
+
+      console.log("Final Payload Being Submitted →", finalPayload);
       const response = await requestWrapper({
         url: API_END_POINTS.createsubmitQualityAgreement,
         method: "POST",
@@ -87,25 +91,28 @@ export const MDPLQualityAgreementForm = ({ vendor_onboarding, ref_no, company_co
       <Form5 vendor_onboarding={vendor_onboarding} />
       <Form6 vendor_onboarding={vendor_onboarding} />
       <Form7 vendor_onboarding={vendor_onboarding} />
-      <div className="flex justify-end space-x-5 items-center pt-[5px]">
-        <Button
-          variant="backbtn"
-          size="backbtnsize"
-          className="py-2"
-          onClick={handleBack}
-        >
-          Back
-        </Button>
 
-        <Button
-          variant="nextbtn"
-          size="nextbtnsize"
-          className="py-2.5"
-          onClick={handleSubmit}
-        >
-          Submit
-        </Button>
-      </div>
+      {!isQATeamApproved && (
+        <div className="flex justify-end space-x-5 items-center pt-[5px]">
+          <Button
+            variant="backbtn"
+            size="backbtnsize"
+            className="py-2"
+            onClick={handleBack}
+          >
+            Back
+          </Button>
+
+          <Button
+            variant="nextbtn"
+            size="nextbtnsize"
+            className="py-2.5"
+            onClick={handleSubmit}
+          >
+            Submit
+          </Button>
+        </div>
+      )}
     </div>
   )
 

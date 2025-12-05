@@ -237,6 +237,8 @@ export type VendorQMSForm = {
   vendor_sign_attachment?: File | string;
   signature?: string | File | null;
   quality_manual?: string | File | null;
+  attach_person_signature?: File | null;
+  attach_meril_signature?: File | null;
 };
 
 export type VendorQualityAgreementForm = {

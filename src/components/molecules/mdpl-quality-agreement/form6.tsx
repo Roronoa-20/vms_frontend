@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/src/components/molecules/mdpl-quality-agreement/header";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useQMSForm } from "@/src/hooks/useQMSForm";
@@ -24,6 +24,10 @@ export const Form6 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
   const currentTab = params.get("tabtype")?.toLowerCase() || "vendor_information";
   const { qualityagreementData, formData, setQualityAgreementData } = useQMSForm(vendor_onboarding, currentTab);
   const { designation } = useAuth();
+  const [submitted, setSubmitted] = useState(false);
+
+  const isQATeamApproved = formData?.qa_team_approved === 1;
+
 
   const products: QAProduct[] = Array.isArray(qualityagreementData?.products_in_qa)
     ? qualityagreementData.products_in_qa.map((p: any) => ({
@@ -93,6 +97,7 @@ export const Form6 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
   };
 
   const addRow = () => {
+    setSubmitted(false);
     setQualityAgreementData((prev: any) => ({
       ...prev,
       products_in_qa: [
@@ -124,6 +129,7 @@ export const Form6 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
       });
       if (response?.data?.message?.status === "success") {
         alert("Prodcuts Added!");
+        setSubmitted(true);
       } else {
         alert("Failed. Please try again.");
       }
@@ -185,6 +191,7 @@ export const Form6 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
                             onChange={e =>
                               handleInputChange(index, "name_of_the_purchased_material__processes", e.target.value)
                             }
+                            disabled={isQATeamApproved}
                             className="w-full px-2 py-1 border border-gray-400 rounded"
                             placeholder="Enter material name"
                           />
@@ -196,11 +203,12 @@ export const Form6 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
                             onChange={e =>
                               handleInputChange(index, "specifications", e.target.value)
                             }
+                            disabled={isQATeamApproved}
                             className="w-full px-2 py-1 border border-gray-400 rounded"
                             placeholder="Enter specifications"
                           />
                         </TableCell>
-                        {(designation !== "QA Team" && designation !== "Purchase Team") && (
+                        {!isQATeamApproved && (designation !== "QA Team" && designation !== "Purchase Team") && (
                           <TableCell className="text-center">
                             <Trash2
                               size={20}
@@ -213,7 +221,7 @@ export const Form6 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
                     ))}
                   </TableBody>
                 </Table>
-                {(designation !== "QA Team" && designation !== "Purchase Team") && (
+                {!isQATeamApproved && (designation !== "QA Team" && designation !== "Purchase Team") && (
                   <button
                     type="button"
                     onClick={addRow}
@@ -225,7 +233,7 @@ export const Form6 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
               </div>
             </div>
           </section>
-          {(designation !== "QA Team" && designation !== "Purchase Team") && hasNewRows && (
+          {(designation !== "QA Team" && designation !== "Purchase Team") && hasNewRows && !submitted && (
             <div className="flex justify-end mt-4 pr-6">
               <Button className="py-2.5" variant={"nextbtn"} size={"nextbtnsize"} onClick={handleSubmit}>
                 Submit

@@ -17,7 +17,7 @@ export const MLSPLQualityAgreementForm = ({ vendor_onboarding, ref_no, company_c
     const params = useSearchParams();
     const formRef = useRef<HTMLInputElement | null>(null);
     const currentTab = params.get("tabtype")?.toLowerCase() || "vendor information";
-    const { formData, handleSubmit, documentTypes, selectedDocumentType, handleDocumentTypeChange, handleAdd, clearFileSelection, handleFileUpload, handleDelete, handleBack, tableData, fileSelected, fileName, } = useQMSForm(vendor_onboarding, currentTab);
+    const { formData, documentTypes, selectedDocumentType, handleDocumentTypeChange, handleAdd, clearFileSelection, handleFileUpload, handleDelete, handleBack, tableData, fileSelected, fileName, } = useQMSForm(vendor_onboarding, currentTab);
 
     const companyCodes = company_code.split(',').map((code) => code.trim());
     const is2000 = companyCodes.includes('2000');
@@ -144,7 +144,7 @@ export const MLSPLQualityAgreementForm = ({ vendor_onboarding, ref_no, company_c
                         variant="nextbtn"
                         size="nextbtnsize"
                         className="py-2.5"
-                        onClick={handleSubmit}
+                        // onClick={handleSubmit}
                     >
                         Submit
                     </Button>

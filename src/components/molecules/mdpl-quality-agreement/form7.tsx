@@ -8,6 +8,17 @@ const Form7 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "vendor_information";
   const { formData, handleChange } = useQMSForm(vendor_onboarding, currentTab);
+  const isQATeamApproved = formData?.qa_team_approved === 1;
+
+  React.useEffect(() => {
+    const form7Data = {
+      contact_person_1: formData.contact_person_1 || "",
+      contact_person_2: formData.contact_person_2 || ""
+    };
+
+    localStorage.setItem("Form7Data", JSON.stringify(form7Data));
+  }, [formData.contact_person_1, formData.contact_person_2]);
+
 
 
 
@@ -49,10 +60,9 @@ const Form7 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
                       placeholder='Write here'
                       name="contact_person_1"
                       value={formData.contact_person_1 || ""}
-                      onChange={e => {
-                        handleChange('contact_person_1', e.target.value);
-                        localStorage.setItem("contact_person_1", e.target.value);
-                      }}
+                      onChange={(e) => handleChange("contact_person_1", e.target.value)}
+                      disabled={isQATeamApproved}
+
                     />
                   </div>
                   <div className='p-1'>
@@ -61,10 +71,8 @@ const Form7 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
                       placeholder='Write here'
                       name="contact_person_2"
                       value={formData.contact_person_2 || ""}
-                      onChange={e => {
-                        handleChange('contact_person_2', e.target.value);
-                        localStorage.setItem("contact_person_2", e.target.value);
-                      }}
+                      onChange={(e) => handleChange("contact_person_2", e.target.value)}
+                      disabled={isQATeamApproved}
                     />
                   </div>
                 </div>
