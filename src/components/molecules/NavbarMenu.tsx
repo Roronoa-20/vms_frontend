@@ -30,6 +30,8 @@ const NavbarMenu = ({...Props}:Props) => {
       Cookies.remove("system_user");
       Cookies.remove("user_id");
       Cookies.remove("user_image");
+      Cookies.remove("VendorASA");
+      Cookies.remove("VendorRef")
       router.push("/");
     }
   };

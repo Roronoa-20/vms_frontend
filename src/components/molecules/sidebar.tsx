@@ -11,7 +11,7 @@ import { SidebarItem, SidebarChild } from "@/src/types/sidebar";
 const Sidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const { designation } = useAuth();
+  const { designation, role } = useAuth();
   const { vendorRef } = useAuth();
   const { asaReqd } = useAuth();
 
@@ -27,6 +27,16 @@ const Sidebar = () => {
     sideBar = sideBar.filter((item) => {
       if (item.name === "ASA Form") {
         return asaReqd === 1;
+      }
+      return true;
+    });
+  }
+
+  // Show Material Onboarding only if Purchase Team + Material CP role
+  if (designation === "Purchase Team") {
+    sideBar = sidebarMenu.filter(item => {
+      if (item.name === "Material Onboarding") {
+        return role?.includes("Material CP");
       }
       return true;
     });

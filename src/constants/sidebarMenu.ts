@@ -11,6 +11,12 @@ export const sidebarMenu: SidebarItem[] = [
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
+    name: "Material Onboarding",
+    href: "/material-onboarding-dashboard",
+    children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
     name: "Vendor Registration",
     href: "/vendor-registration",
     children: []
