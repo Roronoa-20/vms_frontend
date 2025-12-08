@@ -358,7 +358,8 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
             <Button onClick={handleSubmit} variant="nextbtn" size="nextbtnsize" className='py-2.5'>Next</Button>
           </div>
         )}
-        {showApprovalButtons && !isTreasuryUser && (
+      </div>
+      {showApprovalButtons && !isTreasuryUser && (
           <>
             {/* <Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`}>Next</Button> */}
             {designation == "Purchase Team" && validation_check?.is_purchase_approve == 1 && validation_check?.change_pur_detail_req_mail_to_it_head !== 1 &&
@@ -375,7 +376,6 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
             }
           </>
         )}
-      </div>
 
     </div>
   )
