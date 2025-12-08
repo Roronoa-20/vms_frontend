@@ -1,3 +1,6 @@
+
+export const dynamic = 'force-dynamic';
+
 import MaterialOnboardingReqeust from '@/src/components/pages/material-onboarding-request'
 import React from 'react'
 
