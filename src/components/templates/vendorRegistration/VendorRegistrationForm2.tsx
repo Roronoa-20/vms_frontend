@@ -1,6 +1,6 @@
 'use client'
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -53,6 +53,25 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
   const [reconciliation, setReconciliation] = useState<{ label: string, value: string } | null>(null);
   const [termsOfPayment, setTermsOfPayment] = useState<{ label: string, value: string } | null>();
   const [purchaseGroup, setPurchaseGroup] = useState<{ label: string, value: string } | null>();
+  const [currencyDropdownList,setCurrencyDropdownList] = useState<{label:string,value:string}[]>([]);
+
+
+  useEffect(()=>{
+    if(currencyDropdown){
+      const newList = currencyDropdown.map((item)=>{
+        return (
+          {
+            label:item?.name,
+            value:item?.name
+          }
+        )
+      })
+      setCurrencyDropdownList(newList);
+    }
+  },[])
+  console.log(singleTableData,"this is after loading")
+
+
   const handleCompanyDropdownChange = async (value: string) => {
     // handleSelectChange(value,'company_name');
     setSingleTableData((prev: any) => ({ ...prev, company_name: value }));
@@ -364,7 +383,7 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
           <h1 className="text-[14px] font-normal text-black pb-2">
             Order Currency
           </h1>
-          <Select required value={singleTableData?.order_currency ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, order_currency: value })) }}>
+          {/* <Select required value={singleTableData?.order_currency ?? ""} onValueChange={(value) => { setSingleTableData((prev: any) => ({ ...prev, order_currency: value })) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select Order Currency" />
             </SelectTrigger>
@@ -379,7 +398,19 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
                 }
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
+          <MultiSelect
+            options={currencyDropdownList}
+            value={{label:singleTableData?.order_currency,value:singleTableData?.order_currency}}
+            onChange={(value: any) => {
+              setSingleTableData((prev: any) => ({ ...prev, order_currency: value?.value }));
+            }}
+            placeholder={"Select..."}
+            instanceId="order-currency"
+            className="text-[12px] text-black"
+            menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+            styles={multiSelectStyles}
+          />
         </div>
 
         <div className="flex flex-col">

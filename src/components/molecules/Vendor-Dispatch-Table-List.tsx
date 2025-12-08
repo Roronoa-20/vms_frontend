@@ -19,6 +19,7 @@ import Pagination from "./Pagination";
 
 type Props = {
   dashboardTableData: dispatchTable["dispatches"]
+  poname:string
 }
 
 const useDebounce = (value: any, delay: any) => {
@@ -36,7 +37,7 @@ const useDebounce = (value: any, delay: any) => {
   return debouncedValue;
 };
 
-const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
+const DashboardDispatchVendorsTable = ({ dashboardTableData,poname }: Props) => {
   const { designation } = useAuth();
   console.log(dashboardTableData, "this is table data")
   const [isPODialog, setIsPODialog] = useState<boolean>(false);
@@ -57,7 +58,7 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
   };
 
   const [vendorSearch, setVendorSearch] = useState("");
-  const [poSearch, setPOSearch] = useState("");
+  const [poSearch, setPOSearch] = useState(poname ?? "");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 

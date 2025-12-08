@@ -6,7 +6,7 @@ const page = async ({ searchParams }: { searchParams: Promise<{ poname?: string;
     const { poname } = (await searchParams);
 
   return (
-    <DispatchTable />
+    <DispatchTable poname={poname} />
   )
 }
 

@@ -60,7 +60,7 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
               <TableHead className="text-center text-black">Sr. No.</TableHead>
               <TableHead className="text-center text-black">Ref No.</TableHead>
               <TableHead className="text-center text-black">Owner</TableHead>
-              <TableHead className="text-center text-black">Invoice Amount</TableHead>
+              {/* <TableHead className="text-center text-black">Invoice Amount</TableHead> */}
               <TableHead className="text-center text-black">Invoice Date</TableHead>
               <TableHead className="text-center text-black">Invoice Number</TableHead>
               <TableHead className="text-center text-black">status</TableHead>
@@ -74,7 +74,7 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData }: Props) => {
                 <TableCell className="text-center font-medium">{index + 1}</TableCell>
                 <TableCell className="text-center whitespace-nowrap">{item?.name}</TableCell>
                 <TableCell className="text-center whitespace-nowrap">{item?.owner}</TableCell>
-                <TableCell className="text-center whitespace-nowrap">{item?.invoice_amount}</TableCell>
+                {/* <TableCell className="text-center whitespace-nowrap">{item?.invoice_amount}</TableCell> */}
                 <TableCell className="text-center whitespace-nowrap">{item?.invoice_date}</TableCell>
                 <TableCell className="text-center whitespace-nowrap">{item?.invoice_number}</TableCell>
                 <TableCell className="text-center whitespace-nowrap">{item?.status}</TableCell>

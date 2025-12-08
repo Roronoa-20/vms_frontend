@@ -302,7 +302,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
                   <TableCell>
                     <Button
                       className={`bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px] `}
-                      onClick={() => router.push(`/view-dispatch-table`)}
+                      onClick={() => router.push(`/view-dispatch-table?poname=${item?.po_number}`)}
                       // onClick={() => router.push(`/view-dispatch-table?po_name=${item?.name}`)}
                     >
                       View

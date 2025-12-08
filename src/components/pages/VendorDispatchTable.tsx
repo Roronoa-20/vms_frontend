@@ -5,7 +5,11 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { cookies } from 'next/headers'
 import requestWrapper from '@/src/services/apiCall'
 
-const DispatchTable = async () => {
+type Props = {
+  poname?:string
+}
+
+const DispatchTable = async ({poname}:Props) => {
 
   const cookieStore = await cookies();
   const cookieHeaderString = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
@@ -13,6 +17,7 @@ const DispatchTable = async () => {
   const tableResponse: AxiosResponse = await requestWrapper({
     url: API_END_POINTS?.dispatchTable,
     method: "GET",
+    params:{po_name:poname},
     headers: { cookie: cookieHeaderString },
   })
 
@@ -20,7 +25,7 @@ const DispatchTable = async () => {
 
   return (
     <>
-      <DispatchVendorsTable dashboardTableData={dispatchTableData} />
+      <DispatchVendorsTable dashboardTableData={dispatchTableData} poname={poname as string} />
     </>
   )
 }
