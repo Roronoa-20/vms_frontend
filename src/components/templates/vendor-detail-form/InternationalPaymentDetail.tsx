@@ -91,6 +91,17 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
 
     fetchCurrency();
   }, [])
+
+  const requiredFields = {
+    beneficiary_name:"Please Enter Beneficiary Name",
+    beneficiary_bank_name:"Please Enter Beneficiary Name",
+    beneficiary_account_no:"Please Enter Beneficiary Account No",
+    beneficiary_iban_no:"Please Enter Beneficiary IBAN No",
+    beneficiary_bank_address:"Please Enter Beneficiary Bank Address",
+    beneficiary_swift_code:"Please Enter Beneficiary Bank Swift Code",
+    beneficiary_aba_no:"Please Enter Beneficiary ABA No"
+  }
+
   const router = useRouter()
   useEffect(() => {
     const fetchBank = async () => {
@@ -125,6 +136,14 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
   }, [])
 
   const handleSubmit = async () => {
+
+    for (const [key, message] of Object.entries(requiredFields)) {
+          if (!formData?.[key as keyof IformData ]) {
+            alert(message);
+            return;
+          }
+        }
+
     const submitUrl = API_END_POINTS?.bankSubmit;
     const updatedData = { ...formData, ref_no: ref_no, vendor_onboarding: onboarding_ref_no }
     const formdata = new FormData();
