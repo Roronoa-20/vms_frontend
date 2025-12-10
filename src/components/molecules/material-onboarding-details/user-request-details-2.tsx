@@ -1,64 +1,107 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/src/context/AuthContext";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
 import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 import { MaterialCode } from "@/src/types/PurchaseRequestType";
-import { MaterialRegistrationFormData, EmployeeDetail, EmployeeAPIResponse, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialType, MaterialRequestData } from "@/src/types/MaterialCodeRequestFormTypes";
-
+import {
+    MaterialRegistrationFormData,
+    Plant,
+    MaterialType,
+    UOMMaster,
+    MaterialRequestData,
+    division,
+    MaterialCategory,
+} from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface UserRequestFormProps {
     form: UseFormReturn<any>;
-    onSubmit?: (data: any) => void;
-    companyName?: Company[];
     plantcode?: Plant[];
-    UnitOfMeasure?: UOMMaster[];
-    EmployeeDetails?: EmployeeDetail[];
-    MaterialType?: MaterialType[];
+    AllMaterialType?: MaterialType[];
     StorageLocation?: any[];
-    searchResults?: MaterialCode[];
-    showSuggestions?: boolean;
+    AllMaterialCodes: MaterialCode[];
+    MaterialDetails?: MaterialRequestData;
+    MaterialOnboardingDetails?: MaterialRegistrationFormData;
     handleMaterialSearch: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
     handleMaterialSelect: (item: MaterialCode) => void;
+    searchResults?: MaterialCode[];
+    showSuggestions?: boolean;
     setShowSuggestions: React.Dispatch<React.SetStateAction<boolean>>;
     selectedMaterialType: string;
     setSelectedMaterialType: React.Dispatch<React.SetStateAction<string>>;
     setMaterialCompanyCode: React.Dispatch<React.SetStateAction<string>>;
     materialCompanyCode?: string;
-    MaterialDetails?: MaterialRequestData;
-    MaterialCode?: string;
-    MaterialCategory?: MaterialCategory[];
-    AllMaterialType?: MaterialType[];
     setIsMaterialCodeEdited: React.Dispatch<React.SetStateAction<boolean>>;
-    MaterialOnboardingDetails?: MaterialRegistrationFormData;
-    AllMaterialCodes: MaterialCode[];
-    isMaterialCodeEdited?: boolean;
     setShouldShowAllFields: React.Dispatch<React.SetStateAction<boolean>>;
-    setSearchResults: React.Dispatch<React.SetStateAction<MaterialCode[]>>;
     shouldShowAllFields: boolean;
+    setSearchResults: React.Dispatch<React.SetStateAction<MaterialCode[]>>;
     setIsMatchedMaterial: React.Dispatch<React.SetStateAction<boolean>>;
     isZCAPMaterial?: boolean;
     DivisionDetails?: division[];
     filteredStorage?: any[];
     materialSelectedFromList?: boolean;
     filteredDivision?: division[];
+    UnitOfMeasure?: UOMMaster[];
+    MaterialCategory?: MaterialCategory[];
 }
 
-const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllMaterialType, StorageLocation, AllMaterialCodes, MaterialDetails, MaterialOnboardingDetails, handleMaterialSearch, handleMaterialSelect, searchResults = [], showSuggestions, setShowSuggestions, selectedMaterialType, setSelectedMaterialType, setMaterialCompanyCode, materialCompanyCode, setIsMaterialCodeEdited, setShouldShowAllFields, shouldShowAllFields, setIsMatchedMaterial, isZCAPMaterial }) => {
-
+const UserRequestForm: React.FC<UserRequestFormProps> = ({
+    form,
+    plantcode,
+    AllMaterialType,
+    StorageLocation,
+    AllMaterialCodes,
+    MaterialDetails,
+    MaterialOnboardingDetails,
+    handleMaterialSearch,
+    handleMaterialSelect,
+    searchResults = [],
+    showSuggestions,
+    setShowSuggestions,
+    selectedMaterialType,
+    setSelectedMaterialType,
+    setMaterialCompanyCode,
+    materialCompanyCode,
+    setIsMaterialCodeEdited,
+    setShouldShowAllFields,
+    shouldShowAllFields,
+    setIsMatchedMaterial,
+    isZCAPMaterial,
+}) => {
     const { designation } = useAuth();
     const role = designation || "";
+    const isMaterialCP = designation === "Material CP";
+
+    // UI state
     const [originalMaterialCode, setOriginalMaterialCode] = useState<string>("");
     const [originalDesc, setOriginalDesc] = useState<string>("");
     const [divisionSearch, setDivisionSearch] = useState("");
     const [storageSearch, setStorageSearch] = useState("");
-    const [materialCodeSuggestions, setMaterialCodeSuggestions] = useState<MaterialCode[]>([]);
-    const [showCodeSuggestions, setShowCodeSuggestions] = useState(false);
+    // New Code flow state
+    const [hideMaterialCode, setHideMaterialCode] = useState(false); // true after New Code clicked
 
-    // -------------------- MEMOIZED FILTERS --------------------
+    // watchers
+    const materialCode = form.watch("material_code_revised");
+    const materialDesc = (form.watch("material_name_description") || "").trim().toLowerCase();
+
+    // -------------------- MEMOIZED FILTERS (kept intact) --------------------
     const filteredPlants = useMemo(
         () => plantcode?.filter((p) => String(p.company) === materialCompanyCode) || [],
         [plantcode, materialCompanyCode]
@@ -91,24 +134,20 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
 
         const item = MaterialDetails.material_request_item;
         const storage = MaterialDetails.material_master;
-        const matspecs = MaterialDetails?.requestor_master?.material_request?.[0];
 
-        if (matspecs) {
-            form.setValue("material_specifications", matspecs.material_specifications || "");
-        }
-
-
-        const materialDesc = item.material_name_description || "";
-        let revisedCode = getCodeFromDescription(materialDesc);
+        const materialDescValue = item.material_name_description || "";
+        let revisedCode = getCodeFromDescription(materialDescValue);
 
         const approvalStatus = MaterialOnboardingDetails?.approval_status;
-        const shouldPrefill = ["Sent to SAP", "Re-Opened by CP", "Saved as Draft"].includes(approvalStatus);
+        const shouldPrefill = ["Sent to SAP", "Re-Opened by CP", "Saved as Draft"].includes(
+            approvalStatus || ""
+        );
 
-        if (approvalStatus && shouldPrefill) {
+        if (shouldPrefill && storage) {
             revisedCode = storage?.material_code_revised || revisedCode;
         }
 
-        form.setValue("material_name_description", materialDesc);
+        form.setValue("material_name_description", materialDescValue);
         form.setValue("comment_by_user", item.comment_by_user || "");
         form.setValue("base_unit_of_measure", item.unit_of_measure || "");
         form.setValue("material_category", item.material_category || "");
@@ -122,22 +161,33 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
             setMaterialCompanyCode(item.company_name);
             form.setValue("material_company_code", item.company_name);
         }
-        form.setValue("material_code_revised", revisedCode || item.material_code_revised || "");
-        setOriginalMaterialCode(revisedCode || item.material_code_revised || "");
-        setOriginalDesc(materialDesc.trim().toLowerCase());
+
+        const initialCode = revisedCode || item.material_code_revised || "";
+        form.setValue("material_code_revised", initialCode);
+        setOriginalMaterialCode(initialCode);
+        setOriginalDesc(materialDescValue.trim().toLowerCase());
 
         if (shouldPrefill && storage) {
             form.setValue("storage_location", storage.storage_location || "");
             form.setValue("division", storage.division || "");
             form.setValue("old_material_code", storage.old_material_code || "");
         }
-    }, [MaterialDetails, filteredPlants, filteredMaterialTypes, MaterialOnboardingDetails, AllMaterialCodes, form, setMaterialCompanyCode, setSelectedMaterialType]);
+    }, [
+        MaterialDetails,
+        filteredPlants,
+        filteredMaterialTypes,
+        MaterialOnboardingDetails,
+        AllMaterialCodes,
+        form,
+        setMaterialCompanyCode,
+        setSelectedMaterialType,
+    ]);
 
-    // -------------------- AUTO-UPDATE MATERIAL CODE --------------------
+    // -------------------- AUTO-UPDATE MATERIAL CODE FOR CP / STORE --------------------
     useEffect(() => {
         if (!(role === "Material CP" || role === "Store")) return;
 
-        const currentDesc = form.getValues("material_name_description")?.trim();
+        const currentDesc = (form.getValues("material_name_description") || "").trim();
         const currentCode = form.getValues("material_code_revised") || "";
         if (!currentDesc) return;
 
@@ -147,24 +197,26 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
         }
     }, [role, AllMaterialCodes, form]);
 
-    // -------------------- CHECK MANUAL EDITS & VALIDATION --------------------
-    const materialCode = form.watch("material_code_revised");
-    const materialDesc = form.watch("material_name_description");
+    // -------------------- MANUAL EDIT DETECTION & VALIDATION --------------------
     useEffect(() => {
-        const currentCode = materialCode?.trim() || "";
-        const currentDesc = materialDesc?.trim().toLowerCase() || "";
+        const currentCode = (materialCode || "").trim();
+        const currentDesc = materialDesc;
 
         const isManualChange = currentCode !== originalMaterialCode || currentDesc !== originalDesc;
         const existsInList = AllMaterialCodes?.some(
             (c) => c.name === currentCode && c.material_description?.trim().toLowerCase() === currentDesc
         );
 
-        const noRevisedCodeEntered = currentDesc && !currentCode;
+        const noRevisedCodeEntered = !!currentDesc && !currentCode;
         const shouldShowAll = isManualChange || !existsInList || noRevisedCodeEntered;
 
         setIsMatchedMaterial(existsInList);
         setIsMaterialCodeEdited(shouldShowAll);
-        setShouldShowAllFields(shouldShowAll);
+
+        // Only set the global "shouldShowAllFields" from this logic when NOT in New Code flow.
+        if (!hideMaterialCode) {
+            setShouldShowAllFields(shouldShowAll);
+        }
 
         if (currentCode) {
             const found = AllMaterialCodes.find((item) => item.name === currentCode);
@@ -173,11 +225,56 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                     type: "manual",
                     message: `Material Code already exists for "${found.material_description}"`,
                 });
-            } else form.clearErrors("material_code_revised");
-        } else form.clearErrors("material_code_revised");
-    }, [materialCode, materialDesc, originalMaterialCode, originalDesc, AllMaterialCodes, setIsMatchedMaterial, setIsMaterialCodeEdited, setShouldShowAllFields]);
+            } else {
+                form.clearErrors("material_code_revised");
+            }
+        } else {
+            form.clearErrors("material_code_revised");
+        }
+    }, [
+        materialCode,
+        materialDesc,
+        originalMaterialCode,
+        originalDesc,
+        AllMaterialCodes,
+        setIsMatchedMaterial,
+        setIsMaterialCodeEdited,
+        setShouldShowAllFields,
+        hideMaterialCode,
+        form,
+    ]);
 
-    // -------------------- FILTERED DIVISIONS --------------------
+    // -------------------- NEW CODE FLOW --------------------
+    const handleToggleNewCode = () => {
+        if (!hideMaterialCode) {
+            // user clicked "New Code" -> hide code field, clear revised code, hide remaining fields until desc changed
+            setHideMaterialCode(true);
+            form.setValue("material_code_revised", "");
+            setShouldShowAllFields(false);
+        } else {
+            // user clicked "Use Old" -> revert to normal/manual-edit detection
+            setHideMaterialCode(false);
+            const currentCode = form.getValues("material_code_revised") || "";
+            const currentDesc = (form.getValues("material_name_description") || "").trim().toLowerCase();
+            const existsInList = AllMaterialCodes?.some(
+                (c) => c.name === currentCode && c.material_description?.trim().toLowerCase() === currentDesc
+            );
+            const isManualChange = currentCode !== originalMaterialCode || currentDesc !== originalDesc;
+            setShouldShowAllFields(isManualChange || !existsInList || (!!currentDesc && !currentCode));
+        }
+    };
+
+    // Only show remaining fields (division/storage) when both: New Code clicked AND description changed from original.
+    useEffect(() => {
+        if (hideMaterialCode && materialDesc && materialDesc !== originalDesc) {
+            setShouldShowAllFields(true);
+        } else if (hideMaterialCode) {
+            setShouldShowAllFields(false);
+        }
+        // if not hideMaterialCode, other effects manage shouldShowAllFields
+    }, [hideMaterialCode, materialDesc, originalDesc, setShouldShowAllFields]);
+
+    // -------------------- DIVISION FILTERING (kept intact) --------------------
     const filteredDivisions = useMemo(() => {
         const selectedCompany = MaterialDetails?.material_request_item?.company_name?.trim();
         if (!MaterialDetails || !selectedMaterialType || !AllMaterialType?.length || !selectedCompany) return [];
@@ -206,11 +303,14 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
         : filteredStorageLocations;
 
     const showMaterialCodeStatuses = ["Pending by CP", "Sent to SAP", "Re-Opened by CP", "Code Generated by SAP"];
-    const showMaterialCode = MaterialOnboardingDetails?.approval_status ? showMaterialCodeStatuses.includes(MaterialOnboardingDetails.approval_status) : false;
+    const showMaterialCode = MaterialOnboardingDetails?.approval_status
+        ? showMaterialCodeStatuses.includes(MaterialOnboardingDetails.approval_status)
+        : false;
 
+    // -------------------- JSX --------------------
     return (
-        <div className="bg-[#F4F4F6]">
-            <div className="flex flex-col justify-between bg-white rounded-[8px] pt-6">
+        <div className="bg-[#F4F4F6] overflow-hidden">
+            <div className="flex flex-col justify-between bg-white rounded-[8px] pt-3 p-1">
                 <div className="space-y-1">
                     <div className="grid grid-cols-3 gap-4">
                         {/* Material Description */}
@@ -228,6 +328,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                         <FormControl>
                                             <div>
                                                 <textarea
+                                                    disabled={!hideMaterialCode}
                                                     ref={field.ref}
                                                     value={field.value || ""}
                                                     onChange={(e) => {
@@ -243,9 +344,14 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                                         }
                                                     }}
                                                     rows={1}
-                                                    className="w-full p-[9px] text-sm text-gray-400 border border-gray-300 rounded-md placeholder:text-gray-700 hover:border-blue-400 focus:border-blue-400 focus:outline-none"
+                                                    className="w-full p-[9px] text-sm text-gray-700 border border-gray-300 rounded-md placeholder:text-gray-400 hover:border-blue-400 focus:border-blue-400 focus:outline-none"
                                                     placeholder="Enter or Search Material Name/Description"
                                                 />
+                                                {hideMaterialCode && (
+                                                    <span className="text-xs text-blue-600 italic">
+                                                        **change the material description to create new material code
+                                                    </span>
+                                                )}
                                                 {showSuggestions && searchResults.length > 0 && (
                                                     <div className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-md w-full max-h-40 overflow-y-auto">
                                                         {searchResults.map((item, idx) => (
@@ -257,7 +363,6 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                                             >
                                                                 {item.material_description} - {item.material_code}
                                                             </div>
-
                                                         ))}
                                                     </div>
                                                 )}
@@ -268,88 +373,77 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                 )}
                             />
                         </div>
-                        {(showMaterialCode) && (
-                            <>
-                                {/* Material Code Revised  */}
-                                <div className="space-y-2">
-                                    <FormField
-                                        control={form.control}
-                                        name="material_code_revised"
-                                        key="material_code_revised"
-                                        render={({ field }: { field: ControllerRenderProps<FieldValues, "material_code_revised"> }) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel className="font-bold">Material Code<span className="text-red-500">*</span></FormLabel>
-                                                    <FormControl>
-                                                        <div className="relative">
+
+                        {/* Right column: Material Code area + New Code toggle */}
+                        <div className="space-y-2">
+                            {showMaterialCode && !hideMaterialCode && (
+                                <FormField
+                                    control={form.control}
+                                    name="material_code_revised"
+                                    key="material_code_revised"
+                                    render={({ field }: { field: ControllerRenderProps<FieldValues, "material_code_revised"> }) => (
+                                        <FormItem>
+                                            <FormLabel className="font-bold">Material Code <span className="text-red-500">*</span></FormLabel>
+                                            <FormControl>
+                                                <div className="relative flex items-center gap-2 w-full">
+                                                    {!hideMaterialCode ? (
+                                                        <>
                                                             <Input
                                                                 {...field}
+                                                                disabled={true}
                                                                 value={field.value || ""}
-                                                                placeholder="Enter or Search Revised Material Code"
-                                                                className="p-3 w-full text-sm text-gray-400 placeholder:text-gray-400"
-                                                                onChange={(e) => {
-                                                                    field.onChange(e);
-                                                                    const value = e.target.value;
-                                                                    const filtered = AllMaterialCodes?.filter(
-                                                                        (item) =>
-                                                                            item.name?.toLowerCase().includes(value.toLowerCase()) &&
-                                                                            item.material_type === selectedMaterialType
-                                                                    );
-                                                                    setMaterialCodeSuggestions(filtered || []);
-                                                                    setShowCodeSuggestions(true);
-                                                                }}
-                                                                onFocus={() => {
-                                                                    if (materialCodeSuggestions?.length > 0) {
-                                                                        setShowCodeSuggestions(true);
-                                                                    }
-                                                                }}
-                                                                onBlur={(e) => {
-                                                                    if (!e.relatedTarget || !e.relatedTarget.classList.contains("code-suggestion")) {
-                                                                        setTimeout(() => setShowCodeSuggestions(false), 100);
-                                                                    }
-                                                                }}
+                                                                className="p-3 text-sm bg-gray-100 cursor-not-allowed text-gray-500 flex-[3]"
+                                                                placeholder="Material Code Revised"
                                                             />
-                                                            {showCodeSuggestions && materialCodeSuggestions?.length > 0 && (
-                                                                <div className="absolute left-0 top-full mt-1 bg-white border border-gray-300 rounded-md shadow-md w-full max-h-40 overflow-y-auto z-50">
-                                                                    {materialCodeSuggestions.map((item, idx) => (
-                                                                        <div
-                                                                            key={idx}
-                                                                            tabIndex={-1}
-                                                                            className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm code-suggestion"
-                                                                            onClick={() => {
-                                                                                form.setValue("material_code_revised", item.name);
-                                                                                setShowCodeSuggestions(false);
-                                                                            }}
-                                                                        >
-                                                                            {item.name} - {item.material_description}
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            );
-                                        }}
-                                    />
-                                </div>
-                                {/* Material Specifications */}
-                                <div className="space-y-2">
+                                                            <Button
+                                                                type="button"
+                                                                variant="nextbtn"
+                                                                size="nextbtnsize"
+                                                                className="px-2 text-md flex-[1]"
+                                                                onClick={handleToggleNewCode}
+                                                            >
+                                                                New Code
+                                                            </Button>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Button
+                                                                type="button"
+                                                                variant="nextbtn"
+                                                                size="nextbtnsize"
+                                                                className="px-2 text-md flex-[1]"
+                                                                onClick={handleToggleNewCode}
+                                                            >
+                                                                Use Old
+                                                            </Button>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
+                        </div>
+
+                        {/* Material Specifications + User Comment side-by-side */}
+                        <div className="col-span-3">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
                                     <FormField
                                         control={form.control}
-                                        key="material_specifications"
+                                        key="material_specifications_side"
                                         name="material_specifications"
                                         render={({ field }: { field: ControllerRenderProps<FieldValues, "material_specifications"> }) => (
                                             <FormItem>
-                                                <FormLabel>Material Specifications <span className="text-red-500">*</span></FormLabel>
+                                                <FormLabel>Material Specifications</FormLabel>
                                                 <FormControl>
                                                     <textarea
                                                         {...field}
                                                         rows={2}
                                                         className="w-full p-3 text-sm rounded-md placeholder:text-gray-400 border border-gray-300 hover:border-blue-500 focus:border-blue-500 focus:outline-none"
                                                         placeholder="Enter Material Specifications"
-                                                        readOnly
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -357,18 +451,18 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                         )}
                                     />
                                 </div>
-                                {/* Comment by User */}
-                                {!shouldShowAllFields && (
-                                    <div className="space-y-2">
+
+                                <div>
+                                    {!shouldShowAllFields && (
                                         <FormField
                                             control={form.control}
                                             name="comment_by_user"
                                             key="comment_by_user"
-                                            rules={{ required: "Comment is required when material is selected." }}
+                                            rules={{ required: !shouldShowAllFields ? "Comment is required when material is selected." : false }}
                                             render={({ field }: { field: ControllerRenderProps<FieldValues, "comment_by_user"> }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        User Comment <span className="text-red-500">*</span>
+                                                        User Comment {!shouldShowAllFields && <span className="text-red-500">*</span>}
                                                     </FormLabel>
                                                     <FormControl>
                                                         <textarea
@@ -378,18 +472,20 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                                             placeholder="Provide a reason for selecting this material"
                                                             onChange={field.onChange}
                                                             value={field.value || ""}
-                                                            readOnly
+                                                            readOnly={!shouldShowAllFields}
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
                                         />
-                                    </div>
-                                )}
-                            </>
-                        )}
-                        {shouldShowAllFields && (role === "Material CP" || role === "Store") && (
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Remaining fields: show only when shouldShowAllFields is true AND user clicked New Code AND role is CP/Store */}
+                        {shouldShowAllFields && hideMaterialCode && (role === "Material CP" || role === "Store") && (
                             <>
                                 {/* Division */}
                                 <div className="space-y-2">
@@ -437,9 +533,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                                                     </SelectItem>
                                                                 ))
                                                             ) : (
-                                                                <div className="px-3 py-2 text-sm text-gray-500">
-                                                                    No matching divisions
-                                                                </div>
+                                                                <div className="px-3 py-2 text-sm text-gray-500">No matching divisions</div>
                                                             )}
                                                         </SelectContent>
                                                     </Select>
@@ -449,6 +543,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                         )}
                                     />
                                 </div>
+
                                 {/* Storage Location */}
                                 <div className="space-y-2">
                                     <FormField
@@ -457,9 +552,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                         key="storage_location"
                                         render={({ field }: { field: ControllerRenderProps<FieldValues, "storage_location"> }) => (
                                             <FormItem>
-                                                <FormLabel>
-                                                    Storage Location <span className="text-red-500">*</span>
-                                                </FormLabel>
+                                                <FormLabel>Storage Location <span className="text-red-500">*</span></FormLabel>
                                                 <FormControl>
                                                     <Select
                                                         onValueChange={(val) => {
@@ -493,9 +586,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                                                     </SelectItem>
                                                                 ))
                                                             ) : (
-                                                                <div className="px-3 py-2 text-sm text-gray-500">
-                                                                    No storage locations found
-                                                                </div>
+                                                                <div className="px-3 py-2 text-sm text-gray-500">No storage locations found</div>
                                                             )}
                                                         </SelectContent>
                                                     </Select>
@@ -505,30 +596,6 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                         )}
                                     />
                                 </div>
-                                {/* Old Material Code 
-                                <div className="space-y-2">
-                                    <FormField
-                                        control={form.control}
-                                        name="old_material_code"
-                                        key="old_material_code"
-                                        render={({ field }) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Old Material Code</FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            {...field}
-                                                            className="p-3 w-full text-sm text-black placeholder:text-gray-400"
-                                                            placeholder="Enter Old Material Code"
-                                                            onChange={field.onChange}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            );
-                                        }}
-                                    />
-                                </div> */}
                             </>
                         )}
                     </div>
@@ -536,6 +603,6 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
             </div>
         </div>
     );
-}
+};
 
 export default UserRequestForm;

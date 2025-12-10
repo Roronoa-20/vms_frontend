@@ -9,23 +9,23 @@ interface MaterialRemarksFormProps {
     MaterialDetails?: MaterialRequestData;
 }
 
-// const MaterialRemarksForm: React.FC<MaterialRemarksFormProps> = ({
-//     form,
-//     MaterialDetails,
-// }) => {
-//     useEffect(() => {
-//         const onboardingData = MaterialDetails?.material_onboarding;
-//         const requestItem = MaterialDetails?.material_request_item;
+const MaterialRemarksForm: React.FC<MaterialRemarksFormProps> = ({
+    form,
+    MaterialDetails,
+}) => {
+    useEffect(() => {
+        const onboardingData = MaterialDetails?.material_onboarding;
+        const requestItem = MaterialDetails?.material_request_item;
 
         if (onboardingData) {
             const fields: (keyof MaterialOnboarding)[] = ["comment_by_store"];
 
-//             fields.forEach((field) => {
-//                 if (onboardingData[field]) {
-//                     form.setValue(field, onboardingData[field]);
-//                 }
-//             });
-//         }
+            fields.forEach((field) => {
+                if (onboardingData[field]) {
+                    form.setValue(field, onboardingData[field]);
+                }
+            });
+        }
 
         if (requestItem?.comment_by_user) {
             form.setValue("comment_by_user", requestItem.comment_by_user);
@@ -33,10 +33,10 @@ interface MaterialRemarksFormProps {
     }, [MaterialDetails, form]);
 
     return (
-        <div className="bg-[#F4F4F6]">
-            <div className="flex flex-col justify-between bg-white rounded-[8px]">
+        <div className="bg-[#F4F4F6] overflow-hidden">
+            <div className="flex flex-col justify-between bg-white rounded-[8px] p-1">
                 <div className="space-y-1">
-                    <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
+                    <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1 mt-4">
                         Comments
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -107,4 +107,4 @@ interface MaterialRemarksFormProps {
     );
 };
 
-// export default MaterialRemarksForm;
+export default MaterialRemarksForm;

@@ -1,5 +1,4 @@
-// "use client";
-
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -57,13 +56,13 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
   console.log("MRP Value--->", MRPTypeValue);
 
 
-//   useEffect(() => {
-//     if (MRPTypeValue === "ND") {
-//       form.setValue("procurement_type", "F");
-//     } else {
-//       form.setValue("procurement_type", "");
-//     }
-//   }, [MRPTypeValue, form]);
+  useEffect(() => {
+    if (MRPTypeValue === "ND") {
+      form.setValue("procurement_type", "F");
+    } else {
+      form.setValue("procurement_type", "");
+    }
+  }, [MRPTypeValue, form]);
 
   const handleUOMConversionSubmit = ({ numerator, denominator }: { numerator: string; denominator: string; }) => {
     form.setValue("numerator_issue_uom", numerator);
@@ -135,8 +134,8 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
 
 
   return (
-    <div className="bg-[#F4F4F6]">
-      <div className="flex flex-col justify-between pb-2 bg-white rounded-[8px]">
+    <div className="bg-[#F4F4F6] overflow-hidden">
+      <div className="flex flex-col justify-between pb-2 bg-white rounded-[8px] p-1">
         <div className="space-y-1">
           <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
             MRP Data
@@ -449,18 +448,18 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
               </>
             )}
 
-//             {/* Conversion UOM Modal */}
-//             <UOMConversionModal
-//               open={showConversionModal}
-//               onClose={() => setShowConversionModal(false)}
-//               baseUOM={baseUOM}
-//               issueUOM={issueUOM}
-//               onSubmit={handleUOMConversionSubmit}
-//             />
+           {/* Conversion UOM Modal */}
+       <UOMConversionModal
+              open={showConversionModal}
+              onClose={() => setShowConversionModal(false)}
+              baseUOM={baseUOM}
+              issueUOM={issueUOM}
+              onSubmit={handleUOMConversionSubmit}
+            />
 
-//             {/* Hidden fields */}
-//             <input type="hidden" {...form.register("numerator_issue_uom")} />
-//             <input type="hidden" {...form.register("denominator_issue_uom")} />
+            {/* Hidden fields */}
+            <input type="hidden" {...form.register("numerator_issue_uom")} />
+            <input type="hidden" {...form.register("denominator_issue_uom")} />
 
             {/* Conversion Ratio */}
             {conversionRatio && (
@@ -475,4 +474,4 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
   );
 };
 
-// export default MaterialMRPForm;
+export default MaterialMRPForm;

@@ -1,4 +1,4 @@
-// 'use client';
+'use client';
 
 import React, { useEffect, useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
@@ -9,10 +9,10 @@ import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-fo
 import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialRequestData, MaterialType, MaterialMaster } from "@/src/types/MaterialCodeRequestFormTypes";
 import { TcompanyNameBasedDropdown } from "@/src/types/types";
 
-// interface UOMConversionData {
-//   numerator: string;
-//   denominator: string;
-// }
+interface UOMConversionData {
+  numerator: string;
+  denominator: string;
+}
 
 interface MaterialPurchasingDataFormProps {
   form: UseFormReturn<any>;
@@ -44,11 +44,11 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
   const [purchaseUOMSearch, setPurchaseUOMSearch] = useState("");
   const [lotsizeSearch, setLotsizeSearch] = useState("");
 
-//   const handleUOMConversionSubmit = ({ numerator, denominator }: UOMConversionData) => {
-//     form.setValue("numerator_purchase_uom", numerator);
-//     form.setValue("denominator_purchase_uom", denominator);
-//     setConversionRatio(`${numerator} ${baseUOM} = ${denominator} ${purchaseUOM}`);
-//   };
+  const handleUOMConversionSubmit = ({ numerator, denominator }: UOMConversionData) => {
+    form.setValue("numerator_purchase_uom", numerator);
+    form.setValue("denominator_purchase_uom", denominator);
+    setConversionRatio(`${numerator} ${baseUOM} = ${denominator} ${purchaseUOM}`);
+  };
 
   useEffect(() => {
     const numerator = form.getValues("numerator_purchase_uom");
@@ -114,8 +114,8 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
 
 
   return (
-    <div className="bg-[#F4F4F6]">
-      <div className="flex flex-col pt-4 justify-between bg-white rounded-[8px]">
+    <div className="bg-[#F4F4F6] overflow-hidden">
+      <div className="flex flex-col pt-4 justify-between bg-white rounded-[8px] p-1">
         <div className="space-y-1">
           <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
             Purchasing Data
@@ -265,17 +265,17 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
               />
             </div>
 
-//             {/* UOM Conversion Modal */}
-//             <UOMConversionModal
-//               open={showConversionModal}
-//               onClose={() => setShowConversionModal(false)}
-//               baseUOM={baseUOM}
-//               purchaseUOM={purchaseUOM}
-//               onSubmit={handleUOMConversionSubmit}
-//             />
+             {/* UOM Conversion Modal */}
+             <UOMConversionModal
+              open={showConversionModal}
+              onClose={() => setShowConversionModal(false)}
+              baseUOM={baseUOM}
+              purchaseUOM={purchaseUOM}
+              onSubmit={handleUOMConversionSubmit}
+            />
 
-//             <input type="hidden" {...form.register("numerator_purchase_uom")} />
-//             <input type="hidden" {...form.register("denominator_purchase_uom")} />
+            <input type="hidden" {...form.register("numerator_purchase_uom")} />
+            <input type="hidden" {...form.register("denominator_purchase_uom")} />
 
             {/* Lead Time */}
             <div className="space-y-2">
@@ -434,4 +434,4 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
   );
 };
 
-// export default MaterialPurchasingDataForm;
+export default MaterialPurchasingDataForm;

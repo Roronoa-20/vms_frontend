@@ -44,15 +44,15 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, ExpirationDat
         if (dataString === prevDataRef.current) return;
         prevDataRef.current = dataString;
 
-//         const fields: (keyof MaterialOnboardingData)[] = [
-//             "minimum_remaining_shell_life",
-//             "total_shell_life",
-//             "expiration_date",
-//             "inspection_require",
-//             "inspection_interval",
-//             "incoming_inspection_01",
-//             "incoming_inspection_09",
-//         ];
+        const fields: (keyof MaterialOnboardingData)[] = [
+            "minimum_remaining_shell_life",
+            "total_shell_life",
+            "expiration_date",
+            "inspection_require",
+            "inspection_interval",
+            "incoming_inspection_01",
+            "incoming_inspection_09",
+        ];
 
         const currentValues = form.getValues();
 
@@ -81,8 +81,8 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, ExpirationDat
     };
 
     return (
-        <div className="bg-[#F4F4F6]">
-            <div className="flex flex-col justify-between pt-4 pb-2 bg-white rounded-[8px]">
+        <div className="bg-[#F4F4F6] overflow-hidden">
+            <div className="flex flex-col justify-between pt-4 pb-2 bg-white rounded-[8px] p-1">
                 <div className="space-y-1">
                     <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
                         QA/QC Data

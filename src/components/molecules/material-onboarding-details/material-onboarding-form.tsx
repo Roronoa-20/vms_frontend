@@ -1,14 +1,13 @@
-// "use client";
+"use client";
 
-// import React, { useEffect, useState } from "react";
-// import { UseFormReturn } from "react-hook-form";
-// import { Button } from "@/components/ui/button";
-// import { useRouter } from "next/navigation";
-// import { Form } from "@/components/ui/form";
-// import { Save } from "lucide-react";
-// import Alertbox from "@/src/components/common/vendor-onboarding-alertbox";
-// import { useAuth } from "@/src/context/AuthContext";
-
+import React, { useEffect, useState } from "react";
+import { UseFormReturn } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { Form } from "@/components/ui/form";
+import { Save } from "lucide-react";
+import Alertbox from "@/src/components/common/vendor-onboarding-alertbox";
+import { useAuth } from "@/src/context/AuthContext";
 import MaterialInformation from "@/src/components/molecules/material-onboarding-details/material-information";
 import MaterialSpecifications from "@/src/components/molecules/material-onboarding-details/material-specifications";
 import MaterialOnboardingApproval from "@/src/components/molecules/material-onboarding-details/material-approval";
@@ -22,15 +21,19 @@ import SAPMaterialModal from "@/src/components/molecules/material-onboarding-mod
 import RevertRemarkModal from "@/src/components/molecules/material-onboarding-modal/revert-remark-field";
 import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialRequestData, MaterialType } from "@/src/types/MaterialCodeRequestFormTypes";
 import { TcompanyNameBasedDropdown } from "@/src/types/types";
+import { useSearchParams } from "next/navigation";
+import API_END_POINTS from "@/src/services/apiEndPoints";
+import requestWrapper from "@/src/services/apiCall";
+import { AxiosResponse } from "axios";
 
-// interface FileRecord {
-//   file: File;
-//   fileURL: string;
-// }
+
+interface FileRecord {
+  file: File;
+  fileURL: string;
+}
 
 interface MaterialOnboardingFormProps {
   form: UseFormReturn<MaterialRegistrationFormData>;
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   isLoading?: boolean;
   showAlert?: boolean;
   showcompletealert?: boolean;
@@ -67,21 +70,21 @@ interface MaterialOnboardingFormProps {
   SMK?: SchedulingMarginKey[];
   ExpirationDate?: ExpirationDate[];
   doc_name?: string;
-  sendEmailToUser?: (doc: string) => Promise<void>;
   sendRevertEmail?: (doc: string, remark: string) => Promise<void>;
-  onCloseCallback?: (doc: string) => void;
+  onCloseCallback?: (name: string) => void;
   saveAsDraft?: () => void;
   MaterialType?: MaterialType[];
   PurchaseGroupJson?: TcompanyNameBasedDropdown["message"]["data"]["purchase_groups"];
 }
 
 const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) => {
-  const { form, onSubmit, isLoading, MaterialOnboardingDetails, ProfitCenter = [], MaterialGroup, setLineItemFiles, lineItemFiles, sendRevertEmail, doc_name, saveAsDraft, onCloseCallback, showAlert, showcompletealert, showRevertAlert, EmployeeDetailsJSON, MaterialDetails, MaterialType, PurchaseGroup } = props;
+  const { form, isLoading, MaterialOnboardingDetails, ProfitCenter = [], MaterialGroup, setLineItemFiles, lineItemFiles, sendRevertEmail, doc_name, saveAsDraft, onCloseCallback, showAlert, showcompletealert, showRevertAlert, EmployeeDetailsJSON, MaterialDetails, MaterialType, PurchaseGroup } = props;
 
-  // console.log("Material Onboarding type------>",PurchaseGroup)
+  console.log("Material Onboarding type------>", MaterialType)
 
-//   const router = useRouter();
-
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const name = searchParams.get("name");
   const [fileSelected, setFileSelected] = useState(false);
   const [fileName, setFileName] = useState("");
   const [filteredProfit, setFilteredProfit] = useState<ProfitCenter[]>([]);
@@ -119,267 +122,343 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
       return;
     }
 
-//     const employeeCompanyCodes = EmployeeDetailsJSON.company
-//       .map((comp) => String(comp.company_code))
-//       .filter(Boolean);
+    const employeeCompanyCodes = EmployeeDetailsJSON.company
+      .map((comp) => String(comp.company_code))
+      .filter(Boolean);
 
-//     const newFilteredProfit = ProfitCenter.filter((pc) =>
-//       employeeCompanyCodes.includes(String(pc.company_code))
-//     );
+    const newFilteredProfit = ProfitCenter.filter((pc) =>
+      employeeCompanyCodes.includes(String(pc.company_code))
+    );
 
-//     const hasChanged =
-//       newFilteredProfit.length !== filteredProfit.length ||
-//       newFilteredProfit.some(
-//         (pc, i) =>
-//           pc.profit_center_code !== filteredProfit[i]?.profit_center_code ||
-//           pc.profit_center_name !== filteredProfit[i]?.profit_center_name
-//       );
+    const hasChanged =
+      newFilteredProfit.length !== filteredProfit.length ||
+      newFilteredProfit.some(
+        (pc, i) =>
+          pc.profit_center_code !== filteredProfit[i]?.profit_center_code ||
+          pc.profit_center_name !== filteredProfit[i]?.profit_center_name
+      );
 
     if (hasChanged) {
       setFilteredProfit(newFilteredProfit);
     } else {
-      // console.log("Skipped update — filteredProfit unchanged");
     }
   }, [EmployeeDetailsJSON, ProfitCenter, filteredProfit]);
 
-//   const onCancel = (e: React.MouseEvent) => {
-//     e.preventDefault();
-//     router.push("/material-onboarding-table");
-//     window.location.reload();
-//   };
+  const onCancel = (e: React.MouseEvent) => {
+    e.preventDefault();
+    router.push("/material-onboarding-table");
+    window.location.reload();
+  };
 
-//   const handleLabelClick = (inputId: string) => {
-//     document.getElementById(inputId)?.click();
-//   };
+  const handleLabelClick = (inputId: string) => {
+    document.getElementById(inputId)?.click();
+  };
 
-//   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
-//     const file = e.target.files?.[0];
-//     if (file && setLineItemFiles) {
-//       const fileURL = URL.createObjectURL(file);
-//       setLineItemFiles((prev) => ({
-//         ...prev,
-//         [key]: { file, fileURL },
-//       }));
-//       setFileSelected(true);
-//       setFileName(file.name);
-//     }
-//   };
-
-//   const handleRemoveFile = (inputId: string, clearFileNameFn: (v: string) => void) => {
-//     if (!setLineItemFiles) return;
-//     setLineItemFiles((prev) => {
-//       const updated = { ...prev };
-//       delete updated["material_information"];
-//       return updated;
-//     });
-//     clearFileNameFn("");
-//     setFileSelected(false);
-//     const input = document.getElementById(inputId) as HTMLInputElement;
-//     if (input) input.value = "";
-//   };
-
-//   const getButtonLabel = (role: string, approvalStatus?: string): string => {
-//     if (["Material CP", "Store"].includes(role)) {
-//       if (approvalStatus === "Pending by CP" || approvalStatus === "Re-Opened by CP")
-//         return "Send to SAP";
-//       if (approvalStatus === "Sent to SAP") return "Update";
-//     }
-//     if (role === "SAP") return "Close";
-//     return "Submit";
-//   };
-
-  const handleApprovalStatus = async () => {
-    if (role === "SAP") {
-      form.setValue("approval_status", "Code Generated by SAP");
-    } else if (
-      ["Material CP", "Store"].includes(role) &&
-      MaterialOnboardingDetails?.approval_status === "Sent to SAP"
-    ) {
-      form.setValue("approval_status", "Updated By CP");
-    } else if (
-      ["Material CP", "Store"].includes(role) &&
-      MaterialOnboardingDetails?.approval_status === "Pending by SAP"
-    ) {
-      form.setValue("approval_status", "Sent to SAP");
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
+    const file = e.target.files?.[0];
+    if (file && setLineItemFiles) {
+      const fileURL = URL.createObjectURL(file);
+      setLineItemFiles((prev) => ({
+        ...prev,
+        [key]: { file, fileURL },
+      }));
+      setFileSelected(true);
+      setFileName(file.name);
     }
   };
 
-//   const handleRejectStatus = (remark: string) => {
-//     if (["Material CP", "Store"].includes(role)) {
-//       form.setValue("approval_status", "Re-Opened by CP");
-//       form.setValue("remark_by_cp", remark);
-//     }
-//   };
+  const handleRemoveFile = (inputId: string, clearFileNameFn: (v: string) => void) => {
+    if (!setLineItemFiles) return;
+    setLineItemFiles((prev) => {
+      const updated = { ...prev };
+      delete updated["material_information"];
+      return updated;
+    });
+    clearFileNameFn("");
+    setFileSelected(false);
+    const input = document.getElementById(inputId) as HTMLInputElement;
+    if (input) input.value = "";
+  };
 
-//   const approvalStatus = MaterialOnboardingDetails?.approval_status;
-//   const isSAPLockedStatus = [
-//     "Sent to SAP",
-//     "Code Generated by SAP",
-//     "Pending by CP",
-//     "Updated by CP",
-//     "Re-Opened by CP",
-//   ].includes(approvalStatus);
+  const getButtonLabel = (role: string, approvalStatus?: string): string => {
+    if (["Material CP", "Store"].includes(role)) {
+      if (approvalStatus === "Pending by CP" || approvalStatus === "Re-Opened by CP")
+        return "Send to SAP";
+      if (approvalStatus === "Sent to SAP") return "Update";
+    }
+    if (role === "SAP") return "Close";
+    return "Submit";
+  };
 
-//   const materialType = MaterialOnboardingDetails?.material_type_name;
-//   const isZCAPMaterial = materialType === "ZCAP";
+  const handleRejectStatus = (remark: string) => {
+    if (["Material CP", "Store"].includes(role)) {
+      form.setValue("approval_status", "Re-Opened by CP");
+      form.setValue("remark_by_cp", remark);
+    }
+  };
+
+  const approvalStatus = MaterialOnboardingDetails?.approval_status;
+  const isSAPLockedStatus = [
+    "Sent to SAP",
+    "Code Generated by SAP",
+    "Pending by CP",
+    "Updated by CP",
+    "Re-Opened by CP",
+  ].includes(approvalStatus);
+
+  const materialType = MaterialOnboardingDetails?.material_type_name;
+  const isZCAPMaterial = materialType === "ZCAP";
+
+  const buttonLabel = getButtonLabel(role, approvalStatus);
+
+  const handleSubmit = async (values: any) => {
+    console.log("FINAL PAYLOAD:", values);
+
+    const {
+      request_date,
+      requested_by,
+      company,
+      department,
+      sub_department,
+      hod,
+      immediate_reporting_head,
+      contact_information_email,
+      contact_information_phone,
+      ...rest
+    } = values;
+
+    const finalPayload = Object.fromEntries(
+      Object.entries(rest).map(([key, val]) => {
+        if (val && typeof val === "object" && "value" in val) {
+          return [key, val.value];
+        }
+        return [key, val];
+      })
+    );
+    try {
+      const payload = {
+        requestor_ref_no: name,
+        material_code: form.getValues("material_code_revised") || form.getValues("old_material_code"),
+        material_name: form.getValues("material_name_description"),
+        ...finalPayload,
+      };
+
+      console.log("FINAL PAYLOAD SENT TO BACKEND:", payload);
+
+      const response: AxiosResponse<any> = await requestWrapper({
+        url: API_END_POINTS.creatematerialonboarding,
+        method: "POST",
+        data: payload,
+      });
+
+      console.log("Create Material Onboarding Response:", response?.data);
+
+      if (response?.status === 200) {
+        alert("kjgbaskvervnk")
+      }
+    } catch (error) {
+      console.error("Error submitting onboarding:", error);
+    }
+  };
+
+  const getNextApprovalStatus = () => {
+    const current = MaterialOnboardingDetails?.approval_status;
+
+    if (role === "SAP") return "Code Generated by SAP";
+
+    if (["Material CP", "Store"].includes(role)) {
+      if (current === "Sent to SAP") return "Updated By CP";
+      if (current === "Pending by SAP") return "Sent to SAP";
+      if (current === "Pending by CP" || current === "Re-Opened by CP") return "Sent to SAP";
+    }
+
+    return form.getValues("approval_status") || "Pending by CP";
+  };
+
+  const onFinalSubmit = async () => {
+    const nextStatus = getNextApprovalStatus();
+    form.setValue("approval_status", nextStatus);
+
+    const values = form.getValues();
+    await handleSubmit(values);
+  };
+
 
   return (
     <Form {...form}>
-      <form onSubmit={onSubmit}>
-        <div className="bg-[#F4F4F6] min-h-screen flex justify-center p-2">
-          <div className="flex flex-col p-3 bg-white rounded-[8px] shadow-sm w-full max-w-7xl">
-            {/* === SAP MODAL === */}
-            <SAPMaterialModal
-              isOpen={showSAPModal}
-              onClose={() => setShowSAPModal(false)}
-              materialCode={materialType || ""}
-              materialDescription={MaterialOnboardingDetails?.material_name_description || ""}
-              isZCAPMaterial={isZCAPMaterial}
-            />
+      {/* <form onSubmit={form.handleSubmit(onSubmit)}> */}
+      {/* <form
+        onSubmit={form.handleSubmit(async (data) => {
+          await handleApprovalStatus();
+          await handleSubmit(data);
+        })}
+      > */}
+      <div className="bg-gray-300 p-2 overflow-hidden">
+        <div className="flex flex-col p-3 bg-white rounded-[8px] min-h-[88vh] shadow-sm w-full">
+          {/* === SAP MODAL === */}
+          <SAPMaterialModal
+            isOpen={showSAPModal}
+            onClose={() => setShowSAPModal(false)}
+            materialCode={materialType || ""}
+            materialDescription={MaterialOnboardingDetails?.material_name_description || ""}
+            isZCAPMaterial={isZCAPMaterial}
+          />
 
-            {/* === SECTIONS === */}
-            <RequesterDetails MaterialOnboardingDetails={memoizedDetails} form={form} />
+          {/* === SECTIONS === */}
+          <RequesterDetails MaterialOnboardingDetails={memoizedDetails} form={form} />
 
-            <MaterialInformation
-              {...props}
-              MaterialDetails={memoizedMaterialDetails}
-              MaterialType={MaterialType}
-              setShouldShowAllFields={setShouldShowAllFields}
-              shouldShowAllFields={shouldShowAllFields}
-              isMaterialCodeEdited={isMaterialCodeEdited}
-              setIsMaterialCodeEdited={setIsMaterialCodeEdited}
-              setIsMatchedMaterial={setIsMatchedMaterial}
-              isZCAPMaterial={isZCAPMaterial}
-              materialCompanyCode={materialCompanyCode}
-              setMaterialCompanyCode={setMaterialCompanyCode}
-              role={role}
-            />
+          <MaterialInformation
+            {...props}
+            MaterialDetails={memoizedMaterialDetails}
+            MaterialType={MaterialType}
+            setShouldShowAllFields={setShouldShowAllFields}
+            shouldShowAllFields={shouldShowAllFields}
+            isMaterialCodeEdited={isMaterialCodeEdited}
+            setIsMaterialCodeEdited={setIsMaterialCodeEdited}
+            setIsMatchedMaterial={setIsMatchedMaterial}
+            isZCAPMaterial={isZCAPMaterial}
+            materialCompanyCode={materialCompanyCode}
+            setMaterialCompanyCode={setMaterialCompanyCode}
+            role={role}
+          />
 
-            {shouldShowAllFields && (
+          {shouldShowAllFields && (
+            <>
+              {["Material CP", "Store"].includes(role) && (
+                <>
+                  <MaterialPurchasingData {...props} role={role} />
+
+                  <MaterialMRPData {...props} role={role} isZCAPMaterial={isZCAPMaterial} />
+
+                  {!isZCAPMaterial && (
+                    <MaterialQAQCData {...props} MaterialDetails={memoizedMaterialDetails} />
+                  )}
+
+                  <MaterialSpecifications {...props} isZCAPMaterial={isZCAPMaterial} />
+
+                  <MaterialOtherData
+                    {...props}
+                    role={role}
+                    filteredProfit={filteredProfit}
+                    setFilteredProfit={setFilteredProfit}
+                    fileSelected={fileSelected}
+                    setFileSelected={setFileSelected}
+                    fileName={fileName}
+                    setFileName={setFileName}
+                    handleLabelClick={handleLabelClick}
+                    handleImageChange={handleImageChange}
+                    handleRemoveFile={handleRemoveFile}
+                    isZCAPMaterial={isZCAPMaterial}
+                    MaterialType={MaterialType}
+                  />
+                  <MaterialComment {...props} />
+                  <MaterialOnboardingApproval {...props} role={role} />
+                </>
+              )}
+            </>
+          )}
+
+          {/* === FOOTER BUTTONS === */}
+          <div className="flex justify-between items-center w-full mt-4">
+            {/* === User Locked View === */}
+            {role === "User" && isSAPLockedStatus ? (
+              <div className="flex justify-end w-full">
+                <Button variant="backbtn" size="backbtnsize" onClick={onCancel} type="button">
+                  Back to Home
+                </Button>
+              </div>
+            ) : (
               <>
-                {["Material CP", "Store"].includes(role) && (
-                  <>
-                    <MaterialPurchasingData {...props} role={role} />
 
-//                     <MaterialMRPData {...props} role={role} isZCAPMaterial={isZCAPMaterial} />
+                {/* === Back Button (Always shown) === */}
+                <Button
+                  variant="backbtn"
+                  size="backbtnsize"
+                  type="button"
+                  onClick={onCancel}
+                >
+                  Back
+                </Button>
 
-                    {!isZCAPMaterial && (
-                      <MaterialQAQCData {...props} MaterialDetails={memoizedMaterialDetails} />
-                    )}
+                {/* === Right Side Button Set === */}
+                <div className="flex space-x-5 items-center">
 
-                    <MaterialSpecifications {...props} isZCAPMaterial={isZCAPMaterial} />
+                  {/* === Revert Button === */}
+                  <Button
+                    variant="backbtn"
+                    size="backbtnsize"
+                    type="button"
+                    onClick={() => setShowRemarkDialog(true)}
+                  >
+                    Revert
+                  </Button>
 
-                    <MaterialOtherData
-                      {...props}
-                      role={role}
-                      filteredProfit={filteredProfit}
-                      setFilteredProfit={setFilteredProfit}
-                      fileSelected={fileSelected}
-                      setFileSelected={setFileSelected}
-                      fileName={fileName}
-                      setFileName={setFileName}
-                      handleLabelClick={handleLabelClick}
-                      handleImageChange={handleImageChange}
-                      handleRemoveFile={handleRemoveFile}
-                      isZCAPMaterial={isZCAPMaterial}
-                    />
-                    <MaterialComment {...props} />
-                    <MaterialOnboardingApproval {...props} role={role} />
-                  </>
-                )}
+                  {/* === Use Existing Material (Matched Case) === */}
+                  {isMatchedMaterial ? (
+                    <Button
+                      variant="nextbtn"
+                      size="nextbtnsize"
+                      type="button"
+                      onClick={() => onCloseCallback?.(name || "")}
+                    >
+                      {isLoading ? "Processing..." : "Use Existing Material Code"}
+                    </Button>
+                  ) : (
+                    /* === Main Submit Button === */
+                    <Button
+                      variant="nextbtn"
+                      size="nextbtnsize"
+                      type="submit"
+                      onClick={onFinalSubmit}
+                    >
+                      {isLoading ? "Processing..." : getButtonLabel(role, approvalStatus)}
+                    </Button>
+                  )}
+
+                </div>
               </>
             )}
 
-//             {/* === FOOTER BUTTONS === */}
-//             <div className="flex justify-between items-center w-full mt-4">
-//               {role === "User" && isSAPLockedStatus ? (
-//                 <div className="flex justify-end w-full">
-//                   <Button variant="backbtn" size="backbtnsize" onClick={onCancel} type="button">
-//                     Back to Home
-//                   </Button>
-//                 </div>
-//               ) : isMatchedMaterial ? (
-//                 <>
-//                   <Button variant="backbtn" size="backbtnsize" onClick={onCancel} type="button">
-//                     Back to Home
-//                   </Button>
-//                   <div className="flex space-x-5 items-center">
-//                     <Button variant="backbtn" size="backbtnsize" type="button" onClick={() => setShowRemarkDialog(true)}>
-//                       Revert
-//                     </Button>
-//                     <Button
-//                       variant="nextbtn"
-//                       size="nextbtnsize"
-//                       type="button"
-//                       onClick={() => {
-//                         if (onCloseCallback && doc_name) onCloseCallback(doc_name);
-//                       }}
-//                     >
-//                       {isLoading ? "Processing..." : "Use Existing Material Code"}
-//                     </Button>
-//                   </div>
-//                 </>
-//               ) : (
-//                 <>
-//                   <Button variant="backbtn" size="backbtnsize" onClick={onCancel} type="button">
-//                     Back
-//                   </Button>
-//                   <div className="flex space-x-5 items-center">
-//                     <Button variant="backbtn" size="backbtnsize" type="button" onClick={() => setShowRemarkDialog(true)}>
-//                       Revert
-//                     </Button>
-//                     <Button
-//                       variant="nextbtn"
-//                       size="nextbtnsize"
-//                       type="submit"
-//                       onClick={handleApprovalStatus}
-//                     >
-//                       {isLoading ? "Processing..." : getButtonLabel(role, approvalStatus)}
-//                     </Button>
-//                   </div>
-//                 </>
-//               )}
+            {showAlert && (
+              <Alertbox
+                content="Your Details have been submitted successfully!"
+                submit={showAlert}
+                url="/material-onboarding-dashboard"
+              />
+            )}
 
-//               {showAlert && (
-//                 <Alertbox
-//                   content="Your Details have been submitted successfully!"
-//                   submit={showAlert}
-//                   url="/material-onboarding-table"
-//                 />
-//               )}
+            {showcompletealert && (
+              <Alertbox
+                content="Your ticket to create new Material Code has been successfully closed!"
+                submit={showcompletealert}
+                url="/material-onboarding-dashboard"
+              />
+            )}
 
-//               {showcompletealert && (
-//                 <Alertbox
-//                   content="Your ticket to create new Material Code has been successfully closed!"
-//                   submit={showcompletealert}
-//                   url="/material-onboarding-table"
-//                 />
-//               )}
+            <RevertRemarkModal
+              isOpen={showRemarkDialog}
+              onClose={() => setShowRemarkDialog(false)}
+              onConfirm={async (remark) => {
+                handleRejectStatus(remark);
+                if (sendRevertEmail && name) {
+                  await sendRevertEmail(name, remark);
+                  setShowRemarkDialog(false);
+                }
+              }}
+            />
 
-//               <RevertRemarkModal
-//                 isOpen={showRemarkDialog}
-//                 onClose={() => setShowRemarkDialog(false)}
-//                 onConfirm={async (remark) => {
-//                   handleRejectStatus(remark);
-//                   if (sendRevertEmail && doc_name) {
-//                     await sendRevertEmail(doc_name, remark);
-//                     setShowRemarkDialog(false);
-//                   }
-//                 }}
-//               />
+            {showRevertAlert && (
+              <Alertbox
+                content="Your ticket has been successfully re-opened with the remark!"
+                submit={showRevertAlert}
+                url="/material-onboarding-dashboard"
+              />
+            )}
+          </div>
+        </div>
 
-//               {showRevertAlert && (
-//                 <Alertbox
-//                   content="Your ticket has been successfully re-opened with the remark!"
-//                   submit={showRevertAlert}
-//                   url="/material-onboarding-table"
-//                 />
-//               )}
-//             </div>
-//           </div>
-
-          {/* === Floating Save Button === */}
-          {/* {saveAsDraft && (
+        {/* === Floating Save Button === */}
+        {/* {saveAsDraft && (
             <div className="fixed right-0 bottom-20 z-50 group">
               <button
                 type="button"
@@ -393,10 +472,10 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
               </button>
             </div>
           )} */}
-        </div>
-      </form>
+      </div>
+      {/* </form> */}
     </Form>
   );
 };
 
-// export default MaterialOnboardingForm;
+export default MaterialOnboardingForm;

@@ -158,7 +158,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
 
     return (
         <div className="bg-[#F4F4F6]">
-            <div className="flex flex-col justify-between bg-white rounded-[8px]">
+            <div className="flex flex-col justify-between bg-white rounded-[8px] p-1">
                 <div className="space-y-4">
                     <div className="flex items-center justify-between text-[20px] font-semibold text-[#03111F] border-b border-slate-500 pb-1">
                         <span>Basic Data</span>
@@ -176,7 +176,11 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
                                         <Select onValueChange={val => { field.onChange(val); setMaterialCompanyCode(val); }} value={field.value || ""} disabled>
                                             <SelectTrigger className="p-3 w-full text-sm"><SelectValue placeholder="Select Company Code" /></SelectTrigger>
                                             <SelectContent>
-                                                {companyName?.map(c => <SelectItem key={c.company_code} value={c.company_code}>{c.company_name}</SelectItem>)}
+                                                {companyName?.map(c =>
+                                                    <SelectItem key={c.name} value={c.name}>
+                                                        {c.company_name}
+                                                    </SelectItem>
+                                                )}
                                             </SelectContent>
                                         </Select>
                                     </FormControl>

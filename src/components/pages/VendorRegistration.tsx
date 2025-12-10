@@ -44,22 +44,22 @@ export type TtableData = {
 }
 
 type gstDetailsType = {
-  gst_state:string,
-  gst_number:string,
-  pincode:string,
-  company:string
+  gst_state: string,
+  gst_number: string,
+  pincode: string,
+  company: string
 }
 
 type vendorNameDialogDataType = {
-  name:string,
-  vendor_name:string,
-  office_email_primary:string,
-  country:string,
-  first_name:string,
-  mobile_number:string,
-  search_term:string,
-  pan_number:string,
-  gst_details:gstDetailsType[]
+  name: string,
+  vendor_name: string,
+  office_email_primary: string,
+  country: string,
+  first_name: string,
+  mobile_number: string,
+  search_term: string,
+  pan_number: string,
+  gst_details: gstDetailsType[]
 }
 
 const VendorRegistration = ({ ...Props }: Props) => {
@@ -67,10 +67,10 @@ const VendorRegistration = ({ ...Props }: Props) => {
   const [formData, setFormData] = useState<Partial<VendorRegistrationData>>({})
   const [multiVendor, setMultiVendor] = useState();
   const [tableData, setTableData] = useState<TtableData[]>([]);
-  const [vendorNameDialog,setVendorNameDialog] = useState<boolean>(false);
-  const [vendorNameDialogData,setVendorNameDialogData] = useState<vendorNameDialogDataType[]>([]);
-  const [fieldDisable,setFieldDisable] = useState<boolean>(false);
-  
+  const [vendorNameDialog, setVendorNameDialog] = useState<boolean>(false);
+  const [vendorNameDialogData, setVendorNameDialogData] = useState<vendorNameDialogDataType[]>([]);
+  const [fieldDisable, setFieldDisable] = useState<boolean>(false);
+
   const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
 
   const handlefieldChange = (
@@ -187,9 +187,9 @@ const VendorRegistration = ({ ...Props }: Props) => {
         return;
       }
       toast.success("Vendor Registered Successfully.....");
-      setTimeout(()=>{
+      setTimeout(() => {
         router.push("/dashboard");
-      },2000)
+      }, 2000)
       return;
     } else {
       if (submitButton) {
@@ -197,28 +197,28 @@ const VendorRegistration = ({ ...Props }: Props) => {
       }
     }
     // toast.success("Vendor Registered Successfully.....");
-    
+
   };
 
   const handleCancel = async () => {
     router.push("/dashboard");
   };
 
-  const VendorNameCheckApi = async(value:string)=>{
+  const VendorNameCheckApi = async (value: string) => {
 
-    if(value.length < 3){
+    if (value.length < 3) {
       return;
     }
-    
+
     try {
 
-      const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.VendorNameCheckApi,params:{vendor_name:value},method:"GET"});
-      
-      if(response?.status == 404){
+      const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.VendorNameCheckApi, params: { vendor_name: value }, method: "GET" });
+
+      if (response?.status == 404) {
         return;
       }
-      
-      if(response?.status == 200){
+
+      if (response?.status == 200) {
         setVendorNameDialogData(response?.data?.message?.data);
         setVendorNameDialog(true);
       }
@@ -227,17 +227,17 @@ const VendorRegistration = ({ ...Props }: Props) => {
     }
   }
 
-    const handleClose = ()=>{
-      setVendorNameDialog(false);
-    }
+  const handleClose = () => {
+    setVendorNameDialog(false);
+  }
 
 
   const toggleRow = (index: number) => {
     setExpandedRows((row) => ({ ...row, [index]: !row[index] }));
   };
 
-  const handleVendorAdd = (data:vendorNameDialogDataType)=>{
-    setFormData((prev:any)=>({...prev,office_email_primary:data?.office_email_primary,mobile_number:data?.mobile_number,search_term:data?.search_term,vendor_name:data?.vendor_name,country:data?.country}))
+  const handleVendorAdd = (data: vendorNameDialogDataType) => {
+    setFormData((prev: any) => ({ ...prev, office_email_primary: data?.office_email_primary, mobile_number: data?.mobile_number, search_term: data?.search_term, vendor_name: data?.vendor_name, country: data?.country }))
     handleClose();
     setFieldDisable(true);
   }
@@ -273,104 +273,103 @@ const VendorRegistration = ({ ...Props }: Props) => {
       {/* </form> */}
       <ToastContainer closeButton theme="dark" autoClose={2000} />
       {
-        vendorNameDialog && 
-  <PopUp handleClose={handleClose} classname="overflow-y-scroll md:max-w-[1000px] w-full">
-   <div className="overflow-auto bg-slate-100 rounded-xl">
-      <table className="min-w-full">
-        <thead className="border-b">
-          <tr className="bg-blue-100 rounded-t-md">
-            <th className="text-left p-3"></th>
-            <th className="text-left p-3">Name</th>
-            <th className="text-left p-3">Vendor Name</th>
-            <th className="text-left p-3">Email</th>
-            <th className="text-left p-3">Mobile</th>
-            <th className="text-left p-3">Pan Number</th>
-            <th className="text-left p-3">GST Details</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {vendorNameDialogData.map((item, i) => {
-            const isOpen = !!expandedRows[i];
-            return (
-              <React.Fragment key={i}>
-                {/* MAIN ROW */}
-                <tr className="align-top border-b">
-                  <td className="p-3 align-top"><Button className="bg-blue-400 hover:bg-blue-300" onClick={()=>{handleVendorAdd(item)}}>Select</Button></td>
-                  <td className="p-3 align-top">{item.name}</td>
-                  <td className="p-3 align-top">{item.vendor_name}</td>
-                  <td className="p-3 align-top">{item.office_email_primary}</td>
-                  <td className="p-3 align-top">{item.mobile_number}</td>
-                  <td className="p-3 align-top">{item.pan_number}</td>
-
-                  <td className="p-3 align-top">
-                    <button
-                      onClick={() => toggleRow(i)}
-                      aria-expanded={isOpen}
-                      aria-controls={`gst-row-${i}`}
-                      className="text-sm inline-flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100"
-                    >
-                      {item.gst_details.length > 0 ? "View GST Details" : "No GST Records"}
-                      <svg
-                        className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`}
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M5.23 7.21a.75.75 0 011.06.02L10 11.293l3.71-4.06a.75.75 0 111.1 1.02l-4.25 4.657a.75.75 0 01-1.1 0L5.21 8.27a.75.75 0 01.02-1.06z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                  </td>
+        vendorNameDialog &&
+        <PopUp handleClose={handleClose} classname="overflow-y-scroll md:max-w-[1000px] w-full">
+          <div className="overflow-auto bg-slate-100 rounded-xl">
+            <table className="min-w-full">
+              <thead className="border-b">
+                <tr className="bg-blue-100 rounded-t-md">
+                  <th className="text-left p-3"></th>
+                  <th className="text-left p-3">Name</th>
+                  <th className="text-left p-3">Vendor Name</th>
+                  <th className="text-left p-3">Email</th>
+                  <th className="text-left p-3">Mobile</th>
+                  <th className="text-left p-3">Pan Number</th>
+                  <th className="text-left p-3">GST Details</th>
                 </tr>
+              </thead>
 
-                {/* EXPANDED ROW (separate <tr>, valid HTML) */}
-                <tr id={`gst-row-${i}`} className="bg-white">
-                  <td colSpan={5} className="p-0">
-                    {/* content wrapper inside the td — safe to animate */}
-                    <div
-                      // animate using max-height + opacity. Keep overflow hidden.
-                      className={`overflow-hidden transition-[max-height,opacity] duration-300 px-3 ${
-                        isOpen ? "max-h-[1000px] opacity-100 py-3" : "max-h-0 opacity-0 py-0"
-                      }`}
-                    >
-                      {item.gst_details.length > 0 ? (
-                        <table className="min-w-full border">
-                          <thead className="bg-gray-50">
-                            <tr>
-                              <th className="text-left p-2">GST State</th>
-                              <th className="text-left p-2">GST Number</th>
-                              <th className="text-left p-2">Pincode</th>
-                              <th className="text-left p-2">Company</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {item.gst_details.map((gst, gi) => (
-                              <tr key={gi} className="border-t">
-                                <td className="p-2">{gst.gst_state}</td>
-                                <td className="p-2">{gst.gst_number}</td>
-                                <td className="p-2">{gst.pincode ?? "—"}</td>
-                                <td className="p-2">{gst.company ?? "—"}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      ) : (
-                        <p className="text-sm text-muted-foreground">No GST details available.</p>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              </React.Fragment>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-</PopUp>
+              <tbody>
+                {vendorNameDialogData.map((item, i) => {
+                  const isOpen = !!expandedRows[i];
+                  return (
+                    <React.Fragment key={i}>
+                      {/* MAIN ROW */}
+                      <tr className="align-top border-b">
+                        <td className="p-3 align-top"><Button className="bg-blue-400 hover:bg-blue-300" onClick={() => { handleVendorAdd(item) }}>Select</Button></td>
+                        <td className="p-3 align-top">{item.name}</td>
+                        <td className="p-3 align-top">{item.vendor_name}</td>
+                        <td className="p-3 align-top">{item.office_email_primary}</td>
+                        <td className="p-3 align-top">{item.mobile_number}</td>
+                        <td className="p-3 align-top">{item.pan_number}</td>
+
+                        <td className="p-3 align-top">
+                          <button
+                            onClick={() => toggleRow(i)}
+                            aria-expanded={isOpen}
+                            aria-controls={`gst-row-${i}`}
+                            className="text-sm inline-flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100"
+                          >
+                            {item.gst_details.length > 0 ? "View GST Details" : "No GST Records"}
+                            <svg
+                              className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`}
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              aria-hidden="true"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M5.23 7.21a.75.75 0 011.06.02L10 11.293l3.71-4.06a.75.75 0 111.1 1.02l-4.25 4.657a.75.75 0 01-1.1 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </button>
+                        </td>
+                      </tr>
+
+                      {/* EXPANDED ROW (separate <tr>, valid HTML) */}
+                      <tr id={`gst-row-${i}`} className="bg-white">
+                        <td colSpan={5} className="p-0">
+                          {/* content wrapper inside the td — safe to animate */}
+                          <div
+                            // animate using max-height + opacity. Keep overflow hidden.
+                            className={`overflow-hidden transition-[max-height,opacity] duration-300 px-3 ${isOpen ? "max-h-[1000px] opacity-100 py-3" : "max-h-0 opacity-0 py-0"
+                              }`}
+                          >
+                            {item.gst_details.length > 0 ? (
+                              <table className="min-w-full border">
+                                <thead className="bg-gray-50">
+                                  <tr>
+                                    <th className="text-left p-2">GST State</th>
+                                    <th className="text-left p-2">GST Number</th>
+                                    <th className="text-left p-2">Pincode</th>
+                                    <th className="text-left p-2">Company</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {item.gst_details.map((gst, gi) => (
+                                    <tr key={gi} className="border-t">
+                                      <td className="p-2">{gst.gst_state}</td>
+                                      <td className="p-2">{gst.gst_number}</td>
+                                      <td className="p-2">{gst.pincode ?? "—"}</td>
+                                      <td className="p-2">{gst.company ?? "—"}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            ) : (
+                              <p className="text-sm text-muted-foreground">No GST details available.</p>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    </React.Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </PopUp>
       }
     </div>
   );

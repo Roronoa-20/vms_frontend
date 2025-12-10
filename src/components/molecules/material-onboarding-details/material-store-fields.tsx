@@ -53,18 +53,18 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
   }, [MaterialGroup?.length]);
 
 
-//   const materialGroupOptions = useMemo(() => {
-//     if (!materialGroupSearch) return filteredMaterialGroup;
-//     return filteredMaterialGroup.filter((group) =>
-//       `${group.name} - ${group.material_group_description}`
-//         .toLowerCase()
-//         .includes(materialGroupSearch.toLowerCase())
-//     );
-//   }, [filteredMaterialGroup, materialGroupSearch]);
+  const materialGroupOptions = useMemo(() => {
+    if (!materialGroupSearch) return filteredMaterialGroup;
+    return filteredMaterialGroup.filter((group) =>
+      `${group.name} - ${group.material_group_description}`
+        .toLowerCase()
+        .includes(materialGroupSearch.toLowerCase())
+    );
+  }, [filteredMaterialGroup, materialGroupSearch]);
 
-//   useEffect(() => {
-//     const data = MaterialDetails?.material_master;
-//     if (!data || !filteredMaterialGroup.length) return;
+  useEffect(() => {
+    const data = MaterialDetails?.material_master;
+    if (!data || !filteredMaterialGroup.length) return;
 
     const fields = [
       "material_group",
@@ -90,33 +90,33 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
 
   }, [MaterialDetails?.material_master, filteredMaterialGroup]);
 
-//   const batchRequirement = form.watch("batch_requirements_yn");
-//   const classTypeSelected = form.watch("class_type");
-//   const serialNumberProfile = form.watch("serial_number_profile");
+  const batchRequirement = form.watch("batch_requirements_yn");
+  const classTypeSelected = form.watch("class_type");
+  const serialNumberProfile = form.watch("serial_number_profile");
 
-//   useEffect(() => {
-//     if (batchRequirement === "No") {
-//       form.setValue("class_type", "");
-//       form.setValue("class_number", "");
-//     }
-//   }, [batchRequirement, form]);
+  useEffect(() => {
+    if (batchRequirement === "No") {
+      form.setValue("class_type", "");
+      form.setValue("class_number", "");
+    }
+  }, [batchRequirement, form]);
 
-//   useEffect(() => {
-//     if (classTypeSelected && ClassType?.length > 0) {
-//       const selectedClass = ClassType.find(
-//         (item) => item.name === classTypeSelected
-//       );
-//       if (selectedClass?.class_number) {
-//         form.setValue("class_number", selectedClass.class_number);
-//       } else {
-//         form.setValue("class_number", "");
-//       }
-//     }
+  useEffect(() => {
+    if (classTypeSelected && ClassType?.length > 0) {
+      const selectedClass = ClassType.find(
+        (item) => item.name === classTypeSelected
+      );
+      if (selectedClass?.class_number) {
+        form.setValue("class_number", selectedClass.class_number);
+      } else {
+        form.setValue("class_number", "");
+      }
+    }
 
-//     if (serialNumberProfile && SerialProfile?.length > 0) {
-//       const selectedSerial = SerialProfile.find(
-//         (item) => item.name === serialNumberProfile
-//       );
+    if (serialNumberProfile && SerialProfile?.length > 0) {
+      const selectedSerial = SerialProfile.find(
+        (item) => item.name === serialNumberProfile
+      );
 
       if (selectedSerial?.serialization_level) {
         form.setValue("serialization_level", selectedSerial.serialization_level);
@@ -127,8 +127,8 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
   }, [classTypeSelected, ClassType, form, serialNumberProfile, SerialProfile]);
 
   return (
-    <div className="bg-[#F4F4F6]">
-      <div className="flex flex-col justify-between bg-white rounded-[8px]">
+    <div className="bg-[#F4F4F6] overflow-hidden">
+      <div className="flex flex-col justify-between bg-white rounded-[8px] p-1">
         <div className="space-y-1">
           <div className="flex items-center justify-between text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1 mt-4">
             <span>Store Data</span>
@@ -398,4 +398,4 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
   );
 };
 
-// export default Storefields;
+export default Storefields;

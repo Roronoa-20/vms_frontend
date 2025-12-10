@@ -1,4 +1,4 @@
-// "use client";
+"use client";
 
 import React, { useEffect, useState, useCallback, ChangeEvent } from "react";
 import { useWatch } from "react-hook-form";
@@ -123,10 +123,10 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
   const handleMaterialSearch = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
 
-//     if (val.trim().length > 3) {
-//       const filtered = AllMaterialCodes?.filter((item) =>
-//         item.material_description?.toLowerCase().includes(val.toLowerCase())
-//       );
+    if (val.trim().length > 3) {
+      const filtered = AllMaterialCodes?.filter((item) =>
+        item.material_description?.toLowerCase().includes(val.toLowerCase())
+      );
 
       const mappedResults = filtered || [];
       setSearchResults(mappedResults);
@@ -136,25 +136,25 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
       setShowSuggestions(false);
     }
 
-//     setMaterialSelectedFromList(false);
-//   };
+    setMaterialSelectedFromList(false);
+  };
 
   const handleMaterialSelect = (item: MaterialCode) => {
     form.setValue("material_name_description", item.material_name_description || "");
 
-//     if (item.material_code_revised && item.material_code_revised !== "null") {
-//       form.setValue("material_code_revised", item.material_code_revised);
-//     } else {
-//       form.setValue("material_code_revised", "");
-//     }
+    if (item.material_code_revised && item.material_code_revised !== "null") {
+      form.setValue("material_code_revised", item.material_code_revised);
+    } else {
+      form.setValue("material_code_revised", "");
+    }
 
-//     setMaterialSelectedFromList(true);
-//     setShowSuggestions(false);
-//   };
+    setMaterialSelectedFromList(true);
+    setShowSuggestions(false);
+  };
 
-//   useEffect(() => {
-//     const data = MaterialDetails?.material_master;
-//     if (!data || !filteredMaterialGroup.length) return;
+  useEffect(() => {
+    const data = MaterialDetails?.material_master;
+    if (!data || !filteredMaterialGroup.length) return;
 
     const fields = [
       "material_group",
@@ -183,7 +183,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
 
 
   return (
-    <div className="bg-[#F4F4F6]">
+    <div className="bg-[#F4F4F6] overflow-hidden">
       <div className="flex flex-col justify-between bg-white rounded-[8px]">
         <div>
           <UserRequestDetails
@@ -222,7 +222,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
           />
 
           <UserRequestDetails2
-            companyName={companyName}
+            // companyName={companyName}
             form={form}
             MaterialDetails={MaterialDetails}
             MaterialOnboardingDetails={MaterialOnboardingDetails}
@@ -231,7 +231,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
             setSelectedMaterialType={setSelectedMaterialType}
             selectedMaterialType={selectedMaterialType}
             UnitOfMeasure={UnitOfMeasure}
-            MaterialType={MaterialType}
+            // MaterialType={MaterialType}
             plantcode={plantcode}
             DivisionDetails={DivisionDetails}
             filteredStorage={filteredStorage}
@@ -247,7 +247,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
             filteredDivision={filteredDivision}
             StorageLocation={StorageLocation}
             AllMaterialType={MaterialType}
-            isMaterialCodeEdited={isMaterialCodeEdited}
+            // isMaterialCodeEdited={isMaterialCodeEdited}
             setIsMaterialCodeEdited={setIsMaterialCodeEdited}
             AllMaterialCodes={AllMaterialCodes}
             setShouldShowAllFields={setShouldShowAllFields}
@@ -282,4 +282,4 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
   );
 };
 
-// export default MaterialInformationForm;
+export default MaterialInformationForm;

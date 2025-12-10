@@ -1,4 +1,4 @@
-// "use client";
+"use client";
 
 import React, { useEffect, useState } from "react";
 import MaterialOnboardingForm from "@/src/components/molecules/material-onboarding-details/material-onboarding-form";
@@ -209,7 +209,7 @@ export default function MaterialOnboardingDetails() {
       const response: AxiosResponse<any> = await requestWrapper({
         url: API_END_POINTS.getMaterialGroupMaster,
         method: "GET",
-        params: {company_name: company_code}
+        params: { company_name: company_code }
       })
       const data = response?.data?.message?.data;
       if (data?.length) {
@@ -257,42 +257,83 @@ export default function MaterialOnboardingDetails() {
   }, [MaterialOnboardingDetails?.material_company_code]);
 
 
-//   if (loading) return <div className="p-4 text-gray-600">Loading...</div>;
+  const [showcompletealert, setshowcompletealert] = useState(false);
+
+  const sendEmailToUser = async (name: string) => {
+    try {
+      const response: AxiosResponse<any> = await requestWrapper({
+        url: API_END_POINTS.sendemailtouseexistingcode,
+        method: "POST",
+        params: { doc_name: name },
+      });
+
+      const result = response?.data;
+      console.log("Email API response:", result);
+      if (response?.status === 200)
+        setshowcompletealert(true);
+    } catch (error) {
+      console.error("Error sending email to user:", error);
+    }
+  };
+
+  const [showRevertAlert, setShowRevertAlert] = useState(false);
+  const sendRevertEmail = async (name: string, remark: string) => {
+    try {
+      const response: AxiosResponse<any> = await requestWrapper({
+        url: API_END_POINTS.sendrevertemailtouser,
+        method: "POST",
+        params: { doc_name: name,
+          remark: remark,
+         },
+      });
+
+      const result = response?.data;
+      console.log("Email API response:", result);
+      if (response?.status === 200)
+        setShowRevertAlert(true);
+    } catch (error) {
+      console.error("Error sending email to user:", error);
+    }
+  };
+
+  //   if (loading) return <div className="p-4 text-gray-600">Loading...</div>;
 
   return (
-    <div>
-      <MaterialOnboardingForm
-        {...({
-          form,
-          EmployeeDetailsJSON,
-          companyName: CompanyJson,
-          plantcode: PlantJson,
-          DivisionDetails: DivisionJson,
-          IndustryDetails: IndustryJson,
-          UnitOfMeasure: UOMJson,
-          MRPType: MRPTypeJson,
-          ValuationClass: ValuationClassJson,
-          ProcurementType: ProcurementTypeJson,
-          ValuationCategory: ValuationCategoryJson,
-          MaterialGroup: MaterialGroupJson,
-          ProfitCenter: ProfitCenterJson,
-          PriceControl: PriceControlJson,
-          AvailabilityCheck: AvailabilityCheckJson,
-          MaterialType: MaterialTypeJson,
-          MRPController: MRPControllerJson,
-          StorageLocation: StorageLocationJson,
-          ClassType: ClassTypeJson,
-          PurchaseGroup: PurchaseGroupJson,
-          SerialProfile: SerialNumberProfileJson,
-          InspectionType: InspectionTypeJson,
-          LotSize: LotSizeJson,
-          MaterialCategory: MaterialCategoryJson,
-          SMK: SchedulingMarginKeyJson,
-          ExpirationDate: ExpirationDateJson,
-          MaterialOnboardingDetails,
-          MaterialDetails,
-        } as any)}
-      />
-    </div>
+    <MaterialOnboardingForm
+      {...({
+        form,
+        EmployeeDetailsJSON,
+        companyName: CompanyJson,
+        plantcode: PlantJson,
+        DivisionDetails: DivisionJson,
+        IndustryDetails: IndustryJson,
+        UnitOfMeasure: UOMJson,
+        MRPType: MRPTypeJson,
+        ValuationClass: ValuationClassJson,
+        ProcurementType: ProcurementTypeJson,
+        ValuationCategory: ValuationCategoryJson,
+        MaterialGroup: MaterialGroupJson,
+        ProfitCenter: ProfitCenterJson,
+        PriceControl: PriceControlJson,
+        AvailabilityCheck: AvailabilityCheckJson,
+        MaterialType: MaterialTypeJson,
+        MRPController: MRPControllerJson,
+        StorageLocation: StorageLocationJson,
+        ClassType: ClassTypeJson,
+        PurchaseGroup: PurchaseGroupJson,
+        SerialProfile: SerialNumberProfileJson,
+        InspectionType: InspectionTypeJson,
+        LotSize: LotSizeJson,
+        MaterialCategory: MaterialCategoryJson,
+        SMK: SchedulingMarginKeyJson,
+        ExpirationDate: ExpirationDateJson,
+        MaterialOnboardingDetails,
+        MaterialDetails,
+        showcompletealert,
+        onCloseCallback: sendEmailToUser,
+        showRevertAlert,
+        sendRevertEmail
+      } as any)}
+    />
   );
 }

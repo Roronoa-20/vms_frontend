@@ -38,6 +38,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
                 requestor_ref_no: parent.name,
                 request_date: parent.request_date,
                 approval_status: parent.approval_status,
+                request_id: parent.request_id
             })) || []
         );
     }, [data, search, selectedCompany]);
@@ -93,6 +94,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
                         <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] text-center">
                             <TableHead className="text-center text-black">Sr.No.</TableHead>
                             <TableHead className="text-center text-black text-nowrap">Requestor Ref No</TableHead>
+                            <TableHead className="text-center text-black text-nowrap">Request ID</TableHead>
                             <TableHead className="text-center text-black text-nowrap">Request Date</TableHead>
                             <TableHead className="text-center text-black text-nowrap">Company</TableHead>
                             <TableHead className="text-center text-black text-nowrap">Plant Name</TableHead>
@@ -107,6 +109,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
                             <TableRow key={item.child_name || idx}>
                                 <TableCell className="text-center text-nowrap">{(currentPage - 1) * recordPerPage + idx + 1}</TableCell>
                                 <TableCell className="text-center text-nowrap">{item.requestor_ref_no}</TableCell>
+                                <TableCell className="text-center text-nowrap">{item.request_id}</TableCell>
                                 <TableCell className="text-center text-nowrap">{formatDate(item.request_date)}</TableCell>
                                 <TableCell className="text-center text-nowrap">{item.company_code}</TableCell>
                                 <TableCell className="text-center text-nowrap">{item.plant || "-"}</TableCell>

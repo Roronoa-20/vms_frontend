@@ -7,11 +7,12 @@ export interface MaterialRequestChildItem {
   material_description: string;
   material_type: string;
   comment_by_user: string;
+  request_id: string;
 }
 
 // Parent table interface
 export interface MaterialRequestItem {
-  name: string;                           // REQ-9275
+  name: string;                          
   owner: string;
   creation: string;
   modified: string;
@@ -38,7 +39,7 @@ export interface MaterialRequestItem {
   ztext: string | null;
   sap_summary: string | null;
   doctype: string;
-  material_request_items: MaterialRequestChildItem[]; // Nested child table
+  material_request_items: MaterialRequestChildItem[];
 }
 
 // Pagination info

@@ -20,32 +20,32 @@ const MaterialSpecificationsForm: React.FC<MaterialSpecificationsFormProps> = ({
     const data = MaterialDetails?.material_onboarding;
     const requestItem = MaterialDetails?.material_request_item;
 
-//     if (data) {
-//       const fields = [
-//         "storage_requirements",
-//         "intended_usage_application",
-//         "hazardous_material",
-//       ] as const;
+    if (data) {
+      const fields = [
+        "storage_requirements",
+        "intended_usage_application",
+        "hazardous_material",
+      ] as const;
 
-//       fields.forEach((field) => {
-//         if (data[field]) {
-//           form.setValue(field, data[field]);
-//         }
-//       });
-//     }
+      fields.forEach((field) => {
+        if (data[field]) {
+          form.setValue(field, data[field]);
+        }
+      });
+    }
 
-//     if (requestItem?.material_specifications) {
-//       form.setValue("material_specifications", requestItem.material_specifications);
-//     }
-//   }, [MaterialDetails, form]);
+    if (requestItem?.material_specifications) {
+      form.setValue("material_specifications", requestItem.material_specifications);
+    }
+  }, [MaterialDetails, form]);
 
-//   return (
-//     <div className="bg-[#F4F4F6]">
-//       <div className="flex flex-col justify-between pt-4 bg-white rounded-[8px]">
-//         <div className="space-y-1">
-//           <div className="flex items-center justify-between text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
-//             <span>Characteristics & Specifications</span>
-//           </div>
+  return (
+    <div className="bg-[#F4F4F6] overflow-hidden">
+      <div className="flex flex-col justify-between pt-4 bg-white rounded-[8px] p-1">
+        <div className="space-y-1">
+          <div className="flex items-center justify-between text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
+            <span>Characteristics & Specifications</span>
+          </div>
 
           <div className="grid grid-cols-3 gap-4">
             {!isZCAPMaterial && (
@@ -145,4 +145,4 @@ const MaterialSpecificationsForm: React.FC<MaterialSpecificationsFormProps> = ({
   );
 };
 
-// export default MaterialSpecificationsForm;
+export default MaterialSpecificationsForm;
