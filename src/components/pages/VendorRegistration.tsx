@@ -204,17 +204,17 @@ const VendorRegistration = ({ ...Props }: Props) => {
     router.push("/dashboard");
   };
 
-  const VendorNameCheckApi = async (value: string) => {
+  const VendorNameCheckApi = async(email:string)=>{
 
-    if (value.length < 3) {
-      return;
-    }
-
+    // if(name.length < 3){
+    //   return;
+    // }
+    
     try {
 
-      const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.VendorNameCheckApi, params: { vendor_name: value }, method: "GET" });
-
-      if (response?.status == 404) {
+      const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.VendorNameCheckApi,params:{vendor_name:formData?.vendor_name,primary_email:email},method:"GET"});
+      
+      if(response?.status == 404){
         return;
       }
 

@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../atoms/select";
-import MultiSelect, { MultiValue } from "react-select";
+import MultiSelect, { MultiValue, SingleValue } from "react-select";
 import { TvendorRegistrationDropdown, VendorRegistrationData } from "@/src/types/types";
 import { useVendorStore } from "../../../store/VendorRegistrationStore";
 import API_END_POINTS from "@/src/services/apiEndPoints";
@@ -32,7 +32,7 @@ interface Props {
   ) => void;
   handleSelectChange: (value: any, name: string) => void;
   setMultiVendor: (data: any) => void;
-  VendorNameCheckApi:(value:string)=>void
+  VendorNameCheckApi:(email:string)=>void
   fieldDisable:boolean
 }
 
@@ -50,12 +50,21 @@ const VendorRegistration1 = ({
   const [newVendorTypeDropdown, setNewVendorTypeDropdown] = useState<OptionType[]>([]);
   const [countryMobileCode, setCountryMobileCode] = useState<string>("");
   const [emailError, setEmailError] = useState<string>("");
+  const [multiSelectCountryDropdownList,setMultiSelectCountryDropdownList] = useState<OptionType[]>([]);
 
   // Avoid SSR hydration mismatch by only setting after mount
   useEffect(() => {
     if (vendorTypeDropdown?.length) {
       setNewVendorTypeDropdown(
         vendorTypeDropdown.map((item) => ({
+          label: item?.name,
+          value: item?.name,
+        }))
+      );
+    }
+    if (countryDropdown?.length) {
+      setMultiSelectCountryDropdownList(
+        countryDropdown.map((item) => ({
           label: item?.name,
           value: item?.name,
         }))
@@ -85,6 +94,11 @@ const VendorRegistration1 = ({
       console.error("Country code fetch failed", err);
     }
   };
+
+  const handleCountryChange = async(value:SingleValue<OptionType>)=>{
+    fetchCountryCode(value?.value as string);
+    handleSelectChange(value?.value, "country");
+  }
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -155,7 +169,7 @@ const VendorRegistration1 = ({
                 placeholder="Enter Vendor Name"
                 name="vendor_name"
                 value={formData?.vendor_name ?? ""}
-                onChange={(e)=>{handlefieldChange(e),VendorNameCheckApi(e.target.value)}}
+                onChange={(e)=>{handlefieldChange(e)}}
                 disabled={fieldDisable}
               />
             </div>
@@ -167,7 +181,7 @@ const VendorRegistration1 = ({
           <h1 className="text-[14px] font-normal text-black pb-2">Email</h1>
           <Input
             required
-            onChange={handleEmailChange}
+            onChange={(e)=>{handleEmailChange(e),VendorNameCheckApi(e.target.value)}}
             value={formData?.office_email_primary ?? ""}
             name="office_email_primary"
             placeholder="Enter Email Address"
@@ -181,7 +195,7 @@ const VendorRegistration1 = ({
         {/* Country */}
         <div>
           <h1 className="text-[14px] font-normal text-black pb-2">Country</h1>
-          <Select
+          {/* <Select
             required
             value={formData?.country ?? ""}
             onValueChange={(value) => {
@@ -206,7 +220,17 @@ const VendorRegistration1 = ({
                 )}
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
+
+                <MultiSelect
+              onChange={handleCountryChange}
+              instanceId="country-multiselect"
+              options={multiSelectCountryDropdownList}
+              className="text-[12px] text-black"
+              menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+              styles={multiSelectStyles}
+            />
+
         </div>
 
         {/* Mobile No. */}

@@ -312,10 +312,14 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
                 </td>
 
                 <td className="border border-black px-2 py-1 align-top text-center">
-                  {formatDate(item?.schedule_date)}
+                  {formatDate(item?.schedule_date?.map((item:any)=>(
+                    <h1>{item}</h1>
+                  )))}
                 </td>
                 <td className="border border-black px-2 py-1 align-top text-center">
-                  {item?.schedule_quantity}
+                  {item?.schedule_quantity?.map((item:any)=>(
+                    <h1>{item}</h1>
+                  ))}
                 </td>
               </tr>
             ))}
