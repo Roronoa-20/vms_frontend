@@ -40,7 +40,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
   const [filteredValuationClass, setFilteredValuationClass] = useState<ValuationClass[]>([]);
   const [profitcenterSearch, setProfitCenterSearch] = useState<string>("");
 
-  console.log("Others Data Material Details----------->",MaterialType)
+  console.log("Others Data Material Details----------->", MaterialType)
 
   useEffect(() => {
     const currentPriceControl = form.getValues("price_control");
@@ -161,68 +161,69 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            {/* Profit Center */}
-            <div className="space-y-2">
-              <FormField
-                control={form.control}
-                name="profit_center"
-                key="profit_center"
-                render={({ field }: { field: ControllerRenderProps<FieldValues, "profit_center"> }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Profit Center <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={(val) => {
-                          field.onChange(val);
-                          setProfitCenterSearch("");
-                        }}
-                        value={field.value || ""}
-                        disabled={isZCAPMaterial}
-                      >
-                        <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
-                          <SelectValue placeholder="Select Profit Center" />
-                        </SelectTrigger>
-                        <SelectContent className="max-h-60 overflow-y-auto">
-                          <div className="px-2 py-1">
-                            <input
-                              type="text"
-                              value={profitcenterSearch}
-                              onChange={(e) => setProfitCenterSearch(e.target.value)}
-                              onKeyDown={(e) => {
-                                if (
-                                  !["ArrowDown", "ArrowUp", "Enter"].includes(e.key)
-                                ) {
-                                  e.stopPropagation();
-                                }
-                              }}
-                              placeholder="Search Division..."
-                              className="w-full p-2 border border-gray-300 rounded text-sm"
-                            />
-                          </div>
-                          {filteredProfitCenterOptions?.length > 0 ? (
-                            filteredProfitCenterOptions.map((profit) => (
-                              <SelectItem key={profit.name} value={profit.name}>
-                                {profit.name}
-                              </SelectItem>
-                            ))
-                          ) : (
-                            <div className="px-3 py-2 text-sm text-gray-500">
-                              No matching profit center found
-                            </div>
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
             {!isZCAPMaterial && (
               <>
+                {/* Profit Center */}
+                <div className="space-y-2">
+                  <FormField
+                    control={form.control}
+                    name="profit_center"
+                    key="profit_center"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "profit_center"> }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Profit Center <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={(val) => {
+                              field.onChange(val);
+                              setProfitCenterSearch("");
+                            }}
+                            value={field.value || ""}
+                          // disabled={isZCAPMaterial}
+                          >
+                            <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
+                              <SelectValue placeholder="Select Profit Center" />
+                            </SelectTrigger>
+                            <SelectContent className="max-h-60 overflow-y-auto">
+                              <div className="px-2 py-1">
+                                <input
+                                  type="text"
+                                  value={profitcenterSearch}
+                                  onChange={(e) => setProfitCenterSearch(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (
+                                      !["ArrowDown", "ArrowUp", "Enter"].includes(e.key)
+                                    ) {
+                                      e.stopPropagation();
+                                    }
+                                  }}
+                                  placeholder="Search Division..."
+                                  className="w-full p-2 border border-gray-300 rounded text-sm"
+                                />
+                              </div>
+                              {filteredProfitCenterOptions?.length > 0 ? (
+                                filteredProfitCenterOptions.map((profit) => (
+                                  <SelectItem key={profit.name} value={profit.name}>
+                                    {profit.name}
+                                  </SelectItem>
+                                ))
+                              ) : (
+                                <div className="px-3 py-2 text-sm text-gray-500">
+                                  No matching profit center found
+                                </div>
+                              )}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+
                 {/* Valuation Class */}
                 <div className="space-y-2">
                   <FormField
@@ -374,7 +375,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                               />
                             )}
 
-                             {!fileSelected ? (
+                            {!fileSelected ? (
                               <span className="text-sm text-gray-500">
                                 No file selected
                               </span>

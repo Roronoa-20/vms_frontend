@@ -80,7 +80,7 @@ interface MaterialOnboardingFormProps {
 const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) => {
   const { form, isLoading, MaterialOnboardingDetails, ProfitCenter = [], MaterialGroup, setLineItemFiles, lineItemFiles, sendRevertEmail, doc_name, saveAsDraft, onCloseCallback, showAlert, showcompletealert, showRevertAlert, EmployeeDetailsJSON, MaterialDetails, MaterialType, PurchaseGroup } = props;
 
-  console.log("Material Onboarding type------>", MaterialType)
+  console.log("Material Onboarding type------>", EmployeeDetailsJSON)
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -208,6 +208,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
 
   const materialType = MaterialOnboardingDetails?.material_type_name;
   const isZCAPMaterial = materialType === "ZCAP";
+  console.log("is ZCAP Material Type---->", MaterialOnboardingDetails)
 
   const buttonLabel = getButtonLabel(role, approvalStatus);
 
@@ -331,27 +332,31 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
                   <MaterialMRPData {...props} role={role} isZCAPMaterial={isZCAPMaterial} />
 
                   {!isZCAPMaterial && (
-                    <MaterialQAQCData {...props} MaterialDetails={memoizedMaterialDetails} />
+                    <>
+                      <MaterialQAQCData {...props} MaterialDetails={memoizedMaterialDetails} />
+
+                      <MaterialSpecifications {...props} isZCAPMaterial={isZCAPMaterial} />
+
+                      <MaterialOtherData
+                        {...props}
+                        role={role}
+                        filteredProfit={filteredProfit}
+                        setFilteredProfit={setFilteredProfit}
+                        fileSelected={fileSelected}
+                        setFileSelected={setFileSelected}
+                        fileName={fileName}
+                        setFileName={setFileName}
+                        handleLabelClick={handleLabelClick}
+                        handleImageChange={handleImageChange}
+                        handleRemoveFile={handleRemoveFile}
+                        isZCAPMaterial={isZCAPMaterial}
+                        MaterialType={MaterialType}
+                      />
+                    </>
                   )}
 
-                  <MaterialSpecifications {...props} isZCAPMaterial={isZCAPMaterial} />
-
-                  <MaterialOtherData
-                    {...props}
-                    role={role}
-                    filteredProfit={filteredProfit}
-                    setFilteredProfit={setFilteredProfit}
-                    fileSelected={fileSelected}
-                    setFileSelected={setFileSelected}
-                    fileName={fileName}
-                    setFileName={setFileName}
-                    handleLabelClick={handleLabelClick}
-                    handleImageChange={handleImageChange}
-                    handleRemoveFile={handleRemoveFile}
-                    isZCAPMaterial={isZCAPMaterial}
-                    MaterialType={MaterialType}
-                  />
                   <MaterialComment {...props} />
+
                   <MaterialOnboardingApproval {...props} role={role} />
                 </>
               )}

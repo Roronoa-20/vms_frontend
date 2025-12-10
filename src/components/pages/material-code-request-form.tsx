@@ -282,7 +282,6 @@ export default function MaterialRegistration() {
           isLoading={isLoading}
           isButtonDisabled={isButtonDisabled}
           materialRequestList={(materialRequestList.length > 0 ? materialRequestList[0] : undefined) as any}
-
         />
       </Form>
     </div>

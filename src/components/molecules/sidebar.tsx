@@ -23,6 +23,7 @@ const Sidebar = () => {
 
   let sideBar = designation === "Vendor" ? VendorsidebarMenu : designation === "Enquirer" ? EnquirysidebarMenu : designation === "ASA" ? ASASideBarMenu : designation === "Accounts Team" ? AccountSideBarMenu : designation === "Accounts Head" ? AccountHeadSideBarMenu : designation === "Purchase Head" ? PurchaseHeadsidebarMenu : designation === "QA Team" ? QASideBarMenu : designation === "Super Head" ? SuperHeadSidebarMenu : designation === "Treasury" ? TreasurySideBarMenu : designation === "Material User" ? MaterialUserSideBar : designation === "Material CP" ? MaterialCPSideBar : designation === "Finance" ? FinanceSideBarMenu : designation === "Finance Head" ? FinanceSideBarMenu : designation === "Category Master" ? CategoryMastersidebarMenu : sidebarMenu;
 
+
   if (designation === "Vendor") {
     sideBar = sideBar.filter((item) => {
       if (item.name === "ASA Form") {
@@ -41,13 +42,43 @@ const Sidebar = () => {
       return true;
     });
   }
+  const materialCpPages = [
+    "/material-onboarding-dashboard",
+    "/view-material-code-request"
+  ];
+
+  const isMaterialCPSidebar =
+    materialCpPages.includes(pathname) &&
+    designation === "Purchase Team" &&
+    role?.includes("Material CP");
+
+  if (isMaterialCPSidebar) {
+    sideBar = MaterialCPSideBar;
+  }
+
+  const forceCpCompact = isMaterialCPSidebar || designation === "Material CP";
 
   console.log("SIdebar ASA requeisred---->", asaReqd);
 
-  const getSidebarWidth = (designation: string) => {
-    const compactRoles = ["Vendor", "Enquirer", "ASA", "QA Team", "Material User", "Material CP", "Finance", "Finance Head"];
-    return compactRoles.includes(designation) ? "w-[100px]" : "w-[115px]";
+  // const getSidebarWidth = (designation: string) => {
+  //   const compactRoles = ["Vendor", "Enquirer", "ASA", "QA Team", "Material User", "Material CP", "Finance", "Finance Head"];
+  //   return compactRoles.includes(designation) ? "w-[100px]" : "w-[115px]";
+  // };
+
+  const getSidebarWidth = (designation: string, role: string | null| undefined, forceCompact: boolean) => {
+    if (forceCompact) return "w-[100px]";
+    const compactDesignations = [ "Vendor", "Enquirer", "ASA", "QA Team", "Material User", "Material CP", "Finance", "Finance Head"];
+
+    const compactRoles = ["Material CP"];
+
+    const isCompactByDesignation = compactDesignations.includes(designation);
+    const isCompactByRole = role ? compactRoles.includes(role) : false;
+
+    return isCompactByDesignation || isCompactByRole
+      ? "w-[100px]"
+      : "w-[115px]";
   };
+
 
   const [openMenu, setOpenMenu] = useState<SidebarItem | null>(null);
   const [submenuPos, setSubmenuPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
@@ -59,7 +90,7 @@ const Sidebar = () => {
       const btn = buttonRefs.current[idx];
       const sidebar = document.querySelector(".sidebar-scroll") as HTMLElement;
       if (btn && sidebar) {
-        const offset = getSidebarWidth(designation || "") === "w-[100px]" ? 0 : 0;
+        const offset = getSidebarWidth(designation || "", role, forceCpCompact) === "w-[100px]" ? 0 : 0;
         const btnRect = btn.getBoundingClientRect();
         const sidebarRect = sidebar.getBoundingClientRect();
 
@@ -82,7 +113,7 @@ const Sidebar = () => {
         const idx = sideBar.findIndex((item) => item.name === openMenu.name);
         const btn = buttonRefs.current[idx];
         if (btn) {
-          const offset = getSidebarWidth(designation || "") === "w-[100px]" ? 0 : 0;
+          const offset = getSidebarWidth(designation || "", role, forceCpCompact) === "w-[100px]" ? 0 : 0;
           const top = btn.offsetTop + 15 - sidebar.scrollTop;
           const left = sidebar.clientWidth + offset;
 
@@ -95,15 +126,26 @@ const Sidebar = () => {
     return () => sidebar.removeEventListener("scroll", handleScroll);
   }, [openMenu]);
 
+  const hasPurchaseAndCP = designation === "Purchase Team" && role?.includes("Material CP");
+
+
   const navigateTo = (item: SidebarItem | SidebarChild) => {
-    if ('children' in item && item.children.length > 0) return;
+    if ("children" in item && item.children.length > 0) return;
+
+    if (item.name === "Material Onboarding" && hasPurchaseAndCP) {
+      window.open("/material-onboarding-dashboard", "_blank");
+      return;
+    }
+
     if (item.name === "ASA Form") {
       router.push(`/asa-form?tabtype=company_information&vms_ref_no=${vendorRef}`);
     } else if (item.href) {
       router.push(item.href);
     }
+
     setOpenMenu(null);
   };
+
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -122,7 +164,7 @@ const Sidebar = () => {
     <div className="relative">
       {/* SIDEBAR */}
       <div
-        className={`${getSidebarWidth(designation || "")} bg-[#0C2741] flex flex-col items-center gap-3 overflow-y-auto no-scrollbar h-screen sidebar-scroll`}
+        className={`${getSidebarWidth(designation || "", role, forceCpCompact)} bg-[#0C2741] flex flex-col items-center gap-3 overflow-y-auto no-scrollbar h-screen sidebar-scroll`}
       >
         <div className="pb-3 pt-2.5">
           <Logo />

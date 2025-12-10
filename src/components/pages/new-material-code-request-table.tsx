@@ -34,7 +34,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationType>({
     total_count: 0,
-    limit: 5,
+    limit: 15,
     offset: 0,
     has_next: false,
     has_previous: false,
@@ -63,6 +63,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
       requestor_ref_no: parent.name,
       request_date: parent.request_date,
       approval_status: parent.approval_status,
+      request_id: parent.request_id
     })) || []
   );
 
@@ -110,7 +111,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
   };
 
   return (
-    <div className="mt-4 border rounded-xl overflow-hidden shadow-md p-4 bg-white">
+    <div className="border rounded-xl overflow-hidden shadow-md p-4 bg-white">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-3 gap-3 md:gap-0">
         {/* Left side: Button */}
         <div className="flex-shrink-0">
@@ -162,6 +163,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
               <TableHead className="text-center text-black whitespace-nowrap">Sr.No.</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">Requestor Ref No</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">Request ID</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">Request Date</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">Company</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">Plant Name</TableHead>
@@ -180,6 +182,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
                     {(currentPage - 1) * recordsPerPage + index + 1}
                   </TableCell>
                   <TableCell className="text-center whitespace-nowrap">{item.requestor_ref_no}</TableCell>
+                  <TableCell className="text-center whitespace-nowrap">{item.request_id}</TableCell>
                   <TableCell className="text-center whitespace-nowrap">{formatDate(item.request_date)}</TableCell>
                   <TableCell className="text-center whitespace-nowrap">{item.company_code}</TableCell>
                   <TableCell className="text-center whitespace-nowrap">{item.plant || "-"}</TableCell>

@@ -171,29 +171,12 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
 
 
   // --- Search Filters ---
-  const filteredPlantOptions = plantSearch
-    ? filteredPlants?.filter((plant) =>
-      plant.plant_name
-        ?.toLowerCase()
-        .includes(plantSearch.toLowerCase())
-    )
-    : filteredPlants;
+  const filteredPlantOptions = plantSearch ? filteredPlants?.filter((plant) => plant.plant_name?.toLowerCase().includes(plantSearch.toLowerCase())) : filteredPlants;
 
-  const filteredMaterialTypeOptions = materialTypeSearch
-    ? filteredMaterialType?.filter(
-      (type) =>
-        type.name.toLowerCase().includes(materialTypeSearch.toLowerCase()) ||
-        type.description?.toLowerCase().includes(materialTypeSearch.toLowerCase())
-    )
-    : filteredMaterialType;
+  const filteredMaterialTypeOptions = materialTypeSearch ? filteredMaterialType?.filter((type) => type.name.toLowerCase().includes(materialTypeSearch.toLowerCase()) || type.description?.toLowerCase().includes(materialTypeSearch.toLowerCase())) : filteredMaterialType;
 
-  const filteredUomOptions = uomSearch
-    ? uomMaster?.filter(
-      (unit) =>
-        unit.name.toLowerCase().includes(uomSearch.toLowerCase()) ||
-        unit.description?.toLowerCase().includes(uomSearch.toLowerCase())
-    )
-    : uomMaster;
+  const filteredUomOptions = uomSearch ? uomMaster?.filter(
+    (unit) => unit.name.toLowerCase().includes(uomSearch.toLowerCase()) || unit.description?.toLowerCase().includes(uomSearch.toLowerCase())) : uomMaster;
 
   // --- Reset invalid material type ---
   useEffect(() => {
@@ -224,12 +207,14 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
   }, [desc]);
 
   useEffect(() => {
-    if (desc && code && !materialSelectedFromList) {
+    const desc = form.getValues("material_name_description");
+
+    if (desc && !materialSelectedFromList) {
       form.setValue("is_revised_code_new", true);
     } else {
       form.setValue("is_revised_code_new", false);
     }
-  }, [desc, code, materialSelectedFromList]);
+  }, [form.watch("material_name_description"), materialSelectedFromList]);
 
   // --- Delete a row from table (DO NOT DELETE) ---
   // const handleDeleteRow = (indexToDelete: number) => {

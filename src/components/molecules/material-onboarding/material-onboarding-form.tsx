@@ -40,8 +40,8 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, o
     };
 
     return (
-        <form onSubmit={onSubmit} className="bg-white p-4 rounded shadow space-y-4">
-            <div className="space-y-1">
+        <form onSubmit={onSubmit} className="bg-white p-4 rounded shadow">
+            <div className="space-y-4">
                 <RequestorInformation
                     form={form}
                     MaterialOnboarding={materialRequestList}
@@ -55,44 +55,49 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, o
                 />
             </div>
 
-            <div className="flex justify-end space-x-5 items-center">
-                <Button
-                    variant="backbtn"
-                    size="backbtnsize"
-                    onClick={onCancel}
-                >
-                    Cancel
-                </Button>
+            <div className="mt-12">
+                <div className="flex justify-end space-x-6 items-center">
+                    <Button
+                        variant="backbtn"
+                        size="backbtnsize"
+                        className="py-2.5"
+                        onClick={onCancel}
+                    >
+                        Cancel
+                    </Button>
 
-                {(materialRequestList?.approval_status === "" ||
-                    materialRequestList?.approval_status === undefined) && (
+                    {(materialRequestList?.approval_status === "" ||
+                        materialRequestList?.approval_status === undefined) && (
+                            <Button
+                                variant="nextbtn"
+                                size="nextbtnsize"
+                                type="submit"
+                                className="py-2.5"
+                            >
+                                {isLoading ? "Processing..." : "Submit"}
+                            </Button>
+                        )}
+
+                    {materialRequestList?.approval_status === "Re-Opened by CP" && (
                         <Button
                             variant="nextbtn"
                             size="nextbtnsize"
-                            type="submit"
+                            type="button"
+                            className="py-2.5"
+                            onClick={onUpdate}
                         >
-                            {isLoading ? "Processing..." : "Submit"}
+                            {isLoading ? "Processing..." : "Update"}
                         </Button>
                     )}
 
-                {materialRequestList?.approval_status === "Re-Opened by CP" && (
-                    <Button
-                        variant="nextbtn"
-                        size="nextbtnsize"
-                        type="button"
-                        onClick={onUpdate}
-                    >
-                        {isLoading ? "Processing..." : "Update"}
-                    </Button>
-                )}
-
-                {showAlert && (
-                    <AlertBox
-                        content={"Your Details have been submitted successfully!"}
-                        submit={showAlert}
-                        url="new-material-code-request-table"
-                    />
-                )}
+                    {showAlert && (
+                        <AlertBox
+                            content={"Your Details have been submitted successfully!"}
+                            submit={showAlert}
+                            url="new-material-code-request-table"
+                        />
+                    )}
+                </div>
             </div>
         </form>
     );

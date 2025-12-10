@@ -51,7 +51,7 @@ export default function RequestorInformation({ form, EmployeeDetails, MaterialOn
 
     return (
         <div className="bg-[#F4F4F6]">
-            <div className="flex flex-col justify-between pt-4 bg-white rounded-[8px]">
+            <div className="flex flex-col justify-between bg-white rounded-[8px]">
                 <div className="space-y-1">
                     <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
                         Requestor Information

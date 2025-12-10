@@ -13,13 +13,14 @@ import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division,
 interface MaterialApprovalFormProps {
   form: UseFormReturn<MaterialRegistrationFormData>;
   role: string;
-  EmployeeDetails?: EmployeeDetail;
+  EmployeeDetailsJSON?: EmployeeDetail;
   MaterialOnboardingDetails?: MaterialRegistrationFormData;
   MaterialDetails?: MaterialRequestData;
 }
 
-const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({ form, role, EmployeeDetails, MaterialOnboardingDetails, MaterialDetails }) => {
-  console.log("Approval MaterialOnboardingDetails--->", MaterialOnboardingDetails);
+const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({ form, role, EmployeeDetailsJSON, MaterialOnboardingDetails, MaterialDetails }) => {
+
+  console.log("Approval MaterialOnboardingDetails--->", EmployeeDetailsJSON);
 
   const [approvalStatusState, setApprovalStatusState] = useState<string | undefined>(undefined);
 
@@ -123,7 +124,7 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({ form, role,
                         {...field}
                         className="p-3 w-full text-sm placeholder:text-gray-400"
                         placeholder="Enter Name"
-                        value={EmployeeDetails?.name || ""}
+                        value={EmployeeDetailsJSON?.name || ""}
                         disabled={role === "Material User"}
                       />
                     </FormControl>

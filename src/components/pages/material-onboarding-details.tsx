@@ -60,6 +60,7 @@ export default function MaterialOnboardingDetails() {
           url: `${API_END_POINTS.getEmployeeDetails}?user=${user_email}`,
           method: "GET",
         });
+        console.log("Employee Details ------>",res)
         setEmployeeDetailsJSON(res?.data?.message?.data || null);
       } catch (err) {
         console.error("Error fetching employee details:", err);
@@ -163,7 +164,8 @@ export default function MaterialOnboardingDetails() {
             params: { name, material_name },
           }),
         ]);
-
+        console.log("Table REsponse Materi O--->",tableRes)
+        console.log("Table REsponse Materi D--->",detailsRes)
         const tableData = tableRes?.data?.message?.data?.[0];
         const detailsData = detailsRes?.data?.message?.data;
 

@@ -62,29 +62,8 @@ interface UserRequestFormProps {
     MaterialCategory?: MaterialCategory[];
 }
 
-const UserRequestForm: React.FC<UserRequestFormProps> = ({
-    form,
-    plantcode,
-    AllMaterialType,
-    StorageLocation,
-    AllMaterialCodes,
-    MaterialDetails,
-    MaterialOnboardingDetails,
-    handleMaterialSearch,
-    handleMaterialSelect,
-    searchResults = [],
-    showSuggestions,
-    setShowSuggestions,
-    selectedMaterialType,
-    setSelectedMaterialType,
-    setMaterialCompanyCode,
-    materialCompanyCode,
-    setIsMaterialCodeEdited,
-    setShouldShowAllFields,
-    shouldShowAllFields,
-    setIsMatchedMaterial,
-    isZCAPMaterial,
-}) => {
+const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllMaterialType, StorageLocation, AllMaterialCodes, MaterialDetails, MaterialOnboardingDetails, handleMaterialSearch, handleMaterialSelect, searchResults = [], showSuggestions, setShowSuggestions, selectedMaterialType, setSelectedMaterialType, setMaterialCompanyCode, materialCompanyCode, setIsMaterialCodeEdited, setShouldShowAllFields, shouldShowAllFields, setIsMatchedMaterial, isZCAPMaterial }) => {
+
     const { designation } = useAuth();
     const role = designation || "";
     const isMaterialCP = designation === "Material CP";
@@ -95,7 +74,8 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({
     const [divisionSearch, setDivisionSearch] = useState("");
     const [storageSearch, setStorageSearch] = useState("");
     // New Code flow state
-    const [hideMaterialCode, setHideMaterialCode] = useState(false); // true after New Code clicked
+    const [hideMaterialCode, setHideMaterialCode] = useState(false);
+    const isRevisedNewCode = MaterialDetails?.material_request_item?.is_revised_code_new
 
     // watchers
     const materialCode = form.watch("material_code_revised");
@@ -139,9 +119,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({
         let revisedCode = getCodeFromDescription(materialDescValue);
 
         const approvalStatus = MaterialOnboardingDetails?.approval_status;
-        const shouldPrefill = ["Sent to SAP", "Re-Opened by CP", "Saved as Draft"].includes(
-            approvalStatus || ""
-        );
+        const shouldPrefill = ["Sent to SAP", "Re-Opened by CP", "Saved as Draft"].includes(approvalStatus || "");
 
         if (shouldPrefill && storage) {
             revisedCode = storage?.material_code_revised || revisedCode;
@@ -149,6 +127,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({
 
         form.setValue("material_name_description", materialDescValue);
         form.setValue("comment_by_user", item.comment_by_user || "");
+        form.setValue("material_specifications", item.material_specifications || "");
         form.setValue("base_unit_of_measure", item.unit_of_measure || "");
         form.setValue("material_category", item.material_category || "");
 
@@ -172,16 +151,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({
             form.setValue("division", storage.division || "");
             form.setValue("old_material_code", storage.old_material_code || "");
         }
-    }, [
-        MaterialDetails,
-        filteredPlants,
-        filteredMaterialTypes,
-        MaterialOnboardingDetails,
-        AllMaterialCodes,
-        form,
-        setMaterialCompanyCode,
-        setSelectedMaterialType,
-    ]);
+    }, [MaterialDetails, filteredPlants, filteredMaterialTypes, MaterialOnboardingDetails, AllMaterialCodes, form, setMaterialCompanyCode, setSelectedMaterialType]);
 
     // -------------------- AUTO-UPDATE MATERIAL CODE FOR CP / STORE --------------------
     useEffect(() => {
@@ -196,6 +166,21 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({
             form.setValue("material_code_revised", revised, { shouldValidate: true, shouldDirty: true });
         }
     }, [role, AllMaterialCodes, form]);
+
+    useEffect(() => {
+        if (isRevisedNewCode === undefined || isRevisedNewCode === null) return;
+
+        if (isRevisedNewCode) {
+            // When true → hide code UI and show all fields
+            setHideMaterialCode(true);
+            setShouldShowAllFields(true);
+        } else {
+            // When false → show code UI and collapse fields
+            setHideMaterialCode(false);
+            setShouldShowAllFields(false);
+        }
+    }, [isRevisedNewCode, setHideMaterialCode, setShouldShowAllFields]);
+
 
     // -------------------- MANUAL EDIT DETECTION & VALIDATION --------------------
     useEffect(() => {
@@ -231,18 +216,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({
         } else {
             form.clearErrors("material_code_revised");
         }
-    }, [
-        materialCode,
-        materialDesc,
-        originalMaterialCode,
-        originalDesc,
-        AllMaterialCodes,
-        setIsMatchedMaterial,
-        setIsMaterialCodeEdited,
-        setShouldShowAllFields,
-        hideMaterialCode,
-        form,
-    ]);
+    }, [materialCode, materialDesc, originalMaterialCode, originalDesc, AllMaterialCodes, setIsMatchedMaterial, setIsMaterialCodeEdited, setShouldShowAllFields, hideMaterialCode, form]);
 
     // -------------------- NEW CODE FLOW --------------------
     const handleToggleNewCode = () => {
@@ -307,7 +281,8 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({
         ? showMaterialCodeStatuses.includes(MaterialOnboardingDetails.approval_status)
         : false;
 
-    // -------------------- JSX --------------------
+
+
     return (
         <div className="bg-[#F4F4F6] overflow-hidden">
             <div className="flex flex-col justify-between bg-white rounded-[8px] pt-3 p-1">
@@ -347,7 +322,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({
                                                     className="w-full p-[9px] text-sm text-gray-700 border border-gray-300 rounded-md placeholder:text-gray-400 hover:border-blue-400 focus:border-blue-400 focus:outline-none"
                                                     placeholder="Enter or Search Material Name/Description"
                                                 />
-                                                {hideMaterialCode && (
+                                                {!isRevisedNewCode && hideMaterialCode && (
                                                     <span className="text-xs text-blue-600 italic">
                                                         **change the material description to create new material code
                                                     </span>
@@ -376,7 +351,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({
 
                         {/* Right column: Material Code area + New Code toggle */}
                         <div className="space-y-2">
-                            {showMaterialCode && !hideMaterialCode && (
+                            {!isRevisedNewCode && !hideMaterialCode && (
                                 <FormField
                                     control={form.control}
                                     name="material_code_revised"
@@ -386,7 +361,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({
                                             <FormLabel className="font-bold">Material Code <span className="text-red-500">*</span></FormLabel>
                                             <FormControl>
                                                 <div className="relative flex items-center gap-2 w-full">
-                                                    {!hideMaterialCode ? (
+                                                    {!isRevisedNewCode ? (
                                                         <>
                                                             <Input
                                                                 {...field}
@@ -433,7 +408,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({
                                 <div>
                                     <FormField
                                         control={form.control}
-                                        key="material_specifications_side"
+                                        key="material_specifications"
                                         name="material_specifications"
                                         render={({ field }: { field: ControllerRenderProps<FieldValues, "material_specifications"> }) => (
                                             <FormItem>
@@ -444,6 +419,8 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({
                                                         rows={2}
                                                         className="w-full p-3 text-sm rounded-md placeholder:text-gray-400 border border-gray-300 hover:border-blue-500 focus:border-blue-500 focus:outline-none"
                                                         placeholder="Enter Material Specifications"
+                                                        value={field.value || ""}
+                                                        readOnly={shouldShowAllFields}
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -453,7 +430,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({
                                 </div>
 
                                 <div>
-                                    {!shouldShowAllFields && (
+                                    {shouldShowAllFields && (
                                         <FormField
                                             control={form.control}
                                             name="comment_by_user"
@@ -472,7 +449,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({
                                                             placeholder="Provide a reason for selecting this material"
                                                             onChange={field.onChange}
                                                             value={field.value || ""}
-                                                            readOnly={!shouldShowAllFields}
+                                                            readOnly={shouldShowAllFields}
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
@@ -488,61 +465,63 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({
                         {shouldShowAllFields && hideMaterialCode && (role === "Material CP" || role === "Store") && (
                             <>
                                 {/* Division */}
-                                <div className="space-y-2">
-                                    <FormField
-                                        control={form.control}
-                                        name="division"
-                                        key="division"
-                                        render={({ field }: { field: ControllerRenderProps<FieldValues, "division"> }) => (
-                                            <FormItem>
-                                                <FormLabel>Division <span className="text-red-500">*</span></FormLabel>
-                                                <FormControl>
-                                                    <Select
-                                                        onValueChange={(val) => {
-                                                            field.onChange(val);
-                                                            setDivisionSearch("");
-                                                        }}
-                                                        value={field.value || ""}
-                                                        disabled={isZCAPMaterial}
-                                                    >
-                                                        <SelectTrigger className={`p-3 w-full text-sm data-[placeholder]:text-gray-600`}>
-                                                            <SelectValue placeholder="Select Division" />
-                                                        </SelectTrigger>
-                                                        <SelectContent className="max-h-60 overflow-y-auto">
-                                                            <div className="px-2 py-1">
-                                                                <input
-                                                                    type="text"
-                                                                    value={divisionSearch}
-                                                                    onChange={(e) => setDivisionSearch(e.target.value)}
-                                                                    onKeyDown={(e) => {
-                                                                        if (!["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
-                                                                            e.stopPropagation();
-                                                                        }
-                                                                    }}
-                                                                    placeholder="Search Division..."
-                                                                    className="w-full p-2 border border-gray-300 rounded text-sm"
-                                                                />
-                                                            </div>
-                                                            {filteredDivisionOptions?.length > 0 ? (
-                                                                filteredDivisionOptions.map((division) => (
-                                                                    <SelectItem
-                                                                        key={division.division_name}
-                                                                        value={division.division_name ?? ""}
-                                                                    >
-                                                                        {division.division_name}
-                                                                    </SelectItem>
-                                                                ))
-                                                            ) : (
-                                                                <div className="px-3 py-2 text-sm text-gray-500">No matching divisions</div>
-                                                            )}
-                                                        </SelectContent>
-                                                    </Select>
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
+                                {!isZCAPMaterial && (
+                                    <div className="space-y-2">
+                                        <FormField
+                                            control={form.control}
+                                            name="division"
+                                            key="division"
+                                            render={({ field }: { field: ControllerRenderProps<FieldValues, "division"> }) => (
+                                                <FormItem>
+                                                    <FormLabel>Division <span className="text-red-500">*</span></FormLabel>
+                                                    <FormControl>
+                                                        <Select
+                                                            onValueChange={(val) => {
+                                                                field.onChange(val);
+                                                                setDivisionSearch("");
+                                                            }}
+                                                            value={field.value || ""}
+                                                        // disabled={isZCAPMaterial}
+                                                        >
+                                                            <SelectTrigger className={`p-3 w-full text-sm data-[placeholder]:text-gray-600`}>
+                                                                <SelectValue placeholder="Select Division" />
+                                                            </SelectTrigger>
+                                                            <SelectContent className="max-h-60 overflow-y-auto">
+                                                                <div className="px-2 py-1">
+                                                                    <input
+                                                                        type="text"
+                                                                        value={divisionSearch}
+                                                                        onChange={(e) => setDivisionSearch(e.target.value)}
+                                                                        onKeyDown={(e) => {
+                                                                            if (!["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
+                                                                                e.stopPropagation();
+                                                                            }
+                                                                        }}
+                                                                        placeholder="Search Division..."
+                                                                        className="w-full p-2 border border-gray-300 rounded text-sm"
+                                                                    />
+                                                                </div>
+                                                                {filteredDivisionOptions?.length > 0 ? (
+                                                                    filteredDivisionOptions.map((division) => (
+                                                                        <SelectItem
+                                                                            key={division.division_name}
+                                                                            value={division.division_name ?? ""}
+                                                                        >
+                                                                            {division.division_name}
+                                                                        </SelectItem>
+                                                                    ))
+                                                                ) : (
+                                                                    <div className="px-3 py-2 text-sm text-gray-500">No matching divisions</div>
+                                                                )}
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                )}
 
                                 {/* Storage Location */}
                                 <div className="space-y-2">
