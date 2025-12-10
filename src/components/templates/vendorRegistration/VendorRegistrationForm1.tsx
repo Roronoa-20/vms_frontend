@@ -32,7 +32,7 @@ interface Props {
   ) => void;
   handleSelectChange: (value: any, name: string) => void;
   setMultiVendor: (data: any) => void;
-  VendorNameCheckApi:(value:string)=>void
+  VendorNameCheckApi:(email:string)=>void
   fieldDisable:boolean
 }
 
@@ -169,7 +169,7 @@ const VendorRegistration1 = ({
                 placeholder="Enter Vendor Name"
                 name="vendor_name"
                 value={formData?.vendor_name ?? ""}
-                onChange={(e)=>{handlefieldChange(e),VendorNameCheckApi(e.target.value)}}
+                onChange={(e)=>{handlefieldChange(e)}}
                 disabled={fieldDisable}
               />
             </div>
@@ -181,7 +181,7 @@ const VendorRegistration1 = ({
           <h1 className="text-[14px] font-normal text-black pb-2">Email</h1>
           <Input
             required
-            onChange={handleEmailChange}
+            onChange={(e)=>{handleEmailChange(e),VendorNameCheckApi(e.target.value)}}
             value={formData?.office_email_primary ?? ""}
             name="office_email_primary"
             placeholder="Enter Email Address"

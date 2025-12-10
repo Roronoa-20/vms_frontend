@@ -74,7 +74,7 @@ const DashboardCards = ({ ...Props }: Props) => {
   console.log(Props?.cardData, "this is card data");
   const { MultipleVendorCode } = useMultipleVendorCodeStore();
   const { designation } = useAuth();
-  const user = designation;
+  const user = designation as string;
   const [loading, setLoading] = useState<boolean>(true);
 
   console.log(user, "this is desingation");
