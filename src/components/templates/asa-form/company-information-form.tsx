@@ -5,14 +5,16 @@ import { Button } from "@/components/ui/button";
 import Form_Input from "@/src/components/common/FormInput";
 import Textarea_Input from "@/src/components/common/TextareaWithLabel";
 import { useRouter } from "next/navigation";
+import { useAuth } from '@/src/context/AuthContext';
 import { useASAForm } from "@/src/hooks/useASAForm";
+
 
 export default function Company_Information_Form() {
     const router = useRouter();
     const params = useSearchParams();
     const vmsRefNo = params.get("vms_ref_no") || "";
     const { companyInfo, updateCompanyInfo, refreshFormData, asaFormSubmitData } = useASAForm();
-
+    const { name } = useAuth();
     const isverified = asaFormSubmitData.verify_by_asa_team || 0;
 
     const requiredFields: (keyof typeof companyInfo)[] = [
@@ -25,18 +27,27 @@ export default function Company_Information_Form() {
         (field) => companyInfo[field]?.trim()?.length > 0
     );
 
-    useEffect(() => {
-        const stored = localStorage.getItem("companyInfo");
-        if (stored) {
-            const parsed = JSON.parse(stored);
+    // useEffect(() => {
+    //     const stored = localStorage.getItem("companyInfo");
+    //     if (stored) {
+    //         const parsed = JSON.parse(stored);
 
-            for (const key in parsed) {
-                const entry = parsed[key];
-            }
-            updateCompanyInfo(parsed);
-            refreshFormData();
+    //         for (const key in parsed) {
+    //             const entry = parsed[key];
+    //         }
+    //         updateCompanyInfo(parsed);
+    //         refreshFormData();
+    //     }
+    // }, []);
+
+    useEffect(() => {
+        if (name && !companyInfo.name_of_the_company && !localStorage.getItem("companyInfo")) {
+            updateCompanyInfo({
+                ...companyInfo,
+                name_of_the_company: name
+            });
         }
-    }, []);
+    }, [name]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -88,17 +99,17 @@ export default function Company_Information_Form() {
                     required={true}
                 />
                 {isverified !== 1 && (
-                <div className="flex justify-end">
-                    <Button
-                        className="py-2.5"
-                        variant="nextbtn"
-                        size="nextbtnsize"
-                        onClick={handleNext}
-                        disabled={!isFormValid}
-                    >
-                        Next
-                    </Button>
-                </div>
+                    <div className="flex justify-end">
+                        <Button
+                            className="py-2.5"
+                            variant="nextbtn"
+                            size="nextbtnsize"
+                            onClick={handleNext}
+                            disabled={!isFormValid}
+                        >
+                            Next
+                        </Button>
+                    </div>
                 )}
             </div>
         </div>

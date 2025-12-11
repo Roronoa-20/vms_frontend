@@ -176,6 +176,7 @@ export const useASAForm = (): UseASAFormReturn => {
             };
 
             const localForms = {
+                CompanyInfoForm: loadLocalStorage("companyInfo"),
                 EMSForm: loadLocalStorage("EMSForm"),
                 ECEForm: loadLocalStorage("ECEForm"),
                 WCMForm: loadLocalStorage("WCMForm"),
@@ -187,7 +188,11 @@ export const useASAForm = (): UseASAFormReturn => {
                 HealthSafetyForm: loadLocalStorage("HealthSafetyForm"),
                 EmpSatisfactionForm: loadLocalStorage("EmpSatisfactionForm")
             };
-
+            // if (localForms.CompanyInfoForm) setCompanyInfo(localForms.CompanyInfoForm);
+            if (localForms.CompanyInfoForm) {
+                console.log("Setting Company Info from localStorage", localForms.CompanyInfoForm);
+                setCompanyInfo(localForms.CompanyInfoForm);
+            }
             if (localForms.EMSForm) setEmsForm(localForms.EMSForm);
             if (localForms.ECEForm) setEceForm(localForms.ECEForm);
             if (localForms.WCMForm) setWcmForm(localForms.WCMForm);
@@ -210,11 +215,11 @@ export const useASAForm = (): UseASAFormReturn => {
                 setAsaFormSubmitData(data);
                 const ASADoctypename = data?.name || "";
                 setASAFormName(ASADoctypename);
-                setCompanyInfo({
-                    name_of_the_company: data?.company_information?.name_of_the_company || "",
-                    location: data?.company_information?.location || "",
-                    name_of_product: data?.company_information?.name_of_product || "",
-                });
+                // setCompanyInfo({
+                //     name_of_the_company: data?.company_information?.name_of_the_company || "",
+                //     location: data?.company_information?.location || "",
+                //     name_of_product: data?.company_information?.name_of_product || "",
+                // });
 
                 const parseSection = (
                     sectionData: any,
@@ -246,6 +251,7 @@ export const useASAForm = (): UseASAFormReturn => {
                 parseSection(data?.governance, setgovernanceform, "");
                 parseSection(data?.biodiversity, setBiodiversityForm, "");
                 parseSection(data?.emp_satisfaction, setEmpSatisfactionForm, "");
+                parseSection(data?.company_information, setCompanyInfo, "CompanyInfoForm");
                 parseSection(data?.env_manage_system, setEmsForm, "EMSForm");
                 parseSection(data?.energy_cons_emis, setEceForm, "ECEForm");
                 parseSection(data?.water_cons_mang, setWcmForm, "WCMForm");
@@ -266,7 +272,7 @@ export const useASAForm = (): UseASAFormReturn => {
         fetchFormData();
     }, [vms_ref_no, shouldFetch, ASAformName]);
 
-    console.log("Complete ASA Form Data-->",asaFormSubmitData)
+    console.log("Complete ASA Form Data-->", asaFormSubmitData)
 
     useEffect(() => {
         // console.log("Updated ASAformName from state:", ASAformName);

@@ -105,7 +105,7 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData,poname }: Props) => 
 
   return (
     <div className="py-4 px-2">
-      <div className="shadow bg-[#f6f6f7] p-4 rounded-2xl">
+      <div className="shadow bg-[#f6f6f7] p-2 rounded-2xl">
         <div className="flex w-full justify-between pb-4">
           {/* <h1 className="text-[20px] text-[#03111F] font-semibold">
             All Dispatch Orders
@@ -164,7 +164,7 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData,poname }: Props) => 
               <TableHead className="text-center text-black">PO. No.</TableHead>
               <TableHead className="text-center text-black">Invoice Number</TableHead>
               <TableHead className="text-center text-black">Invoice Date</TableHead>
-              <TableHead className="text-center text-black">Invoice Amount</TableHead>
+              {/* <TableHead className="text-center text-black">Invoice Amount</TableHead> */}
               <TableHead className="text-center text-black">Status</TableHead>
               <TableHead className="text-center text-black">View Details</TableHead>
             </TableRow>
@@ -184,7 +184,7 @@ const DashboardDispatchVendorsTable = ({ dashboardTableData,poname }: Props) => 
                 </TableCell>
                 <TableCell className="text-center whitespace-nowrap">{item?.invoice_number}</TableCell>
                 <TableCell className="text-center whitespace-nowrap">{formatDate(item?.invoice_date)}</TableCell>
-                <TableCell className="text-center whitespace-nowrap">₹{item?.invoice_amount}</TableCell>
+                {/* <TableCell className="text-center whitespace-nowrap">₹{item?.invoice_amount}</TableCell> */}
                 <TableCell className="text-center whitespace-nowrap">
                   <div
                     className={`px-2 py-3 rounded-xl uppercase ${item?.status === "In Transit"

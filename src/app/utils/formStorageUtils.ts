@@ -3,6 +3,7 @@ export const restoreFormFromStorage = <T>(
   updateFn: (data: T) => void
 ) => {
   const stored = localStorage.getItem(storageKey);
+  console.log("Storage item---->",stored)
   if (stored) {
     try {
       const parsed: T = JSON.parse(stored);
