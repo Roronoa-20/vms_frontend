@@ -241,6 +241,11 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
         requestor_ref_no: name,
         material_code: form.getValues("material_code_revised") || form.getValues("old_material_code"),
         material_name: form.getValues("material_name_description"),
+        numerator_for_conversion: form.getValues("numerator_purchase_uom"),
+        denominator_for_conversion: form.getValues("denominator_purchase_uom"),
+        purchase_uom: form.getValues("purchase_uom"),
+        purchasing_value_key: "3",
+        min_lot_size: form.getValues("min_lot_size"),
         ...finalPayload,
       };
 

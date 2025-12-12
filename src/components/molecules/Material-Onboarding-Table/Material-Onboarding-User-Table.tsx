@@ -97,7 +97,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
                             <TableHead className="text-center text-black text-nowrap">Request ID</TableHead>
                             <TableHead className="text-center text-black text-nowrap">Request Date</TableHead>
                             <TableHead className="text-center text-black text-nowrap">Company</TableHead>
-                            <TableHead className="text-center text-black text-nowrap">Plant Name</TableHead>
+                            {/* <TableHead className="text-center text-black text-nowrap">Plant Name</TableHead> */}
                             <TableHead className="text-center text-black text-nowrap">Material Type</TableHead>
                             <TableHead className="text-center text-black text-nowrap">Material Description</TableHead>
                             <TableHead className="text-center text-black text-nowrap">Status</TableHead>
@@ -112,7 +112,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
                                 <TableCell className="text-center text-nowrap">{item.request_id}</TableCell>
                                 <TableCell className="text-center text-nowrap">{formatDate(item.request_date)}</TableCell>
                                 <TableCell className="text-center text-nowrap">{item.company_code}</TableCell>
-                                <TableCell className="text-center text-nowrap">{item.plant || "-"}</TableCell>
+                                {/* <TableCell className="text-center text-nowrap">{item.plant || "-"}</TableCell> */}
                                 <TableCell className="text-center text-nowrap">{item.material_type}</TableCell>
                                 <TableCell className="text-center text-nowrap">{item.material_description}</TableCell>
                                 <TableCell>

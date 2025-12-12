@@ -44,6 +44,11 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
   const [purchaseUOMSearch, setPurchaseUOMSearch] = useState("");
   const [lotsizeSearch, setLotsizeSearch] = useState("");
 
+  useEffect(() => {
+    form.register("numerator_purchase_uom");
+    form.register("denominator_purchase_uom");
+  }, []);
+
   const handleUOMConversionSubmit = ({ numerator, denominator }: UOMConversionData) => {
     form.setValue("numerator_purchase_uom", numerator);
     form.setValue("denominator_purchase_uom", denominator);
@@ -221,11 +226,12 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                           field.onChange(val);
                           setPurchaseUOMSearch("");
                         }}
-                        value={
-                          PurchaseUOMOptions.some((opt) => opt.name === field.value)
-                            ? field.value
-                            : ""
-                        }
+                        // value={
+                        //   PurchaseUOMOptions.some((opt) => opt.name === field.value)
+                        //     ? field.value
+                        //     : ""
+                        // }
+                        value={field.value || ""}
                       >
                         <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
                           <SelectValue placeholder="Select Purchase UOM" />
@@ -265,8 +271,8 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
               />
             </div>
 
-             {/* UOM Conversion Modal */}
-             <UOMConversionModal
+            {/* UOM Conversion Modal */}
+            <UOMConversionModal
               open={showConversionModal}
               onClose={() => setShowConversionModal(false)}
               baseUOM={baseUOM}
@@ -317,10 +323,9 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                     <FormControl>
                       <Input
                         {...field}
-                        className="p-3 w-full text-sm placeholder:text-gray-500"
-                        placeholder="Enter Purchasing Value Key"
-                        value="3"
+                        value={field.value || "3"}
                         readOnly
+                        className="p-3 w-full text-sm placeholder:text-gray-500"
                       />
                     </FormControl>
                     <FormMessage />
@@ -345,11 +350,12 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                             field.onChange(val);
                             setLotsizeSearch("");
                           }}
-                          value={
-                            filteredLotSizeOptions.some((opt) => opt.name === field.value)
-                              ? field.value
-                              : ""
-                          }
+                          value={field.value || ""}
+                        // value={
+                        //   filteredLotSizeOptions.some((opt) => opt.name === field.value)
+                        //     ? field.value
+                        //     : ""
+                        // }
                         >
                           <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
                             <SelectValue placeholder="Select Min Lot Size" />

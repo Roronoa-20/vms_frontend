@@ -3,12 +3,20 @@
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import SignatureCanvas from "react-signature-canvas";
-import { RotateCcw } from "lucide-react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
-import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialRequestData, MaterialType, MaterialMaster } from "@/src/types/MaterialCodeRequestFormTypes";
-
+import {
+  MaterialRegistrationFormData,
+  EmployeeDetail,
+  MaterialRequestData,
+} from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface MaterialApprovalFormProps {
   form: UseFormReturn<MaterialRegistrationFormData>;
@@ -18,11 +26,16 @@ interface MaterialApprovalFormProps {
   MaterialDetails?: MaterialRequestData;
 }
 
-const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({ form, role, EmployeeDetailsJSON, MaterialOnboardingDetails, MaterialDetails }) => {
-
-  console.log("Approval MaterialOnboardingDetails--->", EmployeeDetailsJSON);
-
-  const [approvalStatusState, setApprovalStatusState] = useState<string | undefined>(undefined);
+const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({
+  form,
+  role,
+  EmployeeDetailsJSON,
+  MaterialOnboardingDetails,
+  MaterialDetails,
+}) => {
+  const [approvalStatusState, setApprovalStatusState] = useState<string | undefined>(
+    undefined
+  );
 
   function formatDate(date: string | Date): string {
     const d = new Date(date);
@@ -32,6 +45,7 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({ form, role,
     return `${day}.${month}.${year}`;
   }
 
+  // Load initial values into RHF
   useEffect(() => {
     const data = MaterialDetails?.material_onboarding;
     if (!data) return;
@@ -49,10 +63,29 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({ form, role,
 
     fields.forEach((field) => {
       if (data[field]) {
-        form.setValue(field, data[field]);
+        form.setValue(field, data[field] as any);
       }
     });
   }, [MaterialDetails, form]);
+
+  useEffect(() => {
+    if (EmployeeDetailsJSON) {
+      form.setValue("approved_by_name", EmployeeDetailsJSON.company_email);
+    }
+  }, [EmployeeDetailsJSON, form]);
+
+
+  useEffect(() => {
+    if (MaterialOnboardingDetails?.requested_by) {
+      form.setValue("requested_by_name", MaterialOnboardingDetails.requested_by);
+    }
+    if (MaterialOnboardingDetails?.requested_by_place) {
+      form.setValue(
+        "requested_by_place",
+        MaterialOnboardingDetails.requested_by_place
+      );
+    }
+  }, [MaterialOnboardingDetails, form]);
 
   return (
     <div className="bg-[#F4F4F6] overflow-hidden">
@@ -63,99 +96,91 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({ form, role,
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <FormField
-                control={form.control}
-                name="requested_by_name"
-                key="requested_by_name"
-                render={({ field }: { field: ControllerRenderProps<FieldValues, "requested_by_name"> }) => (
-                  <FormItem>
-                    <FormLabel>Requested By - Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className="p-3 w-full text-sm placeholder:text-gray-400"
-                        placeholder="Enter Name"
-                        value={MaterialOnboardingDetails?.requested_by || ""}
-                        disabled={role === "Material User"}
-                        readOnly
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            {/* Requested By - Name */}
+            <FormField
+              control={form.control}
+              name="requested_by_name"
+              render={({ field }: { field: ControllerRenderProps<FieldValues, "requested_by_name"> }) => (
+                <FormItem>
+                  <FormLabel>Requested By - Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className="p-3 w-full text-sm placeholder:text-gray-400"
+                      placeholder="Enter Name"
+                      readOnly
+                      disabled={role === "Material User"}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-            <div className="space-y-2">
-              <FormField
-                control={form.control}
-                name="requested_by_place"
-                key="requested_by_place"
-                render={({ field }: { field: ControllerRenderProps<FieldValues, "requested_by_place"> }) => (
-                  <FormItem>
-                    <FormLabel>Requested By - Place</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className="p-3 w-full text-sm placeholder:text-gray-400"
-                        value={MaterialOnboardingDetails?.requested_by_place || ""}
-                        disabled={role === "Material User"}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            {/* Requested By - Place */}
+            <FormField
+              control={form.control}
+              name="requested_by_place"
+              render={({ field }: { field: ControllerRenderProps<FieldValues, "requested_by_place"> }) => (
+                <FormItem>
+                  <FormLabel>Requested By - Place</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className="p-3 w-full text-sm placeholder:text-gray-400"
+                      placeholder="Enter Place"
+                      disabled={role === "Material User"}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <FormField
-                control={form.control}
-                name="approved_by_name"
-                key="approved_by_name"
-                render={({ field }: { field: ControllerRenderProps<FieldValues, "approved_by_name"> }) => (
-                  <FormItem>
-                    <FormLabel>Approved By - Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className="p-3 w-full text-sm placeholder:text-gray-400"
-                        placeholder="Enter Name"
-                        value={EmployeeDetailsJSON?.name || ""}
-                        disabled={role === "Material User"}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            {/* Approved By - Name */}
+            <FormField
+              control={form.control}
+              name="approved_by_name"
+              render={({ field }: { field: ControllerRenderProps<FieldValues, "approved_by_name"> }) => (
+                <FormItem>
+                  <FormLabel>Approved By - Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      value={EmployeeDetailsJSON?.name || ""}
+                      readOnly
+                      disabled={role === "Material User"}
+                      onChange={() => { }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-            <div className="space-y-2">
-              <FormField
-                control={form.control}
-                name="approved_by_place"
-                key="approved_by_place"
-                render={({ field }: { field: ControllerRenderProps<FieldValues, "approved_by_place"> }) => (
-                  <FormItem>
-                    <FormLabel>Approved By - Place</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className="p-3 w-full text-sm placeholder:text-gray-400"
-                        placeholder="Enter Place"
-                        disabled={role === "Material User"}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            {/* Approved By - Place */}
+            <FormField
+              control={form.control}
+              name="approved_by_place"
+              render={({ field }: { field: ControllerRenderProps<FieldValues, "approved_by_place"> }) => (
+                <FormItem>
+                  <FormLabel>Approved By - Place</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className="p-3 w-full text-sm placeholder:text-gray-400"
+                      placeholder="Enter Place"
+                      disabled={role === "Material User"}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
+            {/* Approval Date */}
             <div className="space-y-2 col-span-1">
               <Label htmlFor="approval_date" className="text-sm font-medium text-gray-700">
                 Approval Date
@@ -164,13 +189,14 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({ form, role,
                 type="text"
                 id="approval_date"
                 name="approval_date"
-                key="approval_date"
                 className="w-full px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-md placeholder:text-[14px]"
                 readOnly
                 disabled={role === "Material User"}
                 value={
                   MaterialDetails?.material_onboarding?.approval_stage === "Approved"
-                    ? formatDate(MaterialDetails.material_onboarding.approval_date || new Date())
+                    ? formatDate(
+                      MaterialDetails.material_onboarding.approval_date || new Date()
+                    )
                     : formatDate(new Date())
                 }
               />
