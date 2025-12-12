@@ -14,6 +14,8 @@ import { AxiosResponse } from "axios";
 import { useRouter } from "next/navigation";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import MultiSelect from 'react-select';
+import { multiSelectStyles } from "../../common/sharedStyles";
 
 
 interface IvalidationChecks {
@@ -49,20 +51,41 @@ interface Props {
 
 const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconciliationDropdown, tabType, validation_check, isPurchaseTeamBankFile, isAmendment, country, isPurchaseTeamBeneficiaryFile, isPurchaseTeamIntermediateFile, re_release, incoTermsDropdown, versions }: Props) => {
 
-  const [reconciliationAccount, setReconciliationAccountt] = useState<string>(OnboardingDetail?.reconciliation_account as string);
-  const [IncoTerms, setIncoTerms] = useState<string>(OnboardingDetail?.incoterms as string);
+  const [reconciliationDropdownList,setReconciliationDropdownList] = useState<{value:string,label:string}[]>([]);
+  const [reconciliationAccount, setReconciliationAccountt] = useState<any>({value:OnboardingDetail?.reconciliation_details?.name,label:OnboardingDetail?.reconciliation_details?.reconcil_description});
+  const [IncoTerms, setIncoTerms] = useState<any>({value:OnboardingDetail?.incoterms,label:OnboardingDetail?.incoterms});
+  const [incotermsList,setIncotermsList] = useState<{value:string,label:string}[]>([])
   const { designation } = useAuth();
   const isTreasuryUser = designation?.toLowerCase() === "treasury";
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const router = useRouter();
   const [companyBasedDropdown, setCompanyBasedDropdown] = useState<TcompanyNameBasedDropdown["message"]["data"]>();
   const [termsOfPaymentDropdown, setTermsOfPaymentDropdown] = useState<any>([]);
-  const [selectedTermsOfPayment, setSelectedTermsOfPayment] = useState(OnboardingDetail?.term_payment_details?.name || "");
+  const [selectedTermsOfPayment, setSelectedTermsOfPayment] = useState<any>({value:OnboardingDetail?.term_payment_details?.name,label:OnboardingDetail?.term_payment_details?.description});
   const [showNext, setShowNext] = useState(false);
   const [showApprovalButtons, setShowApprovalButtons] = useState(true);
   const versionTableRef = React.useRef<HTMLDivElement>(null);
 
-  console.log(versions, "htis is versions data")
+  useEffect(()=>{
+    if(reconciliationDropdown){
+      const array = reconciliationDropdown?.map((item)=>(
+        {
+          value:item?.name,
+          label:item?.reconcil_description
+        }
+      ));
+      setReconciliationDropdownList(array);
+    }
+    if(incoTermsDropdown){
+      const array = incoTermsDropdown?.map((item)=>(
+        {
+          value:item?.name,
+          label:item?.name
+        }
+      ));
+      setIncotermsList(array);
+    }
+  },[])
 
   const handleCompanyDropdownChange = async (value: string) => {
     const url = API_END_POINTS?.companyBasedDropdown;
@@ -92,9 +115,9 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
       ref_no: ref_no,
       vendor_onboarding: onboarding_ref_no,
       purchase_details: {
-        terms_of_payment: selectedTermsOfPayment,
-        incoterms: IncoTerms,
-        reconciliation_account: reconciliationAccount,
+        terms_of_payment: selectedTermsOfPayment?.value,
+        incoterms: IncoTerms?.value,
+        reconciliation_account: reconciliationAccount?.value,
       },
     };
     console.log("Submitting purchasing details:", payload);
@@ -192,7 +215,7 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
             Terms Of Payment
           </h1>
           {/* <Input placeholder="" disabled={isDisabled} defaultValue={OnboardingDetail?.term_payment_details?.description} /> */}
-          <Select disabled={isDisabled} value={selectedTermsOfPayment} onValueChange={(value) => setSelectedTermsOfPayment(value)}>
+          {/* <Select disabled={isDisabled} value={selectedTermsOfPayment} onValueChange={(value) => setSelectedTermsOfPayment(value)}>
             <SelectTrigger>
               <SelectValue placeholder="--- Select Terms of Payment ---" />
             </SelectTrigger>
@@ -209,7 +232,21 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
                 )}
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
+          <MultiSelect
+          isDisabled={isDisabled}
+            options={termsOfPaymentDropdown}
+            value={selectedTermsOfPayment}
+            onChange={(value: any) => {
+             setSelectedTermsOfPayment(value);
+            }}
+            instanceId="terms-of-payment"
+            className="text-[12px] text-black"
+            menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+            styles={multiSelectStyles}
+             menuPlacement="auto" // 'auto', 'top', or 'bottom'
+  menuPosition="fixed" // prevents clipping in scrollable containers
+          />
         </div>
         <div>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -223,7 +260,7 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
             Incoterms
           </h1>
           {/* <Input required placeholder="" disabled={isDisabled} defaultValue={OnboardingDetail?.incoterms} /> */}
-          <Select disabled={isDisabled} value={IncoTerms ?? OnboardingDetail?.incoterms ?? ""} onValueChange={(value) => setIncoTerms(value)}>
+          {/* <Select disabled={isDisabled} value={IncoTerms ?? OnboardingDetail?.incoterms ?? ""} onValueChange={(value) => setIncoTerms(value)}>
             <SelectTrigger>
               <SelectValue placeholder="--- Select Inco Terms ---" />
             </SelectTrigger>
@@ -237,7 +274,22 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
                 }
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
+          <MultiSelect
+          isDisabled={isDisabled}
+            options={incotermsList}
+            value={IncoTerms}
+            onChange={(value: any) => {
+              setIncoTerms(value);
+            }}
+            instanceId="incoterms-dropdown"
+            required
+            className="text-[12px] text-black"
+            menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+            styles={multiSelectStyles}
+             menuPlacement="auto" // 'auto', 'top', or 'bottom'
+  menuPosition="fixed" // prevents clipping in scrollable containers
+          />
         </div>
         <div className={`${validation_check?.register_by_account_team == 0 ? "" : "hidden"}`}>
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
@@ -268,7 +320,7 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
             Reconciliation Account
           </h1>
           {/* <Input placeholder="" disabled defaultValue={OnboardingDetail?.reconciliation_account}/> */}
-          <Select value={reconciliationAccount ?? OnboardingDetail?.reconciliation_account ?? ""} onValueChange={(value) => { setReconciliationAccountt(value) }}>
+          {/* <Select value={reconciliationAccount ?? OnboardingDetail?.reconciliation_account ?? ""} onValueChange={(value) => { setReconciliationAccountt(value) }}>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -280,7 +332,22 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
                 }
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
+          <MultiSelect
+          isDisabled={isDisabled}
+            options={reconciliationDropdownList}
+            value={reconciliationAccount}
+            onChange={(value: any) => {
+              setReconciliationAccountt(value);
+            }}
+            instanceId="reconciliation-dropdown"
+            required
+            className="text-[12px] text-black"
+            menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+            styles={multiSelectStyles}
+             menuPlacement="auto" // 'auto', 'top', or 'bottom'
+  menuPosition="fixed" // prevents clipping in scrollable containers
+          />
         </div>
       </div>
 
@@ -363,16 +430,16 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
           <>
             {/* <Button className={`bg-blue-400 hover:bg-blue-400 ${designation?"hidden":""}`}>Next</Button> */}
             {designation == "Purchase Team" && validation_check?.is_purchase_approve == 1 && validation_check?.change_pur_detail_req_mail_to_it_head !== 1 &&
-              <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile ? true : false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile ? true : false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile ? true : false} isAccountTeam={validation_check?.register_by_account_team == 1 ? 1 : 0} />
+              <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile ? true : false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile ? true : false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount?.value} isBankProofByPurchaseTeam={isPurchaseTeamBankFile ? true : false} isAccountTeam={validation_check?.register_by_account_team == 1 ? 1 : 0} />
             }
             {designation == "Purchase Head" && validation_check?.is_purchase_head_approve &&
-              <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile ? true : false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile ? true : false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile ? true : false} isAccountTeam={validation_check?.register_by_account_team == 1 ? 1 : 0} />
+              <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile ? true : false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile ? true : false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount?.value} isBankProofByPurchaseTeam={isPurchaseTeamBankFile ? true : false} isAccountTeam={validation_check?.register_by_account_team == 1 ? 1 : 0} />
             }
             {designation == "Accounts Team" && validation_check?.is_accounts_team_approve &&
-              <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile ? true : false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile ? true : false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile ? true : false} isAccountTeam={validation_check?.register_by_account_team == 1 ? 1 : 0} />
+              <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile ? true : false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile ? true : false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount?.value} isBankProofByPurchaseTeam={isPurchaseTeamBankFile ? true : false} isAccountTeam={validation_check?.register_by_account_team == 1 ? 1 : 0} />
             }
             {designation == "Accounts Head" && validation_check?.is_accounts_head_approve &&
-              <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile ? true : false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile ? true : false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount} isBankProofByPurchaseTeam={isPurchaseTeamBankFile ? true : false} isAccountTeam={validation_check?.register_by_account_team == 1 ? 1 : 0} />
+              <ApprovalButton isBeneficieryBankProofByPurchaseTeam={isPurchaseTeamBeneficiaryFile ? true : false} isIntermediateBankProofByPurchaseTeam={isPurchaseTeamIntermediateFile ? true : false} country={country} tabtype={tabType} ref_no={ref_no} onboardingRefno={onboarding_ref_no} reconsiliationDrodown={reconciliationDropdown} reconciliationAccount={reconciliationAccount?.value} isBankProofByPurchaseTeam={isPurchaseTeamBankFile ? true : false} isAccountTeam={validation_check?.register_by_account_team == 1 ? 1 : 0} />
             }
           </>
         )}

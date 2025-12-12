@@ -223,6 +223,7 @@ const VendorRegistration1 = ({
           </Select> */}
 
                 <MultiSelect
+                value={{value:formData?.country,label:formData?.country}}
               onChange={handleCountryChange}
               instanceId="country-multiselect"
               options={multiSelectCountryDropdownList}
