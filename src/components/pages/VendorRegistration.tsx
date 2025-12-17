@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/accordion"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../atoms/table";
 import { Button } from "../atoms/button";
+import { Input } from "../atoms/input";
 
 interface Props {
   vendorTitleDropdown: TvendorRegistrationDropdown["message"]["data"]["vendor_title"]
@@ -368,6 +369,24 @@ const VendorRegistration = ({ ...Props }: Props) => {
                 })}
               </tbody>
             </table>
+          </div>
+        </PopUp>
+      }
+      {
+        <PopUp isSubmit={true} isHeaderTextUnderline={true} handleClose={handleClose} classname="md:max-w-[800px] w-full" headerText="This Company is already Registered !">
+          
+            <div className="flex items-center gap-4">
+            <Input className="w-4 mt-2" type="checkbox"/>
+            <h2 className="mt-2">Do you want to Register in Same Company with new GST Number? OR </h2>
+            </div>
+
+            <div className="flex items-center gap-4">
+            <Input className="w-4 mt-2" type="checkbox"/>
+            <h2 className="mt-2">Go to Dashboard?</h2>
+            </div>
+          
+          <div>
+            
           </div>
         </PopUp>
       }

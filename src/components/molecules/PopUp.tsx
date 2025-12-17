@@ -62,9 +62,10 @@ type Props = {
   classname?: string;
   disableRef?: boolean;
   disableSubmit?: boolean;
+  isHeaderTextUnderline?:boolean
 };
 
-const PopUp = ({ handleClose, children, headerText, isSubmit, Submitbutton, classname, disableRef, disableSubmit }: Props) => {
+const PopUp = ({ handleClose, children, headerText, isSubmit, Submitbutton, classname, disableRef, disableSubmit,isHeaderTextUnderline }: Props) => {
   const DialogRef = useOutsideClick<HTMLDivElement>(handleClose);
 
   return (
@@ -77,8 +78,8 @@ const PopUp = ({ handleClose, children, headerText, isSubmit, Submitbutton, clas
           classname
         )}
       >
-        <div className="flex justify-between items-center w-full">
-          <h1 className="text-2xl font-poppins">{headerText}</h1>
+        <div className={`flex justify-between items-center w-full ${isHeaderTextUnderline?"border-b pb-2 border-black":""}`}>
+          <h1 className={`text-2xl font-poppins`}>{headerText}</h1>
           <Button
             variant="ghost"
             size="icon"

@@ -227,7 +227,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
   const fetchAccountAssigmentData = async (pur_req_type: string) => {
     const url = `${API_END_POINTS.fetchAccountAssignmentData}?pur_req_type=${pur_req_type}&company=${company}`;
     try {
-      const response: AxiosResponse = await requestWrapper({ url, method: "GET"});
+      const response: AxiosResponse = await requestWrapper({ url, method: "GET" });
       if (response?.status === 200 && response?.data?.message) {
         console.log("Account Assignment API success:", response);
         setAccountAssignmentDropdown(response.data.message.account_assignment_category_head ?? []);

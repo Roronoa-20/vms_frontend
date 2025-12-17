@@ -105,7 +105,7 @@ export type VendorRegistrationData = {
   vendor_name: string;
   office_email_primary: string;
   search_term: string;
-  country: string;
+  country: any;
   mobile_number: string;
   registered_date: string;
   // qa_required: string;
@@ -516,7 +516,7 @@ export type TPurchaseDetails = {
   },
   reconciliation_details: {
     name: string,
-    description: string,
+    reconcil_description: string,
   },
   account_group_details: {
     name: string,

@@ -203,22 +203,6 @@ const DashboardCards = ({ ...Props }: Props) => {
     ];
   } else if (designation === "Treasury") {
     allCardData = [
-      // {
-      //   name: "Pending Vendors",
-      //   count: Props.cardData?.pending_vendor_count ?? 0,
-      //   icon: "/dashboard-assests/cards_icon/doc.svg",
-      //   text_color: "text-rose-800",
-      //   bg_color: "bg-rose-100",
-      //   hover: "hover:border-rose-400",
-      // },
-      // {
-      //   name: "Accounts Pending Vendors",
-      //   count: Props?.cardData?.pending_vendor_count_by_accounts_team ?? 0,
-      //   icon: "/dashboard-assests/cards_icon/file-search.svg",
-      //   text_color: "text-violet-800",
-      //   bg_color: "bg-violet-100",
-      //   hover: "hover:border-violet-400",
-      // },
       {
         name: "Onboarded Vendors",
         count: Props.cardData?.approved_vendor_count ?? 0,

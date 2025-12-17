@@ -340,6 +340,8 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
             className="text-[12px] text-black"
             menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
             styles={multiSelectStyles}
+             menuPlacement="auto" // 'auto', 'top', or 'bottom'
+  menuPosition="fixed" // prevents clipping in scrollable containers
           />
         </div>
 
@@ -376,6 +378,8 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
             className="text-[12px] text-black"
             menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
             styles={multiSelectStyles}
+             menuPlacement="auto" // 'auto', 'top', or 'bottom'
+  menuPosition="fixed" // prevents clipping in scrollable containers
           />
         </div>
 
@@ -410,6 +414,8 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
             className="text-[12px] text-black"
             menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
             styles={multiSelectStyles}
+             menuPlacement="auto" // 'auto', 'top', or 'bottom'
+  menuPosition="fixed" // prevents clipping in scrollable containers
           />
         </div>
 
