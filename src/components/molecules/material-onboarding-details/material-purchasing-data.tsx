@@ -81,6 +81,13 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
   const filteredLotSizeOptions = lotsizeSearch ? LotSize?.filter((group) => group.description?.toLowerCase().includes(lotsizeSearch.toLowerCase()) || group.name?.toLowerCase().includes(lotsizeSearch.toLowerCase())) : LotSize;
 
   useEffect(() => {
+    form.setValue("purchasing_value_key", "3", {
+      shouldDirty: false,
+      shouldTouch: false,
+    });
+  }, [form]);
+
+  useEffect(() => {
     if (initialLoadRef.current) return;
     if (!MaterialDetails?.material_master || !filteredPurchaseGroup.length) return;
 
@@ -323,7 +330,7 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                     <FormControl>
                       <Input
                         {...field}
-                        value={field.value || "3"}
+                        // value={field.value || "3"}
                         readOnly
                         className="p-3 w-full text-sm placeholder:text-gray-500"
                       />

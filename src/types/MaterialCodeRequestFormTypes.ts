@@ -247,6 +247,10 @@ export interface MaterialType {
     valuation_class: string;
     valuation_class_description: string;
   }[];
+  material_code_logic: {
+    material_type_category: string;
+    code_logic: string;
+  }[];
 }
 
 export interface LotSize {

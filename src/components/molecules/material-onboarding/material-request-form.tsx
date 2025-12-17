@@ -10,6 +10,8 @@ import { MaterialRegistrationFormData, Company, Plant, MaterialCategory, Materia
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
+import { CheckCircle, XCircle, Loader2 } from "lucide-react";
+
 
 interface Masters {
   companyMaster: Company[];
@@ -31,9 +33,16 @@ interface UserRequestFormProps {
   setShowSuggestions: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedMaterialType: React.Dispatch<React.SetStateAction<string>>;
   materialCodeAutoFetched: boolean;
+  materialCodeStatus: "idle" | "checking" | "exists" | "available";
+  selectedCodeLogic: string;
+  setSelectedCodeLogic: React.Dispatch<React.SetStateAction<string>>;
+  latestCodeSuggestions: any[];
+
 }
 
-export default function UserMaterialRequestForm({ form, masters, MaterialOnboardingDetails, handleMaterialSearch, searchResults, showSuggestions, handleMaterialSelect, materialSelectedFromList, setMaterialSelectedFromList, setMaterialCodeAutoFetched, setShowSuggestions, materialCodeAutoFetched, setSelectedMaterialType }: UserRequestFormProps) {
+export default function UserMaterialRequestForm({ form, masters, MaterialOnboardingDetails, handleMaterialSearch, searchResults, showSuggestions, handleMaterialSelect, materialSelectedFromList, setMaterialSelectedFromList, setMaterialCodeAutoFetched, setShowSuggestions, materialCodeAutoFetched, setSelectedMaterialType, materialCodeStatus, selectedCodeLogic, setSelectedCodeLogic, latestCodeSuggestions }: UserRequestFormProps) {
+
+  console.log("Material Code Status---->", materialCodeStatus)
 
   const { companyMaster, materialCategoryMaster, uomMaster } = masters;
   const [filteredPlants, setFilteredPlants] = useState<Plant[]>([]);
@@ -47,7 +56,9 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
   const selectedMaterialType = form.watch("material_type");
   const { name } = useAuth();
   const isMastersReady = [companyMaster, materialCategoryMaster, uomMaster].every((arr) => arr && arr.length > 0);
-  console.log("Filtered Material Types:", MaterialOnboardingDetails);
+  const [materialCategoryTypeOptions, setMaterialCategoryTypeOptions] = useState<{
+    material_category_type: string; code_logic: string;
+  }[]>([]);
 
   useEffect(() => {
     if (!MaterialOnboardingDetails || !isMastersReady) return;
@@ -97,6 +108,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
         base_unit_of_measure: details.unit_of_measure || "",
         plant_name: plantExists ? details.plant : "",
         material_type: typeExists ? details.material_type : "",
+        material_type_category: typeExists ? details.material_type_category : "",
         material_name_description: details.material_name_description || "",
         material_code_revised: details.material_code_revised || "",
         material_specifications: details.material_specifications || "",
@@ -113,6 +125,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
         "material_category",
         "material_type",
         "base_unit_of_measure",
+        "material_type_category",
       ]);
 
       console.log("Prefill successful!", { plantExists, typeExists });
@@ -141,6 +154,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
         method: "GET",
         url: `${API_END_POINTS.getMaterialTypeMaster}?material_category_type=${categoryType}&company=${companyCode}`,
       });
+      console.log("Material Type Response---->", res)
       return res?.data?.message?.data || [];
     } catch (err) {
       console.error("Error fetching MaterialTypeMaster:", err);
@@ -215,6 +229,16 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
       form.setValue("is_revised_code_new", false);
     }
   }, [form.watch("material_name_description"), materialSelectedFromList]);
+
+  useEffect(() => {
+    if (!selectedCodeLogic) return;
+
+    if (!materialSelectedFromList) {
+      form.setValue("material_code_revised", `${selectedCodeLogic}-`);
+      setMaterialCodeAutoFetched(false);
+    }
+  }, [selectedCodeLogic, materialSelectedFromList]);
+
 
   // --- Delete a row from table (DO NOT DELETE) ---
   // const handleDeleteRow = (indexToDelete: number) => {
@@ -326,7 +350,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
               key="material_category"
               render={({ field }: { field: { value?: string; onChange: (value: string) => void; ref?: React.Ref<any> } }) => (
                 <FormItem>
-                  <FormLabel>Material Category</FormLabel>
+                  <FormLabel>Material Category <span className="text-red-500">*</span></FormLabel>
                   <FormControl>
                     <Select onValueChange={field.onChange} value={field.value || ""}>
                       <SelectTrigger>
@@ -364,6 +388,23 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                           field.onChange(value);
                           setSelectedMaterialType(value);
                           setMaterialTypeSearch("");
+                          const selectedType = filteredMaterialType.find(
+                            (t) => t.name === value
+                          );
+
+                          if (selectedType?.material_code_logic?.length) {
+                            setMaterialCategoryTypeOptions(
+                              selectedType.material_code_logic.map((item: any) => ({
+                                material_category_type: item.material_type_category,
+                                code_logic: item.code_logic,
+                              }))
+                            );
+
+                            form.setValue("material_type_category", "");
+                          } else {
+                            setMaterialCategoryTypeOptions([]);
+                            form.setValue("material_type_category", "");
+                          }
                         }}
                       >
                         <SelectTrigger className={`p-2 w-full text-sm data-[placeholder]:text-gray-500`}>
@@ -402,14 +443,61 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
               />
             </div>
 
-            {/* Base UOM */}
+            {/* Material Type Category */}
+            {materialCategoryTypeOptions.length > 0 && (
+              <FormField
+                control={form.control}
+                name="material_type_category"
+                rules={{ required: "Material Type Category is required." }}
+                render={({ field }: { field: { value?: string; onChange: (value: string) => void; ref?: React.Ref<any> } }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Material Type Category <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Select
+                        value={field.value || ""}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+
+                          const selectedCategory = materialCategoryTypeOptions.find(
+                            (item) => item.material_category_type === value
+                          );
+
+                          if (selectedCategory?.code_logic) {
+                            setSelectedCodeLogic(selectedCategory.code_logic);
+                          }
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Material Category Type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {materialCategoryTypeOptions.map((item) => (
+                            <SelectItem
+                              key={item.material_category_type}
+                              value={item.material_category_type}
+                            >
+                              {item.material_category_type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+
             <FormField
               control={form.control}
               name="base_unit_of_measure"
               key="base_unit_of_measure"
               render={({ field }: { field: { value?: string; onChange: (value: string) => void; ref?: React.Ref<any> } }) => (
                 <FormItem>
-                  <FormLabel>Base Unit of Measure</FormLabel>
+                  <FormLabel>Base Unit of Measure <span className="text-red-500">*</span></FormLabel>
                   <FormControl>
                     <Select onValueChange={field.onChange} value={field.value || ""}>
                       <SelectTrigger>
@@ -418,7 +506,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                       <SelectContent>
                         {filteredUomOptions?.map((item: UOMMaster) => (
                           <SelectItem key={item.name} value={item.name}>
-                            {item.name} - {item.description}
+                            {item.description}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -428,97 +516,159 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
               )}
             />
           </div>
-          {/* Material Description */}
-          <div className="pt-3 col-span-2 relative">
-            <FormField
-              control={form.control}
-              name="material_name_description"
-              rules={{ required: "Material Name/Description is required." }}
-              render={({ field }: { field: { value: string; onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void; ref: React.Ref<HTMLTextAreaElement> } }) => (
-                <FormItem>
-                  <FormLabel>
-                    Material Name/Description <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <textarea
-                        ref={field.ref}
-                        value={field.value || ""}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          handleMaterialSearch(e);
-                        }}
-                        onFocus={() => {
-                          console.log("🧠 Current searchResults:", searchResults);
-                          console.log("🎯 Selected Material Type:", selectedMaterialType);
-                          console.log("🔍 Filtered by Material Type:", searchResults?.filter(item => item.material_type === selectedMaterialType));
-                          if (searchResults.length) setShowSuggestions(true);
-                        }}
-                        onBlur={(e) => {
-                          if (!e.relatedTarget || !e.relatedTarget.classList.contains("material-suggestion")) {
-                            setTimeout(() => setShowSuggestions(false), 100);
-                          }
-                        }}
-                        rows={2}
-                        className="w-full p-[9px] text-sm text-gray-700 border border-gray-300 rounded-md placeholder:text-gray-500 hover:border-blue-400 focus:border-blue-400 focus:outline-none"
-                        placeholder="Enter or Search Material Name/Description"
-                      />
-                      {showSuggestions && (
-                        <div className="absolute left-0 top-full mt-1 z-10 bg-white border border-gray-300 rounded-md shadow-md w-full min-w-full max-h-40 overflow-y-auto">
-                          {searchResults
-                            .filter(item => {
-                              if (!selectedMaterialType) return true;
-                              return item.material_type === selectedMaterialType;
-                            })
-                            .map((item, idx) => (
-                              <div
-                                key={idx}
-                                tabIndex={-1}
-                                className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm material-suggestion"
-                                onClick={() => handleMaterialSelect(item)}
-                              >
-                                {item.material_name_description} - {item.material_code_revised}
-                              </div>
-                            ))}
-                          {searchResults.filter(item => !selectedMaterialType || item.material_type === selectedMaterialType).length === 0 && (
-                            <div className="px-3 py-2 text-sm text-gray-500">No matching materials</div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          {/* Material Code Revised  */}
-          <div className="space-y-2 hidden">
-            <FormField
-              control={form.control}
-              name="material_code_revised"
-              render={({ field }: { field: { value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; ref: React.Ref<HTMLInputElement> } }) => {
-                return (
+
+          <div className="grid grid-cols-3 gap-4 pt-3">
+            {/* Material Description */}
+            <div className="col-span-2 relative">
+              <FormField
+                control={form.control}
+                name="material_name_description"
+                rules={{ required: "Material Name/Description is required." }}
+                render={({ field }: { field: { value: string; onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void; ref: React.Ref<HTMLTextAreaElement> } }) => (
                   <FormItem>
-                    <FormLabel>Material Code - Revised <span className="text-red-500">*</span></FormLabel>
+                    <FormLabel>
+                      Material Name/Description <span className="text-red-500">*</span><span className="text-[10px]">(Max Char 40)</span>
+                    </FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        className="p-3 w-full text-sm placeholder:text-gray-500"
-                        placeholder="Enter Revised Material Code"
-                        onChange={(e) => {
-                          setMaterialCodeAutoFetched(false);
-                          field.onChange(e);
-                        }}
-                        disabled={materialCodeAutoFetched}
-                      />
+                      <div className="relative">
+                        <textarea
+                          ref={field.ref}
+                          value={field.value || ""}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            handleMaterialSearch(e);
+                          }}
+                          onFocus={() => {
+                            console.log("🧠 Current searchResults:", searchResults);
+                            console.log("🎯 Selected Material Type:", selectedMaterialType);
+                            console.log("🔍 Filtered by Material Type:", searchResults?.filter(item => item.material_type === selectedMaterialType));
+                            if (searchResults.length) setShowSuggestions(true);
+                          }}
+                          onBlur={(e) => {
+                            if (!e.relatedTarget || !e.relatedTarget.classList.contains("material-suggestion")) {
+                              setTimeout(() => setShowSuggestions(false), 100);
+                            }
+                          }}
+                          rows={2}
+                          maxLength={40}
+                          className="w-full p-[9px] text-sm text-gray-700 border border-gray-300 rounded-md placeholder:text-gray-500 hover:border-blue-400 focus:border-blue-400 focus:outline-none"
+                          placeholder="Enter or Search Material Name/Description"
+                        />
+                        {showSuggestions && (
+                          <div className="absolute left-0 top-full mt-1 z-10 bg-white border border-gray-300 rounded-md shadow-md w-full min-w-full max-h-40 overflow-y-auto">
+                            {searchResults
+                              .filter(item => {
+                                if (!selectedMaterialType) return true;
+                                return item.material_type === selectedMaterialType;
+                              })
+                              .map((item, idx) => (
+                                <div
+                                  key={idx}
+                                  tabIndex={-1}
+                                  className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm material-suggestion"
+                                  onClick={() => handleMaterialSelect(item)}
+                                >
+                                  {item.material_name_description} - {item.material_code_revised}
+                                </div>
+                              ))}
+                            {searchResults.filter(item => !selectedMaterialType || item.material_type === selectedMaterialType).length === 0 && (
+                              <div className="px-3 py-2 text-sm text-gray-500">No matching materials</div>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
-                );
-              }}
-            />
+                )}
+              />
+            </div>
+            {/* Material Code Revised  */}
+            <div className="col-span-1 relative">
+              <FormField
+                control={form.control}
+                name="material_code_revised"
+                render={({ field }: { field: { value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; ref: React.Ref<HTMLInputElement> } }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>Material Code <span className="text-red-500">*</span><span className="text-[10px]">(Max. Char 18)</span></FormLabel>
+                      <div className="relative">
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className="p-3 w-full text-sm placeholder:text-gray-500"
+                            placeholder="Enter Revised Material Code"
+                            maxLength={18}
+                            // onChange={(e) => {
+                            //   setMaterialCodeAutoFetched(false);
+                            //   field.onChange(e);
+                            // }}
+                            onChange={(e) => {
+                              const value = e.target.value;
+
+                              // If material selected from dropdown → don't interfere
+                              if (materialSelectedFromList) {
+                                field.onChange(e);
+                                return;
+                              }
+
+                              // If no code logic, allow normal typing
+                              if (!selectedCodeLogic) {
+                                field.onChange(e);
+                                return;
+                              }
+
+                              // PREFIX PROTECTION
+                              if (!value.startsWith(selectedCodeLogic)) {
+                                e.target.value = `${selectedCodeLogic}-`;
+                                field.onChange(e);
+                                return;
+                              }
+                              setMaterialCodeAutoFetched(false);
+                              field.onChange(e);
+                            }}
+                            disabled={materialCodeAutoFetched}
+                          />
+                        </FormControl>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                          {materialCodeStatus === "checking" && (
+                            <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                          )}
+                          {materialCodeStatus === "available" && (
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                          )}
+                          {materialCodeStatus === "exists" && (
+                            <XCircle className="w-4 h-4 text-red-600" />
+                          )}
+                        </div>
+                        {latestCodeSuggestions.length > 0 && !materialSelectedFromList && (
+                          <div className="absolute left-0 top-full mt-1 z-20 w-full bg-white border rounded-md shadow">
+                            <div className="px-3 py-1 text-xs font-semibold text-gray-500">
+                              Latest used codes
+                            </div>
+
+                            {latestCodeSuggestions.map((item, idx) => (
+                              <div
+                                key={idx}
+                                className="px-3 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+                                onMouseDown={() => {
+                                  form.setValue("material_code_revised", item.name);
+                                }}
+                              >
+                                {item.name}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+            </div>
           </div>
+
           {/* Comment By User */}
           <div className="col-span-3 grid grid-cols-12 items-center gap-4">
             {/* Material specifications*/}
@@ -555,7 +705,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                 render={({ field }: { field: { value: string; onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void; ref: React.Ref<HTMLTextAreaElement> } }) => (
                   <FormItem>
                     <FormLabel>
-                      Comment
+                      Comment <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
                       <textarea
@@ -657,6 +807,6 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

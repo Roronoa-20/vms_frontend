@@ -21,8 +21,9 @@ interface MastersData {
 interface MaterialOnboardingFormProps {
     form: UseFormReturn<MaterialRegistrationFormData>;
     onCancel: (e: React.MouseEvent<HTMLButtonElement>) => void;
-    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+    onSubmit: (data: MaterialRegistrationFormData) => void;
     onUpdate: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    onError: (errors: any) => void;
     masters: MastersData;
     showAlert: any;
     isLoading: any;
@@ -31,7 +32,7 @@ interface MaterialOnboardingFormProps {
     EmployeeDetailsJSON: EmployeeDetail | null;
 }
 
-const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, onCancel, onSubmit, onUpdate, materialRequestList, masters, isLoading, showAlert, EmployeeDetailsJSON }) => {
+const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, onCancel, onSubmit, onUpdate, onError, materialRequestList, masters, isLoading, showAlert, EmployeeDetailsJSON }) => {
 
     const basicMasters = {
         companyMaster: masters.companyMaster,
@@ -40,7 +41,8 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, o
     };
 
     return (
-        <form onSubmit={onSubmit} className="bg-white p-4 rounded shadow">
+        // <form onSubmit={onSubmit} className="bg-white p-4 rounded shadow">
+        <form onSubmit={form.handleSubmit(onSubmit, onError)} className="bg-white p-4 rounded shadow">
             <div className="space-y-4">
                 <RequestorInformation
                     form={form}

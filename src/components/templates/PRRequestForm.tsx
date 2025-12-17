@@ -212,17 +212,33 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
 
   const handleModel = (purchase_requisition_type: string) => purchase_requisition_type === "SB" ? setEditModalOpen(true) : setNBEditModalOpen(true);
 
+  // const fetchAccountAssigmentData = async (pur_req_type: string) => {
+  //   const url = `${API_END_POINTS?.fetchAccountAssignmentData}?pur_req_type=${pur_req_type}&company=${company}`
+  //   const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
+  //   if (response?.status == 200) {
+  //     console.log(response, "response of setAccountAssignmentDropdown data")
+  //     setAccountAssignmentDropdown(response.data.message?.account_assignment_category_head)
+  //     setitemCategoryDropdown(response.data.message?.item_category_head)
+  //   } else {
+  //     alert("error");
+  //   }
+  // }
+
   const fetchAccountAssigmentData = async (pur_req_type: string) => {
-    const url = `${API_END_POINTS?.fetchAccountAssignmentData}?pur_req_type=${pur_req_type}&company=${company}`
-    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
-    if (response?.status == 200) {
-      console.log(response, "response of setAccountAssignmentDropdown data")
-      setAccountAssignmentDropdown(response.data.message?.account_assignment_category_head)
-      setitemCategoryDropdown(response.data.message?.item_category_head)
-    } else {
-      alert("error");
+    const url = `${API_END_POINTS.fetchAccountAssignmentData}?pur_req_type=${pur_req_type}&company=${company}`;
+    try {
+      const response: AxiosResponse = await requestWrapper({ url, method: "GET"});
+      if (response?.status === 200 && response?.data?.message) {
+        console.log("Account Assignment API success:", response);
+        setAccountAssignmentDropdown(response.data.message.account_assignment_category_head ?? []);
+        setitemCategoryDropdown(response.data.message.item_category_head ?? []);
+      } else {
+        console.warn("Account Assignment API returned unexpected response", response);
+      }
+    } catch (error) {
+      console.error("Account Assignment API failed silently", error);
     }
-  }
+  };
 
   const handleEmailToPurchaseTeam = async () => {
     const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.prToPurchaseTeam, params: { name: pur_req, enquirer_remarks: comment }, method: "POST" });
@@ -247,7 +263,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     }
   }, [pur_req, prf_name, PRData?.purchase_requisition_type]);
 
-  console.log("Main INTems wrughwirhoerg----------->",mainItems)
+  console.log("Main INTems wrughwirhoerg----------->", mainItems)
 
   return (
     <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
@@ -408,7 +424,11 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                           </Button>
                         </CollapsibleTrigger>
                         <div>
-                          <div className="font-semibold text-lg">{`${mainItem?.product_full_name_head} (${mainItem?.product_name_head})`|| mainItem?.short_text_head }</div>
+                          <div className="font-semibold text-lg">
+                            {mainItem?.product_full_name_head && mainItem?.product_name_head
+                              ? `${mainItem.product_full_name_head} (${mainItem.product_name_head})`
+                              : mainItem?.short_text_head}
+                          </div>
                           <div className="text-sm text-muted-foreground">
                             {/* Item No: {mainItem?.item_number_of_purchase_requisition_head} | Category: {mainItem?.category} */}
                             Item No: {mainItem?.item_number_of_purchase_requisition_head}

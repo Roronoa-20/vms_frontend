@@ -225,6 +225,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
       immediate_reporting_head,
       contact_information_email,
       contact_information_phone,
+      
       ...rest
     } = values;
 
@@ -239,14 +240,16 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
     try {
       const payload = {
         requestor_ref_no: name,
+        ...finalPayload,
         material_code: form.getValues("material_code_revised") || form.getValues("old_material_code"),
         material_name: form.getValues("material_name_description"),
         numerator_for_conversion: form.getValues("numerator_purchase_uom"),
         denominator_for_conversion: form.getValues("denominator_purchase_uom"),
         purchase_uom: form.getValues("purchase_uom"),
-        purchasing_value_key: "3",
+        purchasing_value_key: form.getValues("purchasing_value_key"),
         min_lot_size: form.getValues("min_lot_size"),
-        ...finalPayload,
+        issue_unit: form.getValues("base_uom"),
+        
       };
 
       console.log("FINAL PAYLOAD SENT TO BACKEND:", payload);

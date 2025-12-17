@@ -10,7 +10,7 @@ import { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import VendorRegistrationSchemas from "@/src/schemas/vendorRegistrationSchema";
+import MaterialOnboardingSchemas from "@/src/schemas/MaterialOnboardingSchema";
 import { EmployeeDetail, EmployeeAPIResponse, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, MaterialType } from "@/src/types/MaterialCodeRequestFormTypes";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/src/context/AuthContext";
@@ -22,7 +22,7 @@ interface MastersData {
 }
 
 export default function MaterialRegistration() {
-  const form = useForm<any>({ resolver: zodResolver(VendorRegistrationSchemas) });
+  const form = useForm<any>({ resolver: zodResolver(MaterialOnboardingSchemas) });
   const [EmployeeDetailsJSON, setEmployeeDetailsJSON] = useState<EmployeeDetail | null>(null);
   const [materialRequestList, setMaterialRequestList] = useState<any[]>([]);
   const [materialCompanyCode, setMaterialCompanyCode] = useState<string>("");
@@ -124,18 +124,16 @@ export default function MaterialRegistration() {
     fetchAllMasters();
   }, []);
 
-  
-
   const [masters, setMasters] = useState<MastersData>({
     companyMaster: [],
     uomMaster: [],
     materialCategoryMaster: [],
   });
 
-  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const onSubmit = async (data: any) => {
     setIsLoading(true);
     try {
+      console.log("Validated Data:", data);
       const formValues = form.getValues();
       // console.log("Form Values on Submit----->", formValues);
       const finalMaterialRequestList =
@@ -147,6 +145,7 @@ export default function MaterialRegistration() {
               material_code_revised: formValues.material_code_revised,
               material_company_code: materialCompanyCode,
               material_type: formValues.material_type,
+              material_type_category: formValues.material_type_category,
               plant: formValues.plant_name,
               material_category: formValues.material_category,
               unit_of_measure: formValues.base_unit_of_measure,
@@ -261,6 +260,13 @@ export default function MaterialRegistration() {
     window.location.reload();
   };
 
+  const onError = (errors: any) => {
+    console.log("Validation Errors:", errors);
+
+    alert("⚠️ Please fill all required fields before submitting.");
+  };
+
+
   if (!EmployeeDetailsJSON)
     return (
       <div className="text-center py-8 text-gray-700 font-medium">
@@ -276,6 +282,7 @@ export default function MaterialRegistration() {
           onCancel={onCancel}
           onSubmit={onSubmit}
           onUpdate={onUpdate}
+          onError={onError}
           EmployeeDetailsJSON={EmployeeDetailsJSON}
           masters={masters}
           showAlert={showAlert}
