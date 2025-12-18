@@ -22,5 +22,5 @@ export const config = {
     // matcher: ['/awareness_program'],
     // matcher: ['/dashboard'],
     // matcher:["/((?!api/login|_next|login).*)"]
-      matcher: ["/((?!api/login|_next|login|vendor-details-form).*)"]
+     matcher: ["/((?!api/login|_next|login|vendor-details-form|.*\\..*).*)"],
 };
