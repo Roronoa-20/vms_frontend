@@ -373,7 +373,7 @@ const VendorRegistration = ({ ...Props }: Props) => {
     </div>
 </PopUp>
       }
-      {
+      {/* {
         <PopUp isSubmit={true} isHeaderTextUnderline={true} handleClose={handleClose} classname="md:max-w-[800px] w-full" headerText="This Company is already Registered !">
           
             <div className="flex items-center gap-4">
@@ -390,7 +390,7 @@ const VendorRegistration = ({ ...Props }: Props) => {
             
           </div>
         </PopUp>
-      }
+      } */}
     </div>
   );
 };
