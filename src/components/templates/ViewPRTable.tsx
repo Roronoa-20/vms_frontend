@@ -39,9 +39,9 @@ const ViewPRTable = ({ data, loading, companyDropdown }: Props) => {
   const [filterType, setFilterType] = useState<string>("All");
   const router = useRouter();
   const [table, setTable] = useState<PurchaseRequisitionDataItem[]>([]);
+  const [prCreatedFromSAP, setPrCreatedFromSAP] = useState<boolean>(false);
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [search, setSearch] = useState<string>("");
-
   const [total_event_list, settotalEventList] = useState(0);
   const [record_per_page, setRecordPerPage] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -88,7 +88,7 @@ const ViewPRTable = ({ data, loading, companyDropdown }: Props) => {
 
   useEffect(() => {
     fetchTable();
-  }, [debouncedSearchName, selectedCompany, filterType, currentPage]);
+  }, [debouncedSearchName, selectedCompany, filterType, currentPage, prCreatedFromSAP]);
 
 
   const handlesearchname = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,7 +99,7 @@ const ViewPRTable = ({ data, loading, companyDropdown }: Props) => {
 
   const fetchTable = async () => {
     const PRFormData: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.sapprcreated}?pur_req_type=${purReqFilter}&company=${selectedCompany}&pr_no=${debouncedSearchName}&page_no=${currentPage}&page_length=${record_per_page}`,
+      url: `${API_END_POINTS?.sapprcreated}?pur_req_type=${purReqFilter}&company=${selectedCompany}&pr_no=${debouncedSearchName}&page_no=${currentPage}&page_length=${record_per_page}&pr_created_from_sap=${prCreatedFromSAP ? 1 : ""}`,
       method: "GET",
     });
     console.log("ijbnivjnsifvnesivnoer---->", PRFormData)
@@ -172,9 +172,22 @@ const ViewPRTable = ({ data, loading, companyDropdown }: Props) => {
                 </SelectContent>
               </Select>
             </div>
-
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="pr_created_from_sap"
+                checked={prCreatedFromSAP}
+                onChange={(e) => {
+                  setPrCreatedFromSAP(e.target.checked);
+                  setCurrentPage(1);
+                }}
+                className="w-4 h-4 cursor-pointer"
+              />
+              <Label htmlFor="pr_created_from_sap" className="text-sm">
+                PR Created from SAP
+              </Label>
+            </div>
           </div>
-
           {/* RIGHT SIDE — Create RFQ Button */}
           {selectedData.length > 0 && (
             <Button
@@ -227,7 +240,7 @@ const ViewPRTable = ({ data, loading, companyDropdown }: Props) => {
                       className="cursor-pointer w-4 h-4"
                     />
                   </TableCell>
-                  <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
+                  <TableCell className="text-center">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                   <TableCell className="text-center">{pr.company}</TableCell>
                   <TableCell className="text-center">{pr.purchase_requisition_type}</TableCell>
                   <TableCell className="text-center">{pr.prf_name_for_sap}</TableCell>
