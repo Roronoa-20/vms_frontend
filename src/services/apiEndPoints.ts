@@ -359,6 +359,8 @@ const API_END_POINTS = {
   GRwaiverDashboardTable: `${url}/api/method/vms.APIs.gr_waiver.get_gr_waiver.get_gr_waiver_list`,
   fetchGRWaiverDetails: `${url}/api/method/vms.APIs.gr_waiver.get_gr_waiver.get_gr_waiver_details`,
 
+  alreadyOnboardedVendorDialogSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.update_vendors_gst_email.update_vendor_gst_email`
+
 }
 
 export default API_END_POINTS;
