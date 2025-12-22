@@ -430,6 +430,11 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                                                         {mainItem?.purchase_requisition_type}
                                                     </Badge>
                                                     {/* <Badge variant="outline">${mainItem?.estimatedPrice}</Badge> */}
+                                                    {mainItem?.purchase_requisition_type && mainItem?.short_text_head && (
+                                                        <Badge className="bg-orange-100 text-orange-900 border border-orange-300">
+                                                            {mainItem.short_text_head}
+                                                        </Badge>
+                                                    )}
                                                 </div>
                                             </div>
                                             {mainItems?.sap_status == "Failed" && (
