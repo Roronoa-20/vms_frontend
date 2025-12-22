@@ -113,24 +113,24 @@ export default function MaterialInformation({ form, basicMasters, MaterialOnboar
     }
   };
 
-  useEffect(() => {
-    if (!selectedCodeLogic || !AllMaterialCodes.length) {
-      setLatestCodeSuggestions([]);
-      return;
+  const fetchLatestCode = async () => {
+    if (!selectedCodeLogic) return;
+
+    const company = form.getValues("material_company_code");
+
+    const res = await requestWrapper({
+      method: "GET",
+      url: `${API_END_POINTS.getLatestMaterialCode}?prefix=${selectedCodeLogic}&company=${company}`,
+    });
+
+    if (res?.data?.message) {
+      setLatestCodeSuggestions([res.data.message]);
     }
+  };
 
-    const matched = AllMaterialCodes
-      .filter(item => item.name?.startsWith(`${selectedCodeLogic}-`))
-      .sort((a, b) => {
-        const numA = Number(a.name.split("-").pop());
-        const numB = Number(b.name.split("-").pop());
-        return numB - numA;
-      })
-      .slice(0, 1);
-
-    setLatestCodeSuggestions(matched);
-  }, [selectedCodeLogic, AllMaterialCodes]);
-
+  useEffect(() => {
+    fetchLatestCode();
+  }, [selectedCodeLogic]);
 
   useEffect(() => {
     const code = form.watch("material_code_revised");

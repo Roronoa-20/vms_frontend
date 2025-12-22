@@ -132,29 +132,33 @@ export default function MaterialRegistration() {
 
   const onSubmit = async (data: any) => {
     setIsLoading(true);
+
     try {
       console.log("Validated Data:", data);
       const formValues = form.getValues();
-      // console.log("Form Values on Submit----->", formValues);
+
+      const materialItem: any = {
+        material_name_description: formValues.material_name_description,
+        material_company_code: materialCompanyCode,
+        material_type: formValues.material_type,
+        material_type_category: formValues.material_type_category,
+        plant: formValues.plant_name,
+        material_category: formValues.material_category,
+        unit_of_measure: formValues.base_unit_of_measure,
+        comment_by_user: formValues.comment_by_user,
+        material_specifications: formValues.material_specifications,
+        is_revised_code_new: formValues.is_revised_code_new,
+        company_name: formValues.material_company_code,
+      };
+
+      if (!formValues.is_revised_code_new) {
+        materialItem.material_code_revised = formValues.material_code_revised;
+      }
+
       const finalMaterialRequestList =
         materialRequestList.length > 0
           ? materialRequestList
-          : [
-            {
-              material_name_description: formValues.material_name_description,
-              material_code_revised: formValues.material_code_revised,
-              material_company_code: materialCompanyCode,
-              material_type: formValues.material_type,
-              material_type_category: formValues.material_type_category,
-              plant: formValues.plant_name,
-              material_category: formValues.material_category,
-              unit_of_measure: formValues.base_unit_of_measure,
-              comment_by_user: formValues.comment_by_user,
-              material_specifications: formValues.material_specifications,
-              is_revised_code_new: formValues.is_revised_code_new,
-              company_name: formValues.material_company_code,
-            },
-          ];
+          : [materialItem];
 
       const requestorData = {
         request_date: formValues.request_date,
@@ -198,24 +202,27 @@ export default function MaterialRegistration() {
     try {
       const formValues = form.getValues();
       // console.log("Form Values on Submit----->", formValues);
+      const materialItem: any = {
+        material_name_description: formValues.material_name_description,
+        material_company_code: materialCompanyCode,
+        material_type: formValues.material_type,
+        plant: formValues.plant_name,
+        material_category: formValues.material_category,
+        unit_of_measure: formValues.base_unit_of_measure,
+        comment_by_user: formValues.comment_by_user,
+        material_specifications: formValues.material_specifications,
+        is_revised_code_new: formValues.is_revised_code_new,
+        company_name: formValues.material_company_code,
+      };
+
+      if (!formValues.is_revised_code_new) {
+        materialItem.material_code_revised = formValues.material_code_revised;
+      }
+
       const finalMaterialRequestList =
         materialRequestList.length > 0
           ? materialRequestList
-          : [
-            {
-              material_name_description: formValues.material_name_description,
-              material_code_revised: formValues.material_code_revised,
-              material_company_code: materialCompanyCode,
-              material_type: formValues.material_type,
-              plant: formValues.plant_name,
-              material_category: formValues.material_category,
-              unit_of_measure: formValues.base_unit_of_measure,
-              comment_by_user: formValues.comment_by_user,
-              material_specifications: formValues.material_specifications,
-              is_revised_code_new: formValues.is_revised_code_new,
-              company_name: formValues.material_company_code,
-            },
-          ];
+          : [materialItem];
 
       const requestorData = {
         request_date: formValues.request_date,

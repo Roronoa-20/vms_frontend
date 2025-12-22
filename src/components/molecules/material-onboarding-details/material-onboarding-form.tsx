@@ -144,10 +144,8 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
     }
   }, [EmployeeDetailsJSON, ProfitCenter, filteredProfit]);
 
-  const onCancel = (e: React.MouseEvent) => {
-    e.preventDefault();
-    router.push("/material-onboarding-table");
-    window.location.reload();
+  const onCancel = () => {
+    router.push("/view-material-code-request");
   };
 
   const handleLabelClick = (inputId: string) => {
@@ -225,7 +223,6 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
       immediate_reporting_head,
       contact_information_email,
       contact_information_phone,
-      
       ...rest
     } = values;
 
@@ -249,7 +246,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
         purchasing_value_key: form.getValues("purchasing_value_key"),
         min_lot_size: form.getValues("min_lot_size"),
         issue_unit: form.getValues("base_uom"),
-        
+
       };
 
       console.log("FINAL PAYLOAD SENT TO BACKEND:", payload);
@@ -365,7 +362,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
 
                   <MaterialComment {...props} />
 
-                  <MaterialOnboardingApproval {...props} role={role} />
+                  {/* <MaterialOnboardingApproval {...props} role={role} /> */}
                 </>
               )}
             </>

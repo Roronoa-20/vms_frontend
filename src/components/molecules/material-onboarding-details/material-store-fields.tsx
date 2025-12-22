@@ -218,7 +218,7 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                 </div>
 
                 {/* Brand / Make */}
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <FormField
                     control={form.control}
                     name="brand_make"
@@ -238,7 +238,7 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                       </FormItem>
                     )}
                   />
-                </div>
+                </div> */}
 
                 {/* Availability Check */}
                 <div className="space-y-2">

@@ -52,7 +52,11 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
   const [searchResults, setSearchResults] = useState<MaterialCode[]>([]);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [materialSelectedFromList, setMaterialSelectedFromList] = useState<boolean>(false);
+  const [materialCodeAutoFetched, setMaterialCodeAutoFetched] = useState(false);
   const [AllMaterialCodes, setAllMaterialCodes] = useState<MaterialCode[]>([]);
+  const [materialCodeStatus, setMaterialCodeStatus] = useState<"idle" | "checking" | "exists" | "available">("idle");
+  const [selectedCodeLogic, setSelectedCodeLogic] = useState<string>("");
+  const [latestCodeSuggestions, setLatestCodeSuggestions] = useState<MaterialCode[]>([]);
 
   const company = useWatch({ control: form.control, name: "material_company_code" });
   const materialType = useWatch({ control: form.control, name: "material_type" });
@@ -89,6 +93,119 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
     [company, materialType]
   );
 
+  const checkMaterialCodeExists = async (code: string) => {
+    if (!code) return;
+
+    try {
+      setMaterialCodeStatus("checking");
+
+      const company = form.getValues("material_company_code");
+      const materialtype = form.getValues("material_type");
+
+      if (!company || !materialtype) {
+        setMaterialCodeStatus("idle");
+        return;
+      }
+
+      const url =
+        `${API_END_POINTS.MaterialCodeSearchApi}` +
+        `?filters=${encodeURIComponent(
+          JSON.stringify({
+            company,
+            material_type: materialtype,
+          })
+        )}&search_term=${encodeURIComponent(code)}`;
+
+      const response: AxiosResponse = await requestWrapper({
+        url,
+        method: "GET",
+      });
+
+      const data = response?.data?.message?.data || [];
+
+      if (data.length > 0) {
+        setMaterialCodeStatus("exists");
+        form.setError("material_code_revised", {
+          type: "manual",
+          message: "Material Code already exists",
+        });
+      } else {
+        setMaterialCodeStatus("available");
+        form.clearErrors("material_code_revised");
+      }
+    } catch (err) {
+      console.error("Material code validation failed", err);
+      setMaterialCodeStatus("idle");
+    }
+  };
+
+  useEffect(() => {
+    const category = form.getValues("material_type_category");
+    if (!category || !MaterialType?.length) return;
+
+    const materialType = form.getValues("material_type");
+    if (!materialType) return;
+
+    const matchedType = MaterialType.find(t => t.name === materialType);
+    if (!matchedType?.material_code_logic?.length) return;
+
+    const matchedLogic = matchedType.material_code_logic.find(
+      (m) => m.material_type_category === category
+    );
+
+    if (matchedLogic?.code_logic) {
+      setSelectedCodeLogic(matchedLogic.code_logic);
+    }
+  }, [
+    form.watch("material_type_category"),
+    form.watch("material_type"),
+    MaterialType
+  ]);
+
+
+  const fetchLatestCode = async () => {
+    if (!selectedCodeLogic) return;
+
+    const company = form.getValues("material_company_code");
+
+    const res = await requestWrapper({
+      method: "GET",
+      url: `${API_END_POINTS.getLatestMaterialCode}?prefix=${selectedCodeLogic}&company=${company}`,
+    });
+    console.log(res)
+    if (res?.data?.message) {
+      setLatestCodeSuggestions([res.data.message]);
+    }
+  };
+
+  useEffect(() => {
+    fetchLatestCode();
+  }, [selectedCodeLogic]);
+
+  useEffect(() => {
+    const code = form.watch("material_code_revised");
+
+    if (!code || code.endsWith("-")) {
+      setMaterialCodeStatus("idle");
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      checkMaterialCodeExists(code);
+    }, 600);
+
+    return () => clearTimeout(timer);
+  }, [
+    form.watch("material_code_revised"),
+    form.watch("material_company_code"),
+    form.watch("material_type"),
+  ]);
+
+  useEffect(() => {
+    fetchMaterialCodeData();
+    setMaterialCodeStatus("idle");
+  }, []);
+
   useEffect(() => {
     if (company || materialType) {
       fetchMaterialCodeData();
@@ -120,23 +237,24 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
   }, [EmployeeDetailsJSON, MaterialGroup, StorageLocation, DivisionDetails]);
 
 
-  const handleMaterialSearch = (e: ChangeEvent<HTMLTextAreaElement>) => {
+  const handleMaterialSearch = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const val = e.target.value;
+    form.setValue("material_name_description", val);
 
-    if (val.trim().length > 3) {
+    if (val.trim().length > 2) {
       const filtered = AllMaterialCodes?.filter((item) =>
         item.material_description?.toLowerCase().includes(val.toLowerCase())
-      );
+      ) || [];
 
-      const mappedResults = filtered || [];
-      setSearchResults(mappedResults);
+      console.log("Filtered Results:", filtered);
+      setSearchResults(filtered);
       setShowSuggestions(true);
     } else {
       setSearchResults([]);
       setShowSuggestions(false);
     }
-
     setMaterialSelectedFromList(false);
+    setMaterialCodeAutoFetched(false);
   };
 
   const handleMaterialSelect = (item: MaterialCode) => {
@@ -147,24 +265,17 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
     } else {
       form.setValue("material_code_revised", "");
     }
-
+    form.setValue("material_type", item.material_type);
     setMaterialSelectedFromList(true);
     setShowSuggestions(false);
+    setMaterialCodeAutoFetched(true);
   };
 
   useEffect(() => {
     const data = MaterialDetails?.material_master;
     if (!data || !filteredMaterialGroup.length) return;
 
-    const fields = [
-      "material_group",
-      "batch_requirements_yn",
-      "brand_make",
-      "availability_check",
-      "class_type",
-      "class_number",
-      "serial_number_profile",
-      "serialization_level"
+    const fields = ["material_group", "batch_requirements_yn", "brand_make", "availability_check", "class_type", "class_number", "serial_number_profile", "serialization_level"
     ] as const;
 
     fields.forEach((field) => {
@@ -238,6 +349,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
             searchResults={searchResults}
             showSuggestions={showSuggestions}
             materialSelectedFromList={materialSelectedFromList}
+            setMaterialSelectedFromList={setMaterialSelectedFromList}
             handleMaterialSearch={handleMaterialSearch}
             handleMaterialSelect={handleMaterialSelect}
             setSearchResults={setSearchResults}
@@ -249,32 +361,38 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
             AllMaterialType={MaterialType}
             // isMaterialCodeEdited={isMaterialCodeEdited}
             setIsMaterialCodeEdited={setIsMaterialCodeEdited}
+            materialCodeAutoFetched={materialCodeAutoFetched}
+            setMaterialCodeAutoFetched={setMaterialCodeAutoFetched}
             AllMaterialCodes={AllMaterialCodes}
             setShouldShowAllFields={setShouldShowAllFields}
             shouldShowAllFields={shouldShowAllFields}
             setIsMatchedMaterial={setIsMatchedMaterial}
             isZCAPMaterial={isZCAPMaterial}
+            materialCodeStatus={materialCodeStatus}
+            selectedCodeLogic={selectedCodeLogic}
+            setSelectedCodeLogic={setSelectedCodeLogic}
+            latestCodeSuggestions={latestCodeSuggestions}
           />
 
           {shouldShowAllFields && (role === "Material CP" || role === "Store") && (
-              <Storefields
-                companyInfo={companyInfo}
-                role={role}
-                form={form}
-                MaterialDetails={MaterialDetails}
-                MaterialOnboardingDetails={MaterialOnboardingDetails}
-                materialCompanyCode={materialCompanyCode}
-                setMaterialCompanyCode={setMaterialCompanyCode}
-                UnitOfMeasure={UnitOfMeasure}
-                MaterialType={MaterialType}
-                plantcode={plantcode}
-                AllMaterialType={MaterialType}
-                AvailabilityCheck={AvailabilityCheck}
-                MaterialGroup={MaterialGroup}
-                SerialProfile={SerialProfile}
-                ClassType={ClassType}
-                isZCAPMaterial={isZCAPMaterial}
-              />
+            <Storefields
+              companyInfo={companyInfo}
+              role={role}
+              form={form}
+              MaterialDetails={MaterialDetails}
+              MaterialOnboardingDetails={MaterialOnboardingDetails}
+              materialCompanyCode={materialCompanyCode}
+              setMaterialCompanyCode={setMaterialCompanyCode}
+              UnitOfMeasure={UnitOfMeasure}
+              MaterialType={MaterialType}
+              plantcode={plantcode}
+              AllMaterialType={MaterialType}
+              AvailabilityCheck={AvailabilityCheck}
+              MaterialGroup={MaterialGroup}
+              SerialProfile={SerialProfile}
+              ClassType={ClassType}
+              isZCAPMaterial={isZCAPMaterial}
+            />
           )}
         </div>
       </div>

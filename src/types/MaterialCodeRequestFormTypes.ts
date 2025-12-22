@@ -297,7 +297,7 @@ export interface MaterialRequestItem {
   manufacturer: string | null;
   plant: string;
   material_code_revised: string;
-  is_revised_code_new: number;
+  is_revised_code_new: number | string | boolean;
   comment_by_user: string | null;
   parent: string;
   parentfield: string;

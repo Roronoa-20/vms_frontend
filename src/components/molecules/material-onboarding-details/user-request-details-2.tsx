@@ -3,33 +3,14 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/src/context/AuthContext";
 import { Input } from "@/components/ui/input";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { MaterialCode } from "@/src/types/PurchaseRequestType";
-import {
-    MaterialRegistrationFormData,
-    Plant,
-    MaterialType,
-    UOMMaster,
-    MaterialRequestData,
-    division,
-    MaterialCategory,
-} from "@/src/types/MaterialCodeRequestFormTypes";
+import { MaterialRegistrationFormData, Plant, MaterialType, UOMMaster, MaterialRequestData, division, MaterialCategory } from "@/src/types/MaterialCodeRequestFormTypes";
+import { CheckCircle, XCircle, Loader2 } from "lucide-react";
+
 
 interface UserRequestFormProps {
     form: UseFormReturn<any>;
@@ -60,53 +41,51 @@ interface UserRequestFormProps {
     filteredDivision?: division[];
     UnitOfMeasure?: UOMMaster[];
     MaterialCategory?: MaterialCategory[];
+    materialCodeStatus: "idle" | "checking" | "exists" | "available";
+    selectedCodeLogic: string;
+    setSelectedCodeLogic: React.Dispatch<React.SetStateAction<string>>;
+    latestCodeSuggestions: any[];
+    setMaterialSelectedFromList: React.Dispatch<React.SetStateAction<boolean>>;
+    setMaterialCodeAutoFetched: React.Dispatch<React.SetStateAction<boolean>>;
+    materialCodeAutoFetched: boolean;
 }
 
-const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllMaterialType, StorageLocation, AllMaterialCodes, MaterialDetails, MaterialOnboardingDetails, handleMaterialSearch, handleMaterialSelect, searchResults = [], showSuggestions, setShowSuggestions, selectedMaterialType, setSelectedMaterialType, setMaterialCompanyCode, materialCompanyCode, setIsMaterialCodeEdited, setShouldShowAllFields, shouldShowAllFields, setIsMatchedMaterial, isZCAPMaterial }) => {
+const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllMaterialType, StorageLocation, AllMaterialCodes, MaterialDetails, MaterialOnboardingDetails, handleMaterialSearch, handleMaterialSelect, searchResults = [], showSuggestions, setShowSuggestions, selectedMaterialType, setSelectedMaterialType, setMaterialCompanyCode, materialCompanyCode, setIsMaterialCodeEdited, setShouldShowAllFields, shouldShowAllFields, setIsMatchedMaterial, isZCAPMaterial, materialCodeStatus, selectedCodeLogic, setSelectedCodeLogic, latestCodeSuggestions, setMaterialSelectedFromList, materialSelectedFromList, setMaterialCodeAutoFetched, materialCodeAutoFetched }) => {
+
+    console.log("latestCodeSuggestions--------->", selectedCodeLogic)
 
     const { designation } = useAuth();
     const role = designation || "";
     const isMaterialCP = designation === "Material CP";
-
-    // UI state
     const [originalMaterialCode, setOriginalMaterialCode] = useState<string>("");
     const [originalDesc, setOriginalDesc] = useState<string>("");
     const [divisionSearch, setDivisionSearch] = useState("");
     const [storageSearch, setStorageSearch] = useState("");
-    // New Code flow state
     const [hideMaterialCode, setHideMaterialCode] = useState(false);
-    const isRevisedNewCode = MaterialDetails?.material_request_item?.is_revised_code_new
+
+    const isRevisedNewCode = MaterialDetails?.material_request_item?.is_revised_code_new === 1 || MaterialDetails?.material_request_item?.is_revised_code_new === true;
+    const isNewCodeFlow = isRevisedNewCode || Boolean(selectedCodeLogic);
 
     // watchers
     const materialCode = form.watch("material_code_revised");
     const materialDesc = (form.watch("material_name_description") || "").trim().toLowerCase();
 
-    // -------------------- MEMOIZED FILTERS (kept intact) --------------------
-    const filteredPlants = useMemo(
-        () => plantcode?.filter((p) => String(p.company) === materialCompanyCode) || [],
-        [plantcode, materialCompanyCode]
-    );
+    const selectedMaterialCategory = form.watch("material_category");
 
-    const filteredMaterialTypes = useMemo(
-        () =>
-            AllMaterialType?.filter((t) =>
-                t.multiple_company?.some((c) => String(c.company) === materialCompanyCode)
-            ) || [],
-        [AllMaterialType, materialCompanyCode]
-    );
+    const isZRND = selectedMaterialType === "ZRND - R&D Material";
+
+    const shouldShowMaterialCode = !isZRND && (selectedMaterialCategory === "R" || selectedMaterialCategory === "P");
+
+    // -------------------- MEMOIZED FILTERS (kept intact) --------------------
+    const filteredPlants = useMemo(() => plantcode?.filter((p) => String(p.company) === materialCompanyCode) || [], [plantcode, materialCompanyCode]);
+
+    const filteredMaterialTypes = useMemo(() => AllMaterialType?.filter((t) => t.multiple_company?.some((c) => String(c.company) === materialCompanyCode)) || [], [AllMaterialType, materialCompanyCode]);
 
     const selectedPlantName = form.getValues("plant_name");
-    const filteredStorageLocations = useMemo(
-        () =>
-            StorageLocation?.filter((s) => String(s.plant_code) === selectedPlantName) || [],
-        [StorageLocation, selectedPlantName]
-    );
+    const filteredStorageLocations = useMemo(() => StorageLocation?.filter((s) => String(s.plant_code) === selectedPlantName) || [], [StorageLocation, selectedPlantName]);
 
     // -------------------- HELPER --------------------
-    const getCodeFromDescription = (desc: string) =>
-        AllMaterialCodes?.find(
-            (code) => code.material_description?.trim().toLowerCase() === desc.trim().toLowerCase()
-        )?.name || "";
+    const getCodeFromDescription = (desc: string) => AllMaterialCodes?.find((code) => code.material_description?.trim().toLowerCase() === desc.trim().toLowerCase())?.name || "";
 
     // -------------------- INITIALIZE FORM --------------------
     useEffect(() => {
@@ -168,19 +147,14 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
     }, [role, AllMaterialCodes, form]);
 
     useEffect(() => {
-        if (isRevisedNewCode === undefined || isRevisedNewCode === null) return;
-
-        if (isRevisedNewCode) {
-            // When true → hide code UI and show all fields
+        if (isNewCodeFlow) {
             setHideMaterialCode(true);
             setShouldShowAllFields(true);
         } else {
-            // When false → show code UI and collapse fields
             setHideMaterialCode(false);
             setShouldShowAllFields(false);
         }
-    }, [isRevisedNewCode, setHideMaterialCode, setShouldShowAllFields]);
-
+    }, [isNewCodeFlow]);
 
     // -------------------- MANUAL EDIT DETECTION & VALIDATION --------------------
     useEffect(() => {
@@ -217,26 +191,6 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
             form.clearErrors("material_code_revised");
         }
     }, [materialCode, materialDesc, originalMaterialCode, originalDesc, AllMaterialCodes, setIsMatchedMaterial, setIsMaterialCodeEdited, setShouldShowAllFields, hideMaterialCode, form]);
-
-    // -------------------- NEW CODE FLOW --------------------
-    const handleToggleNewCode = () => {
-        if (!hideMaterialCode) {
-            // user clicked "New Code" -> hide code field, clear revised code, hide remaining fields until desc changed
-            setHideMaterialCode(true);
-            form.setValue("material_code_revised", "");
-            setShouldShowAllFields(false);
-        } else {
-            // user clicked "Use Old" -> revert to normal/manual-edit detection
-            setHideMaterialCode(false);
-            const currentCode = form.getValues("material_code_revised") || "";
-            const currentDesc = (form.getValues("material_name_description") || "").trim().toLowerCase();
-            const existsInList = AllMaterialCodes?.some(
-                (c) => c.name === currentCode && c.material_description?.trim().toLowerCase() === currentDesc
-            );
-            const isManualChange = currentCode !== originalMaterialCode || currentDesc !== originalDesc;
-            setShouldShowAllFields(isManualChange || !existsInList || (!!currentDesc && !currentCode));
-        }
-    };
 
     // Only show remaining fields (division/storage) when both: New Code clicked AND description changed from original.
     useEffect(() => {
@@ -276,10 +230,33 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
         ? filteredStorageLocations.filter((s) => s.name?.toLowerCase().includes(storageSearch.toLowerCase()))
         : filteredStorageLocations;
 
-    const showMaterialCodeStatuses = ["Pending by CP", "Sent to SAP", "Re-Opened by CP", "Code Generated by SAP"];
-    const showMaterialCode = MaterialOnboardingDetails?.approval_status
-        ? showMaterialCodeStatuses.includes(MaterialOnboardingDetails.approval_status)
-        : false;
+    useEffect(() => {
+        if (!selectedCodeLogic) return;
+
+        form.setValue("material_code_revised", `${selectedCodeLogic}-`, {
+            shouldDirty: false,
+            shouldValidate: true,
+        });
+    }, [selectedCodeLogic]);
+
+    useEffect(() => {
+        if (selectedCodeLogic) return;
+
+        if (!shouldShowMaterialCode || isNewCodeFlow) return;
+
+        if (selectedMaterialCategory === "R") {
+            form.setValue("material_code_revised", "R-", {shouldDirty: false, shouldValidate: true});}
+
+        if (selectedMaterialCategory === "P") {
+            form.setValue("material_code_revised", "P-", {shouldDirty: false, shouldValidate: true});}
+    }, [selectedMaterialCategory, selectedCodeLogic, shouldShowMaterialCode, isNewCodeFlow]);
+
+
+    useEffect(() => {
+        if (!shouldShowMaterialCode) {
+            form.clearErrors("material_code_revised");
+        }
+    }, [shouldShowMaterialCode]);
 
 
 
@@ -351,55 +328,88 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
 
                         {/* Right column: Material Code area + New Code toggle */}
                         <div className="space-y-2">
-                            {!isRevisedNewCode && !hideMaterialCode && (
+                            <div className="col-span-1 relative">
                                 <FormField
                                     control={form.control}
                                     name="material_code_revised"
-                                    key="material_code_revised"
-                                    render={({ field }: { field: ControllerRenderProps<FieldValues, "material_code_revised"> }) => (
-                                        <FormItem>
-                                            <FormLabel className="font-bold">Material Code <span className="text-red-500">*</span></FormLabel>
-                                            <FormControl>
-                                                <div className="relative flex items-center gap-2 w-full">
-                                                    {!isRevisedNewCode ? (
-                                                        <>
-                                                            <Input
-                                                                {...field}
-                                                                disabled={true}
-                                                                value={field.value || ""}
-                                                                className="p-3 text-sm bg-gray-100 cursor-not-allowed text-gray-500 flex-[3]"
-                                                                placeholder="Material Code Revised"
-                                                            />
-                                                            <Button
-                                                                type="button"
-                                                                variant="nextbtn"
-                                                                size="nextbtnsize"
-                                                                className="px-2 text-md flex-[1]"
-                                                                onClick={handleToggleNewCode}
-                                                            >
-                                                                New Code
-                                                            </Button>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <Button
-                                                                type="button"
-                                                                variant="nextbtn"
-                                                                size="nextbtnsize"
-                                                                className="px-2 text-md flex-[1]"
-                                                                onClick={handleToggleNewCode}
-                                                            >
-                                                                Use Old
-                                                            </Button>
-                                                        </>
+                                    render={({ field }: { field: { value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; ref: React.Ref<HTMLInputElement> } }) => {
+                                        return (
+                                            <FormItem>
+                                                <FormLabel>Material Code <span className="text-red-500">*</span><span className="text-[10px]">(Max. Char 18)</span></FormLabel>
+                                                <div className="relative">
+                                                    <FormControl>
+                                                        <Input
+                                                            {...field}
+                                                            className="p-3 w-full text-sm placeholder:text-gray-500"
+                                                            placeholder="Enter Revised Material Code"
+                                                            maxLength={18}
+                                                            // onChange={(e) => {
+                                                            //   setMaterialCodeAutoFetched(false);
+                                                            //   field.onChange(e);
+                                                            // }}
+                                                            onChange={(e) => {
+                                                                if (!isRevisedNewCode && !selectedCodeLogic) return;
+
+                                                                if (materialSelectedFromList) {
+                                                                    field.onChange(e);
+                                                                    return;
+                                                                }
+
+                                                                let value = e.target.value;
+
+                                                                const prefix =
+                                                                    selectedCodeLogic
+                                                                        ? `${selectedCodeLogic}-`
+                                                                        : selectedMaterialCategory === "R"
+                                                                            ? "R-"
+                                                                            : selectedMaterialCategory === "P"
+                                                                                ? "P-"
+                                                                                : "";
+
+                                                                if (prefix && !value.startsWith(prefix)) {
+                                                                    value = prefix;
+                                                                }
+
+                                                                setMaterialCodeAutoFetched(false);
+                                                                field.onChange({
+                                                                    ...e,
+                                                                    target: { ...e.target, value },
+                                                                });
+                                                            }}
+                                                            disabled={materialCodeAutoFetched}
+                                                        />
+                                                    </FormControl>
+
+                                                    {isRevisedNewCode && (
+                                                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                                            {materialCodeStatus === "checking" && (
+                                                                <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                                                            )}
+                                                            {materialCodeStatus === "available" && (
+                                                                <CheckCircle className="w-4 h-4 text-green-600" />
+                                                            )}
+                                                            {materialCodeStatus === "exists" && (
+                                                                <XCircle className="w-4 h-4 text-red-600" />
+                                                            )}
+                                                        </div>
+                                                    )}
+
+                                                    {isRevisedNewCode && latestCodeSuggestions[0] && !materialSelectedFromList && (
+                                                        <p className="mt-1 text-xs text-gray-500">
+                                                            Latest existing code:{" "}
+                                                            <span className="font-semibold">
+                                                                {latestCodeSuggestions[0].material_code}
+                                                            </span>
+                                                        </p>
                                                     )}
                                                 </div>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
+                                                <FormMessage />
+                                            </FormItem>
+                                        );
+                                    }}
                                 />
-                            )}
+                            </div>
+
                         </div>
 
                         {/* Material Specifications + User Comment side-by-side */}

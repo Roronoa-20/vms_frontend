@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import UOMConversionModal from "@/src/components/molecules/material-onboarding-modal/UOMConversionModal";
 import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
 import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialRequestData, MaterialType, MaterialMaster } from "@/src/types/MaterialCodeRequestFormTypes";
@@ -52,9 +52,14 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
 
   console.log("MRP Issue UOM--->", issueUOM);
   console.log("MRP Base UOM--->", baseUOM);
+
   const MRPTypeValue = form.watch("mrp_type");
+
   console.log("MRP Value--->", MRPTypeValue);
 
+  const materialCategory = MaterialDetails?.material_request_item?.material_category;
+  const watchedMaterialCategory = form.watch("material_category") || materialCategory;
+  const shouldShowSMK = !isZCAPMaterial && (watchedMaterialCategory === "R" || watchedMaterialCategory === "P");
 
   useEffect(() => {
     if (MRPTypeValue === "ND") {
@@ -355,7 +360,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
               />
             </div>
 
-            {!isZCAPMaterial && (
+            {shouldShowSMK && (
               <>
                 {/* Scheduling Margin Key */}
                 <div className="space-y-2">
@@ -448,8 +453,8 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
               </>
             )}
 
-           {/* Conversion UOM Modal */}
-       <UOMConversionModal
+            {/* Conversion UOM Modal */}
+            <UOMConversionModal
               open={showConversionModal}
               onClose={() => setShowConversionModal(false)}
               baseUOM={baseUOM}

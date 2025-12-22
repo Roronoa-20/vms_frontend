@@ -42,9 +42,8 @@ interface UserRequestFormProps {
 
 export default function UserMaterialRequestForm({ form, masters, MaterialOnboardingDetails, handleMaterialSearch, searchResults, showSuggestions, handleMaterialSelect, materialSelectedFromList, setMaterialSelectedFromList, setMaterialCodeAutoFetched, setShowSuggestions, materialCodeAutoFetched, setSelectedMaterialType, materialCodeStatus, selectedCodeLogic, setSelectedCodeLogic, latestCodeSuggestions }: UserRequestFormProps) {
 
-  console.log("Material Code Status---->", materialCodeStatus)
-
   const { companyMaster, materialCategoryMaster, uomMaster } = masters;
+  console.log("Masters will be shown here------>",masters)
   const [filteredPlants, setFilteredPlants] = useState<Plant[]>([]);
   const [filteredMaterialType, setFilteredMaterialType] = useState<MaterialType[]>([]);
   const [materialCompanyCode, setMaterialCompanyCode] = useState<string>("");
@@ -52,13 +51,21 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
   const [materialTypeSearch, setMaterialTypeSearch] = useState("");
   const [uomSearch, setUomSearch] = useState("");
   const prefillRef = useRef<MaterialRegistrationFormData | null>(null);
-  const selectedMaterialCategory = form.watch("material_category");
-  const selectedMaterialType = form.watch("material_type");
   const { name } = useAuth();
   const isMastersReady = [companyMaster, materialCategoryMaster, uomMaster].every((arr) => arr && arr.length > 0);
   const [materialCategoryTypeOptions, setMaterialCategoryTypeOptions] = useState<{
     material_category_type: string; code_logic: string;
   }[]>([]);
+
+  const selectedMaterialCategory = form.watch("material_category");
+  const selectedMaterialType = form.watch("material_type");
+  console.log("Slelected Matearial Type--->", selectedMaterialType)
+
+  const isZRND = selectedMaterialType === "ZRND - R&D Material";
+
+  const shouldShowMaterialCode =
+    !isZRND &&
+    (selectedMaterialCategory === "R" || selectedMaterialCategory === "P");
 
   useEffect(() => {
     if (!MaterialOnboardingDetails || !isMastersReady) return;
@@ -154,7 +161,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
         method: "GET",
         url: `${API_END_POINTS.getMaterialTypeMaster}?material_category_type=${categoryType}&company=${companyCode}`,
       });
-      console.log("Material Type Response---->", res)
+      // console.log("Material Type Response---->", res)
       return res?.data?.message?.data || [];
     } catch (err) {
       console.error("Error fetching MaterialTypeMaster:", err);
@@ -239,6 +246,27 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
     }
   }, [selectedCodeLogic, materialSelectedFromList]);
 
+  useEffect(() => {
+    if (!shouldShowMaterialCode) {
+      form.setValue("material_code_revised", "");
+      form.clearErrors("material_code_revised");
+      return;
+    }
+
+    if (selectedMaterialCategory === "R") {
+      form.setValue("material_code_revised", "R-");
+    }
+
+    if (selectedMaterialCategory === "P") {
+      form.setValue("material_code_revised", "P-");
+    }
+  }, [selectedMaterialCategory, selectedMaterialType]);
+
+  useEffect(() => {
+    if (!shouldShowMaterialCode) {
+      form.clearErrors("material_code_revised");
+    }
+  }, [shouldShowMaterialCode]);
 
   // --- Delete a row from table (DO NOT DELETE) ---
   // const handleDeleteRow = (indexToDelete: number) => {
@@ -278,7 +306,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                       <SelectContent>
                         {companyMaster?.map((item: Company) => (
                           <SelectItem key={item.name} value={item.name}>
-                            {item.company_name}
+                            {item.description}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -584,89 +612,91 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
               />
             </div>
             {/* Material Code Revised  */}
-            <div className="col-span-1 relative">
-              <FormField
-                control={form.control}
-                name="material_code_revised"
-                render={({ field }: { field: { value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; ref: React.Ref<HTMLInputElement> } }) => {
-                  return (
-                    <FormItem>
-                      <FormLabel>Material Code <span className="text-red-500">*</span><span className="text-[10px]">(Max. Char 18)</span></FormLabel>
-                      <div className="relative">
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className="p-3 w-full text-sm placeholder:text-gray-500"
-                            placeholder="Enter Revised Material Code"
-                            maxLength={18}
-                            // onChange={(e) => {
-                            //   setMaterialCodeAutoFetched(false);
-                            //   field.onChange(e);
-                            // }}
-                            onChange={(e) => {
-                              const value = e.target.value;
+            {shouldShowMaterialCode && (
+              <div className="col-span-1 relative">
+                <FormField
+                  control={form.control}
+                  name="material_code_revised"
+                  render={({ field }: { field: { value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; ref: React.Ref<HTMLInputElement> } }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel>Material Code <span className="text-red-500">*</span><span className="text-[10px]">(Max. Char 18)</span></FormLabel>
+                        <div className="relative">
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className="p-3 w-full text-sm placeholder:text-gray-500"
+                              placeholder="Enter Revised Material Code"
+                              maxLength={18}
+                              // onChange={(e) => {
+                              //   setMaterialCodeAutoFetched(false);
+                              //   field.onChange(e);
+                              // }}
+                              onChange={(e) => {
+                                const value = e.target.value;
 
-                              // If material selected from dropdown → don't interfere
-                              if (materialSelectedFromList) {
-                                field.onChange(e);
-                                return;
-                              }
+                                // If material selected from dropdown → don't interfere
+                                if (materialSelectedFromList) {
+                                  field.onChange(e);
+                                  return;
+                                }
 
-                              // If no code logic, allow normal typing
-                              if (!selectedCodeLogic) {
-                                field.onChange(e);
-                                return;
-                              }
+                                // If no code logic, allow normal typing
+                                // if (!selectedCodeLogic) {
+                                //   field.onChange(e);
+                                //   return;
+                                // }
 
-                              // PREFIX PROTECTION
-                              if (!value.startsWith(selectedCodeLogic)) {
-                                e.target.value = `${selectedCodeLogic}-`;
+                                // PREFIX PROTECTION
+                                //   if (!value.startsWith(selectedCodeLogic)) {
+                                //     e.target.value = `${selectedCodeLogic}-`;
+                                //     field.onChange(e);
+                                //     return;
+                                //   }
+                                //   setMaterialCodeAutoFetched(false);
+                                //   field.onChange(e);
+                                // }}
+                                const prefix =
+                                  selectedMaterialCategory === "R" ? "R-" :
+                                    selectedMaterialCategory === "P" ? "P-" :
+                                      "";
+
+                                if (prefix && !value.startsWith(prefix)) {
+                                  e.target.value = prefix;
+                                }
+
                                 field.onChange(e);
-                                return;
-                              }
-                              setMaterialCodeAutoFetched(false);
-                              field.onChange(e);
-                            }}
-                            disabled={materialCodeAutoFetched}
-                          />
-                        </FormControl>
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                          {materialCodeStatus === "checking" && (
-                            <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
-                          )}
-                          {materialCodeStatus === "available" && (
-                            <CheckCircle className="w-4 h-4 text-green-600" />
-                          )}
-                          {materialCodeStatus === "exists" && (
-                            <XCircle className="w-4 h-4 text-red-600" />
+                              }}
+                              disabled={materialCodeAutoFetched}
+                            />
+                          </FormControl>
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                            {materialCodeStatus === "checking" && (
+                              <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                            )}
+                            {materialCodeStatus === "available" && (
+                              <CheckCircle className="w-4 h-4 text-green-600" />
+                            )}
+                            {materialCodeStatus === "exists" && (
+                              <XCircle className="w-4 h-4 text-red-600" />
+                            )}
+                          </div>
+                          {latestCodeSuggestions[0] && !materialSelectedFromList && (
+                            <p className="mt-1 text-xs text-gray-500">
+                              Latest existing code:{" "}
+                              <span className="font-semibold">
+                                {latestCodeSuggestions[0].material_code}
+                              </span>
+                            </p>
                           )}
                         </div>
-                        {latestCodeSuggestions.length > 0 && !materialSelectedFromList && (
-                          <div className="absolute left-0 top-full mt-1 z-20 w-full bg-white border rounded-md shadow">
-                            <div className="px-3 py-1 text-xs font-semibold text-gray-500">
-                              Latest used codes
-                            </div>
-
-                            {latestCodeSuggestions.map((item, idx) => (
-                              <div
-                                key={idx}
-                                className="px-3 py-2 text-sm hover:bg-gray-100 cursor-pointer"
-                                onMouseDown={() => {
-                                  form.setValue("material_code_revised", item.name);
-                                }}
-                              >
-                                {item.name}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-            </div>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+              </div>
+            )}
           </div>
 
           {/* Comment By User */}
@@ -771,39 +801,6 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
               </TableBody>
             </Table>
           </div> */}
-          </div>
-
-          {/* Personal Data */}
-          <div className="pt-4">
-            <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1 mt-2">
-              Personal Data
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 pt-2">
-              <FormField
-                name="requested_by_name"
-                render={({ field }: { field: { value?: string; onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; ref?: React.Ref<HTMLInputElement> } }) => (
-                  <FormItem>
-                    <FormLabel>Requested By - Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} readOnly className="p-3 w-full text-sm bg-gray-100" />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                name="requested_by_place"
-                render={({ field }: { field: { value?: string; onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; ref?: React.Ref<HTMLInputElement> } }) => (
-                  <FormItem>
-                    <FormLabel>Requested By - Place</FormLabel>
-                    <FormControl>
-                      <Input {...field} className="p-3 w-full text-sm" placeholder="Enter Place" />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
           </div>
         </div>
       </div>
