@@ -33,9 +33,7 @@ export const PRRequest = async ({ pur_req, cart_id, prf_name }: PageProps) => {
       },
     });
 
-    PRData = PRDataResponse?.status === 200
-      ? PRDataResponse?.data?.message
-      : "";
+    PRData = PRDataResponse?.status === 200 ? PRDataResponse?.data?.message : "";
     company = PRData?.company || ""
   } else if (cart_id) {
     // When PR is created from VMS (Webform)
@@ -49,9 +47,7 @@ export const PRRequest = async ({ pur_req, cart_id, prf_name }: PageProps) => {
       },
     });
 
-    PRData = PRDataResponse?.status === 200
-      ? PRDataResponse?.data?.message?.data
-      : "";
+    PRData = PRDataResponse?.status === 200 ? PRDataResponse?.data?.message?.data : "";
     company = PRData?.company || ""
   } else if (pur_req) {
     PRDataUrl = `${API_END_POINTS?.fetchPRTableData}?name=${pur_req}`;
@@ -62,9 +58,7 @@ export const PRRequest = async ({ pur_req, cart_id, prf_name }: PageProps) => {
         cookie: cookieHeaderString,
       },
     });
-    company = PRDataResponse?.status === 200
-      ? PRDataResponse?.data?.message?.Company[0].name
-      : "";
+    company = PRDataResponse?.status === 200 ? PRDataResponse?.data?.message?.Company[0].name : "";
   }
 
   const dropdownApiUrl = API_END_POINTS?.vendorPurchaseRequestDropdown;
@@ -73,6 +67,7 @@ export const PRRequest = async ({ pur_req, cart_id, prf_name }: PageProps) => {
       cookie: cookieHeaderString
     }
   });
+
   const Dropdown = resposne?.status == 200 ? resposne?.data.message : "";
   const purchaseGroupURL = `${API_END_POINTS?.filterpurchasegroup}?company=${company ? company : ""}`;
   const PurGroupresposne: AxiosResponse = await requestWrapper({
@@ -82,6 +77,7 @@ export const PRRequest = async ({ pur_req, cart_id, prf_name }: PageProps) => {
       cookie: cookieHeaderString
     }
   });
+
   const PurchaseGroupDropdown = PurGroupresposne?.status == 200 ? PurGroupresposne?.data.message?.pur_grp : "";
 
   const ProfitCenterURL = `${API_END_POINTS?.filterprofitcenter}?company=${company ? company : ""}`;
@@ -92,6 +88,7 @@ export const PRRequest = async ({ pur_req, cart_id, prf_name }: PageProps) => {
       cookie: cookieHeaderString
     }
   });
+
   const ProfitCenterDropdown = PorfitCenterResponse?.status == 200 ? PorfitCenterResponse?.data.message?.profit_center : "";
 
   const PurchaseOrgURL = `${API_END_POINTS?.filterpurchaseorg}?company=${company ? company : ""}`;
@@ -102,15 +99,15 @@ export const PRRequest = async ({ pur_req, cart_id, prf_name }: PageProps) => {
       cookie: cookieHeaderString
     }
   });
+
   const PurchaseOrgDropdown = PurchaseOrgResponse?.status == 200 ? PurchaseOrgResponse?.data.message?.purchase_org : "";
+  
   return (
     <>
       {cart_id ?
-          <PRRequestForm Dropdown={Dropdown} PRData={PRData} cartId={cart_id} pur_req={pur_req} PurchaseGroupDropdown={PurchaseGroupDropdown}
-            ProfitCenterDropdown={ProfitCenterDropdown} PurchaseOrgDropdown={PurchaseOrgDropdown} company={company} prf_name={prf_name} />
+          <PRRequestForm Dropdown={Dropdown} PRData={PRData} cartId={cart_id} pur_req={pur_req} PurchaseGroupDropdown={PurchaseGroupDropdown} ProfitCenterDropdown={ProfitCenterDropdown} PurchaseOrgDropdown={PurchaseOrgDropdown} company={company} prf_name={prf_name} />
           :
-          <NewPRRequestForm Dropdown={Dropdown} PRData={PRData} cartId={cart_id} pur_req={pur_req} PurchaseGroupDropdown={PurchaseGroupDropdown}
-            ProfitCenterDropdown={ProfitCenterDropdown} PurchaseOrgDropdown={PurchaseOrgDropdown} company={company} prf_name={prf_name} />
+          <NewPRRequestForm Dropdown={Dropdown} PRData={PRData} cartId={cart_id} pur_req={pur_req} PurchaseGroupDropdown={PurchaseGroupDropdown} ProfitCenterDropdown={ProfitCenterDropdown} PurchaseOrgDropdown={PurchaseOrgDropdown} company={company} prf_name={prf_name} />
       }
     </>
   )

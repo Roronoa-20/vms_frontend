@@ -135,13 +135,49 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
     fetchCurrency();
   }, [])
 
+  const validation = ():Boolean=>{
+    if(!OnboardingDetail?.international_bank_details?.[0]?.beneficiary_name && !formData?.international_bank_details?.beneficiary_name){
+          alert("Please Enter Beneficiary Name");
+          return true;
+        }
+        if(!OnboardingDetail?.international_bank_details?.[0]?.beneficiary_bank_name && !formData?.international_bank_details?.beneficiary_bank_name){
+          alert("Please Enter Beneficiary Bank Name");
+          return true;
+        }
+        if( !OnboardingDetail?.international_bank_details?.[0]?.beneficiary_account_no && !formData?.international_bank_details?.beneficiary_account_no){
+          alert("Please Enter Beneficiary Account No");
+          return true;
+        }
+        if(!OnboardingDetail?.international_bank_details?.[0]?.beneficiary_iban_no && !formData?.international_bank_details?.beneficiary_iban_no){
+          alert("Please Enter Beneficiary Iban No");
+          return true;
+        }
+        if(!OnboardingDetail?.international_bank_details?.[0]?.beneficiary_bank_address && !formData?.international_bank_details?.beneficiary_bank_address){
+          alert("Please Enter Beneficiary Bank Address");
+          return true;
+        }
+        if(!OnboardingDetail?.international_bank_details?.[0]?.beneficiary_swift_code && !formData?.international_bank_details?.beneficiary_swift_code){
+          alert("Please Enter Beneficiary Swift Code");
+          return true;
+        }
+        if(!OnboardingDetail?.international_bank_details?.[0]?.beneficiary_aba_no && !formData?.international_bank_details?.beneficiary_aba_no){
+          alert("Please Enter Beneficiary Aba No");
+          return true;
+        }
+        return false;
+  }
+
   const handleSubmit = async () => {
 
-    for (const [key, message] of Object.entries(requiredFields)) {
-          if (!formData?.[key as keyof IformData ]) {
-            alert(message);
-            return;
-          }
+    // for (const [key, message] of Object.entries(requiredFields)) {
+        //   if (!formData?.[key as keyof IformData ]) {
+        //     alert(message);
+        //     return;
+        //   }
+        // }
+
+        if(validation()){
+          return;
         }
 
     const submitUrl = API_END_POINTS?.bankSubmit;

@@ -325,10 +325,10 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                         </SelectContent>
                     </Select>
                 </div>
-                <div className="col-span-1">
+                {/* <div className="col-span-1">
                     <h1 className="text-[12px] font-normal text-[#626973] pb-3">Requisitioner <span className="text-red-600 ml-1">*</span></h1>
                     <Input placeholder="" name='requisitioner' onChange={(e) => { handleFieldChange(e) }} value={mainItems?.Requisitioner ?? user ?? ""} disabled />
-                </div>
+                </div> */}
                 <div className="col-span-1">
                     <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                         Purchase Group <span className="text-red-600 ml-1">*</span>
@@ -443,6 +443,11 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                                                         {mainItem?.purchase_requisition_type}
                                                     </Badge>
                                                     {/* <Badge variant="outline">${mainItem?.estimatedPrice}</Badge> */}
+                                                    {mainItem?.purchase_requisition_type && mainItem?.short_text_head && (
+                                                        <Badge className="bg-orange-100 text-orange-900 border border-orange-300">
+                                                            {mainItem.short_text_head}
+                                                        </Badge>
+                                                    )}
                                                 </div>
                                             </div>
                                             {mainItems?.sap_status == "Failed" && (

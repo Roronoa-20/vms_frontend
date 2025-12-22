@@ -25,78 +25,88 @@ export default function LoginForm() {
   const [authorization, setAuthorization] = useState<string | "">("")
   const { setAuthData } = useAuth();
   const { MultipleVendorCode, addMultipleVendorCode, reset, resetVendorCode } = useMultipleVendorCodeStore();
+  const [isLoading, setIsLoading] = useState(false);
+
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const url = API_END_POINTS?.login;
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ data: form }),
-      credentials: "include"
-    });
+    setIsLoading(true);
+    try {
+      const url = API_END_POINTS?.login;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ data: form }),
+        credentials: "include"
+      });
 
-    if (response.status == 401) {
-      alert("username or password is incorrect");
-      return;
-    }
+      if (response.status === 401) {
+        alert("username or password is incorrect");
+        setIsLoading(false);
+        return;
+      }
 
-    if (response.status == 200) {
-      const data = await response.json();
-      const roles = data?.message?.employee?.roles || [];
-      Cookies.set("role", JSON.stringify(roles));
+      if (response.status == 200) {
+        const data = await response.json();
+        const roles = data?.message?.employee?.roles || [];
+        Cookies.set("role", JSON.stringify(roles));
 
-      const savedRole = Cookies.get("role");
-      const savedName = Cookies.get("full_name");
-      const savedid = Cookies.get("user_id");
-      const designation = data?.message?.employee?.designation as string;
-      const designationVendor = data?.message?.designation as string;
-      const VendorASA = data?.message?.asa_reqd as string;
-      const VendorRefNo = data?.message?.ref_no as string;
-      console.log("Vendor Ref---->", VendorRefNo);
-      if (designationVendor) {
-        reset();
-        resetVendorCode();
-        data?.message?.vendor_codes?.map((item: TMultipleVendorCode) => (
-          addMultipleVendorCode(item)
-        ))
+        const savedRole = Cookies.get("role");
+        const savedName = Cookies.get("full_name");
+        const savedid = Cookies.get("user_id");
+        const designation = data?.message?.employee?.designation as string;
+        const designationVendor = data?.message?.designation as string;
+        const VendorASA = data?.message?.asa_reqd as string;
+        const VendorRefNo = data?.message?.ref_no as string;
+        console.log("Vendor Ref---->", VendorRefNo);
+        if (designationVendor) {
+          reset();
+          resetVendorCode();
+          data?.message?.vendor_codes?.map((item: TMultipleVendorCode) => (
+            addMultipleVendorCode(item)
+          ))
+        }
+        Cookies.set("designation", designation || designationVendor);
+        Cookies.set("VendorRef", VendorRefNo);
+        Cookies.set("VendorASA", VendorASA);
+        console.log("Checking the saved role----->", savedRole)
+        setAuthData(savedRole, savedName, savedid, designation || designationVendor, VendorRefNo, VendorASA);
+        if (designationVendor) {
+          router.push("/vendor-dashboard");
+          return
+        }
+        if (designation === "QA Team" || designation === "QA Head") {
+          router.push("/qa-dashboard");
+          return;
+        }
+        if (designation === "Super Head") {
+          router.push("/head-dashboard");
+          return;
+        }
+        if (designation === "Finance" || designation === "Finance Head") {
+          router.push("/finance-dashboard");
+          return;
+        }
+        if (designation === "Material User" || designation === "Material CP") {
+          router.push("/material-onboarding-dashboard");
+          return;
+        }
+        if (designation === "Security") {
+          router.push("/gate-entry-dashboard");
+          return;
+        }
+        if (designation === "Category Master") {
+          router.push("/category-master-dashboard");
+          return;
+        }
+        router.push("/dashboard");
       }
-      Cookies.set("designation", designation || designationVendor);
-      Cookies.set("VendorRef", VendorRefNo);
-      Cookies.set("VendorASA", VendorASA);
-      console.log("Checking the saved role----->", savedRole)
-      setAuthData(savedRole, savedName, savedid, designation || designationVendor, VendorRefNo, VendorASA);
-      if (designationVendor) {
-        router.push("/vendor-dashboard");
-        return
-      }
-      if (designation === "QA Team" || designation === "QA Head") {
-        router.push("/qa-dashboard");
-        return;
-      }
-      if (designation === "Super Head") {
-        router.push("/head-dashboard");
-        return;
-      }
-      if (designation === "Finance" || designation === "Finance Head") {
-        router.push("/finance-dashboard");
-        return;
-      }
-      if (designation === "Material User" || designation === "Material CP") {
-        router.push("/material-onboarding-dashboard");
-        return;
-      }
-      if (designation === "Security") {
-        router.push("/gate-entry-dashboard");
-        return;
-      }
-      if (designation === "Category Master") {
-        router.push("/category-master-dashboard");
-        return;
-      }
-      router.push("/dashboard");
+    } catch (err) {
+      console.error("Login error:", err);
+      alert("Something went wrong. Try again.");
+      setIsLoading(false);
     }
   };
 
@@ -167,9 +177,13 @@ export default function LoginForm() {
           <div className="flex justify-center">
             <button
               type="submit"
-              className="bg-[#5291CD] text-[#FFFFFF] text-[18px] font-semibold px-8 py-2 rounded-[10px]"
+              disabled={isLoading}
+              className={`flex items-center justify-center gap-3 px-8 py-2 rounded-[10px] text-[18px] font-semibold transition-all ${isLoading ? "bg-[#5291CD] cursor-not-allowed text-white" : "bg-[#5291CD] text-white"}`}
             >
-              Login
+              {isLoading && (
+                <span className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              )}
+              {isLoading ? "Logging in…" : "Login"}
             </button>
           </div>
           <div className="flex justify-center">
