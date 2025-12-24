@@ -11,9 +11,9 @@ export interface PurchaseRequisitionResponse {
   sap_error: string;
   sap_response: string;
   sap_status: string;
-  mail_sent_to_purchase_team:boolean;
+  mail_sent_to_purchase_team: boolean;
   data: PurchaseRequisitionDataItem[];
-  plant:Plant[]
+  plant: Plant[]
 }
 
 export interface CompanyInfo {
@@ -90,6 +90,9 @@ export interface PurchaseRequisitionDataItem {
   status: string;
   sap_status: string;
   pr_created_from_sap: number;
+  approval_level: string;
+  approval_level_desc: string;
+  release_status: string | number | boolean;
 }
 
 export interface MaterialGroup {
@@ -159,4 +162,6 @@ export interface SubheadField {
   name: string;
   cost_center_subhead_desc: string;
   gl_account_number_subhead_desc: string;
+  approval_level: string;
+  release_status: string;
 }

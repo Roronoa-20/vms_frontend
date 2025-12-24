@@ -17,43 +17,46 @@ export default function Company_Information_Form() {
     const { name } = useAuth();
     const isverified = asaFormSubmitData.verify_by_asa_team || 0;
 
-    const requiredFields: (keyof typeof companyInfo)[] = [
-        "name_of_the_company",
-        "location",
-        "name_of_product"
-    ];
-
-    const isFormValid = requiredFields.every(
-        (field) => companyInfo[field]?.trim()?.length > 0
+    const isFormValid = Boolean(
+        companyInfo.name_of_the_company?.selection?.trim() &&
+        companyInfo.location?.selection?.trim() &&
+        companyInfo.name_of_product?.selection?.trim()
     );
 
-    // useEffect(() => {
-    //     const stored = localStorage.getItem("companyInfo");
-    //     if (stored) {
-    //         const parsed = JSON.parse(stored);
-
-    //         for (const key in parsed) {
-    //             const entry = parsed[key];
-    //         }
-    //         updateCompanyInfo(parsed);
-    //         refreshFormData();
-    //     }
-    // }, []);
 
     useEffect(() => {
-        if (name && !companyInfo.name_of_the_company && !localStorage.getItem("companyInfo")) {
+        if (!name) return;
+
+        if (!companyInfo.name_of_the_company?.selection?.trim()) {
             updateCompanyInfo({
                 ...companyInfo,
-                name_of_the_company: name
+                name_of_the_company: {
+                    ...companyInfo.name_of_the_company,
+                    selection: name,
+                },
             });
         }
     }, [name]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        const updatedInfo = { ...companyInfo, [name]: value };
-        updateCompanyInfo(updatedInfo);
+        if (name === "name_of_the_company" || name === "location" || name === "name_of_product") {
+            updateCompanyInfo({
+                ...companyInfo,
+                [name]: {
+                    ...companyInfo[name],
+                    selection: value,
+                },
+            });
+            return;
+        }
+
+        updateCompanyInfo({
+            ...companyInfo,
+            [name]: value,
+        });
     };
+
 
     const handleNext = () => {
         console.log("Submitting Company Info and navigating to next tab:", companyInfo);
@@ -71,18 +74,18 @@ export default function Company_Information_Form() {
             <div className="space-y-6 p-2">
                 <Form_Input
                     name="name_of_the_company"
-                    value={companyInfo.name_of_the_company}
+                    value={companyInfo.name_of_the_company?.selection || ""}
                     onChange={handleChange}
                     placeholder="Enter company name"
                     label="1. Name of the Company"
                     required={true}
-                    disabled={isverified === 1}
+                    disabled={isverified === 1 || Boolean(name)}
                 />
 
                 <Textarea_Input
                     name="location"
                     label="2. Location (Full Address)"
-                    value={companyInfo.location}
+                    value={companyInfo.location?.selection || ""}
                     onChange={handleChange}
                     placeholder="Enter full address"
                     disabled={isverified === 1}
@@ -91,7 +94,7 @@ export default function Company_Information_Form() {
 
                 <Form_Input
                     name="name_of_product"
-                    value={companyInfo.name_of_product}
+                    value={companyInfo.name_of_product?.selection || ""}
                     onChange={handleChange}
                     placeholder="e.g., Medical devices, logistics services"
                     label="3. Name of the product/products/services supplied/provided to Meril"

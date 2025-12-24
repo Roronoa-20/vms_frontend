@@ -71,6 +71,7 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
       PurchaseGroup?.filter(
         (group) => String(group.company) === employeeCompanyCode
       ) || [];
+    console.log("Purchase Group---->",filtered)
     setFilteredPurchaseGroup(filtered);
   }, [companyInfo, PurchaseGroup, MaterialOnboardingDetails]);
 

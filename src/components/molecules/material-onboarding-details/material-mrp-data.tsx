@@ -393,7 +393,11 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                     )}
                   />
                 </div>
+              </>
+            )}
 
+            {MRPTypeValue !== "ND" && !isZCAPMaterial && (
+              <>
                 {/* Issue Unit */}
                 <div className="space-y-2">
                   <FormField
@@ -452,6 +456,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                 </div>
               </>
             )}
+
 
             {/* Conversion UOM Modal */}
             <UOMConversionModal

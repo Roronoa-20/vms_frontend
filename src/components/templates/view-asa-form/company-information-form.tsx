@@ -1,11 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Button } from "@/components/ui/button";
 import Form_Input from "@/src/components/common/FormInput";
 import Textarea_Input from "@/src/components/common/TextareaWithLabel";
 import { useRouter } from "next/navigation";
 import { useASAForm } from "@/src/hooks/useASAForm";
+import { CompanyInformation } from '@/src/types/asatypes';
 
 export default function Company_Information_Form() {
     const router = useRouter();
@@ -16,20 +16,26 @@ export default function Company_Information_Form() {
     useEffect(() => {
         const stored = localStorage.getItem("companyInfo");
         if (stored) {
-          const parsed = JSON.parse(stored);
-    
-          for (const key in parsed) {
-            const entry = parsed[key];
-          }
-          updateCompanyInfo(parsed);
-          refreshFormData();
+            const parsed = JSON.parse(stored);
+
+            for (const key in parsed) {
+                const entry = parsed[key];
+            }
+            updateCompanyInfo(parsed);
+            refreshFormData();
         }
-      }, []);
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         const updatedInfo = { ...companyInfo, [name]: value };
-        updateCompanyInfo(updatedInfo);
+        updateCompanyInfo({
+            ...companyInfo,
+            [name]: {
+                ...companyInfo[name as keyof CompanyInformation],
+                selection: value,
+            },
+        });
     };
 
     // const handleNext = () => {
@@ -47,7 +53,7 @@ export default function Company_Information_Form() {
             <div className="space-y-6 p-2">
                 <Form_Input
                     name="name_of_the_company"
-                    value={companyInfo.name_of_the_company}
+                    value={companyInfo.name_of_the_company.selection}
                     onChange={handleChange}
                     placeholder="Enter company name"
                     label="1. Name of the Company"
@@ -56,14 +62,14 @@ export default function Company_Information_Form() {
                 <Textarea_Input
                     name="location"
                     label="2. Location (Full Address)"
-                    value={companyInfo.location}
+                    value={companyInfo.location.selection}
                     onChange={handleChange}
                     placeholder="Enter full address"
                 />
 
                 <Form_Input
                     name="name_of_product"
-                    value={companyInfo.name_of_product}
+                    value={companyInfo.name_of_product.selection}
                     onChange={handleChange}
                     placeholder="e.g., Medical devices, logistics services"
                     label="3. Name of the product/products/services supplied/provided to Meril"

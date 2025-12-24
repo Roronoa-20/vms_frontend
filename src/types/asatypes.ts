@@ -145,11 +145,18 @@ export type TasaformDetail = {
     };
 };
 
+export interface TextValue {
+    selection: string;
+    comment: string;
+    file: File | null;
+}
+
+
 
 export type CompanyInformation = {
-    name_of_the_company: string;
-    location: string;
-    name_of_product: string;
+    name_of_the_company: TextValue;
+    location: TextValue;
+    name_of_product: TextValue;
 }
 
 export type YesNoNAValue = {

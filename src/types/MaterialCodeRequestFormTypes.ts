@@ -56,6 +56,7 @@ export interface Plant {
   plant_name: string | null;
   description: string | null;
   company: string;
+  profit_center_list: ProfitCenter[];
 }
 
 export interface Company {
@@ -94,6 +95,7 @@ export interface ProfitCenter {
   profit_center_name?: string;
   description: string;
   company_code?: string;
+  profit_center?: string;
 }
 
 // GL Account Number
@@ -112,6 +114,9 @@ export interface MaterialCode {
   description: string;
   material_description: string;
   material_type: string;
+  company: string;
+  material_code_name: string;
+  plant: string;
 }
 
 export interface StorageLocation {

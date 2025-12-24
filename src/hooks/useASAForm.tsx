@@ -3,8 +3,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { ASAForm, CompanyInformation, GeneralDisclosureData, Governance, fileKeys, commentFieldKeys, EnvironmentalManagementSystem, Biodiversity, GreenProducts, EnergyConsumptionAndEmission, WaterConsumptionAndManagement, WasteManagement, EmployeeSatisfaction, LaborRightsAndWorkingConditions, GrievanceMechanism, EmployeeWellBeing, HealthAndSafety } from '@/src/types/asatypes';
-import { useAuth } from '../context/AuthContext';
-import { Upload } from 'lucide-react';
+
 
 type UseASAFormReturn = {
     companyInfo: CompanyInformation;
@@ -48,9 +47,9 @@ type UseASAFormReturn = {
 
 export const useASAForm = (): UseASAFormReturn => {
     const [companyInfo, setCompanyInfo] = useState<CompanyInformation>({
-        name_of_the_company: "",
-        location: "",
-        name_of_product: "",
+        name_of_the_company: { selection: "", comment: "", file: null },
+        location: { selection: "", comment: "", file: null },
+        name_of_product:  { selection: "", comment: "", file: null }
     });
 
     const [generalDisclosure, setGeneralDisclosure] = useState<GeneralDisclosureData>({
@@ -366,9 +365,9 @@ export const useASAForm = (): UseASAFormReturn => {
         const formData = new FormData();
         const dataPayload: ASAForm = {
             vendor_ref_no: vms_ref_no,
-            name_of_the_company: formCompanyInfo.name_of_the_company,
-            location: formCompanyInfo.location,
-            name_of_product: formCompanyInfo.name_of_product,
+            name_of_the_company: formCompanyInfo.name_of_the_company.selection,
+            location: formCompanyInfo.location.selection,
+            name_of_product: formCompanyInfo.name_of_product.selection,
 
             valid_consent_from_pollution_control: generalDisclosure.valid_consent_from_pollution_control.selection,
             expiry_date_of_consent: generalDisclosure.valid_consent_from_pollution_control.comment,

@@ -19,9 +19,10 @@ interface YesNoNAProps {
   customYesInputType?: "date" | "text" | "textarea";
   disabled?: boolean;
   required?: boolean;
+  fileRequired?: boolean;
 }
 
-export default function YesNoNA({ name, value, onSelectionChange, onCommentChange, onFileChange, label, customYesInputType, disabled, required = false }: YesNoNAProps) {
+export default function YesNoNA({ name, value, onSelectionChange, onCommentChange, onFileChange, label, customYesInputType, disabled, required = false, fileRequired = false, }: YesNoNAProps) {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -92,6 +93,7 @@ export default function YesNoNA({ name, value, onSelectionChange, onCommentChang
       <div className="mt-4 relative">
         <Label htmlFor={`${name}-file`} className="block text-sm font-medium text-gray-900 mb-1">
           Upload File
+          {fileRequired && <span className="text-red-600 ml-1">*</span>}
         </Label>
 
         <Input

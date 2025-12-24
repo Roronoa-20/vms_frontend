@@ -339,6 +339,9 @@ export interface PurchaseRequisitionFormTable {
   parentfield: string;
   parenttype: string;
   doctype: string;
+  release_status: string;
+  approval_level: string;
+
 }
 
 export type PurchaseRequestData = {
@@ -364,6 +367,8 @@ export type PurchaseRequestData = {
       hod: boolean,
       purchase_head: boolean
       cart_id: string;
+      release_status: string;
+      approval_level: string;
     }
   }
 }

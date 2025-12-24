@@ -68,7 +68,9 @@ const SubItemModal: React.FC<SubItemModalProps> = ({
     price_of_purchase_requisition_subhead: "",
     material_code_subhead: "",
     purchase_group_subhead: "",
-    subhead_unique_field: "", material_name_subhead: "", price_subhead: "", original_quantity: "", original_delivery_date: "", cost_center_subhead_desc: "", gl_account_number_subhead_desc: ""
+    subhead_unique_field: "", material_name_subhead: "", price_subhead: "", original_quantity: "", original_delivery_date: "", cost_center_subhead_desc: "", gl_account_number_subhead_desc: "",
+    approval_level: "",
+    release_status: ""
   };
   const [formData, setFormData] = useState<SubheadField>({ ...emptyFormData });
   const [errors, setErrors] = useState<Record<keyof SubheadField, boolean>>({} as any);

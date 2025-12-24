@@ -346,10 +346,12 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                         </SelectContent>
                     </Select>
                 </div>
-                {cartId && <div className="col-span-1">
-                    <h1 className="text-[12px] font-normal text-[#626973] pb-3">Cart Id</h1>
-                    <Input placeholder="" name='requisitioner' value={formData?.cart_id ?? ""} disabled />
-                </div>}
+                {cartId &&
+                    <div className="col-span-1">
+                        <h1 className="text-[12px] font-normal text-[#626973] pb-3">Cart Id</h1>
+                        <Input placeholder="" name='requisitioner' value={formData?.cart_id ?? ""} disabled />
+                    </div>
+                }
             </div>
             {!(mainItems?.docname && mainItems?.docname) && <div className={`flex justify-end p-2`}><Button type='button' className='py-2' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => handleNext()}>Next</Button></div>}
 
@@ -369,8 +371,8 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                         :
                         <Alert variant="success">
                             <CheckCircle2Icon />
-                            <AlertTitle>Success! </AlertTitle>
-                            <AlertDescription>
+                            <AlertTitle className='text-[16px] font-semibold'>Success!</AlertTitle>
+                            <AlertDescription className='text-[18px] font-bold'>
                                 {mainItems?.sap_response}
                             </AlertDescription>
                         </Alert>
@@ -429,11 +431,10 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                                                             : mainItem?.short_text_head}
                                                     </div>
                                                     <div className="text-sm text-muted-foreground">
-                                                        {/* Item No: {mainItem?.item_number_of_purchase_requisition_head} | Category: {mainItem?.category} */}
                                                         Item No: {mainItem?.item_number_of_purchase_requisition_head}
                                                     </div>
                                                 </div>
-                                                <div className="flex gap-2">
+                                                <div className="flex gap-2 items-center flex-wrap">
                                                     {mainItem?.purchase_requisition_type === "SB" && (
                                                         <Badge variant="secondary" className="bg-blue-100 text-blue-800">
                                                             {mainItem?.subhead_fields.length} sub-items
@@ -442,10 +443,22 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                                                     <Badge variant="outline">
                                                         {mainItem?.purchase_requisition_type}
                                                     </Badge>
-                                                    {/* <Badge variant="outline">${mainItem?.estimatedPrice}</Badge> */}
-                                                    {mainItem?.purchase_requisition_type && mainItem?.short_text_head && (
-                                                        <Badge className="bg-orange-100 text-orange-900 border border-orange-300">
-                                                            {mainItem.short_text_head}
+                                                    <Badge
+                                                        className={
+                                                            mainItem?.release_status === 1
+                                                                ? "bg-green-100 text-green-900 border border-green-300 hover:bg-green-100 hover:text-green-900 hover:border-green-300 transition-none cursor-default"
+                                                                : "bg-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-100 hover:text-gray-800 hover:border-gray-300 transition-none cursor-default"
+                                                        }
+
+                                                    >
+                                                        {mainItem?.release_status === 1 ? "Released" : "Not Released"}
+                                                    </Badge>
+                                                    {mainItem?.approval_level && (
+                                                        <Badge
+                                                            variant="outline"
+                                                            className="bg-purple-100 text-purple-900 border border-purple-300"
+                                                        >
+                                                            Approval Level: {mainItem?.approval_level}
                                                         </Badge>
                                                     )}
                                                 </div>
@@ -540,8 +553,8 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                                                                                 <TableCell className="text-center">{subItem?.currency_subhead || "N/A"}</TableCell>
                                                                                 <TableCell className="text-center">{subItem?.service_type_subhead || "N/A"}</TableCell>
                                                                                 <TableCell className="text-center">{subItem?.net_value_subhead || "N/A"}</TableCell>
-                                                                                <TableCell className="text-center text-nowrap">{subItem?.cost_center_subhead_desc || "N/A"}</TableCell>
-                                                                                <TableCell className="text-center text-nowrap">{subItem?.gl_account_number_subhead_desc || "N/A"}</TableCell>
+                                                                                <TableCell className="text-center text-nowrap">{subItem?.cost_center_subhead || "N/A"}</TableCell>
+                                                                                <TableCell className="text-center text-nowrap">{subItem?.gl_account_number_subhead || "N/A"}</TableCell>
                                                                                 {/* Sticky Actions Cell */}
                                                                                 {mainItems?.sap_status === "Success" && ((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) &&
                                                                                     <TableCell className="text-center sticky right-0 bg-white z-20">

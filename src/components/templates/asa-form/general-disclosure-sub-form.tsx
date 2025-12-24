@@ -12,6 +12,10 @@ export default function General_Disclosure_Form() {
     const vmsRefNo = params.get("vms_ref_no") || "";
     const { generalDisclosure, updateGeneralDisclosure, submitForm, refreshFormData, updateCompanyInfo, asaFormSubmitData } = useASAForm();
     const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+    const fileRequiredQuestions = new Set([
+        "valid_consent_from_pollution_control",
+        // "recycle_plastic_package_material",
+    ]);
 
     console.log("General Disclosure Form Data:", generalDisclosure);
 
@@ -45,12 +49,18 @@ export default function General_Disclosure_Form() {
         });
     };
 
-    const isValid = Object.values(generalDisclosure).every((item) => {
+    // const isValid = Object.values(generalDisclosure).every((item) => {
+    //     if (!item.selection) return false;
+    //     if (item.selection === "Yes" && !item.comment.trim()) return false;
+    //     return true;
+    // });
+
+    const isValid = Object.entries(generalDisclosure).every(([key, item]) => {
         if (!item.selection) return false;
         if (item.selection === "Yes" && !item.comment.trim()) return false;
+        if (fileRequiredQuestions.has(key) && !item.file) return false;
         return true;
     });
-
 
     const handleSubmit = async () => {
         await submitForm();
@@ -80,6 +90,7 @@ export default function General_Disclosure_Form() {
                         onFileChange={handleFileChange}
                         customYesInputType="date"
                         required={true}
+                        fileRequired={true}
                         disabled={isverified === 1}
                     />
 

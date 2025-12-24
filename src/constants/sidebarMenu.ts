@@ -262,7 +262,13 @@ export const MaterialUserSideBar: SidebarItem[] = [
     name: "Raise Request",
     href: "/new-material-code-request-table",
     children: []
-  }
+  },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "Material Code",
+    href: "/sap-material-code-list",
+    children: []
+  },
 ]
 
 export const MaterialCPSideBar: SidebarItem[] = [
@@ -277,7 +283,13 @@ export const MaterialCPSideBar: SidebarItem[] = [
     name: "View Request",
     href: "/view-material-code-request",
     children: []
-  }
+  },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "Material Code",
+    href: "/sap-material-code-list",
+    children: []
+  },
 ]
 
 export const HeadSidebar: SidebarItem[] = [
