@@ -6,7 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import UOMConversionModal from "@/src/components/molecules/material-onboarding-modal/UOMConversionModal";
 import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
-import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialRequestData, MaterialType, MaterialMaster } from "@/src/types/MaterialCodeRequestFormTypes";
+import { MaterialRegistrationFormData, Company, UOMMaster, MRPType, ValuationClass, procurementType, MRPController, LotSize, SchedulingMarginKey, MaterialRequestData, MaterialType, MRPGroup } from "@/src/types/MaterialCodeRequestFormTypes";
 
 
 interface OptionType {
@@ -30,19 +30,19 @@ interface MaterialMRPFormProps {
   UnitOfMeasure?: UOMMaster[];
   MRPType?: MRPType[];
   MRPController?: MRPController[];
+  MRPGroup?: MRPGroup[];
   AllMaterialType?: MaterialType[];
   MaterialDetails?: MaterialRequestData;
   SMK?: SchedulingMarginKey[];
   isZCAPMaterial?: boolean;
 }
 
-const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType, MaterialOnboardingDetails, LotSize, UnitOfMeasure, MRPType, MRPController, MaterialDetails, SMK, isZCAPMaterial, }) => {
+const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType, LotSize, UnitOfMeasure, MRPType, MRPController, MaterialDetails, SMK, isZCAPMaterial, MRPGroup }) => {
 
-  console.log("MRP Type----->", MaterialDetails)
+  console.log("MRP Type----->", MRPGroup)
 
   const [showConversionModal, setShowConversionModal] = useState<boolean>(false);
   const [conversionRatio, setConversionRatio] = useState<string>("");
-  const [initialLoadDone, setInitialLoadDone] = useState<boolean>(false);
   const issueUOM = form.watch("base_uom");
   const baseUOM = MaterialDetails?.material_request_item?.unit_of_measure;
   const showConversionUOM = baseUOM && issueUOM && baseUOM !== issueUOM;
@@ -189,13 +189,23 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                     key="mrp_group"
                     render={({ field }: { field: ControllerRenderProps<FieldValues, "mrp_group"> }) => (
                       <FormItem>
-                        <FormLabel>MRP Group</FormLabel>
+                        <FormLabel>MRP Type</FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            className="p-3 w-full text-sm placeholder:text-gray-500"
-                            placeholder="Enter MRP Group"
-                          />
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value ?? undefined}
+                          >
+                            <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
+                              <SelectValue placeholder="Select MRP GRoup" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {MRPGroup?.map((mrp) => (
+                                <SelectItem key={mrp.name} value={mrp.name}>
+                                  {mrp.description}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -322,43 +332,44 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                     )}
                   />
                 </div>
+
+
+                {/* Procurement Type */}
+                <div className="space-y-2">
+                  <FormField
+                    control={form.control}
+                    name="procurement_type"
+                    key="procurement_type"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "procurement_type"> }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Procurement Type <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value ?? undefined}
+                          >
+                            <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
+                              <SelectValue placeholder="Select Procurement Type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {ProcurementType?.map((procurement) => (
+                                <SelectItem key={procurement.name} value={procurement.name}>
+                                  {procurement.procurement_type_code} -{" "}
+                                  {procurement.procurement_type_name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </>
             )}
-
-            {/* Procurement Type */}
-            <div className="space-y-2">
-              <FormField
-                control={form.control}
-                name="procurement_type"
-                key="procurement_type"
-                render={({ field }: { field: ControllerRenderProps<FieldValues, "procurement_type"> }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Procurement Type <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value ?? undefined}
-                      >
-                        <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
-                          <SelectValue placeholder="Select Procurement Type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {ProcurementType?.map((procurement) => (
-                            <SelectItem key={procurement.name} value={procurement.name}>
-                              {procurement.procurement_type_code} -{" "}
-                              {procurement.procurement_type_name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
 
             {shouldShowSMK && (
               <>
@@ -396,7 +407,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
               </>
             )}
 
-            {MRPTypeValue !== "ND" && !isZCAPMaterial && (
+            {!isZCAPMaterial && (
               <>
                 {/* Issue Unit */}
                 <div className="space-y-2">

@@ -66,16 +66,7 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
     const data = MaterialDetails?.material_master;
     if (!data || !filteredMaterialGroup.length) return;
 
-    const fields = [
-      "material_group",
-      "batch_requirements_yn",
-      "brand_make",
-      "availability_check",
-      "class_type",
-      "class_number",
-      "serial_number_profile",
-      "serialization_level",
-    ] as const;
+    const fields = ["material_group", "batch_requirements_yn", "brand_make", "availability_check", "class_type", "class_number", "serial_number_profile", "serialization_level"] as const;
 
     fields.forEach((field) => {
       const currentValue = form.getValues(field);
@@ -158,7 +149,7 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                         </SelectTrigger>
                         <SelectContent className="max-h-60 overflow-y-auto">
                           <div className="px-2 py-1">
-                            <input
+                            <Input
                               type="text"
                               value={materialGroupSearch}
                               onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -216,9 +207,11 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                     )}
                   />
                 </div>
+              </>
+            )}
 
-                {/* Brand / Make */}
-                {/* <div className="space-y-2">
+            {/* Brand / Make */}
+            {/* <div className="space-y-2">
                   <FormField
                     control={form.control}
                     name="brand_make"
@@ -240,27 +233,62 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                   />
                 </div> */}
 
-                {/* Availability Check */}
+            {/* Availability Check */}
+            <div className="space-y-2">
+              <FormField
+                control={form.control}
+                name="availability_check"
+                key="availability_check"
+                render={({ field }: { field: ControllerRenderProps<FieldValues, "availability_check"> }) => (
+                  <FormItem>
+                    <FormLabel>Availability Check</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value || undefined}
+                      >
+                        <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
+                          <SelectValue placeholder="Select Availability Check" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {AvailabilityCheck.map((check) => (
+                            <SelectItem key={check.name} value={check.name}>
+                              {check.name} - {check.description}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Conditional Fields */}
+            {!isZCAPMaterial && batchRequirement === "Yes" && (
+              <>
+                {/* Class Type */}
                 <div className="space-y-2">
                   <FormField
                     control={form.control}
-                    name="availability_check"
-                    key="availability_check"
-                    render={({ field }: { field: ControllerRenderProps<FieldValues, "availability_check"> }) => (
+                    name="class_type"
+                    key="class_type"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "class_type"> }) => (
                       <FormItem>
-                        <FormLabel>Availability Check</FormLabel>
+                        <FormLabel>Class Type</FormLabel>
                         <FormControl>
                           <Select
                             onValueChange={field.onChange}
                             value={field.value || undefined}
                           >
                             <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
-                              <SelectValue placeholder="Select Availability Check" />
+                              <SelectValue placeholder="Select Class Type" />
                             </SelectTrigger>
                             <SelectContent>
-                              {AvailabilityCheck.map((check) => (
-                                <SelectItem key={check.name} value={check.name}>
-                                  {check.name} - {check.description}
+                              {ClassType.map((classtype) => (
+                                <SelectItem key={classtype.name} value={classtype.name}>
+                                  {classtype.name}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -272,68 +300,35 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                   />
                 </div>
 
-                {/* Conditional Fields */}
-                {batchRequirement === "Yes" && (
-                  <>
-                    {/* Class Type */}
-                    <div className="space-y-2">
-                      <FormField
-                        control={form.control}
-                        name="class_type"
-                        key="class_type"
-                        render={({ field }: { field: ControllerRenderProps<FieldValues, "class_type"> }) => (
-                          <FormItem>
-                            <FormLabel>Class Type</FormLabel>
-                            <FormControl>
-                              <Select
-                                onValueChange={field.onChange}
-                                value={field.value || undefined}
-                              >
-                                <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
-                                  <SelectValue placeholder="Select Class Type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {ClassType.map((classtype) => (
-                                    <SelectItem key={classtype.name} value={classtype.name}>
-                                      {classtype.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                {/* Class Number (Auto-populated) */}
+                <div className="space-y-2">
+                  <FormField
+                    control={form.control}
+                    name="class_number"
+                    key="class_number"
+                    render={({ field }: { field: ControllerRenderProps<FieldValues, "class_number"> }) => (
+                      <FormItem>
+                        <FormLabel>Class Number</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="text"
+                            readOnly
+                            className="p-3 w-full text-sm placeholder:text-gray-500"
+                            placeholder="Class Number will be auto-filled"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </>
+            )}
 
-                    {/* Class Number (Auto-populated) */}
-                    <div className="space-y-2">
-                      <FormField
-                        control={form.control}
-                        name="class_number"
-                        key="class_number"
-                        render={({ field }: { field: ControllerRenderProps<FieldValues, "class_number"> }) => (
-                          <FormItem>
-                            <FormLabel>Class Number</FormLabel>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                type="text"
-                                readOnly
-                                className="p-3 w-full text-sm placeholder:text-gray-500"
-                                placeholder="Class Number will be auto-filled"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </>
-                )}
-
-                {/* Serial Number Profile */}
+            {/* Serial Number Profile */}
+            {!isZCAPMaterial && (
+              <>
                 <div className="space-y-2">
                   <FormField
                     control={form.control}
@@ -394,7 +389,7 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

@@ -143,7 +143,6 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
                                             >
                                                 {item.approval_status || "Pending"}
                                             </p>
-
                                         </TableCell>
                                         <TableCell className="text-center">
                                             <Link

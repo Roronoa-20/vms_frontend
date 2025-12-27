@@ -136,6 +136,7 @@ export default function MaterialRegistration() {
     try {
       console.log("Validated Data:", data);
       const formValues = form.getValues();
+      console.log("ALL FORM VALUES →", form.getValues());
 
       const materialItem: any = {
         material_name_description: formValues.material_name_description,
@@ -151,14 +152,15 @@ export default function MaterialRegistration() {
         company_name: formValues.material_company_code,
       };
 
-      if (!formValues.is_revised_code_new) {
+      const isRevisedNew = formValues.is_revised_code_new === true || formValues.is_revised_code_new === 1;
+
+      const isRP = ["R", "P"].includes(formValues.material_category);
+
+      if (isRevisedNew && isRP) {
         materialItem.material_code_revised = formValues.material_code_revised;
       }
 
-      const finalMaterialRequestList =
-        materialRequestList.length > 0
-          ? materialRequestList
-          : [materialItem];
+      const finalMaterialRequestList = materialRequestList.length > 0 ? materialRequestList : [materialItem];
 
       const requestorData = {
         request_date: formValues.request_date,
@@ -178,6 +180,8 @@ export default function MaterialRegistration() {
       payload.append("requestor_data", JSON.stringify(requestorData));
       payload.append("material_request", JSON.stringify(finalMaterialRequestList));
       payload.append("send_email", "true");
+
+      console.log("Final Payload before API hit-------->", payload)
 
       const res: AxiosResponse = await requestWrapper({
         url: API_END_POINTS.createRequestorMaster,

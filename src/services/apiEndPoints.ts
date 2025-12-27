@@ -351,6 +351,7 @@ const API_END_POINTS = {
   getlotSizeMaster: `${url}/api/resource/Lot Sizes?fields=["*"]&limit_page_length=999`,
   getschedulingMarginKeyMaster: `${url}/api/resource/Scheduling Margin Key?fields=["*"]&limit_page_length=999`,
   getexpirationDateMaster: `${url}/api/resource/Expiration Date Master?fields=["*"]&limit_page_length=999`,
+  getMRPGroupMaster: `${url}/api/resource/MRP Group?fields=["*"]&limit_page_length=999`,
   prToPurchaseTeam: `${url}/api/method/vms.APIs.purchase_api.purchase_requisition_approval.sent_approval_to_purchase_team`,
   checkassetcode: `${url}/api/method/vms.APIs.purchase_api.check_asset_code.check_asset_code_availability`,
 

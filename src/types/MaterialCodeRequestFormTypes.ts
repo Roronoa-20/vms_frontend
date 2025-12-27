@@ -195,6 +195,13 @@ export interface MRPController {
   mrp_controller: string;
 }
 
+export interface MRPGroup {
+  name: string;
+  mrp_group_name: string;
+  description: string;
+  mrp_group_code: string;
+}
+
 export interface InspectionType {
   name: string;
   inspection_type_code: string;
@@ -291,6 +298,7 @@ export interface MaterialRequestItem {
   material_type: string;
   material_type_code: string;
   material_category: string;
+  material_type_category: string;
   required_by: string | null;
   material_name_description: string;
   material_group: string | null;

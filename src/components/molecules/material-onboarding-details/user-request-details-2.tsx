@@ -245,10 +245,10 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
         if (!shouldShowMaterialCode || isNewCodeFlow) return;
 
         if (selectedMaterialCategory === "R") {
-            form.setValue("material_code_revised", "R-", {shouldDirty: false, shouldValidate: true});}
+            form.setValue("material_code_revised", "R", {shouldDirty: false, shouldValidate: true});}
 
         if (selectedMaterialCategory === "P") {
-            form.setValue("material_code_revised", "P-", {shouldDirty: false, shouldValidate: true});}
+            form.setValue("material_code_revised", "P", {shouldDirty: false, shouldValidate: true});}
     }, [selectedMaterialCategory, selectedCodeLogic, shouldShowMaterialCode, isNewCodeFlow]);
 
 
@@ -361,9 +361,9 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                                                     selectedCodeLogic
                                                                         ? `${selectedCodeLogic}-`
                                                                         : selectedMaterialCategory === "R"
-                                                                            ? "R-"
+                                                                            ? "R"
                                                                             : selectedMaterialCategory === "P"
-                                                                                ? "P-"
+                                                                                ? "P"
                                                                                 : "";
 
                                                                 if (prefix && !value.startsWith(prefix)) {
@@ -475,7 +475,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                         {shouldShowAllFields && hideMaterialCode && (role === "Material CP" || role === "Store") && (
                             <>
                                 {/* Division */}
-                                {!isZCAPMaterial && (
+                                {/* {!isZCAPMaterial && ( */}
                                     <div className="space-y-2">
                                         <FormField
                                             control={form.control}
@@ -531,7 +531,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                             )}
                                         />
                                     </div>
-                                )}
+                                {/* )} */}
 
                                 {/* Storage Location */}
                                 <div className="space-y-2">

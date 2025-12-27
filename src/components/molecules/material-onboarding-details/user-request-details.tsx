@@ -56,28 +56,71 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
     const role = designation || "";
     const [originalMaterialCode, setOriginalMaterialCode] = useState("");
     const [originalDesc, setOriginalDesc] = useState("");
-    const [materialCategoryTypeOptions, setMaterialCategoryTypeOptions] = useState<{
-        material_type_category: string; code_logic: string;
-    }[]>([]);
+    const [materialCategoryTypeOptions, setMaterialCategoryTypeOptions] = useState<{ material_type_category: string; code_logic: string; }[]>([]);
 
 
-    const filteredPlants = useMemo(
-        () => plantcode?.filter(p => String(p.company) === materialCompanyCode) || [],
-        [plantcode, materialCompanyCode]
-    );
+    const filteredPlants = useMemo(() => plantcode?.filter(p => String(p.company) === materialCompanyCode) || [],
+        [plantcode, materialCompanyCode]);
 
-    const filteredMaterialType = useMemo(
-        () =>
-            AllMaterialType?.filter(t =>
-                t.multiple_company?.some(c => String(c.company) === materialCompanyCode)
-            ) || [],
-        [AllMaterialType, materialCompanyCode]
-    );
+    const filteredMaterialType = useMemo(() => AllMaterialType?.filter(t => t.multiple_company?.some(c => String(c.company) === materialCompanyCode)) || [],
+        [AllMaterialType, materialCompanyCode]);
 
-    const getCodeFromDescription = (desc: string) =>
-        AllMaterialCodes?.find(
-            c => c.material_description?.trim().toLowerCase() === desc.trim().toLowerCase()
-        )?.name || "";
+    const getCodeFromDescription = (desc: string) => AllMaterialCodes?.find(c => c.material_description?.trim().toLowerCase() === desc.trim().toLowerCase())?.name || "";
+    const materialType = form.watch("material_type");
+
+    useEffect(() => {
+        if (!materialType || !AllMaterialType?.length) return;
+
+        const matchedType = AllMaterialType.find(
+            (t) => t.name === materialType
+        );
+
+        if (!matchedType?.material_code_logic?.length) {
+            setMaterialCategoryTypeOptions([]);
+            return;
+        }
+
+        setMaterialCategoryTypeOptions(
+            matchedType.material_code_logic.map(item => ({
+                material_type_category: item.material_type_category,
+                code_logic: item.code_logic
+            }))
+        );
+    }, [materialType, AllMaterialType]);
+
+    useEffect(() => {
+        if (!MaterialDetails?.material_request_item) return;
+        if (!materialCategoryTypeOptions.length) return;
+
+        const backendCategory = MaterialDetails.material_request_item.material_type_category;
+
+        if (!backendCategory) {
+            form.setValue("material_type_category", "", { shouldValidate: true });
+            return;
+        }
+
+        const normalize = (v: string) => v.trim().toLowerCase();
+
+        const matchedOption = materialCategoryTypeOptions.find(
+            o =>
+                normalize(o.material_type_category) ===
+                normalize(backendCategory)
+        );
+
+        if (!matchedOption) {
+            console.warn(
+                "[Material Type Category mismatch]",
+                "Backend:", backendCategory,
+                "UI Options:", materialCategoryTypeOptions
+            );
+
+            form.setValue("material_type_category", "", { shouldValidate: true });
+            return;
+        }
+
+        form.setValue("material_type_category", matchedOption.material_type_category, { shouldValidate: true });
+    }, [MaterialDetails, materialCategoryTypeOptions, form]);
+
 
     useEffect(() => {
         if (!MaterialDetails?.material_request_item) return;
@@ -86,26 +129,26 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
         const storage = MaterialDetails.material_master;
         console.log("MaterialDetails item:", item);
 
+        if (item.company_name) {
+            setMaterialCompanyCode(item.company_name);
+            form.setValue("material_company_code", item.company_name);
+        }
+
+        if (item.material_type) {
+            form.setValue("material_type", item.material_type);
+            setSelectedMaterialType(item.material_type);
+        }
+
         form.setValue("material_name_description", item.material_name_description || "");
         form.setValue("comment_by_user", item.comment_by_user || "");
         form.setValue("base_unit_of_measure", item.unit_of_measure || "");
         form.setValue("material_category", item.material_category || "");
 
         if (filteredPlants.length && item.plant) form.setValue("plant_name", item.plant);
-        if (filteredMaterialType.length && item.material_type) {
-            form.setValue("material_type", item.material_type);
-            setSelectedMaterialType(item.material_type);
-        }
-        if (item.company_name) {
-            setMaterialCompanyCode(item.company_name);
-            form.setValue("material_company_code", item.company_name);
-        }
 
         const revisedCode =
             MaterialOnboardingDetails?.approval_status &&
-                ["Sent to SAP", "Saved as Draft", "Re-Opened by CP"].includes(
-                    MaterialOnboardingDetails.approval_status
-                )
+                ["Sent to SAP", "Saved as Draft", "Re-Opened by CP"].includes(MaterialOnboardingDetails.approval_status)
                 ? storage?.material_code_revised || getCodeFromDescription(item.material_name_description || "")
                 : getCodeFromDescription(item.material_name_description || "");
 
@@ -120,35 +163,14 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
         }
     }, [MaterialDetails, filteredPlants, filteredMaterialType, MaterialOnboardingDetails, AllMaterialCodes, form, setMaterialCompanyCode, setSelectedMaterialType]);
 
-    useEffect(() => {
-        const materialType = form.getValues("material_type");
-        if (!materialType || !AllMaterialType?.length) return;
-
-        const matchedType = AllMaterialType.find(
-            (t) => t.name === materialType
-        );
-
-        if (!matchedType?.material_code_logic?.length) {
-            setMaterialCategoryTypeOptions([]);
-            form.setValue("material_type_category", "");
-            return;
-        }
-
-        // 1️⃣ Set dropdown options
-        const transformedOptions = matchedType.material_code_logic.map(item => ({
-            material_type_category: item.material_type_category,
-            code_logic: item.code_logic
-        }));
-        setMaterialCategoryTypeOptions(transformedOptions);
-
-        // 2️⃣ Auto-select first category (SAP-style default)
-        form.setValue(
-            "material_type_category",
-            matchedType.material_code_logic[0].material_type_category,
-            { shouldValidate: true }
-        );
-
-    }, [form.watch("material_type"), AllMaterialType]);
+    // useEffect(() => {
+    //     console.log("Testing the Value----->",{
+    //         company: form.getValues("material_company_code"),
+    //         type: form.getValues("material_type"),
+    //         options: materialCategoryTypeOptions,
+    //         category: form.getValues("material_type_category"),
+    //     });
+    // }, [materialCategoryTypeOptions]);
 
     useEffect(() => {
         if (!(role === "Material CP" || role === "Store")) return;
@@ -297,10 +319,9 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
                                     </FormLabel>
                                     <FormControl>
                                         <Select
+                                            key={materialCategoryTypeOptions.length}
                                             value={field.value || ""}
-                                            onValueChange={(value) => {
-                                                field.onChange(value);
-                                            }}
+                                            onValueChange={(value) => { field.onChange(value); }}
                                             disabled
                                         >
                                             <SelectTrigger>

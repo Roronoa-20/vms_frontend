@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import VendorRegistrationSchemas from "@/src/schemas/vendorRegistrationSchema";
 import { useAuth } from "@/src/context/AuthContext";
 import { TcompanyNameBasedDropdown } from "@/src/types/types";
-import type { MaterialRegistrationFormData, MaterialRequestData, EmployeeDetail, EmployeeAPIResponse, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialType, } from "@/src/types/MaterialCodeRequestFormTypes";
+import type { MaterialRegistrationFormData, MaterialRequestData, EmployeeDetail, EmployeeAPIResponse, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialType, MRPGroup } from "@/src/types/MaterialCodeRequestFormTypes";
 
 
 
@@ -39,6 +39,7 @@ export default function MaterialOnboardingDetails() {
   const [PriceControlJson, setPriceControlJson] = useState<PriceControl[]>([]);
   const [AvailabilityCheckJson, setAvailabilityCheckJson] = useState<AvailabilityCheck[]>([]);
   const [MaterialTypeJson, setMaterialTypeJson] = useState<MaterialType[]>([]);
+  const [MRPGroupJson, setMRPGroupJson] = useState<MRPGroup[]>([]);
   const [MRPControllerJson, setMRPControllerJson] = useState<MRPController[]>([]);
   const [StorageLocationJson, setStorageLocationJson] = useState<StorageLocation[]>([]);
   const [ClassTypeJson, setClassTypeJson] = useState<ClassType[]>([]);
@@ -72,7 +73,7 @@ export default function MaterialOnboardingDetails() {
     const fetchMasterData = async () => {
       setLoading(true);
       try {
-        const [companyRes, plantRes, divisionRes, industryRes, uomRes, mrpTypeRes, procurementRes, valCatRes, profitCenterRes, priceControlRes, availCheckRes, mrpControllerRes, storageRes, classTypeRes, serialRes, inspectionRes, lotSizeRes, matCategoryRes, schedRes, expiryRes] = await Promise.all([
+        const [companyRes, plantRes, divisionRes, industryRes, uomRes, mrpTypeRes, procurementRes, valCatRes, profitCenterRes, priceControlRes, availCheckRes, mrpControllerRes, storageRes, classTypeRes, serialRes, inspectionRes, lotSizeRes, matCategoryRes, schedRes, expiryRes, MRPGroupRes] = await Promise.all([
           requestWrapper({ url: API_END_POINTS.getCompanyMaster, method: "GET" }),
           requestWrapper({ url: API_END_POINTS.getPlantMaster, method: "GET" }),
           requestWrapper({ url: API_END_POINTS.getDivisionMaster, method: "GET" }),
@@ -93,6 +94,7 @@ export default function MaterialOnboardingDetails() {
           requestWrapper({ url: API_END_POINTS.getMaterialCategoryMaster, method: "GET" }),
           requestWrapper({ url: API_END_POINTS.getschedulingMarginKeyMaster, method: "GET" }),
           requestWrapper({ url: API_END_POINTS.getexpirationDateMaster, method: "GET" }),
+          requestWrapper({ url: API_END_POINTS.getMRPGroupMaster, method: "GET" }),
         ]);
 
         // console.log("Master Data Responses:");
@@ -137,6 +139,7 @@ export default function MaterialOnboardingDetails() {
         setMaterialCategoryJson(matCategoryRes?.data?.data);
         setSchedulingMarginKeyJson(schedRes?.data?.data);
         setExpirationDateJson(expiryRes?.data?.data);
+        setMRPGroupJson(MRPGroupRes?.data?.data)
 
       } catch (err) {
         console.error("Error fetching master data:", err);
@@ -334,7 +337,8 @@ export default function MaterialOnboardingDetails() {
         showcompletealert,
         onCloseCallback: sendEmailToUser,
         showRevertAlert,
-        sendRevertEmail
+        sendRevertEmail,
+        MRPGroup: MRPGroupJson,
       } as any)}
     />
   );

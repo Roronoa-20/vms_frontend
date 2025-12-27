@@ -35,13 +35,13 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
   const rightsidePOPRDetails = [
     ["P.O. No.", prDetails?.name, "Date", formatDate(prDetails?.po_date)],
     ["Amd. Ver No.", "0", "Date", ""],
-    ["Purchase Grp.", prDetails?.purchase_group],
+    ["Purchase Grp.", prDetails?.purchase_group_name],
     ["Ref. PR No", prDetails?.ref_pr_no, "Ref. PR Date", formatDate(prDetails?.ref_pr_date)],
     ["Ref. PR Person", prDetails?.ref_pr_person],
   ];
 
   const rightsidecontactDetails = [
-    ["Contact Person", prDetails?.contact_person2, "Phone No.", prDetails?.phonemobile_no],
+    ["Contact Person", prDetails?.contact_person2, "Phone No.", prDetails?.telephone_no],
     ["E-mail", prDetails?.email2],
     ["D/L No", prDetails?.dl_no],
     ["GSTIN No.", prDetails?.gstin_no],
