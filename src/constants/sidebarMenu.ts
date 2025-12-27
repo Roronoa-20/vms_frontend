@@ -374,12 +374,12 @@ export const EnquirysidebarMenu: SidebarItem[] = [
     href: "/pr-inquiry",
     children: []
   },
-  {
-    logo: "/sidebar-assests/view-pr.svg",
-    name: "View PR",
-    href: "/view-purchase-requisition",
-    children: []
-  },
+  // {
+  //   logo: "/sidebar-assests/view-pr.svg",
+  //   name: "View PR",
+  //   href: "/view-purchase-requisition",
+  //   children: []
+  // },
 ];
 
 export const CategoryMastersidebarMenu: SidebarItem[] = [
