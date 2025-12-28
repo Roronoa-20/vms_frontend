@@ -1,13 +1,11 @@
 // "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import { useAuth } from "@/src/context/AuthContext";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
 import { MaterialCode } from "@/src/types/PurchaseRequestType";
-import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, MaterialType, StorageLocation, MaterialCategory, MaterialRequestData, UOMMaster } from "@/src/types/MaterialCodeRequestFormTypes";
+import { MaterialRegistrationFormData, Company, Plant, division, MaterialType, StorageLocation, MaterialCategory, MaterialRequestData, UOMMaster } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface UserRequestFormProps {
     form: UseFormReturn<any>;
@@ -15,73 +13,38 @@ interface UserRequestFormProps {
     companyName?: Company[]
     plantcode?: Plant[]
     UnitOfMeasure?: UOMMaster[]
-    EmployeeDetails?: EmployeeDetail[]
-    MaterialType?: MaterialType[]
     StorageLocation?: StorageLocation[]
-    searchResults?: MaterialCode[]
-    showSuggestions?: boolean
-    handleMaterialSearch: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
-    handleMaterialSelect: (item: MaterialCode) => void
-    setShowSuggestions: React.Dispatch<React.SetStateAction<boolean>>
-    selectedMaterialType: string
     setSelectedMaterialType: React.Dispatch<React.SetStateAction<string>>
     setMaterialCompanyCode: React.Dispatch<React.SetStateAction<string>>
     materialCompanyCode?: string
     MaterialDetails?: MaterialRequestData
-    MaterialCode?: string
     MaterialCategory?: MaterialCategory[]
     AllMaterialType?: MaterialType[]
-    setIsMaterialCodeEdited: React.Dispatch<React.SetStateAction<boolean>>
     MaterialOnboardingDetails?: MaterialRegistrationFormData
     AllMaterialCodes: MaterialCode[]
-    isMaterialCodeEdited?: boolean
-    setShouldShowAllFields: React.Dispatch<React.SetStateAction<boolean>>
-    setSearchResults: React.Dispatch<React.SetStateAction<MaterialCode[]>>
-    shouldShowAllFields: boolean
-    setIsMatchedMaterial: React.Dispatch<React.SetStateAction<boolean>>
-    isZCAPMaterial?: boolean
-    DivisionDetails?: division[]
     filteredStorage?: StorageLocation[]
-    materialSelectedFromList?: boolean
     filteredDivision?: division[];
 }
 
-const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, plantcode, UnitOfMeasure, MaterialCategory, AllMaterialType, StorageLocation, AllMaterialCodes, MaterialDetails, MaterialOnboardingDetails, setMaterialCompanyCode, setSelectedMaterialType, setIsMaterialCodeEdited, setShouldShowAllFields, setIsMatchedMaterial, materialCompanyCode }) => {
+const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, plantcode, UnitOfMeasure, MaterialCategory, AllMaterialType, StorageLocation, AllMaterialCodes, MaterialDetails, MaterialOnboardingDetails, setMaterialCompanyCode, setSelectedMaterialType, materialCompanyCode }) => {
 
-
-    console.log("Material Details---->", MaterialDetails)
-    console.log("Material Onboarding---->", MaterialOnboardingDetails)
-
-    const { designation } = useAuth();
-    const role = designation || "";
-    const [originalMaterialCode, setOriginalMaterialCode] = useState("");
-    const [originalDesc, setOriginalDesc] = useState("");
     const [materialCategoryTypeOptions, setMaterialCategoryTypeOptions] = useState<{ material_type_category: string; code_logic: string; }[]>([]);
+    const filteredPlants = useMemo(() => plantcode?.filter(p => String(p.company) === materialCompanyCode) || [], [plantcode, materialCompanyCode]);
+    const filteredMaterialType = useMemo(() => AllMaterialType?.filter(t => t.multiple_company?.some(c => String(c.company) === materialCompanyCode)) || [], [AllMaterialType, materialCompanyCode]);
 
-
-    const filteredPlants = useMemo(() => plantcode?.filter(p => String(p.company) === materialCompanyCode) || [],
-        [plantcode, materialCompanyCode]);
-
-    const filteredMaterialType = useMemo(() => AllMaterialType?.filter(t => t.multiple_company?.some(c => String(c.company) === materialCompanyCode)) || [],
-        [AllMaterialType, materialCompanyCode]);
-
-    const getCodeFromDescription = (desc: string) => AllMaterialCodes?.find(c => c.material_description?.trim().toLowerCase() === desc.trim().toLowerCase())?.name || "";
     const materialType = form.watch("material_type");
 
     useEffect(() => {
         if (!materialType || !AllMaterialType?.length) return;
 
-        const matchedType = AllMaterialType.find(
-            (t) => t.name === materialType
-        );
+        const matchedType = AllMaterialType.find((t) => t.name === materialType);
 
         if (!matchedType?.material_code_logic?.length) {
             setMaterialCategoryTypeOptions([]);
             return;
         }
 
-        setMaterialCategoryTypeOptions(
-            matchedType.material_code_logic.map(item => ({
+        setMaterialCategoryTypeOptions(matchedType.material_code_logic.map(item => ({
                 material_type_category: item.material_type_category,
                 code_logic: item.code_logic
             }))
@@ -101,8 +64,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
 
         const normalize = (v: string) => v.trim().toLowerCase();
 
-        const matchedOption = materialCategoryTypeOptions.find(
-            o =>
+        const matchedOption = materialCategoryTypeOptions.find(o =>
                 normalize(o.material_type_category) ===
                 normalize(backendCategory)
         );
@@ -139,22 +101,11 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
             setSelectedMaterialType(item.material_type);
         }
 
-        form.setValue("material_name_description", item.material_name_description || "");
         form.setValue("comment_by_user", item.comment_by_user || "");
         form.setValue("base_unit_of_measure", item.unit_of_measure || "");
         form.setValue("material_category", item.material_category || "");
 
         if (filteredPlants.length && item.plant) form.setValue("plant_name", item.plant);
-
-        const revisedCode =
-            MaterialOnboardingDetails?.approval_status &&
-                ["Sent to SAP", "Saved as Draft", "Re-Opened by CP"].includes(MaterialOnboardingDetails.approval_status)
-                ? storage?.material_code_revised || getCodeFromDescription(item.material_name_description || "")
-                : getCodeFromDescription(item.material_name_description || "");
-
-        form.setValue("material_code_revised", revisedCode || item.material_code_revised || "");
-        setOriginalMaterialCode(revisedCode || item.material_code_revised || "");
-        setOriginalDesc(item.material_name_description?.trim()?.toLowerCase() || "");
 
         if (storage) {
             form.setValue("storage_location", storage.storage_location || "");
@@ -162,58 +113,6 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
             form.setValue("old_material_code", storage.old_material_code || "");
         }
     }, [MaterialDetails, filteredPlants, filteredMaterialType, MaterialOnboardingDetails, AllMaterialCodes, form, setMaterialCompanyCode, setSelectedMaterialType]);
-
-    // useEffect(() => {
-    //     console.log("Testing the Value----->",{
-    //         company: form.getValues("material_company_code"),
-    //         type: form.getValues("material_type"),
-    //         options: materialCategoryTypeOptions,
-    //         category: form.getValues("material_type_category"),
-    //     });
-    // }, [materialCategoryTypeOptions]);
-
-    useEffect(() => {
-        if (!(role === "Material CP" || role === "Store")) return;
-
-        const desc = form.getValues("material_name_description")?.trim() || "";
-        const currentCode = form.getValues("material_code_revised") || "";
-        const revisedCode = getCodeFromDescription(desc);
-
-        if (revisedCode && revisedCode !== currentCode) {
-            form.setValue("material_code_revised", revisedCode, { shouldValidate: true });
-        }
-    }, [role, AllMaterialCodes, form]);
-
-    useEffect(() => {
-        const currentCode = form.getValues("material_code_revised")?.trim() || "";
-        const currentDesc = form.getValues("material_name_description")?.trim().toLowerCase() || "";
-
-        const isManualEdit = currentCode !== originalMaterialCode || currentDesc !== originalDesc;
-        const existsInList = AllMaterialCodes.some(
-            c => c.name === currentCode && c.material_description?.trim().toLowerCase() === currentDesc
-        );
-
-        const shouldShow = Boolean(isManualEdit || !existsInList || (currentDesc && !currentCode));
-
-        setIsMatchedMaterial(prev => (prev !== existsInList ? existsInList : prev));
-        setIsMaterialCodeEdited(prev => (prev !== shouldShow ? shouldShow : prev));
-        setShouldShowAllFields(prev => (prev !== shouldShow ? shouldShow : prev));
-
-        if (currentCode) {
-            const found = AllMaterialCodes.find(c => c.name === currentCode);
-            if (found && found.material_description?.trim().toLowerCase() !== currentDesc) {
-                form.setError("material_code_revised", {
-                    type: "manual",
-                    message: `Material Code already exists for "${found.material_description}"`,
-                });
-            } else {
-                form.clearErrors("material_code_revised");
-            }
-        } else {
-            form.clearErrors("material_code_revised");
-        }
-    }, [AllMaterialCodes, form, originalMaterialCode, originalDesc, setIsMaterialCodeEdited, setShouldShowAllFields, setIsMatchedMaterial]);
-
 
     return (
         <div className="bg-[#F4F4F6]">

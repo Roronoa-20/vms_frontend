@@ -9,7 +9,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import { MaterialCode } from "@/src/types/PurchaseRequestType";
-import { MaterialRegistrationFormData, EmployeeDetail, EmployeeAPIResponse, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialType, MaterialRequestData } from "@/src/types/MaterialCodeRequestFormTypes";
+import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, ClassType, UOMMaster, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, StorageLocation, SerialNumber, MaterialType, MaterialRequestData } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface MaterialInformationFormProps {
   form: any;
@@ -41,9 +41,7 @@ interface MaterialInformationFormProps {
   MaterialDetails?: MaterialRequestData;
 }
 
-const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form, onSubmit, companyName, plantcode, EmployeeDetailsJSON, DivisionDetails = [], role, UnitOfMeasure, MaterialGroup, MaterialOnboardingDetails, companyInfo, ProfitCenter, AvailabilityCheck, MaterialType, StorageLocation = [], ClassType, SerialProfile, materialCompanyCode, setMaterialCompanyCode, MaterialCategory, isMaterialCodeEdited, setIsMaterialCodeEdited, setShouldShowAllFields, shouldShowAllFields, setIsMatchedMaterial, isZCAPMaterial, MaterialDetails }) => {
-
-  // console.log("Material GRoup Parent---->",MaterialGroup);
+const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form, companyName, plantcode, EmployeeDetailsJSON, DivisionDetails = [], role, UnitOfMeasure, MaterialGroup, MaterialOnboardingDetails, companyInfo, AvailabilityCheck, MaterialType, StorageLocation = [], ClassType, SerialProfile, materialCompanyCode, setMaterialCompanyCode, MaterialCategory, setIsMaterialCodeEdited, setShouldShowAllFields, shouldShowAllFields, setIsMatchedMaterial, isZCAPMaterial, MaterialDetails }) => {
 
   const [selectedMaterialType, setSelectedMaterialType] = useState<string>("");
   const [filteredMaterialGroup, setFilteredMaterialGroup] = useState<MaterialGroupMaster[]>([]);
@@ -60,6 +58,8 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
 
   const company = useWatch({ control: form.control, name: "material_company_code" });
   const materialType = useWatch({ control: form.control, name: "material_type" });
+
+  console.log("shouldShowAllFields ==========================>", shouldShowAllFields);
 
   const fetchMaterialCodeData = useCallback(
     async (query?: string): Promise<MaterialCode[]> => {
@@ -172,7 +172,6 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
       method: "GET",
       url: `${API_END_POINTS.getLatestMaterialCode}?prefix=${selectedCodeLogic}&company=${company}`,
     });
-    console.log(res)
     if (res?.data?.message) {
       setLatestCodeSuggestions([res.data.message]);
     }
@@ -214,7 +213,6 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
 
   useEffect(() => {
     const employeeCompanyCode = (EmployeeDetailsJSON?.company && Array.isArray(EmployeeDetailsJSON.company) && EmployeeDetailsJSON.company[0]?.company_code) || "";
-
     const newFilteredMaterialGroup = MaterialGroup?.filter((group) => String(group.material_group_company) === employeeCompanyCode) || [];
     const newFilteredStorage = StorageLocation?.filter((loc) => String(loc.company) === employeeCompanyCode) || [];
     const newFilteredDivision = DivisionDetails?.filter((div) => String(div.company) === employeeCompanyCode) || [];
@@ -285,9 +283,6 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
     });
   }, [MaterialDetails, filteredMaterialGroup]);
 
-  // console.log("role check →", role, typeof role);
-  // console.log("shouldShowAllFields check →", shouldShowAllFields);
-
   useEffect(() => {
     // console.log("MaterialInformationForm: role =", role, "showAll =", shouldShowAllFields);
   }, [role, shouldShowAllFields]);
@@ -305,31 +300,14 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
             materialCompanyCode={materialCompanyCode}
             setMaterialCompanyCode={setMaterialCompanyCode}
             setSelectedMaterialType={setSelectedMaterialType}
-            selectedMaterialType={selectedMaterialType}
             UnitOfMeasure={UnitOfMeasure}
-            MaterialType={MaterialType}
             plantcode={plantcode}
-            DivisionDetails={DivisionDetails}
             filteredStorage={filteredStorage}
-            searchResults={searchResults}
-            showSuggestions={showSuggestions}
-            materialSelectedFromList={materialSelectedFromList}
-            handleMaterialSearch={handleMaterialSearch}
-            handleMaterialSelect={handleMaterialSelect}
-            setSearchResults={setSearchResults}
-            setShowSuggestions={setShowSuggestions}
-            // MaterialCode={MaterialCode}
             MaterialCategory={MaterialCategory}
             filteredDivision={filteredDivision}
             StorageLocation={StorageLocation}
             AllMaterialType={MaterialType}
-            isMaterialCodeEdited={isMaterialCodeEdited}
-            setIsMaterialCodeEdited={setIsMaterialCodeEdited}
             AllMaterialCodes={AllMaterialCodes}
-            setShouldShowAllFields={setShouldShowAllFields}
-            shouldShowAllFields={shouldShowAllFields}
-            setIsMatchedMaterial={setIsMatchedMaterial}
-            isZCAPMaterial={isZCAPMaterial}
           />
 
           <UserRequestDetails2

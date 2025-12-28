@@ -43,8 +43,8 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
   const rightsidecontactDetails = [
     ["Contact Person", prDetails?.contact_person2, "Phone No.", prDetails?.telephone_no],
     ["E-mail", prDetails?.email2],
-    ["D/L No", prDetails?.dl_no],
     ["GSTIN No.", prDetails?.gstin_no],
+    ["D/L No.", prDetails?.dl_no],
     ["MSME No.", prDetails?.msme_no],
   ];
 
@@ -58,9 +58,17 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
     ["Total Value of Purchase Order / Service Order", prDetails?.total_value_of_po__so,],
   ];
 
+  const rowClass = "min-h-[20px] flex items-center justify-end";
 
+  const getScheduleData = (item: any) => {
+    try {
+      return item?.schedule_date_qty_json ? JSON.parse(item.schedule_date_qty_json) : [];
+    } catch {
+      return [];
+    }
+  };
 
-  console.log(prDetails, "this is pr details")
+  console.log(prDetails, "this is po details")
 
   return (
     <div
@@ -95,7 +103,8 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
             </div>
           </div>
           <div className="border-b border-black p-1 leading-6 text-[16px]">
-            <span className="font-semibold">{prDetails?.vendor_address_details?.vendor_name}</span><br />
+            <span className="font-semibold">{prDetails?.supplier_name},</span><br />
+            {prDetails?.vendor_address}
             {prDetails?.vendor_address_details?.address_line_1},<br />
             {prDetails?.vendor_address_details?.address_line_2},<br />
             {prDetails?.vendor_address_details?.city} - {prDetails?.vendor_address_details?.zip_code}, {prDetails?.vendor_address_details?.state}, {prDetails?.vendor_address_details?.country}<br />
@@ -224,102 +233,155 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
           <tbody>
             {prDetails?.po_items?.map((item: any, index: any) => (
               <tr key={index} className={index % 2 ? "bg-gray-50" : ""}>
-                <td className="border border-black px-2 py-1 align-top">
+                <td className="border border-black align-top text-center">
                   {index + 1}
                 </td>
-                <td className="border border-black px-2 py-1 align-top">
+                <td className="border border-black align-top">
                   {item?.material_code}
                 </td>
-                <td className="border border-black px-2 py-1 align-top">
+                <td className="border border-black align-top">
                   {item?.short_text}
                 </td>
-                <td className="border border-black px-2 py-1 align-top text-center">
+                <td className="border border-black align-top text-center">
                   {item?.hsnsac}
                 </td>
-                <td className="border border-black px-2 py-1 align-top text-center">{item?.uom}</td>
+                <td className="border border-black align-top text-center">{item?.uom}</td>
                 {/* QUANTITY COLUMN */}
-                <td className="border border-black px-2 py-1 align-top">
+                <td className="border border-black align-top">
                   <div className="flex flex-col gap-1">
-                    <div className="font-semibold text-right">{item?.quantity}</div>
-
-                    <div className="text-black">
-                      {item?.discount_on_net && "Discount on Net:"}
+                    <div className="font-semibold text-right">{Number(item?.quantity) > 0 &&
+                      Number(item.quantity).toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
                     </div>
 
-                    <div className="text-black">
-                      {item?.igst_rate_percent && "Input IGST:"}
-                    </div>
+                    {item?.discount_on_net > 0 && (
+                      <div className="text-black">
+                        Discount on Net: {item.discount_on_net}
+                      </div>
+                    )}
+
+                    {item?.igst_rate_percent > 0 && (
+                      <div className="text-black">
+                        Input IGST: {item.igst_rate_percent}%
+                      </div>
+                    )}
                   </div>
                 </td>
 
-                {/* RATE COLUMN */}
-                <td className="border border-black px-2 py-1 align-top text-right">
-                  <div className="flex flex-col gap-1 w-full">
-                    <div className="font-semibold">{item?.rate && Number(item.rate).toLocaleString("en-US", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2
-                    })}</div>
+                <td className="border border-black align-top text-right">
+                  <div className="flex flex-col w-full">
 
-                    {/* Empty gap to align with Discount */}
-                    <div className="h-5"></div>
-
-                    <div className="text-black">
-                      {item?.igst_rate_percent && <span className="font-medium">{item.igst_rate_percent}</span>}
-                    </div>
-                    <div className="h-5"></div>
-
-                    {/* NET with top border */}
-                    <div className="w-full border-t border-black pt-1 text-left font-bold">
-                      {item?.price && "NET:"}
-                    </div>
-                  </div>
-                </td>
-
-                {/* AMOUNT COLUMN */}
-                <td className="border border-black px-2 py-1 align-top text-right">
-                  <div className="flex flex-col gap-1 w-full">
-                    <div className="font-semibold">{item?.base_amount &&
-                      Number(item.base_amount).toLocaleString("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                      })}</div>
-                    <div className="text-black">
-                      {item?.discount_on_net && <span className="font-medium">{Number(item.discount_on_net).toLocaleString("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                      })}</span>}
-                    </div>
-
-                    {/* Empty gap to align with IGST*/}
-                    <div className="text-black">
-                      {item?.total_input_igst && <span className="font-medium">{Number(item.total_input_igst).toLocaleString("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                      })}</span>}
-                    </div>
-
-                    <div className="h-5"></div>
-
-                    {/* NET value with top border (aligned with RATE NET) */}
-                    <div className="w-full border-t border-black pt-1 font-semibold">
-                      {item?.price &&
-                        Number(item.price).toLocaleString("en-US", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2
+                    {/* RATE */}
+                    <div className={rowClass + " font-semibold"}>
+                      {Number(item?.rate) > 0 &&
+                        Number(item.rate).toLocaleString("en-US", {
+                          minimumFractionDigits: 4,
+                          maximumFractionDigits: 4,
                         })}
                     </div>
+
+                    {/* DISCOUNT ROW (empty placeholder) */}
+                    <div className={rowClass}></div>
+
+                    {/* IGST RATE */}
+                    <div className={rowClass}>
+                      {Number(item?.igst_rate_percent) > 0 && (
+                        <span className="font-medium">{item.igst_rate_percent}</span>
+                      )}
+                    </div>
+
+                    {/* IGST AMOUNT PLACEHOLDER */}
+                    <div className={rowClass}></div>
+
+                    {/* NET LABEL */}
+                    <div className="w-full border-t border-black pt-1 text-left font-bold min-h-[22px]">
+                      {Number(item?.price) > 0 && "NET:"}
+                    </div>
+
                   </div>
                 </td>
 
-                <td className="border border-black px-2 py-1 align-top text-center">
-                  {formatDate(item?.schedule_date?.map((item:any)=>(
+
+                <td className="border border-black align-top text-right">
+                  <div className="flex flex-col w-full">
+
+                    {/* BASE AMOUNT */}
+                    <div className={rowClass + " font-semibold"}>
+                      {Number(item?.base_amount) > 0 &&
+                        Number(item.base_amount).toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                    </div>
+
+                    {/* DISCOUNT VALUE */}
+                    <div className={rowClass}>
+                      {Number(item?.discount_on_net) > 0 &&
+                        Number(item.discount_on_net).toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                    </div>
+
+                    {/* IGST VALUE */}
+                    <div className={rowClass}>
+                      {Number(item?.total_input_igst) > 0 &&
+                        Number(item.total_input_igst).toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                    </div>
+
+                    {/* IGST PLACEHOLDER */}
+                    <div className={rowClass}></div>
+
+                    {/* NET VALUE */}
+                    <div className="w-full border-t border-black pt-1 font-semibold min-h-[22px]">
+                      {Number(item?.price) > 0 &&
+                        Number(item.price).toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                    </div>
+
+                  </div>
+                </td>
+
+                {/* <td className="border border-black align-top text-center">
+                  {formatDate(item?.schedule_date?.map((item: any) => (
                     <h1>{item}</h1>
                   )))}
+                </td> */}
+                <td className="border border-black align-top text-center">
+                  <div className="flex flex-col gap-1">
+                    {getScheduleData(item).map((sch: any, idx: number) => (
+                      <div key={idx}>
+                        {sch?.EINDT2 ? formatDate(sch.EINDT2) : "-"}
+                      </div>
+                    ))}
+                  </div>
                 </td>
-                <td className="border border-black px-2 py-1 align-top text-center">
-                  {item?.schedule_quantity?.map((item:any)=>(
+
+                {/* <td className="border border-black align-top text-center">
+                  {item?.schedule_quantity?.map((item: any) => (
                     <h1>{item}</h1>
                   ))}
+                </td> */}
+                <td className="border border-black align-top text-right">
+                  <div className="flex flex-col gap-1">
+                    {getScheduleData(item).map((sch: any, idx: number) => (
+                      <div key={idx}>
+                        {Number(sch?.MENGE2) > 0
+                          ? Number(sch.MENGE2).toLocaleString("en-US", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })
+                          : "-"}
+                      </div>
+                    ))}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -341,7 +403,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
             ))}
           </tbody>
         </table>
-      </div>
+      </div >
       <div className="border border-black bg-white text-left text-xs font-semibold p-2">
         Totals Value in Words :
         <span className="font-normal">{prDetails?.total_value_in_words}</span>
@@ -353,20 +415,33 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
         <p className="font-semibold">
           Terms of Payment:{prDetails?.terms_of_payment}
         </p>
-        <p>100% within 30 Days from the Date of Invoice</p>
-        <p className="font-semibold">
-          Delivery Schedule:{prDetails?.delivery_schedule}
-        </p>
-        <p className="font-semibold py-2">Shipping Instructions:</p>
-        <p className="font-semibold">Pre Shipment Documentation:</p>
-        <p className="">The following is required defore of material.</p>
-        <ol className="list-decimal list-inside">
-          <li>Commercial Invoice</li>
-          <li>Packing List</li>
-          <li>Certificate of Analysis (COA)</li>
-          <li>Material Safety Data Sheet (MSDS)</li>
-          <li>Test Certificate</li>
-        </ol>
+
+        {prDetails?.delivery_schedule && (
+          <>
+            <p className="font-semibold">
+              Delivery Schedule: {prDetails.delivery_schedule}
+            </p>
+
+            {(prDetails.delivery_schedule === "Import" ||
+              prDetails.delivery_schedule === "Export") && (
+                <>
+                  <p className="font-semibold py-2">Shipping Instructions:</p>
+
+                  <p className="font-semibold">Pre Shipment Documentation:</p>
+                  <p>The following is required before delivery of material.</p>
+
+                  <ol className="list-decimal list-inside">
+                    <li>Commercial Invoice</li>
+                    <li>Packing List</li>
+                    <li>Certificate of Analysis (COA)</li>
+                    <li>Material Safety Data Sheet (MSDS)</li>
+                    <li>Test Certificate</li>
+                  </ol>
+                </>
+              )}
+          </>
+        )}
+
       </div>
 
       <div className="border border-black bg-white text-left text-xs font-semibold p-2">
@@ -442,7 +517,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
       <div className="text-[10px] py-2 text-right">
         FMT/MM/PUR/003.Issue No.03.Rev.NO.01
       </div>
-    </div>
+    </div >
   );
 };
 

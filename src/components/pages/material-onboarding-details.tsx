@@ -96,29 +96,7 @@ export default function MaterialOnboardingDetails() {
           requestWrapper({ url: API_END_POINTS.getexpirationDateMaster, method: "GET" }),
           requestWrapper({ url: API_END_POINTS.getMRPGroupMaster, method: "GET" }),
         ]);
-
-        // console.log("Master Data Responses:");
-        // console.log("Company Master:", companyRes);
-        // console.log("Plant Master:", plantRes);
-        // console.log("Division Master:", divisionRes);
-        // console.log("Industry Master:", industryRes);
-        // console.log("UOM Master:", uomRes);
-        // console.log("MRP Type Master:", mrpTypeRes);
-        // console.log("Procurement Type Master:", procurementRes);
-        // console.log("Valuation Category Master:", valCatRes);
-        // console.log("Profit Center Master:", profitCenterRes);
-        // console.log("Price Control Master:", priceControlRes);
-        // console.log("Availability Check Master:", availCheckRes);
-        // console.log("MRP Controller Master:", mrpControllerRes);
-        // console.log("Storage Location Master:", storageRes);
-        // console.log("Class Type Master:", classTypeRes);
-        // console.log("Serial Number Master:", serialRes);
-        // console.log("Inspection Type Master:", inspectionRes);
-        // console.log("Lot Size Master:", lotSizeRes);
-        // console.log("Material Category Master:", matCategoryRes);
-        // console.log("Scheduling Margin Key Master:", schedRes);
-        // console.log("Expiration Date Master:", expiryRes);
-
+       
         setCompanyJson(companyRes?.data?.data);
         setPlantJson(plantRes?.data?.message?.data);
         setDivisionJson(divisionRes?.data?.data);
@@ -167,8 +145,6 @@ export default function MaterialOnboardingDetails() {
             params: { name, material_name },
           }),
         ]);
-        console.log("Table REsponse Materi O--->",tableRes)
-        console.log("Table REsponse Materi D--->",detailsRes)
         const tableData = tableRes?.data?.message?.data?.[0];
         const detailsData = detailsRes?.data?.message?.data;
 
@@ -223,7 +199,6 @@ export default function MaterialOnboardingDetails() {
         setMaterialGroupJson([]);
       }
 
-      // console.log("Material Fetch Groups:", data);
     } catch (err) {
       console.error("Error fetching Purchase Group:", err);
       setMaterialGroupJson([]);
@@ -247,7 +222,6 @@ export default function MaterialOnboardingDetails() {
         setPurchaseGroupJson([]);
       }
 
-      // console.log("Purchase Groups:", data?.purchase_groups);
     } catch (err) {
       console.error("Error fetching Purchase Group:", err);
       setPurchaseGroupJson([]);
@@ -293,15 +267,12 @@ export default function MaterialOnboardingDetails() {
       });
 
       const result = response?.data;
-      console.log("Email API response:", result);
       if (response?.status === 200)
         setShowRevertAlert(true);
     } catch (error) {
       console.error("Error sending email to user:", error);
     }
   };
-
-  //   if (loading) return <div className="p-4 text-gray-600">Loading...</div>;
 
   return (
     <MaterialOnboardingForm

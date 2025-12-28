@@ -49,6 +49,15 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
     form.register("denominator_purchase_uom");
   }, []);
 
+  useEffect(() => {
+    const defaultUOM = MaterialDetails?.material_request_item?.unit_of_measure;
+    const currentPurchaseUOM = form.getValues("purchase_uom");
+    if (defaultUOM && !currentPurchaseUOM) {
+      form.setValue("purchase_uom", defaultUOM, {shouldDirty: false, shouldTouch: false, shouldValidate: false});
+    }
+  }, [MaterialDetails?.material_request_item?.unit_of_measure, form]);
+
+
   const handleUOMConversionSubmit = ({ numerator, denominator }: UOMConversionData) => {
     form.setValue("numerator_purchase_uom", numerator);
     form.setValue("denominator_purchase_uom", denominator);
@@ -71,7 +80,7 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
       PurchaseGroup?.filter(
         (group) => String(group.company) === employeeCompanyCode
       ) || [];
-    console.log("Purchase Group---->",filtered)
+    console.log("Purchase Group---->", filtered)
     setFilteredPurchaseGroup(filtered);
   }, [companyInfo, PurchaseGroup, MaterialOnboardingDetails]);
 
@@ -82,10 +91,7 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
   const filteredLotSizeOptions = lotsizeSearch ? LotSize?.filter((group) => group.description?.toLowerCase().includes(lotsizeSearch.toLowerCase()) || group.name?.toLowerCase().includes(lotsizeSearch.toLowerCase())) : LotSize;
 
   useEffect(() => {
-    form.setValue("purchasing_value_key", "3", {
-      shouldDirty: false,
-      shouldTouch: false,
-    });
+    form.setValue("purchasing_value_key", "3", {shouldDirty: false, shouldTouch: false});
   }, [form]);
 
   useEffect(() => {
@@ -123,8 +129,6 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
       setConversionRatio(`${numerator} ${baseUOM} = ${denominator} ${purchaseUOM}`);
     }
   }, [form.watch("numerator_purchase_uom"), form.watch("denominator_purchase_uom"), baseUOM, purchaseUOM]);
-
-
 
   return (
     <div className="bg-[#F4F4F6] overflow-hidden">

@@ -289,6 +289,16 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
     form.register("is_revised_code_new");
   }, []);
 
+  useEffect(() => {
+    if (isCodeGeneratedBySAP) {
+      form.unregister("material_code_revised");
+      form.clearErrors("material_code_revised");
+    } else {
+      form.register("material_code_revised");
+    }
+  }, [isCodeGeneratedBySAP]);
+
+
   // --- Delete a row from table (DO NOT DELETE) ---
   // const handleDeleteRow = (indexToDelete: number) => {
   //   setMaterialRequestList((prevList) =>
@@ -599,6 +609,8 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                           maxLength={40}
                           className="w-full p-[9px] text-sm text-gray-700 border border-gray-300 rounded-md placeholder:text-gray-500 hover:border-blue-400 focus:border-blue-400 focus:outline-none"
                           placeholder="Enter or Search Material Name/Description"
+                          disabled={isCodeGeneratedBySAP}
+
                         />
                         {showSuggestions && (
                           <div className="absolute left-0 top-full mt-1 z-10 bg-white border border-gray-300 rounded-md shadow-md w-full min-w-full max-h-40 overflow-y-auto">
@@ -689,7 +701,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                               disabled={materialCodeAutoFetched || isCodeGeneratedBySAP}
                             />
                           </FormControl>
-                          {isCodeGeneratedBySAP && (
+                          {!isCodeGeneratedBySAP && (
                             <div className="absolute right-3 top-1/2 -translate-y-1/2">
                               {materialCodeStatus === "checking" && (
                                 <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
@@ -702,7 +714,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                               )}
                             </div>
                           )}
-                          {latestCodeSuggestions[0] && !materialSelectedFromList && (
+                          {!isCodeGeneratedBySAP && latestCodeSuggestions[0] && !materialSelectedFromList && (
                             <p className="mt-1 text-xs text-gray-500">
                               Latest existing code:{" "}
                               <span className="font-semibold">
