@@ -389,7 +389,7 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                                     Manage your main items and sub-items. Click the arrow to expand and see sub-items.
                                 </CardDescription>
                             </div>
-                            {mainItems?.sap_status == "Failed" || mainItems?.sap_status == "" && (
+                            {mainItems?.sap_status == "Failed" || mainItems?.sap_status == "" || mainItems?.sap_status == "Pending" && (
                                 <div>
                                     <Button
                                         variant="outline"
@@ -463,7 +463,7 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                                                     )}
                                                 </div>
                                             </div>
-                                            {mainItems?.sap_status == "Failed" && (
+                                            {mainItems?.sap_status == "Failed" || mainItems?.sap_status == "Pending" && (
                                                 <div className="flex items-center gap-2">
                                                     {((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
                                                         <>
