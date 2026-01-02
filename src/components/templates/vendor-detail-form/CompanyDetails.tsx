@@ -46,30 +46,65 @@ const CompanyDetailForm = ({
   const [errors, setErrors] = useState<any>({});
 
   const { data, updateField, resetForm } = useCompanyDetailFormStore();
+
+  useEffect(()=>{
+    if (OnboardingDetail) {
+      Object.entries(OnboardingDetail).forEach(([key, value]) => {
+        updateField(key as keyof TCompanyDetailForm, value);
+      });
+    }
+  },[OnboardingDetail])
+
   const validate = () => {
     const errors: any = {};
-    if (!data?.type_of_business && !OnboardingDetail?.type_of_business) {
+    if (!data?.type_of_business) {
       errors.type_of_business = "Please Select Type Of Business ";
-    }
-    // if (!data?.registered_office_number) {
-    //   errors.registered_office_number = "Please Select Reg No. ";
-    // }
+    };
 
-    if (
-      !data?.corporate_identification_number &&
-      !OnboardingDetail?.corporate_identification_number
-    ) {
+    if(!data?.size_of_company){
+      errors.size_of_company = "Please enter size of company";
+    };
+
+    if(!data?.website ){
+      errors.website = "Please Enter Website";
+    };
+
+    if(!data?.registered_office_number ){
+      errors.registered_office_number = "Please Enter Reg No.";
+    };
+
+    if(!data?.whatsapp_number){
+      errors.whatsapp_number = "Please Enter Whatsapp Number";
+    };
+
+    if(!data?.established_year){
+      errors.established_year = "Please Enter Established Year";
+    };
+
+    if(!data?.office_email_secondary){
+      errors.office_email_secondary = "Please Enter Office Email Secondary";
+    };
+
+    if(!data?.nature_of_company){
+      errors.nature_of_company = "Please Select Nature of Company";
+    };
+
+    if(!data?.nature_of_business){
+      errors.nature_of_business = "Please Select Nature of Business";
+    };
+
+    if (!data?.corporate_identification_number) {
       errors.corporate_identification_number =
         "Please Select Corporate Identification Number ";
-    }
-    if (!data?.cin_date && !OnboardingDetail?.cin_date) {
+    };
+
+    if (!data?.cin_date ) {
       errors.cin_date = "Please Select Cin Date";
-    }
+    };
 
     return errors;
   };
 
-  console.log(OnboardingDetail, "this is onboarding detail");
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const validationErrors = validate();
@@ -145,7 +180,7 @@ const CompanyDetailForm = ({
                 updateField("type_of_business", value);
               }}
               value={
-                data?.type_of_business ?? OnboardingDetail?.type_of_business
+                data?.type_of_business ?? ""
               }
             >
               <SelectTrigger>
@@ -176,8 +211,11 @@ const CompanyDetailForm = ({
               onChange={(e) => {
                 updateField("size_of_company", e.target.value);
               }}
-              value={data?.size_of_company ?? OnboardingDetail?.size_of_company ?? ""}
+              value={data?.size_of_company ??  ""}
             />
+            {errors?.size_of_company && !data?.size_of_company && (
+              <span style={{ color: "red" }}>{errors?.size_of_company}</span>
+            )}
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">
@@ -188,8 +226,11 @@ const CompanyDetailForm = ({
               onChange={(e) => {
                 updateField("website", e.target.value);
               }}
-              value={data?.website ?? OnboardingDetail?.website ?? ""}
+              value={data?.website ?? ""}
             />
+            {errors?.website && !data?.website && (
+              <span style={{ color: "red" }}>{errors?.website}</span>
+            )}
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] flex pb-2">
@@ -202,7 +243,6 @@ const CompanyDetailForm = ({
               }}
               value={
                 data?.registered_office_number ??
-                OnboardingDetail?.registered_office_number ??
                 ""
               }
             />
@@ -225,7 +265,6 @@ const CompanyDetailForm = ({
               }}
               value={
                 data?.telephone_number ??
-                OnboardingDetail?.telephone_number ??
                 ""
               }
             />
@@ -240,9 +279,12 @@ const CompanyDetailForm = ({
                 updateField("whatsapp_number", e.target.value);
               }}
               value={
-                data?.whatsapp_number ?? OnboardingDetail?.whatsapp_number ?? ""
+                data?.whatsapp_number ??  ""
               }
             />
+            {errors?.whatsapp_number && !data?.whatsapp_number && (
+              <span style={{ color: "red" }}>{errors?.whatsapp_number}</span>
+            )}
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">
@@ -255,10 +297,12 @@ const CompanyDetailForm = ({
               }}
               value={
                 data?.established_year ??
-                OnboardingDetail?.established_year ??
                 ""
               }
             />
+            {errors?.established_year && !data?.established_year && (
+              <span style={{ color: "red" }}>{errors?.established_year}</span>
+            )}
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">
@@ -272,10 +316,12 @@ const CompanyDetailForm = ({
               }}
               value={
                 data?.office_email_primary ??
-                OnboardingDetail?.office_email_primary ??
                 ""
               }
             />
+            {errors?.office_email_primary && !data?.office_email_primary && (
+              <span style={{ color: "red" }}>{errors?.office_email_primary}</span>
+            )}
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">
@@ -288,10 +334,12 @@ const CompanyDetailForm = ({
               }}
               value={
                 data?.office_email_secondary ??
-                OnboardingDetail?.office_email_secondary ??
                 ""
               }
             />
+            {errors?.office_email_secondary && !data?.office_email_secondary && (
+              <span style={{ color: "red" }}>{errors?.office_email_secondary}</span>
+            )}
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] flex">
@@ -305,7 +353,6 @@ const CompanyDetailForm = ({
               }}
               value={
                 data?.corporate_identification_number ??
-                OnboardingDetail?.corporate_identification_number ??
                 ""
               }
             />
@@ -327,7 +374,7 @@ const CompanyDetailForm = ({
               onChange={(e) => {
                 updateField("cin_date", e.target.value);
               }}
-              value={data?.cin_date ?? OnboardingDetail?.cin_date ?? ""}
+              value={data?.cin_date ??  ""}
             />
             {errors?.cin_date && !data?.cin_date && (
               <span style={{ color: "red" }}>{errors?.cin_date}</span>
@@ -343,7 +390,6 @@ const CompanyDetailForm = ({
               }}
               value={
                 data?.nature_of_company ??
-                OnboardingDetail?.nature_of_company ??
                 ""
               }
             >
@@ -362,6 +408,9 @@ const CompanyDetailForm = ({
                 </SelectGroup>
               </SelectContent>
             </Select>
+            {errors?.nature_of_company && !data?.nature_of_company && (
+              <span style={{ color: "red" }}>{errors?.nature_of_company}</span>
+            )}
           </div>
           <div className="flex flex-col">
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">
@@ -372,7 +421,7 @@ const CompanyDetailForm = ({
                 updateField("nature_of_business", value);
               }}
               value={
-                data?.nature_of_business ?? OnboardingDetail?.nature_of_business
+                data?.nature_of_business ?? ""
               }
             >
               <SelectTrigger>
@@ -390,6 +439,9 @@ const CompanyDetailForm = ({
                 </SelectGroup>
               </SelectContent>
             </Select>
+            {errors?.nature_of_business && !data?.nature_of_business && (
+              <span style={{ color: "red" }}>{errors?.nature_of_business}</span>
+            )}
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">

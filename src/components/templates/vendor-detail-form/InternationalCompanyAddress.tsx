@@ -32,6 +32,7 @@ interface Props {
   ref_no: string;
   onboarding_ref_no: string;
   OnboardingDetail: VendorOnboardingResponse["message"]["company_address_tab"];
+  nature_of_business: string;
 }
 
 
@@ -68,12 +69,14 @@ interface multipleAddress {
   state: string
   country: string
   zipcode: string
+  
 }
 
 const CompanyAddress = ({
   ref_no,
   onboarding_ref_no,
-  OnboardingDetail
+  OnboardingDetail,
+  nature_of_business
 }: Props) => {
 
   const router = useRouter();
@@ -102,19 +105,31 @@ const CompanyAddress = ({
   const validate = () => {
     const errors: any = {};
 
-    const addressLine1 = formdata?.billing_address?.address_line_1 ?? OnboardingDetail?.billing_address?.address_line_1;
+    const addressLine1 = formdata?.billing_address?.address_line_1;
     if (!addressLine1) {
       errors.address_line_1 = "Please Enter Address 1";
     }
 
-    const addressLine2 = formdata?.billing_address?.address_line_2 ?? OnboardingDetail?.billing_address?.address_line_2;
+    const addressLine2 = formdata?.billing_address?.address_line_2;
     if (!addressLine2) {
       errors.address_line_2 = "Please Enter Address Line 2";
     }
 
-    const pincode = formdata?.billing_address?.international_zipcode ?? OnboardingDetail?.billing_address?.international_zipcode;
+    const pincode = formdata?.billing_address?.international_zipcode;
     if (!pincode) {
       errors.pincode = "Please Enter Pincode";
+    }
+
+    if (nature_of_business == "Manufacturing" && formdata?.same_as_above == false) {
+      if (!formdata?.shipping_address?.address_line_1) {
+        errors.address_line_1 = "Please Enter Address 1";
+      }
+      if (!formdata?.shipping_address?.address_line_2) {
+        errors.address_line_2 = "Please Enter Address Line 2";
+      }
+      if (!formdata?.shipping_address?.international_zipcode) {
+        errors.international_zipcode = "Please Enter Pincode";
+      }
     }
 
     return errors;
@@ -139,7 +154,6 @@ const CompanyAddress = ({
       multiple_locations: formdata?.multiple_locations ? 1 : 0,
       multiple_location_table: multipleTable
     };
-    // const updatedData = {data:Data}
 
     const formData = new FormData();
     formData.append("data", JSON.stringify(Data));
@@ -310,6 +324,9 @@ const CompanyAddress = ({
               handleFieldChange(e, "shipping_address");
             }}
           />
+          {errors?.shipping_address_line_1  && !formdata?.shipping_address?.address_line_1 && (
+              <span style={{ color: "red" }}>{errors?.shipping_address_line_1}</span>
+            )}
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
@@ -324,6 +341,9 @@ const CompanyAddress = ({
               handleFieldChange(e, "shipping_address");
             }}
           />
+          {errors?.shipping_address_line_2 && !formdata?.shipping_address?.address_line_2 && (
+              <span style={{ color: "red" }}>{errors?.shipping_address_line_2}</span>
+            )}
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
@@ -337,6 +357,9 @@ const CompanyAddress = ({
               handleFieldChange(e, "shipping_address");
             }}
           />
+          {errors?.shipping_pincode && !formdata?.shipping_address?.inter_manufacture_zipcode && (
+              <span style={{ color: "red" }}>{errors?.shipping_pincode}</span>
+            )}
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
