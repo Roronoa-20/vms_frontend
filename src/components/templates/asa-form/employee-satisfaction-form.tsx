@@ -13,7 +13,7 @@ export default function Employee_Satisfaction() {
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
     const { EmpSatisfactionForm, updateEmpSatisactionForm, refreshFormData, submitSocialForm, updateHealthSafetyForm, asaFormSubmitData } = useASAForm();
-    const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+    const isverified = asaFormSubmitData.form_is_submitted || 0;
 
     console.log("Emp Satisfaction Form Data:", EmpSatisfactionForm);
 
@@ -76,12 +76,14 @@ export default function Employee_Satisfaction() {
                     <YesNoNA
                         name="conduct_esat"
                         label="1. Do you conduct employee satisfaction survey (ESAT)? If yes, provide the ESAT score."
+                        helperText="If Yes, provide the ESAT score, and provide the details of the paramerters covered in the employee satisfaction survey."
                         value={EmpSatisfactionForm.conduct_esat}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     {isverified !== 1 && (

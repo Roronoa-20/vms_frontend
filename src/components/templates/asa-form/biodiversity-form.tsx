@@ -12,12 +12,15 @@ export default function BiodiversityForm() {
   const searchParams = useSearchParams();
   const vmsRefNo = searchParams.get("vms_ref_no") || "";
   const { biodiversityForm, updateBiodiversityForm, submitEnvironmentForm, refreshFormData, updateGreenProductsForm, asaFormSubmitData } = useASAForm();
-  const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+  const isverified = asaFormSubmitData.form_is_submitted || 0;
 
 
   const isValid = Object.values(biodiversityForm).every((item) => {
     if (!item.selection) return false;
-    if (item.selection === "Yes" && !item.comment.trim()) return false;
+    if (item.selection === "Yes") {
+      if (!item.comment?.trim()) return false;
+      if (!item.file) return false;
+    }
     return true;
   });
 
@@ -73,12 +76,15 @@ export default function BiodiversityForm() {
           <YesNoNA
             name="have_policy_on_biodiversity"
             label="1. Does the organization have a policy or commitment on biodiversity?"
+            helperText="If Yes, attach the copy of the policy or commitment."
             value={biodiversityForm.have_policy_on_biodiversity}
             onSelectionChange={handleSelectionChange}
             onCommentChange={handleCommentChange}
             onFileChange={handleFileChange}
             required={true}
+            fileRequired={true}
             disabled={isverified === 1}
+            options={["Yes", "No"]}
           />
           
           {isverified !== 1 && (

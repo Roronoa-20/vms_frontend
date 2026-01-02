@@ -73,43 +73,6 @@ export default function Employee_Wellbeing() {
         });
     };
 
-    // const fileToBase64 = (file: File): Promise<string> => {
-    //     return new Promise((resolve, reject) => {
-    //         const reader = new FileReader();
-    //         reader.readAsDataURL(file);
-    //         reader.onload = () => resolve(reader.result as string);
-    //         reader.onerror = (error) => reject(error);
-    //     });
-    // };
-
-
-    // const handleNext = async () => {
-    //     console.log("Submitting Labor Rights Form and navigating to next tab:", EmpWellBeingForm);
-    //     const EmpWellBeingFormCopy = { ...EmpWellBeingForm };
-
-    //     for (const key in EmpWellBeingFormCopy) {
-    //         const entry = EmpWellBeingFormCopy[key as keyof EmployeeWellBeing];
-    //         if (entry.file instanceof File) {
-    //             const base64 = await fileToBase64(entry.file);
-    //             entry.file = {
-    //                 url: "",
-    //                 name: entry.file.name,
-    //                 base64,
-    //             };
-    //         }
-    //     }
-    //     updateEmpWellBeingForm(EmpWellBeingFormCopy);
-    //     localStorage.setItem("EmpWellBeingForm", JSON.stringify(EmpWellBeingFormCopy));
-    //     router.push(`asa-form?tabtype=health_safety&vms_ref_no=${vmsRefNo}`);
-    // };
-
-    // const handleBack = useBackNavigation<GrievanceMechanism>(
-    //     "GrievanceMechForm",
-    //     updateGrievnaceMechForm,
-    //     "grievance_mechanism",
-    //     vmsRefNo
-    // );
-
     const handleNext = () => {
         router.push(`/view-asa-form?tabtype=health_safety&vms_ref_no=${vmsRefNo}`);
     };
@@ -128,11 +91,14 @@ export default function Employee_Wellbeing() {
                     <YesNoNA
                         name="any_emp_well_being_initiative"
                         label="1. Are there employee well-being initiatives in place? If Yes, provide the details of the initiatives."
+                        helperText="If Yes, provide the details of the initiatives taken."
                         value={EmpWellBeingForm.any_emp_well_being_initiative}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         disabled={true}
+                        required={true}
+                        options={["Yes", "No"]}
                     />
                     {/* <div className="space-x-4 flex justify-end">
                         <Button

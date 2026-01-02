@@ -13,13 +13,15 @@ export default function Water_Consumption_And_Management() {
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
     const router = useRouter();
     const { wcmform, updateWcmForm, refreshFormData, updateEceForm, asaFormSubmitData } = useASAForm();
-    const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+    const isverified = asaFormSubmitData.form_is_submitted || 0;
+    const fileRequiredQuestions = new Set(["have_permission_for_groundwater"]);
 
     console.log("Energy Consumption and Emission Form Data:", wcmform);
 
-    const isValid = Object.values(wcmform).every((item) => {
+    const isValid = Object.entries(wcmform).every(([key,item]) => {
         if (!item.selection) return false;
         if (item.selection === "Yes" && !item.comment.trim()) return false;
+        if (fileRequiredQuestions.has(key) && item.selection === "Yes" && !item.file) return false;
         return true;
     });
 
@@ -130,80 +132,94 @@ export default function Water_Consumption_And_Management() {
                     <YesNoNA
                         name="water_source_tracking"
                         label="1. Whether the company tracks and identifies the sources of its water (e.g. groundwater, municipal water sourced from the local water body, harvested rainwater, etc.)?"
+                        helperText="If Yes, provide the details of water sources being used and the quantity of water consumed from each water source."
                         value={wcmform.water_source_tracking}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="have_permission_for_groundwater"
                         label="2. Do you have the permission for groundwater withdrawal, if applicable?"
+                        helperText="If Yes, upload the copy of the permission."
                         value={wcmform.have_permission_for_groundwater}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
                         disabled={isverified === 1}
+                        fileRequired={true}
                     />
 
                     <YesNoNA
                         name="has_system_to_track_water_withdrawals"
                         label="3. Whether the company has a system in place to track and measure water withdrawals, consumption, and disposal?"
+                        helperText="If Yes, provide the details about the sytems in place to track and measure the water withdrawals, consumption, and disposal."
                         value={wcmform.has_system_to_track_water_withdrawals}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="have_facility_to_recycle_wastewater"
                         label="4. Do you have a facility (Effluent Treatment Plan/Sewage Treatment Plant) to recycle wastewater generated?"
+                        helperText="If Yes, provide the quantity of waste water recycled during the year."
                         value={wcmform.have_facility_to_recycle_wastewater}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="have_zld_strategy"
                         label="5. Does your company have a Zero Liquid Discharge (ZLD) strategy in place to minimize or eliminate wastewater discharge?"
+                        helperText="If Yes, provide the details about the initiatives taken to implement ZLD strategy."
                         value={wcmform.have_zld_strategy}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="have_initiatives_to_increase_water_efficiency"
                         label="6. Does the company have initiatives in place to increase water use efficiency? If yes, provide the initiative details."
+                        helperText="If Yes, provide the details about the initiatives taken to increase the efficiency of water use."
                         value={wcmform.have_initiatives_to_increase_water_efficiency}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="have_targets_to_reduce_water_consumption"
                         label="7. Do you have any targets to reduce freshwater consumption or waste water recycling? If yes, mention the targets."
+                        helperText="If Yes, provide the details of the target taken and the target year."
                         value={wcmform.have_targets_to_reduce_water_consumption}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
-                    
+
                     {isverified !== 1 && (
                         <div className="space-x-4 flex justify-end">
                             <Button

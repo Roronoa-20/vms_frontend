@@ -73,32 +73,42 @@ export default function General_Disclosure_Form() {
                     <YesNoNA
                         name="valid_consent_from_pollution_control"
                         label="1. Does the company hold valid Consent to Operate (CTO) from the Pollution Control Board? If yes, provide the expiry date of the Consent."
+                        helperText="Please specify the expiry date of the Consent to Operate and attach the copy of the consent."
                         value={generalDisclosure.valid_consent_from_pollution_control}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         customYesInputType="date"
                         disabled={true}
+                        required={true}
+                        fileRequired={true}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="recycle_plastic_package_material"
                         label="2. Do you use recycled plastic/paper in the packaging materials?"
+                        helperText="If Yes, please specify the details about the kind of material being used and is it being used in the product being provided to Meril."
                         value={generalDisclosure.recycle_plastic_package_material}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         disabled={true}
+                        required={true}
+
                     />
 
                     <YesNoNA
                         name="plans_for_recycle_materials"
                         label="3. Do you have plans/strategy in place to increase the use of recycled materials in the packaging materials?"
+                        helperText="If Yes, please provide the details about your plan/startegy."
                         value={generalDisclosure.plans_for_recycle_materials}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         disabled={true}
+                        required={true}
+
                     />
 
                     {/* <div className="flex justify-end gap-4">
