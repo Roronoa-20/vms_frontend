@@ -38,10 +38,6 @@ type Props = {
 };
 
 const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) => {
-  // const { contactDetail, addContactDetail, resetContactDetail } = useContactDetailStore();
-  // const [showtable, setshowtable] = useState(false);
-  // const [contact, setContact] = useState<Partial<TcontactDetail>>();
-  // const [errors, setErrors] = useState<Record<string, string>>({});
   const router = useRouter();
 
   const [singleRow,SetSingleRow] = useState<any>()
@@ -49,12 +45,6 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
   const [materialsTable, setMaterialsTable] = useState<any[]>(OnboardingDetail ?? []);
 
   const uploadProductImageRef = useRef<HTMLInputElement>(null);
-  // useEffect(() => {
-  //   resetContactDetail();
-  //   OnboardingDetail?.map((item, index) => {
-  //     addContactDetail(item);
-  //   });
-  // }, []);
 
   console.log(OnboardingDetail,"this is console")
 
@@ -96,12 +86,30 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
       }
     }
 
+    const requiredFieldsFilled =  {
+      material_name: "Please enter product manufactured",
+      hsnsac_code: "Please enter HSN/SAC Code",
+      annual_capacity: "Please enter Annual Capacity",          
+      product_description: "Please enter Product Description",
+    }
+
   const handleAdd = async () => {
 
-    const formdata = new FormData();
-    if(productImage){
-      formdata.append("material_images",productImage);
+    for (const [field, message] of Object.entries(requiredFieldsFilled)) {
+      if (!singleRow?.[field]) {
+        alert(message);
+        return;
+      };
+    };
+
+    if(!productImage){
+      alert("Please upload a product image");
+      return;
     }
+
+    const formdata = new FormData();
+    formdata.append("material_images",productImage);
+  
     const Data = {materials_supplied:singleRow,ref_no:ref_no,vendor_onboarding:onboarding_ref_no};
     formdata.append("data",JSON.stringify(Data));
     const submitUrl = API_END_POINTS?.addProductDetail;
@@ -148,107 +156,6 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
       <h1 className="border-b-2 pb-1 sticky top-0 bg-white py-2 text-lg font-semibold">
         Product Detail<span className="pl-1 text-red-400 text-2xl">*</span>
       </h1>
-      {/* <h1 className="pl-1 pt-1 font-medium">Contact Person</h1> */}
-
-
-      {/* <div className="grid grid-cols-3 gap-4 p-2">
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            First Name <span className="pl-1 text-red-400 text-xl">*</span>
-          </h1>
-          <Input
-            placeholder="Enter Your First Name"
-            onChange={(e) => {
-              setContact((prev: any) => ({
-                ...prev,
-                first_name: e.target.value,
-              }));
-            }}
-            value={contact?.first_name ?? ""}
-          />
-          {errors.first_name && (
-            <p className="text-red-500 text-xs mt-1">{errors.first_name}</p>
-          )}
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Last Name<span className="pl-1 text-red-400 text-xl">*</span>
-          </h1>
-          <Input
-            placeholder="Enter Your Last Name"
-            onChange={(e) => {
-              setContact((prev: any) => ({
-                ...prev,
-                last_name: e.target.value,
-              }));
-            }}
-            value={contact?.last_name ?? ""}
-          />
-          {errors.last_name && (
-            <p className="text-red-500 text-xs mt-1">{errors.last_name}</p>
-          )}
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Contact Number<span className="pl-1 text-red-400 text-xl">*</span>
-          </h1>
-          <Input
-            placeholder="Enter Your Contact Number"
-            onChange={(e) => {
-              setContact((prev: any) => ({
-                ...prev,
-                contact_number: e.target.value,
-              }));
-            }}
-            value={contact?.contact_number ?? ""}
-          />
-          {errors.contact_number && (
-            <p className="text-red-500 text-xs mt-1">{errors.contact_number}</p>
-          )}
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">Email</h1>
-          <Input
-            placeholder="Enter Your Email"
-            onChange={(e) => {
-              setContact((prev: any) => ({ ...prev, email: e.target.value }));
-            }}
-            value={contact?.email ?? ""}
-          />
-        
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Designation
-          </h1>
-          <Input
-            placeholder="Enter Your Designation"
-            onChange={(e) => {
-              setContact((prev: any) => ({
-                ...prev,
-                designation: e.target.value,
-              }));
-            }}
-            value={contact?.designation ?? ""}
-          />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Department Name
-          </h1>
-          <Input
-            placeholder="Enter Your Department Name"
-            onChange={(e) => {
-              setContact((prev: any) => ({
-                ...prev,
-                department_name: e.target.value,
-              }));
-            }}
-            value={contact?.department_name ?? ""}
-          />
-        </div>
-      </div> */}
-
       <div className="grid grid-cols-3 gap-4 p-1">
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
@@ -319,6 +226,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
                 setProductImage(e?.target?.files?.[0]);
               }}
             />
+
           </div>
         </div>
         <div className="col-span-1 flex items-end">
