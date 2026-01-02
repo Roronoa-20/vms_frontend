@@ -45,18 +45,6 @@ export default function Employee_Satisfaction() {
         });
     };
 
-    // const handleSubmit = async () => {
-    //     await submitSocialForm();
-    //     refreshFormData();
-    // };
-
-    // const handleBack = useBackNavigation<HealthAndSafety>(
-    //     "HealthSafetyForm",
-    //     updateHealthSafetyForm,
-    //     "health_safety",
-    //     vmsRefNo
-    // );
-
     const handleNext = () => {
         router.push(`/view-asa-form?tabtype=governance&vms_ref_no=${vmsRefNo}`);
     };
@@ -76,10 +64,14 @@ export default function Employee_Satisfaction() {
                     <YesNoNA
                         name="conduct_esat"
                         label="1. Do you conduct employee satisfaction survey (ESAT)? If yes, provide the ESAT score."
+                        helperText="If Yes, provide the ESAT score, and provide the details of the paramerters covered in the employee satisfaction survey."
                         value={EmpSatisfactionForm.conduct_esat}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
+                        required={true}
+                        disabled={true}
+                        options={["Yes", "No"]}
                     />
                     {/* <div className="space-x-4 flex justify-end">
                         <Button

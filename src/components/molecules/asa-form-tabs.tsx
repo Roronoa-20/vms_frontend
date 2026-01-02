@@ -19,7 +19,7 @@ export default function ASAFormTab() {
 
   const isVendor = designation?.toLowerCase() === "vendor";
   const { asaFormSubmitData } = useASAForm();
-  const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+  const isverified = asaFormSubmitData.form_is_submitted || 0;
   const isVendorLocked = isVendor && isverified === 0;
 
   useEffect(() => {

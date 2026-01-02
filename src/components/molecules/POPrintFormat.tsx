@@ -52,7 +52,7 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
 
   const amountLabel = [
     ["Total Gross Amount", prDetails?.total_gross_amount],
-    ["Total Discount on Gross Amount", ""],
+    ["Total Discount on Gross Amount", prDetails?.total_discount_on_gross_amount],
     ["Total INPUT CGST", prDetails?.total_input_cgst],
     ["Total INPUT SGST", prDetails?.total_input_sgst],
     ["Total Value of Purchase Order / Service Order", prDetails?.total_value_of_po__so,],
@@ -231,160 +231,236 @@ const POPrintFormat = ({ prDetails, contentRef, Heading }: Props) => {
             </tr>
           </thead>
           <tbody>
-            {prDetails?.po_items?.map((item: any, index: any) => (
-              <tr key={index} className={index % 2 ? "bg-gray-50" : ""}>
-                <td className="border border-black align-top text-center">
-                  {index + 1}
-                </td>
-                <td className="border border-black align-top">
-                  {item?.material_code}
-                </td>
-                <td className="border border-black align-top">
-                  {item?.short_text}
-                </td>
-                <td className="border border-black align-top text-center">
-                  {item?.hsnsac}
-                </td>
-                <td className="border border-black align-top text-center">{item?.uom}</td>
-                {/* QUANTITY COLUMN */}
-                <td className="border border-black align-top">
-                  <div className="flex flex-col gap-1">
-                    <div className="font-semibold text-right">{Number(item?.quantity) > 0 &&
-                      Number(item.quantity).toLocaleString("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </div>
-
-                    {item?.discount_on_net > 0 && (
-                      <div className="text-black">
-                        Discount on Net: {item.discount_on_net}
-                      </div>
-                    )}
-
-                    {item?.igst_rate_percent > 0 && (
-                      <div className="text-black">
-                        Input IGST: {item.igst_rate_percent}%
-                      </div>
-                    )}
-                  </div>
-                </td>
-
-                <td className="border border-black align-top text-right">
-                  <div className="flex flex-col w-full">
-
-                    {/* RATE */}
-                    <div className={rowClass + " font-semibold"}>
-                      {Number(item?.rate) > 0 &&
-                        Number(item.rate).toLocaleString("en-US", {
-                          minimumFractionDigits: 4,
-                          maximumFractionDigits: 4,
+            {prDetails?.po_items?.map((item: any, index: any) => {
+              const hasIGST = Number(item?.igst_rate_percent) > 0;
+              const hasCGSTSGST =
+                Number(item?.cgst_rate_percent) > 0 ||
+                Number(item?.sgst_rate_percent) > 0;
+              return (
+                <tr key={index} className={index % 2 ? "bg-gray-50" : ""}>
+                  <td className="border border-black align-top text-center">
+                    {index + 1}
+                  </td>
+                  <td className="border border-black align-top">
+                    {item?.material_code}
+                  </td>
+                  <td className="border border-black align-top">
+                    {item?.short_text}
+                  </td>
+                  <td className="border border-black align-top text-center">
+                    {item?.hsnsac}
+                  </td>
+                  <td className="border border-black align-top text-center">{item?.uom}</td>
+                  {/* QUANTITY COLUMN */}
+                  <td className="border border-black align-top">
+                    <div className="flex flex-col gap-1">
+                      <div className="font-semibold text-right">{Number(item?.quantity) > 0 &&
+                        Number(item.quantity).toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
                         })}
-                    </div>
+                      </div>
 
-                    {/* DISCOUNT ROW (empty placeholder) */}
-                    <div className={rowClass}></div>
+                      {item?.discount_on_net > 0 && (
+                        <div className="text-[12px] text-black">
+                          Discount on Net:
+                        </div>
+                      )}
 
-                    {/* IGST RATE */}
-                    <div className={rowClass}>
-                      {Number(item?.igst_rate_percent) > 0 && (
-                        <span className="font-medium">{item.igst_rate_percent}</span>
+                      {/* IGST ONLY */}
+                      {hasIGST && !hasCGSTSGST && (
+                        <div className="text-[12px] text-black">
+                          Input IGST:
+                        </div>
+                      )}
+
+                      {/* CGST + SGST ONLY */}
+                      {!hasIGST && hasCGSTSGST && (
+                        <>
+                          {item?.cgst_rate_percent > 0 && (
+                            <div className="text-[12px] text-black">
+                              Input CGST:
+                            </div>
+                          )}
+                          {item?.sgst_rate_percent > 0 && (
+                            <div className="text-[12px] text-black">
+                              Input SGST:
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
+                  </td>
 
-                    {/* IGST AMOUNT PLACEHOLDER */}
-                    <div className={rowClass}></div>
+                  <td className="border border-black align-top text-right">
+                    <div className="flex flex-col gap-1 w-full">
 
-                    {/* NET LABEL */}
-                    <div className="w-full border-t border-black pt-1 text-left font-bold min-h-[22px]">
-                      {Number(item?.price) > 0 && "NET:"}
+                      {/* RATE */}
+                      <div className={rowClass + " font-semibold"}>
+                        {Number(item?.rate) > 0 &&
+                          Number(item.rate).toLocaleString("en-US", {
+                            minimumFractionDigits: 4,
+                            maximumFractionDigits: 4,
+                          })}
+                      </div>
+
+                      {/* DISCOUNT ROW (empty placeholder) */}
+                      <div className={rowClass}>
+                        {item?.discount_on_net_percent > 0 && (
+                          <span className="font-medium">
+                            {item.discount_on_net_percent}%
+                          </span>
+                        )}
+                      </div>
+
+                      {hasIGST && !hasCGSTSGST && (
+                        <div className={rowClass}>
+                          {item?.igst_rate_percent > 0 && (
+                            <span className="font-medium">
+                              {item.igst_rate_percent}%
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* CGST + SGST RATE */}
+                      {!hasIGST && hasCGSTSGST && (
+                        <>
+                          <div className={rowClass}>
+                            {item?.cgst_rate_percent > 0 && (
+                              <span className="font-medium">
+                                {item.cgst_rate_percent}%
+                              </span>
+                            )}
+                          </div>
+
+                          <div className={rowClass}>
+                            {item?.sgst_rate_percent > 0 && (
+                              <span className="font-medium">
+                                {item.sgst_rate_percent}%
+                              </span>
+                            )}
+                          </div>
+                        </>
+                      )}
+
+
+                      {/* IGST AMOUNT PLACEHOLDER */}
+                      <div className={rowClass}></div>
+
+                      {/* NET LABEL */}
+                      <div className="w-full border-t border-black pt-1 text-left font-bold min-h-[22px]">
+                        {Number(item?.price) > 0 && "NET:"}
+                      </div>
+
                     </div>
+                  </td>
 
-                  </div>
-                </td>
+                  <td className="border border-black align-top text-right">
+                    <div className="flex flex-col gap-1 w-full">
+
+                      {/* BASE AMOUNT */}
+                      <div className={rowClass + " font-semibold"}>
+                        {Number(item?.base_amount) > 0 &&
+                          Number(item.base_amount).toLocaleString("en-US", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                      </div>
+
+                      {/* DISCOUNT VALUE */}
+                      <div className={rowClass}>
+                        {Number(item?.discount_on_net) > 0 &&
+                          Number(item.discount_on_net).toLocaleString("en-US", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                      </div>
+
+                      {hasIGST && !hasCGSTSGST && (
+                        <div className={rowClass}>
+                          {item?.input_igst > 0 && (
+                            <span className="font-medium">
+                              {item.input_igst}
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* CGST + SGST AMOUNT */}
+                      {!hasIGST && hasCGSTSGST && (
+                        <>
+                          <div className={rowClass}>
+                            {Number(item?.input_cgst) > 0 &&
+                              Number(item.input_cgst).toLocaleString("en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}
+                          </div>
+
+                          <div className={rowClass}>
+                            {Number(item?.input_sgst) > 0 &&
+                              Number(item.input_sgst).toLocaleString("en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}
+                          </div>
+                        </>
+                      )}
 
 
-                <td className="border border-black align-top text-right">
-                  <div className="flex flex-col w-full">
+                      {/* IGST PLACEHOLDER */}
+                      <div className={rowClass}></div>
 
-                    {/* BASE AMOUNT */}
-                    <div className={rowClass + " font-semibold"}>
-                      {Number(item?.base_amount) > 0 &&
-                        Number(item.base_amount).toLocaleString("en-US", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
+                      {/* NET VALUE */}
+                      <div className="w-full border-t border-black pt-1 font-semibold min-h-[22px]">
+                        {Number(item?.price) > 0 &&
+                          Number(item.price).toLocaleString("en-US", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                      </div>
+
                     </div>
+                  </td>
 
-                    {/* DISCOUNT VALUE */}
-                    <div className={rowClass}>
-                      {Number(item?.discount_on_net) > 0 &&
-                        Number(item.discount_on_net).toLocaleString("en-US", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
-                    </div>
-
-                    {/* IGST VALUE */}
-                    <div className={rowClass}>
-                      {Number(item?.total_input_igst) > 0 &&
-                        Number(item.total_input_igst).toLocaleString("en-US", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
-                    </div>
-
-                    {/* IGST PLACEHOLDER */}
-                    <div className={rowClass}></div>
-
-                    {/* NET VALUE */}
-                    <div className="w-full border-t border-black pt-1 font-semibold min-h-[22px]">
-                      {Number(item?.price) > 0 &&
-                        Number(item.price).toLocaleString("en-US", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
-                    </div>
-
-                  </div>
-                </td>
-
-                {/* <td className="border border-black align-top text-center">
+                  {/* <td className="border border-black align-top text-center">
                   {formatDate(item?.schedule_date?.map((item: any) => (
                     <h1>{item}</h1>
                   )))}
                 </td> */}
-                <td className="border border-black align-top text-center">
-                  <div className="flex flex-col gap-1">
-                    {getScheduleData(item).map((sch: any, idx: number) => (
-                      <div key={idx}>
-                        {sch?.EINDT2 ? formatDate(sch.EINDT2) : "-"}
-                      </div>
-                    ))}
-                  </div>
-                </td>
+                  <td className="border border-black align-top text-center">
+                    <div className="flex flex-col gap-1">
+                      {getScheduleData(item).map((sch: any, idx: number) => (
+                        <div key={idx}>
+                          {sch?.EINDT2 ? formatDate(sch.EINDT2) : "-"}
+                        </div>
+                      ))}
+                    </div>
+                  </td>
 
-                {/* <td className="border border-black align-top text-center">
+                  {/* <td className="border border-black align-top text-center">
                   {item?.schedule_quantity?.map((item: any) => (
                     <h1>{item}</h1>
                   ))}
                 </td> */}
-                <td className="border border-black align-top text-right">
-                  <div className="flex flex-col gap-1">
-                    {getScheduleData(item).map((sch: any, idx: number) => (
-                      <div key={idx}>
-                        {Number(sch?.MENGE2) > 0
-                          ? Number(sch.MENGE2).toLocaleString("en-US", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })
-                          : "-"}
-                      </div>
-                    ))}
-                  </div>
-                </td>
-              </tr>
-            ))}
+                  <td className="border border-black align-top text-right">
+                    <div className="flex flex-col gap-1">
+                      {getScheduleData(item).map((sch: any, idx: number) => (
+                        <div key={idx}>
+                          {Number(sch?.MENGE2) > 0
+                            ? Number(sch.MENGE2).toLocaleString("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })
+                            : "-"}
+                        </div>
+                      ))}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
 
             {amountLabel?.map(([label, value], idx) => (
               <tr key={idx} className={idx % 2 ? "bg-gray-50" : ""}>

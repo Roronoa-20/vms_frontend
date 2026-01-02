@@ -73,42 +73,6 @@ export default function Energy_Consumption_And_Emission() {
         });
     };
 
-    // const fileToBase64 = (file: File): Promise<string> => {
-    //     return new Promise((resolve, reject) => {
-    //         const reader = new FileReader();
-    //         reader.readAsDataURL(file);
-    //         reader.onload = () => resolve(reader.result as string);
-    //         reader.onerror = (error) => reject(error);
-    //     });
-    // };
-
-    // const handleNext = async () => {
-    //     console.log("Submitting ECE Form and navigating to next tab:", eceform);
-    //     const eceCopy = { ...eceform };
-
-    //     for (const key in eceCopy) {
-    //         const entry = eceCopy[key as keyof EnergyConsumptionAndEmission];
-    //         if (entry.file instanceof File) {
-    //             const base64 = await fileToBase64(entry.file);
-    //             entry.file = {
-    //                 url: "",
-    //                 name: entry.file.name,
-    //                 base64,
-    //             };
-    //         }
-    //     }
-    //     updateEceForm(eceCopy);
-    //     localStorage.setItem("ECEForm", JSON.stringify(eceCopy));
-    //     router.push(`asa-form?tabtype=wcm&vms_ref_no=${vmsRefNo}`);
-    // };
-
-    // const handleBack = useBackNavigation<EnvironmentalManagementSystem>(
-    //     "EMSForm",
-    //     updateEmsForm,
-    //     "ems",
-    //     vmsRefNo
-    // );
-
     const handleNext = () => {
         router.push(`/view-asa-form?tabtype=wcm&vms_ref_no=${vmsRefNo}`);
     };
@@ -126,100 +90,121 @@ export default function Energy_Consumption_And_Emission() {
                     <YesNoNA
                         name="energy_consumption_tracking"
                         label="1. Does your company track energy consumption? If yes, provide the total energy consmed."
+                        helperText="If Yes, provide the quanity of the total energy consumed. Attach the copy of the energy report/sustainability report/integrated annual report, if available."
                         value={eceform.energy_consumption_tracking}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         disabled={true}
+                        required={true}
+                        fileRequired={true}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="company_track_greenhouse_gas"
                         label="2. Does your company track greenhouse gas emissions? If yes, provide the scope 1, 2 and 3 GHG emissions. Provide the Scope emissions category wise."
+                        helperText="If Yes, provide the quanity of GHG emissions for each scope. Attach the copy of the emissions report/sustainability report/integrated annual report, if available."
                         value={eceform.company_track_greenhouse_gas}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         disabled={true}
-
+                        required={true}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="consume_renewable_energy"
                         label="3. Do you consume renewable energy? If yes, provide % of total electricity consumption coming from renewable sources."
+                        helperText="If Yes, provide the type of renewable energu used and % of total enenrgy consumption from renewable sources. Attach the copy of the emissions report/sustainability report/integrated annual report, if available."
                         value={eceform.consume_renewable_energy}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         disabled={true}
-
+                        required={true}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="have_system_to_control_air_emission"
                         label="4.Does your company have systems in place to control air emissions? If yes, provide the details."
+                        helperText="If Yes, provide the details about the systems in place to control the air emissions."
                         value={eceform.have_system_to_control_air_emission}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         disabled={true}
-
+                        required={true}
                     />
 
                     <YesNoNA
                         name="have_target_for_increase_renewable_share"
                         label="5. Do you have a target in place to increase the renewable energy share? If yes, mention the target."
+                        helperText="If Yes, provide the details of the target taken and the target year."
                         value={eceform.have_target_for_increase_renewable_share}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         disabled={true}
-
+                        options={["Yes", "No"]}
+                        required={true}
                     />
 
                     <YesNoNA
                         name="have_target_to_reduce_energy_consumption"
                         label="6. Do you have a target in place to reduce the energy consumption? If yes, mention the target."
+                        helperText="If Yes, provide the details of the target taken and the target year."
                         value={eceform.have_target_to_reduce_energy_consumption}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         disabled={true}
+                        options={["Yes", "No"]}
+                        required={true}
 
                     />
 
                     <YesNoNA
                         name="have_plan_to_improve_energy_efficiency"
                         label="7. Do you have a plan to improve energy efficiency of process and assets? If yes, list down the initiatives."
+                        helperText="If Yes, provide the details about the initiatives taken to improve nergy efficiency of process and assets."
                         value={eceform.have_plan_to_improve_energy_efficiency}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         disabled={true}
-
+                        options={["Yes", "No"]}
+                        required={true}
                     />
 
                     <YesNoNA
                         name="have_targets_to_reduce_emission"
                         label="8. Do you have initiatives and targets in place to reduce emission? If yes, provide the target details."
+                        helperText="If Yes, provide the details of the target taken and the target year."
                         value={eceform.have_targets_to_reduce_emission}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         disabled={true}
-
+                        options={["Yes", "No"]}
+                        required={true}
                     />
 
                     <YesNoNA
                         name="pcf_conducted"
                         label="9. Do you do PFC (Product Carbon Footprinting) of your products?"
+                        helperText="If Yes, attach the PCF report."
                         value={eceform.pcf_conducted}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         disabled={true}
-
+                        required={true}
+                        fileRequired={true}
                     />
+                    
                     {/* <div className="space-x-4 flex justify-end">
                         <Button
                             className="py-2.5"

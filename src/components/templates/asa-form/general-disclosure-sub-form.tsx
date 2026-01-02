@@ -11,11 +11,8 @@ export default function General_Disclosure_Form() {
     const params = useSearchParams();
     const vmsRefNo = params.get("vms_ref_no") || "";
     const { generalDisclosure, updateGeneralDisclosure, submitForm, refreshFormData, updateCompanyInfo, asaFormSubmitData } = useASAForm();
-    const isverified = asaFormSubmitData.verify_by_asa_team || 0;
-    const fileRequiredQuestions = new Set([
-        "valid_consent_from_pollution_control",
-        // "recycle_plastic_package_material",
-    ]);
+    const isverified = asaFormSubmitData.form_is_submitted || 0;
+    const fileRequiredQuestions = new Set(["valid_consent_from_pollution_control"]);
 
     console.log("General Disclosure Form Data:", generalDisclosure);
 
@@ -49,16 +46,10 @@ export default function General_Disclosure_Form() {
         });
     };
 
-    // const isValid = Object.values(generalDisclosure).every((item) => {
-    //     if (!item.selection) return false;
-    //     if (item.selection === "Yes" && !item.comment.trim()) return false;
-    //     return true;
-    // });
-
     const isValid = Object.entries(generalDisclosure).every(([key, item]) => {
         if (!item.selection) return false;
         if (item.selection === "Yes" && !item.comment.trim()) return false;
-        if (fileRequiredQuestions.has(key) && !item.file) return false;
+        if (fileRequiredQuestions.has(key) && item.selection === "Yes" && !item.file) return false;
         return true;
     });
 
@@ -84,6 +75,7 @@ export default function General_Disclosure_Form() {
                     <YesNoNA
                         name="valid_consent_from_pollution_control"
                         label="1. Does the company hold valid Consent to Operate (CTO) from the Pollution Control Board? If yes, provide the expiry date of the Consent."
+                        helperText="Please specify the expiry date of the Consent to Operate and attach the copy of the consent."
                         value={generalDisclosure.valid_consent_from_pollution_control}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
@@ -92,11 +84,13 @@ export default function General_Disclosure_Form() {
                         required={true}
                         fileRequired={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="recycle_plastic_package_material"
                         label="2. Do you use recycled plastic/paper in the packaging materials?"
+                        helperText="If Yes, please specify the details about the kind of material being used and is it being used in the product being provided to Meril."
                         value={generalDisclosure.recycle_plastic_package_material}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
@@ -108,6 +102,7 @@ export default function General_Disclosure_Form() {
                     <YesNoNA
                         name="plans_for_recycle_materials"
                         label="3. Do you have plans/strategy in place to increase the use of recycled materials in the packaging materials?"
+                        helperText="If Yes, please provide the details about your plan/startegy."
                         value={generalDisclosure.plans_for_recycle_materials}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
