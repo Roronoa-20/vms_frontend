@@ -79,44 +79,6 @@ export default function Health_And_Safety() {
       });
    };
 
-   // const fileToBase64 = (file: File): Promise<string> => {
-   //    return new Promise((resolve, reject) => {
-   //       const reader = new FileReader();
-   //       reader.readAsDataURL(file);
-   //       reader.onload = () => resolve(reader.result as string);
-   //       reader.onerror = (error) => reject(error);
-   //    });
-   // };
-
-
-   // const handleNext = async () => {
-   //    console.log("Submitting Labor Rights Form and navigating to next tab:", HealthSafetyForm);
-   //    const HealthSafetyFormCopy = { ...HealthSafetyForm };
-
-   //    for (const key in HealthSafetyFormCopy) {
-   //       const entry = HealthSafetyFormCopy[key as keyof HealthAndSafety];
-   //       if (entry.file instanceof File) {
-   //          const base64 = await fileToBase64(entry.file);
-   //          entry.file = {
-   //             url: "",
-   //             name: entry.file.name,
-   //             base64,
-   //          };
-   //       }
-   //    }
-   //    updateHealthSafetyForm(HealthSafetyFormCopy);
-   //    localStorage.setItem("HealthSafetyForm", JSON.stringify(HealthSafetyFormCopy));
-   //    localStorage.setItem("mention_behavior_base_safety", mentionBehaviorBaseSafety);
-   //    router.push(`asa-form?tabtype=employee_satisfaction&vms_ref_no=${vmsRefNo}`);
-   // };
-
-   // const handleBack = useBackNavigation<EmployeeWellBeing>(
-   //    "EmpWellBeingForm",
-   //    updateEmpWellBeingForm,
-   //    "employee_wellbeing",
-   //    vmsRefNo
-   // );
-
    const handleNext = () => {
       router.push(`/view-asa-form?tabtype=employee_satisfaction&vms_ref_no=${vmsRefNo}`);
    };
@@ -136,54 +98,71 @@ export default function Health_And_Safety() {
                <YesNoNA
                   name="has_develop_health_safety_policy"
                   label="1. Has the company developed health and safety policy and has displayed it at a conspicuous location?"
+                  helperText="If Yes, attach the copy of the policy."
                   value={HealthSafetyForm.has_develop_health_safety_policy}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                   disabled={true}
+                  required={true}
+                  fileRequired={true}
+                  options={["Yes", "No"]}
                />
 
                <YesNoNA
                   name="have_healthy_safety_management"
                   label="2. Do you have an Occupational Healthy & Safety management (OHS) system?"
+                  helperText="If Yes, provide the details about the OHS system in place."
                   value={HealthSafetyForm.have_healthy_safety_management}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                   disabled={true}
+                  required={true}
+                  options={["Yes", "No"]}
 
                />
 
                <YesNoNA
                   name="conduct_hira_activity"
                   label="3. Does the company conduct hazard identification and risk assessment (HIRA) for every activity and for any change in conditions?"
+                  helperText="If Yes, provide the details of the HIRA process."
                   value={HealthSafetyForm.conduct_hira_activity}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                   disabled={true}
-
+                  required={true}
+                  fileRequired={true}
+                  options={["Yes", "No"]}
                />
 
                <YesNoNA
                   name="certify_ohs_system"
                   label="4. Is your OHS system certified to ISO 14001 or OHSAS 18001?"
+                  helperText="If Yes, attach the copy of the certification."
                   value={HealthSafetyForm.certify_ohs_system}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                   disabled={true}
+                  required={true}
+                  fileRequired={true}
+                  options={["Yes", "No"]}
 
                />
 
                <YesNoNA
                   name="emp_trained_health_safety"
                   label="5. Are employees regularly trained on health & safety?"
+                  helperText="If Yes, provide the details of hours of training provided and how many employees participated in the trainings."
                   value={HealthSafetyForm.emp_trained_health_safety}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                   disabled={true}
+                  required={true}
+                  options={["Yes", "No"]}
 
                />
 
@@ -211,22 +190,28 @@ export default function Health_And_Safety() {
                <YesNoNA
                   name="track_health_safety_indicators"
                   label="6. Does the company track health and safety indicators like fatalities, lost time injuries, first aid cases, near misses, and maintain records?"
+                  helperText="If Yes, provide the details of helath of safety related incidents happened during the year."
                   value={HealthSafetyForm.track_health_safety_indicators}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                   disabled={true}
+                  required={true}
+                  options={["Yes", "No"]}
 
                />
 
                <YesNoNA
                   name="provide_any_healthcare_services"
                   label="7. Does the company provide healthcare services to the employees and workers like Annual Health checkup? If Yes, provide the details."
+                  helperText="If Yes, provide the details about the healthcare services provide to the employees and workers."
                   value={HealthSafetyForm.provide_any_healthcare_services}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                   disabled={true}
+                  required={true}
+                  options={["Yes", "No"]}
 
                />
 
