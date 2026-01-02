@@ -33,7 +33,8 @@ type Props = {
   onboarding_ref_no: string;
   OnboardingDetail: VendorOnboardingResponse["message"]["manufacturing_details_tab"];
   isAccountsTeam?:number,
-  VendorType?:string[]
+  VendorType?:string[],
+  nature_of_business:string
 };
 
 const ManufacturingDetail = ({
@@ -41,7 +42,8 @@ const ManufacturingDetail = ({
   onboarding_ref_no,
   OnboardingDetail,
   isAccountsTeam,
-  VendorType
+  VendorType,
+  nature_of_business
 }: Props) => {
   const { ManufacturingDetail, updateManufacturingDetail } =
     useManufacturingDetailStore();
@@ -136,7 +138,7 @@ const ManufacturingDetail = ({
     if (manufacturingDetailResponse?.status == 200)
       if(isAccountsTeam == 1){
         router.push(`/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`)
-      }else if(VendorType && !VendorType.includes("Material Vendor")){
+      }else if(VendorType && !VendorType.includes("Material Vendor") && nature_of_business != "Manufacturer"){
         router.push(
           `/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
         );

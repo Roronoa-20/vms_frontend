@@ -134,7 +134,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
                             <ProductDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.product_details_tab} />
                           )
                             : tabType == "Manufacturing Detail" ? (
-                              <ManufacturingDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.manufacturing_details_tab} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} VendorType={OnboardingDetail?.company_details_tab?.vendor_types} />
+                              <ManufacturingDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.manufacturing_details_tab} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} VendorType={OnboardingDetail?.company_details_tab?.vendor_types} nature_of_business={OnboardingDetail?.company_details_tab?.nature_of_business} />
                             ) : tabType == "Employee Detail" ? (
                               <EmployeeDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.employee_details_tab} />
                             ) : tabType == "Machinery Detail" ? (
@@ -142,7 +142,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
                             ) : tabType == "Testing Facility" ? (
                               <TestingFacility ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.testing_details_tab} />
                             ) : tabType == "Reputed Partners" ? (
-                              <ReputedPartners ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.reputed_partners_details_tab} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} VendorType={OnboardingDetail?.company_details_tab?.vendor_types} />
+                              <ReputedPartners ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.reputed_partners_details_tab} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} VendorType={OnboardingDetail?.company_details_tab?.vendor_types} nature_of_business={OnboardingDetail?.company_details_tab?.nature_of_business} />
                             ) : tabType == "Certificate" ? (
                               <Certificate certificateCodeDropdown={certificateCodeDropdown?.certificate_names} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.certificate_details_tab} />
                             ) : (
