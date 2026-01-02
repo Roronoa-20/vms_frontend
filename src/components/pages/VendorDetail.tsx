@@ -96,7 +96,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
           </div>
           <div className="flex px-6 py-6 justify-between gap-4">
             {/* sidebar */}
-            <OnboardingSidebar onboarding_refno={vendorOnboardingRefno} refno={refno} vendor_type={OnboardingDetail?.company_details_tab?.vendor_type_list_from_master} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} />
+            <OnboardingSidebar onboarding_refno={vendorOnboardingRefno} refno={refno} vendor_type={OnboardingDetail?.company_details_tab?.vendor_type_list_from_master} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} nature_of_business={OnboardingDetail?.company_details_tab?.nature_of_business} />
             {/* form */}
             {tabType == "Company Detail" ? (
               <CompanyDetailForm

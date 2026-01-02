@@ -127,7 +127,7 @@ const CompanyAddress = ({
       if (!formdata?.shipping_address?.address_line_2) {
         errors.address_line_2 = "Please Enter Address Line 2";
       }
-      if (!formdata?.shipping_address?.international_zipcode) {
+      if (!formdata?.shipping_address?.inter_manufacture_zipcode) {
         errors.international_zipcode = "Please Enter Pincode";
       }
     }
