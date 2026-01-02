@@ -52,8 +52,15 @@ const CompanyDetailForm = ({
       Object.entries(OnboardingDetail).forEach(([key, value]) => {
         updateField(key as keyof TCompanyDetailForm, value);
       });
+      updateField("type_of_business", OnboardingDetail?.type_of_business);
+      updateField("nature_of_company", OnboardingDetail?.nature_of_company);
+      updateField("nature_of_business", OnboardingDetail?.nature_of_business);
     }
   },[OnboardingDetail])
+
+  if(OnboardingDetail){
+    console.log("Company Detail Form Data--->",data);
+  }
 
   const validate = () => {
     const errors: any = {};
@@ -134,6 +141,8 @@ const CompanyDetailForm = ({
       console.log(error);
     }
   };
+  
+  console.log("dropdown",companyDetailDropdown);
 
   return (
     <div className="flex flex-col bg-white rounded-lg p-4 w-full overflow-y-scroll max-h-[80vh]">
@@ -180,7 +189,7 @@ const CompanyDetailForm = ({
                 updateField("type_of_business", value);
               }}
               value={
-                data?.type_of_business ?? ""
+                data?.type_of_business ?? OnboardingDetail?.type_of_business ?? ""
               }
             >
               <SelectTrigger>
@@ -389,7 +398,7 @@ const CompanyDetailForm = ({
                 updateField("nature_of_company", value);
               }}
               value={
-                data?.nature_of_company ??
+                data?.nature_of_company ?? OnboardingDetail?.nature_of_company ?? 
                 ""
               }
             >
@@ -421,7 +430,7 @@ const CompanyDetailForm = ({
                 updateField("nature_of_business", value);
               }}
               value={
-                data?.nature_of_business ?? ""
+                data?.nature_of_business ??   OnboardingDetail?.nature_of_business ??""
               }
             >
               <SelectTrigger>

@@ -54,6 +54,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
   const companyDetailresponse: AxiosResponse = await requestWrapper({
     url: `${companyDetailDropdownUrl}`,
     method: "GET",
+    params:{ref_no:refno},
   });
   const companyDetailDropdown: TcompanyDetailDropdown["message"]["data"] =
     companyDetailresponse?.status == 200
