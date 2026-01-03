@@ -26,12 +26,14 @@ import { useRouter } from "next/navigation";
 import FilePreview from "../../molecules/FilePreview";
 import Link from "next/link";
 import { CropIcon, Cross, CrossIcon, Trash2, X , Paperclip} from "lucide-react";
+import { object } from "zod";
 
 interface Props {
   companyAddressDropdown?: TCompanyAddressDropdown["message"]["data"];
   ref_no: string;
   onboarding_ref_no: string;
   OnboardingDetail: VendorOnboardingResponse["message"]["company_address_tab"];
+  nature_of_business: string;
 }
 
 interface pincodeFetchData {
@@ -64,7 +66,8 @@ interface multipleAddress {
 const CompanyAddress = ({
   ref_no,
   onboarding_ref_no,
-  OnboardingDetail
+  OnboardingDetail,
+  nature_of_business,
 }: Props) => {
 
   const router = useRouter();
@@ -94,10 +97,21 @@ const CompanyAddress = ({
         ma_country: { name: item?.country_details?.name as string, country_code: item?.country_details?.country_code as string, country_name: item?.country_details?.country_name as string }
       })
     })
+
+    
+      if(OnboardingDetail?.billing_address){
+        Object.entries(OnboardingDetail?.billing_address).forEach(([key, value]) => {
+          updatebillingAddress(key as keyof typeof billingAddress, value);
+        });
+      }
+
+      if(OnboardingDetail?.shipping_address){
+        Object.entries(OnboardingDetail?.shipping_address).forEach(([key, value]) => {
+          updateshippingAddress(key as keyof typeof shippingAddress, value);
+        });
+      }
+
   }, [])
-
-
-  console.log(OnboardingDetail, "htis is onboarding data")
 
   const handlePincodeChange = async (value: string) => {
     updatebillingAddress("pincode", value);
@@ -223,16 +237,27 @@ const CompanyAddress = ({
   const [errors, setErrors] = useState<any>({});
   const validate = () => {
     const errors: any = {};
-    if ((!billingAddress?.address_line_1 && !OnboardingDetail?.billing_address?.address_line_1)) {
+    if (!billingAddress?.address_line_1) {
       errors.address_line_1 = "Please Enter Address 1";
     }
-    if (!billingAddress?.address_line_2 && !OnboardingDetail?.billing_address?.address_line_2) {
+    if (!billingAddress?.address_line_2 ) {
       errors.address_line_2 = "Please Enter Address Line 2 ";
     }
 
-    if (!billingAddress?.pincode && !OnboardingDetail?.billing_address?.pincode) {
+    if (!billingAddress?.pincode) {
       errors.pincode = "Please Enter Pincode ";
+    }
 
+    if( nature_of_business == "Manufacturing" && !isShippingSame){
+      if (!shippingAddress?.address_line_1) {
+        errors.shipping_address_line_1 = "Please Enter Shipping Address 1";
+      }
+      if (!shippingAddress?.address_line_2 ) {
+        errors.shipping_address_line_2 = "Please Enter Shipping Address Line 2 ";
+      }
+      if (!shippingAddress?.pincode) {
+        errors.shipping_pincode = "Please Enter Shipping Pincode ";
+      }
     }
 
     return errors;
@@ -430,6 +455,9 @@ const CompanyAddress = ({
               updateshippingAddress("address_line_1", e.target.value);
             }}
           />
+          {errors?.shipping_address_line_1  && !shippingAddress?.address_line_1 && (
+              <span style={{ color: "red" }}>{errors?.shipping_address_line_1}</span>
+            )}
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
@@ -444,6 +472,9 @@ const CompanyAddress = ({
               updateshippingAddress("address_line_2", e.target.value);
             }}
           />
+          {errors?.shipping_address_line_2  && !shippingAddress?.address_line_2 && (
+              <span style={{ color: "red" }}>{errors?.shipping_address_line_2}</span>
+            )}
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
@@ -457,6 +488,9 @@ const CompanyAddress = ({
               handleShippingPincodeChange(e.target.value);
             }}
           />
+          {errors?.shipping_pincode && !shippingAddress?.pincode && (
+              <span style={{ color: "red" }}>{errors?.shipping_pincode}</span>
+            )}
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">

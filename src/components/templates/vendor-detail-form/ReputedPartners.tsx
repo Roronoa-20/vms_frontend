@@ -21,10 +21,11 @@ type Props = {
   onboarding_ref_no: string,
   OnboardingDetail: VendorOnboardingResponse["message"]["reputed_partners_details_tab"]
   isAccountsTeam?: number,
-  VendorType?: string[]
+  VendorType?: string[],
+  nature_of_business:string
 }
 
-const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAccountsTeam, VendorType }: Props) => {
+const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAccountsTeam, VendorType, nature_of_business }: Props) => {
   const [reputedPartnersDetails, setReputedPartnersDetails] = useState<Partial<TReputedPartnerDetails[]>>([]);
   const [reputedPartners, setReputedPartners] = useState<Partial<TReputedPartnerDetails>>()
 
@@ -56,7 +57,7 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAccoun
 
     if (isAccountsTeam == 1) {
       router.push(`/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`)
-    } else if (VendorType && !VendorType.includes("Material Vendor")) {
+    } else if (VendorType && !VendorType.includes("Material Vendor") && nature_of_business != "Manufacturer") {
       router.push(
         `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
       );

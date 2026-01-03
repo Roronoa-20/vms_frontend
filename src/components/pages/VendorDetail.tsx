@@ -96,7 +96,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
           </div>
           <div className="flex px-6 py-6 justify-between gap-4">
             {/* sidebar */}
-            <OnboardingSidebar onboarding_refno={vendorOnboardingRefno} refno={refno} vendor_type={OnboardingDetail?.company_details_tab?.vendor_type_list_from_master} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} />
+            <OnboardingSidebar onboarding_refno={vendorOnboardingRefno} refno={refno} vendor_type={OnboardingDetail?.company_details_tab?.vendor_type_list_from_master} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} nature_of_business={OnboardingDetail?.company_details_tab?.nature_of_business} />
             {/* form */}
             {tabType == "Company Detail" ? (
               <CompanyDetailForm
@@ -111,10 +111,10 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
             )
 
               : tabType == "Company Address" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
-                <InternationalCompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab} />
+                <InternationalCompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab} nature_of_business={OnboardingDetail?.company_details_tab?.nature_of_business} />
               )
                 : tabType == "Company Address" ? (
-                  <CompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab} />
+                  <CompanyAddress companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab} nature_of_business={OnboardingDetail?.company_details_tab?.nature_of_business} />
                 )
                   : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
                     <InternationalDocumentDetails ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab} documentDetailDropdown={documentDetailDropdown} />
@@ -134,7 +134,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
                             <ProductDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.product_details_tab} />
                           )
                             : tabType == "Manufacturing Detail" ? (
-                              <ManufacturingDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.manufacturing_details_tab} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} VendorType={OnboardingDetail?.company_details_tab?.vendor_types} />
+                              <ManufacturingDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.manufacturing_details_tab} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} VendorType={OnboardingDetail?.company_details_tab?.vendor_types} nature_of_business={OnboardingDetail?.company_details_tab?.nature_of_business} />
                             ) : tabType == "Employee Detail" ? (
                               <EmployeeDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.employee_details_tab} />
                             ) : tabType == "Machinery Detail" ? (
@@ -142,7 +142,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
                             ) : tabType == "Testing Facility" ? (
                               <TestingFacility ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.testing_details_tab} />
                             ) : tabType == "Reputed Partners" ? (
-                              <ReputedPartners ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.reputed_partners_details_tab} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} VendorType={OnboardingDetail?.company_details_tab?.vendor_types} />
+                              <ReputedPartners ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.reputed_partners_details_tab} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} VendorType={OnboardingDetail?.company_details_tab?.vendor_types} nature_of_business={OnboardingDetail?.company_details_tab?.nature_of_business} />
                             ) : tabType == "Certificate" ? (
                               <Certificate certificateCodeDropdown={certificateCodeDropdown?.certificate_names} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.certificate_details_tab} />
                             ) : (

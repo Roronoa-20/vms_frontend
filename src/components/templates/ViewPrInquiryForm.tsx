@@ -160,7 +160,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
       formData?.append("file",acknowlegedFile);
     }
     const url = API_END_POINTS?.PurchaseEnquiryAcknowledge;
-    const response: AxiosResponse = await requestWrapper({ url: url, method: "POST", data: { data: formData } });
+    const response: AxiosResponse = await requestWrapper({ url: url, method: "POST", data:  formData });
     if (response?.status == 200) {
       alert("Acknowledge Sent Successfully");
       setComment("");
