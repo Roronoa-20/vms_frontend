@@ -40,7 +40,7 @@ type UseASAFormReturn = {
     submitEnvironmentForm: () => Promise<void>;
     submitSocialForm: () => Promise<void>;
     ASAformName: string;
-    VerifyASAForm: (asaFormName: string) => Promise<any>;
+    // VerifyASAForm: (asaFormName: string) => Promise<any>;
     asaFormSubmitData: ASAForm;
 
 };
@@ -49,7 +49,7 @@ export const useASAForm = (): UseASAFormReturn => {
     const [companyInfo, setCompanyInfo] = useState<CompanyInformation>({
         name_of_the_company: { selection: "", comment: "", file: null },
         location: { selection: "", comment: "", file: null },
-        name_of_product:  { selection: "", comment: "", file: null }
+        name_of_product: { selection: "", comment: "", file: null }
     });
 
     const [generalDisclosure, setGeneralDisclosure] = useState<GeneralDisclosureData>({
@@ -276,20 +276,6 @@ export const useASAForm = (): UseASAFormReturn => {
     useEffect(() => {
         // console.log("Updated ASAformName from state:", ASAformName);
     }, [ASAformName]);
-
-    const VerifyASAForm = async (asaFormName: string) => {
-        try {
-            const response = await requestWrapper({
-                url: `${API_END_POINTS.verifyasaform}?asa_name=${asaFormName}`,
-                method: "POST",
-            });
-            // console.log("Verify ASA FOrm API response---->",response)
-            return response?.data || null;
-        } catch (error) {
-            console.error("VerifyASAForm error:", error);
-            return null;
-        }
-    };
 
     const refreshFormData = () => setShouldFetch(true);
 
@@ -1030,6 +1016,6 @@ export const useASAForm = (): UseASAFormReturn => {
     };
 
     return {
-        companyInfo, generalDisclosure, updateCompanyInfo, updateGeneralDisclosure, submitForm, refreshFormData, governanceform, submitGoveranceForm, updateGovernanceForm, emsform, updateEmsForm, submitEnvironmentForm, biodiversityForm, greenProductsForm, updateBiodiversityForm, updateGreenProductsForm, eceform, updateEceForm, wcmform, updateWcmForm, wastemanagementForm, updateWasteManagementForm, EmpSatisfactionForm, updateEmpSatisactionForm, LaborRightsForm, updateLaborRightsForm, submitSocialForm, GrievanceMechForm, updateGrievnaceMechForm, EmpWellBeingForm, updateEmpWellBeingForm, updateHealthSafetyForm, HealthSafetyForm, VerifyASAForm, ASAformName, asaFormSubmitData
+        companyInfo, generalDisclosure, updateCompanyInfo, updateGeneralDisclosure, submitForm, refreshFormData, governanceform, submitGoveranceForm, updateGovernanceForm, emsform, updateEmsForm, submitEnvironmentForm, biodiversityForm, greenProductsForm, updateBiodiversityForm, updateGreenProductsForm, eceform, updateEceForm, wcmform, updateWcmForm, wastemanagementForm, updateWasteManagementForm, EmpSatisfactionForm, updateEmpSatisactionForm, LaborRightsForm, updateLaborRightsForm, submitSocialForm, GrievanceMechForm, updateGrievnaceMechForm, EmpWellBeingForm, updateEmpWellBeingForm, updateHealthSafetyForm, HealthSafetyForm, ASAformName, asaFormSubmitData
     };
 };
