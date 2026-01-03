@@ -226,8 +226,8 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
         const url = `${API_END_POINTS.fetchAccountAssignmentData}?pur_req_type=${pur_req_type}&company=${company}`;
         try {
             const response: AxiosResponse = await requestWrapper({ url, method: "GET" });
+            console.log("Account Assignment API success6787654678654678765467865435678:", response);
             if (response?.status === 200 && response?.data?.message) {
-                console.log("Account Assignment API success:", response);
                 setAccountAssignmentDropdown(response.data.message.account_assignment_category_head ?? []);
                 setitemCategoryDropdown(response.data.message.item_category_head ?? []);
             } else {
@@ -256,12 +256,12 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
         if (pur_req || prf_name) {
             fetchTableData(pur_req ?? "", prf_name ?? "");
         }
-        if (PRData?.purchase_requisition_type) {
+        if (PRData?.purchase_requisition_type ) {
             fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "");
         }
     }, [pur_req, prf_name, PRData?.purchase_requisition_type]);
 
-    console.log(mainItems, "pr drardtafdtf")
+    console.log(cartId, "cartId in NewPRRequestForm");
 
     return (
         <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
@@ -463,7 +463,7 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                                                     )}
                                                 </div>
                                             </div>
-                                            {mainItems?.sap_status == "Failed" || mainItems?.sap_status == "Pending" && (
+                                            {(mainItems?.sap_status == "Failed" || mainItems?.sap_status == "Pending") && (
                                                 <div className="flex items-center gap-2">
                                                     {((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
                                                         <>
@@ -659,6 +659,9 @@ const NewPRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, Purchase
                     company={formData?.company ? formData?.company : ""}
                     purchase_group={formData?.purchase_group ? formData?.purchase_group : ""}
                     disabled={false}
+                    setAccountAssignmentDropdown={setAccountAssignmentDropdown}
+                    setitemCategoryDropdown={setitemCategoryDropdown}
+                    cartId={cartId}
                 />
             }
 

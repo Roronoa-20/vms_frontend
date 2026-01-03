@@ -977,8 +977,8 @@ export default function PRMaterialsManager({
                           </TableCell>
                           <TableCell className="text-center font-medium">{index + 1}</TableCell>
                           <TableCell className="text-center">{material?.requisition_no}</TableCell>
-                          <TableCell className="text-center font-mono text-sm">{material?.material_code_head}</TableCell>
-                          <TableCell className="text-center">{material?.material_name_head}</TableCell>
+                          <TableCell className="text-nowrap text-center font-mono text-sm">{material?.material_code_head}</TableCell>
+                          <TableCell className="text-nowrap text-center">{material?.material_name_head}</TableCell>
                           <TableCell className="text-center">{material?.hsn_code_head}</TableCell>
 
                           {/* Quantity Cell */}
@@ -1001,7 +1001,7 @@ export default function PRMaterialsManager({
                           </TableCell>
 
                           <TableCell className="text-center">{material?.uom_head}</TableCell>
-                          <TableCell className="text-center">₹{material?.price_head}</TableCell>
+                          <TableCell className="text-nowrap text-center">₹{material?.price_head}</TableCell>
 
                           {/* Delivery Date Cell */}
                           <TableCell className="text-center">
