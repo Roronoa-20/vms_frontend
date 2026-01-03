@@ -581,6 +581,7 @@ export interface PRItem {
   original_quantity_head?: number
   original_delivery_date_head?: string
   original_material_desc_head?: string
+  hsn_code_head?: string;
 }
 interface SelectedMaterialRows {
   id: string;
@@ -943,6 +944,7 @@ export default function PRMaterialsManager({
                       <TableHead className="text-nowrap text-center">Requisition No.</TableHead>
                       <TableHead className="text-nowrap text-center">Item Code</TableHead>
                       <TableHead className="text-nowrap text-center min-w-[200px]">Item Description</TableHead>
+                      <TableHead className="text-nowrap text-center min-w-[200px]">HSN/SAC Code</TableHead>
                       <TableHead className="text-nowrap text-center">Quantity</TableHead>
                       <TableHead className="text-nowrap text-center">UOM</TableHead>
                       <TableHead className="text-nowrap text-center">Price</TableHead>
@@ -977,6 +979,7 @@ export default function PRMaterialsManager({
                           <TableCell className="text-center">{material?.requisition_no}</TableCell>
                           <TableCell className="text-center font-mono text-sm">{material?.material_code_head}</TableCell>
                           <TableCell className="text-center">{material?.material_name_head}</TableCell>
+                          <TableCell className="text-center">{material?.hsn_code_head}</TableCell>
 
                           {/* Quantity Cell */}
                           <TableCell className="text-center">
