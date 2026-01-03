@@ -246,11 +246,13 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
       fetchTableData(pur_req ?? "", prf_name ?? "");
     }
     if (PRData?.purchase_requisition_type) {
+      console.log(PRData?.purchase_requisition_type, "PRData?.purchase_requisition_type in useEffect");
       fetchAccountAssigmentData(PRData?.purchase_requisition_type ?? "");
     }
   }, [pur_req, prf_name, PRData?.purchase_requisition_type]);
 
-  console.log("Main INTems wrughwirhoerg----------->", mainItems)
+  console.log("Main INTems wrughwirhoerg----------->", cartId)
+
 
   return (
     <div className="flex flex-col bg-white rounded-lg max-h-[80vh] w-full">
@@ -449,7 +451,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
                           )}
                         </div>
                       </div>
-                      {mainItems?.sap_status == "Failed" || mainItems?.sap_status == "Pending" && (
+                      {(mainItems?.sap_status == "Failed" || mainItems?.sap_status == "Pending") && (
                         <div className="flex items-center gap-2">
                           {((!mainItems?.mail_sent_to_purchase_team) || (designation === "Purchase Team" && !mainItems?.form_is_submitted)) && (
                             <>
@@ -645,6 +647,9 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
           company={formData?.company ? formData?.company : ""}
           purchase_group={formData?.purchase_group ? formData?.purchase_group : ""}
           disabled={true}
+          setAccountAssignmentDropdown={setAccountAssignmentDropdown}
+          setitemCategoryDropdown={setitemCategoryDropdown}
+          cartId={cartId}
         />
       }
 
