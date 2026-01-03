@@ -192,7 +192,7 @@ const PRRequestForm = ({ company, Dropdown, PRData, cartId, pur_req, PurchaseGro
     console.log(formData, "formData")
     try {
       const url = API_END_POINTS.createPR;
-      const response: AxiosResponse = await requestWrapper({ url, data: { data: { ...formData, requisitioner: user } }, method: "POST" });
+      const response: AxiosResponse = await requestWrapper({ url, data: {cart_id: cartId, data: { ...formData, requisitioner: user } }, method: "POST" });
 
       if (response?.status === 200) {
         const purReqName = response.data.message.name;
