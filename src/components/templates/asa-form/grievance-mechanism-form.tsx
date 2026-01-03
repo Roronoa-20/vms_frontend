@@ -12,13 +12,16 @@ export default function Grievance_Mechanism() {
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
     const { GrievanceMechForm, updateGrievnaceMechForm, refreshFormData, updateLaborRightsForm, asaFormSubmitData } = useASAForm();
-    const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+    const isverified = asaFormSubmitData.form_is_submitted || 0;
 
     console.log("General Disclosure Form Data:", GrievanceMechForm);
 
     const isValid = Object.values(GrievanceMechForm).every((item) => {
         if (!item.selection) return false;
-        if (item.selection === "Yes" && !item.comment.trim()) return false;
+        if (item.selection === "Yes") {
+            if (!item.comment?.trim()) return false;
+            if (!item.file) return false;
+        }
         return true;
     });
 
@@ -128,12 +131,15 @@ export default function Grievance_Mechanism() {
                     <YesNoNA
                         name="have_grievance_mechanism"
                         label="1. Do you have a grievance mechanism in place which is accessible to both internal and external stakeholders, in a language which they understand?"
+                        helperText="If Yes, provide the details of the grievance mechanism and attach the policy where the grivenace mechanism is specified."
                         value={GrievanceMechForm.have_grievance_mechanism}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
+                        fileRequired={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     {isverified !== 1 && (

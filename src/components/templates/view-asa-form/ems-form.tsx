@@ -72,35 +72,6 @@ export default function Environmental_Management_System() {
     });
   };
 
-  // const fileToBase64 = (file: File): Promise<string> => {
-  //   return new Promise((resolve, reject) => {
-  //     const reader = new FileReader();
-  //     reader.readAsDataURL(file);
-  //     reader.onload = () => resolve(reader.result as string);
-  //     reader.onerror = (error) => reject(error);
-  //   });
-  // };
-
-
-  // const handleNext = async () => {
-  //   console.log("Submitting EMS Form and navigating to next tab:", emsform);
-  //   const emsCopy = { ...emsform };
-
-  //   for (const key in emsCopy) {
-  //     const entry = emsCopy[key as keyof EnvironmentalManagementSystem];
-  //     if (entry.file instanceof File) {
-  //       const base64 = await fileToBase64(entry.file);
-  //       entry.file = {
-  //         url: "",
-  //         name: entry.file.name,
-  //         base64,
-  //       };
-  //     }
-  //   }
-  //   updateEmsForm(emsCopy);
-  //   localStorage.setItem("EMSForm", JSON.stringify(emsCopy));
-  //   router.push(`asa-form?tabtype=ece&vms_ref_no=${vmsRefNo}`);
-  // };
 
   const handleNext = () => {
     router.push(`/view-asa-form?tabtype=ece&vms_ref_no=${vmsRefNo}`);
@@ -130,9 +101,13 @@ export default function Environmental_Management_System() {
               onCommentChange={handleCommentChange}
               onFileChange={handleFileChange}
               label="i. Environment/Sustainability Policy in place?"
+              helperText="If Yes, attach the copy of the policy."
               disabled={true}
-
+              required={true}
+              fileRequired={true}
+              options={["Yes", "No"]}
             />
+            
             <YesNoNA
               name="environmental_management_certification"
               value={emsform.environmental_management_certification}
@@ -140,9 +115,13 @@ export default function Environmental_Management_System() {
               onCommentChange={handleCommentChange}
               onFileChange={handleFileChange}
               label="ii. Environment Management System certified to standards like ISO 14001, ISO 5001, etc.?"
+              helperText="If Yes, attach the copy of the certificate."
               disabled={true}
-
+              required={true}
+              fileRequired={true}
+              options={["Yes", "No"]}
             />
+
             <YesNoNA
               name="regular_audits_conducted"
               value={emsform.regular_audits_conducted}
@@ -150,7 +129,11 @@ export default function Environmental_Management_System() {
               onCommentChange={handleCommentChange}
               onFileChange={handleFileChange}
               label="iii. Do you conduct regular energy, water, and waste audits?"
+              helperText="If Yes, please attach the audit reports/recoomendations."
               disabled={true}
+              required={true}
+              fileRequired={true}
+              options={["Yes", "No"]}
             />
           </div>
         </div>
