@@ -1,6 +1,6 @@
 // components/EditNBModal.tsx
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -36,6 +36,7 @@ interface DropdownData {
 
 interface EditNBModalProps {
   isOpen: boolean;
+  cartId?: string;
   onClose: () => void;
   fetchTableData: (pur_req: string) => void;
   Dropdown: DropdownData;
@@ -48,10 +49,12 @@ interface EditNBModalProps {
   plant: string
   company: string
   purchase_group: string
-  disabled?:boolean
+  disabled?: boolean
+  setAccountAssignmentDropdown?: React.Dispatch<React.SetStateAction<AccountAssignmentCategory[]>>
+  setitemCategoryDropdown?: React.Dispatch<React.SetStateAction<ItemCategoryMaster[]>>
 }
 
-const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen,disabled, onClose, fetchTableData, Dropdown, defaultData, pur_req, PurchaseGroupDropdown,accountAssigmentDropdown, itemCategoryDropdown, plant, company, purchase_group }) => {
+const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, disabled, onClose, fetchTableData, Dropdown, defaultData, pur_req, PurchaseGroupDropdown, accountAssigmentDropdown, itemCategoryDropdown, plant, company, purchase_group, setAccountAssignmentDropdown, setitemCategoryDropdown, cartId }) => {
 
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, any>>({});
@@ -113,6 +116,27 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen,disabled, onClose, fet
     }
   }, [defaultData]);
 
+  useEffect(() => {
+    fetchAccountAssigmentData(formData?.purchase_requisition_type || "");
+  }, [formData?.price_of_purchase_requisition_head]);
+
+  console.log(cartId, "cartId in EditNBModal")
+
+  const fetchAccountAssigmentData = async (pur_req_type: string) => {
+    const url = `${API_END_POINTS.fetchAccountAssignmentData}?pur_req_type=${pur_req_type}&company=${company}&cart_id=${cartId ?? ""}&product_name=${defaultData?.product_name_head ?? ""}`;
+    try {
+      const response: AxiosResponse = await requestWrapper({ url, method: "GET" });
+      console.log("Account Assignment API success6787654678654678765467865435678:", response);
+      if (response?.status === 200 && response?.data?.message) {
+        setAccountAssignmentDropdown?.(response.data.message.account_assignment_category_head ?? []);
+        setitemCategoryDropdown?.(response.data.message.item_category_head ?? [])
+      } else {
+        console.warn("Account Assignment API returned unexpected response", response);
+      }
+    } catch (error) {
+      console.error("Account Assignment API failed silently", error);
+    }
+  };
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -528,7 +552,7 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen,disabled, onClose, fet
     }
   };
 
-  console.log(formData?.store_location_head,"_________")
+  console.log(accountAssigmentDropdown, "___erguhergberjgb______")
 
   return (
     <PopUp headerText='Purchase Request Items' classname='overflow-y-scroll md:max-w-[1000px] md:max-h-[600px]' handleClose={onClose} isSubmit={true} Submitbutton={handleSubmit} disableSubmit={isAssetValid === false}
