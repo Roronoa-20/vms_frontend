@@ -44,25 +44,13 @@ export default function BiodiversityForm() {
     });
   };
 
-  // const handleSubmit = async () => {
-  //   await submitEnvironmentForm();
-  //   refreshFormData();
-  // };
-
-  // const handleBack = useBackNavigation<GreenProducts>(
-  //   "GreenProductsForm",
-  //   updateGreenProductsForm,
-  //   "green_products",
-  //   vmsRefNo
-  // );
-
   const handleNext = () => {
-        router.push(`/view-asa-form?tabtype=labor_rights&vms_ref_no=${vmsRefNo}`);
-    };
+    router.push(`/view-asa-form?tabtype=labor_rights&vms_ref_no=${vmsRefNo}`);
+  };
 
-    const handleBack = () => {
-        router.push(`/view-asa-form?tabtype=green_products&vms_ref_no=${vmsRefNo}`);
-    };
+  const handleBack = () => {
+    router.push(`/view-asa-form?tabtype=green_products&vms_ref_no=${vmsRefNo}`);
+  };
 
   return (
     <div className="h-full">
@@ -74,11 +62,15 @@ export default function BiodiversityForm() {
           <YesNoNA
             name="have_policy_on_biodiversity"
             label="1. Does the organization have a policy or commitment on biodiversity?"
+            helperText="If Yes, attach the copy of the policy or commitment."
             value={biodiversityForm.have_policy_on_biodiversity}
             onSelectionChange={handleSelectionChange}
             onCommentChange={handleCommentChange}
             onFileChange={handleFileChange}
             disabled={true}
+            required={true}
+            fileRequired={true}
+            options={["Yes", "No"]}
 
           />
           {/* <div className="space-x-4 flex justify-end">

@@ -16,15 +16,19 @@ interface YesNoNAProps {
   onCommentChange: (name: string, comment: string) => void;
   onFileChange: (name: string, file: File | null) => void;
   label: string;
+  helperText?: string;
   customYesInputType?: "date" | "text" | "textarea";
   disabled?: boolean;
   required?: boolean;
   fileRequired?: boolean;
+  options?: Array<"Yes" | "No" | "NA">;
+
 }
 
-export default function YesNoNA({ name, value, onSelectionChange, onCommentChange, onFileChange, label, customYesInputType, disabled, required = false, fileRequired = false, }: YesNoNAProps) {
+export default function YesNoNA({ name, value, onSelectionChange, onCommentChange, onFileChange, label, helperText, customYesInputType, disabled, required = false, fileRequired = false, options }: YesNoNAProps) {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const radioOptions = options ?? ["Yes", "No", "NA"];
 
   return (
     <div className="mb-6">
@@ -38,10 +42,15 @@ export default function YesNoNA({ name, value, onSelectionChange, onCommentChang
           {required && <span className="text-red-600 ml-1">*</span>}
         </Label>
       )}
+      {helperText && (
+        <p className="mt-1 text-xs italic text-gray-500 leading-relaxed tracking-wide">
+          {helperText}
+        </p>
+      )}
 
       {/* Radio Selection */}
-      <div className="flex gap-24 mt-4">
-        {(["Yes", "No", "NA"] as const).map((option) => (
+      <div className="flex gap-24 mt-3">
+        {radioOptions.map((option) => (
           <Label
             key={option}
             htmlFor={`${name}-${option}`}
@@ -64,7 +73,7 @@ export default function YesNoNA({ name, value, onSelectionChange, onCommentChang
       </div>
 
       {value.selection === "Yes" && (
-        <div className="mt-4">
+        <div className="mt-3">
           <Label htmlFor={`${name}-comment`} className="font-semibold text-[12px] leading-[19px] text-[#03111F] mb-1">
             {customYesInputType === "date" ? "If Yes, provide expiry date" : "Please Specify"}{required && <span className="text-red-600 ml-1">*</span>}
           </Label>
@@ -83,6 +92,7 @@ export default function YesNoNA({ name, value, onSelectionChange, onCommentChang
               className="block w-full p-2 text-sm border border-gray-300 rounded-md focus:ring focus:ring-blue-200"
               value={value.comment}
               onChange={(e) => !disabled && onCommentChange(name, e.target.value)}
+              rows={5}
             />
           )}
         </div>
@@ -90,10 +100,10 @@ export default function YesNoNA({ name, value, onSelectionChange, onCommentChang
 
 
       {/* File Upload */}
-      <div className="mt-4 relative">
-        <Label htmlFor={`${name}-file`} className="block text-sm font-medium text-gray-900 mb-1">
-          Upload File
-          {fileRequired && <span className="text-red-600 ml-1">*</span>}
+      <div className="mt-3 relative">
+        <Label htmlFor={`${name}-file`} className="block text-[12px] font-semibold mb-1 border-gray-300 rounded-md focus:ring focus:ring-blue-200">
+          Upload Supporting File/Document
+          {fileRequired && value.selection === "Yes" && (<span className="text-red-600 ml-1">*</span>)}
         </Label>
 
         <Input

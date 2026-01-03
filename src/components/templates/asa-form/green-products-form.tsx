@@ -13,13 +13,16 @@ export default function Green_Products() {
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
     const { greenProductsForm, updateGreenProductsForm, refreshFormData, updateWasteManagementForm, asaFormSubmitData } = useASAForm();
-    const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+    const isverified = asaFormSubmitData.form_is_submitted || 0;
 
     console.log("Green Products Form Data:", greenProductsForm);
 
     const isValid = Object.values(greenProductsForm).every((item) => {
         if (!item.selection) return false;
-        if (item.selection === "Yes" && !item.comment.trim()) return false;
+        if (item.selection === "Yes") {
+            if (!item.comment?.trim()) return false;
+            if (!item.file) return false;
+        }
         return true;
     });
 
@@ -128,14 +131,17 @@ export default function Green_Products() {
                     <YesNoNA
                         name="certified_green_projects"
                         label="1. Do you have any products that has been certified as Green by the certification bodies like Green Label, Forest Stewardship Council (FSC), etc.?"
+                        helperText="If Yes, attach the copy of the certifications."
                         value={greenProductsForm.certified_green_projects}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
+                        fileRequired={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
-                    
+
                     {isverified !== 1 && (
                         <div className="space-x-4 flex justify-end">
                             <Button

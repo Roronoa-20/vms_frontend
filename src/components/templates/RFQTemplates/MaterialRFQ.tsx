@@ -73,11 +73,16 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
   const [files, setFiles] = useState<File[]>([]);
   const [isDialog, setIsDialog] = useState<boolean>(false);
   const [newVendorTable, setNewVendorTable] = useState<newVendorTable[]>([]);
+  const [selectedHSNCodes, setSelectedHSNCodes] = useState<string[]>([]);
+
   const router = useRouter();
+  
 
   useEffect(() => {
     const fetchVendorTableData = async (rfq_type: string) => {
-      const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&company=${formData?.company_name}`
+      const hsnQuery = selectedHSNCodes.join(',');
+
+      const url = `${API_END_POINTS?.fetchVendorListBasedOnRFQType}?rfq_type=${rfq_type}&page_no=${currentVendorPage}&vendor_name=${debouncedDoctorSearchName}&company=${formData?.company_name}&hsn_codes=${encodeURIComponent(hsnQuery)}`
       const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
       if (response?.status == 200) {
         setVendorList(response.data.message)
@@ -88,7 +93,7 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
     if (formData?.company_name) {
       fetchVendorTableData(formData?.rfq_type ? formData?.rfq_type : "Material Vendor");
     }
-  }, [currentVendorPage, debouncedDoctorSearchName, formData?.company_name]);
+  }, [currentVendorPage, debouncedDoctorSearchName, formData?.company_name, selectedHSNCodes]);
 
   useEffect(() => {
     const fetchPRDropdown = async (rfq_type: string) => {
@@ -136,6 +141,15 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
 
   const setPRItems = async (materials: SelectedMaterial[]) => {
     setSelectedMaterials(materials)
+    const hsnCodes = Array.from(
+      new Set(
+        materials
+          .map(m => m.hsn_code_head)
+          .filter(Boolean)
+      )
+    ) as string[];
+
+    setSelectedHSNCodes(hsnCodes);
   };
 
   const handleOpen = () => {

@@ -72,43 +72,6 @@ export default function Grievance_Mechanism() {
         });
     };
 
-    // const fileToBase64 = (file: File): Promise<string> => {
-    //     return new Promise((resolve, reject) => {
-    //         const reader = new FileReader();
-    //         reader.readAsDataURL(file);
-    //         reader.onload = () => resolve(reader.result as string);
-    //         reader.onerror = (error) => reject(error);
-    //     });
-    // };
-
-
-    // const handleNext = async () => {
-    //     console.log("Submitting Labor Rights Form and navigating to next tab:", GrievanceMechForm);
-    //     const GrievanceMechFormCopy = { ...GrievanceMechForm };
-
-    //     for (const key in GrievanceMechFormCopy) {
-    //         const entry = GrievanceMechFormCopy[key as keyof GrievanceMechanism];
-    //         if (entry.file instanceof File) {
-    //             const base64 = await fileToBase64(entry.file);
-    //             entry.file = {
-    //                 url: "",
-    //                 name: entry.file.name,
-    //                 base64,
-    //             };
-    //         }
-    //     }
-    //     updateGrievnaceMechForm(GrievanceMechFormCopy);
-    //     localStorage.setItem("GrivanceMechForm", JSON.stringify(GrievanceMechFormCopy));
-    //     router.push(`asa-form?tabtype=employee_wellbeing&vms_ref_no=${vmsRefNo}`);
-    // };
-
-    // const handleBack = useBackNavigation<LaborRightsAndWorkingConditions>(
-    //     "LaborRightsForm",
-    //     updateLaborRightsForm,
-    //     "labor_rights",
-    //     vmsRefNo
-    // );
-
     const handleNext = () => {
         router.push(`/view-asa-form?tabtype=employee_wellbeing&vms_ref_no=${vmsRefNo}`);
     };
@@ -129,10 +92,14 @@ export default function Grievance_Mechanism() {
                         name="have_grievance_mechanism"
                         label="1. Do you have a grievance mechanism in place which is accessible to both internal and external stakeholders, in a language which they understand?"
                         value={GrievanceMechForm.have_grievance_mechanism}
+                        helperText="If Yes, provide the details of the grievance mechanism and attach the policy where the grivenace mechanism is specified."
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         disabled={true}
+                        required={true}
+                        fileRequired={true}
+                        options={["Yes", "No"]}
 
                     />
                     {/* <div className="space-x-4 flex justify-end">

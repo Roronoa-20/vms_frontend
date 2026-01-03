@@ -13,9 +13,9 @@ export default function Company_Information_Form() {
     const router = useRouter();
     const params = useSearchParams();
     const vmsRefNo = params.get("vms_ref_no") || "";
-    const { companyInfo, updateCompanyInfo, refreshFormData, asaFormSubmitData } = useASAForm();
+    const { companyInfo, updateCompanyInfo, asaFormSubmitData } = useASAForm();
     const { name } = useAuth();
-    const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+    const isverified = asaFormSubmitData.form_is_submitted || 0;
 
     const isFormValid = Boolean(
         companyInfo.name_of_the_company?.selection?.trim() &&

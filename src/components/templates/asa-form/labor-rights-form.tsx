@@ -12,12 +12,15 @@ export default function Labor_Rights_And_Working_Conditions() {
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
     const { LaborRightsForm, updateLaborRightsForm, refreshFormData, asaFormSubmitData } = useASAForm();
-    const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+    const isverified = asaFormSubmitData.form_is_submitted || 0;
+    const fileRequiredQuestions = new Set(["have_prohibition_policy_of_child_labor", "have_non_discrimination_policy", "has_diversity_inclusion_policy"]);
+
     console.log("General Disclosure Form Data:", LaborRightsForm);
 
-    const isValid = Object.values(LaborRightsForm).every((item) => {
+    const isValid = Object.entries(LaborRightsForm).every(([key, item]) => {
         if (!item.selection) return false;
         if (item.selection === "Yes" && !item.comment.trim()) return false;
+        if (fileRequiredQuestions.has(key) && item.selection === "Yes" && !item.file) return false;
         return true;
     });
 
@@ -122,125 +125,150 @@ export default function Labor_Rights_And_Working_Conditions() {
                     <YesNoNA
                         name="have_prohibition_policy_of_child_labor"
                         label="1. Does the company have a policy on prohibition of child labor and forced labor?"
+                        helperText="If Yes, attach the policy."
                         value={LaborRightsForm.have_prohibition_policy_of_child_labor}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
+                        fileRequired={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="age_verification_before_hiring"
                         label="2. Does the company obtain proof of Age documentation from all potential employees and workers and review the documents for authenticity prior to hiring?"
+                        helperText="If Yes, provide details of the hiring process."
                         value={LaborRightsForm.age_verification_before_hiring}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="ensure_modern_slavery_labor_policy"
                         label="3. Does the company ensure that no forced, bonded, indentured or involuntary prison labor, human trafficking, or any form of modern slavery takes place in their operations and their supply chain?"
+                        helperText="If Yes, provide the details of the practices to ensure the same."
                         value={LaborRightsForm.ensure_modern_slavery_labor_policy}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
 
                     <YesNoNA
                         name="have_non_discrimination_policy"
                         label="4. Does the company have a non-discrimination policy communicated to all employees and workers?"
+                        helperText="If Yes, attach the policy."
                         value={LaborRightsForm.have_non_discrimination_policy}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
+                        fileRequired={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="has_setup_safety_report_incidents"
                         label="5. Has the company established a procedure, accessible and known to all employees and workers, where workers can safely report incidents of workplace discrimination?"
+                        helperText="If Yes, provide details about the procedues in place."
                         value={LaborRightsForm.has_setup_safety_report_incidents}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
+                        options={["Yes", "No"]}
                         disabled={isverified === 1}
                     />
 
                     <YesNoNA
                         name="pending_legal_cases_workplace_harassment"
                         label="6. Are there any legal cases pending regarding workplace harassment? If yes, provide details."
+                        helperText="If Yes, provide the details of the pending cases."
                         value={LaborRightsForm.pending_legal_cases_workplace_harassment}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
+                        options={["Yes", "No"]}
                         disabled={isverified === 1}
                     />
 
                     <YesNoNA
                         name="comply_minimum_wage_law_regulation"
                         label="7. Does your company comply with all applicable minimum wage laws and regulations in the countries where you operate?"
+                        helperText="If Yes, provide the details how you ensure to provide the minimum wages."
                         value={LaborRightsForm.comply_minimum_wage_law_regulation}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="legal_working_hours"
                         label="8. Are working hours within the legal limit (9 hours pr day, 48 hours per week)?"
+                        helperText="If Yes, provide the policy document where the working hours are specified."
                         value={LaborRightsForm.legal_working_hours}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="work_hrs_track_by_company"
                         label="9. Are working hours and attendance tracked by the company and authenticated by employees and workers?"
+                        helperText="If Yes, provide details of the procedures in place to track working hours and attendance."
                         value={LaborRightsForm.work_hrs_track_by_company}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="has_diversity_inclusion_policy"
                         label="10. Whether the company has a Diversity and inclusion policy covering anti-discrimination and anti-harassment, equal opportunity, etc?"
+                        helperText="If Yes, attach the copy of the policy."
                         value={LaborRightsForm.has_diversity_inclusion_policy}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
+                        fileRequired={true}
+                        options={["Yes", "No"]}
                         disabled={isverified === 1}
                     />
 
                     <YesNoNA
                         name="have_target_to_promote_diversity"
                         label="11. Do you have initiatives and targets in place to promote diversity and inclusion? If Yes, provide the details."
+                        helperText="If Yes, provide the details of the target taken and the target year."
                         value={LaborRightsForm.have_target_to_promote_diversity}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
-                    
+
                     {isverified !== 1 && (
                         <div className="space-x-4 flex justify-end">
                             <Button

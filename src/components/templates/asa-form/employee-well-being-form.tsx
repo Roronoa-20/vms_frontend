@@ -14,7 +14,7 @@ export default function Employee_Wellbeing() {
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
     const { refreshFormData, updateGrievnaceMechForm, EmpWellBeingForm, updateEmpWellBeingForm, asaFormSubmitData } = useASAForm();
-    const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+    const isverified = asaFormSubmitData.form_is_submitted || 0;
 
     console.log("General Disclosure Form Data:", EmpWellBeingForm);
 
@@ -131,12 +131,14 @@ export default function Employee_Wellbeing() {
                     <YesNoNA
                         name="any_emp_well_being_initiative"
                         label="1. Are there employee well-being initiatives in place? If Yes, provide the details of the initiatives."
+                        helperText="If Yes, provide the details of the initiatives taken."
                         value={EmpWellBeingForm.any_emp_well_being_initiative}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     {isverified !== 1 && (
