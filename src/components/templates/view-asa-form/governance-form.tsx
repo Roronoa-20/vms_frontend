@@ -5,15 +5,19 @@ import { useState } from "react";
 import { useASAForm } from "@/src/hooks/useASAForm";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
+import requestWrapper from "@/src/services/apiCall";
+import { CheckCircle } from "lucide-react";
+import API_END_POINTS from "@/src/services/apiEndPoints";
 
 export default function GovernanceForm() {
    const router = useRouter();
    const searchParams = useSearchParams();
    const vmsRefNo = searchParams.get("vms_ref_no") || "";
-   const { governanceform, updateGovernanceForm, VerifyASAForm, ASAformName, asaFormSubmitData } = useASAForm();
+   const { governanceform, updateGovernanceForm, ASAformName, asaFormSubmitData } = useASAForm();
    const [showRevertBox, setShowRevertBox] = useState(false);
    const [revertComment, setRevertComment] = useState("");
-
+   const [showVerifySuccess, setShowVerifySuccess] = useState(false);
+   
    console.log("Governance web Form Data:", governanceform);
 
    const handleSelectionChange = (name: string, selection: "Yes" | "No" | "NA" | "") => {
@@ -48,6 +52,46 @@ export default function GovernanceForm() {
 
    const handleRevert = () => {
       router.push(`/view-asa-form?tabtype=employee_satisfaction&vms_ref_no=${vmsRefNo}`);
+   };
+
+   const VerifyASAForm = async (asaFormName: string) => {
+      try {
+         const response = await requestWrapper({
+            url: `${API_END_POINTS.verifyasaform}?asa_name=${asaFormName}`,
+            method: "POST",
+         });
+         if (response?.data?.message?.status === "success") {
+            setShowVerifySuccess(true);
+         }
+         return response?.data || null;
+      } catch (error) {
+         console.error("VerifyASAForm error:", error);
+         return null;
+      }
+   };
+
+   const RevertASAForm = async (asaFormName: string, comment: string) => {
+      try {
+         const response = await requestWrapper({
+            url: API_END_POINTS.revertasaform,
+            method: "POST",
+            data: {
+               data: {
+                  asa_name: asaFormName,
+                  reason_of_revert: comment,
+               },
+            },
+         });
+
+         if (response?.data?.message?.status === "success") {
+            router.push("/dashboard");
+         }
+
+         return response?.data || null;
+      } catch (error) {
+         console.error("RevertASAForm error:", error);
+         return null;
+      }
    };
 
    const handleNext = async () => {
@@ -173,7 +217,7 @@ export default function GovernanceForm() {
                   options={["Yes", "No"]}
                   disabled={true}
                />
-               
+
                {asaFormSubmitData.verify_by_asa_team !== 1 && (
                   <div className="space-x-4 flex justify-end">
                      <Button
@@ -195,6 +239,41 @@ export default function GovernanceForm() {
                   </div>
                )}
             </div>
+
+            {showVerifySuccess && (
+               <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                  <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 space-y-4 text-center">
+
+                     <div className="flex flex-col items-center gap-3">
+                        <CheckCircle className="w-14 h-14 text-green-600" />
+
+                        <div className="text-xl font-semibold text-green-700">
+                           Verified Successfully
+                        </div>
+                     </div>
+
+                     <div className="text-sm text-gray-600">
+                        The ASA form has been verified successfully.
+                     </div>
+
+                     <div className="flex justify-center">
+                        <Button
+                           className="py-2.5"
+                           variant="nextbtn"
+                           size="nextbtnsize"
+                           onClick={() => {
+                              setShowVerifySuccess(false);
+                              router.push("/dashboard");
+                           }}
+                        >
+                           OK
+                        </Button>
+                     </div>
+
+                  </div>
+               </div>
+            )}
+
             {showRevertBox && (
                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
                   <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-5 space-y-4">
@@ -229,9 +308,10 @@ export default function GovernanceForm() {
                            variant="nextbtn"
                            size="nextbtnsize"
                            disabled={!revertComment.trim()}
-                           onClick={() => {
-                              console.log("Revert comment:", revertComment);
-                              // await submitRevertComment(revertComment);
+                           onClick={async () => {
+                              await RevertASAForm(ASAformName, revertComment);
+                              setShowRevertBox(false);
+                              setRevertComment("");
                            }}
                         >
                            Revert
