@@ -143,6 +143,7 @@ const ViewProfile = ({ vendor_onboarding, tabtype, refno, company, onChangeCompa
         <div className="flex px-4 gap-5 pt-5">
           <div className="flex flex-col items-start relative">
             <OnboardingSidebar
+            nature_of_business=""
               onboarding_refno={vendor_onboarding}
               refno={refno}
             />
