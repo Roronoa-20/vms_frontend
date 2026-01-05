@@ -35,9 +35,11 @@ type Props = {
   ref_no: string;
   onboarding_ref_no: string;
   OnboardingDetail: VendorOnboardingResponse["message"]["product_details_tab"];
+  nature_of_business: string;
+  VendorType: string[];
 };
 
-const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) => {
+const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_business, VendorType }: Props) => {
   const router = useRouter();
 
   const [singleRow,SetSingleRow] = useState<any>()
@@ -140,9 +142,16 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
       alert("Please Enter At Least 1 Material Details")
       return;
     }
-    router.push(
-      `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
-    )
+    if(nature_of_business == "Manufacturer" && VendorType?.includes("Material Vendor")){
+    
+      router.push(
+        `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
+      )
+    }else{
+      router.push(
+        `/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
+      )
+    }
   }
 
   const handleBack = () => {
@@ -159,7 +168,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
       <div className="grid grid-cols-3 gap-4 p-1">
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Product Manufactured
+            Product Manufactured <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -173,7 +182,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            HSN/SAC Code
+            HSN/SAC Code <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -187,7 +196,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Annual Capacity
+            Annual Capacity <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -201,9 +210,9 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Product Description
+            Product Description <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
-          <Input
+          {/* <Input
             placeholder=""
             value={
               singleRow?.material_description ?? ""
@@ -211,11 +220,22 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
             onChange={(e) => {
               SetSingleRow((prev:any)=>({...prev,material_description:e.target.value}))
             }}
-          />
+          /> */}
+
+          <textarea
+              className="col-span-2 w-full border rounded-lg p-2"
+              placeholder=""
+               value={
+              singleRow?.material_description ?? ""
+            }
+               onChange={(e) => {
+              SetSingleRow((prev:any)=>({...prev,material_description:e.target.value}))
+            }}
+            />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Upload manufactured product image
+            Upload manufactured product image <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <div className="flex gap-4">
             <Input

@@ -59,7 +59,7 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAccoun
       router.push(`/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`)
     } else if (VendorType && !VendorType.includes("Material Vendor") && nature_of_business != "Manufacturer") {
       router.push(
-        `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
+        `/vendor-details-form?tabtype=Product%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
       );
     } else {
       router.push(`/vendor-details-form?tabtype=Testing%20Facility&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
