@@ -28,7 +28,7 @@ const ServiceRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFile
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
-    const renderInput = (name: string, label: string, type = 'text',isdisabled?:boolean) => (
+    const renderInput = (name: string, label: string, type = 'text', isdisabled?: boolean) => (
         <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 {label}
@@ -72,11 +72,12 @@ const ServiceRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFile
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
-                        {options?.map((item, idx) => (
-                            <SelectItem key={idx} value={getValue(item)}>
-                                {getLabel(item)}
-                            </SelectItem>
-                        ))}
+                        {options?.filter(item => getValue(item)?.trim() !== "")
+                            .map((item, idx) => (
+                                <SelectItem key={idx} value={getValue(item)}>
+                                    {getLabel(item)}
+                                </SelectItem>
+                            ))}
                     </SelectGroup>
                 </SelectContent>
             </Select>
@@ -100,11 +101,11 @@ const ServiceRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFile
     );
 
     //RFQ date
-            useEffect(() => {
-                setFormData((prev) => ({ ...prev, rfq_date: formData?.rfq_date?formData?.rfq_date:today }));
-              }, [today,formData?.rfq_date]);
-            
-              console.log(formData, "formData");
+    useEffect(() => {
+        setFormData((prev) => ({ ...prev, rfq_date: formData?.rfq_date ? formData?.rfq_date : today }));
+    }, [today, formData?.rfq_date]);
+
+    console.log(formData, "formData");
 
     return (
         <div>
@@ -118,7 +119,7 @@ const ServiceRFQFormFields = ({ formData, setFormData, Dropdown, setUploadedFile
                     (item) => `${item.vendor_type_name}`,
                     true
                 )}
-                {renderInput('rfq_date', 'RFQ Date', 'date',true)}
+                {renderInput('rfq_date', 'RFQ Date', 'date', true)}
                 {renderSelect(
                     'company_name',
                     'Company Name',

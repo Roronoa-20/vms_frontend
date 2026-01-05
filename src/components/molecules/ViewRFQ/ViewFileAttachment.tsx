@@ -1,3 +1,4 @@
+"use client"
 import React from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/src/components/atoms/table";
 import { RFQDetails } from '@/src/types/RFQtype';
@@ -36,7 +37,7 @@ const ViewFileAttachment = ({ RFQData }: Props) => {
                     </TableHeader>
                     <TableBody className="text-center bg-white ">
                         {RFQData.attachments.length > 0 ? (
-                            RFQData.attachments?.map((item, index) => (
+                            RFQData?.attachments?.map((item, index) => (
                                 <TableRow key={index} >
                                     <TableCell className="font-medium text-center">{index + 1}</TableCell>
                                     <TableCell className="text-nowrap text-center">{item?.file_name}</TableCell>
@@ -47,7 +48,6 @@ const ViewFileAttachment = ({ RFQData }: Props) => {
                                             variant={"nextbtn"}
                                             size={"nextbtnsize"}
                                             onClick={() => viewFile(item?.name)}
-
                                         >
                                             View
                                         </Button>

@@ -156,7 +156,7 @@ const LogisticsImportQuatationFormFields = ({
         <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">{label}</h1>
             <Select
-                value={formData[name as keyof QuotationDetail] as string  || ''}
+                value={formData[name as keyof QuotationDetail] as string  ?? ''}
                 onValueChange={(value) => handleSelectChange(value, name)}
                 disabled={isDisabled}
             >
@@ -183,8 +183,8 @@ const LogisticsImportQuatationFormFields = ({
                     'mode_of_shipment',
                     'Mode of Shipment',
                     Dropdown?.mode_of_shipment,
-                    (item) => item.name,
-                    (item) => `${item.name}`
+                    (item) => item?.name,
+                    (item) => `${item?.name}`
                 )}
                 {renderInput('airlinevessel_name', 'Name')}
                 {renderInput('chargeable_weight', 'Chargeable Weight')}
@@ -199,15 +199,15 @@ const LogisticsImportQuatationFormFields = ({
                     'from_currency',
                     'From Currency',
                     Dropdown?.currency_master,
-                    (item) => item.name,
-                    (item) => `${item.name}`
+                    (item) => item?.name,
+                    (item) => `${item?.name}`
                 )}
                 {renderSelect(
                     'to_currency',
                     'To Currency',
                     Dropdown?.currency_master,
-                    (item) => item.name,
-                    (item) => `${item.name}`
+                    (item) => item?.name,
+                    (item) => `${item?.name}`
                 )}
                 {renderInput('exchange_rate', 'XR(XE.COM)', 'text', true)}
                 {renderInput('total_freightinr', 'Total Freight(INR)', 'text', true)}

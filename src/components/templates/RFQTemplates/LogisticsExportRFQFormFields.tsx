@@ -120,11 +120,12 @@ export const LogisticsExportRFQFormFields = ({
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
-                        {options?.map((item, idx) => (
-                            <SelectItem key={idx} value={getValue(item)}>
-                                {getLabel(item)}
-                            </SelectItem>
-                        ))}
+                        {options?.filter(item => getValue(item)?.trim() !== "")
+                            .map((item, idx) => (
+                                <SelectItem key={idx} value={getValue(item)}>
+                                    {getLabel(item)}
+                                </SelectItem>
+                            ))}
                     </SelectGroup>
                 </SelectContent>
             </Select>
@@ -171,7 +172,7 @@ export const LogisticsExportRFQFormFields = ({
         setFormData((prev) => ({ ...prev, rfq_date_logistic: formData?.rfq_date_logistic ? formData?.rfq_date_logistic : today }));
     }, [today, formData?.rfq_date_logistic]);
 
-    console.log(Dropdown?.incoterm_master,"Dropdown?.incoterm_master")
+    console.log(Dropdown?.incoterm_master, "Dropdown?.incoterm_master")
 
     return (
         <div>
@@ -229,7 +230,7 @@ export const LogisticsExportRFQFormFields = ({
                 {renderInput("export_destination_port", "Destination Port", "text", true)}
                 {renderInput("port_code", "Port Code", "text", true)}
                 {renderSelect("port_of_loading", "Port of Loading", Dropdown?.port_of_loading, (i) => i.name, (i) => i.name)}
-                {renderSelect("inco_terms", "Inco Terms", Dropdown?.incoterm_master, (i) => i.name, (i) => (i.incoterm_name+" - "+i.incoterm_code))}
+                {renderSelect("inco_terms", "Inco Terms", Dropdown?.incoterm_master, (i) => i.name, (i) => (i.incoterm_name + " - " + i.incoterm_code))}
                 {renderInput("ship_to_address", "Ship to Address")}
                 {renderSelect("package_type", "Package Type", Dropdown?.package_type, (i) => i.name, (i) => i.package_name)}
                 {renderInput("no_of_pkg_units", "No.Of Pkg Units", "number")}

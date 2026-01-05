@@ -95,12 +95,12 @@ const PublicMaterialQuotationForm = ({ Dropdown, token, RFQData }: Props) => {
         <div className="col-span-1">
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">{label}</h1>
             <div className="flex gap-4">
-                {options.map((option) => (
+                {options?.map((option) => (
                     <label key={option.value} className="flex items-center gap-2 text-sm pb-1">
                         <input
                             type="radio"
                             name={name}
-                            value={option.value}
+                            value={option.value ?? ""}
                             checked={negotiation[name] === option.value}
                             onChange={handleRadioChange}
                             disabled={disabled}

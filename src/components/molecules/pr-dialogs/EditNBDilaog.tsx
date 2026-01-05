@@ -510,7 +510,8 @@ const EditNBModal: React.FC<EditNBModalProps> = ({ isOpen, disabled, onClose, fe
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {options.length > 0 && options?.map((item, idx) => (
+              {options?.filter(item => getValue(item)?.trim() !== "")
+              .map((item, idx) => (
                 <SelectItem key={idx} value={getValue(item)}>
                   {getLabel(item)}
                 </SelectItem>

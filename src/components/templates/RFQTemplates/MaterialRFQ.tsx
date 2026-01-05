@@ -76,7 +76,7 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
   const [selectedHSNCodes, setSelectedHSNCodes] = useState<string[]>([]);
 
   const router = useRouter();
-  
+  console.log("HSCOnde----->",selectedHSNCodes);
 
   useEffect(() => {
     const fetchVendorTableData = async (rfq_type: string) => {
@@ -141,6 +141,7 @@ const MaterialRFQ = ({ Dropdown, pr_codes }: Props) => {
 
   const setPRItems = async (materials: SelectedMaterial[]) => {
     setSelectedMaterials(materials)
+    console.log("Selected Materials in Material RFQ:::", materials);
     const hsnCodes = Array.from(
       new Set(
         materials

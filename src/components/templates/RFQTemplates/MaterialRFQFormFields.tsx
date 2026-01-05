@@ -85,11 +85,12 @@ const MaterialRFQFormFields = ({ formData, setFormData, Dropdown, setFiles, file
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
-                        {options?.map((item, idx) => (
-                            <SelectItem key={idx} value={getValue(item)}>
-                                {getLabel(item)}
-                            </SelectItem>
-                        ))}
+                        {options?.filter(item => getValue(item)?.trim() !== "")
+                            .map((item, idx) => (
+                                <SelectItem key={idx} value={getValue(item)}>
+                                    {getLabel(item)}
+                                </SelectItem>
+                            ))}
                     </SelectGroup>
                 </SelectContent>
             </Select>
