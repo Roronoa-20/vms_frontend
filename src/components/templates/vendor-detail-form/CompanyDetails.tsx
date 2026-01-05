@@ -213,7 +213,7 @@ const CompanyDetailForm = ({
           </div>
           <div className="flex flex-col">
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-              Size of Company
+              Size of Company <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
               placeholder=""
@@ -243,7 +243,7 @@ const CompanyDetailForm = ({
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] flex pb-2">
-              Reg No.
+              Reg No. <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
               placeholder="Enter Reg No."
@@ -264,7 +264,7 @@ const CompanyDetailForm = ({
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-              Mobile Number
+              Mobile Number <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
               placeholder="Enter Mobile Number"
@@ -280,7 +280,7 @@ const CompanyDetailForm = ({
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-              WhatsApp Number (If applicable)
+              WhatsApp Number (If applicable) <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
               placeholder=""
@@ -297,7 +297,7 @@ const CompanyDetailForm = ({
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-              Established Year
+              Established Year <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
               placeholder=""
@@ -315,7 +315,7 @@ const CompanyDetailForm = ({
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-              Office Email Primary
+              Office Email Primary <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
               placeholder=""
@@ -334,7 +334,7 @@ const CompanyDetailForm = ({
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-              Office Email (Secondary)
+              Office Email (Secondary) <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
               placeholder=""
@@ -391,7 +391,7 @@ const CompanyDetailForm = ({
           </div>
           <div className="flex flex-col">
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-              Nature of Company(Please select anyone)
+              Nature of Company(Please select anyone) <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Select
               onValueChange={(value) => {
@@ -423,7 +423,7 @@ const CompanyDetailForm = ({
           </div>
           <div className="flex flex-col">
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-              Nature of Business (Please Select anyone)
+              Nature of Business (Please Select anyone) <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Select
               onValueChange={(value) => {
@@ -454,7 +454,7 @@ const CompanyDetailForm = ({
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-              Meril Associated Companies
+              Meril Associated Companies <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             {ismulticompany ? (
               <textarea
@@ -475,7 +475,7 @@ const CompanyDetailForm = ({
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-              Vendor Type
+              Vendor Type <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <textarea
               className="col-span-2 w-full border rounded-lg p-2"

@@ -22,6 +22,7 @@ export const sidebarTabsWithoutMaterialType = [
   "Contact Detail",
   "Product Detail",
   "Manufacturing Detail",
+  "Employee Detail",
   "Reputed Partners",
   "Certificate",
   // "Purchase Detail"
