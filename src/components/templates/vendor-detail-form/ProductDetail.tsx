@@ -90,7 +90,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
       material_name: "Please enter product manufactured",
       hsnsac_code: "Please enter HSN/SAC Code",
       annual_capacity: "Please enter Annual Capacity",          
-      product_description: "Please enter Product Description",
+      material_description: "Please enter Product Description",
     }
 
   const handleAdd = async () => {

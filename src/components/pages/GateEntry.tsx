@@ -31,10 +31,12 @@ const GateEntry = async({refno}:Props) => {
     });
     if(gateEntryResponse?.status == 200){
       // setFetchedData(gateEntryResponse?.data?.message?.data);
-      console.log(gateEntryResponse?.data?.message?.data,"data at at at at at ");
-      Data = gateEntryResponse?.data?.message?.data;
+      console.log(gateEntryResponse?.data?.message,"data at at at at at ");
+      Data = gateEntryResponse?.data?.message;
     }
   }
+
+  console.log(Data,"data at gate entry page");
   
   return (
     <GateEntryForm refno={refno} QrfetchedData={Data as TFetchedQRData} inwardLocationDropdown={inwardLocationDropdown}/>
