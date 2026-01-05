@@ -212,7 +212,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Product Description <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
-          <Input
+          {/* <Input
             placeholder=""
             value={
               singleRow?.material_description ?? ""
@@ -220,7 +220,18 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
             onChange={(e) => {
               SetSingleRow((prev:any)=>({...prev,material_description:e.target.value}))
             }}
-          />
+          /> */}
+
+          <textarea
+              className="col-span-2 w-full border rounded-lg p-2"
+              placeholder=""
+               value={
+              singleRow?.material_description ?? ""
+            }
+               onChange={(e) => {
+              SetSingleRow((prev:any)=>({...prev,material_description:e.target.value}))
+            }}
+            />
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
