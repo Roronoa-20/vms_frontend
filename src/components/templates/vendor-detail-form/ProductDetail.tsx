@@ -159,7 +159,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
       <div className="grid grid-cols-3 gap-4 p-1">
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Product Manufactured
+            Product Manufactured <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -173,7 +173,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            HSN/SAC Code
+            HSN/SAC Code <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -187,7 +187,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Annual Capacity
+            Annual Capacity <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -201,7 +201,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Product Description
+            Product Description <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -215,7 +215,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
         </div>
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Upload manufactured product image
+            Upload manufactured product image <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <div className="flex gap-4">
             <Input
