@@ -35,9 +35,11 @@ type Props = {
   ref_no: string;
   onboarding_ref_no: string;
   OnboardingDetail: VendorOnboardingResponse["message"]["product_details_tab"];
+  nature_of_business: string;
+  VendorType: string[];
 };
 
-const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) => {
+const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_business, VendorType }: Props) => {
   const router = useRouter();
 
   const [singleRow,SetSingleRow] = useState<any>()
@@ -140,9 +142,16 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
       alert("Please Enter At Least 1 Material Details")
       return;
     }
-    router.push(
-      `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
-    )
+    if(nature_of_business == "Manufacturer" && VendorType?.includes("Material Vendor")){
+    
+      router.push(
+        `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
+      )
+    }else{
+      router.push(
+        `/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
+      )
+    }
   }
 
   const handleBack = () => {

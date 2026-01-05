@@ -138,11 +138,8 @@ const ManufacturingDetail = ({
     if (manufacturingDetailResponse?.status == 200)
       if(isAccountsTeam == 1){
         router.push(`/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`)
-      }else if(VendorType && !VendorType.includes("Material Vendor") && nature_of_business != "Manufacturer"){
-        router.push(
-          `/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
-        );
-      }else{
+      }
+      else{
         router.push(
           `/vendor-details-form?tabtype=Employee%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
         );

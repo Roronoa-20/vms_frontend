@@ -138,6 +138,11 @@ const VendorRegistration = ({ ...Props }: Props) => {
       return;
     }
 
+    if (!formData?.mobile_number) {
+      alert("please Enter Mobile Number");
+      return;
+    }
+
     if (!formData?.search_term) {
       alert("please Enter Search Terms");
       return;

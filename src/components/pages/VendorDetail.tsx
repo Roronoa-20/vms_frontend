@@ -132,7 +132,7 @@ const VendorDetail = async ({ vendor_onboarding, tabtype, refno }: Props) => {
                           <ContactDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.contact_details_tab} />
                         )
                           : tabType == "Product Detail" ? (
-                            <ProductDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.product_details_tab} />
+                            <ProductDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.product_details_tab} nature_of_business={OnboardingDetail?.company_details_tab?.nature_of_business} VendorType={OnboardingDetail?.company_details_tab?.vendor_types} />
                           )
                             : tabType == "Manufacturing Detail" ? (
                               <ManufacturingDetail ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.manufacturing_details_tab} isAccountsTeam={OnboardingDetail?.validation_check?.register_by_account_team} VendorType={OnboardingDetail?.company_details_tab?.vendor_types} nature_of_business={OnboardingDetail?.company_details_tab?.nature_of_business} />
