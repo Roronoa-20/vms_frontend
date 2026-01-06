@@ -123,12 +123,15 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-1 sticky top-0 bg-white py-2 text-lg font-semibold">
-        Contact Detail<span className="pl-1 text-red-400 text-2xl">*</span>
+        Contact Details
       </h1>
+      <div className="italic underline text-[12px] font-semibold text-[#626973] py-2">
+        <p>(Kindly provide 2 contact details. If you don't have 2nd contact details, then add NA)</p>
+      </div>
       {/* <h1 className="pl-1 pt-1 font-medium">Contact Person</h1> */}
       <div className="grid grid-cols-3 gap-4 p-2">
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
             First Name <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
@@ -146,7 +149,7 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
           )}
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
             Last Name<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
@@ -164,7 +167,7 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
           )}
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
             Contact Number<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
@@ -239,7 +242,7 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail }: Props) =
         <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
-              Multiple Contact
+              Contact Details List
             </h1>
           </div>
           <Table className=" max-h-40 overflow-y-scroll">

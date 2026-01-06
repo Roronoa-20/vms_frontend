@@ -42,13 +42,13 @@ type Props = {
 const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_business, VendorType }: Props) => {
   const router = useRouter();
 
-  const [singleRow,SetSingleRow] = useState<any>()
-  const [productImage,setProductImage] = useState<File | null>();
+  const [singleRow, SetSingleRow] = useState<any>()
+  const [productImage, setProductImage] = useState<File | null>();
   const [materialsTable, setMaterialsTable] = useState<any[]>(OnboardingDetail ?? []);
 
   const uploadProductImageRef = useRef<HTMLInputElement>(null);
 
-  console.log(OnboardingDetail,"this is console")
+  console.log(OnboardingDetail, "this is console")
 
   // const handleAddMaterial = () => {
   //   if (
@@ -73,27 +73,27 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
   //   setMaterialsTable((prev) => [...prev, newEntry]);
   // };
 
-    const fetchTable = async()=>{
-      const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
-      const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: fetchOnboardingDetailUrl, method: "GET" });
-      const OnboardingDetail: VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message : "";
-      setMaterialsTable(OnboardingDetail?.product_details_tab)
-    }
+  const fetchTable = async () => {
+    const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
+    const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: fetchOnboardingDetailUrl, method: "GET" });
+    const OnboardingDetail: VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message : "";
+    setMaterialsTable(OnboardingDetail?.product_details_tab)
+  }
 
-    const handleDelete = async(index:number)=>{
-      const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.deleteProductDetailItem,data:{data:{ref_no:ref_no,vendor_onboarding:onboarding_ref_no,idx:index}},method:"DELETE"});
-      if(response?.status == 200){
-        alert("Record Deleted Successfully");
-        fetchTable();
-      }
+  const handleDelete = async (index: number) => {
+    const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.deleteProductDetailItem, data: { data: { ref_no: ref_no, vendor_onboarding: onboarding_ref_no, idx: index } }, method: "DELETE" });
+    if (response?.status == 200) {
+      alert("Record Deleted Successfully");
+      fetchTable();
     }
+  }
 
-    const requiredFieldsFilled =  {
-      material_name: "Please enter product manufactured",
-      hsnsac_code: "Please enter HSN/SAC Code",
-      annual_capacity: "Please enter Annual Capacity",          
-      material_description: "Please enter Product Description",
-    }
+  const requiredFieldsFilled = {
+    material_name: "Please enter product manufactured",
+    hsnsac_code: "Please enter HSN/SAC Code",
+    annual_capacity: "Please enter Annual Capacity",
+    material_description: "Please enter Product Description",
+  }
 
   const handleAdd = async () => {
 
@@ -104,20 +104,20 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
       };
     };
 
-    if(!productImage){
+    if (!productImage) {
       alert("Please upload a product image");
       return;
     }
 
     const formdata = new FormData();
-    formdata.append("material_images",productImage);
-  
-    const Data = {materials_supplied:singleRow,ref_no:ref_no,vendor_onboarding:onboarding_ref_no};
-    formdata.append("data",JSON.stringify(Data));
+    formdata.append("material_images", productImage);
+
+    const Data = { materials_supplied: singleRow, ref_no: ref_no, vendor_onboarding: onboarding_ref_no };
+    formdata.append("data", JSON.stringify(Data));
     const submitUrl = API_END_POINTS?.addProductDetail;
     const submitResponse: AxiosResponse = await requestWrapper({
       url: submitUrl,
-      data:formdata ,
+      data: formdata,
       method: "POST",
     });
 
@@ -125,29 +125,29 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
     //   router.push(
     //     `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
     //   );
-    if(submitResponse?.status == 200){
+    if (submitResponse?.status == 200) {
       alert("data added successfully");
       fetchTable();
       SetSingleRow({});
       setProductImage(null);
       const imageinput = uploadProductImageRef?.current
-      if(imageinput){
-        imageinput.value = "" 
+      if (imageinput) {
+        imageinput.value = ""
       }
     }
   };
 
-  const handleNext = ()=>{
+  const handleNext = () => {
     if (materialsTable?.length == 0) {
       alert("Please Enter At Least 1 Material Details")
       return;
     }
-    if(nature_of_business == "Manufacturer" && VendorType?.includes("Material Vendor")){
-    
+    if (nature_of_business == "Manufacturer" && VendorType?.includes("Material Vendor")) {
+
       router.push(
         `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
       )
-    }else{
+    } else {
       router.push(
         `/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
       )
@@ -163,11 +163,14 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-1 sticky top-0 bg-white py-2 text-lg font-semibold">
-        Product Detail<span className="pl-1 text-red-400 text-2xl">*</span>
+        Product Details
       </h1>
+      <div className="italic underline text-[12px] font-semibold text-[#626973] py-2">
+        <p>(No Brocheure Allowed. Kindly list all the products one by one in the section)</p>
+      </div>
       <div className="grid grid-cols-3 gap-4 p-1">
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
             Product Manufactured <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
@@ -176,12 +179,12 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
               singleRow?.material_name ?? ""
             }
             onChange={(e) => {
-              SetSingleRow((prev:any)=>({...prev,material_name:e.target.value}));
+              SetSingleRow((prev: any) => ({ ...prev, material_name: e.target.value }));
             }}
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
             HSN/SAC Code <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
@@ -190,26 +193,12 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
               singleRow?.hsnsac_code ?? ""
             }
             onChange={(e) => {
-              SetSingleRow((prev:any)=>({...prev,hsnsac_code:e.target.value}))
+              SetSingleRow((prev: any) => ({ ...prev, hsnsac_code: e.target.value }))
             }}
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Annual Capacity <span className="pl-1 text-red-400 text-xl">*</span>
-          </h1>
-          <Input
-            placeholder=""
-            value={
-              singleRow?.annual_capacity ?? ""
-            }
-            onChange={(e) => {
-              SetSingleRow((prev:any)=>({...prev,annual_capacity:e.target.value}))
-            }}
-          />
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
             Product Description <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           {/* <Input
@@ -223,23 +212,38 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
           /> */}
 
           <textarea
-              className="col-span-2 w-full border rounded-lg p-2"
-              placeholder=""
-               value={
+            className="col-span-2 w-full border rounded-lg p-2"
+            placeholder=""
+            value={
               singleRow?.material_description ?? ""
             }
-               onChange={(e) => {
-              SetSingleRow((prev:any)=>({...prev,material_description:e.target.value}))
+            onChange={(e) => {
+              SetSingleRow((prev: any) => ({ ...prev, material_description: e.target.value }))
             }}
-            />
+          />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Annual Capacity <span className="pl-1 text-red-400 text-xl">*</span>
+          </h1>
+          <Input
+            placeholder=""
+            value={
+              singleRow?.annual_capacity ?? ""
+            }
+            onChange={(e) => {
+              SetSingleRow((prev: any) => ({ ...prev, annual_capacity: e.target.value }))
+            }}
+          />
+        </div>
+
+        <div className="col-span-1">
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
             Upload manufactured product image <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <div className="flex gap-4">
             <Input
-            ref={uploadProductImageRef}
+              ref={uploadProductImageRef}
               placeholder=""
               type="file"
               onChange={(e) => {
@@ -264,7 +268,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
         <div className="shadow- bg-[#f6f6f7] p-4 mb-4 mt-4 rounded-2xl">
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
-              Multiple Product List Detail
+              Product Details List
             </h1>
           </div>
           <div className="col-span-3 mt-4">
@@ -292,7 +296,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
                       <Link href={material?.material_images?.url} target="blank">{material?.material_images?.file_name ?? "-"}</Link>
                     </TableCell>
                     <TableCell className="flex justify-center">
-                      <Trash2 className="text-red-400 hover:cursor-pointer" onClick={()=>{handleDelete(material?.idx)}}>
+                      <Trash2 className="text-red-400 hover:cursor-pointer" onClick={() => { handleDelete(material?.idx) }}>
                         Delete
                       </Trash2>
                     </TableCell>
@@ -303,7 +307,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
           </div>
         </div>
       )}
-      
+
       {/* <div className={`flex justify-end pb-2`}>
         <Button
           className="py-2"
@@ -321,7 +325,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
           Back
         </Button>
 
-        <Button  variant="nextbtn" size="nextbtnsize" onClick={()=>{handleNext()}}>
+        <Button variant="nextbtn" size="nextbtnsize" onClick={() => { handleNext() }}>
           Next
         </Button>
       </div>

@@ -324,11 +324,11 @@ const CompanyAddress = ({
       <h1 className="border-b-2 pb-1 sticky top-0 bg-white py-2 text-lg font font-semibold z-50">
         Company Address
       </h1>
-      <h1 className="pt-1 font-semibold">Office Address:</h1>
+      <h1 className="pt-1 font-semibold">Office Address</h1>
       <div className="grid grid-cols-4 gap-4">
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Address 1<span className="pl-1 text-red-400 text-xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Address Line 1<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             maxLength={40}
@@ -341,8 +341,8 @@ const CompanyAddress = ({
           {errors?.address_line_1 && !billingAddress?.address_line_1 && <span style={{ color: 'red' }}>{errors?.address_line_1}</span>}
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Address 2<span className="pl-1 text-red-400 text-xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Address Line 2<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             maxLength={40}
@@ -356,7 +356,7 @@ const CompanyAddress = ({
           {errors?.address_line_2 && !billingAddress?.address_line_2 && <span style={{ color: 'red' }}>{errors?.address_line_2}</span>}
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
             Pincode/Zipcode<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
@@ -378,7 +378,7 @@ const CompanyAddress = ({
         </div>
 
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
             District<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
@@ -391,7 +391,7 @@ const CompanyAddress = ({
         </div>
         <div className="grid grid-cols-3 col-span-4 gap-4">
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               City<span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
@@ -402,7 +402,7 @@ const CompanyAddress = ({
             />
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               State<span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
@@ -413,7 +413,7 @@ const CompanyAddress = ({
             />
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Country<span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
@@ -426,7 +426,7 @@ const CompanyAddress = ({
         </div>
       </div>
       <div className="flex justify-start gap-6 items-center">
-        <h1 className="pt-4 font-semibold">Manufacturing Address:</h1>
+        <h1 className="pt-4 font-semibold">Manufacturing Address</h1>
         <div className="flex items-center gap-1 pt-4">
           <Input
             type="checkbox"
@@ -444,7 +444,7 @@ const CompanyAddress = ({
       <div className={`grid grid-cols-4 gap-4 p-1 ${isShippingSame ? "hidden" : ""}`}>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Address 1
+            Address Line 1
           </h1>
           <Input
             maxLength={40}
@@ -461,7 +461,7 @@ const CompanyAddress = ({
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Address 2
+            Address Line 2
           </h1>
           <Input
             maxLength={40}
@@ -552,10 +552,10 @@ const CompanyAddress = ({
       </div>
       {isMultipleLocation && (
         <>
-          <div className="grid grid-cols-4 gap-6 p-5">
+          <div className="grid grid-cols-4 gap-6 p-2">
             <div className="col-span-2">
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                Address 1
+                Address Line 1
               </h1>
               <Input
                 maxLength={40}
@@ -570,7 +570,7 @@ const CompanyAddress = ({
             </div>
             <div className="col-span-2">
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                Address 2
+                Address Line 2
               </h1>
               <Input
                 maxLength={40}
@@ -633,7 +633,9 @@ const CompanyAddress = ({
               </div>
               <div className={``}>
                 <Button
-                  className="bg-blue-400 hover:bg-blue-400 rounded-3xl"
+                  className="py-2"
+                  variant={"nextbtn"}
+                  size={"nextbtnsize"}
                   onClick={() => {
                     handleMultipleAdd();
                   }}
@@ -649,7 +651,7 @@ const CompanyAddress = ({
           <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
             <div className="flex w-full justify-between pb-4">
               <h1 className="text-[20px] text-[#03111F] font-semibold">
-                Multiple Locations
+                Multiple Locations List
               </h1>
             </div>
             <Table>
@@ -657,8 +659,8 @@ const CompanyAddress = ({
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                   <TableHead className="text-center text-black">Sr No.</TableHead>
-                  <TableHead className="text-center text-black">Address1</TableHead>
-                  <TableHead className="text-center text-black">Address2</TableHead>
+                  <TableHead className="text-center text-black">Address Line 1</TableHead>
+                  <TableHead className="text-center text-black">Address Line 2</TableHead>
                   <TableHead className="text-center text-black">Pincode</TableHead>
                   <TableHead className="text-center text-black">District</TableHead>
                   <TableHead className="text-center text-black">City</TableHead>
@@ -689,9 +691,9 @@ const CompanyAddress = ({
         </>
       )}
 
-      <div className="flex flex-col gap-2 justify-center pl-1 pt-2">
+      <div className="flex flex-col gap-2 justify-center pl-1 pt-3">
         {/* <h1 className="font-medium">Main Office Address Proof</h1> */}
-        <h1 className="text-[14px] font-medium">
+        <h1 className="text-[14px] font-semibold">
           Upload Main Office Address Proof (Light Bill, Telephone Bill, etc.)
         </h1>
         {/* <Input type="file" className="w-fit" onChange={(e) => { setFile(e.target.files) }} />
@@ -704,7 +706,7 @@ const CompanyAddress = ({
             <X className="cursor-pointer" onClick={() => { setIsFilePreview((prev) => !prev) }} />
           </div>
         } */}
-        <div className="mt-4">
+        <div>
           <label
             htmlFor="file-upload"
             className="flex items-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-colors w-fit"

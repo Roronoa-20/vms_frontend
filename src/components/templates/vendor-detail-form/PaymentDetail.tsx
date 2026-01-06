@@ -166,8 +166,8 @@ const PaymentDetail = ({
       </h1>
       <div className="grid grid-cols-3 gap-4 p-1">
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Bank Name<span className="pl-1 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Bank Name<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Select
             value={
@@ -195,8 +195,8 @@ const PaymentDetail = ({
           )}
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            IFSC Code<span className="pl-1 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            IFSC Code<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -212,8 +212,8 @@ const PaymentDetail = ({
           )}
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Account Number<span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Account Number<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -232,9 +232,9 @@ const PaymentDetail = ({
           )}
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
             Name of Account Holder
-            <span className="pl-1 text-red-400 text-2xl">*</span>
+            <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -256,9 +256,9 @@ const PaymentDetail = ({
         </div>
 
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
             Type of Account
-            <span className="pl-1 text-red-400 text-2xl">*</span>
+            <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Select
             value={
@@ -285,9 +285,9 @@ const PaymentDetail = ({
           )}
         </div>
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
             Currency
-            <span className="pl-1 text-red-400 text-2xl">*</span>
+            <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Select
             value={paymentDetail?.currency ?? OnboardingDetail?.currency ?? ""}
@@ -310,9 +310,9 @@ const PaymentDetail = ({
           </Select>
         </div>
         <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
             Bank Proof (Upload Passbook Leaf/Cancelled Cheque)
-            <span className="pl-1 text-red-400 text-2xl">*</span>
+            <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <div className="flex gap-4">
             <Input
