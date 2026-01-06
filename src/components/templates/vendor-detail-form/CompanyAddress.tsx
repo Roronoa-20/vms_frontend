@@ -328,7 +328,7 @@ const CompanyAddress = ({
       <div className="grid grid-cols-4 gap-4">
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Address 1<span className="pl-1 text-red-400 text-2xl">*</span>
+            Address 1<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             maxLength={40}
@@ -342,7 +342,7 @@ const CompanyAddress = ({
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Address 2<span className="pl-1 text-red-400 text-2xl">*</span>
+            Address 2<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             maxLength={40}
@@ -357,7 +357,7 @@ const CompanyAddress = ({
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Pincode/Zipcode<span className="pl-1 text-red-400 text-2xl">*</span>
+            Pincode/Zipcode<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -379,7 +379,7 @@ const CompanyAddress = ({
 
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            District<span className="pl-1 text-red-400 text-2xl">*</span>
+            District<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -392,7 +392,7 @@ const CompanyAddress = ({
         <div className="grid grid-cols-3 col-span-4 gap-4">
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              City<span className="pl-1 text-red-400 text-2xl">*</span>
+              City<span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
               placeholder=""
@@ -403,7 +403,7 @@ const CompanyAddress = ({
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              State<span className="pl-1 text-red-400 text-2xl">*</span>
+              State<span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
               placeholder=""
@@ -414,7 +414,7 @@ const CompanyAddress = ({
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Country<span className="pl-1 text-red-400 text-2xl">*</span>
+              Country<span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
               placeholder=""

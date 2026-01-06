@@ -22,6 +22,8 @@ const Navbar = () => {
   const bellRef = useRef<HTMLDivElement | null>(null);
   const logoLetter = name?.charAt(0).toUpperCase();
   const pathname = usePathname();
+  console.log("Navbar rendered with pathname:", role);
+  console.log("Navbar rendered with designation:", designation);
 
   useEffect(() => {
     const storedVendorName = localStorage.getItem("vendor_name");
@@ -97,6 +99,15 @@ const Navbar = () => {
     heading += ` of ${vendorName}`;
   }
 
+  const displayedDesignation = (() => {
+    if (!role || role.length === 0) return designation || "";
+    const rolesToShow = [designation];
+    if (role.includes("Material CP") && designation !== "Material CP") {
+      rolesToShow.push("Material CP");
+    }
+    return rolesToShow.join(",");
+  })();
+
   return (
     <div className="bg-white w-full shadow-sm flex justify-between p-2 items-center sticky top-0 z-50 border-b border-slate-300">
       <div className="flex items-center gap-2">
@@ -150,18 +161,6 @@ const Navbar = () => {
               >
                 {totalCount}
               </span>
-
-              {/* Tooltip */}
-              {/* <div
-                className="absolute -top-8 right-0 opacity-0 group-hover:opacity-100 transition-opacity 
-             bg-black text-white text-[10px] rounded px-2 py-1 whitespace-nowrap"
-              >
-                {unreadCount > 0
-                  ? `${unreadCount} unread of ${totalCount}`
-                  : totalCount > 0
-                    ? "All caught up 🎉"
-                    : "No notifications"}
-              </div> */}
             </div>
           )}
         </div>
@@ -180,7 +179,7 @@ const Navbar = () => {
         {/* User Info */}
         <div className="flex flex-col justify-center items-end">
           <h1 className="text-[16px] font-semibold">{name}</h1>
-          <h1 className="text-gray-500 text-[15px]">{designation}</h1>
+          <h1 className="text-gray-500 text-[15px]">{displayedDesignation}</h1>
         </div>
 
         {/* Profile Icon */}

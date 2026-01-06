@@ -212,7 +212,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Size of Company <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
@@ -243,7 +243,7 @@ const CompanyDetailForm = ({
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] flex pb-2">
-              Reg No. <span className="pl-1 text-red-400 text-xl">*</span>
+              Reg No.
             </h1>
             <Input
               placeholder="Enter Reg No."
@@ -263,7 +263,7 @@ const CompanyDetailForm = ({
               )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Mobile Number <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
@@ -279,7 +279,7 @@ const CompanyDetailForm = ({
             />
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               WhatsApp Number (If applicable) <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
@@ -296,7 +296,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Established Year <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
@@ -314,7 +314,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Office Email Primary <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
@@ -333,7 +333,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Office Email (Secondary) <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
@@ -390,7 +390,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Nature of Company(Please select anyone) <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Select
@@ -422,7 +422,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Nature of Business (Please Select anyone) <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Select
@@ -453,7 +453,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Meril Associated Companies <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             {ismulticompany ? (
@@ -474,7 +474,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Vendor Type <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <textarea
