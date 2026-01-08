@@ -138,9 +138,9 @@ const ViewOnboardingDetails = async ({ vendor_onboarding, tabtype, refno, compan
             : tabType == "Company Address" ? (
               <CompanyAddress isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} companyAddressDropdown={companyAddressDropdown} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.company_address_tab as VendorOnboardingResponse["message"]["company_address_tab"]} re_release={OnboardingDetail?.validation_check?.re_release as number} />
             )
-              // : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
-              //   <InternationalDocumentDetails isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab as VendorOnboardingResponse["message"]["document_details_tab"]} documentDetailDropdown={documentDetailDropdown} re_release={OnboardingDetail?.validation_check?.re_release as number} />
-              // )
+              : tabType == "Document Detail" && OnboardingDetail?.payment_details_tab?.address?.country != "India" ? (
+                <InternationalDocumentDetails isAmendment={OnboardingDetail?.validation_check?.is_amendment as number} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab as VendorOnboardingResponse["message"]["document_details_tab"]} documentDetailDropdown={documentDetailDropdown} re_release={OnboardingDetail?.validation_check?.re_release as number} />
+              )
                 : tabType == "Document Detail" ? (
                   <DocumentDetails isAmendment={(OnboardingDetail?.validation_check?.is_amendment == 1 ? 1 : 0) as number} ref_no={refno} onboarding_ref_no={vendorOnboardingRefno} OnboardingDetail={OnboardingDetail?.document_details_tab as VendorOnboardingResponse["message"]["document_details_tab"]} documentDetailDropdown={documentDetailDropdown} re_release={OnboardingDetail?.validation_check?.re_release as number} />
                 )
