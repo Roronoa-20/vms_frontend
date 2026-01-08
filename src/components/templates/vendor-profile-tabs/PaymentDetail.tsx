@@ -34,30 +34,17 @@ interface Props {
   onBackTab?: () => void;
 }
 
-const PaymentDetail = ({
-  ref_no,
-  onboarding_ref_no,
-  OnboardingDetail,
-  company_name,
-}: Props) => {
+const PaymentDetail = ({ref_no, onboarding_ref_no, OnboardingDetail, company_name, onNextTab, onBackTab}: Props) => {
   const { paymentDetail, updatePaymentDetail } = usePaymentDetailStore();
   const [bankProofFile, setBankProofFile] = useState<FileList | null>(null);
   const [isBankFilePreview, setIsBankFilePreview] = useState<boolean>(true);
-  const [isPurchaseBankFilePreview, setPurchaseIsBankFilePreview] =
-    useState<boolean>(true);
-  const [bankNameDropown, setBankNameDropown] = useState<
-    TbankNameDropdown["message"]["data"]
-  >([]);
-  const [currencyDropdown, setCurrencyDropdown] = useState<
-    TCurrencyDropdown["message"]["data"]
-  >([]);
+  const [isPurchaseBankFilePreview, setPurchaseIsBankFilePreview] = useState<boolean>(true);
+  const [bankNameDropown, setBankNameDropown] = useState<TbankNameDropdown["message"]["data"]>([]);
+  const [currencyDropdown, setCurrencyDropdown] = useState<TCurrencyDropdown["message"]["data"]>([]);
   const { designation } = useAuth();
+
   const { setBankProof, bank_proof } = UsePurchaseTeamApprovalStore();
-  // if(!designation){
-  //   return(
-  //     <div>Loading...</div>
-  //   )
-  // }
+ 
   const router = useRouter();
   console.log(OnboardingDetail, "this is country");
   useEffect(() => {
@@ -161,15 +148,14 @@ const PaymentDetail = ({
   console.log(OnboardingDetail?.bank_proof?.file_name, "thiskjdvb");
 
   return (
-    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
+    <div className="flex flex-col bg-white rounded-lg p-4 w-full h-[calc(100vh-120px)] overflow-y-auto">
+      <h1 className="border-b-2 pb-2 sticky top-0 bg-white text-lg">
         Bank Details
       </h1>
-      {/* <h1 className="pl-2 ">Billing Address</h1> */}
-      <div className="grid grid-cols-3 gap-6 p-5">
+      <div className="grid grid-cols-3 gap-6 p-2">
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Bank Name <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-1">
+            Bank Name
           </h1>
           <Select
             value={
@@ -197,8 +183,8 @@ const PaymentDetail = ({
           )}
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            IFSC Code <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-1">
+            IFSC Code
           </h1>
           <Input
             placeholder=""
@@ -214,8 +200,8 @@ const PaymentDetail = ({
           )}
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Account Number <span className="pl-2 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] pb-1">
+            Account Number
           </h1>
           <Input
             placeholder=""
@@ -233,9 +219,9 @@ const PaymentDetail = ({
           )}
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-1">
             Name of Account Holder{" "}
-            <span className="pl-2 text-red-400 text-2xl">*</span>
+          
           </h1>
           <Input
             placeholder=""
@@ -257,9 +243,9 @@ const PaymentDetail = ({
         </div>
 
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-1">
             Type of Account{" "}
-            <span className="pl-2 text-red-400 text-2xl">*</span>
+          
           </h1>
           <Select
             value={
@@ -286,7 +272,7 @@ const PaymentDetail = ({
           )}
         </div>
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-6">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-1">
             Currency
           </h1>
           <Select
@@ -310,9 +296,9 @@ const PaymentDetail = ({
           </Select>
         </div>
         <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-1">
             Bank Proof (Upload Passbook Leaf/Cancelled Cheque){" "}
-            <span className="pl-2 text-red-400 text-2xl">*</span>
+          
           </h1>
           <div className="flex gap-4">
             <Input
@@ -347,33 +333,14 @@ const PaymentDetail = ({
               )}
           </div>
         </div>
-        {/* <div className="flex flex-col">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-            Preferred Transaction:
-          </h1>
-          <div className="flex justify-start gap-3">
-            <div className="flex items-center gap-3">
-              <Input placeholder="" type="checkbox" checked={(paymentDetail?.rtgs ?? OnboardingDetail?.rtgs) == 1} className="w-4" onChange={(e)=>{updatePaymentDetail("rtgs",e.target.checked?1:0)}}/>
-              <h1>RTGS</h1>
-            </div>
-            <div className="flex items-center gap-3">
-              <Input placeholder="" type="checkbox" checked={(paymentDetail?.neft ?? OnboardingDetail?.neft) == 1} className="w-4" onChange={(e)=>{updatePaymentDetail("neft",e.target.checked?1:0)}}/>
-              <h1>NEFT</h1>
-            </div>
-            <div className="flex items-center gap-3">
-              <Input placeholder="" type="checkbox" checked={(paymentDetail?.ift ?? OnboardingDetail?.ift) == 1} className="w-4" onChange={(e)=>{updatePaymentDetail("ift",e.target.checked?1:0)}}/>
-              <h1>IFT</h1>
-            </div>
-          </div>
-        </div> */}
         <div></div>
       </div>
       <div className="flex justify-end items-center space-x-3 mt-3">
-        <Button onClick={handleBack} variant="backbtn" size="backbtnsize">
+        <Button onClick={onBackTab} variant="backbtn" size="backbtnsize">
           Back
         </Button>
 
-        <Button onClick={handleSubmit} variant="nextbtn" size="nextbtnsize">
+        <Button onClick={onNextTab} variant="nextbtn" size="nextbtnsize">
           Next
         </Button>
       </div>

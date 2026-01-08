@@ -157,7 +157,7 @@ export default function Grievance_Mechanism() {
                                 variant="nextbtn"
                                 size="nextbtnsize"
                                 onClick={handleNext}
-                                disabled={!isValid}
+                                // disabled={!isValid}
                             >
                                 Next
                             </Button>

@@ -184,13 +184,14 @@ export default function Labor_Rights_And_Working_Conditions() {
 
                     <YesNoNA
                         name="legal_working_hours"
-                        label="8. Are working hours within the legal limit (9 hours pr day, 48 hours per week)?"
+                        label="8. Are working hours within the legal limit?"
                         helperText="If Yes, provide the policy document where the working hours are specified."
                         value={LaborRightsForm.legal_working_hours}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         disabled={true}
+                        fileRequired={true}
                         required={true}
                         options={["Yes", "No"]}
 

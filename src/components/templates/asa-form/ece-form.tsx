@@ -13,10 +13,7 @@ export default function Energy_Consumption_And_Emission() {
     const router = useRouter();
     const { eceform, updateEceForm, updateEmsForm, refreshFormData, asaFormSubmitData } = useASAForm();
     const isverified = asaFormSubmitData.form_is_submitted || 0;
-    const fileRequiredQuestions = new Set([
-        "energy_consumption_tracking",
-        "pcf_conducted",
-    ]);
+    const fileRequiredQuestions = new Set(["pcf_conducted"]);
     console.log("Energy Consumption and Emission Form Data:", eceform);
 
     const isValid = Object.entries(eceform).every(([key, item]) => {
@@ -136,7 +133,6 @@ export default function Energy_Consumption_And_Emission() {
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
-                        fileRequired={true}
                         disabled={isverified === 1}
                         options={["Yes", "No"]}
                     />
@@ -259,7 +255,7 @@ export default function Energy_Consumption_And_Emission() {
                                 variant="nextbtn"
                                 size="nextbtnsize"
                                 onClick={handleNext}
-                                disabled={!isValid}
+                                // disabled={!isValid}
                             >
                                 Next
                             </Button>

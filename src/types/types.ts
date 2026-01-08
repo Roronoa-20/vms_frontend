@@ -403,6 +403,7 @@ export type ASAForm = {
 
 export type TCompanyDetailForm = {
   ref_no: string,
+  vendor_title: string,
   vendor_onboarding: string,
   type_of_business: string,
   website: string,

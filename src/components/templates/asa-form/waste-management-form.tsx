@@ -15,9 +15,7 @@ export default function Waste_Management() {
     const router = useRouter();
     const { wastemanagementForm, updateWasteManagementForm, updateWcmForm, refreshFormData, asaFormSubmitData } = useASAForm();
     const isverified = asaFormSubmitData.form_is_submitted || 0;
-    const fileRequiredQuestions = new Set([
-        "track_waste_generation", "handover_waste_to_authorized_vendor", "vendor_audits_for_waste_management", "have_epr_for_waste_management"
-    ]);
+    const fileRequiredQuestions = new Set([ "handover_waste_to_authorized_vendor", "vendor_audits_for_waste_management", "have_epr_for_waste_management"]);
 
     const isValid = Object.entries(wastemanagementForm).every(([key,item]) => {
         if (!item.selection) return false;
@@ -138,7 +136,7 @@ export default function Waste_Management() {
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
-                        fileRequired={true}
+                        // fileRequired={true}
                         disabled={isverified === 1}
                         options={["Yes", "No"]}
                     />
@@ -212,7 +210,7 @@ export default function Waste_Management() {
                                 variant="nextbtn"
                                 size="nextbtnsize"
                                 onClick={handleNext}
-                                disabled={!isValid}
+                                // disabled={!isValid}
                             >
                                 Next
                             </Button>

@@ -79,6 +79,8 @@ const DocumentDetails = ({
   onboarding_ref_no,
   OnboardingDetail,
   documentDetailDropdown,
+  onNextTab,
+  onBackTab,
 }: Props) => {
   const [BusinessType, setBusinessType] = useState<string>(
     OnboardingDetail?.gst_table[0]?.gst_ven_type
@@ -97,7 +99,7 @@ const DocumentDetails = ({
   }, []);
 
   interface gstDropdown {
-    states:{
+    states: {
       state_name: string;
       name: string;
       pincode: string;
@@ -430,7 +432,7 @@ const DocumentDetails = ({
     const OnboardingDetail: VendorOnboardingResponse["message"]["document_details_tab"]["gst_table"] =
       fetchOnboardingDetailResponse?.status == 200
         ? fetchOnboardingDetailResponse?.data?.message?.document_details_tab
-            ?.gst_table
+          ?.gst_table
         : "";
     setGSTTable(OnboardingDetail);
   };
@@ -456,17 +458,17 @@ const DocumentDetails = ({
     }
   };
 
-  const validateGSTDate = (date:string)=>{
+  const validateGSTDate = (date: string) => {
     const todayDate = new Date();
     const inputDate = new Date(date);
-    if(inputDate > todayDate){
+    if (inputDate > todayDate) {
       alert("Selected Date Cannot be Greater Than Today's Date");
       return;
-    }else{
+    } else {
       setSingleRow((prev: any) => ({
-                    ...prev,
-                    gst_registration_date: date,
-                  }));
+        ...prev,
+        gst_registration_date: date,
+      }));
     }
   }
 
@@ -753,7 +755,7 @@ const DocumentDetails = ({
                 <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Input
-              
+
                 placeholder="Enter Registration Date"
                 value={singlerow?.gst_registration_date ?? ""}
                 type="date"
@@ -1127,12 +1129,11 @@ const DocumentDetails = ({
             </div>
           </div>
         </div>
-        <div className="flex justify-end items-center space-x-3 mt-3">
-          <Button onClick={handleBack} variant="backbtn" size="backbtnsize">
+        <div className="flex justify-end items-center space-x-3 mt-4">
+          <Button onClick={onBackTab} variant="backbtn" size="backbtnsize">
             Back
           </Button>
-
-          <Button onClick={handleSubmit} variant="nextbtn" size="nextbtnsize">
+          <Button onClick={onNextTab} variant="nextbtn" size="nextbtnsize">
             Next
           </Button>
         </div>
