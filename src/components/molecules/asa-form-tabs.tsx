@@ -6,6 +6,7 @@ import { ASAFormTabs } from '@/src/constants/asaformtabs';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useAuth } from '@/src/context/AuthContext';
 import { useASAForm } from "@/src/hooks/useASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
 
 
 export default function ASAFormTab() {
@@ -19,6 +20,7 @@ export default function ASAFormTab() {
 
   const isVendor = designation?.toLowerCase() === "vendor";
   const { asaFormSubmitData } = useASAForm();
+  const { formProgress } = useASAFormContext();
   const isverified = asaFormSubmitData.form_is_submitted || 0;
   const isVendorLocked = isVendor && isverified === 0;
 
@@ -47,6 +49,7 @@ export default function ASAFormTab() {
     const basePath = pathname === '/view-asa-form' ? '/view-asa-form' : '/asa-form';
     router.push(`${basePath}?tabtype=${encodeURIComponent(tab)}&vms_ref_no=${vmsRefNo}`);
   };
+  console.log("Sidebar progress:", formProgress);
 
   return (
     <div className="p-3 flex flex-col bg-white rounded-xl gap-3">
@@ -68,7 +71,17 @@ export default function ASAFormTab() {
                 }
               }}
             >
-              <span>{tab.label}</span>
+              {/* <span>{tab.label}</span> */}
+              <div className="flex items-center justify-between w-full">
+                <span>{tab.label}</span>
+
+                {formProgress?.[tab.key as keyof typeof formProgress] !== undefined && (
+                  <span className="text-xs font-semibold bg-red-800 px-2 py-0.5 rounded">
+                    {formProgress[tab.key as keyof typeof formProgress]}%
+                  </span>
+                )}
+              </div>
+
               {!isGovernance &&
                 (isOpen ? <ChevronDown size={18} /> : <ChevronRight size={18} />)}
             </div>

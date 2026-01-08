@@ -101,7 +101,7 @@ export default function BiodiversityForm() {
                 className="py-2.5"
                 variant="nextbtn"
                 size="nextbtnsize"
-                disabled={!isValid}
+                // disabled={!isValid}
                 onClick={handleSubmit}
               >
                 Submit & Next

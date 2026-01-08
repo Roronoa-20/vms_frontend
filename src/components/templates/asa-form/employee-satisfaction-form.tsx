@@ -101,7 +101,7 @@ export default function Employee_Satisfaction() {
                                 variant="nextbtn"
                                 size="nextbtnsize"
                                 onClick={handleSubmit}
-                                disabled={!isValid}
+                                // disabled={!isValid}
                             >
                                 Submit & Next
                             </Button>

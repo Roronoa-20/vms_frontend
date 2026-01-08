@@ -156,7 +156,7 @@ export default function Green_Products() {
                                 className="py-2.5"
                                 variant="nextbtn"
                                 size="nextbtnsize"
-                                disabled={!isValid}
+                                // disabled={!isValid}
                                 onClick={handleNext}
                             >
                                 Next
