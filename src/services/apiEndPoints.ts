@@ -366,7 +366,10 @@ const API_END_POINTS = {
   GRwaiverDashboardTable: `${url}/api/method/vms.APIs.gr_waiver.get_gr_waiver.get_gr_waiver_list`,
   fetchGRWaiverDetails: `${url}/api/method/vms.APIs.gr_waiver.get_gr_waiver.get_gr_waiver_details`,
 
-  alreadyOnboardedVendorDialogSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.update_vendors_gst_email.update_vendor_gst_email`
+  alreadyOnboardedVendorDialogSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.update_vendors_gst_email.update_vendor_gst_email`,
+
+  uploadPoDocument:`${url}/api/method/vms.APIs.purchase_api.purchase_order.attach_purchase_order_details`,
+  deletePoDocument:`${url}/api/method/vms.APIs.purchase_api.purchase_order.remove_purchase_order_details_attachment`
 
 }
 
