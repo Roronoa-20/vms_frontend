@@ -235,7 +235,7 @@ export default function Water_Consumption_And_Management() {
                                 variant="nextbtn"
                                 size="nextbtnsize"
                                 onClick={handleNext}
-                                disabled={!isValid}
+                                // disabled={!isValid}
                             >
                                 Next
                             </Button>

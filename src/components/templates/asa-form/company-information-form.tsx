@@ -108,7 +108,7 @@ export default function Company_Information_Form() {
                             variant="nextbtn"
                             size="nextbtnsize"
                             onClick={handleNext}
-                            disabled={!isFormValid}
+                            // disabled={!isFormValid}
                         >
                             Next
                         </Button>

@@ -75,7 +75,7 @@ export default function General_Disclosure_Form() {
                     <YesNoNA
                         name="valid_consent_from_pollution_control"
                         label="1. Does the company hold valid Consent to Operate (CTO) from the Pollution Control Board? If yes, provide the expiry date of the Consent."
-                        helperText="Please specify the expiry date of the Consent to Operate and attach the copy of the consent."
+                        helperText="If Yes, Please specify the expiry date of the Consent to Operate and attach the copy of the consent."
                         value={generalDisclosure.valid_consent_from_pollution_control}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
@@ -126,7 +126,7 @@ export default function General_Disclosure_Form() {
                                 variant="nextbtn"
                                 size="nextbtnsize"
                                 onClick={handleSubmit}
-                                disabled={!isValid}
+                                // disabled={!isValid}
                             >
                                 Submit & Next
                             </Button>

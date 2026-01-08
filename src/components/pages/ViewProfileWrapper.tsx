@@ -15,19 +15,20 @@ const ViewProfileWrapper = () => {
   const { user_email } = useAuth();
   const pathname = usePathname();
 
+  // Reset on path change
   useEffect(() => {
     localStorage.clear();
     setSelectedCompany(null);
     setVendorOnboardingId(null);
   }, [pathname]);
 
+  // Load selected company from localStorage
   useEffect(() => {
     const storedCompany = localStorage.getItem("selectedCompany");
-    if (storedCompany) {
-      setSelectedCompany(JSON.parse(storedCompany));
-    }
+    if (storedCompany) setSelectedCompany(JSON.parse(storedCompany));
   }, []);
 
+  // Fetch companies
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
@@ -40,6 +41,7 @@ const ViewProfileWrapper = () => {
           const data = res.message.data;
           setCompanies(data);
 
+          // Auto-select if only one
           if (data.length === 1 && !selectedCompany) {
             setSelectedCompany(data[0]);
             localStorage.setItem("selectedCompany", JSON.stringify(data[0]));
@@ -52,11 +54,10 @@ const ViewProfileWrapper = () => {
       }
     };
 
-    if (user_email) {
-      fetchCompanies();
-    }
+    if (user_email) fetchCompanies();
   }, [user_email]);
 
+  // Fetch onboarding ID
   useEffect(() => {
     const fetchOnboardingId = async () => {
       if (!selectedCompany) return;
@@ -69,12 +70,7 @@ const ViewProfileWrapper = () => {
 
         const data = response?.data?.message?.data || [];
         const approved = data.find((item: any) => item.onboarding_form_status === "Approved");
-
-        if (approved) {
-          setVendorOnboardingId(approved.name);
-        } else {
-          setVendorOnboardingId(null);
-        }
+        setVendorOnboardingId(approved ? approved.name : null);
       } catch (err) {
         console.error("Error fetching onboarding ID", err);
       }
@@ -94,6 +90,7 @@ const ViewProfileWrapper = () => {
     setVendorOnboardingId(null);
   };
 
+  // Loading
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200">
@@ -102,45 +99,41 @@ const ViewProfileWrapper = () => {
     );
   }
 
+  // Company selection modal
   if (!selectedCompany) {
     return (
-      <div className="relative h-screen">
-        {/* Glassy Backdrop */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 to-gray-900/70 backdrop-blur-xl z-10" />
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div
+          className="bg-white rounded-3xl shadow-2xl p-8 sm:p-10 w-11/12 max-w-4xl max-h-[80vh] overflow-y-auto
+                     flex flex-col items-center animate-[fadeUp_0.6s_ease-out_forwards]"
+        >
+          <h2 className="text-3xl font-extrabold text-gray-800 mb-4 text-center">
+            Welcome Vendor
+          </h2>
+          <p className="text-gray-600 mb-6 text-center">
+            Please select your registered company to continue
+          </p>
 
-        {/* Modal */}
-        <div className="absolute inset-0 flex items-center justify-center z-50">
-          <div
-            className="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-10 w-[420px] border border-gray-100 text-center
-                     opacity-0 translate-y-6 animate-[fadeUp_0.6s_ease-out_forwards]"
-          >
-            <h2 className="text-3xl font-extrabold text-gray-800 mb-6">
-              Welcome Vendor
-            </h2>
-            <p className="text-gray-600 mb-8 text-sm">
-              Please select your registered company to continue
-            </p>
-
-            <ul className="space-y-4">
-              {companies.map((company) => (
-                <li key={company.name}>
-                  <button
-                    onClick={() => handleCompanySelect(company)}
-                    className="w-full px-6 py-4 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-600 
-                             text-white font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 
-                             transition-all duration-200"
-                  >
-                    {company.company_master_data.company_name}
-                  </button>
-                </li>
-              ))}
-            </ul>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
+            {companies.map((company) => (
+              <button
+                key={company.name}
+                onClick={() => handleCompanySelect(company)}
+                className="w-full h-24 bg-gradient-to-r from-blue-500 to-indigo-600
+                           text-white font-semibold rounded-2xl shadow-lg
+                           hover:shadow-xl transform hover:scale-105
+                           transition-all duration-200 flex items-center justify-center text-center p-4"
+              >
+                {company.company_master_data.company_name}
+              </button>
+            ))}
           </div>
         </div>
       </div>
     );
   }
 
+  // No approved onboarding
   if (!vendorOnboardingId) {
     return (
       <div className="h-screen flex items-center justify-center text-red-600 font-semibold text-lg">
@@ -149,6 +142,7 @@ const ViewProfileWrapper = () => {
     );
   }
 
+  // Render profile
   return (
     <ViewProfile
       vendor_onboarding={vendorOnboardingId}

@@ -193,7 +193,7 @@ export default function Environmental_Management_System() {
               variant="nextbtn"
               size="nextbtnsize"
               onClick={handleNext}
-              disabled={!isValid}
+              // disabled={!isValid}
             >
               Next
             </Button>

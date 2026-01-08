@@ -13,7 +13,7 @@ export default function Labor_Rights_And_Working_Conditions() {
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
     const { LaborRightsForm, updateLaborRightsForm, refreshFormData, asaFormSubmitData } = useASAForm();
     const isverified = asaFormSubmitData.form_is_submitted || 0;
-    const fileRequiredQuestions = new Set(["have_prohibition_policy_of_child_labor", "have_non_discrimination_policy", "has_diversity_inclusion_policy"]);
+    const fileRequiredQuestions = new Set(["have_prohibition_policy_of_child_labor", "have_non_discrimination_policy", "has_diversity_inclusion_policy","legal_working_hours"]);
 
     console.log("General Disclosure Form Data:", LaborRightsForm);
 
@@ -218,13 +218,14 @@ export default function Labor_Rights_And_Working_Conditions() {
 
                     <YesNoNA
                         name="legal_working_hours"
-                        label="8. Are working hours within the legal limit (9 hours pr day, 48 hours per week)?"
+                        label="8. Are working hours within the legal limit"
                         helperText="If Yes, provide the policy document where the working hours are specified."
                         value={LaborRightsForm.legal_working_hours}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
+                        fileRequired={true}
                         disabled={isverified === 1}
                         options={["Yes", "No"]}
                     />
@@ -284,7 +285,7 @@ export default function Labor_Rights_And_Working_Conditions() {
                                 variant="nextbtn"
                                 size="nextbtnsize"
                                 onClick={handleNext}
-                                disabled={!isValid}
+                                // disabled={!isValid}
                             >
                                 Next
                             </Button>
