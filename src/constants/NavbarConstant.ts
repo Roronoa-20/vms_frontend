@@ -52,5 +52,6 @@ export const NavbarConstant:Record<string,string> = {
     "/category-master-dashboard" : "Dashboard",
     "/view-quality-agreement" : "Quality Agreement",
     "/view-asl": "Approved Supplier List",
-    "/sap-material-code-list": "SAP Material Code List"
+    "/sap-material-code-list": "SAP Material Code List",
+    "/view-po-details":"View PO Details"
 }

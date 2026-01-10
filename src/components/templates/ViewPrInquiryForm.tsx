@@ -74,7 +74,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
   }, [])
 
   useEffect(() => {
-    const needsAsset = tableData?.some(item => item?.need_asset_code && !item?.assest_code);
+    const needsAsset = tableData?.some(item => item?.need_asset_code && !item?.asset_code);
 
     if (acknowledgeButtonRef.current) {
       acknowledgeButtonRef.current.disabled = needsAsset;
@@ -466,7 +466,7 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
                 <TableHead className="w-[100px] text-center">Sr No.</TableHead>
                 <TableHead className="text-center">Is Assest Code ?</TableHead>
-                <TableHead className="text-center">Assest Code</TableHead>
+                <TableHead className="text-center">Asset Code</TableHead>
                 <TableHead className="text-center">Product Name</TableHead>
                 <TableHead className="text-center">Product Price</TableHead>
                 <TableHead className="text-center">UOM</TableHead>
@@ -483,11 +483,11 @@ const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purcha
                   <TableCell className="font-medium">{index + 1}</TableCell>
                   <TableCell className={`flex justify-center text-nowrap`}><Input type='checkbox' onChange={(e) => { handleTableCheckChange(index, e.target.checked) }} disabled={
                     designation === "Enquirer" ||
-                    item?.assest_code !== "" ||
+                    item?.asset_code !== "" ||
                     PRInquiryData?.purchase_team_acknowledgement === 1 ||
                     PRInquiryData?.asked_to_modify === 1
                   } checked={item?.need_asset_code} className='w-5' /></TableCell>
-                  <TableCell className='text-center text-nowrap'>{item?.assest_code}</TableCell>
+                  <TableCell className='text-center text-nowrap'>{item?.asset_code}</TableCell>
                   <TableCell className='text-nowrap'>
                     {/* {item?.product_name} */}
                     <Select

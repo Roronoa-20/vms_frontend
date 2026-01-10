@@ -27,7 +27,7 @@ interface Props {
 
 export type TableData = {
       need_asset_code: boolean,
-      assest_code:string,
+      asset_code:string,
       product_name:string,
       product_price:string,
       uom:string,
