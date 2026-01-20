@@ -109,7 +109,7 @@ const LogisticsExportQuatationFormFields = ({
     <div className="col-span-1">
       <h1 className="text-[12px] font-normal text-[#626973] pb-3">{label}</h1>
       <Select
-        value={formData[name as keyof QuotationDetail] as string  || ''}
+        value={formData[name as keyof QuotationDetail] as string}
         onValueChange={(value) => handleSelectChange(value, name)}
         disabled={isDisabled}
       >
@@ -118,11 +118,12 @@ const LogisticsExportQuatationFormFields = ({
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {options?.map((item, idx) => (
-              <SelectItem key={idx} value={getValue(item)}>
-                {getLabel(item)}
-              </SelectItem>
-            ))}
+            {options?.filter(item => getValue(item)?.trim() !== "")
+              .map((item, idx) => (
+                <SelectItem key={idx} value={getValue(item)}>
+                  {getLabel(item)}
+                </SelectItem>
+              ))}
           </SelectGroup>
         </SelectContent>
       </Select>
@@ -135,8 +136,8 @@ const LogisticsExportQuatationFormFields = ({
         "mode_of_shipment",
         "Mode of Shipment",
         Dropdown?.mode_of_shipment,
-        (item) => item.name,
-        (item) => `${item.name}`
+        (item) => item?.name,
+        (item) => `${item?.name}`
       )}
       {renderInput("airlinevessel_name", "Airline/Vessel Name")}
       {renderInput("chargeable_weight", "Chargeable Weight")}

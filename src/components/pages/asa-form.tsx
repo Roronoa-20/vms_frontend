@@ -18,6 +18,8 @@ import EmployeeWellbeingForm from '@/src/components/templates/asa-form/employee-
 import HealthSafetyForm from '@/src/components/templates/asa-form/health-safety-form';
 import EmployeeSatisfactionForm from '@/src/components/templates/asa-form/employee-satisfaction-form';
 import GovernanceForm from '@/src/components/templates/asa-form/governance-form';
+import { ASAFormProvider } from "@/src/context/ASAFormContext";
+
 
 
 export default function ASAForm() {
@@ -64,17 +66,19 @@ export default function ASAForm() {
     };
 
     return (
-        <div className="flex flex-col bg-gray-200">
-            <div className="min-h-screen flex px-2 gap-4 py-2">
-                <div className="w-1/4 border-r border-gray-400 pr-3">
-                    <div className="sticky top-[75px] overflow-y-auto no-scrollbar">
-                        <ASAFormTab />
+        <ASAFormProvider>
+            <div className="flex flex-col bg-gray-200">
+                <div className="min-h-screen flex px-2 gap-4 py-2">
+                    <div className="w-1/4 border-r border-gray-400 pr-3">
+                        <div className="sticky top-[75px] overflow-y-auto no-scrollbar">
+                            <ASAFormTab />
+                        </div>
+                    </div>
+                    <div className="w-3/4">
+                        {renderFormComponent()}
                     </div>
                 </div>
-                <div className="w-3/4">
-                    {renderFormComponent()}
-                </div>
             </div>
-        </div>
+        </ASAFormProvider>
     );
 }

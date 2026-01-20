@@ -492,9 +492,9 @@ const DocumentDetails = ({
       <div className="">
         <div className="grid grid-cols-3 gap-4 p-2">
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Company PAN Number
-              <span className="pl-1 text-red-400 text-2xl">*</span>
+              <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
               placeholder="Enter Company Pan Number"
@@ -518,9 +518,9 @@ const DocumentDetails = ({
               )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Name of Company on PAN Card
-              <span className="pl-1 text-red-400 text-2xl">*</span>
+              <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
               placeholder="Enter Pan Card"
@@ -544,9 +544,9 @@ const DocumentDetails = ({
               )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Upload PAN Document
-              <span className="pl-1 text-red-400 text-2xl">*</span>
+              <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <div className="flex gap-4">
               <Input
@@ -586,9 +586,9 @@ const DocumentDetails = ({
           </div>
           <div className="col-span-3 grid grid-cols-3 gap-4">
             <div className="flex flex-col">
-              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              <h1 className="text-[12px] font-normal text-[#626973] flex">
                 GST Vendor Type
-                <span className="pl-1 text-red-400 text-2xl">*</span>
+                <span className="pl-1 text-red-400 text-xl">*</span>
               </h1>
               <Select
                 // onValueChange={(value) => {
@@ -626,8 +626,8 @@ const DocumentDetails = ({
               )}
             </div>
             <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-                Meril Company<span className="pl-1 text-red-400 text-2xl">*</span>
+              <h1 className="text-[12px] font-normal text-[#626973] flex">
+                Meril Company<span className="pl-1 text-red-400 text-xl">*</span>
               </h1>
               {/* <Select
                 onValueChange={(value) => {
@@ -664,8 +664,8 @@ const DocumentDetails = ({
               )}
             </div>
             <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-                Pincode<span className="pl-1 text-red-400 text-2xl">*</span>
+              <h1 className="text-[12px] font-normal text-[#626973] flex">
+                Pincode<span className="pl-1 text-red-400 text-xl">*</span>
               </h1>
               {/* <Input
                 className="disabled:opacity-100"
@@ -712,8 +712,8 @@ const DocumentDetails = ({
               )}
             </div>
             <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-                GST State<span className="pl-1 text-red-400 text-2xl">*</span>
+              <h1 className="text-[12px] font-normal text-[#626973] flex">
+                GST State<span className="pl-1 text-red-400 text-xl">*</span>
               </h1>
               {/* <Input placeholder="Enter State" value={documentDetails?.gst_state ?? OnboardingDetail?.gst_table[0]?.gst_state} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,gst_state:e.target.value}))}}/> */}
               <Select
@@ -748,8 +748,8 @@ const DocumentDetails = ({
             {singlerow?.gst_ven_type !== "Not-Registered" && (
               <>
                 <div>
-                  <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                    GST Number<span className="pl-1 text-red-400 text-2xl">*</span>
+                  <h1 className="text-[12px] font-normal text-[#626973] flex">
+                    GST Number<span className="pl-1 text-red-400 text-xl">*</span>
                   </h1>
                   <Input
                     placeholder="Enter GST Number"
@@ -772,9 +772,9 @@ const DocumentDetails = ({
                   )}
                 </div>
                 <div>
-                  <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+                  <h1 className="text-[12px] font-normal text-[#626973] flex">
                     GST Registration Date
-                    <span className="pl-1 text-red-400 text-2xl">*</span>
+                    <span className="pl-1 text-red-400 text-xl">*</span>
                   </h1>
                   <Input
 
@@ -799,9 +799,9 @@ const DocumentDetails = ({
                     )}
                 </div>
                 <div>
-                  <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+                  <h1 className="text-[12px] font-normal text-[#626973] flex">
                     Upload GST Document
-                    <span className="pl-1 text-red-400 text-2xl">*</span>
+                    <span className="pl-1 text-red-400 text-xl">*</span>
                   </h1>
                   <div className="flex gap-4">
                     <Input
@@ -849,7 +849,7 @@ const DocumentDetails = ({
             )}
             {/* </div> */}
 
-            <div className="mt-[44px]">
+            <div className="mt-[29px]">
               <Button
                 className="py-2"
                 variant={"nextbtn"}
@@ -869,7 +869,7 @@ const DocumentDetails = ({
           <div className="shadow- bg-[#f6f6f7] p-4 mb-4 mt-2 rounded-2xl">
             <div className="flex w-full justify-between pb-4">
               <h1 className="text-[20px] text-[#03111F] font-semibold">
-                Multiple GST Certificates
+                GST Details List
               </h1>
             </div>
             <Table className=" max-h-40 overflow-y-scroll">
@@ -930,8 +930,8 @@ const DocumentDetails = ({
 
         <div className="grid grid-cols-3 p-2 gap-4">
           <div className="flex flex-col col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-              MSME Registered?<span className="pl-1 text-red-400 text-2xl">*</span>
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
+              MSME Registered?<span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Select
               onValueChange={(value) => {
@@ -957,9 +957,9 @@ const DocumentDetails = ({
           <div
             className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}
           >
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               MSME Enterprise Type
-              <span className="pl-1 text-red-400 text-2xl">*</span>
+              <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Select
               value={
@@ -994,9 +994,9 @@ const DocumentDetails = ({
           <div
             className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}
           >
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Udyam Registration No.
-              <span className="pl-1 text-red-400 text-2xl">*</span>
+              <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
               placeholder=" Enter Udyam Registration No"
@@ -1019,9 +1019,9 @@ const DocumentDetails = ({
           <div
             className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}
           >
-            <h1 className="text-[12px] font-normal text-[#626973] pb-1">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Name of Company in Udyam Certificate
-              <span className="pl-1 text-red-400 text-2xl">*</span>
+              <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
               placeholder=""
@@ -1047,9 +1047,9 @@ const DocumentDetails = ({
           <div
             className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}
           >
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Upload Udyam Certificate
-              <span className="pl-1 text-red-400 text-2xl">*</span>
+              <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <div className="flex gap-4">
               <Input
@@ -1091,9 +1091,9 @@ const DocumentDetails = ({
             </div>
           </div>
           <div className={`flex-col col-span-1`} title="Type NA for if you don't have the Number">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Enterprise Registration Number{" "}
-              <span className="pl-2 text-red-400 text-2xl">*</span>
+              <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
               placeholder="Enter Enterprise Registration Number"
@@ -1117,9 +1117,9 @@ const DocumentDetails = ({
               )}
           </div>
           <div className={`flex flex-col col-span-1`}>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-6">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2.5">
               Upload Enterprise Registration Document
-              <span className="pl-2 text-red-400 text-2xl hidden">*</span>
+              <span className="pl-1 text-red-400 text-xl hidden">*</span>
             </h1>
             <div className="flex gap-4 w-full">
               <Input

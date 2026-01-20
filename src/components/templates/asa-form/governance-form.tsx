@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import YesNoNA from "@/src/components/common/YesNoNAwithFile";
 import { Button } from "@/components/ui/button"
 import { Governance, EmployeeSatisfaction } from "@/src/types/asatypes";
@@ -6,33 +7,55 @@ import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-
-
+import { useASAFormContext } from "@/src/context/ASAFormContext";
 
 export default function GovernanceForm() {
 
    const searchParams = useSearchParams();
    const vmsRefNo = searchParams.get("vms_ref_no") || "";
-   const { governanceform, updateGovernanceForm, submitGoveranceForm, refreshFormData, updateEmpSatisactionForm, asaFormSubmitData } = useASAForm();
+   const { governanceform, updateGovernanceForm, submitGoveranceForm, refreshFormData, updateEmpSatisactionForm, asaFormSubmitData, setFormProgress } = useASAFormContext();
    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-
    const isverified = asaFormSubmitData.form_is_submitted || 0;
+
+   const calculateProgress = () => {
+      const entries = Object.entries(governanceform);
+
+      const completed = entries.filter(([key, item]) => {
+         const typedItem = item as Governance[keyof Governance];
+         if (!typedItem.selection) return false;
+         if (typedItem.selection === "Yes" && !typedItem.comment?.trim()) return false;
+         if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
+         return true;
+      }).length;
+
+      return Math.round((completed / entries.length) * 100);
+   };
+
+   useEffect(() => {
+      const percent = calculateProgress();
+      setFormProgress((prev: any) => ({
+         ...prev,
+         governance: percent,
+      }));
+   }, [governanceform]);
 
    console.log("Governance web Form Data:", governanceform);
 
    const router = useRouter();
-
    const fileRequiredQuestions = new Set([
       "have_formal_governance_structure",
       "esg_policies_coverage",
       "esg_risk_integration",
       "company_publish_sustainability_report",
+      "esg_rating_participated",
+      "esg_incentive_for_employee",
    ]);
 
    const isValid = Object.entries(governanceform).every(([key, item]) => {
-      if (!item.selection) return false;
-      if (item.selection === "Yes" && !item.comment.trim()) return false;
-      if (fileRequiredQuestions.has(key) && item.selection === "Yes" && !item.file) return false;
+      const typedItem = item as Governance[keyof Governance];
+      if (!typedItem.selection) return false;
+      if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
+      if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
       return true;
    });
 
@@ -65,7 +88,6 @@ export default function GovernanceForm() {
          },
       });
    };
-
 
    const handleSubmit = async () => {
       if (!isValid) return;
@@ -122,7 +144,7 @@ export default function GovernanceForm() {
                <YesNoNA
                   name="esg_risk_integration"
                   label="3. Are ESG risks integrated into the company's risk register?"
-                  helperText="If Yes, attach the company ris register or th list of the risks identified."
+                  helperText="If Yes, attach the company risk register or th list of the risks identified."
                   value={governanceform.esg_risk_integration}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
@@ -150,12 +172,13 @@ export default function GovernanceForm() {
                <YesNoNA
                   name="esg_rating_participated"
                   label="5. Have you participated in ESG/Sustainability ratings like DJSI, CDP, MSCI, Ecovadis, etc.? If Yes, provide the scoring/rating achieved."
-                  helperText="If Yes, specify the scoring/ratings received."
+                  helperText="If Yes, specify the scoring/ratings received and upload the relevant documents or the screenshot of the score/ratings."
                   value={governanceform.esg_rating_participated}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                   required={true}
+                  fileRequired={true}
                   options={["Yes", "No"]}
                   disabled={isverified === 1}
                />
@@ -163,12 +186,13 @@ export default function GovernanceForm() {
                <YesNoNA
                   name="esg_incentive_for_employee"
                   label="6. Does the company provide incentives to employees on achieving ESG targets?"
-                  helperText="If yes, provide the details of the incentives provided to the employees."
+                  helperText="If yes, provide the details of the incentives provided to the employees and attach the relevant documents/policy."
                   value={governanceform.esg_incentive_for_employee}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                   required={true}
+                  fileRequired={true}
                   options={["Yes", "No"]}
                   disabled={isverified === 1}
                />
@@ -213,7 +237,7 @@ export default function GovernanceForm() {
                         className="py-2.5"
                         variant="nextbtn"
                         size="nextbtnsize"
-                        disabled={!isValid}
+                        // disabled={!isValid}
                         onClick={handleSubmit}
                      >
                         Submit

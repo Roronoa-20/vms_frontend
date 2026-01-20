@@ -69,7 +69,7 @@ interface multipleAddress {
   state: string
   country: string
   zipcode: string
-  
+
 }
 
 const CompanyAddress = ({
@@ -204,11 +204,11 @@ const CompanyAddress = ({
       <h1 className="border-b-2 pb-1 font-semibold sticky top-0 bg-white py-2 text-lg z-50">
         Company Address
       </h1>
-      <h1 className="pl-1 pt-1">Office Address</h1>
+      <h1 className="pl-1 pt-1 font-semibold">Office Address</h1>
       <div className="grid grid-cols-4 gap-4 p-2">
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Street Line 1<span className="pl-1 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Street Line 1<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             maxLength={40}
@@ -222,8 +222,8 @@ const CompanyAddress = ({
           {errors?.address_line_1 && <span style={{ color: 'red' }}>{errors?.address_line_1}</span>}
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Street Line 2<span className="pl-1 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Street Line 2<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             maxLength={40}
@@ -238,8 +238,8 @@ const CompanyAddress = ({
           {errors?.address_line_2 && <span style={{ color: 'red' }}>{errors?.address_line_2}</span>}
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Pincode/Zipcode<span className="pl-1 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Pincode/Zipcode<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -251,15 +251,15 @@ const CompanyAddress = ({
             value={formdata?.billing_address?.international_zipcode ?? OnboardingDetail?.billing_address?.international_zipcode ?? ""}
           />
           <p className="text-xs text-gray-500 pt-2">
-            Enter the Pincode/Postal Code/ZipCode in the global format for your state or country.<br/>
+            Enter the Pincode/Postal Code/ZipCode in the global format for your state or country.<br />
             <span className="underline text-black font-medium">(For Eg.- Country: <span className="underline text-blue-500 font-medium">Sweden</span>, ZipCode: <span className="underline text-blue-500 font-medium">123 45</span>)</span>
           </p>
           {errors?.international_zipcode && <span style={{ color: 'red' }}>{errors?.international_zipcode}</span>}
         </div>
 
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            City<span className="pl-1 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            City<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -269,8 +269,8 @@ const CompanyAddress = ({
           />
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            State<span className="pl-1 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            State<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -281,8 +281,8 @@ const CompanyAddress = ({
           />
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Country <span className="pl-1 text-red-400 text-2xl">*</span>
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Country <span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input
             placeholder=""
@@ -294,7 +294,7 @@ const CompanyAddress = ({
 
       </div>
       <div className="flex justify-start gap-4 items-center">
-        <h1 className="pl-1 pt-2 font-medium">Manufacturing Address</h1>
+        <h1 className="pl-1 pt-2 font-semibold">Manufacturing Address</h1>
         <div className="flex items-center gap-1 pt-2">
           <Input
             type="checkbox"
@@ -312,7 +312,7 @@ const CompanyAddress = ({
       <div className={`grid grid-cols-4 gap-4 p-2 ${formdata?.same_as_above ? "hidden" : ""}`}>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Address 1
+            Address Line 1
           </h1>
           <Input
             maxLength={40}
@@ -324,13 +324,13 @@ const CompanyAddress = ({
               handleFieldChange(e, "shipping_address");
             }}
           />
-          {errors?.shipping_address_line_1  && !formdata?.shipping_address?.address_line_1 && (
-              <span style={{ color: "red" }}>{errors?.shipping_address_line_1}</span>
-            )}
+          {errors?.shipping_address_line_1 && !formdata?.shipping_address?.address_line_1 && (
+            <span style={{ color: "red" }}>{errors?.shipping_address_line_1}</span>
+          )}
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Address 2
+            Address Line 2
           </h1>
           <Input
             maxLength={40}
@@ -342,8 +342,8 @@ const CompanyAddress = ({
             }}
           />
           {errors?.shipping_address_line_2 && !formdata?.shipping_address?.address_line_2 && (
-              <span style={{ color: "red" }}>{errors?.shipping_address_line_2}</span>
-            )}
+            <span style={{ color: "red" }}>{errors?.shipping_address_line_2}</span>
+          )}
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
@@ -358,8 +358,8 @@ const CompanyAddress = ({
             }}
           />
           {errors?.shipping_pincode && !formdata?.shipping_address?.inter_manufacture_zipcode && (
-              <span style={{ color: "red" }}>{errors?.shipping_pincode}</span>
-            )}
+            <span style={{ color: "red" }}>{errors?.shipping_pincode}</span>
+          )}
         </div>
         <div className="col-span-2">
           <h1 className="text-[12px] font-normal text-[#626973] pb-2">
@@ -413,7 +413,7 @@ const CompanyAddress = ({
           <div className="grid grid-cols-4 gap-4 p-2">
             <div className="col-span-2">
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                Address 1
+                Address Line 1
               </h1>
               <Input
                 maxLength={40}
@@ -425,7 +425,7 @@ const CompanyAddress = ({
             </div>
             <div className="col-span-2">
               <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                Address 2
+                Address Line 2
               </h1>
               <Input
                 maxLength={40}
@@ -446,54 +446,55 @@ const CompanyAddress = ({
                 value={singlerow?.zipcode ? singlerow?.zipcode : ""}
               />
             </div>
-            <div className="grid grid-cols-3 col-span-4 gap-4">
-              <div>
-                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                  City
-                </h1>
-                <Input
-                  value={singlerow?.city ?? ""}
-                  onChange={(e) => {
-                    setSingleRow((prev: any) => ({ ...prev, city: e.target.value }))
-                  }}
-                />
-              </div>
-              <div>
-                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                  State
-                </h1>
-                <Input
-                  value={singlerow?.state ?? ""}
-                  onChange={
-                    (e) => {
-                      setSingleRow((prev: any) => ({ ...prev, state: e.target.value }))
-                    }
+            <div className="col-span-2">
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                City
+              </h1>
+              <Input
+                value={singlerow?.city ?? ""}
+                onChange={(e) => {
+                  setSingleRow((prev: any) => ({ ...prev, city: e.target.value }))
+                }}
+              />
+            </div>
+            <div className="col-span-2">
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                State
+              </h1>
+              <Input
+                value={singlerow?.state ?? ""}
+                onChange={
+                  (e) => {
+                    setSingleRow((prev: any) => ({ ...prev, state: e.target.value }))
                   }
-                />
-              </div>
-              <div>
-                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-                  Country
-                </h1>
-                <Input
-                  onChange={(e) => {
-                    setSingleRow((prev: any) => ({ ...prev, country: e.target.value }))
-                  }}
-                  value={singlerow?.country ?? ""}
-                />
-              </div>
-              <div className={``}>
-                <Button
-                  className="bg-blue-400 hover:bg-blue-400 rounded-3xl"
-                  onClick={() => {
-                    handleMultipleAdd();
-                  }}
-                >
-                  Add
-                </Button>
-              </div>
+                }
+              />
+            </div>
+            <div className="col-span-2">
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                Country
+              </h1>
+              <Input
+                onChange={(e) => {
+                  setSingleRow((prev: any) => ({ ...prev, country: e.target.value }))
+                }}
+                value={singlerow?.country ?? ""}
+              />
+            </div>
+            <div className={``}>
+              <Button
+                className="py-2"
+                variant={"nextbtn"}
+                size={"nextbtnsize"}
+                onClick={() => {
+                  handleMultipleAdd();
+                }}
+              >
+                Add
+              </Button>
             </div>
           </div>
+
 
           {/* // table */}
 
@@ -508,8 +509,8 @@ const CompanyAddress = ({
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                   <TableHead className="text-center text-black">Sr No.</TableHead>
-                  <TableHead className="text-center text-black">Address1</TableHead>
-                  <TableHead className="text-center text-black">Address2</TableHead>
+                  <TableHead className="text-center text-black">Address Line 1</TableHead>
+                  <TableHead className="text-center text-black">Address Line 2</TableHead>
                   <TableHead className="text-center text-black">Pincode</TableHead>
                   <TableHead className="text-center text-black">City</TableHead>
                   <TableHead className="text-center text-black">State</TableHead>

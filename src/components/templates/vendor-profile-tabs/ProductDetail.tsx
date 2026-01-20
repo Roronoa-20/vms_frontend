@@ -1,40 +1,24 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Select,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../atoms/select";
 import { Input } from "../../atoms/input";
-import { SelectContent } from "../../atoms/select";
-import {
-  useContactDetailStore,
-  TcontactDetail,
-} from "@/src/store/ContactDetailStore";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../../atoms/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "../../atoms/table";
 import { Button } from "@/components/ui/button";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import { VendorOnboardingResponse } from "@/src/types/types";
-import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useProductDetailStore } from "@/src/store/ProductDetailStore";
+
 
 type Props = {
   ref_no: string;
   onboarding_ref_no: string;
-  OnboardingDetail: VendorOnboardingResponse["message"]["product_details_tab"];
+  OnboardingDetail: VendorOnboardingResponse["message"]["contact_details_tab"];
+  onNextTab?: () => void;
+  onBackTab?: () => void;
   nature_of_business: string;
   VendorType: string[];
 };
@@ -49,29 +33,6 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
   const uploadProductImageRef = useRef<HTMLInputElement>(null);
 
   console.log(OnboardingDetail, "this is console")
-
-  // const handleAddMaterial = () => {
-  //   if (
-  //     !singleRow?.material_description ||
-  //     !singleRow?.hsnsac_code ||
-  //     !singleRow?.annual_capacity ||
-  //     !singleRow?.product_description ||
-  //     !productImage
-  //   ) {
-  //     alert(
-  //       "Please fill in all fields and upload a product image before adding."
-  //     );
-  //     return;
-  //   }
-  //   const newEntry = {
-  //     material_description: singleRow.material_description,
-  //     hsnsac_code: singleRow.hsnsac_code,
-  //     annual_capacity: singleRow.annual_capacity,
-  //     product_description:singleRow.product_description,
-  //     material_images: productImage,
-  //   };
-  //   setMaterialsTable((prev) => [...prev, newEntry]);
-  // };
 
   const fetchTable = async () => {
     const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;

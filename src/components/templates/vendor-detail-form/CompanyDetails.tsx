@@ -72,13 +72,13 @@ const CompanyDetailForm = ({
       errors.size_of_company = "Please enter size of company";
     };
 
-    if(!data?.website ){
-      errors.website = "Please Enter Website";
-    };
+    // if(!data?.website ){
+    //   errors.website = "Please Enter Website";
+    // };
 
-    if(!data?.registered_office_number ){
-      errors.registered_office_number = "Please Enter Reg No.";
-    };
+    // if(!data?.registered_office_number ){
+    //   errors.registered_office_number = "Please Enter Reg No.";
+    // };
 
     if(!data?.whatsapp_number){
       errors.whatsapp_number = "Please Enter Whatsapp Number";
@@ -101,8 +101,7 @@ const CompanyDetailForm = ({
     };
 
     if (!data?.corporate_identification_number) {
-      errors.corporate_identification_number =
-        "Please Select Corporate Identification Number ";
+      errors.corporate_identification_number = "Please Select Corporate Identification Number ";
     };
 
     if (!data?.cin_date ) {
@@ -212,7 +211,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Size of Company <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
@@ -243,7 +242,7 @@ const CompanyDetailForm = ({
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] flex pb-2">
-              Reg No. <span className="pl-1 text-red-400 text-xl">*</span>
+              Reg No.
             </h1>
             <Input
               placeholder="Enter Reg No."
@@ -263,7 +262,7 @@ const CompanyDetailForm = ({
               )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Mobile Number <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
@@ -279,7 +278,7 @@ const CompanyDetailForm = ({
             />
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               WhatsApp Number (If applicable) <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
@@ -296,7 +295,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Established Year <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
@@ -314,7 +313,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Office Email Primary <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
@@ -333,7 +332,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Office Email (Secondary) <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
@@ -353,7 +352,7 @@ const CompanyDetailForm = ({
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] flex">
               Corporate Identification No.(CIN No.){" "}
-              <span className="pl-2 text-red-400 text-xl">*</span>
+              <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
               placeholder=""
@@ -374,7 +373,7 @@ const CompanyDetailForm = ({
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] flex">
-              Cin Date <span className="pl-2 text-red-400 text-xl">*</span>
+              Cin Date <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Input
               type="date"
@@ -390,7 +389,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Nature of Company(Please select anyone) <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Select
@@ -422,7 +421,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Nature of Business (Please Select anyone) <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <Select
@@ -453,7 +452,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Meril Associated Companies <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             {ismulticompany ? (
@@ -474,7 +473,7 @@ const CompanyDetailForm = ({
             )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] flex">
               Vendor Type <span className="pl-1 text-red-400 text-xl">*</span>
             </h1>
             <textarea

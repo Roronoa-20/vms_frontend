@@ -121,8 +121,8 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
       </h1>
       <div className="grid grid-cols-3 gap-4 p-2">
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Certificate Name
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Certificate Name<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Select
             value={certificateData?.certificate_code ?? ""}
@@ -149,8 +149,8 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
           </Select>
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Certificate Number
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Certificate Number<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input value={certificateData?.certificate_number ?? ""} onChange={(e) => { setCertificateData((prev: any) => ({ ...prev, certificate_number: e.target.value })) }} />
         </div>
@@ -161,14 +161,14 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
           <Input value={certificateData?.certificate_body ?? ""} onChange={(e) => { setCertificateData((prev: any) => ({ ...prev, certificate_body: e.target.value })) }} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Valid Till
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Valid Till<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input value={certificateData?.valid_till ?? ""} placeholder="" type="date" onChange={(e) => { setCertificateData((prev: any) => ({ ...prev, valid_till: e.target.value })) }} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
-            Upload Certificate File
+          <h1 className="text-[12px] font-normal text-[#626973] flex">
+            Upload Certificate File<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
           <Input ref={fileInput} placeholder="" type="file" onChange={(e) => { setCertificateData((prev: any) => ({ ...prev, file: e?.target?.files, fileDetail: { file_name: e?.target?.files != null ? e.target.files[0].name : "" } })) }} />
         </div>
@@ -187,7 +187,7 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
         <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
-              Multiple Certificates
+              Certificate Details List
             </h1>
           </div>
           <Table className=" max-h-40 overflow-y-scroll">

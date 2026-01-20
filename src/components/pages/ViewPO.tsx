@@ -14,6 +14,9 @@ import jsPDF from 'jspdf';
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import MultiSelect, { MultiValue } from "react-select";
+import { DashboardPOTableData, TvendorRegistrationDropdown } from "@/src/types/types";
+import Pagination from "../molecules/Pagination";
+import page from "@/src/app/maintainance/page";
 
 interface POItemsTable {
   name: string,
@@ -42,13 +45,17 @@ interface PODropdown {
 
 interface Props {
   po_name?: string
+  POTableData: DashboardPOTableData["message"];
+  companyDropdown : TvendorRegistrationDropdown["message"]["data"]["company_master"]
 }
 
 
 
-const ViewPO = ({ po_name }: Props) => {
+const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
   const [prDetails, setPRDetails] = useState<any>();
   const [isSuccessDialog, setIsSuccessDialog] = useState(false);
+
+  const [poTableData,setPoTableData] = useState<DashboardPOTableData["message"]>(POTableData);
 
   const [PRNumber, setPRNumber] = useState<string | undefined>(po_name);
   const [POItemsTable, setPOItemsTable] = useState<POItemsTable[]>([]);
@@ -56,13 +63,20 @@ const ViewPO = ({ po_name }: Props) => {
   const [printFormatDropdown, setPrintFormatDropdown] = useState<dropdown[]>([])
   const [selectedPODropdown, setSelectedPODropdown] = useState<string>("");
   const [PONumberDropdown, setPONumberDropdown] = useState<PODropdown[]>([]);
-  const [isPrintFormat, setIPrintFormat] = useState<boolean>(false);
+
+  const [selectedCompany, setSelectedCompany] = useState<string>("");
+  // const [isPrintFormat, setIPrintFormat] = useState<boolean>(false);
   const [isEmailDialog, setIsEmailDialog] = useState<boolean>(false);
   const email_to = useSearchParams()?.get("email_to");
   const [email, setEmail] = useState<any>({ to: email_to });
   const [date, setDate] = useState("");
   const [comments, setComments] = useState("");
   const [POFile, setPOFile] = useState<File | null>(null)
+  const [vendorName, setVendorName] = useState<string>("");
+
+  const [total_event_list, settotalEventList] = useState(poTableData?.total_count);
+    const [record_per_page, setRecordPerPage] = useState<number>(5);
+    const [currentPage, setCurrentPage] = useState<number>(1);
 
   const [ccEmailsList, setCCEmailsList] = useState<{ value: string, label: string }[]>([]);
 
@@ -76,43 +90,7 @@ const ViewPO = ({ po_name }: Props) => {
   // setEmail((prev:any)=>({...prev,to:email_to}));
   // const [sign,setSign] = useState();
   const router = useRouter();
-  const getPODetails = async () => {
-    if (!PRNumber) {
-      alert("Please Select PO Number");
-      return;
-    }
-    const url = `${API_END_POINTS?.getPrintFormatData}?po_name=${PRNumber}&po_format_name=${selectedPODropdown}`;
-    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" })
-    if (response?.status == 200) {
-      // console.log(response?.data?.message,"this is response")
-      setPRDetails(response?.data?.message?.data);
-      setIPrintFormat(true);
-    }
-  }
-  const contentRef = useRef<HTMLDivElement>(null);
 
-
-  const handleDownloadPDF = async () => {
-    // if (!imageLoaded || !pdfRef.current) {
-    //   alert("Image not loaded yet.");
-    //   return;
-    // }
-
-    if (!contentRef || contentRef.current == null) return;
-
-    const canvas = await html2canvas(contentRef.current, {
-      useCORS: false,
-      scale: 2,
-    });
-
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "mm", "a4");
-    const width = pdf.internal.pageSize.getWidth();
-    const height = pdf.internal.pageSize.getHeight();
-
-    pdf.addImage(imgData, "PNG", 0, 0, width, height);
-    pdf.save("report.pdf");
-  };
 
 
   // const base64Image = await toBase64("/images/coronary_balloon_catheters.png");
@@ -125,19 +103,6 @@ const ViewPO = ({ po_name }: Props) => {
     setEmail((prev: any) => ({ ...prev, cc: [] }));
   }
 
-  const handleOpen = () => {
-    fetchPOItems();
-    setIsEarlyDeliveryDialog(true);
-  }
-
-
-  const fetchPOItems = async () => {
-    const url = `${API_END_POINTS?.POItemsTable}?po_name=${PRNumber}`;
-    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
-    if (response?.status == 200) {
-      setPOItemsTable(response?.data?.message?.items)
-    }
-  }
 
 
   const handleTableChange = (index: number, name: string, value: string | boolean) => {
@@ -152,7 +117,6 @@ const ViewPO = ({ po_name }: Props) => {
   }
 
   useEffect(() => {
-    getDropdown();
     getPODropdown();
     if (po_name) {
       const button = document.getElementById("viewPrintBtn");
@@ -162,9 +126,35 @@ const ViewPO = ({ po_name }: Props) => {
     }
   }, [])
 
-  useEffect(() => {
 
-  }, [selectedPODropdown])
+  useEffect(() => {
+    if(currentPage || PRNumber || selectedCompany || vendorName){
+      fetchPoTable();
+    }
+  },[currentPage,PRNumber,selectedCompany,vendorName]);
+
+  const fetchPoTable = async()=>{
+    
+      const dashboardPOTableDataApi: AxiosResponse = await requestWrapper({
+    url: `${API_END_POINTS?.poTable}`,
+    method: "GET",
+    params:{
+      page_no:currentPage,
+      vendor_name:vendorName,
+      po_number:PRNumber,
+      company:selectedCompany
+    }
+  });
+
+  const dashboardPOTableData: DashboardPOTableData["message"] =
+    dashboardPOTableDataApi?.status == 200 ? dashboardPOTableDataApi?.data?.message : "";
+
+    setPoTableData(dashboardPOTableData);
+    settotalEventList(dashboardPOTableData?.total_count || 0);
+  }
+
+
+
 
   const getPODropdown = async () => {
     const url = API_END_POINTS?.getPONumberDropdown;
@@ -172,15 +162,6 @@ const ViewPO = ({ po_name }: Props) => {
     if (response?.status == 200) {
       // console.log(response?.data?.message?.data,"this is dropdown");
       setPONumberDropdown(response?.data?.message?.total_po);
-    }
-  }
-
-  const getDropdown = async () => {
-    const url = API_END_POINTS?.getPrintFormatDropdown;
-    const response: AxiosResponse = await requestWrapper({ url: url, method: 'GET' });
-    if (response?.status == 200) {
-      // console.log(response?.data?.message?.data,"this is dropdown");
-      setPrintFormatDropdown(response?.data?.message?.data);
     }
   }
 
@@ -225,7 +206,7 @@ const ViewPO = ({ po_name }: Props) => {
   const handlePOChange = async (value: string) => {
     if (!value) {
       setPRNumber("");
-      setIPrintFormat(false);
+      // setIPrintFormat(false);
       setPRDetails(null);
       return;
     }
@@ -250,31 +231,13 @@ const ViewPO = ({ po_name }: Props) => {
     setEmail((prev: any) => ({ ...prev, cc: emailList }));
   }
 
-  console.log(POItemsTable, "this is po table")
-
   return (
-    <div className="min-h-screen bg-[#f8fafc] space-y-6 text-sm text-black font-sans m-5">
+    <>
+    <div className=" bg-[#f8fafc] space-y-6 text-sm text-black font-sans m-5">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-md border border-gray-300">
-        {/* <input
-          onChange={(e) => { setPRNumber(e.target.value) }}
-          type="text"
-          className="w-full md:w-1/2 border border-gray-300 rounded px-4 py-2 focus:outline-none hover:border-blue-700 transition"
-        /> */}
-        {/* <Select onValueChange={(value) => { handlePOChange(value) }} value={PRNumber ?? ""}>
-          <SelectTrigger className="w-60">
-            <SelectValue placeholder="Select PO Number" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {
-                PONumberDropdown?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                ))
-              }
-            </SelectGroup>
-          </SelectContent>
-        </Select> */}
+      <div className="flex items-center justify-between gap-4 bg-white p-4 rounded-md border border-gray-300">
+        <div className="flex gap-4">
+
         <MultiSelect
           className="w-60 text-sm"
           instanceId="po-search-select"
@@ -290,12 +253,28 @@ const ViewPO = ({ po_name }: Props) => {
           }}
           value={
             PRNumber
-              ? { value: PRNumber, label: PRNumber }
-              : null
+            ? { value: PRNumber, label: PRNumber }
+            : null
           }
-        />
-        <div className="flex justify-end gap-5 w-full">
-          <Select onValueChange={(value) => { setSelectedPODropdown(value) }}>
+          />
+
+          <Select onValueChange={(value) => { setSelectedCompany(value) }} value={selectedCompany}>
+            <SelectTrigger className="w-60">
+              <SelectValue placeholder="Select Company" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {
+                  companyDropdown?.map((item, index) => (
+                    <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
+                  ))
+                }
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
+        {/* <div className="flex justify-end gap-5 w-full"> */}
+          {/* <Select onValueChange={(value) => { setSelectedPODropdown(value) }}>
             <SelectTrigger className="w-60">
               <SelectValue placeholder="Select Print Type" />
             </SelectTrigger>
@@ -308,41 +287,90 @@ const ViewPO = ({ po_name }: Props) => {
                 }
               </SelectGroup>
             </SelectContent>
-          </Select>
-          <Button id="viewPrintBtn" onClick={() => { getPODetails(); }} variant={"nextbtn"} size={"nextbtnsize"} className="px-2 transition text-nowrap">
+          </Select> */}
+
+            <div>
+            <Input placeholder="Vendor Name" onChange={(e) => { setVendorName(e.target.value) }} value={vendorName} />
+            </div>
+
+                  </div>
+
+                <div className="flex gap-4">
+          {/* <Button id="viewPrintBtn" onClick={() => { getPODetails(); }} variant={"nextbtn"} size={"nextbtnsize"} className="px-5 py-2 transition text-nowrap">
             View PO Details
-          </Button>
-          <Button onClick={() => { router.push(`/view-all-po-changes`) }} variant={"nextbtn"} size={"nextbtnsize"} className="px-2 transition text-nowrap">
+          </Button> */}
+          <Button onClick={() => { router.push(`/view-all-po-changes`) }} variant={"nextbtn"} size={"nextbtnsize"} className="px-5 py-2 transition text-nowrap">
             View All Changed PO Details
           </Button>
-          <Button onClick={() => { router.push(`/view-invalid-po`) }} variant={"nextbtn"} size={"nextbtnsize"} className="px-2 transition text-nowrap">
+          <Button onClick={() => { router.push(`/view-invalid-po`) }} variant={"nextbtn"} size={"nextbtnsize"} className="px-5 py-2 transition text-nowrap">
             View Invalid PO
           </Button>
+                </div>
         </div>
-      </div>
+      {/* </div> */}
 
+                <Table>
+          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+          <TableHeader className="text-center">
+            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
+              <TableHead className="text-center text-black">Sr No.</TableHead>
+              <TableHead className="text-center text-black">PO No</TableHead>
+              <TableHead className="text-center text-black text-nowrap">PO Date</TableHead>
+              <TableHead className="text-center text-black">Vendor Name</TableHead>
+              <TableHead className="text-center text-black">company</TableHead>
+              <TableHead className="text-center text-black text-nowrap">View PO</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="text-center text-black">
+            {poTableData ? (
+              poTableData?.total_po?.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell className="text-center">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
+                  <TableCell className="text-center">{item?.po_no}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.po_date}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.supplier_name ? item.supplier_name : "-"}</TableCell>
+                   <TableCell className="text-center text-nowrap">{item?.company_code}</TableCell>
+                  <TableCell>
+                    <Button
+                      className={`bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px] `}
+                      onClick={() => router.push(`/view-po-details?poname=${item?.po_number}`)}
+                    >
+                      View
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={9} className="text-center text-gray-500 py-4">
+                  No results found
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       {/* Early Delivery Button */}
-      {isPrintFormat &&
+      {/* {isPrintFormat &&
         <div className="flex justify-start text-left space-x-4">
-          <Button onClick={() => { handleOpen() }} variant={"nextbtn"} size={"nextbtnsize"} className="py-2.5 transition">
+        <Button onClick={() => { handleOpen() }} variant={"nextbtn"} size={"nextbtnsize"} className="py-2.5 transition">
             Early Delivery
-          </Button>
+            </Button>
           <Button variant={"nextbtn"} size={"nextbtnsize"} className="py-2.5 transition" onClick={() => { handleDownloadPDF() }}>Download</Button>
-
-        </div>
-      }
+          
+          </div>
+          } */}
       {/* {isPrintFormat &&
         <Button variant={"nextbtn"} size={"nextbtnsize"} className="px-4 py-2.5 transition" onClick={() => { handleDownloadPDF() }}>Download</Button>
-      } */}
+        } */}
 
       {/* PO Main Section */}
-      {isPrintFormat &&
+      {/* {isPrintFormat &&
         <POPrintFormat contentRef={contentRef} prDetails={prDetails} Heading={selectedPODropdown} />
-      }
+        } */}
 
-      {isPrintFormat && Boolean(prDetails?.sent_to_vendor) &&
+      {/* {isPrintFormat && Boolean(prDetails?.sent_to_vendor) &&
         <div className="flex justify-end items-center"><Button variant={"nextbtn"} size={"nextbtnsize"} className="px-4 py-2.5 transition" onClick={() => { setIsEmailDialog(true) }}>Send Email</Button></div>
-      }
+        } */}
 
       {isEmailDialog &&
         <PopUp handleClose={handleClose} classname="md:max-h-[400px]" headerText="Send Email" isSubmit={true} Submitbutton={handleSubmit}>
@@ -418,9 +446,9 @@ const ViewPO = ({ po_name }: Props) => {
 
       {isSuccessDialog && (
         <PopUp
-          handleClose={() => setIsSuccessDialog(false)}
-          // headerText="Success"
-          classname="md:max-w-[350px] text-center"
+        handleClose={() => setIsSuccessDialog(false)}
+        // headerText="Success"
+        classname="md:max-w-[350px] text-center"
         >
           <div className="p-4 flex flex-col items-center justify-center space-y-4">
             <div className="text-green-600 text-lg font-semibold">
@@ -444,6 +472,8 @@ const ViewPO = ({ po_name }: Props) => {
       )}
 
     </div>
+<Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
+</>
   );
 };
 

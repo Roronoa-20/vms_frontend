@@ -7,25 +7,50 @@ import { useSearchParams } from "next/navigation";
 import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
 import { Label } from "@/components/ui/label";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
 
 
 export default function Health_And_Safety() {
    const router = useRouter();
    const searchParams = useSearchParams();
    const vmsRefNo = searchParams.get("vms_ref_no") || "";
-   const { refreshFormData, updateEmpWellBeingForm, HealthSafetyForm, updateHealthSafetyForm, asaFormSubmitData } = useASAForm();
+   const { refreshFormData, updateEmpWellBeingForm, HealthSafetyForm, updateHealthSafetyForm, asaFormSubmitData, setFormProgress } = useASAFormContext();
    const [mentionBehaviorBaseSafety, setMentionBehaviorBaseSafety] = useState("");
    const isverified = asaFormSubmitData.form_is_submitted || 0;
-   const fileRequiredQuestions = new Set ([
-      "has_develop_health_safety_policy", "conduct_hira_activity", "certify_ohs_system"]);
+   const fileRequiredQuestions = new Set(["has_develop_health_safety_policy", "certify_ohs_system"]);
    console.log("Health Safety Form Data:", HealthSafetyForm);
 
+   const calculateProgress = () => {
+      const entries = Object.entries(HealthSafetyForm);
+
+      const completed = entries.filter(([key, item]) => {
+         const typedItem = item as HealthAndSafety[keyof HealthAndSafety];
+         if (!typedItem.selection) return false;
+         if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
+         if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
+         return true;
+      }).length;
+
+      return Math.round((completed / entries.length) * 100);
+   };
+
+   useEffect(() => {
+      const percent = calculateProgress();
+
+      setFormProgress((prev: any) => ({
+         ...prev,
+         health_safety: percent,
+      }));
+   }, [HealthSafetyForm]);
+
    const isValid = Object.entries(HealthSafetyForm).every(([key, item]) => {
-      if (!item.selection) return false;
-      if (item.selection === "Yes" && !item.comment.trim()) return false;
-      if (fileRequiredQuestions.has(key) && item.selection === "Yes" && !item.file) return false;
+      const typedItem = item as HealthAndSafety[keyof HealthAndSafety];
+      if (!typedItem.selection) return false;
+      if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
+      if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
       return true;
-   }) && mentionBehaviorBaseSafety.trim().length > 0;
+   }) &&
+      (HealthSafetyForm.emp_trained_health_safety?.selection !== "Yes" || mentionBehaviorBaseSafety.trim().length > 0);
 
    const base64ToBlob = (base64: string): Blob => {
       const arr = base64.split(",");
@@ -171,7 +196,7 @@ export default function Health_And_Safety() {
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                   required={true}
-                  fileRequired={true}
+                  // fileRequired={true}
                   disabled={isverified === 1}
                   options={["Yes", "No"]}
                />
@@ -202,25 +227,26 @@ export default function Health_And_Safety() {
                   disabled={isverified === 1}
                   options={["Yes", "No"]}
                />
-
-               <div className="flex flex-col space-y-1">
-                  <Label htmlFor="mention_behavior_base_safety" className="text-sm font-medium text-black">
-                     Also, please mention if behavior-based safety training is provided.<span className="text-red-600 ml-1">*</span>
-                  </Label>
-                  <textarea
-                     id="mention_behavior_base_safety"
-                     name="mention_behavior_base_safety"
-                     rows={2}
-                     placeholder="Mention behavior-based safety training details if any"
-                     value={mentionBehaviorBaseSafety}
-                     className="w-full px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                     onChange={(e) => {
-                        setMentionBehaviorBaseSafety(e.target.value);
-                        localStorage.setItem("mention_behavior_base_safety", e.target.value);
-                     }}
-                     disabled={isverified === 1}
-                  />
-               </div>
+               {HealthSafetyForm.emp_trained_health_safety?.selection === "Yes" && (
+                  <div className="flex flex-col space-y-1">
+                     <Label htmlFor="mention_behavior_base_safety" className="text-sm font-medium text-black">
+                        Also, please mention if behavior-based safety training is provided.<span className="text-red-600 ml-1">*</span>
+                     </Label>
+                     <textarea
+                        id="mention_behavior_base_safety"
+                        name="mention_behavior_base_safety"
+                        rows={2}
+                        placeholder="Mention behavior-based safety training details if any"
+                        value={mentionBehaviorBaseSafety}
+                        className="w-full px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onChange={(e) => {
+                           setMentionBehaviorBaseSafety(e.target.value);
+                           localStorage.setItem("mention_behavior_base_safety", e.target.value);
+                        }}
+                        disabled={isverified === 1}
+                     />
+                  </div>
+               )}
 
 
                <YesNoNA
@@ -264,7 +290,7 @@ export default function Health_And_Safety() {
                         variant="nextbtn"
                         size="nextbtnsize"
                         onClick={handleNext}
-                        disabled={!isValid}
+                     // disabled={!isValid}
                      >
                         Next
                      </Button>
