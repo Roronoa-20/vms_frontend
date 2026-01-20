@@ -1,25 +1,49 @@
+import React, { useState, useEffect } from "react";
 import YesNoNA from "@/src/components/common/YesNoNAwithFile";
 import { Button } from "@/components/ui/button"
 import { Biodiversity, GreenProducts } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
 
 
 export default function BiodiversityForm() {
   const searchParams = useSearchParams();
   const vmsRefNo = searchParams.get("vms_ref_no") || "";
-  const { biodiversityForm, updateBiodiversityForm, submitEnvironmentForm, refreshFormData, updateGreenProductsForm, asaFormSubmitData } = useASAForm();
+  const { biodiversityForm, updateBiodiversityForm, submitEnvironmentForm, refreshFormData, updateGreenProductsForm, asaFormSubmitData, setFormProgress } = useASAFormContext();
   const isverified = asaFormSubmitData.form_is_submitted || 0;
 
+  const calculateProgress = () => {
+    const entries = Object.entries(biodiversityForm);
+
+    const completed = entries.filter(([key, item]) => {
+      const typedItem = item as Biodiversity[keyof Biodiversity];
+      if (!typedItem.selection) return false;
+      if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
+      // if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
+      return true;
+    }).length;
+
+    return Math.round((completed / entries.length) * 100);
+  };
+
+  useEffect(() => {
+    const percent = calculateProgress();
+
+    setFormProgress((prev: any) => ({
+      ...prev,
+      biodiversity: percent,
+    }));
+  }, [biodiversityForm]);
 
   const isValid = Object.values(biodiversityForm).every((item) => {
-    if (!item.selection) return false;
-    if (item.selection === "Yes") {
-      if (!item.comment?.trim()) return false;
-      if (!item.file) return false;
+    const typedItem = item as Biodiversity[keyof Biodiversity];
+    if (!typedItem.selection) return false;
+    if (typedItem.selection === "Yes") {
+      if (!typedItem.comment?.trim()) return false;
+      if (!typedItem.file) return false;
     }
     return true;
   });
@@ -86,7 +110,7 @@ export default function BiodiversityForm() {
             disabled={isverified === 1}
             options={["Yes", "No"]}
           />
-          
+
           {isverified !== 1 && (
             <div className="space-x-4 flex justify-end">
               <Button

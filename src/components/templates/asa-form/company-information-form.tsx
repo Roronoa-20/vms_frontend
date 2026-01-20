@@ -7,22 +7,43 @@ import Textarea_Input from "@/src/components/common/TextareaWithLabel";
 import { useRouter } from "next/navigation";
 import { useAuth } from '@/src/context/AuthContext';
 import { useASAForm } from "@/src/hooks/useASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
+
 
 
 export default function Company_Information_Form() {
     const router = useRouter();
     const params = useSearchParams();
     const vmsRefNo = params.get("vms_ref_no") || "";
-    const { companyInfo, updateCompanyInfo, asaFormSubmitData } = useASAForm();
+    const { companyInfo, updateCompanyInfo, asaFormSubmitData, setFormProgress } = useASAFormContext();
     const { name } = useAuth();
     const isverified = asaFormSubmitData.form_is_submitted || 0;
+
+    const calculateProgress = () => {
+        const fields = [
+            companyInfo.name_of_the_company?.selection,
+            companyInfo.location?.selection,
+            companyInfo.name_of_product?.selection,
+        ];
+
+        const filled = fields.filter(v => v && v.trim()).length;
+        return Math.round((filled / fields.length) * 100);
+    };
+
+    useEffect(() => {
+        const percent = calculateProgress();
+
+        setFormProgress((prev: any) => ({
+            ...prev,
+            company_information: percent,
+        }));
+    }, [companyInfo]);
 
     const isFormValid = Boolean(
         companyInfo.name_of_the_company?.selection?.trim() &&
         companyInfo.location?.selection?.trim() &&
         companyInfo.name_of_product?.selection?.trim()
     );
-
 
     useEffect(() => {
         if (!name) return;
@@ -108,7 +129,7 @@ export default function Company_Information_Form() {
                             variant="nextbtn"
                             size="nextbtnsize"
                             onClick={handleNext}
-                            // disabled={!isFormValid}
+                        // disabled={!isFormValid}
                         >
                             Next
                         </Button>

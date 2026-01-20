@@ -55,7 +55,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
         data: { data: updatedData },
       });
       if (response?.status === 200) {
-        alert("Saved successfully ✅");
+        alert("Saved successfully");
         onNextTab();
       }
     } catch (error) {
@@ -64,7 +64,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
   };
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-4 w-full">
+    <div className="flex flex-col bg-white rounded-lg p-4 h-[500px] overflow-y-scroll w-full">
       <div className="flex justify-between items-center border-b-2 pb-2">
         <h1 className="font-semibold text-lg">Company Detail</h1>
         <Button

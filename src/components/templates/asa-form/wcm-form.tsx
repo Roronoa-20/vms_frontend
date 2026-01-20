@@ -6,22 +6,48 @@ import React, { useState, useEffect } from "react";
 import { useASAForm } from "@/src/hooks/useASAForm";
 import { useSearchParams } from "next/navigation";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
+
 
 
 export default function Water_Consumption_And_Management() {
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
     const router = useRouter();
-    const { wcmform, updateWcmForm, refreshFormData, updateEceForm, asaFormSubmitData } = useASAForm();
+    const { wcmform, updateWcmForm, refreshFormData, updateEceForm, asaFormSubmitData, setFormProgress } = useASAFormContext();
     const isverified = asaFormSubmitData.form_is_submitted || 0;
     const fileRequiredQuestions = new Set(["have_permission_for_groundwater"]);
 
     console.log("Energy Consumption and Emission Form Data:", wcmform);
 
-    const isValid = Object.entries(wcmform).every(([key,item]) => {
-        if (!item.selection) return false;
-        if (item.selection === "Yes" && !item.comment.trim()) return false;
-        if (fileRequiredQuestions.has(key) && item.selection === "Yes" && !item.file) return false;
+    const calculateProgress = () => {
+        const entries = Object.entries(wcmform);
+
+        const completed = entries.filter(([key, item]) => {
+            const typedItem = item as WaterConsumptionAndManagement[keyof WaterConsumptionAndManagement];
+            if (!typedItem.selection) return false;
+            if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
+            if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
+            return true;
+        }).length;
+
+        return Math.round((completed / entries.length) * 100);
+    };
+
+    useEffect(() => {
+        const percent = calculateProgress();
+
+        setFormProgress((prev: any) => ({
+            ...prev,
+            wcm: percent,
+        }));
+    }, [wcmform]);
+
+    const isValid = Object.entries(wcmform).every(([key, item]) => {
+        const typedItem = item as WaterConsumptionAndManagement[keyof WaterConsumptionAndManagement];
+        if (!typedItem.selection) return false;
+        if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
+        if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
         return true;
     });
 
@@ -235,7 +261,7 @@ export default function Water_Consumption_And_Management() {
                                 variant="nextbtn"
                                 size="nextbtnsize"
                                 onClick={handleNext}
-                                // disabled={!isValid}
+                            // disabled={!isValid}
                             >
                                 Next
                             </Button>
