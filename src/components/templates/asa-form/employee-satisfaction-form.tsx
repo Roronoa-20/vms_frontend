@@ -6,20 +6,45 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
 
 
 export default function Employee_Satisfaction() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
-    const { EmpSatisfactionForm, updateEmpSatisactionForm, refreshFormData, submitSocialForm, updateHealthSafetyForm, asaFormSubmitData } = useASAForm();
+    const { EmpSatisfactionForm, updateEmpSatisactionForm, refreshFormData, submitSocialForm, updateHealthSafetyForm, asaFormSubmitData, setFormProgress } = useASAFormContext();
     const isverified = asaFormSubmitData.form_is_submitted || 0;
 
     console.log("Emp Satisfaction Form Data:", EmpSatisfactionForm);
 
+    const calculateProgress = () => {
+        const entries = Object.entries(EmpSatisfactionForm);
+
+        const completed = entries.filter(([key, item]) => {
+            const typedItem = item as EmployeeSatisfaction[keyof EmployeeSatisfaction];
+            if (!typedItem.selection) return false;
+            if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
+            // if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
+            return true;
+        }).length;
+
+        return Math.round((completed / entries.length) * 100);
+    };
+
+    useEffect(() => {
+        const percent = calculateProgress();
+
+        setFormProgress((prev: any) => ({
+            ...prev,
+            employee_satisfaction: percent,
+        }));
+    }, [EmpSatisfactionForm]);
+
     const isValid = Object.values(EmpSatisfactionForm).every((item) => {
-        if (!item.selection) return false;
-        if (item.selection === "Yes" && !item.comment.trim()) return false;
+        const typedItem = item as EmployeeSatisfaction[keyof EmployeeSatisfaction];
+        if (!typedItem.selection) return false;
+        if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
         return true;
     });
 
@@ -101,7 +126,7 @@ export default function Employee_Satisfaction() {
                                 variant="nextbtn"
                                 size="nextbtnsize"
                                 onClick={handleSubmit}
-                                // disabled={!isValid}
+                            // disabled={!isValid}
                             >
                                 Submit & Next
                             </Button>

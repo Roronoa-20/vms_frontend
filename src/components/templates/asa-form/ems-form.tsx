@@ -5,22 +5,48 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { EnvironmentalManagementSystem } from "@/src/types/asatypes";
 import { Label } from "@/components/ui/label";
 import { useASAForm } from "@/src/hooks/useASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
+
 
 export default function Environmental_Management_System() {
 
   const router = useRouter();
   const params = useSearchParams();
   const vmsRefNo = params.get("vms_ref_no") || "";
-  const { emsform, updateEmsForm, refreshFormData, asaFormSubmitData } = useASAForm();
+  const { emsform, updateEmsForm, refreshFormData, asaFormSubmitData, setFormProgress } = useASAFormContext();
   const isverified = asaFormSubmitData.form_is_submitted || 0;
 
   console.log("General Disclosure Form Data:", emsform);
 
+  const calculateProgress = () => {
+    const entries = Object.entries(emsform);
+
+    const completed = entries.filter(([key, item]) => {
+      const typedItem = item as EnvironmentalManagementSystem[keyof EnvironmentalManagementSystem];
+      if (!typedItem.selection) return false;
+      if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
+      // if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
+      return true;
+    }).length;
+
+    return Math.round((completed / entries.length) * 100);
+  };
+
+  useEffect(() => {
+    const percent = calculateProgress();
+
+    setFormProgress((prev: any) => ({
+      ...prev,
+      ems: percent,
+    }));
+  }, [emsform]);
+
   const isValid = Object.values(emsform).every((item) => {
-    if (!item.selection) return false;
-    if (item.selection === "Yes") {
-      if (!item.comment?.trim()) return false;
-      if (!item.file) return false;
+    const typedItem = item as EnvironmentalManagementSystem[keyof EnvironmentalManagementSystem];
+    if (!typedItem.selection) return false;
+    if (typedItem.selection === "Yes") {
+      if (!typedItem.comment?.trim()) return false;
+      if (!typedItem.file) return false;
     }
     return true;
   });
@@ -193,7 +219,7 @@ export default function Environmental_Management_System() {
               variant="nextbtn"
               size="nextbtnsize"
               onClick={handleNext}
-              // disabled={!isValid}
+            // disabled={!isValid}
             >
               Next
             </Button>

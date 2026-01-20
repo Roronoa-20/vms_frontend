@@ -36,3 +36,42 @@ export const ASAFormTabs = [
     children: []
   }
 ];
+
+
+export const PARENT_CHILD_MAP: Record<string, string[]> = {
+  general_disclosures: [
+    "company_information",
+    "general_disclosures_sub",
+  ],
+  environment: [
+    "ems",
+    "ece",
+    "wcm",
+    "waste_management",
+    "green_products",
+    "biodiversity",
+  ],
+  social: [
+    "labor_rights",
+    "grievance_mechanism",
+    "employee_wellbeing",
+    "health_safety",
+    "employee_satisfaction",
+  ],
+};
+
+
+export const calculateParentProgress = (
+  parentKey: string,
+  progress: Record<string, number>
+) => {
+  const children = PARENT_CHILD_MAP[parentKey];
+  if (!children || children.length === 0) return progress[parentKey] ?? 0;
+
+  const total = children.reduce(
+    (sum, key) => sum + (progress[key] ?? 0),
+    0
+  );
+
+  return Math.round(total / children.length);
+};

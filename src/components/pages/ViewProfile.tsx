@@ -141,9 +141,9 @@ const ViewProfile = ({ vendor_onboarding, tabtype, refno, company, onChangeCompa
 
   return (
     <AuthProvider>
-      <div className="h-screen flex flex-col bg-gray-200">
-        <div className="flex px-4 gap-5 pt-5">
-          <div className="flex flex-col items-start relative">
+      <div className="h-screen bg-gray-200 ">
+        <div className=" px-4 gap-5 pt-5 grid grid-cols-4 w-full">
+          <div className="items-start relative  col-span-1">
             <OnboardingSidebar
               nature_of_business=""
               onboarding_refno={vendor_onboarding}
@@ -170,7 +170,7 @@ const ViewProfile = ({ vendor_onboarding, tabtype, refno, company, onChangeCompa
             </div>
           </div>
 
-          <div className="flex-1">
+          <div className="flex-1 col-span-3">
             {activeTab == "Company Detail" ? (
               <CompanyDetailForm
                 companyDetailDropdown={companyDetailDropdown}

@@ -1,20 +1,45 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import YesNoNA from "@/src/components/common/YesNoNAwithFile";
 import { useRouter, useSearchParams } from "next/navigation";
 import { GeneralDisclosureData, CompanyInformation } from "@/src/types/asatypes";
 import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
+
 
 export default function General_Disclosure_Form() {
     const router = useRouter();
     const params = useSearchParams();
     const vmsRefNo = params.get("vms_ref_no") || "";
-    const { generalDisclosure, updateGeneralDisclosure, submitForm, refreshFormData, updateCompanyInfo, asaFormSubmitData } = useASAForm();
+    const { generalDisclosure, updateGeneralDisclosure, submitForm, refreshFormData, updateCompanyInfo, asaFormSubmitData, setFormProgress } = useASAFormContext();
     const isverified = asaFormSubmitData.form_is_submitted || 0;
     const fileRequiredQuestions = new Set(["valid_consent_from_pollution_control"]);
 
     console.log("General Disclosure Form Data:", generalDisclosure);
+
+    const calculateProgress = () => {
+        const entries = Object.entries(generalDisclosure);
+
+        const completed = entries.filter(([key, item]) => {
+            const typedItem = item as GeneralDisclosureData[keyof GeneralDisclosureData];
+            if (!typedItem.selection) return false;
+            if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
+            if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
+            return true;
+        }).length;
+
+        return Math.round((completed / entries.length) * 100);
+    };
+
+    useEffect(() => {
+        const percent = calculateProgress();
+
+        setFormProgress((prev: any) => ({
+            ...prev,
+            general_disclosures_sub: percent,
+        }));
+    }, [generalDisclosure]);
 
     const handleSelectionChange = (name: string, selection: "Yes" | "No" | "NA" | "") => {
         updateGeneralDisclosure({
@@ -47,9 +72,10 @@ export default function General_Disclosure_Form() {
     };
 
     const isValid = Object.entries(generalDisclosure).every(([key, item]) => {
-        if (!item.selection) return false;
-        if (item.selection === "Yes" && !item.comment.trim()) return false;
-        if (fileRequiredQuestions.has(key) && item.selection === "Yes" && !item.file) return false;
+        const typedItem = item as GeneralDisclosureData[keyof GeneralDisclosureData];
+        if (!typedItem.selection) return false;
+        if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
+        if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
         return true;
     });
 
@@ -126,7 +152,7 @@ export default function General_Disclosure_Form() {
                                 variant="nextbtn"
                                 size="nextbtnsize"
                                 onClick={handleSubmit}
-                                // disabled={!isValid}
+                            // disabled={!isValid}
                             >
                                 Submit & Next
                             </Button>
