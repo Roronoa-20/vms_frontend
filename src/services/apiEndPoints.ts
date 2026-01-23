@@ -369,7 +369,13 @@ const API_END_POINTS = {
   alreadyOnboardedVendorDialogSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.update_vendors_gst_email.update_vendor_gst_email`,
 
   uploadPoDocument:`${url}/api/method/vms.APIs.purchase_api.purchase_order.attach_purchase_order_details`,
-  deletePoDocument:`${url}/api/method/vms.APIs.purchase_api.purchase_order.remove_purchase_order_details_attachment`
+  deletePoDocument:`${url}/api/method/vms.APIs.purchase_api.purchase_order.remove_purchase_order_details_attachment`,
+
+  //DOCUMENT VERIFICATION APIs
+  
+  generateToken:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.generate_access_token`,
+  verifyGstNumber:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.verify_gst_details`,
+  verifyPanNumber:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.verify_pan_details`
 
 }
 
