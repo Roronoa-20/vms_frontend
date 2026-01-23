@@ -57,7 +57,7 @@ const Page = async ({ searchParams }: PageProps): Promise<React.ReactElement> =>
         QuotationData = Quotation?.message ?? Quotation;
     }
     // console.log(QuotationData, "QuotationData")
-    if (RFQDataResponse.status === 410) {
+    if (RFQDataResponse?.status === 410) {
         return (
             <div className="">
                 <ErrorComponent
@@ -68,7 +68,7 @@ const Page = async ({ searchParams }: PageProps): Promise<React.ReactElement> =>
         );
     }
 
-    if (RFQDataResponse.status !== 200) {
+    if (RFQDataResponse?.status !== 200) {
         return (
             <div className="">
                 <ErrorComponent
@@ -78,6 +78,7 @@ const Page = async ({ searchParams }: PageProps): Promise<React.ReactElement> =>
             </div>
         );
     }
+    console.log(RFQDataResponse, "RFQDataResponse");
     return (
         <Suspense>
             <div className="px-4 py-6">

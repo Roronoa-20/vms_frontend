@@ -155,9 +155,9 @@ const ServiceQuotationFormFields = ({
     isDisabled?: boolean
   ) => (
     <div className="col-span-1">
-      <h1 className="text-[12px] font-normal text-[#626973] pb-3">{label}</h1>
+      <h1 className="text-[12px] font-normal text-[#626973] pb-3">{label ?? ""}</h1>
       <Select
-        value={formData[name] ?? ""}
+        value={formData[name] || undefined}
         onValueChange={(value) => handleSelectChange(value, name)}
         disabled={isDisabled}
       >
@@ -166,11 +166,12 @@ const ServiceQuotationFormFields = ({
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {options?.map((item, idx) => (
-              <SelectItem key={idx} value={getValue(item)}>
-                {getLabel(item)}
-              </SelectItem>
-            ))}
+            {options?.filter(item => getValue(item)?.trim() !== "")
+              .map((item, idx) => (
+                <SelectItem key={idx} value={getValue(item)}>
+                  {getLabel(item)}
+                </SelectItem>
+              ))}
           </SelectGroup>
         </SelectContent>
       </Select>
@@ -185,8 +186,8 @@ const ServiceQuotationFormFields = ({
           "material_code_head",
           "Select item Code",
           itemcodes,
-          (item) => item.material_code_head,
-          (item) => `${item.material_code_head}`
+          (item) => item?.material_code_head,
+          (item) => `${item?.material_code_head}`
         )}
         {renderInput("material_name_head", "Material Desc. & Specifications")}
         {renderInput("price_head", "Total Price", "number", true)}
@@ -195,7 +196,7 @@ const ServiceQuotationFormFields = ({
       </div>
 
       {/* Sub services table */}
-      {formData.material_code_head && (
+      {formData?.material_code_head && (
         <>
           <div className="mt-6 border">
             <h2 className="text-lg font-semibold mb-3">Sub Services</h2>
@@ -246,8 +247,8 @@ const ServiceQuotationFormFields = ({
                     {/* UOM Select */}
                     <TableCell>
                       <Select
-                        value={sub.uom_subhead}
-                        onValueChange={(val) =>
+                        value={sub?.uom_subhead}
+                         onValueChange={(val) =>
                           handleSubheadChange(index, "uom_subhead", val)
                         }
                       >
@@ -255,9 +256,9 @@ const ServiceQuotationFormFields = ({
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
-                          {Dropdown.uom_master?.map((u, idx) => (
-                            <SelectItem key={idx} value={u.name}>
-                              {u.uom}
+                          {Dropdown?.uom_master?.map((u, idx) => (
+                            <SelectItem key={idx} value={u?.name}>
+                              {u?.uom}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -266,7 +267,7 @@ const ServiceQuotationFormFields = ({
 
                     <TableCell>
                       <Input
-                        value={sub.price_subhead}
+                        value={sub?.price_subhead}
                         onChange={(e) =>
                           handleSubheadChange(index, "price_subhead", e.target.value)
                         }
@@ -276,7 +277,7 @@ const ServiceQuotationFormFields = ({
                     <TableCell>
                       <Input
                         type="date"
-                        value={sub.delivery_date_subhead}
+                        value={sub.delivery_date_subhead ?? ""}
                         onChange={(e) =>
                           handleSubheadChange(index, "delivery_date_subhead", e.target.value)
                         }

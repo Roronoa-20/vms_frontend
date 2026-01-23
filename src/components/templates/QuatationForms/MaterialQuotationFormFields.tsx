@@ -82,7 +82,7 @@ const MaterialQuatationFormFields = ({
     <div className="col-span-1">
       <h1 className="text-[12px] font-normal text-[#626973] pb-3">{label}</h1>
       <Select
-        value={formData[name] ?? ""}
+        value={formData[name]}
         onValueChange={(value) => handleSelectChange(value, name)}
         disabled={isDisabled}
       >
@@ -91,24 +91,28 @@ const MaterialQuatationFormFields = ({
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {options?.map((item, idx) => (
-              <SelectItem key={idx} value={getValue(item)}>
-                {getLabel(item)}
-              </SelectItem>
-            ))}
+           {options?.filter(item => getValue(item)?.trim() !== "")
+              .map((item, idx) => (
+                <SelectItem key={idx} value={getValue(item)}>
+                  {getLabel(item)}
+                </SelectItem>
+              ))}
           </SelectGroup>
         </SelectContent>
       </Select>
     </div>
   );
+
+  console.log("Form Data in Material Quotation Form Fields:::", formData);
+  console.log(itemcodes,"itemcodes")
   return (
     <div className="grid grid-cols-3 gap-6 p-5">
       {renderSelect(
         "material_code_head",
         "Select item Code",
         itemcodes,
-        (item) => item.material_code_head,
-        (item) => `${item.material_code_head}`
+        (item) => item?.material_code_head,
+        (item) => `${item?.material_code_head}`
       )}
       {renderInput("material_name_head","Material Desc. & Specifications")}
       {renderInput("rate_head","Rate")}
