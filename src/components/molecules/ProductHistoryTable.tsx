@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
 import { Button } from '../atoms/button'
-import { ProductHistory } from '../pages/Pr-Inquiry'
+import { ProductHistory } from '../../types/prEnquiry/prEnquiry.types'
 import { productHIstoryResponse } from '../pages/ProductHistory'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'

@@ -1,6 +1,8 @@
 import { verify } from "crypto";
 import { User } from "lucide-react";
 import Dispatch from "../components/pages/Dispatch";
+import { create } from "domain";
+import { getCompanyDropdownBasedOUser, submitEnquiry } from "./prEnquiry/prEnquiry.services";
 
 const url = process.env.NEXT_PUBLIC_BACKEND_END;
 // const resourceurl = process.env.NEXT_PUBLIC_API_RESOURCE_URL;
@@ -65,7 +67,7 @@ const API_END_POINTS = {
   fetchProductNameBasedOnCategory: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.filter_product_name`,
   submitPrInquiryNextButton: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.create_purchase_inquiry`,
   prInquiryCount: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.dashboard_card`,
-  prInquiryDashboardTable: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pi`,
+  prInquiryDashboardTable: `${url}/api/method/vms.APIs.cart_details.v1.cart_details_dashboard.get_cart_dashboard_list`,
   prInquiryData: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pi_details`,
   prInquiryHodApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.hod_approval_check`,
   prInquiryPurchaseApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.purchase_approval_check`,
@@ -375,8 +377,21 @@ const API_END_POINTS = {
   
   generateToken:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.generate_access_token`,
   verifyGstNumber:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.verify_gst_details`,
-  verifyPanNumber:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.verify_pan_details`
+  verifyPanNumber:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.verify_pan_details`,
 
+  //purchase Enquiry 
+  createPurchaseEnquiry:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.create_cart_details`,
+  getCompanyDropdownBasedOUser:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_company_for_user`,
+  getPurchaseEnquiryData:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_full_data_cart_details`,
+  getProductNameDropdown:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_product_names`,
+  getPurchaseTypeDropdown:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.cart_details_masters`,
+  getLocationDropdown:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_plant_master`,
+  addEnquiryItems:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.update_cart_products`,
+  deleteEnquiryItem:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.delete_cart_product`,
+  submitEnquiry:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.submit_cart_details`,
+  acknowledgeEnquiry:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.acknowledge_cart_details`,
+  approvalEnquiry:`${url}/api/method/vms.APIs.cart_details.v1.cart_details_approval.purchase_approval_check`,
+  getCityDropdown:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_location_master`,
 }
 
 export default API_END_POINTS;

@@ -5,624 +5,291 @@ import { Button } from '../atoms/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../atoms/select'
 import { PurchaseRequestData, PurchaseRequestDropdown } from '@/src/types/PurchaseRequestType'
-import { EyeIcon } from 'lucide-react'
+import { EyeIcon, Trash2 } from 'lucide-react';
+import { PencilIcon } from 'lucide-react'
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
-import Cookies from 'js-cookie'
-import { purchaseInquiryDropdown, TableData, TPRInquiry, ProductHistory } from '../pages/Pr-Inquiry'
-import Comment_box from '../molecules/CommentBox'
-import { Value } from '@radix-ui/react-select'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '@/src/context/AuthContext'
-import { TvendorRegistrationDropdown } from '@/src/types/types'
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { Card, CardContent } from "@/components/ui/card";
+import { CheckCircle2, XIcon } from "lucide-react";
+import { toast, ToastContainer } from 'react-toastify';
+import MultiSelect, { GroupBase, MultiValue } from "react-select";
+import { multiSelectStyles } from "@/src/components/common/sharedStyles";
+import { companyDropdownBasedOnUserType, locationDropdownType, ProductNameDropdown, PurchaseTypeType, TPRInquiry } from '@/src/types/prEnquiry/prEnquiry.types'
+import { acknowledgeEnquiry, addEnquiryItems, approvalEnquiry, createPurchaseEnquiry, deleteEnquiryItems, getlocationDropdown, getProductNameDropdown, getPurchaseEnquiryData, submitEnquiry } from '@/src/services/prEnquiry/prEnquiry.services'
+import SearchableDropdown from '../molecules/SearchableDropdown'
+import SearchSelectComponent from '../molecules/Selectsearchcomponent'
 import PopUp from '../molecules/PopUp'
 
+
+
 interface Props {
-  Dropdown?: PurchaseRequestDropdown["message"]
-  PRData?: PurchaseRequestData["message"]["data"]
-  dropdown: purchaseInquiryDropdown["message"]
-  PRInquiryData: TPRInquiry | null
-  refno?: string
-  companyDropdown: { name: string, description: string }[]
-  purchaseTypeDropdown: { name: string, purchase_requisition_type_name: string, description: string }[]
-  AllcompanyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
-  productHistory: ProductHistory[]
+PRInquiryData:TPRInquiry
 }
 
-type ProductNameDropdown = {
-  name: string,
-  product_name: string
-}
-const currentDate = new Date();
 
-const PRInquiryForm = ({ PRInquiryData, dropdown, refno, companyDropdown, purchaseTypeDropdown, AllcompanyDropdown, productHistory }: Props) => {
-  const user = Cookies.get("user_id");
-  const [formData, setFormData] = useState<TPRInquiry | null>(PRInquiryData ?? null);
-  const [singleTableRow, setSingleTableRow] = useState<TableData | null>(null);
-  const [tableData, setTableData] = useState<TableData[]>(PRInquiryData?.cart_product ?? []);
-  const [productHistroytableData, setProductHistoryTable] = useState<ProductHistory[]>(productHistory);
-  const [productNameDropdown, setProductNameDropdown] = useState<ProductNameDropdown[]>([]);
-  const [index, setIndex] = useState<number>(-1)
-  const [isApproved, setIsApproved] = useState(false);
-  const [isReject, setIsReject] = useState(false);
-  const [isDialog, setIsDialog] = useState(false);
-  const [isAcknowledgeDialog, setIsAcknowledgeDialog] = useState(false);
-  const [comment, setComment] = useState<string>("")
-  const [date, setDate] = useState<string>("")
-  const [acknowlegedFile, setAcknowlegedFile] = useState<File | null>(null)
-  const [isModifyDialog, setIsModifyDialog] = useState<boolean>(false);
-  const [plantDropdown, setPlantDropdown] = useState<{ name: string, plant_name: string, description: string }[]>();
-  const [purchaseGroupDropdown, setPurchaseGroupDropdown] = useState<{ name: string, purchase_group_code: string, purchase_group_name: string, description: string }[]>();
-  const [costCenterDropdown, setCostCenterDropdown] = useState<{ name: string, cost_center_code: string, cost_center_name: string, description: string }[]>([]);
-  const [glAccountDropdown, setGLAccountDropdown] = useState<{ name: string, gl_account_code: string, gl_account_name: string, description: string }[]>([]);
-  const [toEmail, setToEmail] = useState<string>("");
-  const [isEmailDialog, setIsEmailDialog] = useState<boolean>(false);
+const ViewPRInquiryForm = ({PRInquiryData}:Props) => {
   const router = useRouter();
+  const param = useSearchParams();
+  const refno = param.get("cart_id");
 
-  const acknowledgeButtonRef = useRef<HTMLButtonElement>(null);
+  const [formData, setFormData] = useState<TPRInquiry>();
+  
 
-  useEffect(() => {
-    if (PRInquiryData?.company) {
-      handleCompanyChange(PRInquiryData?.company);
+  const [productNameDropdown, setProductNameDropdown] = useState<ProductNameDropdown[]>([]);
+
+  const [isAcknowledgeDialog,setIsAcknowledgeDialog] = useState<boolean>(false);
+  const [acknowledgeBody,setAcknowledgeBody] = useState<any>();
+  const [isApprovalDialog,setIsApprovalDialog] = useState<boolean>(false);
+  const [approvalBody,setApprovalBody] = useState<any>();
+  const [isRejectionDialog,setIsRejectionDialog] = useState<boolean>(false);
+
+  const [selectedProductName,setSelectedProductName] = useState<string>();
+
+
+  useEffect(()=>{
+    if(refno){
+      getPurchaseEnquiryData(refno).then((data)=>{
+        setFormData(data)
+      })
     }
-
-    if (PRInquiryData?.category_type) {
-      fetchProductName(PRInquiryData?.category_type);
-    }
-  }, [])
-
-  useEffect(() => {
-    const needsAsset = tableData?.some(item => item?.need_asset_code && !item?.asset_code);
-
-    if (acknowledgeButtonRef.current) {
-      acknowledgeButtonRef.current.disabled = needsAsset;
-    }
-  }, [tableData]);
-
-  const formatDate = (dateStr: string | null | undefined) => {
-    if (!dateStr) return "-";
-    const cleanDate = dateStr.trim().split(" ")[0];
-    if (!cleanDate) return "-";
-    const [year, month, day] = cleanDate.split("-");
-    if (!year || !month || !day) return "-";
-    return `${day}-${month}-${year}`;
-  };
-
-  const handleSelectChange = (value: any, name: string, isTable: boolean) => {
-    if (isTable) {
-      setSingleTableRow((prev: any) => ({ ...prev, [name]: value }));
-    } else {
-      setFormData((prev: any) => ({ ...prev, [name]: value }))
-    }
-  };
-
-  const handleFieldChange = (isTable: boolean, e: React.ChangeEvent<
-    HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-  >) => {
-    const { name, value } = e.target;
-    if (isTable) {
-      setSingleTableRow((prev: any) => ({ ...prev, [name]: value }))
-    } else {
-      setFormData((prev: any) => ({ ...prev, [name]: value }));
-    }
-  };
-
-  let url = "";
-  if (PRInquiryData?.hod) {
-    url = `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.hod_approval_check`
-  } else if (PRInquiryData?.purchase_team) {
-    url = `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.purchase_approval_check`
-  }
-
-  const handleApproval = async () => {
-    const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { cart_id: refno, approve: isApproved, reject: isReject, user: user, comments: comment, cart_product: tableData } }, method: "POST" });
-    if (response?.status == 200) {
-      setComment("");
-      setIsApproved(false);
-      setIsReject(false);
-      router.push("/dashboard");
-
-      if (isReject) {
-        alert("Rejected Successfully");
-      } else if (isApproved) {
-        alert("Approved Successfully");
-      } else {
-        alert("Action completed successfully");
-      }
-    } else {
-      alert("Something went wrong");
-    }
-  };
+  },[])
 
 
-  const handleModify = async () => {
-    const url = API_END_POINTS?.PurchaseEnquiryModify;
-    const updatedTable = tableData?.map((item, index) => {
-      return { ...item, row_id: item?.name };
-    });
-    const response: AxiosResponse = await requestWrapper({ url: url, method: "POST", data: { data: { cart_id: refno, fields_to_modify: comment, cart_product: updatedTable } } });
-    if (response?.status == 200) {
-      alert("Modify Notification Sent Successfully");
-      setComment("");
-      setIsModifyDialog(false);
-      location.reload();
-    }
-  }
-
-
-  const handleAcknowledge = async () => {
-    const formData = new FormData();
-    const data = { cart_id: refno, acknowledged_remarks: comment, acknowledged_date: date };
-    formData?.append("data",JSON.stringify(data));
-    if(acknowlegedFile){
-      formData?.append("file",acknowlegedFile);
-    }
-    const url = API_END_POINTS?.PurchaseEnquiryAcknowledge;
-    const response: AxiosResponse = await requestWrapper({ url: url, method: "POST", data:  formData });
-    if (response?.status == 200) {
-      alert("Acknowledge Sent Successfully");
-      setComment("");
-      setIsAcknowledgeDialog(false);
-      setAcknowlegedFile(null);
-      setDate("");
-      location.reload();
-    }
-  }
-
-  const fetchProductName = async (value: string) => {
-    const fetchProductNameUrl = API_END_POINTS?.fetchProductNameBasedOnCategory;
-    const response: AxiosResponse = await requestWrapper({ url: fetchProductNameUrl, params: { category_type: value } });
-    if (response?.status == 200) {
-      setProductNameDropdown(response?.data?.message?.data);
-    }
-  }
-
-  const handleEmailClose = () => {
-    setIsEmailDialog(false);
-    setIsModifyDialog(false);
+  const handleClose = ()=>{
     setIsAcknowledgeDialog(false);
+    setIsApprovalDialog(false);
+    setIsRejectionDialog(false)
   }
 
-  const handleComment = (value: string) => {
-    setComment(value)
+  const handleAssestCodeCheck = (index:number,value:boolean)=>{
+    setFormData((prev: any) => ({
+      ...prev,
+      cart_product: prev.cart_product.map((item: any, i: number) =>
+        i === index ? { ...item, need_asset_code: value } : item
+      )
+    }));
   }
 
-  const { designation } = useAuth();
+  const handleAcknowledge = ()=>{
+    const formdata = new FormData();
+    if(acknowledgeBody?.file){
+      formdata.append("file",acknowledgeBody?.file);
+    }
 
-  const handleTableInput = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setTableData((prev) => {
-      const updated = [...prev];
-      if (updated[index]) {
-        updated[index] = { ...updated[index], [name]: value };
+    const body = {
+      ...acknowledgeBody,
+      cart_id:refno
+    };
+    formdata?.append("data",JSON.stringify(body));
+    acknowledgeEnquiry(formdata).then((data)=>{alert("Acknowledged successfully!");getPurchaseEnquiryData(refno as string).then((data)=>setFormData(data))}).finally(()=>{setAcknowledgeBody(null);setIsAcknowledgeDialog(false);setIsApprovalDialog(false)})
+  }
+
+  const handleFinalPriceChange = (index:number,value:string)=>{
+    setFormData((prev:any)=>({
+      ...prev,cart_product:formData?.cart_product?.map((item,i)=>(
+        i === index ? {...item,final_price_by_purchase_team:value} : item
+      ))
+    }))
+  }
+
+  const handleApproval = ()=>{
+    const body = {
+      data:{
+        ...approvalBody,
+        cart_id:refno,
+        action:1
       }
-      return updated;
-    });
-  }
-
-  // const handleTableCheck = (index: number, checked:boolean) => {
-  //   setTableData((prev) => {
-  //     const updated = [...prev];
-  //     if (updated[index]) {
-  //       updated[index] = { ...updated[index],isAssestCode: checked };
-  //     }
-  //     return updated;
-  //   });
-  // }
-
-  const handleCompanyChange = async (value: string) => {
-    const url = `${API_END_POINTS?.InquiryDropdownsBasedOnCompany}?comp=${value}`
-    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
-    if (response?.status == 200) {
-      setPlantDropdown(response?.data?.message?.plants?.data);
-      setPurchaseGroupDropdown(response?.data?.message?.purchase_groups?.data);
-      setCostCenterDropdown(response?.data?.message?.cost_centers?.data);
-      setGLAccountDropdown(response?.data?.message?.gl_accounts?.data);
     }
+  approvalEnquiry(body).then((data)=>{alert("approved successfully");}).finally(()=>{setApprovalBody(null);setIsApprovalDialog(false);getPurchaseEnquiryData(refno as string).then((data)=>(setFormData(data)))})
   }
 
-  const handleTableCheckChange = (index: number, check: boolean) => {
-    // const { name, value } = e.target;
-    setTableData((prev) => {
-      const updated = [...prev];
-      if (updated[index]) {
-        updated[index] = { ...updated[index], need_asset_code: check };
+  const handleReject = ()=>{
+    const body = {
+      data:{
+        ...approvalBody,
+        cart_id:refno,
+        action:0
       }
-      return updated;
-    });
-  }
-
-  const handleClose = () => {
-    setIsDialog(false);
-    setIsAcknowledgeDialog(false);
-    setIsModifyDialog(false);
-    setToEmail("");
-  }
-
-  const handleAddionalFlow = async () => {
-    const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.InquiryAddtionalApproval, method: "GET", params: { email_id: toEmail, purchase_enquiry_id: refno } });
-    if (response?.status == 200) {
-      alert("Added additional approval successfully");
-      handleEmailClose();
     }
+  approvalEnquiry(body).then((data)=>{alert("Rejected successfully");}).finally(()=>{setApprovalBody(null);setIsRejectionDialog(false)})
   }
-
-  const today = new Date().toISOString().split("T")[0];
-
-  const handleNumberInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
-    if (allowedKeys.includes(e.key)) return;
-    if (e.key === ".") {
-      if (e.currentTarget.value.includes(".")) {
-        e.preventDefault();
-      }
-      return;
-    }
-    if (!/^\d$/.test(e.key)) {
-      e.preventDefault();
-    }
-  };
-
-
-  console.log(PRInquiryData)
-  console.log(productNameDropdown, "this is dropdown");
-
-  console.log(productHistroytableData, "this is table")
+  console.log(typeof(formData?.cart_product?.[0]?.purchase_team_acknowledgement) ,"this is type")
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-2 max-h-[90vh] w-full">
-      <h1 className="border-b-2 sticky top-0 bg-white text-lg font-semibold z-30">
-        Purchase Enquiry
-      </h1>
-      <div className="grid grid-cols-3 gap-6 p-3">
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-2">User</h1>
-          <Input placeholder="" name='user' onChange={(e) => { handleFieldChange(false, e) }} value={formData?.user ?? user ?? ""} disabled />
+    <>
+      <div className="flex flex-col bg-white rounded-lg px-2 pb-2 max-h-[80vh] w-full">
+        <div className="grid grid-cols-3 gap-6 p-3">
+        <div className='col-span-1 flex flex-col gap-1'>
+          <h1 className='text-[#626973]'>User</h1>
+          {PRInquiryData?.user}
         </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-            Cart Use
-          </h1>
-          <Select disabled value={formData?.cart_use ?? ""} onValueChange={(value) => { handleSelectChange(value, "cart_use", false) }}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="Individual Use">Individual Use</SelectItem>
-                <SelectItem value="Commercial Use">Commercial Use</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+        <div className='col-span-1 flex flex-col gap-1'>
+          <h1 className='text-[#626973]'>Cart Use</h1>
+          {PRInquiryData?.cart_use}
         </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-2">Cart Date</h1>
-          <Input placeholder="" name='cart_date' onChange={(e) => { handleFieldChange(false, e) }} value={formData?.cart_date ?? currentDate?.toLocaleDateString() ?? ""} disabled />
+        <div className='col-span-1 flex flex-col gap-1'>
+          <h1 className='text-[#626973]'>Enquiry Raise Date</h1>
+          {PRInquiryData?.cart_date}
         </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-            Category Type
-          </h1>
-          <Select disabled value={formData?.category_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "category_type", false); fetchProductName(value) }}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {dropdown?.category_type?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.category_name}</SelectItem>
-                ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+        <div className='col-span-1 flex flex-col gap-1'>
+          <h1 className='text-[#626973]'>Company</h1>
+          {PRInquiryData?.company?.description}
         </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-            Company
-          </h1>
-          <Select disabled value={formData?.company ?? ""} onValueChange={(value) => { handleSelectChange(value, "company", false); handleCompanyChange(value); }}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {designation == "Purchase Team" ? AllcompanyDropdown?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                )) : companyDropdown?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          {/* <Input value={formData?.company ?? ""} disabled/> */}
         </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-            Purchase Type
-          </h1>
-          <Select disabled value={formData?.purchase_type ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_type", false) }}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {purchaseTypeDropdown?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.purchase_requisition_type_name} - {item?.description}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-            Plant
-          </h1>
-          <Select disabled value={formData?.plant ?? ""} onValueChange={(value) => { handleSelectChange(value, "plant", false) }}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {plantDropdown?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-            Purchase Group
-          </h1>
-          <Select disabled value={formData?.purchase_group ?? ""} onValueChange={(value) => { handleSelectChange(value, "purchase_group", false) }}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {purchaseGroupDropdown?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        {/* Cost Center */}
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-            Cost Center
-          </h1>
-          <Select
-            value={formData?.cost_center ?? ""}
-            onValueChange={(value) => handleSelectChange(value, "cost_center", false)}
-            disabled={refno ? true : false}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {costCenterDropdown?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.cost_center_code}-{item?.cost_center_name}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* G/L Account */}
-        <div className="col-span-1">
-          <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-            G/L Account
-          </h1>
-          <Select
-            value={formData?.gl_account ?? ""}
-            onValueChange={(value) => handleSelectChange(value, "gl_account", false)}
-            disabled={refno ? true : false}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {glAccountDropdown?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        {PRInquiryData?.acknowledged_date && (
-          <div className="col-span-1">
-            <h1 className="text-[14px] font-normal text-[#000000] pb-2">Early Delivery Date</h1>
-            <Input placeholder="" value={PRInquiryData?.acknowledged_date} disabled />
-          </div>
-        )}
-        {
-          PRInquiryData?.second_stage_approval_by &&
-          <div className="col-span-1">
-            <h1 className="text-[14px] font-normal text-[#000000] pb-2">Additional Approval Email</h1>
-            <Input placeholder="" value={PRInquiryData?.second_stage_approval_by} disabled />
-          </div>
-        }
-        {
-          designation != "Enquirer" && PRInquiryData?.hod_approved && !PRInquiryData?.second_stage_approved ?
-            <div className='flex items-end'>
-              <Button className={`py-2.5 ${PRInquiryData?.purchase_requisition_form_created ? "hidden" : ""}`} variant={"nextbtn"} size={"nextbtnsize"} onClick={(e) => { setIsEmailDialog(true) }}>Additional Approval</Button>
-            </div> :
-            <div></div>
-        }
-      </div>
-      <div className='pb-4'>
-        <h1 className="border-b-2 sticky top-0 bg-white text-lg font-semibold z-30">
-          Purchase Enquiry Items
-        </h1>
-        <div className="shadow- bg-[#f6f6f7] mt-4 p-4 rounded-2xl">
-          <Table className="max-h-40">
-            <TableHeader className="text-center">
-              <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                <TableHead className="w-[100px] text-center">Sr No.</TableHead>
-                <TableHead className="text-center">Is Assest Code ?</TableHead>
-                <TableHead className="text-center">Asset Code</TableHead>
-                <TableHead className="text-center">Product Name</TableHead>
-                <TableHead className="text-center">Product Price</TableHead>
-                <TableHead className="text-center">UOM</TableHead>
-                <TableHead className="text-center">Lead Time</TableHead>
-                <TableHead className="text-center">Product Quantity</TableHead>
-                <TableHead className="text-center">User Specification</TableHead>
-                <TableHead className="text-center">Attachment</TableHead>
-                <TableHead className="text-center">Final Price</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="text-center">
-              {tableData?.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-medium">{index + 1}</TableCell>
-                  <TableCell className={`flex justify-center text-nowrap`}><Input type='checkbox' onChange={(e) => { handleTableCheckChange(index, e.target.checked) }} disabled={
-                    designation === "Enquirer" ||
-                    item?.asset_code !== "" ||
-                    PRInquiryData?.purchase_team_acknowledgement === 1 ||
-                    PRInquiryData?.asked_to_modify === 1
-                  } checked={item?.need_asset_code} className='w-5' /></TableCell>
-                  <TableCell className='text-center text-nowrap'>{item?.asset_code}</TableCell>
-                  <TableCell className='text-nowrap'>
-                    {/* {item?.product_name} */}
-                    <Select
-                      disabled
-                      value={item?.product_name ?? ""}
-                    >
-                      <SelectTrigger className='text-nowrap disabled:opacity-100'>
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {productNameDropdown?.map((item, index) => (
-                            <SelectItem key={index} value={item?.name}>
-                              {item?.product_name}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                  <TableCell className='text-nowrap'>{item?.product_price}</TableCell>
-                  <TableCell className='text-nowrap'>{item?.uom}</TableCell>
-                  <TableCell className='text-nowrap'>{item?.lead_time}</TableCell>
-                  <TableCell className='text-nowrap'>{item?.product_quantity}</TableCell>
-                  <TableCell className='text-nowrap'>{item?.user_specifications}</TableCell>
-                  <TableCell className='text-nowrap'><Link href={item?.attachment?.url ?? ""}>{item?.attachment?.file_name}</Link></TableCell>
-                  <TableCell className='text-nowrap flex justify-center'>
-                    <Input disabled={PRInquiryData?.purchase_team_approved == Boolean(0) && PRInquiryData?.purchase_team == Boolean(1) ? false : true} value={tableData[index]?.final_price_by_purchase_team ?? 0} name='final_price_by_purchase_team' onChange={(e) => { handleTableInput(index, e) }} onKeyDown={handleNumberInputKeyDown} inputMode="decimal" pattern="^[0-9]*\.?[0-9]*$" className={`text-center w-28 ${PRInquiryData?.purchase_team_acknowledgement ? "" : "hidden"}`} />
-                  </TableCell>
-                  {/* <TableCell className='flex justify-center'><Input className='text-center w-28' type='checked' onChange={(e)=>{handleTableCheck(index,e.target.checked)}}/></TableCell> */}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
-      {/* purchase team approval buttons */}
-
-      {PRInquiryData?.purchase_team_approval_status != "Rejected" && (PRInquiryData?.purchase_team == Boolean(0) || PRInquiryData?.asked_to_modify == Boolean(0)) && (
-        <div className={`flex justify-end pr-4 pb-4 gap-4 ${designation != "Enquirer" ? "" : "hidden"}`}>
-          <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:border border-[#5291CD] hover:text-black ${PRInquiryData?.purchase_team_acknowledgement ? "hidden" : ""}`} onClick={() => { setIsModifyDialog(true) }}>Modify</Button>
-
-          {
-            PRInquiryData?.purchase_team_acknowledgement == Boolean(1) ?
-              <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:border border-[#5291CD] hover:text-black ${PRInquiryData?.purchase_team_approved == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsApproved(true); setIsDialog(true) }}>Proceed</Button>
-              :
-              <Button variant={"nextbtn"} size={"nextbtnsize"} className='py-2.5 hover:bg-white hover:border border-[#5291CD] hover:text-black' ref={acknowledgeButtonRef} onClick={() => { setIsAcknowledgeDialog(true) }}>Acknowledge</Button>
-          }
-          {
-            <Button variant={"nextbtn"} size={"nextbtnsize"} className={`py-2.5 hover:bg-white hover:border border-[#5291CD] hover:text-black ${designation != "Enquirer" && PRInquiryData?.purchase_team_approved == Boolean(0) && PRInquiryData?.purchase_team_acknowledgement == Boolean(0) ? "" : "hidden"}`} onClick={() => { setIsReject(true); setIsDialog(true) }}>Reject</Button>
-          }
-        </div>
-      )}
-
-      {designation !== "Enquirer" && (
-        <div className='pb-4'>
-          <h1 className="border-b-2 sticky top-0 bg-white text-lg font-semibold z-30">
-            Product History
-          </h1>
-          <div className="shadow- bg-[#f6f6f7] mt-4 p-4 rounded-2xl">
-            <Table className="max-h-40">
+          <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl mt-4">
+            <div className="flex w-full justify-between pb-4">
+              <h1 className="text-[20px] text-[#03111F] font-semibold">
+                Items List
+              </h1>
+            </div>
+            <Table className=" max-h-40 overflow-y-scroll relative">
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                  <TableHead className="text-black text-center text-nowrap">Sr.No</TableHead>
-                  <TableHead className="text-black text-center text-nowrap">Cart Id</TableHead>
-                  <TableHead className="text-black text-center text-nowrap">User</TableHead>
-                  <TableHead className="text-black text-center text-nowrap">Cart Date</TableHead>
-                  <TableHead className="text-black text-center text-nowrap">Purchase Requisition Form</TableHead>
-                  <TableHead className="text-black text-center text-nowrap">Product Name</TableHead>
-                  <TableHead className="text-black text-center text-nowrap">Price</TableHead>
-                  <TableHead className="text-black text-center text-nowrap">Final Price</TableHead>
-                  <TableHead className="text-black text-center text-nowrap">Quantity</TableHead>
-                  <TableHead className="text-black text-center text-nowrap">Action</TableHead>
+                  <TableHead className="w-[100px]">Sr No.</TableHead>
+                  <TableHead className="text-center">Product Type</TableHead>
+                  <TableHead className="text-center">Product Name</TableHead>
+                  <TableHead className="text-center">Is Assest Code? </TableHead>
+                  <TableHead className="text-center">Product Quantity</TableHead>
+                  <TableHead className="text-center">location</TableHead>
+                  <TableHead className="text-center">User Specification</TableHead>
+                  <TableHead className="text-center">Attachment</TableHead>
+                  <TableHead className="text-center">Category Type</TableHead>
+                  <TableHead className="text-center">Product Price</TableHead>
+                  <TableHead className="text-center">UOM</TableHead>
+                  <TableHead className="text-center">Lead Time</TableHead>
+                  <TableHead className="text-center">Final Price</TableHead>
+                  <TableHead className="text-center">Remarks</TableHead>
+                  <TableHead className="text-center">Status</TableHead>
+                  {
+                    <TableHead className="text-center">Action</TableHead>
+                  }
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
-                {productHistroytableData?.map((item, index) => (
+               {
+                formData?.cart_product?.map((item,index)=>(
                   <TableRow key={index}>
-                    <TableCell className="text-center text-nowrap">{index + 1}</TableCell>
-                    <TableCell className="text-center text-nowrap">{item?.cart_id}</TableCell>
-                    <TableCell className='text-center'>{item?.user}</TableCell>
-                    <TableCell className="text-center text-nowrap">{formatDate(item?.cart_date)}</TableCell>
-                    <TableCell className="text-center text-nowrap">{item?.purchase_requisition_form}</TableCell>
-                    <TableCell className="text-center text-nowrap">{item?.product_name}</TableCell>
-                    <TableCell className="text-center text-nowrap">{item?.price}</TableCell>
-                    <TableCell className="text-center text-nowrap">{item?.final_price}</TableCell>
-                    <TableCell className="text-center text-nowrap">{item?.quantity}</TableCell>
+                    <TableCell className="font-medium">{index + 1}</TableCell>
+                    <TableCell className=''>{item?.purchase_type ?? ""}</TableCell>
+                    <TableCell>{item?.product_details?.product_name}</TableCell> 
+                    <TableCell className='flex justify-center'><Input className='w-5' type='checkbox' onChange={(e)=>{handleAssestCodeCheck(index,e.target?.checked)}} checked={item?.need_asset_code?true:false} disabled={item?.purchase_team_acknowledgement}/></TableCell>
+                    <TableCell>{item?.product_quantity}</TableCell>
+                    <TableCell>{item?.plant_details?.plant_name ?? ""}</TableCell>
+                    <TableCell>{item?.user_specifications}</TableCell>
+                    <TableCell><Link href={item?.attachment_details?.url ?? ""} target='blank'>{item?.attachment_details?.file_name}</Link></TableCell> 
+                    <TableCell>{item?.category_type ?? ""}</TableCell>
+                    <TableCell>{item?.product_price ?? ""}</TableCell>
+                    <TableCell>{item?.uom}</TableCell>
+                    <TableCell>{item?.lead_time}</TableCell>
                     <TableCell>
-                      <Button className='bg-blue-400 hover:bg-blue-400' onClick={() => { router.push(`/product-history?cart_id=${refno}&product_name=${item?.product_name}`) }}>View</Button>
+                      <Input type='number' disabled={item?.can_approve === 1?false:true} value={item?.final_price_by_purchase_team ?? ""} onChange={(e)=>{handleFinalPriceChange(index,e.target.value)}}/>
+                      </TableCell>
+                    <TableCell>{item?.remarks}</TableCell>
+                    <TableCell>{item?.approval_status}</TableCell>
+                      <TableCell>
+                      {
+                        !item?.purchase_team_acknowledgement &&
+                        <div className='flex gap-4 justify-center items-center'>
+                        <svg onClick={()=>{setIsAcknowledgeDialog(true);setAcknowledgeBody((prev:any)=>({...prev,need_asset_code:item?.need_asset_code,name:item?.name}))}} className='hover:cursor-pointer' width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6.75 8.25L9 10.5L16.5 3" stroke="#16A34A" strokeWidth="1.32" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M15.75 9V14.25C15.75 14.6478 15.592 15.0294 15.3107 15.3107C15.0294 15.592 14.6478 15.75 14.25 15.75H3.75C3.35218 15.75 2.97064 15.592 2.68934 15.3107C2.40804 15.0294 2.25 14.6478 2.25 14.25V3.75C2.25 3.35218 2.40804 2.97064 2.68934 2.68934C2.97064 2.40804 3.35218 2.25 3.75 2.25H12" stroke="#16A34A" strokeWidth="1.32" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+
+                      
+                        <svg onClick={()=>{setIsRejectionDialog(true);setApprovalBody((prev:any)=>({...prev,name:item?.name}))}} className='hover:cursor-pointer' width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12.6602 0.660156L0.660156 12.6602M0.660156 0.660156L12.6602 12.6602" stroke="#F87171" strokeWidth="1.32" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+
+                    </div>
+}
+                    {
+                      (item?.purchase_team_acknowledgement && item?.can_approve) ? 
+                  <Button
+                   className=" rounded-xl px-2 py-2 font-normal"
+                  variant="nextbtn"
+                  size="nextbtnsize"
+                  onClick={()=>{setIsApprovalDialog(true);setApprovalBody((prev:any)=>({...prev,name:item?.name,final_price_by_purchase_team:item?.final_price_by_purchase_team}))}}
+                  >Proceed</Button>
+                  :""
+                    }
                     </TableCell>
                   </TableRow>
-                ))}
+                ))
+               }
               </TableBody>
             </Table>
           </div>
-        </div>
-      )}
-
-      {isDialog &&
-        <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
-          <Comment_box handleClose={handleClose} Submitbutton={handleApproval} handleComment={handleComment} />
-        </div>
-      }
-      {isModifyDialog &&
-        <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
-          <Comment_box handleClose={handleClose} Submitbutton={handleModify} handleComment={handleComment} />
-        </div>
-      }
-      {isAcknowledgeDialog &&
-        <div className="absolute z-50 flex pt-10 items-center justify-center inset-0 bg-black bg-opacity-50">
-          <Comment_box className='md:max-h-fit' handleClose={handleClose} Submitbutton={handleAcknowledge} handleComment={handleComment}>
-            <div className="">
-              <h1 className="text-[12px] font-normal text-[#626973] pb-2">Expected Delivery</h1>
-              <Input className='w-44' type='Date' onChange={(e) => { setDate(e.target.value) }} min={today} />
-              <Input className='mt-2' type='file' onChange={(e) => { setAcknowlegedFile(e?.target?.files?.[0] as File) }} />
-              <div className='pt-3 italic'>
-                <h1 className='text-[10px] bg-slate-400 font-mono'>Disclaimer: The Expected Delivery Date can be changed based on the receipt of Purchase Order and Purchase Requisition.</h1>
-              </div>
-            </div>
-          </Comment_box>
-        </div>
-      }
+          {/* {
+            !formData?.is_submited && 
+            <div className={`flex justify-end pr-2 mt-4 pb-4 ${refno ? "" : "hidden"}`}><Button className='py-2.5' variant={"nextbtn"} size={"nextbtnsize"} >Submit</Button></div>
+          } */}
+      </div>
       {
-        isEmailDialog &&
-        <PopUp handleClose={handleEmailClose} headerText='Additional Flow' isSubmit={true} Submitbutton={handleAddionalFlow}>
-          <div className="col-span-1 py-4 ">
-            <h1 className="text-[14px] font-normal text-[#000000] pb-2">
-              To Email
-            </h1>
-            <Input onChange={(e) => { setToEmail(e.target.value) }} value={toEmail ?? ""} />
+        isAcknowledgeDialog &&
+        <PopUp Submitbutton={() => { handleAcknowledge() }} isSubmit={true} headerText='Comments' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[900px] md:max-h-[700px]' isHeaderTextUnderline={true}>
+          <Input className='mt-5 rounded-xl py-2' placeholder='Enter your comment here...' onChange={(e)=>{setAcknowledgeBody((prev:any)=>({...prev,remarks:e.target.value}))}}/>
+          <div className='grid grid-cols-2 mt-4 gap-4'>
+            <div className="col-span-1">
+                            <h1 className="text-[14px] font-normal text-[#000000] pb-2 relative">
+                              Expected Delivery <span className='text-red-400 text-[20px] absolute -top-2'>*</span>
+                            </h1>
+                            <Input onChange={(e)=>setAcknowledgeBody((prev:any)=>({...prev,expected_date:e.target.value}))} type='date' min={new Date().toISOString().split('T')[0]}/>
+                          </div>
+            <div className="col-span-1">
+                            <h1 className="text-[14px] font-normal text-[#000000] pb-2 relative">
+                              Attachment
+                            </h1>
+                            <Input type='file' onChange={(e)=>{setAcknowledgeBody((prev:any)=>({...prev,file:e.target.files?.[0]}))}}/>
+                          </div>
+          </div>
+          <div className='bg-[#F6F6F7] mt-3 rounded-lg p-1'>
+          <h1 className='font-semibold text-[14px] pl-3'>Disclaimer: <span className='font-normal text-[14px] text-inherit'>The Expected Delivery Date can be changed based on the receipt of Purchase Order and Purchase Requisition.</span></h1>
           </div>
         </PopUp>
+
       }
-    </div>
+        {
+          isApprovalDialog && 
+          <PopUp Submitbutton={() => { handleApproval() }} isSubmit={true} headerText='Is Additional Approval Required ?' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[900px] md:max-h-[700px]' isHeaderTextUnderline={true}>
+            <div className='flex w-full justify-start gap-4 '>
+              <div className='flex gap-2 items-center'>
+              <Input type='radio' className='w-3' name='isAdditional' onClick={()=>{setApprovalBody((prev:any)=>({...prev,required_additional_approver:true}))}}/>
+                <h1>Yes</h1>
+              </div>
+              <div className='flex gap-2 items-center'>
+              <Input type='radio' className='w-3' name='isAdditional' onClick={()=>{setApprovalBody((prev:any)=>({...prev,required_additional_approver:false}))}} />
+              <h1>No</h1>
+              </div>
+            </div>
+            {
+              approvalBody?.required_additional_approver &&
+              <div className='grid grid-cols-2 mt-3'>
+            <div className="col-span-1">
+                            <h1 className="text-[14px] font-normal text-[#000000] pb-2 relative">
+                              Enter Additional Approval Email ID <span className='text-red-400 text-[20px] absolute -top-2'>*</span>
+                            </h1>
+                            <Input onChange={(e)=>setApprovalBody((prev:any)=>({...prev,additional_approver_email:e.target.value}))} placeholder='Type here...' />
+                          </div>
+              </div>
+            }
+            <Input className='mt-3' placeholder='Enter your comment here...' onChange={(e)=>{setApprovalBody((prev:any)=>({...prev,remarks:e.target.value}))}}/>
+          </PopUp>
+        }
+
+
+        {
+          isRejectionDialog && 
+          <PopUp Submitbutton={() => { handleReject() }} isSubmit={true} headerText='Are You Sure You Want to Reject ?' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[900px] md:max-h-[700px]' isHeaderTextUnderline={true}>
+            <Input className='mt-3' placeholder='Enter your comment here...' onChange={(e)=>{setApprovalBody((prev:any)=>({...prev,remarks:e.target.value}))}}/>
+          </PopUp>
+        }
+
+    </>
   )
 }
 
-export default PRInquiryForm
+export default ViewPRInquiryForm
