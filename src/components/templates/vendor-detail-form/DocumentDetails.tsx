@@ -33,6 +33,7 @@ import {
   TableRow,
 } from "../../atoms/table";
 import MultiSelect, { MultiValue } from "react-select";
+import { verifyGstNumber, verifyPanNumber } from "@/src/services/documentVerification";
 
 interface documentDetail {
   company_pan_number: string;
@@ -76,7 +77,7 @@ const DocumentDetails = ({
   ref_no,
   onboarding_ref_no,
   OnboardingDetail,
-  documentDetailDropdown,
+  documentDetailDropdown
 }: Props) => {
   const [BusinessType, setBusinessType] = useState<string>(
     OnboardingDetail?.gst_table[0]?.gst_ven_type
@@ -261,6 +262,33 @@ const DocumentDetails = ({
       return false;
     }
   };
+
+
+  const panVerification = async(panNumber:string)=>{ 
+    if(!checkPAN(panNumber)){
+      return;
+    } 
+    await verifyPanNumber(panNumber)
+    .then((data)=>{
+        console.log(data,"this is pan verification data")
+    })
+    .catch((error)=>{
+        console.log(error,"this is error in pan verification")
+    })
+  }
+
+  const gstVerification = async(gstNumber:string)=>{ 
+    if(!checkGST(gstNumber)){
+      return;
+    } 
+    await verifyGstNumber(gstNumber)
+    .then((data)=>{
+        console.log(data,"this is gst verification data")
+    })
+    .catch((error)=>{
+        console.log(error,"this is error in gst verification")
+    })
+  }
 
   const handleSubmit = async () => {
     const validationErrors = validate();
@@ -504,6 +532,7 @@ const DocumentDetails = ({
                 ""
               }
               onChange={(e) => {
+                panVerification(e.target.value);
                 setDocumentDetail((prev) => ({
                   ...prev,
                   company_pan_number: e.target.value,
@@ -761,6 +790,7 @@ const DocumentDetails = ({
                     //   }));
                     // }}
                     onChange={(e) => {
+                      gstVerification(e.target.value);
                       setSingleRow((prev: any) => ({
                         ...prev,
                         gst_number: e.target.value,

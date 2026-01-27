@@ -1,6 +1,6 @@
 import React from 'react'
 import ProductHistoryTable from '../molecules/ProductHistoryTable'
-import { ProductHistory as ProductHistoryType } from './Pr-Inquiry'
+import { ProductHistory as ProductHistoryType } from '../../types/prEnquiry/prEnquiry.types'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import API_END_POINTS from '@/src/services/apiEndPoints'
