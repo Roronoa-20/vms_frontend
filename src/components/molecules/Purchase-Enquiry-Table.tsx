@@ -211,7 +211,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData }: Props) => 
                     </TableCell> */}
                     <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.company}</TableCell>
                     <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.user}</TableCell>
-                    <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={`view-pr-enquiry?cart_id=${item?.name}`}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View</Button></Link></TableCell>
+                    <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={`${designation == "Enquirer"?`pr-enquiry?cart_id=${item?.name}`:`view-pr-enquiry?cart_id=${item?.name}`}`}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View</Button></Link></TableCell>
                     {/* <TableCell
                       className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show ? "" : "hidden"
                         }`}
