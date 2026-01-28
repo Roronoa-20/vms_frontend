@@ -47,6 +47,7 @@ export type getPurchaseEnquiryDataType = {
 }
 
 export type itemListType = {
+    can_acknowledge:number
     need_asset_code: boolean
     asset_code: string,
     product_name: string,
