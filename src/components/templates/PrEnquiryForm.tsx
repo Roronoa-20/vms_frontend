@@ -214,6 +214,9 @@ const PRInquiryForm = ({  companyDropdown,purchaseTypeDropdown,categoryTypeDropd
       setSingleTableRow(null);
       setSelectedLocation("");
       setSelectedProductName("");
+      if(fileUploadRef?.current){
+        fileUploadRef.current.value = "";
+      }
      })
      .catch(()=>{
       alert("failed to add item");

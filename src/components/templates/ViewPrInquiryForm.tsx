@@ -165,14 +165,14 @@ const ViewPRInquiryForm = ({PRInquiryData}:Props) => {
                   <TableHead className="text-center">Remarks</TableHead>
                   <TableHead className="text-center">Status</TableHead>
                   {
-                    <TableHead className="text-center">Action</TableHead>
+                    <TableHead className="text-center sticky right-0 bg-[#DDE8FE]">Action</TableHead>
                   }
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
                {
                 formData?.cart_product?.map((item,index)=>(
-                  <TableRow key={index}>
+                  <TableRow key={index} className='bg-[#f6f6f7]'>
                     <TableCell className="font-medium">{index + 1}</TableCell>
                     <TableCell className=''>{item?.purchase_type ?? ""}</TableCell>
                     <TableCell>{item?.product_details?.product_name}</TableCell> 
@@ -189,8 +189,8 @@ const ViewPRInquiryForm = ({PRInquiryData}:Props) => {
                       <Input type='number' disabled={!item?.can_approve} value={item?.final_price_by_purchase_team ?? ""} onChange={(e)=>{handleFinalPriceChange(index,e.target.value)}}/>
                       </TableCell>
                     <TableCell>{item?.remarks}</TableCell>
-                    <TableCell>{item?.approval_status}</TableCell>
-                      <TableCell>
+                    <TableCell className='w-full text-nowrap'>{item?.approval_status}</TableCell>
+                      <TableCell className='sticky right-0 bg-[#f6f6f7]'>
                       {
                         !item?.purchase_team_acknowledgement &&
                         <div className='flex gap-4 justify-center items-center'>
