@@ -117,8 +117,8 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData }: Props) => 
             <SelectContent>
               <SelectGroup>
                 <SelectItem value="All">All</SelectItem>
-                {purchaseTypes.map((type) => (
-                  <SelectItem key={type} value={type}>{type}</SelectItem>
+                {purchaseTypes.map((type,index) => (
+                  <SelectItem key={index} value={type}>{type}</SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
@@ -130,34 +130,36 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData }: Props) => 
               <TableHead className="text-center text-black whitespace-nowrap">Sr No.</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">Ref No.</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">Cart Date</TableHead>
-              {designation !== "Enquirer" && (
+              {/* {designation !== "Enquirer" && (
                 <TableHead className="text-center text-black whitespace-nowrap">Created By</TableHead>
-              )}
-              <TableHead className="text-center text-black whitespace-nowrap">Transfer Status</TableHead>
-              <TableHead className="text-center text-black whitespace-nowrap">Category Type</TableHead>
-              <TableHead className="text-center text-black whitespace-nowrap">PR Type</TableHead>
-              <TableHead className="text-center text-black whitespace-nowrap">Purchase Team Status</TableHead>
-              <TableHead className="text-center text-black whitespace-nowrap">HOD Status</TableHead>
-              <TableHead className="text-center text-black whitespace-nowrap">Additional Status</TableHead>
+              )} */}
+              {/* <TableHead className="text-center text-black whitespace-nowrap">Transfer Status</TableHead> */}
+              {/* <TableHead className="text-center text-black whitespace-nowrap">Category Type</TableHead> */}
+              {/* <TableHead className="text-center text-black whitespace-nowrap">PR Type</TableHead> */}
+              {/* <TableHead className="text-center text-black whitespace-nowrap">Purchase Team Status</TableHead> */}
+              {/* <TableHead className="text-center text-black whitespace-nowrap">HOD Status</TableHead> */}
+              {/* <TableHead className="text-center text-black whitespace-nowrap">Additional Status</TableHead> */}
+              <TableHead className="text-center text-black whitespace-nowrap">Company</TableHead>
+              <TableHead className="text-center text-black whitespace-nowrap">Created By</TableHead>
               <TableHead className="text-center text-black whitespace-nowrap">View Cart</TableHead>
-              <TableHead className={`text-center text-black whitespace-nowrap`}>Raise PR</TableHead>
+              {/* <TableHead className={`text-center text-black whitespace-nowrap`}>Raise PR</TableHead> */}
             </TableRow>
           </TableHeader>
           <TableBody className="text-center text-black">
             {paginatedTable.length > 0 ? (
               paginatedTable.map((item, index) => {
-                const url = item?.asked_to_modify
-                  ? `/pr-inquiry?cart_Id=${item?.name}`
-                  : `/view-pr-inquiry?cart_Id=${item?.name}`;
+                // const url = item?.asked_to_modify
+                //   ? `/pr-enquiry?cart_Id=${item?.name}`
+                //   : `/view-pr-inquiry?cart_Id=${item?.name}`;
                 return (
                   <TableRow key={index}>
                     <TableCell className="font-medium text-center whitespace-nowrap">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                     <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.name}</TableCell>
                     <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.cart_date ? formatDate(new Date(item.cart_date)) : "-"}</TableCell>
-                    {designation !== "Enquirer" && (
+                    {/* {designation !== "Enquirer" && (
                       <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.created_by_user_name}</TableCell>
-                    )}
-                    <TableCell className="text-center whitespace-nowrap">
+                    )} */}
+                    {/* <TableCell className="text-center whitespace-nowrap">
                       <div
                         className={`px-2 py-3 rounded-xl uppercase ${item?.transfer_status === "Not Transferred"
                           ? "bg-yellow-100 text-yellow-800"
@@ -168,10 +170,10 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData }: Props) => 
                       >
                         {item?.transfer_status}
                       </div>
-                    </TableCell>
-                    <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.category_type}</TableCell>
-                    <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.purchase_type}</TableCell>
-                    <TableCell className="text-center whitespace-nowrap">
+                    </TableCell> */}
+                    {/* <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.category_type}</TableCell> */}
+                    {/* <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.purchase_type}</TableCell> */}
+                    {/* <TableCell className="text-center whitespace-nowrap">
                       <div
                         className={`px-2 py-3 rounded-xl uppercase ${item?.purchase_team_approval_status === "Pending"
                           ? "bg-yellow-100 text-yellow-800"
@@ -182,8 +184,8 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData }: Props) => 
                       >
                         {item?.purchase_team_approval_status}
                       </div>
-                    </TableCell>
-                    <TableCell className="text-center whitespace-nowrap">
+                    </TableCell> */}
+                    {/* <TableCell className="text-center whitespace-nowrap">
                       <div
                         className={`px-2 py-3 rounded-xl uppercase ${item?.hod_approval_status === "Pending"
                           ? "bg-yellow-100 text-yellow-800"
@@ -194,8 +196,8 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData }: Props) => 
                       >
                         {item?.hod_approval_status}
                       </div>
-                    </TableCell>
-                    <TableCell className="text-center whitespace-nowrap">
+                    </TableCell> */}
+                    {/* <TableCell className="text-center whitespace-nowrap">
                       <div
                         className={`px-2 py-3 rounded-xl uppercase ${item?.second_stage_approval_status === "Pending"
                           ? "bg-yellow-100 text-yellow-800"
@@ -206,9 +208,11 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData }: Props) => 
                       >
                         {item?.second_stage_approval_status}
                       </div>
-                    </TableCell>
-                    <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={url}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View</Button></Link></TableCell>
-                    <TableCell
+                    </TableCell> */}
+                    <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.company}</TableCell>
+                    <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.user}</TableCell>
+                    <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={`view-pr-enquiry?cart_id=${item?.name}`}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View</Button></Link></TableCell>
+                    {/* <TableCell
                       className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show ? "" : "hidden"
                         }`}
                     >
@@ -221,7 +225,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData }: Props) => 
                           <Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">PR</Button>
                         </Link>
                       )}
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 )
               })
