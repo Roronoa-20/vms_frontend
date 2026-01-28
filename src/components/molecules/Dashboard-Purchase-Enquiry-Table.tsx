@@ -157,12 +157,12 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
             <TableBody className="text-center text-black">
               {table ? (
                 table?.map((item, index) => {
-                  const url =
-                    designation === "Purchase Team"
-                      ? `/view-pr-enquiry?cart_id=${item?.name}`
-                      : (item?.asked_to_modify || !item?.is_submited)
-                        ? `/pr-enquiry?cart_id=${item?.name}`
-                        : `/view-pr-enquiry?cart_id=${item?.name}`;
+                  // const url =
+                  //   designation === "Purchase Team"
+                  //     ? `/view-pr-enquiry?cart_id=${item?.name}`
+                  //     : (item?.asked_to_modify || !item?.is_submited)
+                  //       ? `/view-pr-enquiry?cart_id=${item?.name}`
+                  //       : `/view-pr-enquiry?cart_id=${item?.name}`;
                   return (
                     <TableRow key={index}>
                       <TableCell className="font-medium text-center whitespace-nowrap">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
@@ -228,7 +228,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                           {item?.second_stage_approval_status}
                         </div>
                       </TableCell> */}
-                      <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={url}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View</Button></Link></TableCell>
+                      <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={`/view-pr-enquiry?cart_id=${item?.name}`}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View</Button></Link></TableCell>
                       {/* {designation === "Enquirer" && (
                         <TableCell className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show ? "" : "hidden"}`}>
                           {item?.pr_created ? (
