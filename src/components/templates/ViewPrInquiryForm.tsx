@@ -186,7 +186,7 @@ const ViewPRInquiryForm = ({PRInquiryData}:Props) => {
                     <TableCell>{item?.uom}</TableCell>
                     <TableCell>{item?.lead_time}</TableCell>
                     <TableCell>
-                      <Input type='number' disabled={!item?.purchase_team_acknowledgement} value={item?.final_price_by_purchase_team ?? ""} onChange={(e)=>{handleFinalPriceChange(index,e.target.value)}}/>
+                      <Input type='number' disabled={!item?.can_approve} value={item?.final_price_by_purchase_team ?? ""} onChange={(e)=>{handleFinalPriceChange(index,e.target.value)}}/>
                       </TableCell>
                     <TableCell>{item?.remarks}</TableCell>
                     <TableCell>{item?.approval_status}</TableCell>
