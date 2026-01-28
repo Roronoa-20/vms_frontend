@@ -228,7 +228,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                           {item?.second_stage_approval_status}
                         </div>
                       </TableCell> */}
-                      <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={`/view-pr-enquiry?cart_id=${item?.name}`}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View</Button></Link></TableCell>
+                      <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={`${designation == "Enquirer"?`/pr-enquiry?cart_id=${item?.name}`:`view-pr-enquiry?cart_id=${item?.name}`}`}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View</Button></Link></TableCell>
                       {/* {designation === "Enquirer" && (
                         <TableCell className={`text-nowrap text-center whitespace-nowrap ${item?.pr_button_show ? "" : "hidden"}`}>
                           {item?.pr_created ? (
