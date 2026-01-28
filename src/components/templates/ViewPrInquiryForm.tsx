@@ -115,9 +115,14 @@ const ViewPRInquiryForm = ({PRInquiryData}:Props) => {
         action:0
       }
     }
-  approvalEnquiry(body).then((data)=>{alert("Rejected successfully");}).finally(()=>{setApprovalBody(null);setIsRejectionDialog(false)})
-  }
-  console.log(typeof(formData?.cart_product?.[0]?.purchase_team_acknowledgement) ,"this is type")
+  approvalEnquiry(body)
+  .then(()=>{
+    alert("Rejected successfully");
+    getPurchaseEnquiryData(refno as string)
+    .then((data)=>setFormData(data));
+  })
+  .finally(()=>{setApprovalBody(null);setIsRejectionDialog(false);})
+  };
 
   return (
     <>
@@ -176,7 +181,7 @@ const ViewPRInquiryForm = ({PRInquiryData}:Props) => {
                     <TableCell className="font-medium">{index + 1}</TableCell>
                     <TableCell className=''>{item?.purchase_type ?? ""}</TableCell>
                     <TableCell>{item?.product_details?.product_name}</TableCell> 
-                    <TableCell className='flex justify-center'><Input className='w-5' type='checkbox' onChange={(e)=>{handleAssestCodeCheck(index,e.target?.checked)}} checked={item?.need_asset_code?true:false} disabled={item?.purchase_team_acknowledgement}/></TableCell>
+                    <TableCell className='flex justify-center'><Input className='w-5' type='checkbox' onChange={(e)=>{handleAssestCodeCheck(index,e.target?.checked)}} checked={item?.need_asset_code?true:false} disabled={item?.can_acknowledge == 0?true:false}/></TableCell>
                     <TableCell>{item?.product_quantity}</TableCell>
                     <TableCell>{item?.plant_details?.plant_name ?? ""}</TableCell>
                     <TableCell>{item?.user_specifications}</TableCell>
@@ -192,7 +197,7 @@ const ViewPRInquiryForm = ({PRInquiryData}:Props) => {
                     <TableCell className='w-full text-nowrap'>{item?.approval_status}</TableCell>
                       <TableCell className='sticky right-0 bg-[#f6f6f7]'>
                       {
-                        !item?.purchase_team_acknowledgement &&
+                        item?.can_acknowledge == 1 ?
                         <div className='flex gap-4 justify-center items-center'>
                         <svg onClick={()=>{setIsAcknowledgeDialog(true);setAcknowledgeBody((prev:any)=>({...prev,need_asset_code:item?.need_asset_code,name:item?.name}))}} className='hover:cursor-pointer' width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M6.75 8.25L9 10.5L16.5 3" stroke="#16A34A" strokeWidth="1.32" strokeLinecap="round" strokeLinejoin="round"/>
@@ -205,9 +210,10 @@ const ViewPRInquiryForm = ({PRInquiryData}:Props) => {
                         </svg>
 
                     </div>
+                    :""
 }
                     {
-                      (item?.purchase_team_acknowledgement && item?.can_approve) ? 
+                      (item?.can_approve) ? 
                   <Button
                    className=" rounded-xl px-2 py-2 font-normal"
                   variant="nextbtn"
