@@ -489,7 +489,7 @@ const PRInquiryForm = ({  companyDropdown,purchaseTypeDropdown,categoryTypeDropd
           </div>
           {
             !formData?.is_submited && 
-            <div className={`flex justify-end pr-2 mt-4 pb-4 ${refno ? "" : "hidden"}`}><Button className='py-2.5' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => {submitEnquiry(refno as string).then(()=>setShowSuccessModal(true)) }} >Submit</Button></div>
+            <div className={`flex justify-end pr-2 mt-4 pb-4 ${refno && formData?.cart_product.length>0 ? "" : "hidden"}`}><Button className='py-2.5' variant={"nextbtn"} size={"nextbtnsize"} onClick={() => {submitEnquiry(refno as string).then(()=>setShowSuccessModal(true)) }} >Submit</Button></div>
           }
 
         {showSuccessModal && (
