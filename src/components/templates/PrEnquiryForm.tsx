@@ -29,20 +29,22 @@ interface Props {
  companyDropdown:companyDropdownBasedOnUserType[]
  purchaseTypeDropdown:PurchaseTypeType[]
  categoryTypeDropdown:categoryTypeDropdownType[]
+ cityDropdown:cityDropdownType[]
+ data:TPRInquiry
 }
 
 
-const PRInquiryForm = ({  companyDropdown,purchaseTypeDropdown,categoryTypeDropdown}: Props) => {
+const PRInquiryForm = ({  companyDropdown,purchaseTypeDropdown,categoryTypeDropdown,cityDropdown,data}: Props) => {
   const router = useRouter();
   const param = useSearchParams();
   const refno = param.get("cart_id");
 
-  const [formData, setFormData] = useState<TPRInquiry>();
+  const [formData, setFormData] = useState<TPRInquiry>(data);
   const [singleTableRow, setSingleTableRow] = useState<any>(null);
   
 
   const [productNameDropdown, setProductNameDropdown] = useState<ProductNameDropdown[]>([]);
-  const [locationDropdown, setLocationDropdown] = useState<cityDropdownType[]>([]);
+  const [locationDropdown, setLocationDropdown] = useState<cityDropdownType[]>(cityDropdown);
   const [selectedLocation,setSelectedLocation] = useState<string>()
   const [isDialog, setIsDialog] = useState<boolean>(false);
   const [index, setIndex] = useState<number>(-1);
@@ -56,6 +58,7 @@ const PRInquiryForm = ({  companyDropdown,purchaseTypeDropdown,categoryTypeDropd
 
   const fileUploadRef = useRef<HTMLInputElement>(null);
 
+  console.log(cityDropdown,"this is city")
 
   useEffect(()=>{
     if(selectedProductName){
@@ -68,13 +71,13 @@ const PRInquiryForm = ({  companyDropdown,purchaseTypeDropdown,categoryTypeDropd
     }
   },[selectedProductName])
 
-  useEffect(()=>{
-    if(refno){
-      getPurchaseEnquiryData(refno).then((data)=>{
-        setFormData(data)
-      })
-    }
-  },[])
+  // useEffect(()=>{
+  //   if(refno){
+  //     getPurchaseEnquiryData(refno).then((data)=>{
+  //       setFormData(data)
+  //     })
+  //   }
+  // },[])
 
 
   const requiredTableFields = {
@@ -114,24 +117,29 @@ const PRInquiryForm = ({  companyDropdown,purchaseTypeDropdown,categoryTypeDropd
     }
 
     const response = await createPurchaseEnquiry(body);
-    router.push(`/pr-enquiry?cart_id=${response?.name}`);
+    router.replace(`/pr-enquiry?cart_id=${response?.name}`);
+    getPurchaseEnquiryData(response?.name).then((data)=>{setFormData(data)})
   }
 
-  const fetchLocationDropdown = async(query:string)=>{
-    if(formData?.company){
-      return await getlocationDropdown(query,formData?.company?.name as string)
+  // const fetchLocationDropdown = async(query:string)=>{
+  //   if(formData?.company){
+  //     return await getlocationDropdown(query,formData?.company?.name as string)
+  //   }else{
+  //     return []
+  //   }
+  // }
+
+  const fetchCityDropdown = async(query?:string)=>{
+    if(formData?.company?.name){
+      return await getCityDropdown(query as string,formData?.company?.name as string)
     }else{
       return []
     }
   }
 
-  const fetchCityDropdown = async(query:string)=>{
-    if(formData?.company){
-      return await getCityDropdown(query,formData?.company?.name as string)
-    }else{
-      return[]
-    }
-  }
+  useEffect(()=>{
+    fetchCityDropdown();
+  },[formData?.company?.name])
   let nbrequiredFields: { [key: string]: string } = {
     // cart_use: "Please Select Cart Use",
     // category_type: "Please Select Category Type",

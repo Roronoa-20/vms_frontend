@@ -152,7 +152,7 @@ const ViewPRInquiryForm = ({PRInquiryData}:Props) => {
                   <TableHead className="w-[100px]">Sr No.</TableHead>
                   <TableHead className="text-center">Product Type</TableHead>
                   <TableHead className="text-center">Product Name</TableHead>
-                  <TableHead className="text-center">Is Assest Code? </TableHead>
+                  <TableHead className="text-center">Is Asset Code? </TableHead>
                   <TableHead className="text-center">Product Quantity</TableHead>
                   <TableHead className="text-center">location</TableHead>
                   <TableHead className="text-center">User Specification</TableHead>
@@ -186,7 +186,7 @@ const ViewPRInquiryForm = ({PRInquiryData}:Props) => {
                     <TableCell>{item?.uom}</TableCell>
                     <TableCell>{item?.lead_time}</TableCell>
                     <TableCell>
-                      <Input type='number' disabled={item?.can_approve === 1?false:true} value={item?.final_price_by_purchase_team ?? ""} onChange={(e)=>{handleFinalPriceChange(index,e.target.value)}}/>
+                      <Input type='number' disabled={!item?.purchase_team_acknowledgement} value={item?.final_price_by_purchase_team ?? ""} onChange={(e)=>{handleFinalPriceChange(index,e.target.value)}}/>
                       </TableCell>
                     <TableCell>{item?.remarks}</TableCell>
                     <TableCell>{item?.approval_status}</TableCell>
