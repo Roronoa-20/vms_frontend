@@ -4,9 +4,9 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios';
 import requestWrapper from '@/src/services/apiCall';
 import { cookies } from 'next/headers';
-import { purchaseInquiryDropdown } from '@/src/types/prEnquiry/prEnquiry.types';
+import { cityDropdownType, purchaseInquiryDropdown } from '@/src/types/prEnquiry/prEnquiry.types';
 import { TPRInquiry } from './View-Pr-Enquiry';
-import { getCategoryTypeEnquiryDropdown, getCompanyDropdownBasedOUser, getPurchaseTypeDropdown } from '@/src/services/prEnquiry/prEnquiry.services';
+import { getCategoryTypeEnquiryDropdown, getCityDropdown, getCompanyDropdownBasedOUser, getlocationDropdown, getPurchaseEnquiryData, getPurchaseTypeDropdown } from '@/src/services/prEnquiry/prEnquiry.services';
 
 interface Props {
     refno?: string
@@ -58,9 +58,20 @@ const PrInquiryPage = async ({ refno }: Props) => {
     const companyDropdown = await getCompanyDropdownBasedOUser(cookieHeaderString);
     const purchaseTypeDropdown = await getPurchaseTypeDropdown(cookieHeaderString);
     const categoryTypeDropdown = await getCategoryTypeEnquiryDropdown(cookieHeaderString);
+
+    let data:any = null;
+    if(refno){
+       data = await getPurchaseEnquiryData(refno,cookieHeaderString)
+    };
+
+    let cityDropdown:cityDropdownType[] | null = null; 
+    if(data?.company?.name){
+       cityDropdown = await getCityDropdown("",data?.company?.name,cookieHeaderString);
+    }
+    console.log(cityDropdown,"fjdhfj")
     
     return (
-        <PrEnquiryForm companyDropdown={companyDropdown} purchaseTypeDropdown={purchaseTypeDropdown} categoryTypeDropdown={categoryTypeDropdown}/>
+        <PrEnquiryForm companyDropdown={companyDropdown} purchaseTypeDropdown={purchaseTypeDropdown} categoryTypeDropdown={categoryTypeDropdown} cityDropdown={cityDropdown as cityDropdownType[]} data={data}/>
         // <></>
     )
 }
