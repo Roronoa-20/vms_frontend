@@ -14,7 +14,7 @@ const Dashboard = async () => {
     const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
 
 
-    const prInquiryDashboardUrl = API_END_POINTS?.prInquiryDashboardTable;
+    const prInquiryDashboardUrl = API_END_POINTS?.viewEnquiryTable;
     const prInquiryApi: AxiosResponse = await requestWrapper({
         url: prInquiryDashboardUrl,
         method: "GET",

@@ -68,6 +68,7 @@ const API_END_POINTS = {
   submitPrInquiryNextButton: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.create_purchase_inquiry`,
   prInquiryCount: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.dashboard_card`,
   prInquiryDashboardTable: `${url}/api/method/vms.APIs.cart_details.v1.cart_details_dashboard.get_cart_dashboard_list`,
+  viewEnquiryTable:`${url}/api/method/vms.APIs.cart_details.v1.cart_details_dashboard.get_cart_dashboard_with_status`,
   prInquiryData: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pi_details`,
   prInquiryHodApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.hod_approval_check`,
   prInquiryPurchaseApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.purchase_approval_check`,
