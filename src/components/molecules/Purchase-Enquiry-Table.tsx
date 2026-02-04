@@ -47,6 +47,14 @@ const useDebounce = (value: any, delay: any) => {
   return debouncedValue;
 };
 
+ enum Status {
+  All = "All",
+  Pending = "Pending",
+  Approved = "Approved",
+  Escalated = "Escalated",
+  Rejected = "Rejected"
+}
+
 const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData }: Props) => {
 
   console.log("DashboardTableData PPRRRPRR--->", dashboardTableData);
@@ -69,13 +77,16 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData }: Props) => 
     return `${day}-${month}-${year}`;
   };
 
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
+
   useEffect(() => {
     fetchTable();
-  }, [debouncedSearchName, selectedCompany, currentPage])
+  }, [debouncedSearchName, selectedCompany, currentPage, selectedPurchaseType, selectedStatus]);
+
 
   const fetchTable = async () => {
     const dashboardPurchaseEnquiryTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.prInquiryDashboardTable}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_length=${record_per_page}`,
+      url: `${API_END_POINTS?.viewEnquiryTable}?usr=${user}&company=${selectedCompany}&vendor_name=${search}&page_no=${currentPage}&page_length=${record_per_page}&status=${selectedStatus == "All" ? "" : selectedStatus}&purchase_type=${selectedPurchaseType}`,
       method: "GET",
     });
     if (dashboardPurchaseEnquiryTableDataApi?.status == 200) {
@@ -116,10 +127,28 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData }: Props) => 
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="All">All</SelectItem>
                 {purchaseTypes.map((type,index) => (
                   <SelectItem key={index} value={type}>{type}</SelectItem>
                 ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex items-center gap-2">
+          <h1 className="text-[16px]">Status</h1>
+          <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Filter by Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {/* {purchaseTypes.map((type,index) => (
+                  <SelectItem key={index} value={type}>{type}</SelectItem>
+                ))} */}
+                <SelectItem value={Status?.All}>All</SelectItem>
+                <SelectItem value={Status.Pending}>Pending</SelectItem>
+                <SelectItem value={Status.Approved}>Approved</SelectItem>
+                <SelectItem value={Status.Escalated}>Escalated</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
