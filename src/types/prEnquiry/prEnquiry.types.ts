@@ -129,6 +129,7 @@ export type ProductHistory = {
 export type PurchaseTypeType = {
     purchase_requisition_type_name:string,
     name:string
+    description:string
 }
 
 export type ProductNameDropdown = {

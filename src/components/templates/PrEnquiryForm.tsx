@@ -411,7 +411,7 @@ const PRInquiryForm = ({
                     <SelectGroup>
                       {purchaseTypeDropdown?.map((item) => (
                         <SelectItem key={item?.name} value={item?.name}>
-                          {item?.purchase_requisition_type_name}
+                          {item?.description}
                         </SelectItem>
                       ))}
                     </SelectGroup>
