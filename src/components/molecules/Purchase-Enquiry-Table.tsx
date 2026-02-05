@@ -149,6 +149,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData }: Props) => 
                 <SelectItem value={Status.Pending}>Pending</SelectItem>
                 <SelectItem value={Status.Approved}>Approved</SelectItem>
                 <SelectItem value={Status.Escalated}>Escalated</SelectItem>
+                <SelectItem value={Status.Rejected}>Rejected</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
