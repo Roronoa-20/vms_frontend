@@ -371,7 +371,7 @@ export const EnquirysidebarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/purchase-enquiry-logo.svg",
     name: "Raise Enquiry",
-    href: "/pr-inquiry",
+    href: "/pr-enquiry",
     children: []
   },
   // {

@@ -2,8 +2,8 @@ export const NavbarConstant:Record<string,string> = {
     "/vendor-registration":"Vendor Registration",
     "/dashboard":"Dashboard",
     "/pr-request":"Purchase Requisition (PR)",
-    "/pr-inquiry":"Purchase Enquiry",
-    "/view-pr-inquiry":"View Purchase Enquiry",
+    "/pr-enquiry":"Purchase Enquiry",
+    "/view-pr-enquiry":"View Purchase Enquiry",
     "/dispatch":"Create Dispatch",
     "/view-grn":"Good Receipts Note (GRN)",
     "/view-grn-details":"Good Receipts Note (GRN)",
@@ -52,5 +52,6 @@ export const NavbarConstant:Record<string,string> = {
     "/category-master-dashboard" : "Dashboard",
     "/view-quality-agreement" : "Quality Agreement",
     "/view-asl": "Approved Supplier List",
-    "/sap-material-code-list": "SAP Material Code List"
+    "/sap-material-code-list": "SAP Material Code List",
+    "/view-po-details":"View PO Details"
 }
