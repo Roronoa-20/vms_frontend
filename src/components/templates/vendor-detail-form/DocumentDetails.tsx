@@ -278,6 +278,11 @@ const DocumentDetails = ({
       return;
     }
 
+    if(documentDetails?.panDocument?.length == 0 && !OnboardingDetail?.pan_proof?.url){
+      alert("Please upload PAN document");
+      return;
+    }
+
     if (GSTTable?.length == 0) {
       alert("please add at least 1 gst document details");
       return;
@@ -386,6 +391,8 @@ const DocumentDetails = ({
       alert("please enter correct gst number");
       return;
     }
+
+
     const url = API_END_POINTS?.addGSTTAbleData;
     const table = [{ ...singlerow }];
     const data = {
