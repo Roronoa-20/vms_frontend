@@ -101,11 +101,12 @@ const Navbar = () => {
 
   const displayedDesignation = (() => {
     if (!role || role.length === 0) return designation || "";
-    const rolesToShow = [designation];
-    if (role.includes("Material CP") && designation !== "Material CP") {
-      rolesToShow.push("Material CP");
-    }
-    return rolesToShow.join(",");
+    // const rolesToShow = [designation];
+    // if (role.includes("Material CP") && designation !== "Material CP") {
+    //   rolesToShow.push("Material CP");
+    // }
+    // return rolesToShow.join(",");
+    return designation || "";
   })();
 
   return (

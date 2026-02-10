@@ -9,12 +9,12 @@ export const sidebarMenu: SidebarItem[] = [
     defaultActive: true,
     children: []
   },
-  {
-    logo: "/sidebar-assests/vendor-icon.svg",
-    name: "Material Onboarding",
-    href: "/material-onboarding-dashboard",
-    children: []
-  },
+  // {
+  //   logo: "/sidebar-assests/vendor-icon.svg",
+  //   name: "Material Onboarding",
+  //   href: "/material-onboarding-dashboard",
+  //   children: []
+  // },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "Vendor Registration",

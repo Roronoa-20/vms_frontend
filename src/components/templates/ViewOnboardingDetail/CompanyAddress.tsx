@@ -94,6 +94,7 @@ const CompanyAddress = ({
     const url = `${API_END_POINTS.securefileview}?file_id=${fileId}`;
     window.open(url, "_blank");
   };
+
   const [isMultipleLocation, setIsMultipleLocation] = useState<boolean>(OnboardingDetail?.multiple_locations ? true : false);
 
   useEffect(() => {

@@ -15,7 +15,7 @@ import { AuthProvider, useAuth } from "../../context/AuthContext";
 import { TMultipleVendorCode, useMultipleVendorCodeStore } from "@/src/store/MultipleVendorCodeStore";
 
 
-export default function LoginForm() {
+export default function LoginForm({ loginType }: { loginType: "default" | "material" }) {
   const router = useRouter();
   const [form, setForm] = useState<Tlogin>();
   const [isEmailIdDialog, setIsEmailIdDialog] = useState<boolean>(false);
@@ -26,6 +26,8 @@ export default function LoginForm() {
   const { setAuthData } = useAuth();
   const { MultipleVendorCode, addMultipleVendorCode, reset, resetVendorCode } = useMultipleVendorCodeStore();
   const [isLoading, setIsLoading] = useState(false);
+  console.log("Body of the API---->", loginType)
+
 
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -38,14 +40,24 @@ export default function LoginForm() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ data: form }),
+        body: JSON.stringify({ data: form, login_type: loginType }),
         credentials: "include"
       });
-
+      console.log("Login API response---->", response);
       if (response.status === 401) {
         alert("username or password is incorrect");
         setIsLoading(false);
         return;
+      }
+
+      if (response.status === 403) {
+        const err = await response.json();
+        const errorMessage =
+          typeof err.message === "string"
+            ? err.message
+            : err.message?.message || "Access denied";
+
+        alert(errorMessage);
       }
 
       if (response.status == 200) {
@@ -89,10 +101,6 @@ export default function LoginForm() {
           router.push("/finance-dashboard");
           return;
         }
-        if (designation === "Material User" || designation === "Material CP") {
-          router.push("/material-onboarding-dashboard");
-          return;
-        }
         if (designation === "Security") {
           router.push("/gate-entry-dashboard");
           return;
@@ -101,12 +109,21 @@ export default function LoginForm() {
           router.push("/category-master-dashboard");
           return;
         }
+        if (loginType === "material" && (designation === "Material User" || designation === "Material CP")) {
+          router.push("/material-onboarding-dashboard");
+          return;
+        }
+
+        if (loginType === "default" && (designation === "Material User" || designation === "Material CP")) {
+          alert("Please login from Material Portal");
+          return;
+        }
         router.push("/dashboard");
       }
     } catch (err) {
       console.error("Login error:", err);
       alert("Something went wrong. Try again.");
-    }finally{
+    } finally {
       setIsLoading(false);
     }
   };
@@ -197,16 +214,13 @@ export default function LoginForm() {
           </div>
         </div>
       </form>
-      {
-        isEmailIdDialog &&
+      {isEmailIdDialog &&
         <EmailDialog setIsEmailDialog={setIsEmailIdDialog} setIsOtpDialog={setIsOtpDialog} setUsr={setEmail} setAuthorization={setAuthorization} />
       }
-      {
-        isOtpDialog &&
+      {isOtpDialog &&
         <OtpDialog setIsPasswordDialog={setIsPasswordDialog} setIsOtpDialog={setIsOtpDialog} authorization={authorization} user={email} />
       }
-      {
-        isPasswordDialog &&
+      {isPasswordDialog &&
         <PasswordDialog setIsPasswordDialog={setIsPasswordDialog} email={email} authorization={authorization} />
       }
     </>

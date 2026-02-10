@@ -43,7 +43,9 @@ const Sidebar = () => {
   const materialCpPages = [
     "/material-onboarding-dashboard",
     "/view-material-code-request",
-    "/sap-material-code-list"
+    "/sap-material-code-list",
+    "/material-onboarding-details",
+    "/material-code-request-form",
   ];
 
   const isMaterialCPSidebar = materialCpPages.includes(pathname) && designation === "Purchase Team" && role?.includes("Material CP");

@@ -18,6 +18,7 @@ const NavbarMenu = ({...Props}:Props) => {
   const {designation} = useAuth();
 
   const handleLogOut = async () => {
+    const isMaterial = designation === "Material User" || designation === "Material CP";
     const url = API_END_POINTS?.logout;
     const reponse: AxiosResponse = await requestWrapper({
       url: url,
@@ -32,7 +33,8 @@ const NavbarMenu = ({...Props}:Props) => {
       Cookies.remove("user_image");
       Cookies.remove("VendorASA");
       Cookies.remove("VendorRef")
-      router.push("/");
+      // router.push("/");
+      router.push(isMaterial ? "/material_login" : "/login");
     }
   };
 
