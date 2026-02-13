@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/newselect";
 import UOMConversionModal from "@/src/components/molecules/material-onboarding-modal/UOMConversionModal";
 import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
 import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialRequestData, MaterialType, MaterialMaster } from "@/src/types/MaterialCodeRequestFormTypes";
@@ -53,7 +53,7 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
     const defaultUOM = MaterialDetails?.material_request_item?.unit_of_measure;
     const currentPurchaseUOM = form.getValues("purchase_uom");
     if (defaultUOM && !currentPurchaseUOM) {
-      form.setValue("purchase_uom", defaultUOM, {shouldDirty: false, shouldTouch: false, shouldValidate: false});
+      form.setValue("purchase_uom", defaultUOM, { shouldDirty: false, shouldTouch: false, shouldValidate: false });
     }
   }, [MaterialDetails?.material_request_item?.unit_of_measure, form]);
 
@@ -91,7 +91,7 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
   const filteredLotSizeOptions = lotsizeSearch ? LotSize?.filter((group) => group.description?.toLowerCase().includes(lotsizeSearch.toLowerCase()) || group.name?.toLowerCase().includes(lotsizeSearch.toLowerCase())) : LotSize;
 
   useEffect(() => {
-    form.setValue("purchasing_value_key", "3", {shouldDirty: false, shouldTouch: false});
+    form.setValue("purchasing_value_key", "3", { shouldDirty: false, shouldTouch: false });
   }, [form]);
 
   useEffect(() => {
@@ -164,8 +164,9 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                         <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
                           <SelectValue placeholder="Select Purchasing Group" />
                         </SelectTrigger>
-                        <SelectContent className="max-h-60 overflow-y-auto">
-                          <div className="px-2 py-1">
+                        <SelectContent className="max-h-60 overflow-y-scroll">
+                          {/* Search */}
+                          <div className="sticky top-0 z-10 bg-white px-2 py-1">
                             <input
                               type="text"
                               value={purchaseGroupSearch}
@@ -179,17 +180,20 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                               className="w-full p-2 border border-gray-300 rounded text-sm"
                             />
                           </div>
-                          {filteredPurchaseGroupOptions?.length > 0 ? (
-                            filteredPurchaseGroupOptions.map((pgroup) => (
-                              <SelectItem key={pgroup.name} value={pgroup.name}>
-                                {pgroup.description}
-                              </SelectItem>
-                            ))
-                          ) : (
-                            <div className="px-3 py-2 text-sm text-gray-500">
-                              No matching groups found
-                            </div>
-                          )}
+
+                          <SelectGroup>
+                            {filteredPurchaseGroupOptions?.length > 0 ? (
+                              filteredPurchaseGroupOptions.map((pgroup) => (
+                                <SelectItem key={pgroup.name} value={pgroup.name}>
+                                  {pgroup.description}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <div className="px-3 py-2 text-sm text-gray-500">
+                                No matching groups found
+                              </div>
+                            )}
+                          </SelectGroup>
                         </SelectContent>
                       </Select>
                     </FormControl>

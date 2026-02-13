@@ -207,6 +207,7 @@ const API_END_POINTS = {
 
   // All Approved Vendors Speicfy Detail API
   allvendorsdetails: `${url}/api/method/vms.APIs.dashboard_api.vendor_brief.get_vendors_with_pagination_next`,
+  companyWiseVendorAnalytics: `${url}/api/method/vms.APIs.dashboard_api.vendor_brief.get_company_wise_vendor_analytics`,
   allvendorscompanycodedetails: `${url}/api/method/vms.APIs.dashboard_api.vendor_code_brief.get_comp_ven_code`,
   allvendorsspecificdetails: `${url}/api/method/vms.APIs.dashboard_api.vendor_specific_data.get_vendor_complete_ecosystem`,
 

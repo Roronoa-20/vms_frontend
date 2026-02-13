@@ -22,8 +22,6 @@ const Navbar = () => {
   const bellRef = useRef<HTMLDivElement | null>(null);
   const logoLetter = name?.charAt(0).toUpperCase();
   const pathname = usePathname();
-  console.log("Navbar rendered with pathname:", role);
-  console.log("Navbar rendered with designation:", designation);
 
   useEffect(() => {
     const storedVendorName = localStorage.getItem("vendor_name");

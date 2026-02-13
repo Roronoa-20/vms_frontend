@@ -1,22 +1,8 @@
 import React, { useEffect, useState, useMemo, ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { MaterialRegistrationFormData, EmployeeDetail, EmployeeAPIResponse, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialType, MaterialRequestData } from "@/src/types/MaterialCodeRequestFormTypes";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup} from "@/components/ui/newselect";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import { MaterialRegistrationFormData, Company, Plant, ClassType, UOMMaster, MaterialGroupMaster, ProfitCenter, AvailabilityCheck, SerialNumber, MaterialType, MaterialRequestData } from "@/src/types/MaterialCodeRequestFormTypes";
 import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
 
 
@@ -147,30 +133,37 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                         <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
                           <SelectValue placeholder="Select Material Group" />
                         </SelectTrigger>
-                        <SelectContent className="max-h-60 overflow-y-auto">
-                          <div className="px-2 py-1">
+                        <SelectContent className="max-h-60 overflow-y-scroll">
+                          {/* Search */}
+                          <div className="sticky top-0 z-10 bg-white px-2 py-1">
                             <Input
                               type="text"
                               value={materialGroupSearch}
-                              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                setMaterialGroupSearch(e.target.value)
-                              }
+                              onChange={(e) => setMaterialGroupSearch(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (!["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
+                                  e.stopPropagation();
+                                }
+                              }}
                               placeholder="Search Material Group..."
                               className="w-full p-2 border border-gray-300 rounded text-sm"
                             />
                           </div>
-                          {materialGroupOptions.length > 0 ? (
-                            materialGroupOptions.map((group) => (
-                              <SelectItem key={group.name} value={group.name}>
-                                {group.material_group_name} -{" "}
-                                {group.material_group_description}
-                              </SelectItem>
-                            ))
-                          ) : (
-                            <div className="px-3 py-2 text-sm text-gray-500">
-                              No material group found
-                            </div>
-                          )}
+
+                          <SelectGroup>
+                            {materialGroupOptions.length > 0 ? (
+                              materialGroupOptions.map((group) => (
+                                <SelectItem key={group.name} value={group.name}>
+                                  {group.material_group_name} –{" "}
+                                  {group.material_group_description}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <div className="px-3 py-2 text-sm text-gray-500">
+                                No material group found
+                              </div>
+                            )}
+                          </SelectGroup>
                         </SelectContent>
                       </Select>
                     </FormControl>

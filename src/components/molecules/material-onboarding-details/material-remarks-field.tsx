@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
-import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialRequestData, MaterialType, MaterialMaster, MaterialOnboarding } from "@/src/types/MaterialCodeRequestFormTypes";
+import { MaterialRequestData, MaterialOnboarding } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface MaterialRemarksFormProps {
     form: UseFormReturn<any>;

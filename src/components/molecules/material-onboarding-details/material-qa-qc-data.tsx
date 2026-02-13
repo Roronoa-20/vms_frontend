@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { FormField, FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/newselect";
 import { Controller, ControllerRenderProps, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 import { ExpirationDate, MaterialRequestData, MaterialType, InspectionType } from "@/src/types/MaterialCodeRequestFormTypes";
 

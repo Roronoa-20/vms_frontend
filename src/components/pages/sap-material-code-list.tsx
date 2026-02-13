@@ -28,7 +28,8 @@ export default async function SAPMaterialCodeView() {
     if (employeeRes?.status === 200 && employeeRes?.data?.message?.message === "Success") {
       const employee = employeeRes.data.message.data;
 
-      isMaterialUser = employee?.designation === "Material User";
+      const restrictedDesignations = ["Material User", "Enquirer"];
+      isMaterialUser = restrictedDesignations.includes(employee?.designation);
 
       if (isMaterialUser && Array.isArray(employee?.company)) {
         companyCodes = employee.company

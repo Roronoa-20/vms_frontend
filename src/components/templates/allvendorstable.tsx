@@ -26,22 +26,18 @@ interface Props {
 }
 
 const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurrentPage, pageSize, totalPages, totalRecords }) => {
-    // console.log("Vendors-------->", vendors);
+    console.log("Vendors of the table-------->", vendors);
     const router = useRouter();
     const [isVendorCodeDialog, setIsVendorCodeDialog] = React.useState(false);
     const [selectedVendorCodes, setSelectedVendorCodes] = React.useState<CompanyVendorCodeRecord[] | null>(null);
     const [copiedRow, setCopiedRow] = React.useState<RowData | null>(null);
     const [isExtendDialogOpen, setIsExtendDialogOpen] = React.useState(false);
     const [extendRow, setExtendRow] = React.useState<ExtendRowData | null>(null);
-    // const [currentPage, setCurrentPage] = React.useState(1);
     const copyFormRef = React.useRef<HTMLDivElement | null>(null);
     const extendFormRef = React.useRef<HTMLDivElement | null>(null);
-    const recordPerPage = 10;
     const stickyKeys: (keyof RowData | "srno")[] = ["srno", "company_code", "vendor_name"];
     const [colWidths, setColWidths] = React.useState<Record<string, number>>({});
     const headerRefs = React.useRef<Record<string, HTMLTableCellElement | null>>({});
-
-    useEffect(() => setCurrentPage(1), [vendors]);
 
     React.useEffect(() => {
         const widths: Record<string, number> = {};
@@ -77,8 +73,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
 
     const rows: RowData[] = vendors.flatMap((vendor) => {
         // Always have at least one company entry for the active tab
-        const companyDataList: Partial<CompanyData>[] = vendor.multiple_company_data?.length
-            ? vendor.multiple_company_data.filter((c) => c.company_name === activeTab)
+        const companyDataList: Partial<CompanyData>[] = vendor.company_data?.length ? vendor.company_data
             : [{
                 name: "",
                 creation: "",
@@ -105,14 +100,11 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
             }];
 
         return companyDataList.map((company) => {
-            const approvedRecord = vendor.vendor_onb_records?.find(
-                (record) => record.onboarding_form_status === "Approved"
-            );
-
+            const approvedRecord = vendor.vendor_onb_records?.find((record) => record.onboarding_form_status === "Approved");
             const normalizedCompany = normalizeCompanyData(company);
 
             return {
-                multiple_company_data: [normalizedCompany],
+                company_data: [normalizedCompany],
                 name: vendor.name ?? "N.A.",
                 ref_no: approvedRecord?.vendor_onboarding_no ?? "N.A.",
                 multiple_company: vendor.bank_details?.registered_for_multi_companies ?? 0,
@@ -134,12 +126,9 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
             } as RowData;
         });
     });
-    // console.log("Normalized Rows----->", rows)
 
-    const paginatedRows = useMemo(() => {
-        const start = (currentPage - 1) * pageSize;
-        return rows.slice(start, start + pageSize);
-    }, [rows, currentPage, pageSize]);
+    const paginatedRows = rows;
+
     const startIdx = (currentPage - 1) * pageSize;
 
     const columns: { key: keyof RowData; label: string; type?: "text" | "file" | "boolean"; sticky?: boolean; }[] = [
@@ -179,32 +168,20 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
         }
     };
 
-    // const handleView = (refno: string, vendorId: string, via_data_import: string | number) => {
-    //     router.push(
-    //         `/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${refno}&refno=${vendorId}&via_data_import=${via_data_import}`
-    //     );
-    // };
 
     const handleView = (row: RowData) => {
-        const isImported = row.multiple_company_data?.some(c => String(c.via_import) === "1");
+        const isImported = row.company_data?.some(c => String(c.via_import) === "1");
         const isViaImport = String(row.via_data_import) === "1";
         const isFromRegistration = String(row.created_from_registration) === "1";
 
         if (isViaImport && isImported) {
-            router.push(
-                `/view-onboarding-details?tabtype=Company%20Detail&refno=${row.name}&company_code=${row.company_code}&via_data_import=1`
-            );
+            router.push(`/view-onboarding-details?tabtype=Company%20Detail&refno=${row.name}&company_code=${row.company_code}&via_data_import=1`);
         } else if (isFromRegistration && !isImported) {
-            router.push(
-                `/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${row.ref_no}&refno=${row.name}`
-            );
+            router.push(`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${row.ref_no}&refno=${row.name}`);
         } else {
-            router.push(
-                `/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${row.ref_no}&refno=${row.name}`
-            );
+            router.push(`/view-onboarding-details?tabtype=Company%20Detail&vendor_onboarding=${row.ref_no}&refno=${row.name}`);
         }
     };
-
 
     const fetchVendorCodes = async (vendorId: string, company: string) => {
         try {
@@ -233,10 +210,8 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
                 setUnfilteredDropdownData(allDropDownApi?.status === 200 ? allDropDownApi.data?.message?.data ?? null : null);
 
                 if (!activeTab) return;
-                const selectedCompany = vendors
-                    ?.flatMap((vendor) => vendor.multiple_company_data || [])
-                    .find((c) => c.company_name === activeTab);
-
+                const selectedCompany = vendors?.flatMap((vendor) => vendor.company_data || []).find((c) => String(c.company_name) === String(activeTab));
+                console.log("Selected Company for Dropdown:", selectedCompany);
                 const sapCode = selectedCompany?.sap_client_code;
                 if (!sapCode || sapCode === "N.A.") {
                     console.warn(`No sap_client_code found for activeTab: ${activeTab}`);
@@ -257,12 +232,9 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
         };
 
         fetchDropdownData();
-    }, [activeTab]);
+    }, [activeTab,vendors]);
 
-    // console.log("SAP CLient Code Filter Data--->", dropdownData);
-    // console.log("Unfiltered Data---->", unfilteredDropdownData);
     const companyDropdown = dropdownData?.company_master;
-
     const handleCopy = (row: RowData) => {
         if (copiedRow?.name === row.name && copiedRow?.company_code === row.company_code) {
             setCopiedRow(null);
@@ -361,7 +333,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
         }
     };
 
-    const noVendors = rows.length === 0;
+    const noVendors = !vendors?.length;
 
     return (
         <>

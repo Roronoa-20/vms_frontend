@@ -24,7 +24,7 @@ export const sidebarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "All Vendors",
-    href:"/all-vendors",
+    href: "/all-vendors",
     children: []
   },
   {
@@ -111,7 +111,7 @@ export const SuperHeadSidebarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "All Vendors",
-    href:"/all-vendors",
+    href: "/all-vendors",
     children: []
   },
   {
@@ -141,7 +141,7 @@ export const SuperHeadSidebarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/dispatch-logo.svg",
     name: "View Dispatch",
-    href:"",
+    href: "",
     children: []
   },
   {
@@ -181,7 +181,7 @@ export const PurchaseHeadsidebarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "All Vendors",
-    href:"/all-vendors",
+    href: "/all-vendors",
     children: []
   },
   {
@@ -303,7 +303,7 @@ export const HeadSidebar: SidebarItem[] = [
   {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "All Vendors",
-    href:"/all-vendors",
+    href: "/all-vendors",
     children: []
   },
   {
@@ -374,6 +374,13 @@ export const EnquirysidebarMenu: SidebarItem[] = [
     href: "/pr-enquiry",
     children: []
   },
+  {
+    logo: "/sidebar-assests/view-pr.svg",
+    name: "Material Code",
+    href: "/sap-material-code-list",
+    children: []
+  },
+
   // {
   //   logo: "/sidebar-assests/view-pr.svg",
   //   name: "View PR",
@@ -425,13 +432,13 @@ export const QASideBarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "QMS Form List",
-    href:"/all-qms-forms",
+    href: "/all-qms-forms",
     children: []
   },
   {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "ASL",
-    href:"/view-asl",
+    href: "/view-asl",
     children: []
   },
 ];
@@ -453,7 +460,7 @@ export const AccountSideBarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "All Vendors",
-    href:"/all-vendors",
+    href: "/all-vendors",
     children: []
   },
   {
@@ -488,7 +495,7 @@ export const AccountHeadSideBarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "All Vendors",
-    href:"/all-vendors",
+    href: "/all-vendors",
     children: []
   },
   {
@@ -519,10 +526,10 @@ export const TreasurySideBarMenu: SidebarItem[] = [
     defaultActive: true,
     children: []
   },
-   {
+  {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "All Vendors",
-    href:"/all-vendors",
+    href: "/all-vendors",
     children: []
   },
   {
@@ -547,10 +554,10 @@ export const FinanceSideBarMenu: SidebarItem[] = [
     defaultActive: true,
     children: []
   },
-   {
+  {
     logo: "/sidebar-assests/vendor-icon.svg",
     name: "All Vendors",
-    href:"/all-vendors",
+    href: "/all-vendors",
     children: []
   },
   {
