@@ -47,7 +47,6 @@ const MaterialOnboardingCards = ({ cardData, companyDropdown }: Props) => {
     if (!allData.length) {
       return [];
     }
-
     if (tabName === "Approved Material Request") {
       const filtered = allData.filter((d) => d.approval_status === APPROVED_STATUS);
       return filtered;
@@ -63,25 +62,25 @@ const MaterialOnboardingCards = ({ cardData, companyDropdown }: Props) => {
       name: "Total Material Request",
       count: cardData?.total_count ?? 0,
       icon: "/dashboard-assests/cards_icon/file-search.svg",
-      text_color: "text-emerald-800",
-      bg_color: "bg-emerald-100",
-      hover: "hover:border-emerald-400",
-    },
-    {
-      name: "Pending Material Request",
-      count: cardData?.pending ?? 0,
-      icon: "/dashboard-assests/cards_icon/file-search.svg",
       text_color: "text-violet-800",
       bg_color: "bg-violet-100",
       hover: "hover:border-violet-400",
     },
     {
-      name: "Approved Material Request",
-      count: cardData?.approved ?? 0,
+      name: "Pending Material Request",
+      count: cardData?.pending ?? 0,
       icon: "/dashboard-assests/cards_icon/file-search.svg",
       text_color: "text-rose-800",
       bg_color: "bg-rose-100",
       hover: "hover:border-rose-400",
+    },
+    {
+      name: "Approved Material Request",
+      count: cardData?.approved ?? 0,
+      icon: "/dashboard-assests/cards_icon/file-search.svg",
+      text_color: "text-emerald-800",
+      bg_color: "bg-emerald-100",
+      hover: "hover:border-emerald-400",
     },
   ];
 

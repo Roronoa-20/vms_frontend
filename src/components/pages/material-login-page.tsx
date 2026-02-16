@@ -22,9 +22,9 @@ export default function LoginPage() {
           Welcome to
         </h1>
         <h1 className="text-[#5291CD] leading-[40px] text-[26px] font-semibold text-center pt-4">
-          Vendor Management System (VMS)
+          Material Onboarding System (MOS)
         </h1>
-        <LoginForm loginType="default"/>
+        <LoginForm loginType="material"/>
       </div>
     </div>
     </AuthProvider>

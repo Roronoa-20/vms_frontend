@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/src/context/AuthContext";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup } from "@/components/ui/newselect";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -560,14 +560,14 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                 {/* )} */}
 
                                 {/* Storage Location */}
-                                <div className="space-y-2">
+                                {/* <div className="space-y-2">
                                     <FormField
                                         control={form.control}
                                         name="storage_location"
                                         key="storage_location"
                                         render={({ field }: { field: ControllerRenderProps<FieldValues, "storage_location"> }) => (
                                             <FormItem>
-                                                <FormLabel>Storage Location <span className="text-red-500">*</span></FormLabel>
+                                                <FormLabel>Storage Location<span className="text-red-500">*</span></FormLabel>
                                                 <FormControl>
                                                     <Select
                                                         onValueChange={(val) => {
@@ -603,6 +603,70 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                                             ) : (
                                                                 <div className="px-3 py-2 text-sm text-gray-500">No storage locations found</div>
                                                             )}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div> */}
+                                <div className="space-y-2">
+                                    <FormField
+                                        control={form.control}
+                                        name="storage_location"
+                                        render={({ field }: { field: ControllerRenderProps<FieldValues, "storage_location"> }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Storage Location <span className="text-red-500">*</span>
+                                                </FormLabel>
+
+                                                <FormControl>
+                                                    <Select
+                                                        required
+                                                        value={field.value ?? ""}
+                                                        onValueChange={(value) => {
+                                                            field.onChange(value);
+                                                            setStorageSearch("");
+                                                        }}
+                                                    >
+                                                        <SelectTrigger className="p-3 w-full text-sm">
+                                                            <SelectValue placeholder="Select Storage Location" />
+                                                        </SelectTrigger>
+
+                                                        <SelectContent className="max-h-60 overflow-y-scroll">
+                                                            {/* Search box */}
+                                                            <div className="sticky top-0 bg-white px-2 py-1 z-10">
+                                                                <input
+                                                                    type="text"
+                                                                    value={storageSearch}
+                                                                    onChange={(e) => setStorageSearch(e.target.value)}
+                                                                    onKeyDown={(e) => {
+                                                                        if (!["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
+                                                                            e.stopPropagation();
+                                                                        }
+                                                                    }}
+                                                                    placeholder="Search Storage Location..."
+                                                                    className="w-full p-2 border border-gray-300 rounded text-sm"
+                                                                />
+                                                            </div>
+
+                                                            <SelectGroup>
+                                                                {filteredStorageOptions?.length ? (
+                                                                    filteredStorageOptions.map((storage) => (
+                                                                        <SelectItem
+                                                                            key={storage.name}
+                                                                            value={storage.name}
+                                                                        >
+                                                                            {storage.name}
+                                                                        </SelectItem>
+                                                                    ))
+                                                                ) : (
+                                                                    <div className="px-3 py-2 text-sm text-gray-500">
+                                                                        No storage locations found
+                                                                    </div>
+                                                                )}
+                                                            </SelectGroup>
                                                         </SelectContent>
                                                     </Select>
                                                 </FormControl>

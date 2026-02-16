@@ -22,8 +22,6 @@ const Navbar = () => {
   const bellRef = useRef<HTMLDivElement | null>(null);
   const logoLetter = name?.charAt(0).toUpperCase();
   const pathname = usePathname();
-  console.log("Navbar rendered with pathname:", role);
-  console.log("Navbar rendered with designation:", designation);
 
   useEffect(() => {
     const storedVendorName = localStorage.getItem("vendor_name");
@@ -101,11 +99,12 @@ const Navbar = () => {
 
   const displayedDesignation = (() => {
     if (!role || role.length === 0) return designation || "";
-    const rolesToShow = [designation];
-    if (role.includes("Material CP") && designation !== "Material CP") {
-      rolesToShow.push("Material CP");
-    }
-    return rolesToShow.join(",");
+    // const rolesToShow = [designation];
+    // if (role.includes("Material CP") && designation !== "Material CP") {
+    //   rolesToShow.push("Material CP");
+    // }
+    // return rolesToShow.join(",");
+    return designation || "";
   })();
 
   return (

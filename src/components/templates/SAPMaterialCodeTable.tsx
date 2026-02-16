@@ -14,6 +14,8 @@ type Props = {
   loading: boolean;
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"];
   data: MaterialCodeResponse;
+  allowedCompanyCodes?: string[];
+  isMaterialUser?: boolean;
 };
 
 const useDebounce = (value: any, delay: number) => {
@@ -25,8 +27,8 @@ const useDebounce = (value: any, delay: number) => {
   return debouncedValue;
 };
 
-const ViewMaterialCodeTable = ({ data, loading, companyDropdown }: Props) => {
-  console.log("THis Material Code Data----->", data)
+const ViewMaterialCodeTable = ({ data, loading, companyDropdown, allowedCompanyCodes, isMaterialUser }: Props) => {
+  console.log("Allowed Company Code in Material Code Data----->", allowedCompanyCodes)
   const [table, setTable] = useState<MaterialCode[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [materialtype, setMaterialType] = useState<string>("");
@@ -43,8 +45,10 @@ const ViewMaterialCodeTable = ({ data, loading, companyDropdown }: Props) => {
 
   const fetchTable = async () => {
     const filters: any = {};
-
-    if (selectedCompany) {
+    if (isMaterialUser && allowedCompanyCodes?.length) {
+      filters.company = ["in", allowedCompanyCodes];
+    }
+    else if (selectedCompany) {
       filters.company = selectedCompany;
     }
 
@@ -56,18 +60,12 @@ const ViewMaterialCodeTable = ({ data, loading, companyDropdown }: Props) => {
 
     const res = await requestWrapper({ url, method: "GET" });
 
-    console.log("API RAW RESPONSE:", res);
-
     if (res?.status === 200) {
       const message = res?.data?.message;
-
-      console.log("TABLE DATA:", message?.data);
-
       setTable(message?.data || []);
       settotalEventList(message?.pagination?.total_count || 0);
     }
   };
-
 
   if (loading) return <p className="text-center text-gray-500">Loading material data...</p>;
 
@@ -81,25 +79,26 @@ const ViewMaterialCodeTable = ({ data, loading, companyDropdown }: Props) => {
             onChange={(e) => setSearch(e.target.value)}
             className="w-[200px]"
           />
-
-          <Select
-            value={selectedCompany || "all"}
-            onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Company" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="all">All</SelectItem>
-                {companyDropdown?.map((item, index) => (
-                  <SelectItem key={index} value={item?.name}>
-                    {item?.description}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          {!isMaterialUser && (
+            <Select
+              value={selectedCompany || "all"}
+              onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select Company" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="all">All</SelectItem>
+                  {companyDropdown?.map((item, index) => (
+                    <SelectItem key={index} value={item?.name}>
+                      {item?.description}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          )}
         </div>
 
         <Table>

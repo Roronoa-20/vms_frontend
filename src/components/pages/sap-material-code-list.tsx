@@ -9,6 +9,35 @@ export default async function SAPMaterialCodeView() {
 
   const cookieStore = await cookies();
   const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
+  const userEmail = cookieStore.get("user_id")?.value
+
+  let companyCodes: string[] = [];
+  let isMaterialUser = false;
+
+  if (userEmail) {
+    const employeeRes: AxiosResponse = await requestWrapper({
+      url: API_END_POINTS.getEmployeeDetails,
+      method: "GET",
+      params: { user: userEmail },
+      headers: {
+        cookie: cookieHeaderString,
+      },
+    });
+    console.log("Employee API response for Material Code List---->", employeeRes);
+
+    if (employeeRes?.status === 200 && employeeRes?.data?.message?.message === "Success") {
+      const employee = employeeRes.data.message.data;
+
+      const restrictedDesignations = ["Material User", "Enquirer"];
+      isMaterialUser = restrictedDesignations.includes(employee?.designation);
+
+      if (isMaterialUser && Array.isArray(employee?.company)) {
+        companyCodes = employee.company
+          .map((c: any) => c.company_code)
+          .filter(Boolean);
+      }
+    }
+  }
 
   const dropdownUrl = API_END_POINTS.vendorRegistrationDropdown;
   const dropDownApi: AxiosResponse = await requestWrapper({
@@ -24,14 +53,23 @@ export default async function SAPMaterialCodeView() {
 
   const companyDropdown = dropdownData?.company_master || [];
 
+  let materialFilters = {};
+
+  if (isMaterialUser && companyCodes.length > 0) {
+    materialFilters = {
+      company: ["in", companyCodes],
+    };
+  }
+
   const MaterialCodeResponse = await requestWrapper({
-    url: `${API_END_POINTS.MaterialCodeSearchApi}`,
+    url: API_END_POINTS.MaterialCodeSearchApi,
     method: "GET",
+    params: Object.keys(materialFilters).length ? { filters: JSON.stringify(materialFilters) } : {},
     headers: {
       cookie: cookieHeaderString,
     },
   });
-  console.log("Material Code response----->",MaterialCodeResponse)
+  console.log("Material Code response----->", MaterialCodeResponse)
   const msg = MaterialCodeResponse?.status === 200 ? MaterialCodeResponse?.data?.message : {};
   const MaterialCodeData = msg?.data || [];
 
@@ -41,6 +79,8 @@ export default async function SAPMaterialCodeView() {
         data={MaterialCodeData}
         loading={false}
         companyDropdown={companyDropdown}
+        allowedCompanyCodes={companyCodes}
+        isMaterialUser={isMaterialUser}
       />
     </div>
   );

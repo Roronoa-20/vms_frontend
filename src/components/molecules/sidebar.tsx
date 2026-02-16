@@ -31,31 +31,33 @@ const Sidebar = () => {
     });
   }
 
-  // Show Material Onboarding only if Purchase Team + Material CP role
-  if (designation === "Purchase Team") {
-    sideBar = sidebarMenu.filter(item => {
-      if (item.name === "Material Onboarding") {
-        return role?.includes("Material CP");
-      }
-      return true;
-    });
-  }
-  const materialCpPages = [
-    "/material-onboarding-dashboard",
-    "/view-material-code-request",
-    "/sap-material-code-list"
-  ];
+  // // Show Material Onboarding only if Purchase Team + Material CP role
+  // if (designation === "Purchase Team") {
+  //   sideBar = sidebarMenu.filter(item => {
+  //     if (item.name === "Material Onboarding") {
+  //       return role?.includes("Material CP");
+  //     }
+  //     return true;
+  //   });
+  // }
+  // const materialCpPages = [
+  //   "/material-onboarding-dashboard",
+  //   "/view-material-code-request",
+  //   "/sap-material-code-list",
+  //   "/material-onboarding-details",
+  //   "/material-code-request-form",
+  // ];
 
-  const isMaterialCPSidebar = materialCpPages.includes(pathname) && designation === "Purchase Team" && role?.includes("Material CP");
+  // const isMaterialCPSidebar = materialCpPages.includes(pathname) && designation === "Purchase Team" && role?.includes("Material CP");
 
-  if (isMaterialCPSidebar) {
-    sideBar = MaterialCPSideBar;
-  }
+  // if (isMaterialCPSidebar) {
+  //   sideBar = MaterialCPSideBar;
+  // }
 
-  const forceCpCompact = isMaterialCPSidebar || designation === "Material CP";
+  // const forceCpCompact = isMaterialCPSidebar || designation === "Material CP";
 
-  const getSidebarWidth = (designation: string, role: string | null | undefined, forceCompact: boolean) => {
-    if (forceCompact) return "w-[100px]";
+  const getSidebarWidth = (designation: string, role: string | null | undefined) => {
+    // if (forceCompact) return "w-[100px]";
     const compactDesignations = ["Vendor", "Enquirer", "ASA", "QA Team", "Material User", "Material CP", "Finance", "Finance Head"];
 
     const compactRoles = ["Material CP"];
@@ -152,15 +154,14 @@ const Sidebar = () => {
   }, []);
 
   useEffect(() => {
-    console.log("OPEN MENU:", openMenuName);
+    // console.log("OPEN MENU:", openMenuName);
   }, [openMenuName]);
-
 
 
   return (
     <div className="relative">
       {/* SIDEBAR */}
-      <div className={`${getSidebarWidth(designation || "", role, forceCpCompact)} bg-[#0C2741] flex flex-col h-screen sidebar-scroll relative`}>
+      <div className={`${getSidebarWidth(designation || "", role)} bg-[#0C2741] flex flex-col h-screen sidebar-scroll relative`}>
         <div className="flex flex-col items-center gap-3 overflow-y-auto no-scrollbar relative">
           <div className="pb-3 pt-2.5">
             <Logo />
@@ -184,7 +185,7 @@ const Sidebar = () => {
             </button>
           ))}
         </div>
-        {isMaterialCPSidebar && (
+        {/* {isMaterialCPSidebar && (
           <div className="mt-auto pb-4 flex justify-center">
             <button
               onClick={() => router.push("/dashboard")}
@@ -194,7 +195,7 @@ const Sidebar = () => {
               <span className="text-sm">Back</span>
             </button>
           </div>
-        )}
+        )} */}
 
         {openMenu?.children && (
           <div

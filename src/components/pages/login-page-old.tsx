@@ -31,7 +31,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <LoginForm />
+          <LoginForm loginType="default"/>
         </div>
       </div>
     </div>
