@@ -74,6 +74,7 @@ export default function MaterialRegistration() {
           },
         });
         const data = res?.data?.message?.data?.[0];
+        console.log("Fetched existing form data →", data);
         if (!data) {
           console.warn("No form found for the provided params");
           return;

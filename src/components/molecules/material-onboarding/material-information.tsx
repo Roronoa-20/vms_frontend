@@ -34,36 +34,43 @@ export default function MaterialInformation({ form, basicMasters, MaterialOnboar
 
   const fetchMaterialCodeData = async (query?: string): Promise<MaterialCode[]> => {
     try {
-      const baseUrl = API_END_POINTS?.MaterialCodeSearchApi;
-      let url = baseUrl;
-
       const company = form.getValues("material_company_code");
       const materialtype = form.getValues("material_type");
 
-      const filters: Record<string, string> = {};
-      if (company) filters.company = company;
-      if (materialtype) filters.material_type = materialtype;
-
-      if (Object.keys(filters).length > 0) {
-        url += `?filters=${encodeURIComponent(JSON.stringify(filters))}`;
+      if (!company || !materialtype) {
+        setAllMaterialCodes([]);
+        return [];
       }
+
+      const filters = {
+        company,
+        material_type: materialtype,
+      };
+
+      let url =
+        `${API_END_POINTS.MaterialCodeSearchApi}?filters=${encodeURIComponent(
+          JSON.stringify(filters)
+        )}`;
 
       if (query) {
-        url += `${url.includes("?") ? "&" : "?"}search_term=${encodeURIComponent(query)}`;
+        url += `&search_term=${encodeURIComponent(query)}`;
       }
 
-      const response: AxiosResponse = await requestWrapper({ url, method: "GET" });
+      const response: AxiosResponse = await requestWrapper({
+        url,
+        method: "GET",
+      });
+
       if (response?.status === 200) {
         const data = response.data?.message?.data || [];
-        // console.log(data);
+        console.log("Fetched material codes:", data);
         setAllMaterialCodes(data);
         return data;
-      } else {
-        console.error("Failed to fetch material codes:", response);
       }
     } catch (error) {
       console.error("Error fetching material code data:", error);
     }
+
     return [];
   };
 
@@ -96,6 +103,7 @@ export default function MaterialInformation({ form, basicMasters, MaterialOnboar
       });
 
       const data = response?.data?.message?.data || [];
+      console.log("Material code check response:", data);
 
       if (data.length > 0) {
         setMaterialCodeStatus("exists");
@@ -151,47 +159,67 @@ export default function MaterialInformation({ form, basicMasters, MaterialOnboar
     form.watch("material_type"),
   ]);
 
-  useEffect(() => {
-    fetchMaterialCodeData();
-    setMaterialCodeStatus("idle");
-  }, []);
+  // useEffect(() => {
+  //   fetchMaterialCodeData();
+  //   setMaterialCodeStatus("idle");
+  // }, []);
 
   useEffect(() => {
     const subscription = form.watch(async (value, { name }) => {
-      if (name === "material_company_code" || name === "material_type") {
-        await fetchMaterialCodeData();
+      if (
+        name === "material_company_code" ||
+        name === "material_type"
+      ) {
+        const company = form.getValues("material_company_code");
+        const materialtype = form.getValues("material_type");
+
+        if (company && materialtype) {
+          await fetchMaterialCodeData();
+        } else {
+          setAllMaterialCodes([]);
+        }
       }
     });
+
     return () => subscription.unsubscribe();
   }, [form]);
 
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
 
-  const handleMaterialSearch = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const val = e.target.value;
-    form.setValue("material_name_description", val);
+  const handleMaterialSearch = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const rawVal = e.target.value;
+    const val = rawVal.trim();
 
-    if (val.trim().length > 2) {
-      const filtered = AllMaterialCodes?.filter((item) =>
-        item.material_description?.toLowerCase().includes(val.toLowerCase())
-      );
+    form.setValue("material_name_description", rawVal);
 
-      const mappedResults = filtered?.map((item) => ({
-        material_name_description: item.material_description,
-        material_code_revised: item.name,
-        material_type: item.material_type,
-      }));
+    if (searchTimeout) clearTimeout(searchTimeout);
 
-      console.log("Mapped Results:", mappedResults);
+    if (val.length > 2) {
+      const timeout = setTimeout(async () => {
+        const results = await fetchMaterialCodeData(val);
 
-      setSearchResults(mappedResults || []);
-      setShowSuggestions(true);
+        const mappedResults = results.map((item) => ({
+          material_name_description: item.material_description,
+          material_code_revised: item.name,
+          material_type: item.material_type,
+        }));
+
+        setSearchResults(mappedResults);
+        setShowSuggestions(true);
+      }, 400);
+
+      setSearchTimeout(timeout);
     } else {
       setSearchResults([]);
       setShowSuggestions(false);
     }
+
     setMaterialSelectedFromList(false);
     setMaterialCodeAutoFetched(false);
   };
+
 
   const handleMaterialSelect = (item: any) => {
     form.setValue("material_name_description", item.material_name_description);

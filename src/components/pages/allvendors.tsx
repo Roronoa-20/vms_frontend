@@ -102,6 +102,7 @@ const AllVendors = () => {
 
         if (activeVendorTab === "imported_vendors") {
           params.via_data_import = 1;
+          params.created_from_registration = 0;
         }
 
         if (activeVendorTab === "both_registered_and_import") {

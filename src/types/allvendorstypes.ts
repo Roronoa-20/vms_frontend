@@ -16,6 +16,7 @@ export interface Vendor {
   docstatus: number;
   idx: number;
   vendor_title: string | null;
+  vendor_id: string | null;
   vendor_name: string;
   first_name: string | null;
   last_name: string | null;
@@ -129,6 +130,7 @@ export interface CompanyData {
   via_import?: number | boolean | string;
   onboarding_company_name: string | null;
   company_id: string | null;
+  vendor_id: string | null;
 
 }
 
@@ -163,6 +165,7 @@ export interface VendorOnboardingRecord {
   created_by_accounts_team: number;
   onboarding_company_name: string | null;
   company_id: string | null;
+  vendor_id: string | null;
 }
 
 
