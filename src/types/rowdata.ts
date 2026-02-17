@@ -22,6 +22,7 @@ export interface RowData {
   created_from_registration: string | number;
   multiple_company_data: MultipleCompanyData[];
   company_data: MultipleCompanyData[];
+  vendor_id: string | null;
 }
 
 export interface ExtendRowData extends RowData {

@@ -33,8 +33,6 @@ interface MaterialOnboardingFormProps {
 
 const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, onCancel, onSubmit, onUpdate, onError, materialRequestList, masters, isLoading, showAlert, EmployeeDetailsJSON }) => {
 
-    console.log("MaterialOnboardingDetails User side---->",materialRequestList)
-
     const [showSAPModal, setShowSAPModal] = useState(false);
     const materialType = materialRequestList?.material_type_name;
     const isZCAPMaterial = materialType === "ZCAP";

@@ -35,7 +35,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
     const [extendRow, setExtendRow] = React.useState<ExtendRowData | null>(null);
     const copyFormRef = React.useRef<HTMLDivElement | null>(null);
     const extendFormRef = React.useRef<HTMLDivElement | null>(null);
-    const stickyKeys: (keyof RowData | "srno")[] = ["srno", "company_code", "vendor_name"];
+    const stickyKeys: (keyof RowData | "srno")[] = ["srno", "company_code", "name", "vendor_name"];
     const [colWidths, setColWidths] = React.useState<Record<string, number>>({});
     const headerRefs = React.useRef<Record<string, HTMLTableCellElement | null>>({});
 
@@ -76,6 +76,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
         const companyDataList: Partial<CompanyData>[] = vendor.company_data?.length ? vendor.company_data
             : [{
                 name: "",
+                vendor_id: "",
                 creation: "",
                 modified: "",
                 modified_by: "",
@@ -105,7 +106,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
 
             return {
                 company_data: [normalizedCompany],
-                name: vendor.name ?? "N.A.",
+                name: vendor.vendor_id ?? "N.A.",
                 ref_no: approvedRecord?.vendor_onboarding_no ?? "N.A.",
                 multiple_company: vendor.bank_details?.registered_for_multi_companies ?? 0,
                 company_code: normalizedCompany.company_name,
@@ -133,6 +134,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
 
     const columns: { key: keyof RowData; label: string; type?: "text" | "file" | "boolean"; sticky?: boolean; }[] = [
         { key: "company_code", label: "Company Code", sticky: true },
+        { key: "name", label: "Vendor Ref No.", sticky: true },
         { key: "vendor_name", label: "Vendor Name", sticky: true },
         { key: "country", label: "Country" },
         { key: "office_email_primary", label: "Official Email" },
@@ -235,6 +237,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
     }, [activeTab,vendors]);
 
     const companyDropdown = dropdownData?.company_master;
+    
     const handleCopy = (row: RowData) => {
         if (copiedRow?.name === row.name && copiedRow?.company_code === row.company_code) {
             setCopiedRow(null);
@@ -310,6 +313,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
             alert("Cannot extend vendor in the same company.");
             return;
         }
+        console.log("Submitting the extend row info---->",extendRow);
 
         try {
             const response = await requestWrapper({
@@ -360,7 +364,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
                                             <TableHead
                                                 key={col.key}
                                                 ref={(el) => { headerRefs.current[col.key] = el; }}
-                                                className={`text-black text-center px-4 py-2 whitespace-nowrap ${col.sticky ? "sticky left-0 bg-blue-100 z-20" : ""}`}
+                                                className={`text-black text-center px-4 py-2 whitespace-wrap ${col.sticky ? "sticky left-0 bg-blue-100 z-20" : ""}`}
                                                 style={stickyKeys.includes(col.key) ? { left: getStickyLeft(col.key) } : {}}
                                             >
                                                 {col.label}

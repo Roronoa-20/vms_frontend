@@ -241,8 +241,18 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
         data: payload,
       });
 
+      console.log("FULL RESPONSE:", response);
+
       if (response?.status === 200) {
-        alert("Material created successfully");
+        const sapStatus = response.data?.message?.sap_status;
+        const sapMessage = response.data?.message?.sap_message;
+
+        if (sapStatus === "success") {
+          alert("Material created and sent to SAP successfully");
+        } else {
+          alert("Material saved, but SAP integration failed.\n\n" + (sapMessage || ""));
+        }
+
         return;
       }
       if (response?.name === "AxiosError" && response?.status === 400) {

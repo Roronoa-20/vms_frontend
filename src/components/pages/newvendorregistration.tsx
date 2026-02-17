@@ -189,13 +189,13 @@ const NewVendorRegistration = ({ handleCancel, ...Props }: Props) => {
         office_email_primary: Props?.initialData?.office_email_primary,
       };
     }
-
+    console.log("Submitting the form data---->", updateFormData);
     const response: AxiosResponse = await requestWrapper({
       url: url,
       method: "POST",
       data: { data: updateFormData },
     });
-
+    console.log("Response from submit API---->", response);
     if (response?.status == 500) {
       console.log("error in submitting this form");
       return;
