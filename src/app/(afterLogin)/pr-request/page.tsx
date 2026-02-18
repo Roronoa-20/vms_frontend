@@ -1,5 +1,5 @@
 import { getPurchaseReqisitionData, getPurchaseRequisitionMaterialDropdown, getPurchaseRequisitionPlantDropdown, GetPurchaseRequisitionTypeDropdown } from '@/src/services/prRequisition/prRequisitionNb.services'
-import PrRequest from '../../../../src/components/pages/PrRequest'
+import PrRequest from '../../../../src/components/pages/PRRequest'
 import React from 'react'
 import { cookies } from 'next/headers'
 import { getCompanyDropdownBasedOUser } from '@/src/services/prEnquiry/prEnquiry.services'
