@@ -1,114 +1,88 @@
-import React from 'react'
-import PRRequestForm from '../templates/PRRequestForm'
-import API_END_POINTS from '@/src/services/apiEndPoints'
-import { AxiosResponse } from 'axios';
-import requestWrapper from '@/src/services/apiCall';
-import { PurchaseRequestData } from '@/src/types/PurchaseRequestType';
-import { cookies } from 'next/headers';
-import NewPRRequestForm from '../templates/NewPRRequestForm';
+"use client"
+import React, { useState } from 'react'
+import CreatePurchaseRequest from '../templates/purchase-request/CreatePurchaseRequest'
+import { Button } from '../atoms/button'
+import NormalPR from '../templates/purchase-request/NormalPR'
+import CapexPR from '../templates/purchase-request/CapexPR'
+import { companyDropdownBasedOnUserType, purchaseRequisitionDataType, PurchaseRequisitionMaterialDropdownType, purchaseRequisitionPlantDropdownType, purchaseRequisitionTypeDropdownType } from '@/src/types/prRequisition/prRequisition.types'
+import { getPurchaseReqisitionData, submitPurchaseRequisition } from '@/src/services/prRequisition/prRequisitionNb.services'
+import ZSBService from '../templates/purchase-request/ZSBService'
+import ZSBAsset from '../templates/purchase-request/ZSBAsset'
 
-
-interface PageProps {
-  pur_req?: string
-  cart_id?: string
-  prf_name?: string
+interface Props  {
+    purchaseRequisitionTypeDropdown:purchaseRequisitionTypeDropdownType[]
+    companyDropdown: companyDropdownBasedOnUserType[]
+    prData?: purchaseRequisitionDataType
+    pr_id?: string
+    materialDropdown: PurchaseRequisitionMaterialDropdownType[]
+        plantDropdown: purchaseRequisitionPlantDropdownType[]
 }
 
-export const PRRequest = async ({ pur_req, cart_id, prf_name }: PageProps) => {
+enum PurchaseType  {
+    nbNormal = "NB-Normal",
+    nbCapex = "NB-CAPEX",
+    zsbService = "ZSB Cost Centre",
+    zsbAsset = "ZSB Asset",
+}
 
-  let PRDataUrl;
-  let PRData: PurchaseRequestData["message"]["data"] | null = null;
+const PrRequest = (props:Props) => {
+    const [prData,setPrData] = useState<purchaseRequisitionDataType>(props?.prData as purchaseRequisitionDataType);
 
-  const cookieStore = await cookies();
-  const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
-  let company = "";
-  if (prf_name) {
-    PRDataUrl = `${API_END_POINTS.fetchPRFDoctypeData}?prf_name=${prf_name}`;
-
-    const PRDataResponse: AxiosResponse = await requestWrapper({
-      url: PRDataUrl,
-      method: "GET",
-      headers: {
-        cookie: cookieHeaderString,
-      },
-    });
-
-    PRData = PRDataResponse?.status === 200 ? PRDataResponse?.data?.message : "";
-    company = PRData?.company || ""
-  } else if (cart_id) {
-    // When PR is created from VMS (Webform)
-    PRDataUrl = `${API_END_POINTS.fetchDataCartId}?cart_id=${cart_id}`;
-
-    const PRDataResponse: AxiosResponse = await requestWrapper({
-      url: PRDataUrl,
-      method: "GET",
-      headers: {
-        cookie: cookieHeaderString,
-      },
-    });
-
-    PRData = PRDataResponse?.status === 200 ? PRDataResponse?.data?.message?.data : "";
-    company = PRData?.company || ""
-  } else if (pur_req) {
-    PRDataUrl = `${API_END_POINTS?.fetchPRTableData}?name=${pur_req}`;
-    const PRDataResponse: AxiosResponse = await requestWrapper({
-      url: PRDataUrl,
-      method: "GET",
-      headers: {
-        cookie: cookieHeaderString,
-      },
-    });
-    company = PRDataResponse?.status === 200 ? PRDataResponse?.data?.message?.Company[0].name : "";
-  }
-
-  const dropdownApiUrl = API_END_POINTS?.vendorPurchaseRequestDropdown;
-  const resposne: AxiosResponse = await requestWrapper({
-    url: dropdownApiUrl, method: "GET", headers: {
-      cookie: cookieHeaderString
+    const fetchPrData = ()=>{
+        getPurchaseReqisitionData(props?.pr_id as string).then((res)=>{
+            console.log(res,"fetched pr data");
+            setPrData(res);
+        }).catch((err)=>{
+            console.error("Error fetching PR data:", err);
+        })
     }
-  });
 
-  const Dropdown = resposne?.status == 200 ? resposne?.data.message : "";
-  const purchaseGroupURL = `${API_END_POINTS?.filterpurchasegroup}?company=${company ? company : ""}`;
-  const PurGroupresposne: AxiosResponse = await requestWrapper({
-    url: purchaseGroupURL,
-    method: "GET",
-    headers: {
-      cookie: cookieHeaderString
+    const handlePurchaseRequisitionSubmit = ()=>{
+        confirm("Are you sure you want to submit this purchase requisition?") &&
+        submitPurchaseRequisition(props?.pr_id as string).then((res)=>{
+            alert("Purchase Requisition submitted successfully");
+            fetchPrData();
+        }).catch((err)=>{
+            console.error("Error submitting purchase requisition:", err);
+        })
     }
-  });
 
-  const PurchaseGroupDropdown = PurGroupresposne?.status == 200 ? PurGroupresposne?.data.message?.pur_grp : "";
-
-  const ProfitCenterURL = `${API_END_POINTS?.filterprofitcenter}?company=${company ? company : ""}`;
-  const PorfitCenterResponse: AxiosResponse = await requestWrapper({
-    url: ProfitCenterURL,
-    method: "GET",
-    headers: {
-      cookie: cookieHeaderString
-    }
-  });
-
-  const ProfitCenterDropdown = PorfitCenterResponse?.status == 200 ? PorfitCenterResponse?.data.message?.profit_center : "";
-
-  const PurchaseOrgURL = `${API_END_POINTS?.filterpurchaseorg}?company=${company ? company : ""}`;
-  const PurchaseOrgResponse: AxiosResponse = await requestWrapper({
-    url: PurchaseOrgURL,
-    method: "GET",
-    headers: {
-      cookie: cookieHeaderString
-    }
-  });
-
-  const PurchaseOrgDropdown = PurchaseOrgResponse?.status == 200 ? PurchaseOrgResponse?.data.message?.purchase_org : "";
-  
   return (
-    <>
-      {cart_id ?
-          <PRRequestForm Dropdown={Dropdown} PRData={PRData} cartId={cart_id} pur_req={pur_req} PurchaseGroupDropdown={PurchaseGroupDropdown} ProfitCenterDropdown={ProfitCenterDropdown} PurchaseOrgDropdown={PurchaseOrgDropdown} company={company} prf_name={prf_name} />
-          :
-          <NewPRRequestForm Dropdown={Dropdown} PRData={PRData} cartId={cart_id} pur_req={pur_req} PurchaseGroupDropdown={PurchaseGroupDropdown} ProfitCenterDropdown={ProfitCenterDropdown} PurchaseOrgDropdown={PurchaseOrgDropdown} company={company} prf_name={prf_name} />
-      }
-    </>
+    <div className='py-8 px-5'>
+        <CreatePurchaseRequest purchaseRequisitionTypeDropdown={props.purchaseRequisitionTypeDropdown} companyDropdown={props?.companyDropdown} prData={prData} pr_id={props?.pr_id} />
+        <div className='flex justify-end'>
+            {
+                props?.pr_id && !prData?.is_submitted && 
+                <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={()=>{handlePurchaseRequisitionSubmit()}}>
+          Submit PR
+        </Button>
+        }
+        </div>
+
+        {/* normal pr component */}
+        {
+            props.prData?.pr_type === PurchaseType.nbNormal && <NormalPR prData={prData} materialDropdown={props?.materialDropdown} plantDropdown={props?.plantDropdown} />
+        }
+
+        {/* capex pr component */}
+        {
+            props.prData?.pr_type === PurchaseType.nbCapex && <CapexPR prData={prData} materialDropdown={props?.materialDropdown} plantDropdown={props?.plantDropdown} />
+        }
+
+        {/* ZSB SERVICE */}
+
+        {
+            props.prData?.pr_type === PurchaseType.zsbService && <ZSBService prData={prData} materialDropdown={props?.materialDropdown} plantDropdown={props?.plantDropdown} />
+        }
+
+        {/* ZSB ASSET */}
+
+        {
+            props.prData?.pr_type === PurchaseType.zsbAsset && <ZSBAsset prData={prData} />
+        }        
+
+    </div>
   )
 }
+
+export default PrRequest
