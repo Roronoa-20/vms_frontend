@@ -37,6 +37,10 @@ const page = async ({ searchParams }: PageProps) => {
     const getMaterialDropdown = await getPurchaseRequisitionMaterialDropdown(cookieHeaderString);
     const plantDropdown = await getPurchaseRequisitionPlantDropdown(getCompanyDropdown[0]?.name as string,cookieHeaderString);
     console.log(plantDropdown,"plantDropdown");
+    console.log(getMaterialDropdown,"getMaterialDropdown");
+    console.log(prData,"prData");
+    console.log(getCompanyDropdown,"companyDropdown");
+  console.log(purchaseRequisitionTypeDropdown,"purchaseRequisitionTypeDropdown");
     
   return (
     <PrRequest purchaseRequisitionTypeDropdown={purchaseRequisitionTypeDropdown} companyDropdown={getCompanyDropdown} prData={prData as purchaseRequisitionDataType} pr_id={pr_id} materialDropdown={getMaterialDropdown} plantDropdown={plantDropdown}/>
