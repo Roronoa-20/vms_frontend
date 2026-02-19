@@ -72,7 +72,7 @@ const API_END_POINTS = {
   prInquiryData: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pi_details`,
   prInquiryHodApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.hod_approval_check`,
   prInquiryPurchaseApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.purchase_approval_check`,
-  prTableData: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pr_w`,
+  prTableData: `${url}/api/method/vms.APIs.purchase_api.vms_pr_api.list_vms_pr`,
   prInquiryProductHistory: `${url}/api/method/vms.APIs.purchase_api.product_inquiry_details_report.get_latest_product_inquiry`,
   FullProductHistory: `${url}/api/method/vms.APIs.purchase_api.product_inquiry_details_report.get_product_inquiry_report`,
   purchasingDetailsSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_purchase_details.update_vendor_onboarding_purchase_details`,
