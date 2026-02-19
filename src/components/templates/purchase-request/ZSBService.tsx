@@ -244,6 +244,28 @@ const ServicePR = (props: Props) => {
   };
 
   const handleSubItemAdd = () => {
+
+    if(!subLineItem?.service_code){
+        alert("please select service code");
+        return;
+      }
+
+      if(!subLineItem?.short_text){
+        alert("please enter short text");
+        return;
+      }
+
+      if(!subLineItem?.uom){
+        alert("please select uom");
+        return;
+      }
+
+      if(!subLineItem?.quantity){
+        alert("please enter quantity");
+        return;
+      }
+
+
     const body = {
       data: {
         name: subLineItem?.name,
@@ -271,6 +293,42 @@ const ServicePR = (props: Props) => {
   };
 
   const handleTableAdd = () => {
+
+    if(!singleRowData?.material_description){
+        alert("please enter material description");
+        return;
+      }
+
+      if(!singleRowData?.plant){
+        alert("please select plant");
+        return;
+      }
+
+      if(!singleRowData?.quantity){
+        alert("please enter quantity");
+        return;
+      }
+
+      if(!singleRowData?.material_group){
+        alert("please select material group");
+        return;
+      }
+
+      if(!singleRowData?.cost_center){
+        alert("please select cost center");
+        return;
+      }
+
+      if(!singleRowData?.gl_account){
+        alert("please select gl account");
+        return;
+      }
+
+      if(!singleRowData?.short_text){
+        alert("please enter short text");
+        return;
+      }
+
     const body = {
       data: {
         name: singleRowData?.name,
@@ -357,7 +415,7 @@ const ServicePR = (props: Props) => {
             Items List
           </h1>
         </div>
-        <Table className=" max-h-40 overflow-y-scroll border border-black/20">
+        <Table className=" h-40 overflow-y-scroll border border-black/20">
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
               <TableHead className="text-center w-[10%]">Sr No.</TableHead>

@@ -77,6 +77,30 @@ const NormalPR = (props:Props) => {
     }
 
     const handleTableAdd = ()=>{
+      if(!singleRowData?.material){
+        alert("please select material");
+        return;
+      }
+
+      if(!singleRowData?.plant){
+        alert("please select plant");
+        return;
+      }
+
+      if(!singleRowData?.quantity){
+        alert("please enter quantity");
+        return;
+      }
+
+      if(!singleRowData?.purchasing_group){
+        alert("please select purchasing group");
+        return;
+      }
+
+      if(!singleRowData?.required_delivery_date){
+        alert("please select required delivery date");
+        return;
+      }
         const body = {
             data:{
                 name:singleRowData?.name,
@@ -156,7 +180,7 @@ const NormalPR = (props:Props) => {
       <div className="flex w-full justify-between pb-4">
         <h1 className="text-[20px] text-[#03111F] font-semibold">Items List</h1>
       </div>
-      <Table className=" max-h-40 overflow-y-scroll border border-black/20">
+      <Table className=" h-40 overflow-y-scroll border border-black/20">
         <TableHeader className="text-center">
           <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
             <TableHead className="text-center w-[10%]">Sr No.</TableHead>

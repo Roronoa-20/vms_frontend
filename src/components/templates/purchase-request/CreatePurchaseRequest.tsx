@@ -54,6 +54,17 @@ const CreatePurchaseRequest = (props: Props) => {
       }
 
   const handleNextButton = () => {
+
+    if(!form?.pr_type){
+      alert("please select purchase type");
+      return;
+    }
+
+    if(!form?.company){
+      alert("please select company");
+      return;
+    }
+
     const body = {
       ...form,
       requisitioner_name: name,
