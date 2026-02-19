@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Biodiversity, GreenProducts } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
 import { useASAFormContext } from "@/src/context/ASAFormContext";
 
@@ -12,38 +12,15 @@ import { useASAFormContext } from "@/src/context/ASAFormContext";
 export default function BiodiversityForm() {
   const searchParams = useSearchParams();
   const vmsRefNo = searchParams.get("vms_ref_no") || "";
-  const { biodiversityForm, updateBiodiversityForm, submitEnvironmentForm, refreshFormData, updateGreenProductsForm, asaFormSubmitData, setFormProgress } = useASAFormContext();
+  const { biodiversityForm, updateBiodiversityForm, submitEnvironmentForm, refreshFormData, updateGreenProductsForm, asaFormSubmitData } = useASAFormContext();
   const isverified = asaFormSubmitData.form_is_submitted || 0;
-
-  const calculateProgress = () => {
-    const entries = Object.entries(biodiversityForm);
-
-    const completed = entries.filter(([key, item]) => {
-      const typedItem = item as Biodiversity[keyof Biodiversity];
-      if (!typedItem.selection) return false;
-      if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
-      // if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
-      return true;
-    }).length;
-
-    return Math.round((completed / entries.length) * 100);
-  };
-
-  useEffect(() => {
-    const percent = calculateProgress();
-
-    setFormProgress((prev: any) => ({
-      ...prev,
-      biodiversity: percent,
-    }));
-  }, [biodiversityForm]);
 
   const isValid = Object.values(biodiversityForm).every((item) => {
     const typedItem = item as Biodiversity[keyof Biodiversity];
     if (!typedItem.selection) return false;
     if (typedItem.selection === "Yes") {
       if (!typedItem.comment?.trim()) return false;
-      if (!typedItem.file) return false;
+      // if (!typedItem.file) return false;
     }
     return true;
   });
@@ -125,7 +102,7 @@ export default function BiodiversityForm() {
                 className="py-2.5"
                 variant="nextbtn"
                 size="nextbtnsize"
-                // disabled={!isValid}
+                disabled={!isValid}
                 onClick={handleSubmit}
               >
                 Submit & Next

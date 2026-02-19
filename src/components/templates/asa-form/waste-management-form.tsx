@@ -4,7 +4,7 @@ import { WasteManagement, WaterConsumptionAndManagement } from "@/src/types/asat
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
 import { useASAFormContext } from "@/src/context/ASAFormContext";
 
@@ -13,38 +13,15 @@ export default function Waste_Management() {
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
     const router = useRouter();
-    const { wastemanagementForm, updateWasteManagementForm, updateWcmForm, refreshFormData, asaFormSubmitData, setFormProgress } = useASAFormContext();
+    const { wastemanagementForm, updateWasteManagementForm, updateWcmForm, refreshFormData, asaFormSubmitData } = useASAFormContext();
     const isverified = asaFormSubmitData.form_is_submitted || 0;
     const fileRequiredQuestions = new Set(["handover_waste_to_authorized_vendor", "vendor_audits_for_waste_management", "have_epr_for_waste_management"]);
-
-    const calculateProgress = () => {
-        const entries = Object.entries(wastemanagementForm);
-
-        const completed = entries.filter(([key, item]) => {
-            const typedItem = item as WasteManagement[keyof WasteManagement];
-            if (!typedItem.selection) return false;
-            if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
-            if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
-            return true;
-        }).length;
-
-        return Math.round((completed / entries.length) * 100);
-    };
-
-    useEffect(() => {
-        const percent = calculateProgress();
-
-        setFormProgress((prev: any) => ({
-            ...prev,
-            waste_management: percent,
-        }));
-    }, [wastemanagementForm]);
 
     const isValid = Object.entries(wastemanagementForm).every(([key, item]) => {
         const typedItem = item as WasteManagement[keyof WasteManagement];
         if (!typedItem.selection) return false;
         if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
-        if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
+        // if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
         return true;
     });
 
@@ -234,7 +211,7 @@ export default function Waste_Management() {
                                 variant="nextbtn"
                                 size="nextbtnsize"
                                 onClick={handleNext}
-                            // disabled={!isValid}
+                                disabled={!isValid}
                             >
                                 Next
                             </Button>

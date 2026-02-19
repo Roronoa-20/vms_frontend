@@ -1,23 +1,29 @@
 import YesNoNA from "@/src/components/common/YesNoNAwithFile";
 import { Button } from "@/components/ui/button"
 import { Governance } from "@/src/types/asatypes";
-import { useState } from "react";
-import { useASAForm } from "@/src/hooks/useASAForm";
+import { useState, useEffect } from "react";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import requestWrapper from "@/src/services/apiCall";
 import { CheckCircle } from "lucide-react";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
 import API_END_POINTS from "@/src/services/apiEndPoints";
+import { Label } from "@/components/ui/label";
 
 export default function GovernanceForm() {
    const router = useRouter();
    const searchParams = useSearchParams();
    const vmsRefNo = searchParams.get("vms_ref_no") || "";
-   const { governanceform, updateGovernanceForm, ASAformName, asaFormSubmitData } = useASAForm();
+   const { governanceform, updateGovernanceForm, ASAformName, asaFormSubmitData } = useASAFormContext();
    const [showRevertBox, setShowRevertBox] = useState(false);
    const [revertComment, setRevertComment] = useState("");
    const [showVerifySuccess, setShowVerifySuccess] = useState(false);
-   
+   const [showVerifyPopup, setShowVerifyPopup] = useState(false);
+   const [totalEsgScore, setTotalEsgScore] = useState("");
+   const [remarks, setRemarks] = useState("");
+
+
    console.log("Governance web Form Data:", governanceform);
 
    const handleSelectionChange = (name: string, selection: "Yes" | "No" | "NA" | "") => {
@@ -54,11 +60,17 @@ export default function GovernanceForm() {
       router.push(`/view-asa-form?tabtype=employee_satisfaction&vms_ref_no=${vmsRefNo}`);
    };
 
-   const VerifyASAForm = async (asaFormName: string) => {
+   const VerifyASAForm = async (asaFormName: string, totalScore: string, remarks: string) => {
       try {
          const response = await requestWrapper({
-            url: `${API_END_POINTS.verifyasaform}?asa_name=${asaFormName}`,
+            url: `${API_END_POINTS.verifyasaform}`,
             method: "POST",
+            data: {
+               data: {
+                  asa_name: asaFormName,
+                  total_esg_score: totalScore,
+               },
+            },
          });
          if (response?.data?.message?.status === "success") {
             setShowVerifySuccess(true);
@@ -95,7 +107,7 @@ export default function GovernanceForm() {
    };
 
    const handleNext = async () => {
-      const res = await VerifyASAForm(ASAformName);
+      const res = await VerifyASAForm(ASAformName, totalEsgScore, remarks);
       console.log("verify result:", res);
    };
 
@@ -232,7 +244,7 @@ export default function GovernanceForm() {
                         className="py-2.5"
                         variant="nextbtn"
                         size="nextbtnsize"
-                        onClick={handleNext}
+                        onClick={() => setShowVerifyPopup(true)}
                      >
                         Verify
                      </Button>
@@ -270,6 +282,67 @@ export default function GovernanceForm() {
                         </Button>
                      </div>
 
+                  </div>
+               </div>
+            )}
+
+            {showVerifyPopup && (
+               <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                  <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 space-y-4">
+
+                     <div className="text-lg font-semibold text-gray-800">
+                        Total ESG Score
+                     </div>
+
+                     <input
+                        type="number"
+                        className="w-full border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+                        placeholder="Enter total ESG score"
+                        value={totalEsgScore}
+                        onChange={(e) => setTotalEsgScore(e.target.value)}
+                     />
+
+                     <div className="space-y-1">
+                        <Label className="text-md font-semibold text-gray-700">
+                           Remarks
+                        </Label>
+
+                        <textarea
+                           className="w-full border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+                           rows={3}
+                           placeholder="Enter remarks (optional)"
+                           value={remarks}
+                           onChange={(e) => setRemarks(e.target.value)}
+                        />
+                     </div>
+
+
+                     <div className="flex justify-end gap-3">
+                        <Button
+                           variant="backbtn"
+                           size="backbtnsize"
+                           onClick={() => {
+                              setShowVerifyPopup(false);
+                              setTotalEsgScore("");
+                           }}
+                        >
+                           Cancel
+                        </Button>
+
+                        <Button
+                           variant="nextbtn"
+                           size="nextbtnsize"
+                           disabled={!totalEsgScore.trim() || !remarks.trim()}
+                           onClick={async () => {
+                              await VerifyASAForm(ASAformName, totalEsgScore, remarks);
+                              setShowVerifyPopup(false);
+                              setTotalEsgScore("");
+                              setRemarks("");
+                           }}
+                        >
+                           Submit
+                        </Button>
+                     </div>
                   </div>
                </div>
             )}

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { GrievanceMechanism, LaborRightsAndWorkingConditions } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
 import { useASAFormContext } from "@/src/context/ASAFormContext";
 
@@ -12,40 +12,17 @@ export default function Grievance_Mechanism() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
-    const { GrievanceMechForm, updateGrievnaceMechForm, refreshFormData, updateLaborRightsForm, asaFormSubmitData, setFormProgress } = useASAFormContext();
+    const { GrievanceMechForm, updateGrievnaceMechForm, refreshFormData, updateLaborRightsForm, asaFormSubmitData } = useASAFormContext();
     const isverified = asaFormSubmitData.form_is_submitted || 0;
 
     console.log("General Disclosure Form Data:", GrievanceMechForm);
-
-    const calculateProgress = () => {
-        const entries = Object.entries(GrievanceMechForm);
-
-        const completed = entries.filter(([key, item]) => {
-            const typedItem = item as LaborRightsAndWorkingConditions[keyof LaborRightsAndWorkingConditions];
-            if (!typedItem.selection) return false;
-            if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
-            // if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
-            return true;
-        }).length;
-
-        return Math.round((completed / entries.length) * 100);
-    };
-
-    useEffect(() => {
-        const percent = calculateProgress();
-
-        setFormProgress((prev: any) => ({
-            ...prev,
-            grievance_mechanism: percent,
-        }));
-    }, [GrievanceMechForm]);
 
     const isValid = Object.values(GrievanceMechForm).every((item) => {
         const typedItem = item as LaborRightsAndWorkingConditions[keyof LaborRightsAndWorkingConditions];
         if (!typedItem.selection) return false;
         if (typedItem.selection === "Yes") {
             if (!typedItem.comment?.trim()) return false;
-            if (!typedItem.file) return false;
+            // if (!typedItem.file) return false;
         }
         return true;
     });
@@ -182,7 +159,7 @@ export default function Grievance_Mechanism() {
                                 variant="nextbtn"
                                 size="nextbtnsize"
                                 onClick={handleNext}
-                            // disabled={!isValid}
+                                disabled={!isValid}
                             >
                                 Next
                             </Button>

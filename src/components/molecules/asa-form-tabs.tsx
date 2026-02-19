@@ -41,7 +41,6 @@ export default function ASAFormTab() {
     const basePath = pathname === '/view-asa-form' ? '/view-asa-form' : '/asa-form';
     router.push(`${basePath}?tabtype=${encodeURIComponent(tab)}&vms_ref_no=${vmsRefNo}`);
   };
-  console.log("Sidebar progress:", formProgress);
 
   return (
     <div className="p-3 flex flex-col bg-white rounded-xl gap-3">
@@ -67,8 +66,8 @@ export default function ASAFormTab() {
               <div className="flex items-center justify-between w-full">
                 <span>{tab.label}</span>
 
-                {formProgress?.[tab.key as keyof typeof formProgress] !== undefined && (
-                  <span className="text-xs font-semibold bg-red-600 text-white px-2 py-0.5 rounded">
+                {formProgress[tab.key] !== undefined && (
+                  <span className="text-[10px] font-medium bg-blue-300 text-black px-1 py-0.5 rounded-[20px]">
                     {formProgress[tab.key as keyof typeof formProgress]}%
                   </span>
                 )}
@@ -96,7 +95,7 @@ export default function ASAFormTab() {
                       <span>{child.label}</span>
 
                       {formProgress?.[child.key as keyof typeof formProgress] !== undefined && (
-                        <span className="text-[10px] font-semibold bg-gray-700 text-white px-2 py-0.5 rounded">
+                        <span className="text-[10px] font-medium bg-blue-300 text-black px-1 py-0.5 rounded-[10px]">
                           {formProgress[child.key as keyof typeof formProgress]}%
                         </span>
                       )}

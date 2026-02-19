@@ -4,16 +4,16 @@ import { Button } from "@/components/ui/button";
 import { EmployeeWellBeing, GrievanceMechanism } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
 
 
 export default function Employee_Wellbeing() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
-    const { refreshFormData, updateGrievnaceMechForm, EmpWellBeingForm, updateEmpWellBeingForm } = useASAForm();
-    console.log("General Disclosure Form Data:", EmpWellBeingForm);
+    const { refreshFormData, updateGrievnaceMechForm, EmpWellBeingForm, updateEmpWellBeingForm } = useASAFormContext();
 
     const base64ToBlob = (base64: string): Blob => {
         const arr = base64.split(",");
