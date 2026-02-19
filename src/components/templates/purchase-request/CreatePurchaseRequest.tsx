@@ -66,7 +66,7 @@ const CreatePurchaseRequest = (props: Props) => {
     createPurchaseReqisition(body)
       .then((res) => {
         alert(res?.message);
-        router.push(`/pr-request?pr_id=${res?.name}`);
+        router.refresh();
         // fetchPrData();
       })
       .catch((err) => {
