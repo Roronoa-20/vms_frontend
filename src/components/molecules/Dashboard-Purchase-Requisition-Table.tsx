@@ -120,13 +120,13 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                 <TableHead className="text-center text-black">Sr No.</TableHead>
                 <TableHead className="text-center text-black">Ref No.</TableHead>
-                <TableHead className="text-center text-black">Cart No.</TableHead>
+                {/* <TableHead className="text-center text-black">Cart No.</TableHead> */}
                 <TableHead className="text-center text-black">Company</TableHead>
                 <TableHead className="text-center text-black">PR Type</TableHead>
-                <TableHead className="text-center text-black text-nowrap">Purchase Group</TableHead>
+                {/* <TableHead className="text-center text-black text-nowrap">Purchase Group</TableHead> */}
                 <TableHead className="text-center text-black">Requisitioner</TableHead>
                 <TableHead className="text-center text-black text-nowrap">Status</TableHead>
-                <TableHead className="text-center text-black text-nowrap">View Cart</TableHead>
+                {/* <TableHead className="text-center text-black text-nowrap">View Cart</TableHead> */}
                 <TableHead className="text-center text-black">View PR</TableHead>
               </TableRow>
             </TableHeader>
@@ -136,10 +136,10 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
                   <TableRow key={index}>
                     <TableCell className="font-medium text-center">{(currentPage - 1) * record_per_page + (index + 1)}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
-                    <TableCell className="text-nowrap text-center">{item?.cart_details_id}</TableCell>
+                    {/* <TableCell className="text-nowrap text-center">{item?.cart_details_id}</TableCell> */}
                     <TableCell className="text-nowrap text-center">{item?.company}</TableCell>
-                    <TableCell className="text-nowrap text-center">{item?.purchase_requisition_type}</TableCell>
-                    <TableCell className="text-nowrap text-center">{item?.purchase_group}</TableCell>
+                    <TableCell className="text-nowrap text-center">{item?.pr_type}</TableCell>
+                    {/* <TableCell className="text-nowrap text-center">{item?.purchase_group}</TableCell> */}
                     <TableCell className="text-nowrap text-center">{item?.requisitioner}</TableCell>
                     {/* <TableCell className="text-nowrap text-center">{item?.purchase_head_status}</TableCell> */}
                     <TableCell>
@@ -155,11 +155,11 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
                       </div>
                     </TableCell>
 
-                    <TableCell className="text-nowrap text-center"><Link href={`/view-pr-inquiry?cart_Id=${item?.cart_details_id}`}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]" >View</Button></Link></TableCell>
+                    {/* <TableCell className="text-nowrap text-center"><Link href={`/view-pr-inquiry?cart_Id=${item?.cart_details_id}`}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]" >View</Button></Link></TableCell> */}
                     <TableCell
                       className={`text-nowrap text-center whitespace-nowrap`}
                     >
-                      <Link href={`/pr-request?cart_id=${item?.cart_details_id}&pur_req=${item?.name}`}>
+                      <Link href={`/pr-request?pr_id=${item?.name}`}>
                         <Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View PR</Button>
                       </Link>
                     </TableCell>

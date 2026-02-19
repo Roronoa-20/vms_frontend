@@ -1534,6 +1534,7 @@ export type CartDetails = {
 }
 
 export interface PurchaseRequisition {
+  pr_type:string
   name: string;
   creation: string;
   modified: string;
