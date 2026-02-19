@@ -28,6 +28,7 @@ interface Props {
   companyDropdown: companyDropdownBasedOnUserType[];
   prData?: purchaseRequisitionDataType;
   pr_id?: string;
+  fetchPrData:(prId?:string)=>void
 }
 
 type FormType = {
@@ -67,7 +68,7 @@ const CreatePurchaseRequest = (props: Props) => {
       .then((res) => {
         alert(res?.message);
         router.replace(`/pr-request?pr_id=${res?.name}`);
-        router.refresh();
+        props?.fetchPrData(res?.name as string);
       })
       .catch((err) => {
         alert("Error creating purchase requisition: " + err);
