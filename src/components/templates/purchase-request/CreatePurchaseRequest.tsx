@@ -43,14 +43,14 @@ const CreatePurchaseRequest = (props: Props) => {
   const [form, setForm] = useState<FormType>({ ...(props.prData as any) });
   const router = useRouter();
 
-  // const fetchPrData = ()=>{
-  //         getPurchaseReqisitionData(props?.pr_id as string).then((res)=>{
-  //             console.log(res,"fetched pr data");
-  //             setForm(res as any);
-  //         }).catch((err)=>{
-  //             console.error("Error fetching PR data:", err);
-  //         })
-  //     }
+  const fetchPrData = ()=>{
+          getPurchaseReqisitionData(props?.pr_id as string).then((res)=>{
+              console.log(res,"fetched pr data");
+              setForm(res as any);
+          }).catch((err)=>{
+              console.error("Error fetching PR data:", err);
+          })
+      }
 
   const handleNextButton = () => {
     const body = {
@@ -66,8 +66,8 @@ const CreatePurchaseRequest = (props: Props) => {
     createPurchaseReqisition(body)
       .then((res) => {
         alert(res?.message);
+        router.replace(`/pr-request?pr_id=${res?.name}`);
         router.refresh();
-        // fetchPrData();
       })
       .catch((err) => {
         alert("Error creating purchase requisition: " + err);
