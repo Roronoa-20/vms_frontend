@@ -67,7 +67,6 @@ import PopUp from "../../molecules/PopUp";
 
 type Props = {
   prData?: purchaseRequisitionDataType;
-  materialDropdown: PurchaseRequisitionMaterialDropdownType[];
   plantDropdown: purchaseRequisitionPlantDropdownType[];
 };
 

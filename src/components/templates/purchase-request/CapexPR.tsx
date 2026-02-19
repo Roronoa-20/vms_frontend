@@ -18,10 +18,11 @@ import {
 import { Input } from "../../atoms/input";
 import { Trash2 } from "lucide-react";
 import { nbCapexItemsType, nbItemsType, purchaseRequisitionDataType, PurchaseRequisitionMaterialDropdownType, purchaseRequisitionPlantDropdownType, purchaseRequisitionPurchaseGroupDropdownType, purchaseRequisitionUOMType } from "@/src/types/prRequisition/prRequisition.types";
-import { addPurchaseRequisitionNBItems, deletePurchaseRequisitionNBItems, getPurchaseReqisitionData, getPurchaseRequisitionPurchaseGroupDropdown, getPurchaseRequisitionUOM, updatePurchaseRequisitionNBItems } from "@/src/services/prRequisition/prRequisitionNb.services";
+import { addPurchaseRequisitionNBItems, deletePurchaseRequisitionNBItems, getPurchaseReqisitionData, getPurchaseRequisitionMaterialDropdown, getPurchaseRequisitionPurchaseGroupDropdown, getPurchaseRequisitionUOM, updatePurchaseRequisitionNBItems } from "@/src/services/prRequisition/prRequisitionNb.services";
 import { set } from "nprogress";
 import { useSearchParams } from "next/navigation";
 import { deleteEnquiryItems } from "@/src/services/prEnquiry/prEnquiry.services";
+import SearchSelectComponent from "../../molecules/Selectsearchcomponent";
 
 type Props = {
   prData?: purchaseRequisitionDataType
@@ -42,6 +43,8 @@ const CapexPR = (props:Props) => {
     const [singleRowData, setSingleRowData] = useState<nbCapexItemsType>();
 
     const [tableData, setTableData] = useState<nbCapexItemsType[]>(props?.prData?.nb_capex_items || []);
+
+    const [materialDropdown,setMaterialDropdown] = useState<PurchaseRequisitionMaterialDropdownType[]>(props?.materialDropdown);
 
     const getPurchaseGroupBasedOnMaterial = (material:string)=>{
         getPurchaseRequisitionPurchaseGroupDropdown(material).then((res:any)=>{
@@ -135,9 +138,19 @@ const CapexPR = (props:Props) => {
     const handleUpdateItem = (index:number)=>{
         getPurchaseGroupBasedOnMaterial(tableData[index]?.material);
         getUOMBasedOnMaterial(tableData[index]?.material);
+        fetchMaterialDropdown(tableData[index]?.material);
         setSingleRowData(tableData[index]);
     }
 
+
+      const fetchMaterialDropdown = (query?:string):Promise<PurchaseRequisitionMaterialDropdownType[]>=>{
+            return getPurchaseRequisitionMaterialDropdown(query)
+              .then((res) => {setMaterialDropdown(res);return res})
+              .catch((err) => {
+                console.error(err);
+                return [];
+              });
+          }
     
 
     
@@ -213,7 +226,7 @@ const CapexPR = (props:Props) => {
           <TableRow>
             <TableCell className="font-medium text-center"></TableCell>
             <TableCell className="font-medium">
-              <Select
+              {/* <Select
               value={singleRowData?.material ?? ""}
               onValueChange={(value)=>{
                   getPurchaseGroupBasedOnMaterial(value);
@@ -233,7 +246,16 @@ const CapexPR = (props:Props) => {
                           ))}
                   </SelectGroup>
                 </SelectContent>
-              </Select>
+              </Select> */}
+               <SearchSelectComponent
+                        searchApi={fetchMaterialDropdown}
+                        getLabel={(item) => item?.material_description}
+                        getValue={(item) => item?.name}
+                        setDropdown={setMaterialDropdown}
+                        dropdown={materialDropdown}
+                        setData={(value) => {setSingleRowData((prev:any)=>({...prev,material:value ?? ""})); getPurchaseGroupBasedOnMaterial(value as string); getUOMBasedOnMaterial(value as string)}}
+                        data={singleRowData?.material}
+                      />
             </TableCell>
             <TableCell className="font-medium">
               <h1 className="text-center">{singleRowData?.uom}</h1>
