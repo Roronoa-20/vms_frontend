@@ -72,7 +72,7 @@ const PrRequest = (props:Props) => {
         {/* ZSB SERVICE */}
 
         {
-            props.prData?.pr_type === PurchaseType.zsbService && <ZSBService prData={prData} materialDropdown={props?.materialDropdown} plantDropdown={props?.plantDropdown} />
+            props.prData?.pr_type === PurchaseType.zsbService && <ZSBService prData={prData} plantDropdown={props?.plantDropdown} />
         }
 
         {/* ZSB ASSET */}
