@@ -28,8 +28,8 @@ enum PurchaseType  {
 const PrRequest = (props:Props) => {
     const [prData,setPrData] = useState<purchaseRequisitionDataType>(props?.prData as purchaseRequisitionDataType);
 
-    const fetchPrData = ()=>{
-        getPurchaseReqisitionData(props?.pr_id as string).then((res)=>{
+    const fetchPrData = (prId?:string)=>{
+        getPurchaseReqisitionData(prId ?? props?.pr_id as string).then((res)=>{
             console.log(res,"fetched pr data");
             setPrData(res);
         }).catch((err)=>{
@@ -49,7 +49,7 @@ const PrRequest = (props:Props) => {
 
   return (
     <div className='py-8 px-5'>
-        <CreatePurchaseRequest purchaseRequisitionTypeDropdown={props.purchaseRequisitionTypeDropdown} companyDropdown={props?.companyDropdown} prData={prData} pr_id={props?.pr_id} />
+        <CreatePurchaseRequest purchaseRequisitionTypeDropdown={props.purchaseRequisitionTypeDropdown} companyDropdown={props?.companyDropdown} prData={prData} pr_id={props?.pr_id} fetchPrData={fetchPrData}/>
         <div className='flex justify-end'>
             {
                 props?.pr_id && !prData?.is_submitted && 
