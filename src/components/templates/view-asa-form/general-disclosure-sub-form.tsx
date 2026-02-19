@@ -1,16 +1,19 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Button } from "@/components/ui/button";
 import YesNoNA from "@/src/components/common/YesNoNAwithFile";
 import { useRouter, useSearchParams } from "next/navigation";
 import { GeneralDisclosureData, CompanyInformation } from "@/src/types/asatypes";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
+
 
 export default function General_Disclosure_Form() {
     const router = useRouter();
     const params = useSearchParams();
     const vmsRefNo = params.get("vms_ref_no") || "";
-    const { generalDisclosure, updateGeneralDisclosure, submitForm, refreshFormData, updateCompanyInfo } = useASAForm();
+    const fileRequiredQuestions = new Set(["valid_consent_from_pollution_control"]);
+    const { generalDisclosure, updateGeneralDisclosure } = useASAFormContext();
     console.log("General Disclosure Form Data:", generalDisclosure);
 
     const handleSelectionChange = (name: string, selection: "Yes" | "No" | "NA" | "") => {

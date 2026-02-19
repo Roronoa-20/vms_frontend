@@ -4,14 +4,16 @@ import { useSearchParams } from 'next/navigation';
 import Form_Input from "@/src/components/common/FormInput";
 import Textarea_Input from "@/src/components/common/TextareaWithLabel";
 import { useRouter } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
 import { CompanyInformation } from '@/src/types/asatypes';
+
 
 export default function Company_Information_Form() {
     const router = useRouter();
     const params = useSearchParams();
     const vmsRefNo = params.get("vms_ref_no") || "";
-    const { companyInfo, updateCompanyInfo, refreshFormData } = useASAForm();
+    const { companyInfo, updateCompanyInfo, refreshFormData } = useASAFormContext();
 
     useEffect(() => {
         const stored = localStorage.getItem("companyInfo");

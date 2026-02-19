@@ -2,17 +2,19 @@ import YesNoNA from "@/src/components/common/YesNoNAwithFile";
 import { Button } from "@/components/ui/button"
 import { Biodiversity, GreenProducts } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
+
 
 
 export default function BiodiversityForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const vmsRefNo = searchParams.get("vms_ref_no") || "";
-  const { biodiversityForm, updateBiodiversityForm, submitEnvironmentForm, refreshFormData, updateGreenProductsForm } = useASAForm();
+  const { biodiversityForm, updateBiodiversityForm } = useASAFormContext();
 
   const handleSelectionChange = (name: string, selection: "Yes" | "No" | "NA" | "") => {
     updateBiodiversityForm({
