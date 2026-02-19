@@ -4,15 +4,16 @@ import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { EnvironmentalManagementSystem } from "@/src/types/asatypes";
 import { Label } from "@/components/ui/label";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
+
 
 export default function Environmental_Management_System() {
 
   const router = useRouter();
   const params = useSearchParams();
   const vmsRefNo = params.get("vms_ref_no") || "";
-  const { emsform, updateEmsForm, refreshFormData } = useASAForm();
-  console.log("General Disclosure Form Data:", emsform);
+  const { emsform, updateEmsForm, refreshFormData } = useASAFormContext();
 
   const base64ToBlob = (base64: string): Blob => {
     const arr = base64.split(",");
@@ -107,7 +108,7 @@ export default function Environmental_Management_System() {
               fileRequired={true}
               options={["Yes", "No"]}
             />
-            
+
             <YesNoNA
               name="environmental_management_certification"
               value={emsform.environmental_management_certification}

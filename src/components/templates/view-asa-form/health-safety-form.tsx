@@ -4,16 +4,18 @@ import { Button } from "@/components/ui/button";
 import { HealthAndSafety, EmployeeWellBeing } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
 import { Label } from "@/components/ui/label";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
+
 
 
 export default function Health_And_Safety() {
    const router = useRouter();
    const searchParams = useSearchParams();
    const vmsRefNo = searchParams.get("vms_ref_no") || "";
-   const { refreshFormData, updateEmpWellBeingForm, HealthSafetyForm, updateHealthSafetyForm } = useASAForm();
+   const { refreshFormData, updateEmpWellBeingForm, HealthSafetyForm, updateHealthSafetyForm } = useASAFormContext();
    const [mentionBehaviorBaseSafety, setMentionBehaviorBaseSafety] = useState("");
    console.log("Health Safety Form Data:", HealthSafetyForm);
 

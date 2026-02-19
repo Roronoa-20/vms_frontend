@@ -3,7 +3,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { ASAForm, CompanyInformation, GeneralDisclosureData, Governance, fileKeys, commentFieldKeys, EnvironmentalManagementSystem, Biodiversity, GreenProducts, EnergyConsumptionAndEmission, WaterConsumptionAndManagement, WasteManagement, EmployeeSatisfaction, LaborRightsAndWorkingConditions, GrievanceMechanism, EmployeeWellBeing, HealthAndSafety } from '@/src/types/asatypes';
-import { calculateParentProgress } from '@/src/constants/asaformtabs';
+// import { calculateParentProgress } from '@/src/constants/asaformtabs';
+import { calculateAllProgress } from "@/utlis/calculateAllProgress";
 
 
 type UseASAFormReturn = {
@@ -180,30 +181,41 @@ export const useASAForm = (): UseASAFormReturn => {
     const [formProgress, setFormProgress] = useState<FormProgress>({});
 
     useEffect(() => {
-        setFormProgress((prev: any) => ({
-            ...prev,
-            general_disclosures: calculateParentProgress(
-                "general_disclosures",
-                prev
-            ),
-            environment: calculateParentProgress("environment", prev),
-            social: calculateParentProgress("social", prev),
-        }));
+        const progress = calculateAllProgress({
+            company_information: companyInfo,
+            general_disclosures_sub: generalDisclosure,
+            governance: governanceform,
+            ems: emsform,
+            biodiversity: biodiversityForm,
+            green_products: greenProductsForm,
+            ece: eceform,
+            wcm: wcmform,
+            waste_management: wastemanagementForm,
+            employee_satisfaction: EmpSatisfactionForm,
+            labor_rights: LaborRightsForm,
+            grievance_mechanism: GrievanceMechForm,
+            employee_wellbeing: EmpWellBeingForm,
+            health_safety: HealthSafetyForm,
+        });
+
+        setFormProgress(progress);
     }, [
-        formProgress.company_information,
-        formProgress.general_disclosures_sub,
-        formProgress.ems,
-        formProgress.ece,
-        formProgress.wcm,
-        formProgress.waste_management,
-        formProgress.green_products,
-        formProgress.biodiversity,
-        formProgress.labor_rights,
-        formProgress.grievance_mechanism,
-        formProgress.employee_wellbeing,
-        formProgress.health_safety,
-        formProgress.employee_satisfaction,
+        companyInfo,
+        generalDisclosure,
+        governanceform,
+        emsform,
+        biodiversityForm,
+        greenProductsForm,
+        eceform,
+        wcmform,
+        wastemanagementForm,
+        EmpSatisfactionForm,
+        LaborRightsForm,
+        GrievanceMechForm,
+        EmpWellBeingForm,
+        HealthSafetyForm,
     ]);
+
 
 
     useEffect(() => {

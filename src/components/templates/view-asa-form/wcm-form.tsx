@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { WaterConsumptionAndManagement, EnergyConsumptionAndEmission } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useSearchParams } from "next/navigation";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
 
 
@@ -12,7 +13,8 @@ export default function Water_Consumption_And_Management() {
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
     const router = useRouter();
-    const { wcmform, updateWcmForm, refreshFormData, updateEceForm } = useASAForm();
+    const { wcmform, updateWcmForm, refreshFormData } = useASAFormContext();
+
     console.log("Energy Consumption and Emission Form Data:", wcmform);
 
     const base64ToBlob = (base64: string): Blob => {

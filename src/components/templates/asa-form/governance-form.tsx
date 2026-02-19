@@ -3,7 +3,7 @@ import YesNoNA from "@/src/components/common/YesNoNAwithFile";
 import { Button } from "@/components/ui/button"
 import { Governance, EmployeeSatisfaction } from "@/src/types/asatypes";
 import { useState } from "react";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
@@ -13,31 +13,9 @@ export default function GovernanceForm() {
 
    const searchParams = useSearchParams();
    const vmsRefNo = searchParams.get("vms_ref_no") || "";
-   const { governanceform, updateGovernanceForm, submitGoveranceForm, refreshFormData, updateEmpSatisactionForm, asaFormSubmitData, setFormProgress } = useASAFormContext();
+   const { governanceform, updateGovernanceForm, submitGoveranceForm, refreshFormData, updateEmpSatisactionForm, asaFormSubmitData } = useASAFormContext();
    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
    const isverified = asaFormSubmitData.form_is_submitted || 0;
-
-   const calculateProgress = () => {
-      const entries = Object.entries(governanceform);
-
-      const completed = entries.filter(([key, item]) => {
-         const typedItem = item as Governance[keyof Governance];
-         if (!typedItem.selection) return false;
-         if (typedItem.selection === "Yes" && !typedItem.comment?.trim()) return false;
-         if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
-         return true;
-      }).length;
-
-      return Math.round((completed / entries.length) * 100);
-   };
-
-   useEffect(() => {
-      const percent = calculateProgress();
-      setFormProgress((prev: any) => ({
-         ...prev,
-         governance: percent,
-      }));
-   }, [governanceform]);
 
    console.log("Governance web Form Data:", governanceform);
 
@@ -55,7 +33,7 @@ export default function GovernanceForm() {
       const typedItem = item as Governance[keyof Governance];
       if (!typedItem.selection) return false;
       if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
-      if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
+      // if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
       return true;
    });
 
@@ -237,7 +215,7 @@ export default function GovernanceForm() {
                         className="py-2.5"
                         variant="nextbtn"
                         size="nextbtnsize"
-                        // disabled={!isValid}
+                        disabled={!isValid}
                         onClick={handleSubmit}
                      >
                         Submit
