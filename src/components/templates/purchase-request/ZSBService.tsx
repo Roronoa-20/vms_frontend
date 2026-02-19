@@ -415,7 +415,7 @@ const ServicePR = (props: Props) => {
             Items List
           </h1>
         </div>
-        <Table className=" h-40 overflow-y-scroll border border-black/20">
+        <Table className=" max-h-40 overflow-y-scroll border border-black/20">
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
               <TableHead className="text-center w-[10%]">Sr No.</TableHead>
