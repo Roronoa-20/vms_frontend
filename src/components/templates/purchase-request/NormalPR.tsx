@@ -36,6 +36,7 @@ const NormalPR = (props:Props) => {
     const [purchaseGroupDropdown, setPurchaseGroupDropdown] = useState<purchaseRequisitionPurchaseGroupDropdownType[]>([]);
     const [uomDrop, setUOM] = useState<purchaseRequisitionUOMType>();
     const [isPurchaseGroupDropdown,setIsPurchaseGroupDropdown] = useState(false);
+    const [plantDropdown, setPlantDropdown] = useState<purchaseRequisitionPlantDropdownType[]>(props?.plantDropdown);
 
     const [singleRowData, setSingleRowData] = useState<nbItemsType>();
 
@@ -242,7 +243,7 @@ const NormalPR = (props:Props) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {props?.plantDropdown?.map((item) => (
+                    {plantDropdown?.map((item) => (
                             <SelectItem key={item?.name} value={item?.name}>
                               {item?.plant_name}
                             </SelectItem>

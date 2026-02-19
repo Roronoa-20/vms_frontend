@@ -37,6 +37,8 @@ const CapexPR = (props:Props) => {
     const [uomDrop, setUOM] = useState<purchaseRequisitionUOMType>();
     const [isPurchaseGroupDropdown,setIsPurchaseGroupDropdown] = useState(false);
 
+    const [plantDropdown, setPlantDropdown] = useState<purchaseRequisitionPlantDropdownType[]>(props?.plantDropdown);
+
     const [singleRowData, setSingleRowData] = useState<nbCapexItemsType>();
 
     const [tableData, setTableData] = useState<nbCapexItemsType[]>(props?.prData?.nb_capex_items || []);
@@ -248,7 +250,7 @@ const CapexPR = (props:Props) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {props?.plantDropdown?.map((item) => (
+                    {plantDropdown?.map((item) => (
                         <SelectItem key={item?.name} value={item?.name}>
                               {item?.plant_name}
                             </SelectItem>
