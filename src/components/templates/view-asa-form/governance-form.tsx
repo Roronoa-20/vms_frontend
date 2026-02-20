@@ -12,6 +12,8 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import { Label } from "@/components/ui/label";
 
 export default function GovernanceForm() {
+   console.log("THIS GOVERNANCE FILE IS RUNNING");
+
    const router = useRouter();
    const searchParams = useSearchParams();
    const vmsRefNo = searchParams.get("vms_ref_no") || "";
@@ -21,7 +23,7 @@ export default function GovernanceForm() {
    const [showVerifySuccess, setShowVerifySuccess] = useState(false);
    const [showVerifyPopup, setShowVerifyPopup] = useState(false);
    const [totalEsgScore, setTotalEsgScore] = useState("");
-   const [remarks, setRemarks] = useState("");
+   const [asaremarks, setRemarks] = useState("");
 
 
    console.log("Governance web Form Data:", governanceform);
@@ -60,16 +62,21 @@ export default function GovernanceForm() {
       router.push(`/view-asa-form?tabtype=employee_satisfaction&vms_ref_no=${vmsRefNo}`);
    };
 
-   const VerifyASAForm = async (asaFormName: string, totalScore: string, remarks: string) => {
+   const VerifyASAForm = async (asaFormName: string, totalScore: string, asaremarks: string) => {
+      console.log("VERIFY PAYLOAD:", {
+         asa_name: ASAformName,
+         total_esg_score: totalEsgScore,
+         remarks: asaremarks,
+      });
+
       try {
          const response = await requestWrapper({
             url: `${API_END_POINTS.verifyasaform}`,
             method: "POST",
             data: {
-               data: {
-                  asa_name: asaFormName,
-                  total_esg_score: totalScore,
-               },
+               asa_name: asaFormName,
+               total_esg_score: totalScore,
+               remarks: asaremarks,
             },
          });
          if (response?.data?.message?.status === "success") {
@@ -106,10 +113,10 @@ export default function GovernanceForm() {
       }
    };
 
-   const handleNext = async () => {
-      const res = await VerifyASAForm(ASAformName, totalEsgScore, remarks);
-      console.log("verify result:", res);
-   };
+   // const handleNext = async () => {
+   //    const res = await VerifyASAForm(ASAformName, totalEsgScore, asaremarks);
+   //    console.log("verify result:", res);
+   // };
 
 
 
@@ -311,7 +318,7 @@ export default function GovernanceForm() {
                            className="w-full border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
                            rows={3}
                            placeholder="Enter remarks (optional)"
-                           value={remarks}
+                           value={asaremarks}
                            onChange={(e) => setRemarks(e.target.value)}
                         />
                      </div>
@@ -332,9 +339,9 @@ export default function GovernanceForm() {
                         <Button
                            variant="nextbtn"
                            size="nextbtnsize"
-                           disabled={!totalEsgScore.trim() || !remarks.trim()}
+                           disabled={!totalEsgScore.trim() || !asaremarks.trim()}
                            onClick={async () => {
-                              await VerifyASAForm(ASAformName, totalEsgScore, remarks);
+                              await VerifyASAForm(ASAformName, totalEsgScore, asaremarks);
                               setShowVerifyPopup(false);
                               setTotalEsgScore("");
                               setRemarks("");

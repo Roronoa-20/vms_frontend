@@ -39,7 +39,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
     const [selectedCompany, setSelectedCompany] = useState<string>("");
     const [search, setSearch] = useState<string>("");
     const [total_event_list, settotalEventList] = useState(0);
-    const [record_per_page, setRecordPerPage] = useState<number>(5);
+    const [record_per_page, setRecordPerPage] = useState<number>(10);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const debouncedSearchName = useDebounce(search, 300);
     const [isCommentOpen, setIsCommentOpen] = useState(false);
@@ -63,7 +63,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
         if (dashboardASAPendingVendorTableDataApi?.status == 200) {
             setTable(dashboardASAPendingVendorTableDataApi?.data?.message?.pending_vendors);
             settotalEventList(dashboardASAPendingVendorTableDataApi?.data?.message?.overall_count)
-            setRecordPerPage(5);
+            setRecordPerPage(10);
         }
     };
 
@@ -111,7 +111,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
                     </h1>
                     <div className="flex gap-4">
                         <Input
-                            placeholder="Search..."
+                            placeholder="Search Vendor Name..."
                             value={search}
                             onChange={handleSearchChange}
                         />
@@ -154,7 +154,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
                                     <TableCell>{item.office_email_primary}</TableCell>
                                     <TableCell>{item.mobile_number}</TableCell>
                                     <TableCell>{item.country}</TableCell>
-                                    <TableCell className="text-center">{formatDate(item?.registered_date)}</TableCell>
+                                    <TableCell className="text-center">{item?.registered_date}</TableCell>
                                     <TableCell className="text-center">
                                         <Button
                                             className="py-2.5 rounded-[20px] text-white hover:bg-white hover:border hover:border-[#5291CD] hover:text-black"

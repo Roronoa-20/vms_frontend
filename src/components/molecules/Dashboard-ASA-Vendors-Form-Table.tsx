@@ -38,7 +38,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
   const [search, setSearch] = useState<string>("");
 
   const [total_event_list, settotalEventList] = useState(0);
-  const [record_per_page, setRecordPerPage] = useState<number>(5);
+  const [record_per_page, setRecordPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const debouncedSearchName = useDebounce(search, 300);
@@ -63,7 +63,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
     if (dashboardASAOnboardedVendorTableDataApi?.status == 200) {
       setTable(dashboardASAOnboardedVendorTableDataApi?.data?.message?.data);
       settotalEventList(dashboardASAOnboardedVendorTableDataApi?.data?.message?.overall_total_asa)
-      setRecordPerPage(5);
+      setRecordPerPage(10);
     }
   };
 

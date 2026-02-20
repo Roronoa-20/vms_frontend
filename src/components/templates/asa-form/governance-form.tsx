@@ -8,6 +8,8 @@ import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useASAFormContext } from "@/src/context/ASAFormContext";
+import { CheckCircle } from "lucide-react";
+
 
 export default function GovernanceForm() {
 
@@ -228,9 +230,13 @@ export default function GovernanceForm() {
          {showSuccessPopup && (
             <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
                <div className="bg-white p-6 rounded-xl shadow-xl w-[350px] text-center">
-                  <h2 className="text-xl font-semibold mb-4">
-                     ASA Form Submitted Successfully
-                  </h2>
+                  <div className="flex flex-col items-center gap-3">
+                     <CheckCircle className="w-14 h-14 text-green-600" />
+
+                     <div className="text-xl font-semibold text-green-700">
+                        ASA Questionnaire Submitted Successfully!!!
+                     </div>
+                  </div>
                   <Button
                      className="mt-2 py-2.5 hover:bg-white hover:text-black hover:border hover:border-[#5291CD]"
                      variant={"nextbtn"}
