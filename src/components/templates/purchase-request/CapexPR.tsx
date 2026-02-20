@@ -195,7 +195,7 @@ const CapexPR = (props:Props) => {
         <TableHeader className="text-center">
           <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
             <TableHead className="text-center w-[10%]">Sr No.</TableHead>
-            <TableHead className="w-[10%]">Materials</TableHead>
+            <TableHead className="">Materials</TableHead>
             <TableHead className="w-[10%]">UOM</TableHead>
             <TableHead className="w-[10%]">Plant</TableHead>
             <TableHead className="w-[10%]">Asset Code</TableHead>
