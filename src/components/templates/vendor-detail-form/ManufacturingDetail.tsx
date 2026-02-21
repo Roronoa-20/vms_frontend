@@ -153,7 +153,7 @@ const ManufacturingDetail = ({
   };
 
   return (
-    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
+    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] w-full">
       <h1 className="border-b-2 pb-1 font-semibold sticky top-0 bg-white py-2 text-lg">
         Manufacturing Detail
       </h1>
@@ -538,7 +538,7 @@ const ManufacturingDetail = ({
           </div>
         </div>
       </div>
-      <div className="flex justify-end items-center space-x-3 mt-3">
+      <div className="flex justify-end items-center space-x-3 mt-14">
         <Button onClick={handleBack} variant="backbtn" size="backbtnsize">
           Back
         </Button>
