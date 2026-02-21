@@ -204,7 +204,7 @@ const MachineryDetail = ({
           </Table>
         </div>
       )}
-      <div className="flex justify-end items-center space-x-3 mt-3">
+      <div className="flex justify-end items-center space-x-3 mt-8">
         <Button onClick={handleBack} variant="backbtn" size="backbtnsize">
           Back
         </Button>

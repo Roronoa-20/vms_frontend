@@ -160,7 +160,7 @@ const PaymentDetail = ({
   console.log(OnboardingDetail?.bank_proof?.file_name, "thiskjdvb");
 
   return (
-    <div className="flex flex-col bg-white px-4 pb-4 rounded-lg max-h-[80vh] overflow-y-scroll w-full">
+    <div className="flex flex-col bg-white px-4 pb-4 rounded-lg max-h-[80vh] w-full">
       <h1 className="border-b-2 pb-1 sticky top-0 bg-white py-2 text-lg font font-semibold z-50">
         Bank Details
       </h1>
@@ -368,7 +368,7 @@ const PaymentDetail = ({
         </div> */}
         <div></div>
       </div>
-      <div className="flex justify-end items-center space-x-3 mt-3">
+      <div className="flex justify-end items-center space-x-3 mt-32">
         <Button onClick={handleBack} variant="backbtn" size="backbtnsize">
           Back
         </Button>

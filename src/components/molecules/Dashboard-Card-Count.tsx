@@ -83,7 +83,7 @@ const DashboardCards = ({ ...Props }: Props) => {
   if (user === "ASA") {
     allCardData = [
       {
-        name: "Total Onboarded Vendor",
+        name: "Total ASA Vendor",
         count: Props.ASAdashboardOnboardedVendorListTableData?.overall_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-emerald-800",
@@ -376,7 +376,7 @@ const DashboardCards = ({ ...Props }: Props) => {
           if (user === "ASA") {
             return (
               <TabsContent key={item.name} value={item.name}>
-                {item.name === "Total Onboarded Vendor" && (
+                {item.name === "Total ASA Vendor" && (
                   <DashboardASAOnboardedVendorsList
                     dashboardTableData={
                       Props.ASAdashboardOnboardedVendorListTableData

@@ -182,9 +182,10 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
         }
       </div>
 
-      <div className={`flex justify-end`}><Button className="py-2" variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleAdd() }}>Add</Button></div>
+      <div className={`flex justify-end mt-1`}><Button className="py-2" variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleAdd() }}>Add</Button></div>
+
       {multipleCertificateData?.length > 0 && (
-        <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
+        <div className="shadow- bg-[#f6f6f7] p-4 mb-4 mt-2 rounded-2xl">
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
               Certificate Details List

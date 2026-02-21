@@ -135,6 +135,8 @@ export type ASAForm = {
     creation?: string,
     form_is_submitted?: boolean | undefined | number,
     verify_by_asa_team?: boolean | undefined | number,
+    status?: string,
+    total_esg_score?: number | null,
 };
 
 export type TasaformDetail = {

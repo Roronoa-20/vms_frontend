@@ -4,16 +4,17 @@ import { WasteManagement, WaterConsumptionAndManagement } from "@/src/types/asat
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
-
+import { useASAFormContext } from "@/src/context/ASAFormContext";
 
 
 export default function Waste_Management() {
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
     const router = useRouter();
-    const { wastemanagementForm, updateWasteManagementForm, updateWcmForm, refreshFormData } = useASAForm();
+    const { wastemanagementForm, updateWasteManagementForm, updateWcmForm, refreshFormData } = useASAFormContext();
+    
 
     const base64ToBlob = (base64: string): Blob => {
         const arr = base64.split(",");
@@ -114,7 +115,7 @@ export default function Waste_Management() {
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         disabled={true}
-                         required={true}
+                        required={true}
                         fileRequired={true}
                         options={["Yes", "No"]}
 

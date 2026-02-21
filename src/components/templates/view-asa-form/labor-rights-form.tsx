@@ -4,14 +4,17 @@ import { Button } from "@/components/ui/button";
 import { LaborRightsAndWorkingConditions } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
+
 
 export default function Labor_Rights_And_Working_Conditions() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
-    const { LaborRightsForm, updateLaborRightsForm, refreshFormData } = useASAForm();
+    const { LaborRightsForm, updateLaborRightsForm, refreshFormData } = useASAFormContext();
+
     console.log("General Disclosure Form Data:", LaborRightsForm);
 
     const base64ToBlob = (base64: string): Blob => {
@@ -125,7 +128,7 @@ export default function Labor_Rights_And_Working_Conditions() {
                         disabled={true}
                         required={true}
                         options={["Yes", "No"]}
-                        
+
                     />
 
 
@@ -237,7 +240,7 @@ export default function Labor_Rights_And_Working_Conditions() {
                         required={true}
                         options={["Yes", "No"]}
                     />
-                    
+
                     {/* <div className="space-x-4 flex justify-end">
                         <Button
                             className="py-2.5"

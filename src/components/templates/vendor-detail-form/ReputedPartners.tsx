@@ -105,11 +105,11 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAccoun
           <Input placeholder="" value={reputedPartners?.remark ?? ""} onChange={(e) => { setReputedPartners((prev) => ({ ...prev, remark: e.target.value })) }} />
         </div>
       </div>
-      <div className="flex justify-end">
+      <div className="flex justify-end mt-1">
         <Button className={`py-2`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleAdd() }}>Add</Button>
       </div>
       {reputedPartnersDetails.length > 0 && (
-        <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
+        <div className="shadow- bg-[#f6f6f7] p-4 mb-4 mt-2 rounded-2xl">
           <div className="flex w-full justify-between pb-4">
             <h1 className="text-[20px] text-[#03111F] font-semibold">
               Reputed Partners List
@@ -140,7 +140,7 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAccoun
           </Table>
         </div>
       )}
-      <div className="flex justify-end items-center space-x-3 mt-20">
+      <div className="flex justify-end items-center space-x-3 mt-14">
         <Button
           onClick={handleBack}
           variant="backbtn"

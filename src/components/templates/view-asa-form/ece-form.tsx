@@ -4,14 +4,16 @@ import { Button } from "@/components/ui/button";
 import { EnergyConsumptionAndEmission, EnvironmentalManagementSystem } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
+
 
 export default function Energy_Consumption_And_Emission() {
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
     const router = useRouter();
-    const { eceform, updateEceForm, updateEmsForm, refreshFormData } = useASAForm();
+    const { eceform, updateEceForm, updateEmsForm, refreshFormData } = useASAFormContext();
     console.log("Energy Consumption and Emission Form Data:", eceform);
 
     const base64ToBlob = (base64: string): Blob => {
@@ -204,7 +206,7 @@ export default function Energy_Consumption_And_Emission() {
                         required={true}
                         fileRequired={true}
                     />
-                    
+
                     {/* <div className="space-x-4 flex justify-end">
                         <Button
                             className="py-2.5"

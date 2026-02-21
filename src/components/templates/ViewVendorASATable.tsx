@@ -47,7 +47,7 @@ const ViewASAEntry = ({ ASAData }: Props) => {
     const [search, setSearch] = useState<string>("");
 
     const [total_event_list, settotalEventList] = useState(0);
-    const [record_per_page, setRecordPerPage] = useState<number>(10);
+    const [record_per_page, setRecordPerPage] = useState<number>(20);
     const [currentPage, setCurrentPage] = useState<number>(1);
 
     const debouncedSearchName = useDebounce(search, 300);
@@ -87,8 +87,8 @@ const ViewASAEntry = ({ ASAData }: Props) => {
 
 
     return (
-        <div className="bg-gray-300 min-h-screen p-4">
-            <div className="shadow bg-[#f6f6f7] p-4 rounded-2xl">
+        <div className="bg-white p-2">
+            <div className="shadow bg-gray-100 p-4 rounded-2xl">
                 <div className="flex justify-end w-[200px] pb-4">
                     <div className="flex gap-4">
                         <Input
@@ -115,10 +115,12 @@ const ViewASAEntry = ({ ASAData }: Props) => {
                 <div className="overflow-y-auto max-h-[110vh]">
                     <Table>
                         <TableHeader>
-                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] text-center">
+                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] hover:bg-[#DDE8FE] text-[14px] text-center">
                                 <TableHead className="text-black text-center">Sr No.</TableHead>
                                 <TableHead className="text-black text-center">Vendor Name</TableHead>
                                 <TableHead className="text-black text-center">Vendor Ref No.</TableHead>
+                                <TableHead className="text-black text-center">Status</TableHead>
+                                <TableHead className="text-black text-center">Score</TableHead>
                                 <TableHead className="text-black text-center">Form Submitted On</TableHead>
                                 <TableHead className="text-black text-center">View Form</TableHead>
                             </TableRow>
@@ -128,11 +130,26 @@ const ViewASAEntry = ({ ASAData }: Props) => {
                             {table && table.length > 0 ? (
                                 table.map((item, index) => (
                                     <TableRow key={index}>
-                                        <TableCell className="text-center">{index + 1}</TableCell>
-                                        <TableCell className="text-center">{item?.vendor_name}</TableCell>
-                                        <TableCell className="text-center">{item?.vendor_ref_no}</TableCell>
-                                        <TableCell className="text-center">{formatDate(item?.creation)}</TableCell>
-                                        <TableCell className="text-center">
+                                        <TableCell className="text-black text-center">{index + 1}</TableCell>
+                                        <TableCell className="text-black text-center">{item?.vendor_name}</TableCell>
+                                        <TableCell className="text-black text-center">{item?.vendor_ref_no}</TableCell>
+                                        <TableCell>
+                                            <div
+                                                className={`text-center font-semibold px-2 py-3 rounded-xl uppercase ${item?.status === "Pending"
+                                                    ? "bg-red-100 text-red-800"
+                                                    : item?.status === "Verified"
+                                                        ? "bg-green-100 text-green-800"
+                                                        : "bg-yellow-100 text-orange-800"
+                                                    }`}
+                                            >
+                                                {item?.status}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="text-black font-semibold text-center">
+                                            {item?.total_esg_score ?? "--"}
+                                        </TableCell>
+                                        <TableCell className="text-black text-center">{formatDate(item?.creation)}</TableCell>
+                                        <TableCell className="text-black text-center">
                                             <Link href={`/view-asa-form?tabtype=company_information&vms_ref_no=${item?.vendor_ref_no}`}
                                                 onClick={() => {
                                                     if (item?.vendor_name) {

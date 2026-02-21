@@ -126,7 +126,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
     //     `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
     //   );
     if (submitResponse?.status == 200) {
-      alert("data added successfully");
+      alert("Product Details Added Successfully!!!");
       fetchTable();
       SetSingleRow({});
       setProductImage(null);
@@ -139,7 +139,7 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
 
   const handleNext = () => {
     if (materialsTable?.length == 0) {
-      alert("Please Enter At Least 1 Material Details")
+      alert("Please Enter At Least 1 Material/Product Details")
       return;
     }
     if (nature_of_business == "Manufacturer" && VendorType?.includes("Material Vendor")) {

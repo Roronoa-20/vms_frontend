@@ -4,14 +4,16 @@ import { Button } from "@/components/ui/button";
 import { GrievanceMechanism, LaborRightsAndWorkingConditions } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
+
 
 export default function Grievance_Mechanism() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
-    const { GrievanceMechForm, updateGrievnaceMechForm, refreshFormData, updateLaborRightsForm } = useASAForm();
+    const { GrievanceMechForm, updateGrievnaceMechForm, refreshFormData } = useASAFormContext();
     console.log("General Disclosure Form Data:", GrievanceMechForm);
 
     const base64ToBlob = (base64: string): Blob => {

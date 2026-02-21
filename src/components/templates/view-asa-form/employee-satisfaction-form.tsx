@@ -4,16 +4,18 @@ import YesNoNA from "@/src/components/common/YesNoNAwithFile";
 import { EmployeeSatisfaction, HealthAndSafety } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
+
 
 
 export default function Employee_Satisfaction() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
-    const { EmpSatisfactionForm, updateEmpSatisactionForm, refreshFormData, submitSocialForm, updateHealthSafetyForm } = useASAForm();
-    console.log("Emp Satisfaction Form Data:", EmpSatisfactionForm);
+    const { EmpSatisfactionForm, updateEmpSatisactionForm } = useASAFormContext();
+
 
     const handleSelectionChange = (name: string, selection: "Yes" | "No" | "NA" | "") => {
         updateEmpSatisactionForm({

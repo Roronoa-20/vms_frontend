@@ -69,7 +69,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
   const [search, setSearch] = useState<string>("");
 
   const [total_event_list, settotalEventList] = useState(0);
-  const [record_per_page, setRecordPerPage] = useState<number>(5);
+  const [record_per_page, setRecordPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const user = Cookies?.get("user_id");
@@ -94,7 +94,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
     if (dashboardASAOnboardedVendorTableDataApi?.status == 200) {
       setTable(dashboardASAOnboardedVendorTableDataApi?.data?.message?.approved_vendors);
       settotalEventList(dashboardASAOnboardedVendorTableDataApi?.data?.message?.overall_count)
-      setRecordPerPage(5);
+      setRecordPerPage(10);
     }
   };
 
@@ -121,7 +121,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
             Onboarded Vendors List
           </h1>
           <div className="flex gap-4">
-            <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
+            <Input placeholder="Search Vendor Name..." onChange={(e) => { handlesearchname(e) }} />
             {/* <Select>
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />

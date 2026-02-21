@@ -4,15 +4,17 @@ import { Button } from "@/components/ui/button";
 import { GreenProducts, WasteManagement } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
+
 
 
 export default function Green_Products() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
-    const { greenProductsForm, updateGreenProductsForm, refreshFormData, updateWasteManagementForm } = useASAForm();
+    const { greenProductsForm, updateGreenProductsForm, refreshFormData } = useASAFormContext();
     console.log("Green Products Form Data:", greenProductsForm);
 
     const base64ToBlob = (base64: string): Blob => {
