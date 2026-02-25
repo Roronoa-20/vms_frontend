@@ -19,6 +19,58 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
   const multiSelectOptions = useMultiSelectOptions(vendor_onboarding);
   const isQATeamApproved = formData?.qa_team_approved === 1;
 
+  const isFormValid = () => {
+    if (!formData) return false;
+
+    // 1. Quality Control System (Required)
+    const qualityControlSelected = Array.isArray(formData.quality_control_system) && formData.quality_control_system.length > 0;
+
+    if (!qualityControlSelected) return false;
+
+    // If "Others" selected → others_certificates required
+    const hasOtherCertificate =
+      Array.isArray(formData.quality_control_system) &&
+      formData.quality_control_system.some((item: any) =>
+        typeof item === "object"
+          ? item.qms_quality_control === "Others"
+          : item === "Others"
+      );
+
+    if (hasOtherCertificate && !formData.others_certificates?.trim())
+      return false;
+
+    // 2. Sites inspected by (Required)
+    if (!formData.sites_inspected_by) return false;
+
+    if (formData.sites_inspected_by === "Others" && !formData.inspected_by_others?.trim())
+      return false;
+
+    // 3. Documents / Procedures (Required)
+    const documentsSelected = Array.isArray(formData.have_documentsprocedure) && formData.have_documentsprocedure.length > 0;
+
+    if (!documentsSelected) return false;
+
+    // 4. Prior Notification (Required)
+    if (!formData.prior_notification) return false;
+
+    if (formData.prior_notification === "Yes" &&
+      (!Array.isArray(formData.if_yes_for_prior_notification) ||
+        formData.if_yes_for_prior_notification.length === 0)
+    )
+      return false;
+
+    // 5. Calibrations performed (Required)
+    if (!formData.calibrations_performed) return false;
+
+    // 6. Regular review (Required)
+    if (!formData.regular_review_of_quality_system) return false;
+
+    if (formData.regular_review_of_quality_system === "Yes" && !formData.review_frequency?.trim())
+      return false;
+
+    return true;
+  };
+
   const handleSubmit = async () => {
     try {
       if (isQATeamApproved) {
@@ -81,6 +133,7 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           onChange={(e) => { handleMultipleCheckboxChange(e, "quality_control_system") }}
           columns={3}
           disabled={isQATeamApproved}
+          required={true}
         />
 
         <ConditionalTextareaGroup
@@ -99,7 +152,6 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           placeholder="Enter the Other Certificates details here"
           onChange={(e) => { handleTextareaChange(e, "others_certificates") }}
           disabled={isQATeamApproved}
-
         />
 
         <SingleCheckboxGroup
@@ -109,6 +161,7 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           value={formData.sites_inspected_by || ""}
           onChange={(e) => { handleSingleCheckboxChange(e, "sites_inspected_by") }}
           disabled={isQATeamApproved}
+          required={true}
 
         />
 
@@ -124,7 +177,6 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           placeholder="Enter the details here"
           onChange={(e) => { handleTextareaChange(e, "inspected_by_others") }}
           disabled={isQATeamApproved}
-
         />
 
         <MultiCheckboxGroup
@@ -148,6 +200,8 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           onChange={(e) => { handleMultipleCheckboxChange(e, "have_documentsprocedure") }}
           columns={3}
           disabled={isQATeamApproved}
+          required={true}
+
 
         />
 
@@ -157,6 +211,8 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           onChange={(e) => { handleSingleCheckboxChange(e, "prior_notification") }}
           value={formData.prior_notification || ""}
           disabled={isQATeamApproved}
+          required={true}
+
 
         />
 
@@ -180,8 +236,9 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
                 : []
             }
             onChange={(e) => { handleMultipleCheckboxChange(e, "if_yes_for_prior_notification") }}
+            required={true}
             columns={2}
-          disabled={isQATeamApproved}
+            disabled={isQATeamApproved}
 
           />
         )}
@@ -191,6 +248,7 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           label="5. Are calibrations performed as per the procedure and is the calibration schedule in place?"
           value={formData.calibrations_performed || ""}
           onChange={(e) => { handleSingleCheckboxChange(e, "calibrations_performed") }}
+          required={true}
           disabled={isQATeamApproved}
 
         />
@@ -200,6 +258,7 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           label="6. Do you undertake regular review of the Quality System?"
           value={formData.regular_review_of_quality_system || ""}
           onChange={(e) => { handleSingleCheckboxChange(e, "regular_review_of_quality_system") }}
+          required={true}
           disabled={isQATeamApproved}
 
         />
@@ -211,11 +270,12 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
           condition={formData.regular_review_of_quality_system === "Yes"}
           placeholder="Enter the details"
           onChange={(e) => { handleTextareaChange(e, "review_frequency") }}
+          required={true}
           disabled={isQATeamApproved}
 
         />
 
-        <div className="flex justify-end space-x-5 items-center">
+        <div className="flex justify-end space-x-5 items-center mt-3">
           <Button
             variant="backbtn"
             size="backbtnsize"
@@ -234,6 +294,7 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
             //   handleNext();
             // }}
             onClick={handleSubmit}
+            disabled={!isFormValid() || isQATeamApproved}
           >
             Next
           </Button>

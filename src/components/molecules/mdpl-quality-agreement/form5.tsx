@@ -9,11 +9,10 @@ import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/src/context/AuthContext';
 import { Paperclip } from 'lucide-react';
 
-export const Form5 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
+export const Form5 = ({ vendor_onboarding, qms }: { vendor_onboarding: string; qms: any }) => {
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "vendor_information";
-  const { qualityagreementData, formData, handleClearSignature, signaturePreviews, handleTextareaChange, handleDateChange, handleSignatureUpload } = useQMSForm(vendor_onboarding, currentTab);
-
+  const { qualityagreementData, formData, handleClearSignature, signaturePreviews, handleTextareaChange, handleDateChange, handleSignatureUpload, setSignaturePreviews } = qms;
   const form5Data = qualityagreementData.mdpl_quality_agreement || "";
   const vendorNameInputValue = formData.mdpl_qa_vendor_name || formData.vendor_name1 || '';
 
@@ -28,15 +27,25 @@ export const Form5 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
       name_of_person: formData.name_of_person,
       designation_of_person: formData.designation_of_person,
       signed_date: formData.signed_date,
-      // meril_signed_date: formData.meril_signed_date,
       vendor_name: vendorNameInputValue,
-      // attach_vendor_signature: signaturePreviews["attach_vendor_signature"]
     };
-
     localStorage.setItem("Form5Data", JSON.stringify(dataToSave));
   }, [formData]);
 
+  useEffect(() => {
+    if (form5Data?.attach_person_signature?.url) {
+      setSignaturePreviews((prev: any) => ({
+        ...prev,
+        attach_person_signature: form5Data.attach_person_signature.url
+      }));
+    }
+  }, [form5Data?.attach_person_signature?.url]);
+  const vendorSignaturePreview =
+    signaturePreviews["attach_person_signature"] ||
+    form5Data?.attach_person_signature?.url;
 
+  console.log("URL:", form5Data?.attach_person_signature?.url);
+  console.log("Preview:", signaturePreviews["attach_person_signature"]);
 
   return (
     <div className="space-y-[32px] flex flex-col justify-between min-h-[80vh]">
@@ -123,12 +132,12 @@ export const Form5 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
                 <div className="border-b-[1px] border-black p-1 flex flex-col">
                   <Label className="text-[13px]">Vendor Signature</Label>
 
-                  {signaturePreviews["attach_person_signature"] ? (
+                  {vendorSignaturePreview ? (
                     <div className="relative w-fit">
                       <img
-                        src={signaturePreviews["attach_person_signature"]}
+                        src={vendorSignaturePreview}
                         alt="Signature Preview"
-                        className="w-[400px] h-[170px] object-contain border border-gray-300 rounded-md"
+                        className="w-[375px] h-[170px] object-contain border border-gray-300 rounded-md"
                       />
 
                       {/* Cross Icon */}
@@ -141,7 +150,7 @@ export const Form5 = ({ vendor_onboarding }: { vendor_onboarding: string }) => {
                       </button>
                     </div>
                   ) : (
-                    <label className="flex flex-col items-center justify-center w-[450px] h-[170px] border-2 border-dashed border-gray-400 rounded-md cursor-pointer hover:bg-gray-50">
+                    <label className="flex flex-col items-center justify-center w-[400px] h-[170px] border-2 border-dashed border-gray-400 rounded-md cursor-pointer hover:bg-gray-50">
                       <div className="flex flex-col items-center text-gray-600">
                         <Paperclip className="w-8 h-8 mb-2" />
                         <p className="text-xs mt-1">Attach Signature (PDF/PNG/JPG/JPEG)</p>

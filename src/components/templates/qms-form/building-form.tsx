@@ -14,6 +14,20 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
   const { formData, handleTextareaChange, handleCheckboxChange, handleBack, handleNext } = useQMSForm(vendor_onboarding, currentTab);
 
   const isQATeamApproved = formData?.qa_team_approved === 1;
+  const requiredFields = ["area_of_facility", "no_of_employees", "valid_license", "air_handling_unit", "humidity", "pest_control", "adequate_sizes", "clean_rooms", "water_disposal", "safety_committee"];
+
+  const isFormValid = () => {
+    if (!formData) return false;
+
+    return requiredFields.every((field) => {
+      const value = formData[field as keyof typeof formData];
+      if (value === null || value === undefined) return false;
+      if (typeof value === "string") {
+        return value.trim() !== "";
+      }
+      return true;
+    });
+  };
 
   const handleSubmit = async () => {
     try {
@@ -60,6 +74,7 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           rows={1}
           onChange={(e) => handleTextareaChange(e, 'area_of_facility')}
           disabled={isQATeamApproved}
+          required={true}
         />
 
         <TextareaWithLabel
@@ -69,6 +84,8 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           rows={1}
           disabled={isQATeamApproved}
           onChange={(e) => handleTextareaChange(e, 'no_of_employees')}
+          required={true}
+
         />
 
         <TextareaWithLabel
@@ -78,6 +95,8 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           rows={1}
           onChange={(e) => handleTextareaChange(e, 'valid_license')}
           disabled={isQATeamApproved}
+          required={true}
+
         />
 
         <YesNoNAGroup
@@ -85,6 +104,7 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           label="4. Do you have an Air Handling Unit?"
           value={formData.air_handling_unit || ""}
           onChange={(e) => handleCheckboxChange(e, 'air_handling_unit')}
+          required={true}
           disabled={isQATeamApproved}
         />
 
@@ -93,6 +113,7 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           label="5. Do you control and monitor temperature and relative humidity?"
           value={formData.humidity || ""}
           onChange={(e) => handleCheckboxChange(e, 'humidity')}
+          required={true}
           disabled={isQATeamApproved}
         />
 
@@ -101,6 +122,7 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           label="6. Do you have procedure for pest control?"
           value={formData.pest_control || ""}
           onChange={(e) => handleCheckboxChange(e, 'pest_control')}
+          required={true}
           disabled={isQATeamApproved}
         />
 
@@ -109,6 +131,7 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           label="7. Are your working areas of adequate size, well illuminated, air-conditioned and designed to avoid (cross) contamination?"
           value={formData.adequate_sizes || ""}
           onChange={(e) => handleCheckboxChange(e, 'adequate_sizes')}
+          required={true}
           disabled={isQATeamApproved}
         />
 
@@ -117,6 +140,7 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           label="8. Do you have clean rooms?"
           value={formData.clean_rooms || ""}
           onChange={(e) => handleCheckboxChange(e, 'clean_rooms')}
+          required={true}
           disabled={isQATeamApproved}
         />
 
@@ -125,6 +149,7 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           label="9. Do you have procedure for waste disposal?"
           value={formData.water_disposal || ""}
           onChange={(e) => handleCheckboxChange(e, 'water_disposal')}
+          required={true}
           disabled={isQATeamApproved}
 
         />
@@ -134,6 +159,7 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           label="10. Does the factory have a safety committee?"
           value={formData.safety_committee || ""}
           onChange={(e) => handleCheckboxChange(e, 'safety_committee')}
+          required={true}
           disabled={isQATeamApproved}
 
         />
@@ -152,6 +178,7 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
             size="nextbtnsize"
             className="py-2.5"
             onClick={handleSubmit}
+            disabled={!isFormValid() || isQATeamApproved}
           >
             Next
           </Button>

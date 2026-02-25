@@ -28,6 +28,37 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
   const multiSelectOptions = useMultiSelectOptions(vendor_onboarding);
 
   const isQATeamApproved = formData?.qa_team_approved === 1;
+  const isFormValid = () => {
+    if (!formData) return false;
+
+    const isNonEmptyString = (val: any) =>
+      typeof val === "string" && val.trim() !== "";
+
+    const isNonEmptyArray = (val: any) =>
+      Array.isArray(val) && val.length > 0;
+
+    const basicFields = ["manufactruing_process_validate", "nonconforming_materials_removed", "identification_number", "product_identifiable", "traceability", "prevent_cross_contamination", "testing_or_inspection", "batch_record"];
+
+    for (let field of basicFields) {
+      if (!formData[field as keyof VendorQMSForm]) return false;
+    }
+
+    const areaFields = ["handling_of_start_materials", "manufacturing", "quarantined_finish_products", "storage_of_approved_finished_products"];
+
+    for (let field of areaFields) {
+      const value = formData[field as keyof VendorQMSForm];
+      if (!value || (typeof value === "string" && value.trim() === ""))
+        return false;
+    }
+    if (formData.batch_record === "Yes") {
+      if (!isNonEmptyArray(formData.details_of_batch_records))
+        return false;
+    }
+    if (!isNonEmptyString(formData.duration_of_batch_records))
+      return false;
+
+    return true;
+  };
 
   const handleSubmit = async () => {
     try {
@@ -76,6 +107,7 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           value={formData.manufactruing_process_validate || ""}
           onChange={(e) => handleCheckboxChange(e, 'manufactruing_process_validate')}
           disabled={isQATeamApproved}
+          required={true}
         />
 
         <YesNoNAGroup
@@ -83,6 +115,7 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           label="2. Are nonconforming materials removed from the production areas and prominently identified or destroyed to preclude further usage?"
           value={formData.nonconforming_materials_removed || ""}
           onChange={(e) => handleCheckboxChange(e, 'nonconforming_materials_removed')}
+          required={true}
           disabled={isQATeamApproved}
 
         />
@@ -105,7 +138,7 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                     htmlFor={item.name}
                     className="font-semibold text-base text-[#03111F] w-1/2 pl-4"
                   >
-                    {item.label}
+                    {item.label}<span className="text-red-500">*</span>
                   </Label>
                   <YesNoNAOptions
                     name={item.name as string}
@@ -125,6 +158,7 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           label=" 4. Does each lot /batch have an identification number?"
           value={formData.identification_number ?? ""}
           onChange={(e) => { handleSingleCheckboxChange(e, "identification_number") }}
+          required={true}
           disabled={isQATeamApproved}
 
         />
@@ -134,6 +168,7 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           label="5. Is the product identifiable throughout the manufacturing process?"
           value={formData.product_identifiable || ""}
           onChange={(e) => { handleSingleCheckboxChange(e, "product_identifiable") }}
+          required={true}
           disabled={isQATeamApproved}
 
         />
@@ -144,8 +179,7 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           value={formData.traceability || ""}
           onChange={(e) => handleCheckboxChange(e, 'traceability')}
           disabled={isQATeamApproved}
-
-
+          required={true}
         />
 
         <YesNoNAGroup
@@ -153,9 +187,8 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           label="7. Is there a procedure in place to prevent cross-contamination?"
           value={formData.prevent_cross_contamination || ""}
           onChange={(e) => handleCheckboxChange(e, 'prevent_cross_contamination')}
+          required={true}
           disabled={isQATeamApproved}
-
-
         />
 
         <YesNoNAGroup
@@ -163,8 +196,8 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
           label="8. Is testing or inspection performed between processes or manufacturing stages?"
           value={formData.testing_or_inspection || ""}
           onChange={(e) => handleCheckboxChange(e, 'testing_or_inspection')}
+          required={true}
           disabled={isQATeamApproved}
-
         />
 
         <div className="mb-3">
@@ -174,8 +207,9 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
             value={formData.batch_record ?? ""}
             onChange={(e) => { handleSingleCheckboxChange(e, "batch_record") }}
             disabled={isQATeamApproved}
-
+            required={true}
           />
+
           {formData.batch_record === "Yes" && (
 
             <MultiCheckboxGroup
@@ -198,8 +232,9 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
               onChange={(e) => { handleMultipleCheckboxChange(e, "details_of_batch_records") }}
               columns={3}
               disabled={isQATeamApproved}
-
+              required={true}
             />
+
           )}
         </div>
         <div className="mb-3 border-b border-gray-300">
@@ -209,8 +244,8 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
             value={formData.duration_of_batch_records || ""}
             onChange={(e) => { handleTextareaChange(e, "duration_of_batch_records") }}
             rows={1}
+            required={true}
             disabled={isQATeamApproved}
-
           />
         </div>
 
@@ -228,6 +263,7 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
             size="nextbtnsize"
             className="py-2.5"
             onClick={handleSubmit}
+            disabled={!isFormValid() || isQATeamApproved}
           >
             Next
           </Button>

@@ -13,6 +13,12 @@ export const ComplaintForm = ({ vendor_onboarding }: { vendor_onboarding: string
   const { formData, handleCheckboxChange, handleBack, handleNext } = useQMSForm(vendor_onboarding, currentTab);
 
   const isQATeamApproved = formData?.qa_team_approved === 1;
+  const requiredFields = ["customer_complaints", "retain_complaints_records", "reviews_customer_complaints", "any_recalls", "reporting_environmental_accident"];
+
+  const isFormValid = () => {
+    if (!formData) return false;
+    return requiredFields.every(field => !!formData[field as keyof typeof formData]);
+  };
 
   const handleSubmit = async () => {
     try {
@@ -58,6 +64,7 @@ export const ComplaintForm = ({ vendor_onboarding }: { vendor_onboarding: string
           value={formData.customer_complaints || ""}
           onChange={(e) => handleCheckboxChange(e, 'customer_complaints')}
           disabled={isQATeamApproved}
+          required={true}
         />
 
         <YesNoNAGroup
@@ -65,6 +72,7 @@ export const ComplaintForm = ({ vendor_onboarding }: { vendor_onboarding: string
           label="2. Do you retain customer complaints records?"
           value={formData.retain_complaints_records || ""}
           onChange={(e) => handleCheckboxChange(e, 'retain_complaints_records')}
+          required={true}
           disabled={isQATeamApproved}
         />
 
@@ -73,6 +81,7 @@ export const ComplaintForm = ({ vendor_onboarding }: { vendor_onboarding: string
           label="3. Does management reviews customer complaints?"
           value={formData.reviews_customer_complaints || ""}
           onChange={(e) => handleCheckboxChange(e, 'reviews_customer_complaints')}
+          required={true}
           disabled={isQATeamApproved}
         />
 
@@ -81,6 +90,7 @@ export const ComplaintForm = ({ vendor_onboarding }: { vendor_onboarding: string
           label="4. Have there been any recalls in the last two years?"
           value={formData.any_recalls || ""}
           onChange={(e) => handleCheckboxChange(e, 'any_recalls')}
+          required={true}
           disabled={isQATeamApproved}
         />
 
@@ -89,6 +99,7 @@ export const ComplaintForm = ({ vendor_onboarding }: { vendor_onboarding: string
           label="5. Any reporting accident including environmental accident occured in the last 2 years?<br />If yes, investigated and CAPA taken?"
           value={formData.reporting_environmental_accident || ""}
           onChange={(e) => handleCheckboxChange(e, 'reporting_environmental_accident')}
+          required={true}
           disabled={isQATeamApproved}
         />
 
@@ -105,7 +116,9 @@ export const ComplaintForm = ({ vendor_onboarding }: { vendor_onboarding: string
             variant="nextbtn"
             size="nextbtnsize"
             className="py-2.5"
-            onClick={handleSubmit}>
+            onClick={handleSubmit}
+            disabled={!isFormValid() || isQATeamApproved}
+            >
             Next
           </Button>
         </div>

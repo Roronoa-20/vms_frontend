@@ -9,9 +9,10 @@ interface SingleCheckboxGroupProps {
   options: string[];
   onChange: (e: React.ChangeEvent<HTMLInputElement>, field: string) => void;
   disabled?: boolean;
+  required?: boolean;
 }
 
-const SingleCheckboxGroup: React.FC<SingleCheckboxGroupProps> = ({ name, label, value, options, onChange, disabled}) => {
+const SingleCheckboxGroup: React.FC<SingleCheckboxGroupProps> = ({ name, label, value, options, onChange, disabled, required=false}) => {
   return (
     <div className="mb-3 border-b border-gray-300 pb-4">
       {label && (
@@ -19,7 +20,7 @@ const SingleCheckboxGroup: React.FC<SingleCheckboxGroupProps> = ({ name, label, 
           htmlFor={name}
           className="font-semibold text-[16px] leading-[19px] text-[#03111F] block mb-2"
         >
-          {label}
+          {label}{required && <span className="text-red-500 ml-1">*</span>}
         </Label>
       )}
       <div className="flex flex-wrap gap-x-10 gap-y-2">
