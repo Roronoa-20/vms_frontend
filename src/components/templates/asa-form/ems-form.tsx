@@ -4,23 +4,30 @@ import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { EnvironmentalManagementSystem } from "@/src/types/asatypes";
 import { Label } from "@/components/ui/label";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
+
 
 export default function Environmental_Management_System() {
 
   const router = useRouter();
   const params = useSearchParams();
   const vmsRefNo = params.get("vms_ref_no") || "";
-  const { emsform, updateEmsForm, refreshFormData, asaFormSubmitData } = useASAForm();
-  const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+  const { emsform, updateEmsForm, refreshFormData, asaFormSubmitData } = useASAFormContext();
+  const isverified = asaFormSubmitData.form_is_submitted || 0;
 
   console.log("General Disclosure Form Data:", emsform);
 
   const isValid = Object.values(emsform).every((item) => {
-    if (!item.selection) return false;
-    if (item.selection === "Yes" && !item.comment.trim()) return false;
+    const typedItem = item as EnvironmentalManagementSystem[keyof EnvironmentalManagementSystem];
+    if (!typedItem.selection) return false;
+    if (typedItem.selection === "Yes") {
+      if (!typedItem.comment?.trim()) return false;
+      // if (!typedItem.file) return false;
+    }
     return true;
   });
+
 
   const base64ToBlob = (base64: string): Blob => {
     const arr = base64.split(",");
@@ -133,8 +140,12 @@ export default function Environmental_Management_System() {
               onCommentChange={handleCommentChange}
               onFileChange={handleFileChange}
               label="i. Environment/Sustainability Policy in place?"
+              helperText="If Yes, attach the copy of the policy."
               required={true}
+              fileRequired={true}
               disabled={isverified === 1}
+              options={["Yes", "No"]}
+
             />
 
             <YesNoNA
@@ -144,8 +155,12 @@ export default function Environmental_Management_System() {
               onCommentChange={handleCommentChange}
               onFileChange={handleFileChange}
               label="ii. Environment Management System certified to standards like ISO 14001, ISO 5001, etc.?"
+              helperText="If Yes, attach the copy of the certificate."
               required={true}
+              fileRequired={true}
               disabled={isverified === 1}
+              options={["Yes", "No"]}
+
             />
 
             <YesNoNA
@@ -155,8 +170,12 @@ export default function Environmental_Management_System() {
               onCommentChange={handleCommentChange}
               onFileChange={handleFileChange}
               label="iii. Do you conduct regular energy, water, and waste audits?"
+              helperText="If Yes, please attach the audit reports/recoomendations."
               required={true}
+              fileRequired={true}
               disabled={isverified === 1}
+              options={["Yes", "No"]}
+
             />
           </div>
         </div>

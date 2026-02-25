@@ -4,22 +4,27 @@ import { Button } from "@/components/ui/button";
 import { GreenProducts, WasteManagement } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
 
 
 export default function Green_Products() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
-    const { greenProductsForm, updateGreenProductsForm, refreshFormData, updateWasteManagementForm, asaFormSubmitData } = useASAForm();
-    const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+    const { greenProductsForm, updateGreenProductsForm, refreshFormData, updateWasteManagementForm, asaFormSubmitData } = useASAFormContext();
+    const isverified = asaFormSubmitData.form_is_submitted || 0;
 
     console.log("Green Products Form Data:", greenProductsForm);
 
     const isValid = Object.values(greenProductsForm).every((item) => {
-        if (!item.selection) return false;
-        if (item.selection === "Yes" && !item.comment.trim()) return false;
+        const typedItem = item as GreenProducts[keyof GreenProducts];
+        if (!typedItem.selection) return false;
+        if (typedItem.selection === "Yes") {
+            if (!typedItem.comment?.trim()) return false;
+            // if (!typedItem.file) return false;
+        }
         return true;
     });
 
@@ -128,14 +133,17 @@ export default function Green_Products() {
                     <YesNoNA
                         name="certified_green_projects"
                         label="1. Do you have any products that has been certified as Green by the certification bodies like Green Label, Forest Stewardship Council (FSC), etc.?"
+                        helperText="If Yes, attach the copy of the certifications."
                         value={greenProductsForm.certified_green_projects}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
+                        fileRequired={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
-                    
+
                     {isverified !== 1 && (
                         <div className="space-x-4 flex justify-end">
                             <Button

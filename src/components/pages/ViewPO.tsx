@@ -117,9 +117,6 @@ const ViewPO = ({ po_name }: Props) => {
 
   // const base64Image = await toBase64("/images/coronary_balloon_catheters.png");
 
-
-
-
   const handleClose = () => {
     setIsEarlyDeliveryDialog(false);
     setIsEmailDialog(false);
@@ -342,6 +339,7 @@ const ViewPO = ({ po_name }: Props) => {
       {isPrintFormat &&
         <POPrintFormat contentRef={contentRef} prDetails={prDetails} Heading={selectedPODropdown} />
       }
+
       {isPrintFormat && Boolean(prDetails?.sent_to_vendor) &&
         <div className="flex justify-end items-center"><Button variant={"nextbtn"} size={"nextbtnsize"} className="px-4 py-2.5 transition" onClick={() => { setIsEmailDialog(true) }}>Send Email</Button></div>
       }

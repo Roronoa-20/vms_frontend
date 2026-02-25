@@ -4,16 +4,18 @@ import YesNoNA from "@/src/components/common/YesNoNAwithFile";
 import { EmployeeSatisfaction, HealthAndSafety } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
+
 
 
 export default function Employee_Satisfaction() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
-    const { EmpSatisfactionForm, updateEmpSatisactionForm, refreshFormData, submitSocialForm, updateHealthSafetyForm } = useASAForm();
-    console.log("Emp Satisfaction Form Data:", EmpSatisfactionForm);
+    const { EmpSatisfactionForm, updateEmpSatisactionForm } = useASAFormContext();
+
 
     const handleSelectionChange = (name: string, selection: "Yes" | "No" | "NA" | "") => {
         updateEmpSatisactionForm({
@@ -45,18 +47,6 @@ export default function Employee_Satisfaction() {
         });
     };
 
-    // const handleSubmit = async () => {
-    //     await submitSocialForm();
-    //     refreshFormData();
-    // };
-
-    // const handleBack = useBackNavigation<HealthAndSafety>(
-    //     "HealthSafetyForm",
-    //     updateHealthSafetyForm,
-    //     "health_safety",
-    //     vmsRefNo
-    // );
-
     const handleNext = () => {
         router.push(`/view-asa-form?tabtype=governance&vms_ref_no=${vmsRefNo}`);
     };
@@ -76,10 +66,14 @@ export default function Employee_Satisfaction() {
                     <YesNoNA
                         name="conduct_esat"
                         label="1. Do you conduct employee satisfaction survey (ESAT)? If yes, provide the ESAT score."
+                        helperText="If Yes, provide the ESAT score, and provide the details of the paramerters covered in the employee satisfaction survey."
                         value={EmpSatisfactionForm.conduct_esat}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
+                        required={true}
+                        disabled={true}
+                        options={["Yes", "No"]}
                     />
                     {/* <div className="space-x-4 flex justify-end">
                         <Button

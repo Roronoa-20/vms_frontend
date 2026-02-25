@@ -4,21 +4,24 @@ import { WasteManagement, WaterConsumptionAndManagement } from "@/src/types/asat
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
-
+import { useASAFormContext } from "@/src/context/ASAFormContext";
 
 
 export default function Waste_Management() {
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
     const router = useRouter();
-    const { wastemanagementForm, updateWasteManagementForm, updateWcmForm, refreshFormData, asaFormSubmitData } = useASAForm();
-    const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+    const { wastemanagementForm, updateWasteManagementForm, updateWcmForm, refreshFormData, asaFormSubmitData } = useASAFormContext();
+    const isverified = asaFormSubmitData.form_is_submitted || 0;
+    const fileRequiredQuestions = new Set(["handover_waste_to_authorized_vendor", "vendor_audits_for_waste_management", "have_epr_for_waste_management"]);
 
-    const isValid = Object.values(wastemanagementForm).every((item) => {
-        if (!item.selection) return false;
-        if (item.selection === "Yes" && !item.comment.trim()) return false;
+    const isValid = Object.entries(wastemanagementForm).every(([key, item]) => {
+        const typedItem = item as WasteManagement[keyof WasteManagement];
+        if (!typedItem.selection) return false;
+        if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
+        // if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
         return true;
     });
 
@@ -128,43 +131,54 @@ export default function Waste_Management() {
                     <YesNoNA
                         name="track_waste_generation"
                         label="1. Does the company track the waste generation and keep the record different categories of waste?"
+                        helperText="If Yes, provide the type of waste being generated and quanity of each kind of waste generated."
                         value={wastemanagementForm.track_waste_generation}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
+                        // fileRequired={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="handover_waste_to_authorized_vendor"
                         label="2. Does the company handover the waste to the authorized vendors?"
+                        helperText="If Yes, attach the autorization certificate of the vendors."
                         value={wastemanagementForm.handover_waste_to_authorized_vendor}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         required={true}
+                        fileRequired={true}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="vendor_audits_for_waste_management"
                         label="3. Does the company conduct vendor audits for waste management?"
+                        helperText="If Yes, attach the vendor audit reports/recommendations."
                         value={wastemanagementForm.vendor_audits_for_waste_management}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         required={true}
+                        fileRequired={true}
                         onFileChange={handleFileChange}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     <YesNoNA
                         name="have_epr_for_waste_management"
                         label="4. Does your company have an Extended Producer Responsibility (EPR) program in place for plastic waste management?"
+                        helperText="If Yes, attach the EPR plan."
                         value={wastemanagementForm.have_epr_for_waste_management}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         required={true}
+                        fileRequired={true}
                         onFileChange={handleFileChange}
                         disabled={isverified === 1}
                     />
@@ -172,12 +186,14 @@ export default function Waste_Management() {
                     <YesNoNA
                         name="have_goals_to_reduce_waste"
                         label="5. Does the company have goals, initiatives, and targets to reduce, recycle, and reuse waste, including hazardous waste? If yes, provide the initiative details."
+                        helperText="If Yes, provide the details of the initiatives taken, target taken and the target year."
                         value={wastemanagementForm.have_goals_to_reduce_waste}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         required={true}
                         onFileChange={handleFileChange}
                         disabled={isverified === 1}
+                        options={["Yes", "No"]}
                     />
 
                     {isverified !== 1 && (

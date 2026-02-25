@@ -6,6 +6,7 @@ import { ASAFormTabs } from '@/src/constants/asaformtabs';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useAuth } from '@/src/context/AuthContext';
 import { useASAForm } from "@/src/hooks/useASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
 
 
 export default function ASAFormTab() {
@@ -19,13 +20,12 @@ export default function ASAFormTab() {
 
   const isVendor = designation?.toLowerCase() === "vendor";
   const { asaFormSubmitData } = useASAForm();
-  const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+  const { formProgress } = useASAFormContext();
+  const isverified = asaFormSubmitData.form_is_submitted || 0;
   const isVendorLocked = isVendor && isverified === 0;
 
   useEffect(() => {
-    const parentTab = ASAFormTabs.find(tab =>
-      tab.children.some(child => child.key === currentTab)
-    );
+    const parentTab = ASAFormTabs.find(tab => tab.children.some(child => child.key === currentTab));
     if (parentTab) {
       setOpenTab(parentTab.key);
     } else {
@@ -35,12 +35,6 @@ export default function ASAFormTab() {
       }
     }
   }, [currentTab]);
-
-
-  // const handleTabClick = (mainKey: string, subKey?: string) => {
-  //   const tab = subKey || mainKey;
-  //   router.push(`/asa-form?tabtype=${encodeURIComponent(tab)}&vms_ref_no=${vmsRefNo}`);
-  // };
 
   const handleTabClick = (mainKey: string, subKey?: string) => {
     const tab = subKey || mainKey;
@@ -68,7 +62,17 @@ export default function ASAFormTab() {
                 }
               }}
             >
-              <span>{tab.label}</span>
+              {/* <span>{tab.label}</span> */}
+              <div className="flex items-center justify-between w-full">
+                <span>{tab.label}</span>
+
+                {formProgress[tab.key] !== undefined && (
+                  <span className="text-[10px] font-medium bg-blue-300 text-black px-1 py-0.5 rounded-[20px]">
+                    {formProgress[tab.key as keyof typeof formProgress]}%
+                  </span>
+                )}
+              </div>
+
               {!isGovernance &&
                 (isOpen ? <ChevronDown size={18} /> : <ChevronRight size={18} />)}
             </div>
@@ -82,12 +86,20 @@ export default function ASAFormTab() {
                       if (isVendorLocked) return;
                       handleTabClick(tab.key, child.key);
                     }}
-                    className={`cursor-${isVendorLocked ? 'not-allowed' : 'pointer'} px-3 py-1 rounded text-sm font-medium transition ${currentTab === child.key
+                    className={`cursor-${isVendorLocked ? 'not-allowed' : 'pointer'} px-3 py-1 text-wrap rounded text-sm font-medium transition ${currentTab === child.key
                       ? 'bg-[#0C72F5] text-white'
                       : 'text-[#0C72F5] hover:bg-[#d1e3f8]'
                       }`}
                   >
-                    {child.label}
+                    <div className="flex items-center justify-between w-full">
+                      <span>{child.label}</span>
+
+                      {formProgress?.[child.key as keyof typeof formProgress] !== undefined && (
+                        <span className="text-[10px] font-medium bg-blue-300 text-black px-1 py-0.5 rounded-[10px]">
+                          {formProgress[child.key as keyof typeof formProgress]}%
+                        </span>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>

@@ -6,6 +6,7 @@ import CompanyAddress from "../templates/vendor-profile-tabs/CompanyAddress";
 import DocumentDetails from "../templates/vendor-profile-tabs/DocumentDetails";
 import OnboardingSidebar from "../molecules/OnboardingSidebar";
 import PaymentDetail from "../templates/vendor-profile-tabs/PaymentDetail";
+import ProductDetail from "../templates/vendor-profile-tabs/ProductDetail";
 import ContactDetail from "../templates/vendor-profile-tabs/ContactDetail";
 import ManufacturingDetail from "../templates/vendor-profile-tabs/ManufacturingDetail";
 import EmployeeDetail from "../templates/vendor-profile-tabs/EmployeeDetail";
@@ -62,6 +63,7 @@ const ViewProfile = ({ vendor_onboarding, tabtype, refno, company, onChangeCompa
         const companyDetailresponse: AxiosResponse = await requestWrapper({
           url: API_END_POINTS?.companyDetailDropdown,
           method: "GET",
+          params:{ref_no:refno},
         });
         setCompanyDetailDropdown(
           companyDetailresponse?.status == 200
@@ -139,9 +141,9 @@ const ViewProfile = ({ vendor_onboarding, tabtype, refno, company, onChangeCompa
 
   return (
     <AuthProvider>
-      <div className="h-screen flex flex-col bg-gray-200 relative">
-        <div className="flex px-4 gap-5 pt-5">
-          <div className="flex flex-col items-start relative">
+      <div className="h-screen bg-gray-200 ">
+        <div className=" px-4 gap-5 pt-5 grid grid-cols-4 w-full">
+          <div className="items-start relative  col-span-1">
             <OnboardingSidebar
               onboarding_refno={vendor_onboarding}
               refno={refno}
@@ -167,14 +169,17 @@ const ViewProfile = ({ vendor_onboarding, tabtype, refno, company, onChangeCompa
             </div>
           </div>
 
-          <div className="flex-1">
+          <div className="flex-1 col-span-3">
             {activeTab == "Company Detail" ? (
               <CompanyDetailForm
                 companyDetailDropdown={companyDetailDropdown}
                 onboarding_refno={vendor_onboarding}
                 refno={refno}
                 OnboardingDetail={onboardingDetail?.company_details_tab}
-                multipleCompany={onboardingDetail?.multi_company_data}
+                multipleCompany={onboardingDetail?.multi_company_data?.map((item: any) => ({
+                  company: item.company,
+                  company_name: item.company || item.company_name,
+                }))}
                 ismulticompany={onboardingDetail?.is_multi_company}
                 onNextTab={() => setActiveTab("Company Address")}
               />
@@ -225,7 +230,7 @@ const ViewProfile = ({ vendor_onboarding, tabtype, refno, company, onChangeCompa
                 onboarding_ref_no={vendor_onboarding}
                 OnboardingDetail={onboardingDetail?.payment_details_tab}
                 onNextTab={() => setActiveTab("Contact Detail")}
-                onBackTab={() => setActiveTab("Payment Detail")}
+                onBackTab={() => setActiveTab("Document Detail")}
               />
             ) : activeTab?.includes("Contact Detail") ? (
               <ContactDetail
@@ -233,7 +238,17 @@ const ViewProfile = ({ vendor_onboarding, tabtype, refno, company, onChangeCompa
                 onboarding_ref_no={vendor_onboarding}
                 OnboardingDetail={onboardingDetail?.contact_details_tab}
                 onNextTab={() => setActiveTab("Manufacturing Detail")}
-                onBackTab={() => setActiveTab("Payment Detail")}
+                onBackTab={() => setActiveTab("Document Detail")}
+              />
+            ) : activeTab?.includes("Product Detail") ? (
+              <ProductDetail
+                ref_no={refno}
+                onboarding_ref_no={vendor_onboarding}
+                OnboardingDetail={onboardingDetail?.contact_details_tab}
+                VendorType={onboardingDetail.company_details_tab.vendor_types ?? ""}
+                nature_of_business={onboardingDetail.company_details_tab.nature_of_business}
+                onNextTab={() => setActiveTab("Manufacturing Detail")}
+                onBackTab={() => setActiveTab("Contact Detail")}
               />
             ) : activeTab == "Manufacturing Detail" ? (
               <ManufacturingDetail
@@ -266,7 +281,7 @@ const ViewProfile = ({ vendor_onboarding, tabtype, refno, company, onChangeCompa
                 OnboardingDetail={onboardingDetail?.testing_details_tab}
                 onNextTab={() => setActiveTab("Reputed Partners")}
                 onBackTab={() => setActiveTab("Machinery Detail")}
-                
+
               />
             ) : activeTab == "Reputed Partners" ? (
               <ReputedPartners
@@ -294,3 +309,4 @@ const ViewProfile = ({ vendor_onboarding, tabtype, refno, company, onChangeCompa
 };
 
 export default ViewProfile;
+

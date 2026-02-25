@@ -4,25 +4,30 @@ import { Button } from "@/components/ui/button";
 import { HealthAndSafety, EmployeeWellBeing } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
 import { Label } from "@/components/ui/label";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
 
 
 export default function Health_And_Safety() {
    const router = useRouter();
    const searchParams = useSearchParams();
    const vmsRefNo = searchParams.get("vms_ref_no") || "";
-   const { refreshFormData, updateEmpWellBeingForm, HealthSafetyForm, updateHealthSafetyForm, asaFormSubmitData } = useASAForm();
+   const { refreshFormData, updateEmpWellBeingForm, HealthSafetyForm, updateHealthSafetyForm, asaFormSubmitData } = useASAFormContext();
    const [mentionBehaviorBaseSafety, setMentionBehaviorBaseSafety] = useState("");
-   const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+   const isverified = asaFormSubmitData.form_is_submitted || 0;
+   const fileRequiredQuestions = new Set(["has_develop_health_safety_policy", "certify_ohs_system"]);
    console.log("Health Safety Form Data:", HealthSafetyForm);
 
-   const isValid = Object.values(HealthSafetyForm).every((item) => {
-      if (!item.selection) return false;
-      if (item.selection === "Yes" && !item.comment.trim()) return false;
+   const isValid = Object.entries(HealthSafetyForm).every(([key, item]) => {
+      const typedItem = item as HealthAndSafety[keyof HealthAndSafety];
+      if (!typedItem.selection) return false;
+      if (typedItem.selection === "Yes" && !typedItem.comment.trim()) return false;
+      // if (fileRequiredQuestions.has(key) && typedItem.selection === "Yes" && !typedItem.file) return false;
       return true;
-   });
+   }) &&
+      (HealthSafetyForm.emp_trained_health_safety?.selection !== "Yes" || mentionBehaviorBaseSafety.trim().length > 0);
 
    const base64ToBlob = (base64: string): Blob => {
       const arr = base64.split(",");
@@ -135,98 +140,116 @@ export default function Health_And_Safety() {
                <YesNoNA
                   name="has_develop_health_safety_policy"
                   label="1. Has the company developed health and safety policy and has displayed it at a conspicuous location?"
+                  helperText="If Yes, attach the copy of the policy."
                   value={HealthSafetyForm.has_develop_health_safety_policy}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                   required={true}
+                  fileRequired={true}
                   disabled={isverified === 1}
+                  options={["Yes", "No"]}
                />
 
                <YesNoNA
                   name="have_healthy_safety_management"
                   label="2. Do you have an Occupational Healthy & Safety management (OHS) system?"
+                  helperText="If Yes, provide the details about the OHS system in place."
                   value={HealthSafetyForm.have_healthy_safety_management}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                   required={true}
                   disabled={isverified === 1}
+                  options={["Yes", "No"]}
                />
 
                <YesNoNA
                   name="conduct_hira_activity"
                   label="3. Does the company conduct hazard identification and risk assessment (HIRA) for every activity and for any change in conditions?"
+                  helperText="If Yes, provide the details of the HIRA process."
                   value={HealthSafetyForm.conduct_hira_activity}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                   required={true}
+                  // fileRequired={true}
                   disabled={isverified === 1}
+                  options={["Yes", "No"]}
                />
 
                <YesNoNA
                   name="certify_ohs_system"
                   label="4. Is your OHS system certified to ISO 14001 or OHSAS 18001?"
+                  helperText="If Yes, attach the copy of the certification."
                   value={HealthSafetyForm.certify_ohs_system}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                   required={true}
+                  fileRequired={true}
                   disabled={isverified === 1}
+                  options={["Yes", "No"]}
                />
 
                <YesNoNA
                   name="emp_trained_health_safety"
                   label="5. Are employees regularly trained on health & safety?"
+                  helperText="If Yes, provide the details of hours of training provided and how many employees participated in the trainings."
                   value={HealthSafetyForm.emp_trained_health_safety}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                   required={true}
                   disabled={isverified === 1}
+                  options={["Yes", "No"]}
                />
-
-               <div className="flex flex-col space-y-1">
-                  <Label htmlFor="mention_behavior_base_safety" className="text-sm font-medium text-black">
-                     Also, please mention if behavior-based safety training is provided.<span className="text-red-600 ml-1">*</span>
-                  </Label>
-                  <textarea
-                     id="mention_behavior_base_safety"
-                     name="mention_behavior_base_safety"
-                     rows={2}
-                     placeholder="Mention behavior-based safety training details if any"
-                     value={mentionBehaviorBaseSafety}
-                     className="w-full px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                     onChange={(e) => {
-                        setMentionBehaviorBaseSafety(e.target.value);
-                        localStorage.setItem("mention_behavior_base_safety", e.target.value);
-                     }}
-                     disabled={isverified === 1}
-                  />
-               </div>
+               {HealthSafetyForm.emp_trained_health_safety?.selection === "Yes" && (
+                  <div className="flex flex-col space-y-1">
+                     <Label htmlFor="mention_behavior_base_safety" className="text-sm font-medium text-black">
+                        Also, please mention if behavior-based safety training is provided.<span className="text-red-600 ml-1">*</span>
+                     </Label>
+                     <textarea
+                        id="mention_behavior_base_safety"
+                        name="mention_behavior_base_safety"
+                        rows={2}
+                        placeholder="Mention behavior-based safety training details if any"
+                        value={mentionBehaviorBaseSafety}
+                        className="w-full px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onChange={(e) => {
+                           setMentionBehaviorBaseSafety(e.target.value);
+                           localStorage.setItem("mention_behavior_base_safety", e.target.value);
+                        }}
+                        disabled={isverified === 1}
+                     />
+                  </div>
+               )}
 
 
                <YesNoNA
                   name="track_health_safety_indicators"
                   label="6. Does the company track health and safety indicators like fatalities, lost time injuries, first aid cases, near misses, and maintain records?"
+                  helperText="If Yes, provide the details of helath of safety related incidents happened during the year."
                   value={HealthSafetyForm.track_health_safety_indicators}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                   required={true}
                   disabled={isverified === 1}
+                  options={["Yes", "No"]}
                />
 
                <YesNoNA
                   name="provide_any_healthcare_services"
                   label="7. Does the company provide healthcare services to the employees and workers like Annual Health checkup? If Yes, provide the details."
+                  helperText="If Yes, provide the details about the healthcare services provide to the employees and workers."
                   value={HealthSafetyForm.provide_any_healthcare_services}
                   onSelectionChange={handleSelectionChange}
                   onCommentChange={handleCommentChange}
                   onFileChange={handleFileChange}
                   required={true}
                   disabled={isverified === 1}
+                  options={["Yes", "No"]}
                />
 
                {isverified !== 1 && (

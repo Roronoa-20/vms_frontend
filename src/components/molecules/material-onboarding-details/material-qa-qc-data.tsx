@@ -117,7 +117,7 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, ExpirationDat
                             name="total_shell_life"
                             render={({ field }: { field: ControllerRenderProps<FieldValues, "total_shell_life"> }) => (
                                 <FormItem>
-                                    <FormLabel>Total Shelf Life</FormLabel>
+                                    <FormLabel>Total Shell Life</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}

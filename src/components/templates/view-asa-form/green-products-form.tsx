@@ -4,15 +4,17 @@ import { Button } from "@/components/ui/button";
 import { GreenProducts, WasteManagement } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
+
 
 
 export default function Green_Products() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const vmsRefNo = searchParams.get("vms_ref_no") || "";
-    const { greenProductsForm, updateGreenProductsForm, refreshFormData, updateWasteManagementForm } = useASAForm();
+    const { greenProductsForm, updateGreenProductsForm, refreshFormData } = useASAFormContext();
     console.log("Green Products Form Data:", greenProductsForm);
 
     const base64ToBlob = (base64: string): Blob => {
@@ -74,41 +76,6 @@ export default function Green_Products() {
         });
     };
 
-    // const fileToBase64 = (file: File): Promise<string> => {
-    //     return new Promise((resolve, reject) => {
-    //         const reader = new FileReader();
-    //         reader.readAsDataURL(file);
-    //         reader.onload = () => resolve(reader.result as string);
-    //         reader.onerror = (error) => reject(error);
-    //     });
-    // };
-
-    // const handleNext = async () => {
-    //     console.log("Submitting WCM Form and navigating to next tab:", greenProductsForm);
-    //     const GreenProductsCopy = { ...greenProductsForm };
-
-    //     for (const key in GreenProductsCopy) {
-    //         const entry = GreenProductsCopy[key as keyof GreenProducts];
-    //         if (entry.file instanceof File) {
-    //             const base64 = await fileToBase64(entry.file);
-    //             entry.file = {
-    //                 url: "",
-    //                 name: entry.file.name,
-    //                 base64,
-    //             };
-    //         }
-    //     }
-    //     updateGreenProductsForm(GreenProductsCopy);
-    //     localStorage.setItem("GreenProductsForm", JSON.stringify(GreenProductsCopy));
-    //     router.push(`asa-form?tabtype=biodiversity&vms_ref_no=${vmsRefNo}`);
-    // };
-
-    // const handleBack = useBackNavigation<WasteManagement>(
-    //     "WasteManagementForm",
-    //     updateWasteManagementForm,
-    //     "waste_management",
-    //     vmsRefNo
-    // );
 
     const handleNext = () => {
         router.push(`/view-asa-form?tabtype=biodiversity&vms_ref_no=${vmsRefNo}`);
@@ -128,12 +95,15 @@ export default function Green_Products() {
                     <YesNoNA
                         name="certified_green_projects"
                         label="1. Do you have any products that has been certified as Green by the certification bodies like Green Label, Forest Stewardship Council (FSC), etc.?"
+                        helperText="If Yes, attach the copy of the certifications."
                         value={greenProductsForm.certified_green_projects}
                         onSelectionChange={handleSelectionChange}
                         onCommentChange={handleCommentChange}
                         onFileChange={handleFileChange}
                         disabled={true}
-
+                        required={true}
+                        fileRequired={true}
+                        options={["Yes", "No"]}
                     />
                     {/* <div className="space-x-4 flex justify-end">
                         <Button

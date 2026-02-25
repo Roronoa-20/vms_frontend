@@ -3,6 +3,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { ASAForm, CompanyInformation, GeneralDisclosureData, Governance, fileKeys, commentFieldKeys, EnvironmentalManagementSystem, Biodiversity, GreenProducts, EnergyConsumptionAndEmission, WaterConsumptionAndManagement, WasteManagement, EmployeeSatisfaction, LaborRightsAndWorkingConditions, GrievanceMechanism, EmployeeWellBeing, HealthAndSafety } from '@/src/types/asatypes';
+// import { calculateParentProgress } from '@/src/constants/asaformtabs';
+import { calculateAllProgress } from "@/utlis/calculateAllProgress";
 
 
 type UseASAFormReturn = {
@@ -40,16 +42,37 @@ type UseASAFormReturn = {
     submitEnvironmentForm: () => Promise<void>;
     submitSocialForm: () => Promise<void>;
     ASAformName: string;
-    VerifyASAForm: (asaFormName: string) => Promise<any>;
+    // VerifyASAForm: (asaFormName: string) => Promise<any>;
     asaFormSubmitData: ASAForm;
+    formProgress: FormProgress;
+    setFormProgress: (data: FormProgress) => void;
+};
 
+type FormProgress = {
+    governance?: number;
+    employee_satisfaction?: number;
+    company_information?: number;
+    general_disclosures?: number;
+    general_disclosures_sub?: number;
+    ems?: number;
+    ece?: number;
+    wcm?: number;
+    waste_management?: number;
+    green_products?: number;
+    biodiversity?: number;
+    labor_rights?: number;
+    grievance_mechanism?: number;
+    employee_wellbeing?: number;
+    health_safety?: number;
+    environment?: number;
+    social?: number;
 };
 
 export const useASAForm = (): UseASAFormReturn => {
     const [companyInfo, setCompanyInfo] = useState<CompanyInformation>({
         name_of_the_company: { selection: "", comment: "", file: null },
         location: { selection: "", comment: "", file: null },
-        name_of_product:  { selection: "", comment: "", file: null }
+        name_of_product: { selection: "", comment: "", file: null }
     });
 
     const [generalDisclosure, setGeneralDisclosure] = useState<GeneralDisclosureData>({
@@ -155,6 +178,44 @@ export const useASAForm = (): UseASAFormReturn => {
     const [shouldFetch, setShouldFetch] = useState(true);
     const [ASAformName, setASAFormName] = useState("");
     const [asaFormSubmitData, setAsaFormSubmitData] = useState<ASAForm>({});
+    const [formProgress, setFormProgress] = useState<FormProgress>({});
+
+    useEffect(() => {
+        const progress = calculateAllProgress({
+            company_information: companyInfo,
+            general_disclosures_sub: generalDisclosure,
+            governance: governanceform,
+            ems: emsform,
+            biodiversity: biodiversityForm,
+            green_products: greenProductsForm,
+            ece: eceform,
+            wcm: wcmform,
+            waste_management: wastemanagementForm,
+            employee_satisfaction: EmpSatisfactionForm,
+            labor_rights: LaborRightsForm,
+            grievance_mechanism: GrievanceMechForm,
+            employee_wellbeing: EmpWellBeingForm,
+            health_safety: HealthSafetyForm,
+        });
+
+        setFormProgress(progress);
+    }, [
+        companyInfo,
+        generalDisclosure,
+        governanceform,
+        emsform,
+        biodiversityForm,
+        greenProductsForm,
+        eceform,
+        wcmform,
+        wastemanagementForm,
+        EmpSatisfactionForm,
+        LaborRightsForm,
+        GrievanceMechForm,
+        EmpWellBeingForm,
+        HealthSafetyForm,
+    ]);
+
 
 
     useEffect(() => {
@@ -209,17 +270,10 @@ export const useASAForm = (): UseASAFormReturn => {
                     method: 'GET',
                 });
 
-                // console.log('Fetched ASA Form Data:', response);
                 const data = response?.data?.message || {};
                 setAsaFormSubmitData(data);
                 const ASADoctypename = data?.name || "";
                 setASAFormName(ASADoctypename);
-                // setCompanyInfo({
-                //     name_of_the_company: data?.company_information?.name_of_the_company || "",
-                //     location: data?.company_information?.location || "",
-                //     name_of_product: data?.company_information?.name_of_product || "",
-                // });
-
                 const parseSection = (
                     sectionData: any,
                     setState: Function,
@@ -276,20 +330,6 @@ export const useASAForm = (): UseASAFormReturn => {
     useEffect(() => {
         // console.log("Updated ASAformName from state:", ASAformName);
     }, [ASAformName]);
-
-    const VerifyASAForm = async (asaFormName: string) => {
-        try {
-            const response = await requestWrapper({
-                url: `${API_END_POINTS.verifyasaform}?asa_name=${asaFormName}`,
-                method: "POST",
-            });
-            // console.log("Verify ASA FOrm API response---->",response)
-            return response?.data || null;
-        } catch (error) {
-            console.error("VerifyASAForm error:", error);
-            return null;
-        }
-    };
 
     const refreshFormData = () => setShouldFetch(true);
 
@@ -397,7 +437,6 @@ export const useASAForm = (): UseASAFormReturn => {
             }
         }
 
-        console.log("Submitting ASA Form Data:");
         for (let [key, value] of formData.entries()) {
             console.log(`${key}:`, value);
         }
@@ -417,7 +456,7 @@ export const useASAForm = (): UseASAFormReturn => {
                         : res.message?.message || "Something went wrong while submitting the form.";
                 throw new Error(errMsg);
             }
-            console.log("Form submission successful:", res);
+            // console.log("Form submission successful:", res);
             localStorage.removeItem("companyInfo");
             router.push(`asa-form?tabtype=ems&vms_ref_no=${vms_ref_no}`);
 
@@ -429,7 +468,6 @@ export const useASAForm = (): UseASAFormReturn => {
     const submitGoveranceForm = async (): Promise<boolean> => {
         try {
             const formData = new FormData();
-
             const dataPayload: ASAForm = {
                 vendor_ref_no: vms_ref_no,
                 name: ASAformName,
@@ -479,7 +517,6 @@ export const useASAForm = (): UseASAFormReturn => {
                 }
             });
 
-            console.log("Submitting ASA Form Data:");
             for (let [key, value] of formData.entries()) {
                 console.log(`${key}:`, value);
             }
@@ -1030,6 +1067,6 @@ export const useASAForm = (): UseASAFormReturn => {
     };
 
     return {
-        companyInfo, generalDisclosure, updateCompanyInfo, updateGeneralDisclosure, submitForm, refreshFormData, governanceform, submitGoveranceForm, updateGovernanceForm, emsform, updateEmsForm, submitEnvironmentForm, biodiversityForm, greenProductsForm, updateBiodiversityForm, updateGreenProductsForm, eceform, updateEceForm, wcmform, updateWcmForm, wastemanagementForm, updateWasteManagementForm, EmpSatisfactionForm, updateEmpSatisactionForm, LaborRightsForm, updateLaborRightsForm, submitSocialForm, GrievanceMechForm, updateGrievnaceMechForm, EmpWellBeingForm, updateEmpWellBeingForm, updateHealthSafetyForm, HealthSafetyForm, VerifyASAForm, ASAformName, asaFormSubmitData
+        companyInfo, generalDisclosure, updateCompanyInfo, updateGeneralDisclosure, submitForm, refreshFormData, governanceform, submitGoveranceForm, updateGovernanceForm, emsform, updateEmsForm, submitEnvironmentForm, biodiversityForm, greenProductsForm, updateBiodiversityForm, updateGreenProductsForm, eceform, updateEceForm, wcmform, updateWcmForm, wastemanagementForm, updateWasteManagementForm, EmpSatisfactionForm, updateEmpSatisactionForm, LaborRightsForm, updateLaborRightsForm, submitSocialForm, GrievanceMechForm, updateGrievnaceMechForm, EmpWellBeingForm, updateEmpWellBeingForm, updateHealthSafetyForm, HealthSafetyForm, ASAformName, asaFormSubmitData, formProgress, setFormProgress,
     };
 };

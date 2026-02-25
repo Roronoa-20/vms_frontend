@@ -6,23 +6,24 @@ import Form_Input from "@/src/components/common/FormInput";
 import Textarea_Input from "@/src/components/common/TextareaWithLabel";
 import { useRouter } from "next/navigation";
 import { useAuth } from '@/src/context/AuthContext';
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
+
 
 
 export default function Company_Information_Form() {
     const router = useRouter();
     const params = useSearchParams();
     const vmsRefNo = params.get("vms_ref_no") || "";
-    const { companyInfo, updateCompanyInfo, refreshFormData, asaFormSubmitData } = useASAForm();
+    const { companyInfo, updateCompanyInfo, asaFormSubmitData } = useASAFormContext();
     const { name } = useAuth();
-    const isverified = asaFormSubmitData.verify_by_asa_team || 0;
+    const isverified = asaFormSubmitData.form_is_submitted || 0;
 
     const isFormValid = Boolean(
         companyInfo.name_of_the_company?.selection?.trim() &&
         companyInfo.location?.selection?.trim() &&
         companyInfo.name_of_product?.selection?.trim()
     );
-
 
     useEffect(() => {
         if (!name) return;

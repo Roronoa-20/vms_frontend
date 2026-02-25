@@ -1,23 +1,27 @@
+import React, { useState, useEffect } from "react";
 import YesNoNA from "@/src/components/common/YesNoNAwithFile";
 import { Button } from "@/components/ui/button"
 import { Biodiversity, GreenProducts } from "@/src/types/asatypes";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useASAForm } from "@/src/hooks/useASAForm";
+// import { useASAForm } from "@/src/hooks/useASAForm";
 import { useBackNavigation } from "@/src/hooks/useBackNavigationASAForm";
+import { useASAFormContext } from "@/src/context/ASAFormContext";
 
 
 export default function BiodiversityForm() {
   const searchParams = useSearchParams();
   const vmsRefNo = searchParams.get("vms_ref_no") || "";
-  const { biodiversityForm, updateBiodiversityForm, submitEnvironmentForm, refreshFormData, updateGreenProductsForm, asaFormSubmitData } = useASAForm();
-  const isverified = asaFormSubmitData.verify_by_asa_team || 0;
-
+  const { biodiversityForm, updateBiodiversityForm, submitEnvironmentForm, refreshFormData, updateGreenProductsForm, asaFormSubmitData } = useASAFormContext();
+  const isverified = asaFormSubmitData.form_is_submitted || 0;
 
   const isValid = Object.values(biodiversityForm).every((item) => {
-    if (!item.selection) return false;
-    if (item.selection === "Yes" && !item.comment.trim()) return false;
+    const typedItem = item as Biodiversity[keyof Biodiversity];
+    if (!typedItem.selection) return false;
+    if (typedItem.selection === "Yes") {
+      if (!typedItem.comment?.trim()) return false;
+      // if (!typedItem.file) return false;
+    }
     return true;
   });
 
@@ -73,14 +77,17 @@ export default function BiodiversityForm() {
           <YesNoNA
             name="have_policy_on_biodiversity"
             label="1. Does the organization have a policy or commitment on biodiversity?"
+            helperText="If Yes, attach the copy of the policy or commitment."
             value={biodiversityForm.have_policy_on_biodiversity}
             onSelectionChange={handleSelectionChange}
             onCommentChange={handleCommentChange}
             onFileChange={handleFileChange}
             required={true}
+            fileRequired={true}
             disabled={isverified === 1}
+            options={["Yes", "No"]}
           />
-          
+
           {isverified !== 1 && (
             <div className="space-x-4 flex justify-end">
               <Button
