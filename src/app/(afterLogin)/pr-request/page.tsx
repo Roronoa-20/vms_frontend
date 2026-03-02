@@ -28,14 +28,14 @@ const page = async ({ searchParams }: PageProps) => {
   const purchaseRequisitionTypeDropdown = await GetPurchaseRequisitionTypeDropdown(cookieHeaderString);
   const getCompanyDropdown = await getCompanyDropdownBasedOUser(cookieHeaderString);
 
-    let prData:any = null;
+    let prData:purchaseRequisitionDataType | null = null;
 
     if(pr_id){
       prData = await getPurchaseReqisitionData(pr_id,cookieHeaderString);
     }
     
     const getMaterialDropdown = await getPurchaseRequisitionMaterialDropdown(cookieHeaderString);
-    const plantDropdown = await getPurchaseRequisitionPlantDropdown(getCompanyDropdown[0]?.name as string,cookieHeaderString);
+    const plantDropdown = await getPurchaseRequisitionPlantDropdown(prData?.company as string,cookieHeaderString);
     
   return (
     <PrRequest purchaseRequisitionTypeDropdown={purchaseRequisitionTypeDropdown} companyDropdown={getCompanyDropdown} prData={prData as purchaseRequisitionDataType} pr_id={pr_id} materialDropdown={getMaterialDropdown} plantDropdown={plantDropdown}/>
