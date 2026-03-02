@@ -394,6 +394,7 @@ const API_END_POINTS = {
   acknowledgeEnquiry:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.acknowledge_cart_details`,
   approvalEnquiry:`${url}/api/method/vms.APIs.cart_details.v1.cart_details_approval.purchase_approval_check`,
   getCityDropdown:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_location_master`,
+  proceedToPR:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.create_vms_pr_from_cart`
 }
 
 export default API_END_POINTS;
