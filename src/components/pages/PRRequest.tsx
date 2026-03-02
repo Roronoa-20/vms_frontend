@@ -14,7 +14,7 @@ interface Props  {
     companyDropdown: companyDropdownBasedOnUserType[]
     prData?: purchaseRequisitionDataType
     pr_id?: string
-    materialDropdown: PurchaseRequisitionMaterialDropdownType[]
+    materialDropdown: PurchaseRequisitionMaterialDropdownType[] | []
         plantDropdown: purchaseRequisitionPlantDropdownType[]
 }
 
@@ -61,24 +61,24 @@ const PrRequest = (props:Props) => {
 
         {/* normal pr component */}
         {
-            props.prData?.pr_type === PurchaseType.nbNormal && <NormalPR prData={prData} materialDropdown={props?.materialDropdown} plantDropdown={props?.plantDropdown} />
+            props?.prData?.pr_type === PurchaseType.nbNormal && <NormalPR prData={prData} materialDropdown={props?.materialDropdown} plantDropdown={props?.plantDropdown} />
         }
 
         {/* capex pr component */}
         {
-            props.prData?.pr_type === PurchaseType.nbCapex && <CapexPR prData={prData} materialDropdown={props?.materialDropdown} plantDropdown={props?.plantDropdown} />
+            props?.prData?.pr_type === PurchaseType.nbCapex && <CapexPR prData={prData} materialDropdown={props?.materialDropdown} plantDropdown={props?.plantDropdown} />
         }
 
         {/* ZSB SERVICE */}
 
         {
-            props.prData?.pr_type === PurchaseType.zsbService && <ZSBService prData={prData} plantDropdown={props?.plantDropdown} />
+            props?.prData?.pr_type === PurchaseType.zsbService && <ZSBService prData={prData} plantDropdown={props?.plantDropdown} />
         }
 
         {/* ZSB ASSET */}
 
         {
-            props.prData?.pr_type === PurchaseType.zsbAsset && <ZSBAsset prData={prData} />
+            props?.prData?.pr_type === PurchaseType.zsbAsset && <ZSBAsset prData={prData} />
         }        
 
     </div>
