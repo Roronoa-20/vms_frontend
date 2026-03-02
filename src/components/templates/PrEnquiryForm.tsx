@@ -52,6 +52,7 @@ import {
   getlocationDropdown,
   getProductNameDropdown,
   getPurchaseEnquiryData,
+  proceedToPR,
   submitEnquiry,
 } from "@/src/services/prEnquiry/prEnquiry.services";
 import SearchableDropdown from "../molecules/SearchableDropdown";
@@ -106,7 +107,10 @@ const PRInquiryForm = ({
   const addLoaderRef = useRef<HTMLSpanElement>(null);
   const submitLoaderRef = useRef<HTMLSpanElement>(null);
 
-  console.log(cityDropdown, "this is city");
+   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+    const isAnySelected = selectedItems.size > 0;
+
+    const [selectedStatus,setSelectedStatus] = useState<string>("");
 
   useEffect(() => {
     if (selectedProductName) {
@@ -321,6 +325,59 @@ const PRInquiryForm = ({
       });
     }
   };
+
+
+    const handleAllSelect = (checked: boolean) => {
+      if (!formData?.cart_product) return;
+  
+      setSelectedItems(() => {
+        if (!checked) return new Set();
+  
+        const newSet = new Set<string>();
+  
+        formData.cart_product.forEach((item) => {
+          if (!item.pr_created) {
+            newSet.add(item?.name as string);
+          }
+        });
+  
+        return newSet;
+      });
+    };
+  
+    const handleProceedToPR = () => {
+      if (selectedItems.size === 0) {
+        alert("Please select at least one item.");
+        return;
+      }
+  
+      const cartItem = Array.from(selectedItems).map((name) => ({
+        name,
+      }));
+  
+      const body = {
+        data: {
+          cart_id: refno,
+          cart_item: cartItem,
+        },
+      };
+  
+      proceedToPR(body)
+        ?.then((res) => {
+          alert(res?.message);
+          setSelectedItems(new Set()); // clear selection
+          router.push(`pr-request?pr_id=${res?.data?.name}`);
+        })
+        .catch((err) => alert(err?.message));
+    };
+
+    const fetchTableBasedOnFilter = (status?:string,pr_type?:string)=>{
+      getPurchaseEnquiryData(refno as string,"",status,pr_type).then((data) => {
+          setFormData(data);
+        });
+        
+    }
+    
 
   return (
     <>
@@ -692,16 +749,91 @@ const PRInquiryForm = ({
               </div>
             </>
           )}
+          {
+            formData?.is_submited ?
+            <div className="flex justify-end pr-10">
+                    <Button
+                      variant="nextbtn"
+                      disabled={!isAnySelected}
+                      className={!isAnySelected ? `opacity-50 cursor-not-allowed` : ""}
+                      onClick={handleProceedToPR}
+                      >
+                      Proceed to PR
+                    </Button>
+                  </div>:""
+                    }
 
           <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl mt-4">
             <div className="flex w-full justify-between pb-4">
-              <h1 className="text-[20px] text-[#03111F] font-semibold">
-                Items List
-              </h1>
-            </div>
+                        <div>
+                          <h1 className="text-[20px] text-[#03111F] font-semibold">
+                            Items List
+                          </h1>
+                        </div>
+                        {
+                          formData?.is_submited?
+                          <div className="w-full max-w-[500px] flex gap-4">
+                          <Select
+                            onValueChange={(value) => {
+                              setSelectedStatus(value);
+                              fetchTableBasedOnFilter(value == "All"?"":value,"");
+                            }}
+                            >
+                            <SelectTrigger className="rounded-xl">
+                              <SelectValue placeholder="Status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectItem value="All">
+                                  All
+                                </SelectItem>
+                                <SelectItem value="Approved">Approved</SelectItem>
+                                <SelectItem value="Rejected">Rejected</SelectItem>
+                                <SelectItem value="Pending">Pending</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                          <Select
+                            onValueChange={(value) => {
+                              fetchTableBasedOnFilter("",value);
+                            }}
+                            >
+                            <SelectTrigger className="rounded-xl">
+                              <SelectValue placeholder="Purchase Type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectItem value="Individual Use">
+                                  Individual Use
+                                </SelectItem>
+                                <SelectItem value="Commercial Use">Group Use</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        :""
+                          }
+                      </div>
             <Table className=" max-h-40 overflow-y-scroll">
               <TableHeader className="text-center">
                 <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
+                  { formData?.is_submited && selectedStatus == "Approved" ?
+                    <TableHead className="w-[100px]">
+                                    <Input
+                                      type="checkbox"
+                                      className="w-5"
+                                      onChange={(e) => handleAllSelect(e.target.checked)}
+                                      checked={Boolean(
+                                        formData?.cart_product &&
+                                        formData?.cart_product.filter((i) => !i?.pr_created)
+                                        .length > 0 &&
+                                        selectedItems?.size ===
+                                        formData?.cart_product.filter((i) => !i?.pr_created)
+                                        .length,
+                                      )}
+                                      />
+                                  </TableHead>:<TableHead></TableHead>
+                                    }
                   <TableHead className="w-[100px]">Sr No.</TableHead>
                   <TableHead className="text-center">Product Type</TableHead>
                   <TableHead className="text-center">Product Name</TableHead>
@@ -729,6 +861,35 @@ const PRInquiryForm = ({
               <TableBody className="text-center">
                 {formData?.cart_product?.map((item, index) => (
                   <TableRow key={index}>
+                    {
+                      formData?.is_submited && selectedStatus == "Approved"?
+                      <TableCell className="flex justify-center">
+                                        <Input
+                                          type="checkbox"
+                                          className="w-5"
+                                          disabled={item?.pr_created ? true : false} // Already processed
+                                          checked={
+                                            Boolean(item.pr_created) ||
+                                            selectedItems.has(item.name as string)
+                                          }
+                                          onChange={(e) => {
+                                            setSelectedItems((prev) => {
+                                              const newSet = new Set(prev);
+                                              
+                                              if (e.target.checked) {
+                                                newSet.add(item?.name as string);
+                                              } else {
+                                                newSet.delete(item?.name as string);
+                                              }
+                                              
+                                              return newSet;
+                                            });
+                                          }}
+                                          />
+                                      </TableCell>
+                                      :
+                                      <TableCell></TableCell>
+                                        }
                     <TableCell className="font-medium">{index + 1}</TableCell>
                     <TableCell className="">
                       {item?.purchase_type ?? ""}

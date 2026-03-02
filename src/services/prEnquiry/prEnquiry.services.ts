@@ -46,9 +46,9 @@ export const getCompanyDropdownBasedOUser = async(cookie:string):Promise<company
     }
 }
 
-export const getPurchaseEnquiryData = async(refno:string,cookie?:string):Promise<TPRInquiry>=>{
+export const getPurchaseEnquiryData = async(refno:string,cookie?:string,status?:string,pr_type?:string):Promise<TPRInquiry>=>{
     try {
-        const response = await fetch(`${API_END_POINTS.getPurchaseEnquiryData}?cart_id=${refno}`, {
+        const response = await fetch(`${API_END_POINTS.getPurchaseEnquiryData}?cart_id=${refno}&status=${status?status:""}&purchase_type=${pr_type?pr_type:""}`, {
             method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -292,6 +292,30 @@ export const getCategoryTypeEnquiryDropdown = async(cookie?:string):Promise<cate
         }
     } catch (error:any) {
         console.error("Error Fetching Category Type enquiry Dropdown  :", error);
+        return Promise.reject(error?.exception);
+    }
+}
+
+export const proceedToPR = async(body:any,cookie?:string):Promise<any>=>{
+    try {
+        const response = await fetch(`${API_END_POINTS?.proceedToPR}`, {
+            method: 'POST',
+            headers:{
+                'Content-Type': 'application/json',
+                'Cookie': cookie as string
+            },
+                credentials: 'include',
+                body:JSON.stringify(body)
+        });
+        if(response.ok){
+            return Promise.resolve(response.json()?.then((data)=>data?.message));
+        }else{
+            const Response = await response.json();
+            console.error(Response?.message)
+            return Promise.reject(Response?.message);
+        }
+    } catch (error:any) {
+        console.error("Error Proceeding Enquiry To PR :", error);
         return Promise.reject(error?.exception);
     }
 }
