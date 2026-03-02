@@ -95,7 +95,7 @@ export const getPurchaseReqisitionData = async(name:string,cookie?:string):Promi
 }
 
 
-export const getPurchaseRequisitionMaterialDropdown = async(query?:string,cookie?:string):Promise<PurchaseRequisitionMaterialDropdownType[]>=>{
+export const getPurchaseRequisitionMaterialDropdown = async(query:string,material:string,cookie?:string):Promise<PurchaseRequisitionMaterialDropdownType[]>=>{
     try {
         const response = await fetch(`${API_END_POINTS.getMaterialDropdown}?search_term=${query}`, {
             method: 'GET',

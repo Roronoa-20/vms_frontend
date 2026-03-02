@@ -34,7 +34,7 @@ const page = async ({ searchParams }: PageProps) => {
       prData = await getPurchaseReqisitionData(pr_id,cookieHeaderString);
     }
     
-    const getMaterialDropdown = await getPurchaseRequisitionMaterialDropdown(cookieHeaderString);
+    const getMaterialDropdown = await getPurchaseRequisitionMaterialDropdown("",prData?.company as string,cookieHeaderString);
     const plantDropdown = await getPurchaseRequisitionPlantDropdown(prData?.company as string,cookieHeaderString);
     
   return (
