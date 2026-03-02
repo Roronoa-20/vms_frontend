@@ -531,7 +531,7 @@ const PRInquiryForm = ({
                     </SelectContent>
                   </Select>
                 </div>
-                {singleTableRow?.purchase_type == "SB" && (
+                {!singleTableRow?.purchase_type?.includes("NB") && (
                   <div className="col-span-1">
                     <h1 className="text-[14px] font-normal text-[#000000] pb-2 relative">
                       Category Type{" "}
@@ -563,7 +563,7 @@ const PRInquiryForm = ({
                     </Select>
                   </div>
                 )}
-                {singleTableRow?.purchase_type !== "SB" && (
+                {singleTableRow?.purchase_type?.includes("NB") && (
                   <>
                     <div className="col-span-1">
                       <h1 className="text-[14px] font-normal text-[#000000] pb-2 relative">
@@ -803,10 +803,13 @@ const PRInquiryForm = ({
                             </SelectTrigger>
                             <SelectContent>
                               <SelectGroup>
-                                <SelectItem value="Individual Use">
-                                  Individual Use
+                                {
+                                  purchaseTypeDropdown?.map((item,index)=>(
+                                <SelectItem key={index} value={item?.name}>
+                                  {item?.description}
                                 </SelectItem>
-                                <SelectItem value="Commercial Use">Group Use</SelectItem>
+                                  ))
+                                }
                               </SelectGroup>
                             </SelectContent>
                           </Select>
