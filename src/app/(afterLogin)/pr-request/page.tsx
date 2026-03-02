@@ -3,7 +3,7 @@ import PrRequest from '../../../../src/components/pages/PRRequest'
 import React from 'react'
 import { cookies } from 'next/headers'
 import { getCompanyDropdownBasedOUser } from '@/src/services/prEnquiry/prEnquiry.services'
-import { purchaseRequisitionDataType } from '@/src/types/prRequisition/prRequisition.types'
+import { purchaseRequisitionDataType, PurchaseRequisitionMaterialDropdownType, purchaseRequisitionPlantDropdownType } from '@/src/types/prRequisition/prRequisition.types'
 
 interface PageProps {
   searchParams: Promise<{
@@ -34,11 +34,16 @@ const page = async ({ searchParams }: PageProps) => {
       prData = await getPurchaseReqisitionData(pr_id,cookieHeaderString);
     }
     
-    const getMaterialDropdown = await getPurchaseRequisitionMaterialDropdown("",prData?.company as string,cookieHeaderString);
-    const plantDropdown = await getPurchaseRequisitionPlantDropdown(prData?.company as string,cookieHeaderString);
+    let getMaterialDropdown:PurchaseRequisitionMaterialDropdownType[] | null = null;
+    let plantDropdown:purchaseRequisitionPlantDropdownType[] | null = null;
+    if(pr_id){
+      getMaterialDropdown = await getPurchaseRequisitionMaterialDropdown("",prData?.company as string,cookieHeaderString);
+      plantDropdown = await getPurchaseRequisitionPlantDropdown(prData?.company as string,cookieHeaderString);
+    }
+
     
   return (
-    <PrRequest purchaseRequisitionTypeDropdown={purchaseRequisitionTypeDropdown} companyDropdown={getCompanyDropdown} prData={prData as purchaseRequisitionDataType} pr_id={pr_id} materialDropdown={getMaterialDropdown} plantDropdown={plantDropdown}/>
+    <PrRequest purchaseRequisitionTypeDropdown={purchaseRequisitionTypeDropdown} companyDropdown={getCompanyDropdown} prData={prData as purchaseRequisitionDataType} pr_id={pr_id} materialDropdown={getMaterialDropdown?getMaterialDropdown:[]} plantDropdown={plantDropdown ?? []}/>
   )
 }
 
