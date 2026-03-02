@@ -133,6 +133,13 @@ export type PurchaseTypeType = {
     description:string
 }
 
+// export enum pr_type  {
+//     NB-Normal
+// NB-CAPEX
+// ZSB Asset
+// ZSB Cost Centre
+// }
+
 export type ProductNameDropdown = {
   name: string,
   product_name: string,
