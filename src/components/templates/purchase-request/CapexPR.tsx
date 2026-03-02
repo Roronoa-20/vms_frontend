@@ -175,7 +175,7 @@ const CapexPR = (props:Props) => {
 
 
       const fetchMaterialDropdown = (query?:string):Promise<PurchaseRequisitionMaterialDropdownType[]>=>{
-            return getPurchaseRequisitionMaterialDropdown(query)
+            return getPurchaseRequisitionMaterialDropdown(query as string, props?.prData?.company as string)
               .then((res) => {setMaterialDropdown(res);return res})
               .catch((err) => {
                 console.error(err);

@@ -5,7 +5,7 @@ const API_END_POINTS = {
       getCompanyDropdownBasedOUser:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_company_for_user`,
       createPurchaseReqisition:`${url}/api/method/vms.APIs.purchase_api.vms_pr_api.create_vms_pr`,
       getPurchaseRequisitionData:`${url}/api/method/vms.APIs.purchase_api.vms_pr_api.get_vms_pr`,
-      getMaterialDropdown:`${url}/api/method/vms.APIs.purchase_api.vms_pr_utility_api.get_materials`,
+      getMaterialDropdown:`${url}/api/method/vms.APIs.purchase_api.vms_pr_utility_api.get_materials_by_company`,
       getPlantDropdown:`${url}/api/method/vms.APIs.purchase_api.vms_pr_utility_api.get_plants_by_company`,
       getPurchaseGroupDropdown:`${url}/api/method/vms.APIs.purchase_api.vms_pr_utility_api.get_purchasing_group_by_material`,
       getUOMDropdown:`${url}/api/method/vms.APIs.purchase_api.vms_pr_utility_api.get_uom_by_material`,
