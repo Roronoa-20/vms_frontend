@@ -60,7 +60,7 @@ export const createPurchaseReqisition = async (body: any): Promise<any> => {
 
         });
         if (response.ok) {
-            return Promise.resolve(response.json()?.then((data) => data?.message));
+            return Promise.resolve(response.json()?.then((data) => data));
         } else {
             const Response = await response.json();
             return Promise.reject(Response?.message);

@@ -77,9 +77,9 @@ const CreatePurchaseRequest = (props: Props) => {
 
     createPurchaseReqisition(body)
       .then((res) => {
-        alert(res?.message);
-        router.replace(`/pr-request?pr_id=${res?.name}`);
-        props?.fetchPrData(res?.name as string);
+        alert(res?.message?.message);
+        router.replace(`/pr-request?pr_id=${res?.message?.name}`);
+        props?.fetchPrData(res?.message?.name as string);
       })
       .catch((err) => {
         alert("Error creating purchase requisition: " + err?.message);
