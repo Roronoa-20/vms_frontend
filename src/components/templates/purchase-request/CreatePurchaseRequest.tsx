@@ -28,7 +28,7 @@ interface Props {
   companyDropdown: companyDropdownBasedOnUserType[];
   prData?: purchaseRequisitionDataType;
   pr_id?: string;
-  fetchPrData:(prId?:string)=>void
+  fetchPrData: (prId?: string) => void
 }
 
 type FormType = {
@@ -44,23 +44,23 @@ const CreatePurchaseRequest = (props: Props) => {
   const [form, setForm] = useState<FormType>({ ...(props.prData as any) });
   const router = useRouter();
 
-  const fetchPrData = ()=>{
-          getPurchaseReqisitionData(props?.pr_id as string).then((res)=>{
-              console.log(res,"fetched pr data");
-              setForm(res as any);
-          }).catch((err)=>{
-              console.error("Error fetching PR data:", err);
-          })
-      }
+  const fetchPrData = () => {
+    getPurchaseReqisitionData(props?.pr_id as string).then((res) => {
+      console.log(res, "fetched pr data");
+      setForm(res as any);
+    }).catch((err) => {
+      console.error("Error fetching PR data:", err);
+    })
+  }
 
   const handleNextButton = () => {
 
-    if(!form?.pr_type){
+    if (!form?.pr_type) {
       alert("please select purchase type");
       return;
     }
 
-    if(!form?.company){
+    if (!form?.company) {
       alert("please select company");
       return;
     }
@@ -77,12 +77,12 @@ const CreatePurchaseRequest = (props: Props) => {
 
     createPurchaseReqisition(body)
       .then((res) => {
-        alert(res?.message);
-        router.replace(`/pr-request?pr_id=${res?.name}`);
-        props?.fetchPrData(res?.name as string);
+        alert(res?.message?.message);
+        router.replace(`/pr-request?pr_id=${res?.message?.data?.name}`);
+        props?.fetchPrData(res?.message?.data?.name as string);
       })
       .catch((err) => {
-        alert("Error creating purchase requisition: " + err);
+        alert("Error creating purchase requisition: " + err?.message);
       });
   };
 

@@ -1,21 +1,21 @@
 import { companyDropdownBasedOnUserType, purchaseRequisitionDataType, PurchaseRequisitionMaterialDropdownType, purchaseRequisitionPlantDropdownType, purchaseRequisitionPurchaseGroupDropdownType, purchaseRequisitionTypeDropdownType, purchaseRequisitionUOMType } from "@/src/types/prRequisition/prRequisition.types";
 import API_END_POINTS from "./apiEndPointsNb";
 
-export const GetPurchaseRequisitionTypeDropdown = async(cookies:string):Promise<purchaseRequisitionTypeDropdownType[]>=>{
+export const GetPurchaseRequisitionTypeDropdown = async (cookies: string): Promise<purchaseRequisitionTypeDropdownType[]> => {
     try {
         const response = await fetch(`${API_END_POINTS.getPurchaseRequisitionTypeDropdown}`, {
             method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cookie': cookies
-                },
-                credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': cookies
+            },
+            credentials: 'include',
         });
-        if(response.ok){
-            return Promise.resolve(response.json()?.then((data)=>data?.message?.data));
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message?.data));
         }
-        else{
-            console.error("Failed to get Purchase Requisition Type Dropdown with status:", await response.json().then((data)=>data));
+        else {
+            console.error("Failed to get Purchase Requisition Type Dropdown with status:", await response.json().then((data) => data));
             return Promise.reject(false);
         }
     } catch (error) {
@@ -26,19 +26,19 @@ export const GetPurchaseRequisitionTypeDropdown = async(cookies:string):Promise<
 
 
 
-export const getCompanyDropdownBasedOUser = async(cookie:string):Promise<companyDropdownBasedOnUserType[]>=>{
+export const getCompanyDropdownBasedOUser = async (cookie: string): Promise<companyDropdownBasedOnUserType[]> => {
     try {
         const response = await fetch(`${API_END_POINTS.getCompanyDropdownBasedOUser}`, {
             method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cookie': cookie
-                },
-                
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': cookie
+            },
+
         });
-        if(response.ok){
-            return Promise.resolve(response.json()?.then((data)=>data?.message?.data));
-        }else{
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message?.data));
+        } else {
             const Response = await response.json();
             return Promise.reject(Response);
         }
@@ -48,22 +48,22 @@ export const getCompanyDropdownBasedOUser = async(cookie:string):Promise<company
     }
 }
 
-export const createPurchaseReqisition = async(body:any):Promise<any>=>{
+export const createPurchaseReqisition = async (body: any): Promise<any> => {
     try {
         const response = await fetch(`${API_END_POINTS.createPurchaseReqisition}`, {
             method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body:JSON.stringify({data:body})
-                
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({ data: body })
+
         });
-        if(response.ok){
-            return Promise.resolve(response.json()?.then((data)=>data?.message?.data));
-        }else{
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data));
+        } else {
             const Response = await response.json();
-            return Promise.reject(Response);
+            return Promise.reject(Response?.message);
         }
     } catch (error) {
         console.error("Error Fetching Company Dropdown :", error);
@@ -71,20 +71,20 @@ export const createPurchaseReqisition = async(body:any):Promise<any>=>{
     }
 }
 
-export const getPurchaseReqisitionData = async(name:string,cookie?:string):Promise<purchaseRequisitionDataType>=>{
+export const getPurchaseReqisitionData = async (name: string, cookie?: string): Promise<purchaseRequisitionDataType> => {
     try {
         const response = await fetch(`${API_END_POINTS.getPurchaseRequisitionData}?name=${name}`, {
             method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cookie': cookie as string
-                },
-                credentials: 'include',
-                
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': cookie as string
+            },
+            credentials: 'include',
+
         });
-        if(response.ok){
-            return Promise.resolve(response.json()?.then((data)=>data?.message?.data));
-        }else{
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message?.data));
+        } else {
             const Response = await response.json();
             return Promise.reject(Response);
         }
@@ -95,20 +95,20 @@ export const getPurchaseReqisitionData = async(name:string,cookie?:string):Promi
 }
 
 
-export const getPurchaseRequisitionMaterialDropdown = async(query:string,company:string,cookie?:string):Promise<PurchaseRequisitionMaterialDropdownType[]>=>{
+export const getPurchaseRequisitionMaterialDropdown = async (query: string, company: string, cookie?: string): Promise<PurchaseRequisitionMaterialDropdownType[]> => {
     try {
         const response = await fetch(`${API_END_POINTS.getMaterialDropdown}?search_term=${query}&company=${company}`, {
             method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cookie': cookie as string
-                },
-                credentials: 'include',
-                
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': cookie as string
+            },
+            credentials: 'include',
+
         });
-        if(response.ok){
-            return Promise.resolve(response.json()?.then((data)=>data?.message?.data));
-        }else{
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message?.data));
+        } else {
             const Response = await response.json();
             return Promise.reject(Response);
         }
@@ -118,19 +118,19 @@ export const getPurchaseRequisitionMaterialDropdown = async(query:string,company
     }
 }
 
-export const getPurchaseRequisitionPlantDropdown = async(company:string,cookie?:string):Promise<purchaseRequisitionPlantDropdownType[]>=>{
+export const getPurchaseRequisitionPlantDropdown = async (company: string, cookie?: string): Promise<purchaseRequisitionPlantDropdownType[]> => {
     try {
         const response = await fetch(`${API_END_POINTS.getPlantDropdown}?company=${company}`, {
             method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cookie': cookie as string
-                },
-                credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': cookie as string
+            },
+            credentials: 'include',
         });
-        if(response.ok){
-            return Promise.resolve(response.json()?.then((data)=>data?.message?.data));
-        }else{
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message?.data));
+        } else {
             const Response = await response.json();
             return Promise.reject(Response);
         }
@@ -140,19 +140,19 @@ export const getPurchaseRequisitionPlantDropdown = async(company:string,cookie?:
     }
 }
 
-export const getPurchaseRequisitionPurchaseGroupDropdown = async(material:string,cookie?:string):Promise<purchaseRequisitionPurchaseGroupDropdownType[]>=>{
+export const getPurchaseRequisitionPurchaseGroupDropdown = async (material: string, cookie?: string): Promise<purchaseRequisitionPurchaseGroupDropdownType[]> => {
     try {
         const response = await fetch(`${API_END_POINTS.getPurchaseGroupDropdown}?material=${material}`, {
             method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cookie': cookie as string
-                },
-                credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': cookie as string
+            },
+            credentials: 'include',
         });
-        if(response.ok){
-            return Promise.resolve(response.json()?.then((data)=>data?.message?.data));
-        }else{
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message?.data));
+        } else {
             const Response = await response.json();
             return Promise.reject(Response);
         }
@@ -163,19 +163,19 @@ export const getPurchaseRequisitionPurchaseGroupDropdown = async(material:string
 }
 
 
-export const getPurchaseRequisitionUOM = async(material:string,cookie?:string):Promise<purchaseRequisitionUOMType>=>{
+export const getPurchaseRequisitionUOM = async (material: string, cookie?: string): Promise<purchaseRequisitionUOMType> => {
     try {
         const response = await fetch(`${API_END_POINTS.getUOMDropdown}?material=${material}`, {
             method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cookie': cookie as string
-                },
-                credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': cookie as string
+            },
+            credentials: 'include',
         });
-        if(response.ok){
-            return Promise.resolve(response.json()?.then((data)=>data?.message?.data?.base_uom));
-        }else{
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message?.data?.base_uom));
+        } else {
             const Response = await response.json();
             return Promise.reject(Response);
         }
@@ -186,26 +186,26 @@ export const getPurchaseRequisitionUOM = async(material:string,cookie?:string):P
 }
 
 
-export const addPurchaseRequisitionNBItems = async(body:any,type:string,cookie?:string):Promise<any>=>{
+export const addPurchaseRequisitionNBItems = async (body: any, type: string, cookie?: string): Promise<any> => {
     let url = "";
-    if(type == "NB-CAPEX"){
+    if (type == "NB-CAPEX") {
         url = API_END_POINTS.addPurchaseRequisitionCapexItems;
-    }else{
+    } else {
         url = API_END_POINTS.addPurchaseRequisitionNBItems;
     }
     try {
         const response = await fetch(url, {
             method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cookie': cookie as string
-                },
-                credentials: 'include',
-                body: JSON.stringify(body)
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': cookie as string
+            },
+            credentials: 'include',
+            body: JSON.stringify(body)
         });
-        if(response.ok){
-            return Promise.resolve(response.json()?.then((data)=>data?.message?.message));
-        }else{
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message?.message));
+        } else {
             const Response = await response.json();
             return Promise.reject(Response);
         }
@@ -216,25 +216,25 @@ export const addPurchaseRequisitionNBItems = async(body:any,type:string,cookie?:
 }
 
 
-export const deletePurchaseRequisitionNBItems = async(name:any,type:string,cookie?:string):Promise<any>=>{
+export const deletePurchaseRequisitionNBItems = async (name: any, type: string, cookie?: string): Promise<any> => {
     let url = "";
-    if(type == "NB-CAPEX"){
+    if (type == "NB-CAPEX") {
         url = API_END_POINTS.deletePurchaseRequisitionCapexItems;
-    }else{
+    } else {
         url = API_END_POINTS.deletePurchaseRequisitionNBItems;
     }
     try {
         const response = await fetch(`${url}?name=${name}`, {
             method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cookie': cookie as string
-                },
-                credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': cookie as string
+            },
+            credentials: 'include',
         });
-        if(response.ok){
-            return Promise.resolve(response.json()?.then((data)=>data?.message?.message));
-        }else{
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message?.message));
+        } else {
             const Response = await response.json();
             return Promise.reject(Response);
         }
@@ -245,26 +245,26 @@ export const deletePurchaseRequisitionNBItems = async(name:any,type:string,cooki
 }
 
 
-export const updatePurchaseRequisitionNBItems = async(body:any,type:string,cookie?:string):Promise<any>=>{
+export const updatePurchaseRequisitionNBItems = async (body: any, type: string, cookie?: string): Promise<any> => {
     let url = "";
-    if(type == "NB-CAPEX"){
+    if (type == "NB-CAPEX") {
         url = API_END_POINTS.updatePurchaseRequisitionCapexItems;
-    }else{
+    } else {
         url = API_END_POINTS.updatePurchaseRequisitionNBItems;
     }
     try {
         const response = await fetch(url, {
             method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cookie': cookie as string
-                },
-                credentials: 'include',
-                body: JSON.stringify(body)
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': cookie as string
+            },
+            credentials: 'include',
+            body: JSON.stringify(body)
         });
-        if(response.ok){
-            return Promise.resolve(response.json()?.then((data)=>data?.message?.message));
-        }else{
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message?.message));
+        } else {
             const Response = await response.json();
             return Promise.reject(Response);
         }
@@ -276,19 +276,19 @@ export const updatePurchaseRequisitionNBItems = async(body:any,type:string,cooki
 
 
 
-export const submitPurchaseRequisition = async(name:any,cookie?:string):Promise<any>=>{
+export const submitPurchaseRequisition = async (name: any, cookie?: string): Promise<any> => {
     try {
         const response = await fetch(`${API_END_POINTS.submitPurchaseRequisition}?name=${name}`, {
             method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cookie': cookie as string
-                },
-                credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': cookie as string
+            },
+            credentials: 'include',
         });
-        if(response.ok){
-            return Promise.resolve(response.json()?.then((data)=>data?.message?.message));
-        }else{
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message?.message));
+        } else {
             const Response = await response.json();
             return Promise.reject(Response);
         }
