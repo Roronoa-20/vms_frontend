@@ -115,7 +115,7 @@ const Dashboard = async () => {
 
   const prInquiryDashboardUrl = API_END_POINTS?.prInquiryDashboardTable;
   const prInquiryApi: AxiosResponse = await requestWrapper({
-    url: prInquiryDashboardUrl,
+    url: `${prInquiryDashboardUrl}?company=""`,
     method: "GET",
     headers: {
       cookie: cookieHeaderString

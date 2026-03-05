@@ -480,6 +480,12 @@ export const AccountSideBarMenu: SidebarItem[] = [
     name: "View GRN",
     href: "/view-grn",
     children: []
+  },
+  {
+    logo: "/sidebar-assests/vendor-icon.svg",
+    name: "Quick Vendor",
+    href: "/quick-vendor",
+    children: []
   }
 ];
 
