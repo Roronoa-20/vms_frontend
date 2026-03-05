@@ -25,6 +25,8 @@ import Pagination from "./Pagination";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
+import { GetPurchaseRequisitionTypeDropdown } from "@/src/services/prRequisition/prRequisitionNb.services";
+import { purchaseRequisitionTypeDropdownType } from "@/src/types/prRequisition/prRequisition.types";
 
 type Props = {
   dashboardTableData?: PurchaseRequisition[]
@@ -54,12 +56,14 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
   const [total_event_list, settotalEventList] = useState(0);
   const [record_per_page, setRecordPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [prTypeDropdown, setPRTypeDropdown] = useState<purchaseRequisitionTypeDropdownType[]>([]);
+  const [selectedPRType, setSelectedPRType] = useState<string>("");
   const user = Cookies?.get("user_id");
   console.log(user, "this is user");
   const debouncedSearchName = useDebounce(search, 300);
   useEffect(() => {
     fetchTable();
-  }, [debouncedSearchName, selectedCompany, currentPage])
+  }, [debouncedSearchName, selectedCompany, currentPage, selectedPRType])
 
   const handlesearchname = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -68,18 +72,26 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
   };
 
   const fetchTable = async () => {
+    const offset = (currentPage - 1) * record_per_page;
     const dashboardPRTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.prTableData}?usr=${user}&company=${selectedCompany}&cart_id=${debouncedSearchName}&page_no=${currentPage}&page_length=${record_per_page}`,
+      url: `${API_END_POINTS?.prTableData}?limit=${record_per_page}&offset=${offset}&company=${selectedCompany}&search_term=${debouncedSearchName}&pr_type=${selectedPRType == "all" ? "" : selectedPRType}`,
       method: "GET",
     });
     if (dashboardPRTableDataApi?.status == 200) {
       setTable(dashboardPRTableDataApi?.data?.message?.data);
-      settotalEventList(dashboardPRTableDataApi?.data?.message?.total_count);
-      // setRecordPerPage(5)
+      settotalEventList(dashboardPRTableDataApi?.data?.message?.pagination?.total_count);
     }
   };
 
-  console.log("Table Data of PR PT----->",table);
+  useEffect(() => {
+    GetPurchaseRequisitionTypeDropdown().then((res) => {
+      setPRTypeDropdown(res);
+    }).catch((err) => {
+      console.log(err);
+    })
+  }, []);
+
+  console.log("Table Data of PR PT----->", table);
 
   return (
     <>
@@ -89,9 +101,9 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
             Purchase Requisition Request
           </h1>
           <div className="flex gap-4">
-            <Input 
-              placeholder="Search Cart-ID..."
-              onChange={(e) => { handlesearchname(e) }} 
+            <Input
+              placeholder="Search PR Name"
+              onChange={(e) => { handlesearchname(e) }}
             />
             <Select
               value={selectedCompany || "all"}
@@ -106,6 +118,24 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
                   {companyDropdown?.map((item) => (
                     <SelectItem key={item.name} value={item.name}>
                       {item.description}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <Select
+              value={selectedPRType}
+              onValueChange={(value) => setSelectedPRType(value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select PR Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="all">All</SelectItem>
+                  {prTypeDropdown?.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.label}
                     </SelectItem>
                   ))}
                 </SelectGroup>

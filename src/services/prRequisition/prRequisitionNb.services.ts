@@ -1,13 +1,13 @@
 import { companyDropdownBasedOnUserType, purchaseRequisitionDataType, PurchaseRequisitionMaterialDropdownType, purchaseRequisitionPlantDropdownType, purchaseRequisitionPurchaseGroupDropdownType, purchaseRequisitionTypeDropdownType, purchaseRequisitionUOMType } from "@/src/types/prRequisition/prRequisition.types";
 import API_END_POINTS from "./apiEndPointsNb";
 
-export const GetPurchaseRequisitionTypeDropdown = async (cookies: string): Promise<purchaseRequisitionTypeDropdownType[]> => {
+export const GetPurchaseRequisitionTypeDropdown = async (cookies?: string): Promise<purchaseRequisitionTypeDropdownType[]> => {
     try {
         const response = await fetch(`${API_END_POINTS.getPurchaseRequisitionTypeDropdown}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Cookie': cookies
+                'Cookie': cookies as string
             },
             credentials: 'include',
         });
