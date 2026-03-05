@@ -264,8 +264,6 @@ export interface TVendorDetails {
     district: string;
     region: string;
     country: string;
-    gst_no: string;
-    gst_ven_class: string;
     pan_number: string;
     payee_in_document: boolean;
     check_double_invoice: boolean;

@@ -191,10 +191,10 @@ export const getLocationByPincode = async (pincode: string, cookie?: string): Pr
     }
 };
 
-export const getReconciliationMasterData = async (company?: string, search_term?: string, cookie?: string): Promise<TReconciliationResponse> => {
+export const getReconciliationMasterData = async (account_group?: string, search_term?: string, cookie?: string): Promise<TReconciliationResponse> => {
     try {
         const queryParams = new URLSearchParams();
-        if (company) queryParams.append('company', company);
+        if (account_group) queryParams.append('account_group', account_group);
         if (search_term) queryParams.append('search_term', search_term);
 
         const queryString = queryParams.toString() ? `?${queryParams.toString()}` : "";

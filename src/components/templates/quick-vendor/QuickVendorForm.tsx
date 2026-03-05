@@ -51,7 +51,43 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 const response = await getQuickVendorOnboardingDetails(onboarding_id);
                 const responseData: any = response?.message?.data;
                 if (responseData) {
-                    setFormData(responseData?.vendor_details ? responseData.vendor_details : responseData);
+                    const data = responseData?.vendor_details ? responseData.vendor_details : responseData;
+
+                    // Map international_bank_details fields from API format to form format
+                    const mappedInternationalBankDetails = data.international_bank_details?.map((bank: any) => ({
+                        meril_company_name: bank.meril_company_name || '',
+                        beneficiary_name: bank.beneficiary_name || '',
+                        beneficiary_bank_name: bank.beneficiary_bank_name || '',
+                        beneficiary_account_no: bank.beneficiary_account_no || '',
+                        beneficiary_iban_no: bank.iban_no || bank.beneficiary_iban_no || '',
+                        beneficiary_bank_address: bank.beneficiary_bank_address || '',
+                        beneficiary_swift_code: bank.swift_code || bank.beneficiary_swift_code || '',
+                        beneficiary_ach_no: bank.beneficiary_ach_no || '',
+                        beneficiary_aba_no: bank.beneficiary_aba_no || '',
+                        beneficiary_routing_no: bank.beneficiary_routing_no || '',
+                    })) || [];
+
+                    const mappedData: any = {
+                        ...data,
+                        vendors_primary_email: data.email || data.vendors_primary_email || '',
+                        mobile_no: data.mobile_number || data.mobile_no || '',
+                        vendor_type: data.vendor_types && data.vendor_types.length > 0 ? data.vendor_types[0] : (data.vendor_type || ''),
+                        payee_in_document: data.payee_in_document === 1 || data.payee_in_document === true,
+                        check_double_invoice: data.check_double_invoice === 1 || data.check_double_invoice === true,
+                        gr_based_inv_verif: data.gr_base_inv_ver === 1 || data.gr_based_inv_verif === true,
+                        service_based_inv_verif: data.service_base_inv_ver === 1 || data.service_based_inv_verif === true,
+                        international_bank_details: mappedInternationalBankDetails,
+                    };
+
+                    setFormData(mappedData);
+                    if (mappedData?.bank_details?.length > 0) {
+                        getBankKeyMasterData(mappedData?.bank_details[0]?.country, mappedData?.bank_details[0]?.bank_key).then((res) => {
+                            if (res?.message?.data) {
+                                setBankKeyDropdown(res?.message?.data);
+                            }
+                        });
+                    }
+
                 }
             } catch (error) {
                 console.error("Failed to fetch vendor draft details", error);
@@ -93,6 +129,45 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             delete submitData.gr_based_inv_verif;
             delete submitData.service_based_inv_verif;
 
+            submitData.gst_details = formData.gst_details?.map(gst => ({
+                gst_state: formData.state || "",
+                gst_number: gst.gst_number || "",
+                gst_ven_class: gst.gst_ven_class || ""
+            })) || [];
+
+            submitData.bank_details = formData.bank_details?.map(bank => ({
+                country: bank.country || "",
+                bank_key: bank.bank_key || "",
+                account_number: bank.account_number || "",
+                name_of_account_holder: bank.name_of_account_holder || "",
+                bank_type: bank.bank_type || "",
+                ak: bank.ak || "",
+                bnkt: bank.bnkt || "",
+                ifsc_code: bank.ifsc_code || ""
+                // bank_name intentionally excluded as requested
+            })) || [];
+
+            submitData.international_bank_details = formData.international_bank_details?.map(bank => ({
+                meril_company_name: bank.meril_company_name || "",
+                beneficiary_name: bank.beneficiary_name || "",
+                swift_code: bank.beneficiary_swift_code || (bank as any).swift_code || "",
+                iban_no: bank.beneficiary_iban_no || (bank as any).iban_no || "",
+                beneficiary_bank_name: bank.beneficiary_bank_name || "",
+                beneficiary_account_no: bank.beneficiary_account_no || "",
+                beneficiary_bank_address: bank.beneficiary_bank_address || "",
+                beneficiary_currency: (bank as any).beneficiary_currency || "",
+                beneficiary_ach_no: bank.beneficiary_ach_no || "",
+                beneficiary_aba_no: bank.beneficiary_aba_no || "",
+                beneficiary_routing_no: bank.beneficiary_routing_no || ""
+            })) || [];
+
+            submitData.contact_persons = formData.contact_persons?.map(contact => ({
+                first_name: contact.first_name || "",
+                last_name: contact.last_name || "",
+                email: contact.email || "",
+                contact_number: contact.contact_number || ""
+            })) || [];
+
             const body = new FormData();
             body.append('data', JSON.stringify({ vendor_details: submitData }));
 
@@ -105,7 +180,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             const response = await createQuickVendorOnboarding(body);
             if (response?.message?.status === 'success') {
                 alert("Vendor created successfully!");
-                router.push(`/quick-vendor?onboarding_id=${response?.message?.data?.onboarding_id}`); // Redirect back or to a specific page
+                router.push(`/quick-vendor?onboarding_id=${response?.message?.onboarding_id}`); // Redirect back or to a specific page
             } else {
                 alert(response?.message?.message || "Something went wrong.");
             }
@@ -136,8 +211,8 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
     }
 
     const fetchReconciliationDropdown = (query?: string): Promise<TReconciliation[]> => {
-        if (!formData?.company_code) return Promise.resolve([]);
-        return getReconciliationMasterData(formData?.company_code, query)
+        if (!formData?.account_group) return Promise.resolve([]);
+        return getReconciliationMasterData(formData?.account_group, query)
             .then((res) => { setReconciliationDropdown(res?.message?.data); return res?.message?.data; })
             .catch((err) => {
                 console.error(err);
@@ -176,11 +251,16 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
     useEffect(() => {
         if (formData?.company_code) {
             fetchPurchaseOrgDropdown();
-            fetchReconciliationDropdown();
             fetchTermsOfPaymentDropdown();
             fetchIncotermsDropdown();
         }
     }, [formData?.company_code]);
+
+    useEffect(() => {
+        if (formData?.account_group) {
+            fetchReconciliationDropdown();
+        }
+    }, [formData?.account_group]);
 
     useEffect(() => {
         if (formData?.vendor_type && formData?.company_code && formData?.purchase_organization) {
@@ -216,6 +296,12 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 return [];
             });
     };
+
+    useEffect(() => {
+        if (onboarding_id) {
+            fetchVendorDetails();
+        }
+    }, [])
 
     return (
         <div className="flex flex-col w-full mb-4 p-4">
@@ -436,7 +522,11 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         placeholder="Enter Number"
                         className="rounded-xl h-10 bg-white border-gray-200"
                         value={formData?.mobile_no ?? ''}
-                        onChange={handleInputChange}
+                        onChange={(e) => {
+                            e.target.value = e.target.value.replace(/\D/g, '');
+                            handleInputChange(e);
+                        }}
+                        maxLength={10}
                     />
                 </div>
 
@@ -593,11 +683,16 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 <div className="col-span-1 flex flex-col gap-2">
                     <h2 className="text-[13px] font-medium text-[#64748B]">GST No.</h2>
                     <Input
-                        name="gst_no"
+                        name="gst_number"
                         placeholder="0 - If Non available"
                         className="rounded-xl h-10 bg-white border-gray-200"
-                        value={formData?.gst_no ?? ''}
-                        onChange={handleInputChange}
+                        value={formData?.gst_details?.[0]?.gst_number ?? ''}
+                        onChange={(e) => {
+                            const updated = [...(formData?.gst_details || [])];
+                            if (updated.length === 0) updated.push({ gst_state: '', gst_number: '', gst_ven_class: '' });
+                            updated[0] = { ...updated[0], gst_number: e.target.value };
+                            setFormData((prev) => ({ ...prev, gst_details: updated }));
+                        }}
                     />
                 </div>
 
@@ -608,8 +703,13 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         name="gst_ven_class"
                         placeholder="0"
                         className="rounded-xl h-10 bg-white border-gray-200"
-                        value={formData?.gst_ven_class ?? ''}
-                        onChange={handleInputChange}
+                        value={formData?.gst_details?.[0]?.gst_ven_class ?? ''}
+                        onChange={(e) => {
+                            const updated = [...(formData?.gst_details || [])];
+                            if (updated.length === 0) updated.push({ gst_state: '', gst_number: '', gst_ven_class: '' });
+                            updated[0] = { ...updated[0], gst_ven_class: e.target.value };
+                            setFormData((prev) => ({ ...prev, gst_details: updated }));
+                        }}
                     />
                 </div>
 
