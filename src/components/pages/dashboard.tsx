@@ -11,7 +11,7 @@ const Dashboard = async () => {
   const user = cookieStore.get("user_id")?.value
   console.log(user, "user")
   const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
-  
+
   //card data
   const dashboardCardApi: AxiosResponse = await requestWrapper({
     url: `${API_END_POINTS?.dashboardCardURL}?usr=${user}`,
@@ -115,7 +115,7 @@ const Dashboard = async () => {
 
   const prInquiryDashboardUrl = API_END_POINTS?.prInquiryDashboardTable;
   const prInquiryApi: AxiosResponse = await requestWrapper({
-    url: prInquiryDashboardUrl,
+    url: `${prInquiryDashboardUrl}?company=""`,
     method: "GET",
     headers: {
       cookie: cookieHeaderString
@@ -213,10 +213,10 @@ const Dashboard = async () => {
 
   console.log(filterregisteredby, "prData");
 
-return (
-<div className="p-4">
+  return (
+    <div className="p-4">
       {/* Cards */}
-<DashboardCardCounter
+      <DashboardCardCounter
         cardData={CardData}
         companyDropdown={companyDropdown}
         filterregisteredby={filterregisteredby}
@@ -237,9 +237,9 @@ return (
         dashboardAccountsRejected={dashboardAccountsRejected}
         dashboardAccountsSapErrors={dashboardAccountsSapErrors}
         ASAdashboardOnboardedVendorListTableData={ASAdashboardOnboardedVendorListTableData}
-/>
-</div>
-)
+      />
+    </div>
+  )
 }
 
 export default Dashboard;
