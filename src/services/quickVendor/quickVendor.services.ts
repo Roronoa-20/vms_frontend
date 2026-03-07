@@ -414,3 +414,197 @@ export const getIncotermsMasterData = async (company?: string, search_term?: str
         return Promise.reject(error);
     }
 };
+
+export const updateGstDetail = async (data: { onboarding_id: string; name?: string; gst_state: string; gst_number: string; gst_ven_class: string }, gst_document?: File | null): Promise<any> => {
+    try {
+        const formData = new FormData();
+        formData.append('data', JSON.stringify(data));
+        if (gst_document) {
+            formData.append('gst_document', gst_document);
+        }
+        const response = await fetch(`${QUICK_VENDOR_END_POINTS.updateGstDetail}`, {
+            method: 'POST',
+            credentials: 'include',
+            body: formData
+        });
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response);
+        }
+    } catch (error) {
+        console.error("Error updating GST detail:", error);
+        return Promise.reject(error);
+    }
+};
+
+export const deleteGstDetailRow = async (onboarding_id: string, row_name: string): Promise<any> => {
+    try {
+        const response = await fetch(`${QUICK_VENDOR_END_POINTS.deleteGstDetailRow}?onboarding_id=${onboarding_id}&row_name=${row_name}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        });
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response);
+        }
+    } catch (error) {
+        console.error("Error deleting GST detail row:", error);
+        return Promise.reject(error);
+    }
+};
+
+export const updateContactDetail = async (body: { data: { onboarding_id: string; name?: string; first_name: string; last_name: string; email: string; contact_number: string } }): Promise<any> => {
+    try {
+        const response = await fetch(`${QUICK_VENDOR_END_POINTS.updateContactDetail}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify(body)
+        });
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response);
+        }
+    } catch (error) {
+        console.error("Error updating contact detail:", error);
+        return Promise.reject(error);
+    }
+};
+
+export const deleteContactDetailRow = async (onboarding_id: string, row_name: string): Promise<any> => {
+    try {
+        const response = await fetch(`${QUICK_VENDOR_END_POINTS.deleteContactDetailRow}?onboarding_id=${onboarding_id}&row_name=${row_name}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        });
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response);
+        }
+    } catch (error) {
+        console.error("Error deleting contact detail row:", error);
+        return Promise.reject(error);
+    }
+};
+
+export const updateDomesticBankDetails = async (body: { onboarding_id: string; name?: string; country: string; bank_key: string; bank_type: string; name_of_account_holder: string; account_number: string; ifsc_code: string }): Promise<any> => {
+    try {
+        const response = await fetch(`${QUICK_VENDOR_END_POINTS.updateDomesticBankDetails}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify(body)
+        });
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response);
+        }
+    } catch (error) {
+        console.error("Error updating domestic bank details:", error);
+        return Promise.reject(error);
+    }
+};
+
+export const deleteDomesticBankDetailRow = async (onboarding_id: string, row_name: string): Promise<any> => {
+    try {
+        const response = await fetch(`${QUICK_VENDOR_END_POINTS.deleteDomesticBankDetailRow}?onboarding_id=${onboarding_id}&row_name=${row_name}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        });
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response);
+        }
+    } catch (error) {
+        console.error("Error deleting domestic bank detail row:", error);
+        return Promise.reject(error);
+    }
+};
+
+export const updateImportBankDetails = async (body: { onboarding_id: string; name?: string; meril_company_name: string; beneficiary_name: string; beneficiary_swift_code: string; beneficiary_iban_no: string; beneficiary_aba_no: string; beneficiary_bank_address: string; beneficiary_bank_name: string; beneficiary_account_no: string; beneficiary_ach_no: string; beneficiary_routing_no: string; beneficiary_currency: string }): Promise<any> => {
+    try {
+        const response = await fetch(`${QUICK_VENDOR_END_POINTS.updateImportBankDetails}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify(body)
+        });
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response);
+        }
+    } catch (error) {
+        console.error("Error updating import bank details:", error);
+        return Promise.reject(error);
+    }
+};
+
+export const deleteImportBankDetailRow = async (onboarding_id: string, row_name: string): Promise<any> => {
+    try {
+        const response = await fetch(`${QUICK_VENDOR_END_POINTS.deleteImportBankDetailRow}?onboarding_id=${onboarding_id}&row_name=${row_name}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        });
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response);
+        }
+    } catch (error) {
+        console.error("Error deleting import bank detail row:", error);
+        return Promise.reject(error);
+    }
+};
+
+export const submitOnboardingForm = async (formData: FormData, cookie?: string): Promise<any> => {
+    try {
+        const response = await fetch(`${QUICK_VENDOR_END_POINTS.submitOnboardingForm}`, {
+            method: 'POST',
+            headers: cookie ? { 'Cookie': cookie } : {},
+            credentials: 'include',
+            body: formData
+        });
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response);
+        }
+    } catch (error) {
+        console.error("Error submitting onboarding form:", error);
+        return Promise.reject(error);
+    }
+};

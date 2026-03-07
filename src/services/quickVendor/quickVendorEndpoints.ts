@@ -16,4 +16,13 @@ export const QUICK_VENDOR_END_POINTS = {
     createQuickVendorOnboarding: `${url}/api/method/vms.APIs.quick_onboarding.v1.vendor_registration.vendor_registration`,
     getQuickVendorOnboardingDetails: `${url}/api/method/vms.APIs.quick_onboarding.v1.quick_vendor_onboarding_details.get_quick_vendor_onboarding_details`,
     getIncotermsMasterData: `${url}/api/method/vms.utils.master_data.get_incoterms_master_data`,
+    updateGstDetail: `${url}/api/method/vms.APIs.quick_onboarding.v1.update_gst_detail.update_gst_details`,
+    updateContactDetail: `${url}/api/method/vms.APIs.quick_onboarding.v1.update_contact_person.update_contact_detail`,
+    deleteContactDetailRow: `${url}/api/method/vms.APIs.quick_onboarding.v1.update_contact_person.delete_contact_detail_row`,
+    updateDomesticBankDetails: `${url}/api/method/vms.APIs.quick_onboarding.v1.update_domestic_bank_details.update_domestic_bank_details`,
+    deleteDomesticBankDetailRow: `${url}/api/method/vms.APIs.quick_onboarding.v1.update_domestic_bank_details.delete_domestic_bank_detail_row`,
+    updateImportBankDetails: `${url}/api/method/vms.APIs.quick_onboarding.v1.update_import_bank_details.update_import_bank_details`,
+    deleteImportBankDetailRow: `${url}/api/method/vms.APIs.quick_onboarding.v1.update_import_bank_details.delete_import_bank_detail_row`,
+    submitOnboardingForm: `${url}/api/method/vms.APIs.quick_onboarding.v1.vendor_registration.submit_onboarding_form`,
+    deleteGstDetailRow: `${url}/api/method/vms.APIs.quick_onboarding.v1.update_gst_detail.delete_gst_detail_row`,
 }
