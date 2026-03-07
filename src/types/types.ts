@@ -1534,7 +1534,9 @@ export type CartDetails = {
 }
 
 export interface PurchaseRequisition {
-  pr_type:string
+  sap_pr_no: string
+  status: string,
+  pr_type: string
   name: string;
   creation: string;
   modified: string;

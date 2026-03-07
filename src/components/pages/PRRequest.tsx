@@ -1,5 +1,6 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
+import { Loader2 } from 'lucide-react'
 import CreatePurchaseRequest from '../templates/purchase-request/CreatePurchaseRequest'
 import { Button } from '../atoms/button'
 import NormalPR from '../templates/purchase-request/NormalPR'
@@ -27,6 +28,7 @@ enum PurchaseType {
 
 const PrRequest = (props: Props) => {
     const [prData, setPrData] = useState<purchaseRequisitionDataType>(props?.prData as purchaseRequisitionDataType);
+    const submitLoaderRef = useRef<HTMLSpanElement>(null);
 
     const fetchPrData = (prId?: string) => {
         getPurchaseReqisitionData(prId ?? props?.pr_id as string).then((res) => {
@@ -38,13 +40,23 @@ const PrRequest = (props: Props) => {
     }
 
     const handlePurchaseRequisitionSubmit = () => {
-        confirm("Are you sure you want to submit this purchase requisition?") &&
+        if (confirm("Are you sure you want to submit this purchase requisition?")) {
+            if (submitLoaderRef?.current) {
+                submitLoaderRef.current.className = "inline-flex animate-spin ml-2";
+            }
             submitPurchaseRequisition(props?.pr_id as string).then((res) => {
-                alert(res);
+                alert(res?.details?.error?.message?.value || res?.message);
                 fetchPrData();
+                if (submitLoaderRef?.current) {
+                    submitLoaderRef.current.className = "hidden";
+                }
             }).catch((err) => {
                 console.error("Error submitting purchase requisition:", err);
+                if (submitLoaderRef?.current) {
+                    submitLoaderRef.current.className = "hidden";
+                }
             })
+        }
     }
 
     return (
@@ -55,18 +67,21 @@ const PrRequest = (props: Props) => {
                     props?.pr_id && !prData?.is_submitted &&
                     <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => { handlePurchaseRequisitionSubmit() }}>
                         Submit PR
+                        <span ref={submitLoaderRef} className="hidden">
+                            <Loader2 className="w-5 h-5" />
+                        </span>
                     </Button>
                 }
             </div>
 
             {/* normal pr component */}
             {
-                props?.prData?.pr_type === PurchaseType.nbNormal && <NormalPR prData={prData} materialDropdown={props?.materialDropdown} plantDropdown={props?.plantDropdown} />
+                props?.prData?.pr_type === PurchaseType.nbNormal && <NormalPR prData={prData} materialDropdown={props?.materialDropdown} />
             }
 
             {/* capex pr component */}
             {
-                props?.prData?.pr_type === PurchaseType.nbCapex && <CapexPR prData={prData} materialDropdown={props?.materialDropdown} plantDropdown={props?.plantDropdown} />
+                props?.prData?.pr_type === PurchaseType.nbCapex && <CapexPR prData={prData} materialDropdown={props?.materialDropdown} />
             }
 
             {/* ZSB SERVICE */}

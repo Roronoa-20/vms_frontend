@@ -18,7 +18,7 @@ import {
 import { Input } from "../../atoms/input";
 import { Trash2 } from "lucide-react";
 import { nbCapexItemsType, nbItemsType, purchaseRequisitionDataType, PurchaseRequisitionMaterialDropdownType, purchaseRequisitionPlantDropdownType, purchaseRequisitionPurchaseGroupDropdownType, purchaseRequisitionUOMType } from "@/src/types/prRequisition/prRequisition.types";
-import { addPurchaseRequisitionNBItems, deletePurchaseRequisitionNBItems, getPurchaseReqisitionData, getPurchaseRequisitionMaterialDropdown, getPurchaseRequisitionPurchaseGroupDropdown, getPurchaseRequisitionUOM, updatePurchaseRequisitionNBItems } from "@/src/services/prRequisition/prRequisitionNb.services";
+import { addPurchaseRequisitionNBItems, deletePurchaseRequisitionNBItems, getPurchaseReqisitionData, getPurchaseRequisitionMaterialDropdown, getPurchaseRequisitionPurchaseGroupDropdown, getPurchaseRequisitionUOM, updatePurchaseRequisitionNBItems, getPlantByMaterial, getMaterialNameByCode } from "@/src/services/prRequisition/prRequisitionNb.services";
 import { set } from "nprogress";
 import { useSearchParams } from "next/navigation";
 import { deleteEnquiryItems } from "@/src/services/prEnquiry/prEnquiry.services";
@@ -26,165 +26,183 @@ import SearchSelectComponent from "../../molecules/Selectsearchcomponent";
 
 type Props = {
   prData?: purchaseRequisitionDataType
-  materialDropdown:PurchaseRequisitionMaterialDropdownType[]
-    plantDropdown: purchaseRequisitionPlantDropdownType[]
+  materialDropdown: PurchaseRequisitionMaterialDropdownType[]
 };
 
 
-const CapexPR = (props:Props) => {
-     const searchParams = useSearchParams();
-    const pr_id = searchParams.get("pr_id") as string;
-    const [purchaseGroupDropdown, setPurchaseGroupDropdown] = useState<purchaseRequisitionPurchaseGroupDropdownType[]>([]);
-    const [uomDrop, setUOM] = useState<purchaseRequisitionUOMType>();
-    const [isPurchaseGroupDropdown,setIsPurchaseGroupDropdown] = useState(false);
+const CapexPR = (props: Props) => {
+  const searchParams = useSearchParams();
+  const pr_id = searchParams.get("pr_id") as string;
+  const [purchaseGroupDropdown, setPurchaseGroupDropdown] = useState<purchaseRequisitionPurchaseGroupDropdownType[]>([]);
+  const [uomDrop, setUOM] = useState<purchaseRequisitionUOMType>();
+  const [isPurchaseGroupDropdown, setIsPurchaseGroupDropdown] = useState(false);
+  const [isPlantDropdown, setIsPlantDropdown] = useState(false);
+  const [plantDropdown, setPlantDropdown] = useState<purchaseRequisitionPlantDropdownType[]>();
 
-    const [plantDropdown, setPlantDropdown] = useState<purchaseRequisitionPlantDropdownType[]>(props?.plantDropdown);
+  const [singleRowData, setSingleRowData] = useState<nbCapexItemsType>();
 
-    const [singleRowData, setSingleRowData] = useState<nbCapexItemsType>();
+  const [tableData, setTableData] = useState<nbCapexItemsType[]>(props?.prData?.nb_capex_items || []);
 
-    const [tableData, setTableData] = useState<nbCapexItemsType[]>(props?.prData?.nb_capex_items || []);
+  const [materialDropdown, setMaterialDropdown] = useState<PurchaseRequisitionMaterialDropdownType[]>(props?.materialDropdown);
 
-    const [materialDropdown,setMaterialDropdown] = useState<PurchaseRequisitionMaterialDropdownType[]>(props?.materialDropdown);
+  const getPurchaseGroupBasedOnMaterial = (material: string) => {
+    getPurchaseRequisitionPurchaseGroupDropdown(material).then((res: any) => {
+      if (Array.isArray(res)) {
+        setPurchaseGroupDropdown(res);
+        setIsPurchaseGroupDropdown(true);
+      } else {
+        setSingleRowData((prev) => ({ ...prev, purchasing_group: res?.purchase_group } as nbCapexItemsType));
+        setIsPurchaseGroupDropdown(false);
+      }
 
-    const getPurchaseGroupBasedOnMaterial = (material:string)=>{
-        getPurchaseRequisitionPurchaseGroupDropdown(material).then((res:any)=>{
-           if( Array.isArray(res)){
-                setPurchaseGroupDropdown(res);
-                setIsPurchaseGroupDropdown(true);
-            }else{
-                setSingleRowData((prev)=>({...prev,purchasing_group:res?.purchase_group} as nbCapexItemsType));
-                setIsPurchaseGroupDropdown(false);
-            }
-            
-        }).catch((err)=>{
-            console.log(err);
-        })
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+
+  const fetchPrData = () => {
+    getPurchaseReqisitionData(pr_id as string).then((res) => {
+      setTableData(res?.nb_capex_items || []);
+    }).catch((err) => {
+      console.error("Error fetching PR data:", err);
+    })
+  }
+
+  const getUOMBasedOnMaterial = (material: string) => {
+    getPurchaseRequisitionUOM(material).then((res) => {
+      setSingleRowData(prev => ({ ...prev, uom: res?.base_uom }) as nbCapexItemsType);
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+
+  const getPlantBasedOnMaterial = (material: string) => {
+    getPlantByMaterial(material).then((res: any) => {
+      if (Array.isArray(res)) {
+        setPlantDropdown(res);
+        setIsPlantDropdown(true);
+      } else {
+        setSingleRowData(prev => ({ ...prev, plant: res?.plant }) as nbCapexItemsType);
+        setIsPlantDropdown(false);
+      }
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+
+  const handleTableAdd = () => {
+
+    if (!singleRowData?.material) {
+      alert("please select material");
+      return;
     }
 
-     const fetchPrData = ()=>{
-            getPurchaseReqisitionData(pr_id as string).then((res)=>{
-                setTableData(res?.nb_capex_items || []);
-            }).catch((err)=>{
-                console.error("Error fetching PR data:", err);
-            })
-        }
-
-    const getUOMBasedOnMaterial = (material:string)=>{
-        getPurchaseRequisitionUOM(material).then((res)=>{
-            setSingleRowData(prev=>({...prev,uom:res?.base_uom}) as nbCapexItemsType);
-        }).catch((err)=>{
-            console.log(err);
-        })
+    if (!singleRowData?.plant) {
+      alert("please select plant");
+      return;
     }
 
-    const handleTableAdd = ()=>{
+    if (!singleRowData?.asset_code) {
+      alert("please enter asset code");
+      return;
+    }
 
-      if(!singleRowData?.material){
-        alert("please select material");
-        return;
+    if (!singleRowData?.quantity) {
+      alert("please enter quantity");
+      return;
+    }
+
+    if (!singleRowData?.purchasing_group) {
+      alert("please select purchasing group");
+      return;
+    }
+
+    if (!singleRowData?.required_delivery_date) {
+      alert("please select required delivery date");
+      return;
+    }
+
+    const body = {
+      data: {
+        name: singleRowData?.name,
+        purchase_requisition: props?.prData?.name,
+        company: props?.prData?.company,
+        material: singleRowData?.material,
+        plant: singleRowData?.plant,
+        requisitioner: props?.prData?.name,
+        uom: singleRowData?.uom,
+        quantity: singleRowData?.quantity,
+        purchasing_group: singleRowData?.purchasing_group,
+        required_delivery_date: singleRowData?.required_delivery_date,
+        asset_code: singleRowData?.asset_code,
+        account_assignment_category: "A"
       }
-
-      if(!singleRowData?.plant){
-        alert("please select plant");
-        return;
-      }
-
-      if(!singleRowData?.asset_code){
-        alert("please enter asset code");
-        return;
-      }
-
-      if(!singleRowData?.quantity){
-        alert("please enter quantity");
-        return;
-      }
-
-      if(!singleRowData?.purchasing_group){
-        alert("please select purchasing group");
-        return;
-      }
-
-      if(!singleRowData?.required_delivery_date){
-        alert("please select required delivery date");
-        return;
-      }
-
-        const body = {
-            data:{
-                name:singleRowData?.name,
-                purchase_requisition:props?.prData?.name,
-                company:props?.prData?.company,
-                material:singleRowData?.material,
-                plant:singleRowData?.plant,
-                requisitioner:props?.prData?.name,
-                uom:singleRowData?.uom,
-                quantity:singleRowData?.quantity,
-                purchasing_group:singleRowData?.purchasing_group,
-                required_delivery_date:singleRowData?.required_delivery_date,
-                asset_code:singleRowData?.asset_code,
-                account_assignment_category:"A"
-            }
-         }
-
-         
-
-         if(singleRowData?.name){
-            updatePurchaseRequisitionNBItems(body,"NB-CAPEX").then((res)=>{
-                alert(res);
-                setSingleRowData(undefined);
-                setIsPurchaseGroupDropdown(false);
-                setUOM(undefined);
-                fetchPrData();
-            }).catch((err)=>{
-                alert(err);
-            })
-         }else{
-
-         addPurchaseRequisitionNBItems(body,"NB-CAPEX").then((res)=>{
-            alert(res);
-            // setTableData(prev=>[...prev,singleRowData as nbItemsType]);
-            setSingleRowData(undefined);
-            setIsPurchaseGroupDropdown(false);
-            setUOM(undefined);
-            fetchPrData();
-            }).catch((err)=>{
-                console.log(err);
-            })
-        }
     }
 
 
-    const handleDeleteItem = (name:string)=>{
-        if(!confirm("Are you sure you want to delete this item?")){
-            return;
-        }
-        deletePurchaseRequisitionNBItems(name,"NB-CAPEX").then((res)=>{
-            alert(res);
-            fetchPrData();
-        }).catch((err)=>{
-            console.log(err);
-        })
+
+    if (singleRowData?.name) {
+      updatePurchaseRequisitionNBItems(body, "NB-CAPEX").then((res) => {
+        alert(res);
+        setSingleRowData(undefined);
+        setIsPurchaseGroupDropdown(false);
+        setIsPlantDropdown(false);
+        setUOM(undefined);
+        fetchPrData();
+      }).catch((err) => {
+        alert(err);
+      })
+    } else {
+
+      addPurchaseRequisitionNBItems(body, "NB-CAPEX").then((res) => {
+        alert(res);
+        // setTableData(prev=>[...prev,singleRowData as nbItemsType]);
+        setSingleRowData(undefined);
+        setIsPurchaseGroupDropdown(false);
+        setIsPlantDropdown(false);
+        setUOM(undefined);
+        fetchPrData();
+      }).catch((err) => {
+        console.log(err);
+      })
     }
+  }
 
-    const handleUpdateItem = (index:number)=>{
-        getPurchaseGroupBasedOnMaterial(tableData[index]?.material);
-        getUOMBasedOnMaterial(tableData[index]?.material);
-        fetchMaterialDropdown(tableData[index]?.material);
-        setSingleRowData(tableData[index]);
+
+  const handleDeleteItem = (name: string) => {
+    if (!confirm("Are you sure you want to delete this item?")) {
+      return;
     }
+    deletePurchaseRequisitionNBItems(name, "NB-CAPEX").then((res) => {
+      alert(res);
+      fetchPrData();
+      setSingleRowData(undefined);
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+
+  const handleUpdateItem = async (index: number) => {
+    const materialName = await getMaterialNameByCode(tableData[index]?.material);
+    getPurchaseGroupBasedOnMaterial(materialName?.material_name as string);
+    getUOMBasedOnMaterial(materialName?.material_name as string);
+    getPlantBasedOnMaterial(materialName?.material_name as string);
+    fetchMaterialDropdown(materialName?.material_name as string);
+    setSingleRowData({ ...tableData[index], material: materialName?.material_name } as nbCapexItemsType);
+  }
 
 
-      const fetchMaterialDropdown = (query?:string):Promise<PurchaseRequisitionMaterialDropdownType[]>=>{
-            return getPurchaseRequisitionMaterialDropdown(query as string, props?.prData?.company as string)
-              .then((res) => {setMaterialDropdown(res);return res})
-              .catch((err) => {
-                console.error(err);
-                return [];
-              });
-          }
-    
+  const fetchMaterialDropdown = (query?: string): Promise<PurchaseRequisitionMaterialDropdownType[]> => {
+    return getPurchaseRequisitionMaterialDropdown(query as string, props?.prData?.company as string)
+      .then((res) => { setMaterialDropdown(res); return res })
+      .catch((err) => {
+        console.error(err);
+        return [];
+      });
+  }
 
-    
+
+
 
   return (
     <div className="">
@@ -203,61 +221,61 @@ const CapexPR = (props:Props) => {
             <TableHead className="w-[10%]">Purchasing Group</TableHead>
             <TableHead className="w-[10%]">Required Delivery Date</TableHead>
             {
-                props?.prData?.is_submitted !== 1 &&
-            <TableHead className="w-[5%] max-w-[10%]">Action</TableHead>
+              props?.prData?.is_submitted !== 1 &&
+              <TableHead className="w-[5%] max-w-[10%]">Action</TableHead>
             }
           </TableRow>
         </TableHeader>
         <TableBody className="">
-            {
-                tableData?.map((item,index)=>(
-                    <TableRow key={index}>
-                        <TableCell className="font-medium text-center">{index + 1}</TableCell>
-                        <TableCell className="font-medium">{item.material}</TableCell>  
-                        <TableCell className="font-medium">{item.uom}</TableCell>  
-                        <TableCell className="font-medium">{item.plant}</TableCell>  
-                         <TableCell className="font-medium">{item.asset_code}</TableCell>  
-                        <TableCell className="font-medium">{item.quantity}</TableCell>  
-                        <TableCell className="font-medium">{item.purchasing_group}</TableCell>  
-                        <TableCell className="font-medium">{item.required_delivery_date}</TableCell>  
-                        {
-                            props?.prData?.is_submitted !== 1 &&
-                        <TableCell className="font-medium">
-                            <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
-                                {/* Pencil Icon */}
-              <svg
-              onClick={()=>{handleUpdateItem(index)}}
-              className="hover:cursor-pointer"
-              width="22"
-              height="22"
-              viewBox="0 0 22 22"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M12 20.0008H20.0001M14.0001 4.00045L18.0001 8.00054M20.1741 5.81249C20.7028 5.2839 20.9999 4.56693 21 3.8193C21.0001 3.07167 20.7032 2.35462 20.1746 1.8259C19.646 1.29718 18.9291 1.00009 18.1814 1C17.4338 0.999906 16.7168 1.29681 16.1881 1.8254L2.84195 15.1747C2.60977 15.4062 2.43806 15.6912 2.34195 16.0047L1.02093 20.3568C0.99509 20.4433 0.993138 20.5352 1.01529 20.6227C1.03743 20.7102 1.08286 20.7901 1.14673 20.8538C1.21061 20.9176 1.29056 20.9629 1.3781 20.9849C1.46564 21.0069 1.5575 21.0048 1.64394 20.9788L5.99698 19.6588C6.31015 19.5636 6.59516 19.3929 6.82699 19.1618L20.1741 5.81249Z"
-                  stroke="#03111F"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  />
-              </svg>
+          {
+            tableData?.map((item, index) => (
+              <TableRow key={index}>
+                <TableCell className="font-medium text-center">{index + 1}</TableCell>
+                <TableCell className="font-medium">{item.material}</TableCell>
+                <TableCell className="font-medium">{item.uom}</TableCell>
+                <TableCell className="font-medium">{item.plant}</TableCell>
+                <TableCell className="font-medium">{item.asset_code}</TableCell>
+                <TableCell className="font-medium">{item.quantity}</TableCell>
+                <TableCell className="font-medium">{item.purchasing_group}</TableCell>
+                <TableCell className="font-medium">{item.required_delivery_date}</TableCell>
+                {
+                  props?.prData?.is_submitted !== 1 &&
+                  <TableCell className="font-medium">
+                    <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
+                      {/* Pencil Icon */}
+                      <svg
+                        onClick={() => { handleUpdateItem(index) }}
+                        className="hover:cursor-pointer"
+                        width="22"
+                        height="22"
+                        viewBox="0 0 22 22"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M12 20.0008H20.0001M14.0001 4.00045L18.0001 8.00054M20.1741 5.81249C20.7028 5.2839 20.9999 4.56693 21 3.8193C21.0001 3.07167 20.7032 2.35462 20.1746 1.8259C19.646 1.29718 18.9291 1.00009 18.1814 1C17.4338 0.999906 16.7168 1.29681 16.1881 1.8254L2.84195 15.1747C2.60977 15.4062 2.43806 15.6912 2.34195 16.0047L1.02093 20.3568C0.99509 20.4433 0.993138 20.5352 1.01529 20.6227C1.03743 20.7102 1.08286 20.7901 1.14673 20.8538C1.21061 20.9176 1.29056 20.9629 1.3781 20.9849C1.46564 21.0069 1.5575 21.0048 1.64394 20.9788L5.99698 19.6588C6.31015 19.5636 6.59516 19.3929 6.82699 19.1618L20.1741 5.81249Z"
+                          stroke="#03111F"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
 
-              <Trash2 className="text-red-400 hover:cursor-pointer" onClick={()=>{handleDeleteItem(item?.name as string)}}/>
-                            </div>
-                            </TableCell>  
-            }
-                </TableRow>
-                ))     
-            }
+                      <Trash2 className="text-red-400 hover:cursor-pointer" onClick={() => { handleDeleteItem(item?.name as string) }} />
+                    </div>
+                  </TableCell>
+                }
+              </TableRow>
+            ))
+          }
 
-            {
-                props?.prData?.is_submitted !== 1 &&
+          {
+            props?.prData?.is_submitted !== 1 &&
 
-          <TableRow>
-            <TableCell className="font-medium text-center"></TableCell>
-            <TableCell className="font-medium">
-              {/* <Select
+            <TableRow>
+              <TableCell className="font-medium text-center"></TableCell>
+              <TableCell className="font-medium">
+                {/* <Select
               value={singleRowData?.material ?? ""}
               onValueChange={(value)=>{
                   getPurchaseGroupBasedOnMaterial(value);
@@ -278,88 +296,94 @@ const CapexPR = (props:Props) => {
                   </SelectGroup>
                 </SelectContent>
               </Select> */}
-               <SearchSelectComponent
-                        searchApi={fetchMaterialDropdown}
-                        getLabel={(item) => item?.material_description}
-                        getValue={(item) => item?.name}
-                        setDropdown={setMaterialDropdown}
-                        dropdown={materialDropdown}
-                        setData={(value) => {setSingleRowData((prev:any)=>({...prev,material:value ?? ""})); getPurchaseGroupBasedOnMaterial(value as string); getUOMBasedOnMaterial(value as string)}}
-                        data={singleRowData?.material}
-                      />
-            </TableCell>
-            <TableCell className="font-medium">
-              <h1 className="text-center">{singleRowData?.uom}</h1>
-            </TableCell>
-            <TableCell className="font-medium">
-              <Select
-             value={singleRowData?.plant ?? ""}
-             onValueChange={(value)=>{
-                 setSingleRowData(prev=>({...prev,plant:value} as nbCapexItemsType));
-                }}
-              >
-                <SelectTrigger className="rounded-xl">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {plantDropdown?.map((item) => (
-                        <SelectItem key={item?.name} value={item?.name}>
-                              {item?.plant_name}
+                <SearchSelectComponent
+                  searchApi={fetchMaterialDropdown}
+                  getLabel={(item) => item?.material_description}
+                  getValue={(item) => item?.name}
+                  setDropdown={setMaterialDropdown}
+                  dropdown={materialDropdown}
+                  setData={(value) => { setSingleRowData((prev: any) => ({ ...prev, material: value ?? "" })); getPurchaseGroupBasedOnMaterial(value as string); getUOMBasedOnMaterial(value as string); getPlantBasedOnMaterial(value as string); }}
+                  data={singleRowData?.material}
+                />
+              </TableCell>
+              <TableCell className="font-medium">
+                <h1 className="text-center">{singleRowData?.uom}</h1>
+              </TableCell>
+              <TableCell className="font-medium">
+                {
+                  isPlantDropdown ?
+                    <Select
+                      value={singleRowData?.plant ?? ""}
+                      onValueChange={(value) => {
+                        setSingleRowData(prev => ({ ...prev, plant: value } as nbCapexItemsType));
+                      }}
+                    >
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {plantDropdown?.map((item) => (
+                            <SelectItem key={item?.name} value={item?.name}>
+                              {item?.plant_name || item?.name}
                             </SelectItem>
                           ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </TableCell>
-            <TableCell className="font-medium">
-              <Input value={singleRowData?.asset_code ?? ""} onChange={(e)=>{setSingleRowData(prev=>({...prev,asset_code:e.target.value} as nbCapexItemsType))}} />
-            </TableCell>
-            <TableCell className="font-medium">
-              <Input type="number" value={singleRowData?.quantity ?? ""} onChange={(e)=>{setSingleRowData(prev=>({...prev,quantity:Number(e.target.value)} as nbCapexItemsType))}} />
-            </TableCell>
-            <TableCell className="font-medium">
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    :
+                    <Input value={singleRowData?.plant ?? ""} onChange={(e) => { setSingleRowData(prev => ({ ...prev, plant: e.target.value } as nbCapexItemsType)) }} disabled />
+                }
+              </TableCell>
+              <TableCell className="font-medium">
+                <Input value={singleRowData?.asset_code ?? ""} onChange={(e) => { setSingleRowData(prev => ({ ...prev, asset_code: e.target.value } as nbCapexItemsType)) }} />
+              </TableCell>
+              <TableCell className="font-medium">
+                <Input type="number" value={singleRowData?.quantity ?? ""} onChange={(e) => { setSingleRowData(prev => ({ ...prev, quantity: Number(e.target.value) } as nbCapexItemsType)) }} />
+              </TableCell>
+              <TableCell className="font-medium">
                 {
-                    isPurchaseGroupDropdown ?
-                    
+                  isPurchaseGroupDropdown ?
+
                     <Select
-                    value={singleRowData?.purchasing_group ?? ""}
-                    onValueChange={(value)=>{
-                        setSingleRowData(prev=>({...prev,purchasing_group:value} as nbCapexItemsType));
-                    }}
+                      value={singleRowData?.purchasing_group ?? ""}
+                      onValueChange={(value) => {
+                        setSingleRowData(prev => ({ ...prev, purchasing_group: value } as nbCapexItemsType));
+                      }}
                     >
-                <SelectTrigger className="rounded-xl">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {purchaseGroupDropdown?.map((item,index) => (
-                        <SelectItem key={index} value={item?.name}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {purchaseGroupDropdown?.map((item, index) => (
+                            <SelectItem key={index} value={item?.name}>
                               {item?.purchase_group_name}
                             </SelectItem>
                           ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              :
-              <Input value={singleRowData?.purchasing_group ?? ""} onChange={(e)=>{setSingleRowData(prev=>({...prev,purchasing_group:e.target.value} as nbCapexItemsType))}} disabled/>
-                        }
-            </TableCell>
-            <TableCell className="font-medium">
-              <Input type="date" 
-              value={singleRowData?.required_delivery_date ?? ""}
-              onChange={(e)=>{setSingleRowData(prev=>({...prev,required_delivery_date:e.target.value} as nbCapexItemsType))}}
-              />
-            </TableCell>
-            <TableCell className="">
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    :
+                    <Input value={singleRowData?.purchasing_group ?? ""} onChange={(e) => { setSingleRowData(prev => ({ ...prev, purchasing_group: e.target.value } as nbCapexItemsType)) }} disabled />
+                }
+              </TableCell>
+              <TableCell className="font-medium">
+                <Input type="date"
+                  value={singleRowData?.required_delivery_date ?? ""}
+                  min={new Date().toISOString().split("T")[0]}
+                  onChange={(e) => { setSingleRowData(prev => ({ ...prev, required_delivery_date: e.target.value } as nbCapexItemsType)) }}
+                />
+              </TableCell>
+              <TableCell className="">
                 <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
-              <div className="bg-[#D1FAE5] flex justify-center items-center text-2xl  text-[#065F46] w-[30px] h-[30px] hover:cursor-pointer" onClick={()=>{handleTableAdd()}}>
-                +
-              </div>
+                  <div className="bg-[#D1FAE5] flex justify-center items-center text-2xl  text-[#065F46] w-[30px] h-[30px] hover:cursor-pointer" onClick={() => { handleTableAdd() }}>
+                    +
                   </div>
-            </TableCell>
-          </TableRow>
-            }
+                </div>
+              </TableCell>
+            </TableRow>
+          }
         </TableBody>
       </Table>
     </div>

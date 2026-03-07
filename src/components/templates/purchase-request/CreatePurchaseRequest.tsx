@@ -1,5 +1,6 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { Loader2 } from "lucide-react";
 import { Input } from "../../atoms/input";
 import {
   Select,
@@ -43,6 +44,7 @@ const CreatePurchaseRequest = (props: Props) => {
   const { role, name, designation } = useAuth();
   const [form, setForm] = useState<FormType>({ ...(props.prData as any) });
   const router = useRouter();
+  const nextLoaderRef = useRef<HTMLSpanElement>(null);
 
   const fetchPrData = () => {
     getPurchaseReqisitionData(props?.pr_id as string).then((res) => {
@@ -75,13 +77,23 @@ const CreatePurchaseRequest = (props: Props) => {
       body.account_assignment_category = "A";
     }
 
+    if (nextLoaderRef?.current) {
+      nextLoaderRef.current.className = "inline-flex animate-spin ml-2 text-white";
+    }
+
     createPurchaseReqisition(body)
       .then((res) => {
         alert(res?.message?.message);
+        if (nextLoaderRef?.current) {
+          nextLoaderRef.current.className = "hidden";
+        }
         router.replace(`/pr-request?pr_id=${res?.message?.data?.name}`);
         props?.fetchPrData(res?.message?.data?.name as string);
       })
       .catch((err) => {
+        if (nextLoaderRef?.current) {
+          nextLoaderRef.current.className = "hidden";
+        }
         alert("Error creating purchase requisition: " + err?.message);
       });
   };
@@ -166,6 +178,9 @@ const CreatePurchaseRequest = (props: Props) => {
               onClick={handleNextButton}
             >
               Next
+              <span ref={nextLoaderRef} className="hidden">
+                <Loader2 className="w-5 h-5 text-white" />
+              </span>
             </Button>
           )}
         </div>

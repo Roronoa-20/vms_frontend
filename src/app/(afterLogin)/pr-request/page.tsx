@@ -23,27 +23,27 @@ const page = async ({ searchParams }: PageProps) => {
 
   const cookieStore = await cookies();
   const user = cookieStore.get('user')?.value;
-      const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
+  const cookieHeaderString = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
 
   const purchaseRequisitionTypeDropdown = await GetPurchaseRequisitionTypeDropdown(cookieHeaderString);
   const getCompanyDropdown = await getCompanyDropdownBasedOUser(cookieHeaderString);
 
-    let prData:purchaseRequisitionDataType | null = null;
+  let prData: purchaseRequisitionDataType | null = null;
 
-    if(pr_id){
-      prData = await getPurchaseReqisitionData(pr_id,cookieHeaderString);
-    }
-    
-    let getMaterialDropdown:PurchaseRequisitionMaterialDropdownType[] | null = null;
-    let plantDropdown:purchaseRequisitionPlantDropdownType[] | null = null;
-    if(pr_id){
-      getMaterialDropdown = await getPurchaseRequisitionMaterialDropdown("",prData?.company as string,cookieHeaderString);
-      plantDropdown = await getPurchaseRequisitionPlantDropdown(prData?.company as string,cookieHeaderString);
-    }
+  if (pr_id) {
+    prData = await getPurchaseReqisitionData(pr_id, cookieHeaderString);
+  }
 
-    
+  let getMaterialDropdown: PurchaseRequisitionMaterialDropdownType[] | null = null;
+  let plantDropdown: purchaseRequisitionPlantDropdownType[] | null = null;
+  if (pr_id) {
+    getMaterialDropdown = await getPurchaseRequisitionMaterialDropdown("", prData?.company as string, cookieHeaderString);
+    plantDropdown = await getPurchaseRequisitionPlantDropdown(prData?.company as string, cookieHeaderString);
+  }
+
+
   return (
-    <PrRequest purchaseRequisitionTypeDropdown={purchaseRequisitionTypeDropdown} companyDropdown={getCompanyDropdown} prData={prData as purchaseRequisitionDataType} pr_id={pr_id} materialDropdown={getMaterialDropdown?getMaterialDropdown:[]} plantDropdown={plantDropdown ?? []}/>
+    <PrRequest purchaseRequisitionTypeDropdown={purchaseRequisitionTypeDropdown} companyDropdown={getCompanyDropdown} prData={prData as purchaseRequisitionDataType} pr_id={pr_id} materialDropdown={getMaterialDropdown ? getMaterialDropdown : []} plantDropdown={plantDropdown ?? []} />
   )
 }
 

@@ -140,6 +140,49 @@ export const getPurchaseRequisitionPlantDropdown = async (company: string, cooki
     }
 }
 
+export const getPlantByMaterial = async (material: string, cookie?: string): Promise<any> => {
+    try {
+        const response = await fetch(`${API_END_POINTS.getPlantByMaterial}?material_code=${material}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': cookie as string
+            },
+            credentials: 'include',
+        });
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message?.data));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response);
+        }
+    } catch (error) {
+        console.error("Error Fetching Plant By Material :", error);
+        return Promise.reject("error fetching plant by material");
+    }
+}
+export const getMaterialNameByCode = async (material_code: string, cookie?: string): Promise<{ material_name: string }> => {
+    try {
+        const response = await fetch(`${API_END_POINTS.getMaterialNameByCode}?material_code=${material_code}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': cookie as string
+            },
+            credentials: 'include',
+        });
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message?.data));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response);
+        }
+    } catch (error) {
+        console.error("Error Fetching Material Name By Code :", error);
+        return Promise.reject("error fetching material name by code");
+    }
+}
+
 export const getPurchaseRequisitionPurchaseGroupDropdown = async (material: string, cookie?: string): Promise<purchaseRequisitionPurchaseGroupDropdownType[]> => {
     try {
         const response = await fetch(`${API_END_POINTS.getPurchaseGroupDropdown}?material=${material}`, {
@@ -287,7 +330,7 @@ export const submitPurchaseRequisition = async (name: any, cookie?: string): Pro
             credentials: 'include',
         });
         if (response.ok) {
-            return Promise.resolve(response.json()?.then((data) => data?.message?.message));
+            return Promise.resolve(response.json()?.then((data) => data?.message));
         } else {
             const Response = await response.json();
             return Promise.reject(Response);

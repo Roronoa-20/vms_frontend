@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Table,
   TableBody,
@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "../../atoms/select";
 import { Input } from "../../atoms/input";
-import { Trash2 } from "lucide-react";
+import { Trash2, Loader2 } from "lucide-react";
 import {
   CostCenterDropdownType,
   GlAccountDropdownType,
@@ -64,6 +64,7 @@ import {
 } from "@/src/services/prRequisition/prRequisitionZsb.services";
 import { get } from "http";
 import PopUp from "../../molecules/PopUp";
+import { Button } from "../../atoms/button";
 
 type Props = {
   prData?: purchaseRequisitionDataType;
@@ -73,6 +74,7 @@ type Props = {
 const ServicePR = (props: Props) => {
   const searchParams = useSearchParams();
   const pr_id = searchParams.get("pr_id") as string;
+  const addLoaderRef = useRef<HTMLSpanElement>(null);
   const [purchaseGroupDropdown, setPurchaseGroupDropdown] = useState<
     purchaseRequisitionPurchaseGroupDropdownType[]
   >([]);
@@ -108,6 +110,8 @@ const ServicePR = (props: Props) => {
   const [tableData, setTableData] = useState<zsbServiceItemsType[]>(
     props?.prData?.zsb_service_items || [],
   );
+
+  const [isSubItemsView, setIsSubItemView] = useState(false);
 
   useEffect(() => {
     fetchUom();
@@ -245,25 +249,25 @@ const ServicePR = (props: Props) => {
 
   const handleSubItemAdd = () => {
 
-    if(!subLineItem?.service_code){
-        alert("please select service code");
-        return;
-      }
+    // if (!subLineItem?.service_code) {
+    //   alert("please select service code");
+    //   return;
+    // }
 
-      if(!subLineItem?.short_text){
-        alert("please enter short text");
-        return;
-      }
+    if (!subLineItem?.short_text) {
+      alert("please enter short text");
+      return;
+    }
 
-      if(!subLineItem?.uom){
-        alert("please select uom");
-        return;
-      }
+    if (!subLineItem?.uom) {
+      alert("please select uom");
+      return;
+    }
 
-      if(!subLineItem?.quantity){
-        alert("please enter quantity");
-        return;
-      }
+    if (!subLineItem?.quantity) {
+      alert("please enter quantity");
+      return;
+    }
 
 
     const body = {
@@ -278,7 +282,7 @@ const ServicePR = (props: Props) => {
     };
 
     if (subLineItem?.name) {
-      updateSublineItem(body,"service").then((res)=>{alert(res);fetchPrData(); setSubLineItem(undefined);}).catch((err)=>{alert(err)});
+      updateSublineItem(body, "service").then((res) => { alert(res); fetchPrData(); setSubLineItem(undefined); }).catch((err) => { alert(err) });
     } else {
       addSublineItem(body, "service")
         .then((res) => {
@@ -294,40 +298,40 @@ const ServicePR = (props: Props) => {
 
   const handleTableAdd = () => {
 
-    if(!singleRowData?.material_description){
-        alert("please enter material description");
-        return;
-      }
+    if (!singleRowData?.material_description) {
+      alert("please enter material description");
+      return;
+    }
 
-      if(!singleRowData?.plant){
-        alert("please select plant");
-        return;
-      }
+    if (!singleRowData?.plant) {
+      alert("please select plant");
+      return;
+    }
 
-      if(!singleRowData?.quantity){
-        alert("please enter quantity");
-        return;
-      }
+    if (!singleRowData?.quantity) {
+      alert("please enter quantity");
+      return;
+    }
 
-      if(!singleRowData?.material_group){
-        alert("please select material group");
-        return;
-      }
+    if (!singleRowData?.material_group) {
+      alert("please select material group");
+      return;
+    }
 
-      if(!singleRowData?.cost_center){
-        alert("please select cost center");
-        return;
-      }
+    if (!singleRowData?.cost_center) {
+      alert("please select cost center");
+      return;
+    }
 
-      if(!singleRowData?.gl_account){
-        alert("please select gl account");
-        return;
-      }
+    if (!singleRowData?.gl_account) {
+      alert("please select gl account");
+      return;
+    }
 
-      if(!singleRowData?.short_text){
-        alert("please enter short text");
-        return;
-      }
+    if (!singleRowData?.short_text) {
+      alert("please enter short text");
+      return;
+    }
 
     const body = {
       data: {
@@ -347,15 +351,25 @@ const ServicePR = (props: Props) => {
       },
     };
 
+    if (addLoaderRef?.current) {
+      addLoaderRef.current.className = "inline-flex animate-spin ml-2";
+    }
+
     if (singleRowData?.name) {
       updateZsbLineItems(body, "service").then((res) => {
         alert(res?.message);
         setSingleRowData(undefined);
         setIsPurchaseGroupDropdown(false);
         setUOM(undefined);
-          fetchPrData();
-        })
+        if (addLoaderRef?.current) {
+          addLoaderRef.current.className = "hidden";
+        }
+        fetchPrData();
+      })
         .catch((err) => {
+          if (addLoaderRef?.current) {
+            addLoaderRef.current.className = "hidden";
+          }
           alert(err);
         });
     } else {
@@ -364,9 +378,15 @@ const ServicePR = (props: Props) => {
           alert(res?.message);
           // setTableData(prev=>[...prev,singleRowData as nbItemsType]);
           setSingleRowData(undefined);
+          if (addLoaderRef?.current) {
+            addLoaderRef.current.className = "hidden";
+          }
           fetchPrData();
         })
         .catch((err) => {
+          if (addLoaderRef?.current) {
+            addLoaderRef.current.className = "hidden";
+          }
           console.log(err);
         });
     }
@@ -390,21 +410,22 @@ const ServicePR = (props: Props) => {
     setSingleRowData(tableData[index]);
   };
 
-  const handleUpdateSubItem = (index:number) => {
+  const handleUpdateSubItem = (index: number) => {
     setSubLineItem(tableData[selectedSubItemIndex?.index]?.sub_items[index]);
   }
 
   const handleClose = () => {
     setIsSubItemDialog(false);
     setSelectedSubItemIndex(undefined);
+    setIsSubItemView(false);
   };
 
 
-  const handleSublineItemDelete = (name:string)=>{
+  const handleSublineItemDelete = (name: string) => {
     if (!confirm("Are you sure you want to delete this sub line item?")) {
       return;
     }
-    deleteSublineItem(name,"service").then((res)=>{alert(res); fetchPrData();}).catch((err)=>{console.log(err)});
+    deleteSublineItem(name, "service").then((res) => { alert(res); fetchPrData(); }).catch((err) => { console.log(err) });
   }
 
   return (
@@ -427,7 +448,7 @@ const ServicePR = (props: Props) => {
               <TableHead className="w-[10%]">Cost Center</TableHead>
               <TableHead className="w-[10%]">G/L Account</TableHead>
               <TableHead className="w-[10%]">Short Text</TableHead>
-                <TableHead className="w-[5%] max-w-[10%]">Action</TableHead>
+              <TableHead className="w-[5%] max-w-[10%]">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="">
@@ -450,15 +471,34 @@ const ServicePR = (props: Props) => {
                 </TableCell>
                 <TableCell className="font-medium">{item.gl_account}</TableCell>
                 <TableCell className="font-medium">{item.short_text}</TableCell>
-                
-                  <TableCell className="font-medium">
-                    <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
-                      {/* eye icom */}
+
+                <TableCell className="font-medium">
+                  <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
+                    {
+                      props?.prData?.is_submitted !== 1 &&
+                      <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
+                        <div
+                          className="bg-[#D1FAE5] flex justify-center items-center text-2xl  text-[#065F46] w-[30px] h-[30px] hover:cursor-pointer"
+                          onClick={() => {
+                            setIsSubItemDialog(true);
+                            setIsSubItemView(false);
+                            setSelectedSubItemIndex({ index: index, parent_id: item?.name });
+                          }}
+                        >
+                          +
+                        </div>
+                      </div>
+                    }
+
+                    {/* eye icom */}
+                    <div className="flex items-end gap-1">
+
 
                       <svg
                         onClick={() => {
                           setIsSubItemDialog(true);
-                          setSelectedSubItemIndex({index:index,parent_id:item?.name});
+                          setIsSubItemView(true);
+                          setSelectedSubItemIndex({ index: index, parent_id: item?.name });
                         }}
                         width="22"
                         height="16"
@@ -481,41 +521,43 @@ const ServicePR = (props: Props) => {
                           strokeLinejoin="round"
                         />
                       </svg>
-                        {
-                          !props?.prData?.is_submitted &&
-                          <>
-                      {/* Pencil Icon */}
-                      <svg
-                        onClick={() => {
-                          handleUpdateItem(index);
-                        }}
-                        className="hover:cursor-pointer"
-                        width="22"
-                        height="22"
-                        viewBox="0 0 22 22"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M12 20.0008H20.0001M14.0001 4.00045L18.0001 8.00054M20.1741 5.81249C20.7028 5.2839 20.9999 4.56693 21 3.8193C21.0001 3.07167 20.7032 2.35462 20.1746 1.8259C19.646 1.29718 18.9291 1.00009 18.1814 1C17.4338 0.999906 16.7168 1.29681 16.1881 1.8254L2.84195 15.1747C2.60977 15.4062 2.43806 15.6912 2.34195 16.0047L1.02093 20.3568C0.99509 20.4433 0.993138 20.5352 1.01529 20.6227C1.03743 20.7102 1.08286 20.7901 1.14673 20.8538C1.21061 20.9176 1.29056 20.9629 1.3781 20.9849C1.46564 21.0069 1.5575 21.0048 1.64394 20.9788L5.99698 19.6588C6.31015 19.5636 6.59516 19.3929 6.82699 19.1618L20.1741 5.81249Z"
-                          stroke="#03111F"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-
-                      <Trash2
-                        className="text-red-400 hover:cursor-pointer"
-                        onClick={() => {
-                          handleDeleteItem(item?.name as string);
-                        }}
-                        />
-                        </>
-                      }
+                      <h1>{item?.sub_items?.length}</h1>
                     </div>
-                  </TableCell>
-                
+                    {
+                      !props?.prData?.is_submitted &&
+                      <>
+                        {/* Pencil Icon */}
+                        <svg
+                          onClick={() => {
+                            handleUpdateItem(index);
+                          }}
+                          className="hover:cursor-pointer"
+                          width="22"
+                          height="22"
+                          viewBox="0 0 22 22"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M12 20.0008H20.0001M14.0001 4.00045L18.0001 8.00054M20.1741 5.81249C20.7028 5.2839 20.9999 4.56693 21 3.8193C21.0001 3.07167 20.7032 2.35462 20.1746 1.8259C19.646 1.29718 18.9291 1.00009 18.1814 1C17.4338 0.999906 16.7168 1.29681 16.1881 1.8254L2.84195 15.1747C2.60977 15.4062 2.43806 15.6912 2.34195 16.0047L1.02093 20.3568C0.99509 20.4433 0.993138 20.5352 1.01529 20.6227C1.03743 20.7102 1.08286 20.7901 1.14673 20.8538C1.21061 20.9176 1.29056 20.9629 1.3781 20.9849C1.46564 21.0069 1.5575 21.0048 1.64394 20.9788L5.99698 19.6588C6.31015 19.5636 6.59516 19.3929 6.82699 19.1618L20.1741 5.81249Z"
+                            stroke="#03111F"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+
+                        <Trash2
+                          className="text-red-400 hover:cursor-pointer"
+                          onClick={() => {
+                            handleDeleteItem(item?.name as string);
+                          }}
+                        />
+                      </>
+                    }
+                  </div>
+                </TableCell>
+
               </TableRow>
             ))}
 
@@ -676,7 +718,7 @@ const ServicePR = (props: Props) => {
                   />
                 </TableCell>
                 <TableCell className="">
-                  <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
+                  {/* <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
                     <div
                       className="bg-[#D1FAE5] flex justify-center items-center text-2xl  text-[#065F46] w-[30px] h-[30px] hover:cursor-pointer"
                       onClick={() => {
@@ -685,12 +727,25 @@ const ServicePR = (props: Props) => {
                     >
                       +
                     </div>
-                  </div>
+                  </div> */}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
+        {props?.prData?.is_submitted !== 1 && (
+          <div className='flex'>
+            <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
+              handleTableAdd();
+            }}>
+              Add Row
+              <span ref={addLoaderRef} className="hidden">
+                <Loader2 className="w-5 h-5" />
+              </span>
+            </Button>
+          </div>
+        )}
+
       </div>
       {isSubItemDialog && (
         <PopUp
@@ -706,13 +761,13 @@ const ServicePR = (props: Props) => {
                 <TableHead className="w-[10%]">Short Text</TableHead>
                 <TableHead className="w-[10%]">UOM</TableHead>
                 <TableHead className="w-[10%]">Quantity</TableHead>
-                {props?.prData?.is_submitted !== 1 && (
+                {props?.prData?.is_submitted !== 1 && !isSubItemsView && (
                   <TableHead className="w-[5%] max-w-[10%]">Action</TableHead>
                 )}
               </TableRow>
             </TableHeader>
             <TableBody className="">
-                {tableData?.[selectedSubItemIndex?.index as number]?.sub_items?.map(
+              {tableData?.[selectedSubItemIndex?.index as number]?.sub_items?.map(
                 (item, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium text-center">
@@ -728,9 +783,10 @@ const ServicePR = (props: Props) => {
                     <TableCell className="font-medium">
                       {item.quantity}
                     </TableCell>
-                    {props?.prData?.is_submitted !== 1 && (
+                    {props?.prData?.is_submitted !== 1 && !isSubItemsView && (
                       <TableCell className="font-medium">
                         <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
+
                           {/* Pencil Icon */}
                           <svg
                             onClick={() => {
@@ -765,7 +821,7 @@ const ServicePR = (props: Props) => {
                 ),
               )}
 
-              {props?.prData?.is_submitted !== 1 && (
+              {props?.prData?.is_submitted !== 1 && !isSubItemsView && (
                 <TableRow>
                   <TableCell className="font-medium text-center"></TableCell>
                   <TableCell className="font-medium">
@@ -838,7 +894,7 @@ const ServicePR = (props: Props) => {
                     </Select>
                   </TableCell>
                   <TableCell className="font-medium">
-                    <Input value={subLineItem?.quantity ?? ""} onChange={(e)=>{setSubLineItem((prev:any)=>({...prev,quantity:e.target.value}))}} />
+                    <Input value={subLineItem?.quantity ?? ""} onChange={(e) => { setSubLineItem((prev: any) => ({ ...prev, quantity: e.target.value })) }} />
                   </TableCell>
                   <TableCell className="">
                     <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">

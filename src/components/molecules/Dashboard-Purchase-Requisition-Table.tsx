@@ -150,7 +150,7 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                 <TableHead className="text-center text-black">Sr No.</TableHead>
                 <TableHead className="text-center text-black">Ref No.</TableHead>
-                {/* <TableHead className="text-center text-black">Cart No.</TableHead> */}
+                <TableHead className="text-center text-black">SAP Ref No</TableHead>
                 <TableHead className="text-center text-black">Company</TableHead>
                 <TableHead className="text-center text-black">PR Type</TableHead>
                 {/* <TableHead className="text-center text-black text-nowrap">Purchase Group</TableHead> */}
@@ -166,7 +166,7 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
                   <TableRow key={index}>
                     <TableCell className="font-medium text-center">{(currentPage - 1) * record_per_page + (index + 1)}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
-                    {/* <TableCell className="text-nowrap text-center">{item?.cart_details_id}</TableCell> */}
+                    <TableCell className="text-nowrap text-center">{item?.sap_pr_no ?? ""}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.company}</TableCell>
                     <TableCell className="text-nowrap text-center">{item?.pr_type}</TableCell>
                     {/* <TableCell className="text-nowrap text-center">{item?.purchase_group}</TableCell> */}
@@ -174,14 +174,9 @@ const DashboardPurchaseRequisitionVendorsTable = ({ dashboardTableData, companyD
                     {/* <TableCell className="text-nowrap text-center">{item?.purchase_head_status}</TableCell> */}
                     <TableCell>
                       <div
-                        className={`text-center px-2 py-3 rounded-xl ${item?.sap_status === "Failed"
-                          ? "bg-red-100 text-red-800"
-                          : item?.sap_status === "Success"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                          }`}
+                        className={`text-center px-2 py-3 rounded-xl`}
                       >
-                        {item?.sap_status || "--"}
+                        {item?.status ?? ""}
                       </div>
                     </TableCell>
 
