@@ -95,6 +95,8 @@ const AssetPR = (props: Props) => {
     props?.prData?.zsb_asset_items || [],
   );
 
+  const [isSubItemsView, setIsSubItemView] = useState(false);
+
   useEffect(() => {
     fetchUom();
     if (props?.prData?.company) {
@@ -188,10 +190,10 @@ const AssetPR = (props: Props) => {
 
   const handleSubItemAdd = () => {
 
-    if (!subLineItem?.service_code) {
-      alert("please select service code");
-      return;
-    }
+    // if (!subLineItem?.service_code) {
+    //   alert("please select service code");
+    //   return;
+    // }
 
     if (!subLineItem?.short_text) {
       alert("please enter short text");
@@ -349,6 +351,7 @@ const AssetPR = (props: Props) => {
   const handleClose = () => {
     setIsSubItemDialog(false);
     setSelectedSubItemIndex(undefined);
+    setIsSubItemView(false);
   };
 
 
@@ -402,34 +405,55 @@ const AssetPR = (props: Props) => {
                 <TableCell className="font-medium">{item.short_text}</TableCell>
                 <TableCell className="font-medium">
                   <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
-                    {/* eye icom */}
+                    {
+                      props?.prData?.is_submitted !== 1 &&
+                      <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
+                        <div
+                          className="bg-[#D1FAE5] flex justify-center items-center text-2xl  text-[#065F46] w-[30px] h-[30px] hover:cursor-pointer"
+                          onClick={() => {
+                            setIsSubItemDialog(true);
+                            setIsSubItemView(false);
+                            setSelectedSubItemIndex({ index: index, parent_id: item?.name });
+                          }}
+                        >
+                          +
+                        </div>
+                      </div>
+                    }
 
-                    <svg
-                      onClick={() => {
-                        setIsSubItemDialog(true);
-                        setSelectedSubItemIndex({ index: index, parent_id: item?.name });
-                      }}
-                      width="22"
-                      height="16"
-                      viewBox="0 0 22 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M1.01387 8.46318C0.877686 8.24754 0.809592 8.13972 0.771474 7.97342C0.742842 7.8485 0.742842 7.6515 0.771474 7.52658C0.809592 7.36028 0.877685 7.25246 1.01387 7.03682C2.13928 5.25484 5.48915 0.75 10.5942 0.75C15.6992 0.75 19.049 5.25484 20.1744 7.03682C20.3106 7.25246 20.3787 7.36028 20.4168 7.52658C20.4455 7.6515 20.4455 7.8485 20.4168 7.97342C20.3787 8.13972 20.3106 8.24754 20.1744 8.46318C19.049 10.2452 15.6992 14.75 10.5942 14.75C5.48915 14.75 2.13928 10.2452 1.01387 8.46318Z"
-                        stroke="#5291CD"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M10.5942 10.75C12.251 10.75 13.5942 9.40685 13.5942 7.75C13.5942 6.09315 12.251 4.75 10.5942 4.75C8.9373 4.75 7.59415 6.09315 7.59415 7.75C7.59415 9.40685 8.9373 10.75 10.5942 10.75Z"
-                        stroke="#5291CD"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                    {/* eye icom */}
+                    <div className="flex items-end gap-1">
+
+
+                      <svg
+                        onClick={() => {
+                          setIsSubItemDialog(true);
+                          setIsSubItemView(true);
+                          setSelectedSubItemIndex({ index: index, parent_id: item?.name });
+                        }}
+                        width="22"
+                        height="16"
+                        viewBox="0 0 22 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M1.01387 8.46318C0.877686 8.24754 0.809592 8.13972 0.771474 7.97342C0.742842 7.8485 0.742842 7.6515 0.771474 7.52658C0.809592 7.36028 0.877685 7.25246 1.01387 7.03682C2.13928 5.25484 5.48915 0.75 10.5942 0.75C15.6992 0.75 19.049 5.25484 20.1744 7.03682C20.3106 7.25246 20.3787 7.36028 20.4168 7.52658C20.4455 7.6515 20.4455 7.8485 20.4168 7.97342C20.3787 8.13972 20.3106 8.24754 20.1744 8.46318C19.049 10.2452 15.6992 14.75 10.5942 14.75C5.48915 14.75 2.13928 10.2452 1.01387 8.46318Z"
+                          stroke="#5291CD"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M10.5942 10.75C12.251 10.75 13.5942 9.40685 13.5942 7.75C13.5942 6.09315 12.251 4.75 10.5942 4.75C8.9373 4.75 7.59415 6.09315 7.59415 7.75C7.59415 9.40685 8.9373 10.75 10.5942 10.75Z"
+                          stroke="#5291CD"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      <h1>{item?.sub_items?.length}</h1>
+                    </div>
                     {
                       !props?.prData?.is_submitted &&
                       <>
@@ -574,7 +598,7 @@ const AssetPR = (props: Props) => {
                   />
                 </TableCell>
                 <TableCell className="">
-                  <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
+                  {/* <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
                     <div
                       className="bg-[#D1FAE5] flex justify-center items-center text-2xl  text-[#065F46] w-[30px] h-[30px] hover:cursor-pointer"
                       onClick={() => {
@@ -583,7 +607,7 @@ const AssetPR = (props: Props) => {
                     >
                       +
                     </div>
-                  </div>
+                  </div> */}
                 </TableCell>
               </TableRow>
             )}
@@ -616,7 +640,7 @@ const AssetPR = (props: Props) => {
                 <TableHead className="w-[10%]">Short Text</TableHead>
                 <TableHead className="w-[10%]">UOM</TableHead>
                 <TableHead className="w-[10%]">Quantity</TableHead>
-                {props?.prData?.is_submitted !== 1 && (
+                {props?.prData?.is_submitted !== 1 && !isSubItemsView && (
                   <TableHead className="w-[5%] max-w-[10%]">Action</TableHead>
                 )}
               </TableRow>
@@ -638,7 +662,7 @@ const AssetPR = (props: Props) => {
                     <TableCell className="font-medium">
                       {item.quantity}
                     </TableCell>
-                    {props?.prData?.is_submitted !== 1 && (
+                    {props?.prData?.is_submitted !== 1 && !isSubItemsView && (
                       <TableCell className="font-medium">
                         <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
                           {/* Pencil Icon */}
@@ -675,7 +699,7 @@ const AssetPR = (props: Props) => {
                 ),
               )}
 
-              {props?.prData?.is_submitted !== 1 && (
+              {props?.prData?.is_submitted !== 1 && !isSubItemsView && (
                 <TableRow>
                   <TableCell className="font-medium text-center"></TableCell>
                   <TableCell className="font-medium">
