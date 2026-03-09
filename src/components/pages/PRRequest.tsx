@@ -51,7 +51,8 @@ const PrRequest = (props: Props) => {
                     submitLoaderRef.current.className = "hidden";
                 }
             }).catch((err) => {
-                console.error("Error submitting purchase requisition:", err);
+                console.error(err?.message);
+                alert(err?.message);
                 if (submitLoaderRef?.current) {
                     submitLoaderRef.current.className = "hidden";
                 }
