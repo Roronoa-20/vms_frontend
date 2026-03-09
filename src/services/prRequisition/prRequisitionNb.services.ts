@@ -331,7 +331,12 @@ export const submitPurchaseRequisition = async (name: any, cookie?: string): Pro
         });
         if (response.ok) {
             return Promise.resolve(response.json()?.then((data) => data?.message));
-        } else {
+        }
+        else if (response.status === 400) {
+            const Response = await response.json();
+            return Promise.reject(Response?.message?.message);
+        }
+        else {
             const Response = await response.json();
             return Promise.reject(Response?.message?.message);
         }
