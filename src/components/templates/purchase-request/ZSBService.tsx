@@ -734,15 +734,24 @@ const ServicePR = (props: Props) => {
           </TableBody>
         </Table>
         {props?.prData?.is_submitted !== 1 && (
-          <div className='flex'>
+          <div className='flex gap-4'>
             <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
               handleTableAdd();
             }}>
-              Add Row
+              {singleRowData?.name ? "Update Row" : "Add Row"}
               <span ref={addLoaderRef} className="hidden">
                 <Loader2 className="w-5 h-5" />
               </span>
             </Button>
+            {singleRowData?.name && (
+              <Button className='mt-5 bg-red-100 text-red-600 rounded-lg px-6 py-2 hover:bg-red-200' onClick={() => {
+                setSingleRowData(undefined);
+                setIsPurchaseGroupDropdown(false);
+                setUOM(undefined);
+              }}>
+                Cancel
+              </Button>
+            )}
           </div>
         )}
 
@@ -906,6 +915,16 @@ const ServicePR = (props: Props) => {
                       >
                         +
                       </div>
+                      {subLineItem?.name && (
+                        <div
+                          className="bg-red-100 flex justify-center items-center text-lg text-red-600 w-[30px] h-[30px] hover:cursor-pointer rounded-full"
+                          onClick={() => {
+                            setSubLineItem(undefined);
+                          }}
+                        >
+                          ✕
+                        </div>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

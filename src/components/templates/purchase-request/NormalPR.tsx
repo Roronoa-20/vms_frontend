@@ -365,6 +365,19 @@ const NormalPR = (props: Props) => {
                   <div className="bg-[#D1FAE5] flex justify-center items-center text-2xl  text-[#065F46] w-[30px] h-[30px] hover:cursor-pointer" onClick={() => { handleTableAdd() }}>
                     +
                   </div>
+                  {singleRowData?.name && (
+                    <div
+                      className="bg-red-100 flex justify-center items-center text-lg text-red-600 w-[30px] h-[30px] hover:cursor-pointer rounded-full"
+                      onClick={() => {
+                        setSingleRowData(undefined);
+                        setIsPurchaseGroupDropdown(false);
+                        setIsPlantDropdown(false);
+                        setUOM(undefined);
+                      }}
+                    >
+                      ✕
+                    </div>
+                  )}
                 </div>
               </TableCell>
             </TableRow>
