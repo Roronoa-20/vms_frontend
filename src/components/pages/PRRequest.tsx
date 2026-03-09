@@ -51,8 +51,7 @@ const PrRequest = (props: Props) => {
                     submitLoaderRef.current.className = "hidden";
                 }
             }).catch((err) => {
-                console.error(err?.message);
-                alert(err?.message);
+                console.error(err);
                 if (submitLoaderRef?.current) {
                     submitLoaderRef.current.className = "hidden";
                 }
