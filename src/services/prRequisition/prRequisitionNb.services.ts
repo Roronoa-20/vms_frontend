@@ -334,7 +334,7 @@ export const submitPurchaseRequisition = async (name: any, cookie?: string): Pro
         }
         else if (response.status === 400) {
             const Response = await response.json();
-            return Promise.resolve(Response?.message?.message);
+            return Promise.resolve(Response?.message);
         }
         else {
             const Response = await response.json();
