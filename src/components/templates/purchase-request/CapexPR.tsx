@@ -29,6 +29,8 @@ import { set } from "nprogress";
 import { useSearchParams } from "next/navigation";
 import { deleteEnquiryItems } from "@/src/services/prEnquiry/prEnquiry.services";
 import SearchSelectComponent from "../../molecules/Selectsearchcomponent";
+import MultiSelect from 'react-select';
+import { multiSelectStyles } from "../../common/sharedStyles";
 
 type Props = {
   prData?: purchaseRequisitionDataType
@@ -222,7 +224,7 @@ const CapexPR = (props: Props) => {
         <TableHeader className="text-center">
           <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
             <TableHead className="text-center w-[10%]">Sr No.</TableHead>
-            <TableHead className="w-[12%]">Materials</TableHead>
+            <TableHead className="w-[15%]">Materials</TableHead>
             <TableHead className="w-[10%]">UOM</TableHead>
             <TableHead className="w-[10%]">Plant</TableHead>
             <TableHead className="w-[10%]">Asset Code</TableHead>
@@ -339,25 +341,28 @@ const CapexPR = (props: Props) => {
               <TableCell className="font-medium">
                 {
                   isPlantDropdown ?
-                    <Select
-                      value={singleRowData?.plant ?? ""}
-                      onValueChange={(value) => {
-                        setSingleRowData(prev => ({ ...prev, plant: value } as nbCapexItemsType));
+                    <MultiSelect
+                      options={plantDropdown?.map(item => ({ label: item?.plant_name || item?.name, value: item?.name })) || []}
+                      value={singleRowData?.plant ? { label: plantDropdown?.find(p => p.name === singleRowData.plant)?.plant_name || singleRowData.plant, value: singleRowData.plant } : null}
+                      onChange={(selectedOption: any) => {
+                        setSingleRowData(prev => ({ ...prev, plant: selectedOption?.value } as nbCapexItemsType));
                       }}
-                    >
-                      <SelectTrigger className="rounded-xl">
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {plantDropdown?.map((item) => (
-                            <SelectItem key={item?.name} value={item?.name}>
-                              {item?.plant_name || item?.name}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                      instanceId="capexpr-plant-select"
+                      placeholder="Select Plant..."
+                      className="text-[12px] text-black text-left min-w-[150px]"
+                      styles={{
+                        ...multiSelectStyles,
+                        control: (base: any) => ({
+                          ...base,
+                          minHeight: "36px",
+                          borderRadius: "0.5rem",
+                          borderColor: "#e5e7eb",
+                        }),
+                      }}
+                      menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+                      menuPlacement="auto"
+                      menuPosition="fixed"
+                    />
                     :
                     <Input value={singleRowData?.plant ?? ""} onChange={(e) => { setSingleRowData(prev => ({ ...prev, plant: e.target.value } as nbCapexItemsType)) }} disabled />
                 }
@@ -372,25 +377,28 @@ const CapexPR = (props: Props) => {
                 {
                   isPurchaseGroupDropdown ?
 
-                    <Select
-                      value={singleRowData?.purchasing_group ?? ""}
-                      onValueChange={(value) => {
-                        setSingleRowData(prev => ({ ...prev, purchasing_group: value } as nbCapexItemsType));
+                    <MultiSelect
+                      options={purchaseGroupDropdown?.map(item => ({ label: item?.purchase_group_name, value: item?.name })) || []}
+                      value={singleRowData?.purchasing_group ? { label: purchaseGroupDropdown?.find(p => p.name === singleRowData.purchasing_group)?.purchase_group_name || singleRowData.purchasing_group, value: singleRowData.purchasing_group } : null}
+                      onChange={(selectedOption: any) => {
+                        setSingleRowData(prev => ({ ...prev, purchasing_group: selectedOption?.value } as nbCapexItemsType));
                       }}
-                    >
-                      <SelectTrigger className="rounded-xl">
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {purchaseGroupDropdown?.map((item, index) => (
-                            <SelectItem key={index} value={item?.name}>
-                              {item?.purchase_group_name}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                      instanceId="capexpr-pg-select"
+                      placeholder="Select Purchase Group..."
+                      className="text-[12px] text-black text-left min-w-[150px]"
+                      styles={{
+                        ...multiSelectStyles,
+                        control: (base: any) => ({
+                          ...base,
+                          minHeight: "36px",
+                          borderRadius: "0.5rem",
+                          borderColor: "#e5e7eb",
+                        }),
+                      }}
+                      menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+                      menuPlacement="auto"
+                      menuPosition="fixed"
+                    />
                     :
                     <Input value={singleRowData?.purchasing_group ?? ""} onChange={(e) => { setSingleRowData(prev => ({ ...prev, purchasing_group: e.target.value } as nbCapexItemsType)) }} disabled />
                 }

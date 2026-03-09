@@ -52,6 +52,8 @@ import {
 import { set } from "nprogress";
 import { useSearchParams } from "next/navigation";
 import { deleteEnquiryItems } from "@/src/services/prEnquiry/prEnquiry.services";
+import MultiSelect from 'react-select';
+import { multiSelectStyles } from "../../common/sharedStyles";
 import {
   addSublineItem,
   addZsbLineItems,
@@ -647,28 +649,31 @@ const ServicePR = (props: Props) => {
                   <h1>AU</h1>
                 </TableCell>
                 <TableCell className="font-medium">
-                  <Select
-                    value={singleRowData?.plant ?? ""}
-                    onValueChange={(value) => {
+                  <MultiSelect
+                    options={plantBasedOnCompanyDropdown?.map(item => ({ label: item?.plant_name || item?.name, value: item?.name })) || []}
+                    value={singleRowData?.plant ? { label: plantBasedOnCompanyDropdown?.find(p => p.name === singleRowData.plant)?.plant_name || singleRowData.plant, value: singleRowData.plant } : null}
+                    onChange={(selectedOption: any) => {
                       setSingleRowData(
                         (prev) =>
-                          ({ ...prev, plant: value }) as zsbServiceItemsType,
+                          ({ ...prev, plant: selectedOption?.value }) as zsbServiceItemsType,
                       );
                     }}
-                  >
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {plantBasedOnCompanyDropdown?.map((item) => (
-                          <SelectItem key={item?.name} value={item?.name}>
-                            {item?.plant_name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                    instanceId="zsbservice-plant-select"
+                    placeholder="Select Plant..."
+                    className="text-[12px] text-black text-left min-w-[150px]"
+                    styles={{
+                      ...multiSelectStyles,
+                      control: (base: any) => ({
+                        ...base,
+                        minHeight: "36px",
+                        borderRadius: "0.5rem",
+                        borderColor: "#e5e7eb",
+                      }),
+                    }}
+                    menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+                    menuPlacement="auto"
+                    menuPosition="fixed"
+                  />
                 </TableCell>
                 <TableCell className="font-medium">
                   <Input
@@ -686,31 +691,34 @@ const ServicePR = (props: Props) => {
                   />
                 </TableCell>
                 <TableCell className="font-medium">
-                  <Select
-                    value={singleRowData?.material_group ?? ""}
-                    onValueChange={(value) => {
+                  <MultiSelect
+                    options={materialGroupDropdown?.map(item => ({ label: item?.material_group_description || item?.name, value: item?.name })) || []}
+                    value={singleRowData?.material_group ? { label: materialGroupDropdown?.find(p => p.name === singleRowData.material_group)?.material_group_description || singleRowData.material_group, value: singleRowData.material_group } : null}
+                    onChange={(selectedOption: any) => {
                       setSingleRowData(
                         (prev) =>
                           ({
                             ...prev,
-                            material_group: value,
+                            material_group: selectedOption?.value,
                           }) as zsbServiceItemsType,
                       );
                     }}
-                  >
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {materialGroupDropdown?.map((item, index) => (
-                          <SelectItem key={index} value={item?.name}>
-                            {item?.material_group_description}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                    instanceId="zsbservice-mg-select"
+                    placeholder="Select Material Group..."
+                    className="text-[12px] text-black text-left min-w-[150px]"
+                    styles={{
+                      ...multiSelectStyles,
+                      control: (base: any) => ({
+                        ...base,
+                        minHeight: "36px",
+                        borderRadius: "0.5rem",
+                        borderColor: "#e5e7eb",
+                      }),
+                    }}
+                    menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+                    menuPlacement="auto"
+                    menuPosition="fixed"
+                  />
                   {/* <Input value={singleRowData?.material_group ?? ""} onChange={(e)=>{setSingleRowData(prev=>({...prev,material_group:e.target.value} as zsbServiceItemsType))}} /> */}
                 </TableCell>
                 <TableCell>
@@ -961,29 +969,32 @@ const ServicePR = (props: Props) => {
                     />
                   </TableCell>
                   <TableCell className="font-medium">
-                    <Select
-                      disabled={isSubItemUom ? true : false}
-                      value={subLineItem?.uom ?? ""}
-                      onValueChange={(value) => {
+                    <MultiSelect
+                      isDisabled={isSubItemUom ? true : false}
+                      options={UOMDropdown?.map(item => ({ label: item?.description || item?.name, value: item?.name })) || []}
+                      value={subLineItem?.uom ? { label: UOMDropdown?.find(p => p.name === subLineItem.uom)?.description || subLineItem.uom, value: subLineItem.uom } : null}
+                      onChange={(selectedOption: any) => {
                         setSubLineItem(
                           (prev) =>
-                            ({ ...prev, uom: value }) as zsbServiceSubItemsType,
+                            ({ ...prev, uom: selectedOption?.value }) as zsbServiceSubItemsType,
                         );
                       }}
-                    >
-                      <SelectTrigger className="rounded-xl">
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {UOMDropdown?.map((item) => (
-                            <SelectItem key={item?.name} value={item?.name}>
-                              {item?.description}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                      instanceId="zsbservice-subuom-select"
+                      placeholder="Select UOM..."
+                      className="text-[12px] text-black text-left min-w-[150px]"
+                      styles={{
+                        ...multiSelectStyles,
+                        control: (base: any) => ({
+                          ...base,
+                          minHeight: "36px",
+                          borderRadius: "0.5rem",
+                          borderColor: "#e5e7eb",
+                        }),
+                      }}
+                      menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+                      menuPlacement="auto"
+                      menuPosition="fixed"
+                    />
                   </TableCell>
                   <TableCell className="font-medium">
                     <Input value={subLineItem?.quantity ?? ""} onChange={(e) => { setSubLineItem((prev: any) => ({ ...prev, quantity: e.target.value })) }} />
