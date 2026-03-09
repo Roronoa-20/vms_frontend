@@ -17,6 +17,12 @@ import {
 } from "../../atoms/select";
 import { Input } from "../../atoms/input";
 import { Trash2 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { nbCapexItemsType, nbItemsType, purchaseRequisitionDataType, PurchaseRequisitionMaterialDropdownType, purchaseRequisitionPlantDropdownType, purchaseRequisitionPurchaseGroupDropdownType, purchaseRequisitionUOMType } from "@/src/types/prRequisition/prRequisition.types";
 import { addPurchaseRequisitionNBItems, deletePurchaseRequisitionNBItems, getPurchaseReqisitionData, getPurchaseRequisitionMaterialDropdown, getPurchaseRequisitionPurchaseGroupDropdown, getPurchaseRequisitionUOM, updatePurchaseRequisitionNBItems, getPlantByMaterial, getMaterialNameByCode } from "@/src/services/prRequisition/prRequisitionNb.services";
 import { set } from "nprogress";
@@ -177,6 +183,9 @@ const CapexPR = (props: Props) => {
       alert(res);
       fetchPrData();
       setSingleRowData(undefined);
+      setIsPurchaseGroupDropdown(false);
+      setIsPlantDropdown(false);
+      setUOM(undefined);
     }).catch((err) => {
       console.log(err);
     })
@@ -243,25 +252,43 @@ const CapexPR = (props: Props) => {
                   <TableCell className="font-medium">
                     <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
                       {/* Pencil Icon */}
-                      <svg
-                        onClick={() => { handleUpdateItem(index) }}
-                        className="hover:cursor-pointer"
-                        width="22"
-                        height="22"
-                        viewBox="0 0 22 22"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M12 20.0008H20.0001M14.0001 4.00045L18.0001 8.00054M20.1741 5.81249C20.7028 5.2839 20.9999 4.56693 21 3.8193C21.0001 3.07167 20.7032 2.35462 20.1746 1.8259C19.646 1.29718 18.9291 1.00009 18.1814 1C17.4338 0.999906 16.7168 1.29681 16.1881 1.8254L2.84195 15.1747C2.60977 15.4062 2.43806 15.6912 2.34195 16.0047L1.02093 20.3568C0.99509 20.4433 0.993138 20.5352 1.01529 20.6227C1.03743 20.7102 1.08286 20.7901 1.14673 20.8538C1.21061 20.9176 1.29056 20.9629 1.3781 20.9849C1.46564 21.0069 1.5575 21.0048 1.64394 20.9788L5.99698 19.6588C6.31015 19.5636 6.59516 19.3929 6.82699 19.1618L20.1741 5.81249Z"
-                          stroke="#03111F"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <svg
+                              onClick={() => { handleUpdateItem(index) }}
+                              className="hover:cursor-pointer"
+                              width="22"
+                              height="22"
+                              viewBox="0 0 22 22"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M12 20.0008H20.0001M14.0001 4.00045L18.0001 8.00054M20.1741 5.81249C20.7028 5.2839 20.9999 4.56693 21 3.8193C21.0001 3.07167 20.7032 2.35462 20.1746 1.8259C19.646 1.29718 18.9291 1.00009 18.1814 1C17.4338 0.999906 16.7168 1.29681 16.1881 1.8254L2.84195 15.1747C2.60977 15.4062 2.43806 15.6912 2.34195 16.0047L1.02093 20.3568C0.99509 20.4433 0.993138 20.5352 1.01529 20.6227C1.03743 20.7102 1.08286 20.7901 1.14673 20.8538C1.21061 20.9176 1.29056 20.9629 1.3781 20.9849C1.46564 21.0069 1.5575 21.0048 1.64394 20.9788L5.99698 19.6588C6.31015 19.5636 6.59516 19.3929 6.82699 19.1618L20.1741 5.81249Z"
+                                stroke="#03111F"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Edit Item</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
 
-                      <Trash2 className="text-red-400 hover:cursor-pointer" onClick={() => { handleDeleteItem(item?.name as string) }} />
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Trash2 className="text-red-400 hover:cursor-pointer" onClick={() => { handleDeleteItem(item?.name as string) }} />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Delete Item</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                   </TableCell>
                 }
@@ -377,21 +404,40 @@ const CapexPR = (props: Props) => {
               </TableCell>
               <TableCell className="">
                 <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
-                  <div className="bg-[#D1FAE5] flex justify-center items-center text-2xl  text-[#065F46] w-[30px] h-[30px] hover:cursor-pointer" onClick={() => { handleTableAdd() }}>
-                    +
-                  </div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="bg-[#D1FAE5] flex justify-center items-center text-2xl  text-[#065F46] w-[30px] h-[30px] hover:cursor-pointer" onClick={() => { handleTableAdd() }}>
+                          {singleRowData?.name ? "✓" : "+"}
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{singleRowData?.name ? "Update Row" : "Add Row"}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
                   {singleRowData?.name && (
-                    <div
-                      className="bg-red-100 flex justify-center items-center text-lg text-red-600 w-[30px] h-[30px] hover:cursor-pointer rounded-full"
-                      onClick={() => {
-                        setSingleRowData(undefined);
-                        setIsPurchaseGroupDropdown(false);
-                        setIsPlantDropdown(false);
-                        setUOM(undefined);
-                      }}
-                    >
-                      ✕
-                    </div>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div
+                            className="bg-red-100 flex justify-center items-center text-lg text-red-600 w-[30px] h-[30px] hover:cursor-pointer rounded-full"
+                            onClick={() => {
+                              setSingleRowData(undefined);
+                              setIsPurchaseGroupDropdown(false);
+                              setIsPlantDropdown(false);
+                              setUOM(undefined);
+                            }}
+                          >
+                            ✕
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Cancel Update</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   )}
                 </div>
               </TableCell>

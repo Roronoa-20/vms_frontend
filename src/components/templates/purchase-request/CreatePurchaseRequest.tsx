@@ -23,6 +23,12 @@ import {
   getPurchaseReqisitionData,
 } from "@/src/services/prRequisition/prRequisitionNb.services";
 import { useRouter } from "next/navigation";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Props {
   purchaseRequisitionTypeDropdown: purchaseRequisitionTypeDropdownType[];
@@ -185,6 +191,47 @@ const CreatePurchaseRequest = (props: Props) => {
           )}
         </div>
       </div>
+
+      {props?.pr_id && (
+        <>
+          <div className="col-span-1 border border-black/10 rounded-xl px-4 py-2 flex flex-col justify-center">
+            <h1 className="text-[12px] font-normal text-[#626973] uppercase -mb-1">
+              PR Ref No
+            </h1>
+            <h1 className="text-[16px] font-medium text-black truncate">
+              {(form as any)?.name ?? "-"}
+            </h1>
+          </div>
+
+          <div className="col-span-1 border border-black/10 rounded-xl px-4 py-2 flex flex-col justify-center">
+            <h1 className="text-[12px] font-normal text-[#626973] uppercase -mb-1">
+              SAP Ref No
+            </h1>
+            <h1 className="text-[16px] font-medium text-black truncate">
+              {(form as any)?.sap_pr_no || "-"}
+            </h1>
+          </div>
+
+          <div className="col-span-1 border border-black/10 rounded-xl px-4 py-2 flex flex-col justify-center">
+            <h1 className="text-[12px] font-normal text-[#626973] uppercase -mb-1">
+              SAP Error Message
+            </h1>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <h1 className="text-[16px] font-medium text-black truncate cursor-default">
+                    {(form as any)?.sap_error || "-"}
+                  </h1>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{(form as any)?.sap_error || "No error message"}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        </>
+      )}
+
     </div>
   );
 };
