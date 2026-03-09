@@ -333,7 +333,7 @@ export const submitPurchaseRequisition = async (name: any, cookie?: string): Pro
             return Promise.resolve(response.json()?.then((data) => data?.message));
         } else {
             const Response = await response.json();
-            return Promise.reject(Response);
+            return Promise.reject(Response?.message?.message);
         }
     } catch (error) {
         console.error("Error Submitting Purchase Requisition :", error);
