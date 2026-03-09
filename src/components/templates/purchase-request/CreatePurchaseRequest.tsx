@@ -52,6 +52,12 @@ const CreatePurchaseRequest = (props: Props) => {
   const router = useRouter();
   const nextLoaderRef = useRef<HTMLSpanElement>(null);
 
+  React.useEffect(() => {
+    if (props.prData) {
+      setForm((prev) => ({ ...prev, ...(props.prData as any) }));
+    }
+  }, [props.prData]);
+
   const fetchPrData = () => {
     getPurchaseReqisitionData(props?.pr_id as string).then((res) => {
       console.log(res, "fetched pr data");
