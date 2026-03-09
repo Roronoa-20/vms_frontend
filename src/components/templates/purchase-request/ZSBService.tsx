@@ -722,58 +722,64 @@ const ServicePR = (props: Props) => {
                   {/* <Input value={singleRowData?.material_group ?? ""} onChange={(e)=>{setSingleRowData(prev=>({...prev,material_group:e.target.value} as zsbServiceItemsType))}} /> */}
                 </TableCell>
                 <TableCell>
-                  <Select
-                    value={singleRowData?.cost_center ?? ""}
-                    onValueChange={(value) => {
+                  <MultiSelect
+                    options={costCenterDropdown?.map(item => ({ label: item?.cost_center_name || item?.name, value: item?.name })) || []}
+                    value={singleRowData?.cost_center ? { label: costCenterDropdown?.find(p => p.name === singleRowData.cost_center)?.cost_center_name || singleRowData.cost_center, value: singleRowData.cost_center } : null}
+                    onChange={(selectedOption: any) => {
                       setSingleRowData(
                         (prev) =>
                           ({
                             ...prev,
-                            cost_center: value,
+                            cost_center: selectedOption?.value,
                           }) as zsbServiceItemsType,
                       );
                     }}
-                  >
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {costCenterDropdown?.map((item, index) => (
-                          <SelectItem key={index} value={item?.name}>
-                            {item?.cost_center_name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                    instanceId="zsbservice-cc-select"
+                    placeholder="Select Cost Center..."
+                    className="text-[12px] text-black text-left min-w-[150px]"
+                    styles={{
+                      ...multiSelectStyles,
+                      control: (base: any) => ({
+                        ...base,
+                        minHeight: "36px",
+                        borderRadius: "0.5rem",
+                        borderColor: "#e5e7eb",
+                      }),
+                    }}
+                    menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+                    menuPlacement="auto"
+                    menuPosition="fixed"
+                  />
                 </TableCell>
                 <TableCell>
-                  <Select
-                    value={singleRowData?.gl_account ?? ""}
-                    onValueChange={(value) => {
+                  <MultiSelect
+                    options={glAccountDropdown?.map(item => ({ label: item?.gl_account_name || item?.name, value: item?.name })) || []}
+                    value={singleRowData?.gl_account ? { label: glAccountDropdown?.find(p => p.name === singleRowData.gl_account)?.gl_account_name || singleRowData.gl_account, value: singleRowData.gl_account } : null}
+                    onChange={(selectedOption: any) => {
                       setSingleRowData(
                         (prev) =>
                           ({
                             ...prev,
-                            gl_account: value,
+                            gl_account: selectedOption?.value,
                           }) as zsbServiceItemsType,
                       );
                     }}
-                  >
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {glAccountDropdown?.map((item, index) => (
-                          <SelectItem key={index} value={item?.name}>
-                            {item?.gl_account_name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                    instanceId="zsbservice-gl-select"
+                    placeholder="Select GL Account..."
+                    className="text-[12px] text-black text-left min-w-[150px]"
+                    styles={{
+                      ...multiSelectStyles,
+                      control: (base: any) => ({
+                        ...base,
+                        minHeight: "36px",
+                        borderRadius: "0.5rem",
+                        borderColor: "#e5e7eb",
+                      }),
+                    }}
+                    menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+                    menuPlacement="auto"
+                    menuPosition="fixed"
+                  />
                 </TableCell>
                 <TableCell className="font-medium">
                   <Input
