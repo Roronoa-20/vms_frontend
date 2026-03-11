@@ -213,16 +213,16 @@ const NormalPR = (props: Props) => {
       <Table className=" max-h-40 overflow-y-scroll border border-black/20">
         <TableHeader className="text-center">
           <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-            <TableHead className="text-center w-[10%]">Sr No.</TableHead>
-            <TableHead className="text-center w-[15%]">Materials</TableHead>
-            <TableHead className="text-center w-[10%]">UOM</TableHead>
-            <TableHead className="text-center w-[10%]">Plant</TableHead>
-            <TableHead className="text-center w-[10%]">Quantity</TableHead>
-            <TableHead className="text-center w-[10%]">Purchasing Group</TableHead>
-            <TableHead className="text-center w-[10%]">Required Delivery Date</TableHead>
+            <TableHead className="text-center min-w-[60px]">Sr No.</TableHead>
+            <TableHead className="text-center min-w-[200px]">Materials</TableHead>
+            <TableHead className="text-center min-w-[100px]">UOM</TableHead>
+            <TableHead className="text-center min-w-[150px]">Plant</TableHead>
+            <TableHead className="text-center min-w-[120px]">Quantity</TableHead>
+            <TableHead className="text-center min-w-[200px]">Purchasing Group</TableHead>
+            <TableHead className="text-center min-w-[150px]">Required Delivery Date</TableHead>
             {
               props?.prData?.is_submitted !== 1 &&
-              <TableHead className="w-[5%] max-w-[10%]">Action</TableHead>
+              <TableHead className="text-center min-w-[120px]">Action</TableHead>
             }
           </TableRow>
         </TableHeader>
@@ -231,12 +231,12 @@ const NormalPR = (props: Props) => {
             tableData?.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium text-center">{index + 1}</TableCell>
-                <TableCell className="font-medium text-center">{item.material}</TableCell>
-                <TableCell className="font-medium text-center">{item.uom}</TableCell>
-                <TableCell className="font-medium text-center">{item.plant}</TableCell>
-                <TableCell className="font-medium text-center">{item.quantity}</TableCell>
-                <TableCell className="font-medium text-center">{item.purchasing_group}</TableCell>
-                <TableCell className="font-medium text-center">{item.required_delivery_date}</TableCell>
+                <TableCell className="font-medium text-center max-w-[200px] truncate" title={item.material}>{item.material}</TableCell>
+                <TableCell className="font-medium text-center max-w-[100px] truncate" title={item.uom}>{item.uom}</TableCell>
+                <TableCell className="font-medium text-center max-w-[150px] truncate" title={item.plant}>{item.plant}</TableCell>
+                <TableCell className="font-medium text-center max-w-[120px] truncate" title={item.quantity?.toString()}>{item.quantity}</TableCell>
+                <TableCell className="font-medium text-center max-w-[200px] truncate" title={item.purchasing_group}>{item.purchasing_group}</TableCell>
+                <TableCell className="font-medium text-center max-w-[150px] truncate" title={item.required_delivery_date}>{item.required_delivery_date}</TableCell>
                 {
 
                   props?.prData?.is_submitted !== 1 &&
