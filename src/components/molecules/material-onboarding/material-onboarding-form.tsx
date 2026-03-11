@@ -32,7 +32,7 @@ interface MaterialOnboardingFormProps {
 }
 
 const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, onCancel, onSubmit, onUpdate, onError, materialRequestList, masters, isLoading, showAlert, EmployeeDetailsJSON }) => {
-
+    console.log("Material Request List in Form--->", EmployeeDetailsJSON);
     const [showSAPModal, setShowSAPModal] = useState(false);
     const materialType = materialRequestList?.material_type_name;
     const isZCAPMaterial = materialType === "ZCAP";
@@ -73,6 +73,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, o
                     form={form}
                     basicMasters={basicMasters}
                     MaterialOnboarding={materialRequestList}
+                    EmployeeDetails={EmployeeDetailsJSON || {} as EmployeeDetail}
                 />
             </div>
 

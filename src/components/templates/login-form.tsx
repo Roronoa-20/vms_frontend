@@ -72,7 +72,8 @@ export default function LoginForm({ loginType }: { loginType: "default" | "mater
         const designationVendor = data?.message?.designation as string;
         const VendorASA = data?.message?.asa_reqd as string;
         const VendorRefNo = data?.message?.ref_no as string;
-        console.log("Vendor Ref---->", VendorRefNo);
+        console.log("Vendor Ref---->", designation);
+        console.log("Vendor Ref1123---->", designationVendor);
         if (designationVendor) {
           reset();
           resetVendorCode();

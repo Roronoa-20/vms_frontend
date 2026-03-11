@@ -20,32 +20,28 @@ export default function RequestorInformation({ form, EmployeeDetails, MaterialOn
     useEffect(() => {
         // VIEW EXISTING FORM MODE
         if (MaterialOnboarding) {
-            form.reset({
-                request_date: MaterialOnboarding.request_date ?? "",
-                requested_by: MaterialOnboarding.requested_by ?? "",
-                company: MaterialOnboarding.material_company_name ?? "",
-                department: MaterialOnboarding.department ?? "",
-                sub_department: MaterialOnboarding.sub_department ?? "",
-                hod: MaterialOnboarding.hod ?? "",
-                immediate_reporting_head: MaterialOnboarding.immediate_reporting_head ?? "",
-                contact_information_email: MaterialOnboarding.contact_information_email ?? "",
-                contact_information_phone: MaterialOnboarding.contact_information_phone ?? "",
-            });
+            form.setValue("request_date", MaterialOnboarding.request_date ?? "");
+            form.setValue("requested_by", MaterialOnboarding.requested_by ?? "");
+            form.setValue("company", MaterialOnboarding.material_company_name ?? "");
+            form.setValue("department", MaterialOnboarding.department ?? "");
+            form.setValue("sub_department", MaterialOnboarding.sub_department ?? "");
+            form.setValue("hod", MaterialOnboarding.hod ?? "");
+            form.setValue("immediate_reporting_head", MaterialOnboarding.immediate_reporting_head ?? "");
+            form.setValue("contact_information_email", MaterialOnboarding.contact_information_email ?? "");
+            form.setValue("contact_information_phone", MaterialOnboarding.contact_information_phone ?? "");
         }
 
         // NEW FORM MODE
         else if (EmployeeDetails) {
-            form.reset({
-                request_date: new Date().toISOString().split("T")[0],
-                requested_by: EmployeeDetails.name ?? "",
-                company: EmployeeDetails.company?.[0]?.company_name ?? "",
-                department: EmployeeDetails.department ?? "",
-                sub_department: EmployeeDetails.sub_department ?? "",
-                hod: EmployeeDetails.head_of_department ?? "",
-                immediate_reporting_head: EmployeeDetails.reports_to ?? "",
-                contact_information_email: EmployeeDetails.company_email ?? "",
-                contact_information_phone: EmployeeDetails.cell_number ?? "",
-            });
+            form.setValue("request_date", new Date().toISOString().split("T")[0]);
+            form.setValue("requested_by", EmployeeDetails.name ?? "");
+            form.setValue("company", EmployeeDetails.company?.[0]?.company_name ?? "");
+            form.setValue("department", EmployeeDetails.department ?? "");
+            form.setValue("sub_department", EmployeeDetails.sub_department ?? "");
+            form.setValue("hod", EmployeeDetails.head_of_department ?? "");
+            form.setValue("immediate_reporting_head", EmployeeDetails.reports_to ?? "");
+            form.setValue("contact_information_email", EmployeeDetails.company_email ?? "");
+            form.setValue("contact_information_phone", EmployeeDetails.cell_number ?? "");
         }
     }, [EmployeeDetails, MaterialOnboarding, form]);
 

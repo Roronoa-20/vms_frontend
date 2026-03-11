@@ -16,7 +16,29 @@ export const MaterialForm = ({ vendor_onboarding }: { vendor_onboarding: string;
   const { formData, handleMultipleCheckboxChange, handleCheckboxChange, handleBack, handleNext } = useQMSForm(vendor_onboarding, currentTab);
   const multiSelectOptions = useMultiSelectOptions(vendor_onboarding);
 
-  const isQATeamApproved = formData?.qa_team_approved === 1;
+  // const isQATeamApproved = formData?.qa_team_approved === 1;
+  const isQATeamApproved = formData?.form_fully_submitted === 1;
+  const requiredFields = ["approved_supplierlist", "agreements", "control_and_inspection", "defined_areas"];
+
+  const isFormValid = () => {
+    if (!formData) return false;
+
+    const basicFieldsValid = requiredFields.every((field) => {
+      const value = formData[field as keyof typeof formData];
+
+      if (value === null || value === undefined) return false;
+      if (typeof value === "string") {
+        return value.trim() !== "";
+      }
+      return true;
+    });
+
+    const inspectionReportsValid =
+      Array.isArray(formData.inspection_reports) &&
+      formData.inspection_reports.length > 0;
+
+    return basicFieldsValid && inspectionReportsValid;
+  };
 
   const handleSubmit = async () => {
     try {
@@ -65,6 +87,7 @@ export const MaterialForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           value={formData.approved_supplierlist || ""}
           onChange={(e) => handleCheckboxChange(e, 'approved_supplierlist')}
           disabled={isQATeamApproved}
+          required={true}
         />
 
         <YesNoNAGroup
@@ -72,6 +95,7 @@ export const MaterialForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           label="2. Do you have agreements in place with all critical raw materail suppliers that are required to notify you regarding any change in raw material or the manufacturing process of the material supplied?"
           value={formData.agreements || ""}
           onChange={(e) => handleCheckboxChange(e, 'agreements')}
+          required={true}
           disabled={isQATeamApproved}
         />
 
@@ -80,6 +104,7 @@ export const MaterialForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           label="3. Do you have procedure for incoming raw material control and inspection?"
           value={formData.control_and_inspection || ""}
           onChange={(e) => handleCheckboxChange(e, 'control_and_inspection')}
+          required={true}
           disabled={isQATeamApproved}
         />
 
@@ -88,6 +113,7 @@ export const MaterialForm = ({ vendor_onboarding }: { vendor_onboarding: string;
           label="4. Do you have defined areas for Receipt, identification, Sampling and Quarantine of incoming materials?"
           value={formData.defined_areas || ""}
           onChange={(e) => handleCheckboxChange(e, 'defined_areas')}
+          required={true}
           disabled={isQATeamApproved}
         />
 
@@ -109,8 +135,9 @@ export const MaterialForm = ({ vendor_onboarding }: { vendor_onboarding: string;
               )
               : []
           }
-          onChange={(e) => { handleMultipleCheckboxChange(e, "inspection_reports") }}
+          onChange={(e) => {handleMultipleCheckboxChange(e, "inspection_reports") }}
           columns={3}
+          required={true}
           disabled={isQATeamApproved}
         />
 
@@ -128,6 +155,7 @@ export const MaterialForm = ({ vendor_onboarding }: { vendor_onboarding: string;
             size="nextbtnsize"
             className="py-2.5"
             onClick={handleSubmit}
+            disabled={!isFormValid() || isQATeamApproved}
           >
             Next
           </Button>

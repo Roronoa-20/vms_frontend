@@ -53,23 +53,23 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
   const [reconciliation, setReconciliation] = useState<{ label: string, value: string } | null>(null);
   const [termsOfPayment, setTermsOfPayment] = useState<{ label: string, value: string } | null>();
   const [purchaseGroup, setPurchaseGroup] = useState<{ label: string, value: string } | null>();
-  const [currencyDropdownList,setCurrencyDropdownList] = useState<{label:string,value:string}[]>([]);
+  const [currencyDropdownList, setCurrencyDropdownList] = useState<{ label: string, value: string }[]>([]);
 
 
-  useEffect(()=>{
-    if(currencyDropdown){
-      const newList = currencyDropdown.map((item)=>{
+  useEffect(() => {
+    if (currencyDropdown) {
+      const newList = currencyDropdown.map((item) => {
         return (
           {
-            label:item?.name,
-            value:item?.name
+            label: item?.name,
+            value: item?.name
           }
         )
       })
       setCurrencyDropdownList(newList);
     }
-  },[])
-  console.log(singleTableData,"this is after loading")
+  }, [])
+  console.log(singleTableData, "this is after loading")
 
 
   const handleCompanyDropdownChange = async (value: string) => {
@@ -340,8 +340,8 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
             className="text-[12px] text-black"
             menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
             styles={multiSelectStyles}
-             menuPlacement="auto" // 'auto', 'top', or 'bottom'
-  menuPosition="fixed" // prevents clipping in scrollable containers
+            menuPlacement="auto" // 'auto', 'top', or 'bottom'
+            menuPosition="fixed" // prevents clipping in scrollable containers
           />
         </div>
 
@@ -378,8 +378,8 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
             className="text-[12px] text-black"
             menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
             styles={multiSelectStyles}
-             menuPlacement="auto" // 'auto', 'top', or 'bottom'
-  menuPosition="fixed" // prevents clipping in scrollable containers
+            menuPlacement="auto" // 'auto', 'top', or 'bottom'
+            menuPosition="fixed" // prevents clipping in scrollable containers
           />
         </div>
 
@@ -405,7 +405,7 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
           </Select> */}
           <MultiSelect
             options={currencyDropdownList}
-            value={{label:singleTableData?.order_currency,value:singleTableData?.order_currency}}
+            value={{ label: singleTableData?.order_currency, value: singleTableData?.order_currency }}
             onChange={(value: any) => {
               setSingleTableData((prev: any) => ({ ...prev, order_currency: value?.value }));
             }}
@@ -414,8 +414,8 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
             className="text-[12px] text-black"
             menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
             styles={multiSelectStyles}
-             menuPlacement="auto" // 'auto', 'top', or 'bottom'
-  menuPosition="fixed" // prevents clipping in scrollable containers
+            menuPlacement="auto" // 'auto', 'top', or 'bottom'
+            menuPosition="fixed" // prevents clipping in scrollable containers
           />
         </div>
 
@@ -472,8 +472,8 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
             required
             className="text-[12px] text-black"
             menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
-             menuPlacement="auto" // 'auto', 'top', or 'bottom'
-  menuPosition="fixed" // prevents clipping in scrollable containers
+            menuPlacement="auto" // 'auto', 'top', or 'bottom'
+            menuPosition="fixed" // prevents clipping in scrollable containers
             styles={multiSelectStyles}
           />
         </div>

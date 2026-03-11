@@ -36,7 +36,7 @@ const MaterialRemarksForm: React.FC<MaterialRemarksFormProps> = ({
         <div className="bg-[#F4F4F6] overflow-hidden">
             <div className="flex flex-col justify-between bg-white rounded-[8px] p-1">
                 <div className="space-y-1">
-                    <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1 mt-4">
+                    <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
                         Comments
                     </div>
                     <div className="grid grid-cols-2 gap-4">

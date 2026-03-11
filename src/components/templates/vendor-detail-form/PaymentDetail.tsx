@@ -24,6 +24,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { X } from "lucide-react";
 import { UsePurchaseTeamApprovalStore } from "@/src/store/PurchaseTeamApprovalStore";
+import MultiSelect from "react-select";
+import { multiSelectStyles } from "../../common/sharedStyles";
 
 interface Props {
   ref_no: string;
@@ -85,8 +87,14 @@ const PaymentDetail = ({
     fetchCurrency();
   }, []);
 
+  const bankOptions =
+    bankNameDropown?.map((item) => ({
+      value: item?.name,
+      label: `${item?.bank_code} - ${item?.bank_name}`,
+    })) || [];
+
   const [errors, setErrors] = useState<any>({});
-  
+
   const validate = () => {
     const errors: any = {};
     if (!paymentDetail?.bank_name && !OnboardingDetail?.bank_name) {
@@ -169,7 +177,7 @@ const PaymentDetail = ({
           <h1 className="text-[12px] font-normal text-[#626973] flex">
             Bank Name<span className="pl-1 text-red-400 text-xl">*</span>
           </h1>
-          <Select
+          {/* <Select
             value={
               paymentDetail?.bank_name ?? OnboardingDetail?.bank_name ?? ""
             }
@@ -189,7 +197,29 @@ const PaymentDetail = ({
                 ))}
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
+          <MultiSelect
+            options={bankOptions}
+            value={
+              bankOptions.find(
+                (option) =>
+                  option.value ===
+                  (paymentDetail?.bank_name ?? OnboardingDetail?.bank_name)
+              ) || null
+            }
+            onChange={(value: any) => {
+              updatePaymentDetail("bank_name", value ? value.value : "");
+            }}
+            instanceId="bank-name"
+            className="text-[12px] text-black"
+            menuPortalTarget={
+              typeof document !== "undefined" ? document.body : undefined
+            }
+            styles={multiSelectStyles}
+            menuPlacement="auto"
+            menuPosition="fixed"
+            isClearable
+          />
           {errors?.bank_name && !paymentDetail?.bank_name && (
             <span style={{ color: "red" }}>{errors?.bank_name}</span>
           )}

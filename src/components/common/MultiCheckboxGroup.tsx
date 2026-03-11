@@ -10,11 +10,12 @@ interface MultiCheckboxGroupProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>, field: string) => void;
   columns?: number;
   disabled?: boolean;
+  required?: boolean;
 }
 
-const MultiCheckboxGroup: React.FC<MultiCheckboxGroupProps> = ({ name, label, options, selected, onChange, columns = 3, disabled}) => (
+const MultiCheckboxGroup: React.FC<MultiCheckboxGroupProps> = ({ name, label, options, selected, onChange, columns = 3, disabled, required = false}) => (
   <div className="mb-3 border-b border-gray-300 pb-4">
-    <Label htmlFor={name} className="font-semibold text-[16px] leading-[19px] text-[#03111F]">{label}</Label>
+    <Label htmlFor={name} className="font-semibold text-[16px] leading-[19px] text-[#03111F]">{label}{required && <span className="text-red-500 ml-1">*</span>}</Label>
     <div className={`grid grid-cols-${columns} mt-2 gap-2`}>
       {options.map(option => (
         <Label className="inline-flex items-center space-x-2" key={option}>

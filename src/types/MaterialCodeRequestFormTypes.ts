@@ -117,6 +117,8 @@ export interface MaterialCode {
   company: string;
   material_code_name: string;
   plant: string;
+  plant_description: string;
+  material_group_new_description: string;
 }
 
 export interface StorageLocation {
@@ -318,7 +320,7 @@ export interface MaterialRequestItem {
   doctype: string;
   material_type_name: string;
   company_name_display?: string;
-  material_specifications?:string
+  material_specifications?: string
 }
 
 export interface RequestorMaster {

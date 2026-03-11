@@ -153,14 +153,9 @@ export default function MaterialRegistration() {
         company_name: formValues.material_company_code,
       };
 
-      const isRevisedNew = formValues.is_revised_code_new === true || formValues.is_revised_code_new === 1;
-
-      const isRP = ["R", "P"].includes(formValues.material_category);
-
-      if (isRevisedNew && isRP) {
+      if (formValues.is_revised_code_new === false) {
         materialItem.material_code_revised = formValues.material_code_revised;
       }
-
       const finalMaterialRequestList = materialRequestList.length > 0 ? materialRequestList : [materialItem];
 
       const requestorData = {
@@ -182,7 +177,15 @@ export default function MaterialRegistration() {
       payload.append("material_request", JSON.stringify(finalMaterialRequestList));
       payload.append("send_email", "true");
 
-      console.log("Final Payload before API hit-------->", payload)
+      console.log("formValues.is_revised_code_new:", formValues.is_revised_code_new);
+      console.log("material_code_revised:", formValues.material_code_revised);
+      console.log("materialItem:", materialItem);
+      console.log("materialRequestList:", materialRequestList);
+      console.log("finalMaterialRequestList:", finalMaterialRequestList);
+      console.log(
+        "Final Payload JSON:",
+        JSON.parse(payload.get("material_request") as string)
+      );
 
       const res: AxiosResponse = await requestWrapper({
         url: API_END_POINTS.createRequestorMaster,
@@ -190,12 +193,17 @@ export default function MaterialRegistration() {
         data: payload,
       });
 
+      if (res?.status !== 200) {
+        throw new Error(`API request failed with status: ${res?.status}`);
+      }
+
       console.log("Create success →", res.data);
       setIsButtonDisabled(true);
       setShowAlert(true);
 
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error creating material:", err);
+      alert(`Submission failed: ${err?.message || "Unknown error occurred"}`);
     } finally {
       setIsLoading(false);
     }
@@ -220,13 +228,13 @@ export default function MaterialRegistration() {
         company_name: formValues.material_company_code,
       };
 
-      if (!formValues.is_revised_code_new) {
+      if (formValues.is_revised_code_new === false) {
         materialItem.material_code_revised = formValues.material_code_revised;
       }
 
       const finalMaterialRequestList =
         materialRequestList.length > 0
-          ? materialRequestList
+          ? [{ ...materialRequestList[0], ...materialItem }]
           : [materialItem];
 
       const requestorData = {
@@ -254,13 +262,17 @@ export default function MaterialRegistration() {
         data: payload,
       });
 
+      if (res?.status !== 200) {
+        throw new Error(`API request failed with status: ${res?.status}`);
+      }
+
       console.log("Update success →", res.data);
       setIsButtonDisabled(true);
       setShowAlert(true);
 
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error updating material:", err);
-
+      alert(`Update failed: ${err?.message || "Unknown error occurred"}`);
     } finally {
       setIsLoading(false);
     }
@@ -269,13 +281,12 @@ export default function MaterialRegistration() {
   const onCancel = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     router.push("/new-material-code-request-table");
-    window.location.reload();
   };
 
   const onError = (errors: any) => {
     console.log("Validation Errors:", errors);
 
-    alert("⚠️ Please fill all required fields before submitting.");
+    alert("Please fill all required fields before submitting.");
   };
 
 
