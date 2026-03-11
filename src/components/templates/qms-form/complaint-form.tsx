@@ -12,7 +12,8 @@ export const ComplaintForm = ({ vendor_onboarding }: { vendor_onboarding: string
   const currentTab = params.get("tabtype")?.toLowerCase() || "complaint";
   const { formData, handleCheckboxChange, handleBack, handleNext } = useQMSForm(vendor_onboarding, currentTab);
 
-  const isQATeamApproved = formData?.qa_team_approved === 1;
+  // const isQATeamApproved = formData?.qa_team_approved === 1;
+  const isQATeamApproved = formData?.form_fully_submitted === 1;
   const requiredFields = ["customer_complaints", "retain_complaints_records", "reviews_customer_complaints", "any_recalls", "reporting_environmental_accident"];
 
   const isFormValid = () => {

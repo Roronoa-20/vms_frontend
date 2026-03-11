@@ -2,9 +2,8 @@
 
 import React, { useEffect, useState, useCallback, ChangeEvent } from "react";
 import { useWatch } from "react-hook-form";
-import UserRequestDetails from "@/src/components/molecules/material-onboarding-details/user-request-details";
-import UserRequestDetails2 from "@/src/components/molecules/material-onboarding-details/user-request-details-2";
-import Storefields from "./material-store-fields";
+import UserRequestDetails from "@/src/components/templates/material-onboarding-details/user-request-details";
+import UserRequestDetails2 from "@/src/components/templates/material-onboarding-details/user-request-details-2";
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
@@ -58,8 +57,6 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
 
   const company = useWatch({ control: form.control, name: "material_company_code" });
   const materialType = useWatch({ control: form.control, name: "material_type" });
-
-  console.log("shouldShowAllFields ==========================>", shouldShowAllFields);
 
   const fetchMaterialCodeData = useCallback(
     async (query?: string): Promise<MaterialCode[]> => {
@@ -139,26 +136,27 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
     }
   };
 
-  useEffect(() => {
-    const category = form.getValues("material_type_category");
-    if (!category || !MaterialType?.length) return;
+  const category = useWatch({ control: form.control, name: "material_type_category" });
 
-    const materialType = form.getValues("material_type");
+  useEffect(() => {
+    if (!category || !MaterialType?.length) return;
     if (!materialType) return;
 
     const matchedType = MaterialType.find(t => t.name === materialType);
     if (!matchedType?.material_code_logic?.length) return;
 
+    const normalize = (v: string) => (v || "").trim().toLowerCase();
+
     const matchedLogic = matchedType.material_code_logic.find(
-      (m) => m.material_type_category === category
+      (m) => normalize(m.material_type_category) === normalize(category)
     );
 
     if (matchedLogic?.code_logic) {
       setSelectedCodeLogic(matchedLogic.code_logic);
     }
   }, [
-    form.watch("material_type_category"),
-    form.watch("material_type"),
+    category,
+    materialType,
     MaterialType
   ]);
 
@@ -166,20 +164,28 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
   const fetchLatestCode = async () => {
     if (!selectedCodeLogic) return;
 
-    const company = form.getValues("material_company_code");
+    const companyCodeVal = form.getValues("material_company_code");
+    if (!companyCodeVal) return;
 
-    const res = await requestWrapper({
-      method: "GET",
-      url: `${API_END_POINTS.getLatestMaterialCode}?prefix=${selectedCodeLogic}&company=${company}`,
-    });
-    if (res?.data?.message) {
-      setLatestCodeSuggestions([res.data.message]);
+    try {
+        const res = await requestWrapper({
+          method: "GET",
+          url: `${API_END_POINTS.getLatestMaterialCode}?prefix=${selectedCodeLogic}&company=${companyCodeVal}`,
+        });
+        
+        if (res?.data?.message && Object.keys(res.data.message).length > 0) {
+          setLatestCodeSuggestions([res.data.message]);
+        } else {
+             setLatestCodeSuggestions([{ material_code: "No existing code found for this logic" } as any]);
+        }
+    } catch (e) {
+        console.error("fetchLatestCode API Failed", e);
     }
   };
 
   useEffect(() => {
     fetchLatestCode();
-  }, [selectedCodeLogic]);
+  }, [selectedCodeLogic, company]);
 
   useEffect(() => {
     const code = form.watch("material_code_revised");
@@ -284,7 +290,6 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
   }, [MaterialDetails, filteredMaterialGroup]);
 
   useEffect(() => {
-    // console.log("MaterialInformationForm: role =", role, "showAll =", shouldShowAllFields);
   }, [role, shouldShowAllFields]);
 
 
@@ -311,7 +316,6 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
           />
 
           <UserRequestDetails2
-            // companyName={companyName}
             form={form}
             MaterialDetails={MaterialDetails}
             MaterialOnboardingDetails={MaterialOnboardingDetails}
@@ -320,7 +324,6 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
             setSelectedMaterialType={setSelectedMaterialType}
             selectedMaterialType={selectedMaterialType}
             UnitOfMeasure={UnitOfMeasure}
-            // MaterialType={MaterialType}
             plantcode={plantcode}
             DivisionDetails={DivisionDetails}
             filteredStorage={filteredStorage}
@@ -332,12 +335,10 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
             handleMaterialSelect={handleMaterialSelect}
             setSearchResults={setSearchResults}
             setShowSuggestions={setShowSuggestions}
-            // MaterialCode={MaterialCode}
             MaterialCategory={MaterialCategory}
             filteredDivision={filteredDivision}
             StorageLocation={StorageLocation}
             AllMaterialType={MaterialType}
-            // isMaterialCodeEdited={isMaterialCodeEdited}
             setIsMaterialCodeEdited={setIsMaterialCodeEdited}
             materialCodeAutoFetched={materialCodeAutoFetched}
             setMaterialCodeAutoFetched={setMaterialCodeAutoFetched}
@@ -351,27 +352,6 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
             setSelectedCodeLogic={setSelectedCodeLogic}
             latestCodeSuggestions={latestCodeSuggestions}
           />
-
-          {shouldShowAllFields && (role === "Material CP" || role === "Store") && (
-            <Storefields
-              companyInfo={companyInfo}
-              role={role}
-              form={form}
-              MaterialDetails={MaterialDetails}
-              MaterialOnboardingDetails={MaterialOnboardingDetails}
-              materialCompanyCode={materialCompanyCode}
-              setMaterialCompanyCode={setMaterialCompanyCode}
-              UnitOfMeasure={UnitOfMeasure}
-              MaterialType={MaterialType}
-              plantcode={plantcode}
-              AllMaterialType={MaterialType}
-              AvailabilityCheck={AvailabilityCheck}
-              MaterialGroup={MaterialGroup}
-              SerialProfile={SerialProfile}
-              ClassType={ClassType}
-              isZCAPMaterial={isZCAPMaterial}
-            />
-          )}
         </div>
       </div>
     </div>

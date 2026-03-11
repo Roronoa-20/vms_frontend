@@ -42,7 +42,7 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
     return fileOrUrl.name;
   };
 
-  const isQATeamApproved = formData?.qa_team_approved === 1;
+  const isQATeamApproved = formData?.form_fully_submitted === 1;
 
   const handleSubmit = async () => {
     try {

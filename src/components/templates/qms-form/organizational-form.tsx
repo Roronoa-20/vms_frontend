@@ -12,8 +12,8 @@ export const OrganizationalForm = ({ vendor_onboarding }: { vendor_onboarding: s
   const params = useSearchParams();
   const currentTab = params.get("tabtype")?.toLowerCase() || "organizational";
   const { formData, handleCheckboxChange, handleBack, handleNext } = useQMSForm(vendor_onboarding, currentTab);
-  const isQATeamApproved = formData?.qa_team_approved === 1;
-
+  // const isQATeamApproved = formData?.qa_team_approved === 1;
+  const isQATeamApproved = formData?.form_fully_submitted === 1;
   const requiredFields = ["organizational_chart", "procedure_for_training", "maintain_training_records", "effectiveness_of_training", "written_authority"];
 
   const isFormValid = () => {

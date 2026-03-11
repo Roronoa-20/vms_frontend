@@ -11,11 +11,10 @@ import { useAuth } from "@/src/context/AuthContext";
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import Cookies from "js-cookie";
-import { decryptImage } from "@/src/app/utils/decryptSignature";
+// import { decryptImage } from "@/src/app/utils/decryptSignature";
 
 export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: string; }) => {
     const { designation } = useAuth();
-    const isDisabled = designation === "Purchase Team";
     const params = useSearchParams();
     const currentTab = params.get("tabtype")?.toLowerCase() || "conclusion";
     const user = Cookies?.get("user_id");
@@ -23,7 +22,12 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
     const [showEsignModal, setShowEsignModal] = useState(false);
     const [esignPasskey, setEsignPasskey] = useState("");
     const [showApprovalModal, setShowApprovalModal] = useState(false);
+    // const isQATeamApproved = formData.qa_team_approved === 1;
+    const isPurchaseTeam = designation === "Purchase Team";
+    const isQATeam = designation === "QA Team";
     const isQATeamApproved = formData.qa_team_approved === 1;
+
+    const isFormLocked = isPurchaseTeam || (isQATeam && isQATeamApproved);
 
     React.useEffect(() => {
         if (!formData.performent_date) {
@@ -59,25 +63,26 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
     const handleGetUserSignature = async () => {
         try {
             const res = await requestWrapper({
-                method: "GET",
+                method: "POST",
                 url: API_END_POINTS.getusersignature,
-                params: {
+                data: {
                     esign_passkey: esignPasskey,
                     user_id: user,
                 },
             });
 
-            const encrypted = res?.data?.message?.encrypted_image;
-            const key = res?.data?.message?.token_key;
+            const base64Image = res?.data?.message?.image_base64;
 
-            const decryptedImage = await decryptImage(encrypted, key);
-            if (!decryptedImage) {
-                alert("Failed to decrypt signature");
+            if (!base64Image) {
+                alert("Failed to retrieve signature");
                 return;
             }
 
-            updateSignature(decryptedImage);
+            const imageSrc = `data:image/png;base64,${base64Image}`;
+
+            updateSignature(imageSrc);
             setShowEsignModal(false);
+            setEsignPasskey("");
 
         } catch (err) {
             console.error("E-signature fetch failed:", err);
@@ -101,7 +106,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                 </Label>
 
                 <textarea
-                    disabled={isDisabled}
+                    disabled={isFormLocked}
                     className="w-full mt-2 border border-gray-300 p-2 rounded-md text-[14px]"
                     rows={2}
                     placeholder="Enter your remarks here"
@@ -123,7 +128,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                     <div className="flex items-center space-x-2">
                         <Input
                             type="checkbox"
-                            disabled={isDisabled}
+                            disabled={isFormLocked}
                             className="w-4 h-4"
                             value="Satisfactory"
                             checked={
@@ -142,7 +147,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                     <div className="flex items-center space-x-2">
                         <Input
                             type="checkbox"
-                            disabled={isDisabled}
+                            disabled={isFormLocked}
                             className="w-4 h-4"
                             value="Not Satisfactory"
                             checked={
@@ -173,7 +178,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                         <Label className="text-[15px] font-medium text-[#03111F]">Name</Label>
                         <Input
                             type="text"
-                            disabled={isDisabled}
+                            disabled={isFormLocked}
                             className="border border-gray-300 rounded-md px-3 py-2 text-[14px] focus:ring-1 focus:ring-black"
                             placeholder="Enter the name"
                             value={formData.performer_name || ""}
@@ -186,7 +191,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                         <Label className="text-[15px] font-medium text-[#03111F]">Title</Label>
                         <Input
                             type="text"
-                            disabled={isDisabled}
+                            disabled={isFormLocked}
                             className="border border-gray-300 rounded-md px-3 py-2 text-[14px] focus:ring-1 focus:ring-black"
                             placeholder="Enter authorized title"
                             value={formData.performer_title || ""}
@@ -227,6 +232,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                                         size="nextbtnsize"
                                         className="py-2.5 w-[180px]"
                                         onClick={() => setShowEsignModal(true)}
+                                        disabled={isFormLocked}
                                     >
                                         Attach Signature
                                     </Button>
@@ -243,6 +249,7 @@ export const ConclusionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
                                     type="date"
                                     name="performent_date"
                                     value={formData.performent_date ?? ""}
+                                    disabled={isFormLocked}
                                     onChange={(e) => handleTextareaChange(e, "performent_date")}
                                     className="border border-gray-300 rounded-md px-3 py-2 text-[14px] focus:ring-1 focus:ring-black w-[200px]"
                                 />

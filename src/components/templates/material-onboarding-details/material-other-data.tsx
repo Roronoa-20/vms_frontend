@@ -12,7 +12,6 @@ import { MaterialRegistrationFormData, Company, Plant, ValuationClass, ProfitCen
 
 interface MaterialProcurementFormProps {
   form: UseFormReturn<any>;
-  setFilteredProfit: React.Dispatch<React.SetStateAction<ProfitCenter[]>>;
   role: string;
   designationname?: string;
   MaterialOnboardingDetails?: MaterialRegistrationFormData;
@@ -31,11 +30,13 @@ interface MaterialProcurementFormProps {
   fileName: string;
   MaterialType?: MaterialType[];
   isZCAPMaterial?: boolean;
-  plantcode?: Plant[]
+  plantcode?: Plant[];
+  isFileUploading?: boolean;
+  localLineItemFiles?: any;
 }
 
 
-const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role, plantcode, MaterialDetails, PriceControl = [], handleImageChange, handleLabelClick, handleRemoveFile, fileSelected, setFileSelected, setFileName, fileName, MaterialType = [], isZCAPMaterial = false }) => {
+const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role, plantcode, MaterialDetails, PriceControl = [], handleImageChange, handleLabelClick, handleRemoveFile, fileSelected, setFileSelected, setFileName, fileName, MaterialType = [], isZCAPMaterial = false, isFileUploading = false, localLineItemFiles }) => {
 
   const [filteredProfitCenter, setFilteredProfitCenter] = useState<ProfitCenter[]>([]);
   const [filteredValuationClass, setFilteredValuationClass] = useState<ValuationClass[]>([]);
@@ -74,8 +75,8 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
 
       valuationProfit.forEach((item) => {
         if (item.valuation_class && !uniqueValuationClasses.find(
-            (vc) => vc.name === item.valuation_class
-          )
+          (vc) => vc.name === item.valuation_class
+        )
         ) {
           uniqueValuationClasses.push({
             name: item.valuation_class,
@@ -100,8 +101,8 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
     }
 
     const matchedPlant = plantcode.find((p) =>
-        p.name === plantFromMaterial ||
-        p.plant_code === plantFromMaterial
+      p.name === plantFromMaterial ||
+      p.plant_code === plantFromMaterial
     );
 
     if (!matchedPlant || !matchedPlant.profit_center_list?.length) {
@@ -110,15 +111,15 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
     }
 
     const profitCenters: ProfitCenter[] = matchedPlant.profit_center_list.filter((pc) => pc.profit_center !== undefined).map((pc) => ({
-          name: pc.profit_center as string,
-          description: pc.profit_center_name || "",
-        }));
+      name: pc.profit_center as string,
+      description: pc.profit_center_name || "",
+    }));
 
     setFilteredProfitCenter(profitCenters);
 
   }, [MaterialDetails, plantcode]);
 
-  const filteredProfitCenterOptions = profitcenterSearch ? filteredProfitCenter.filter((profit) => profit.name ?.toLowerCase().includes(profitcenterSearch.toLowerCase())) : filteredProfitCenter;
+  const filteredProfitCenterOptions = profitcenterSearch ? filteredProfitCenter.filter((profit) => profit.name?.toLowerCase().includes(profitcenterSearch.toLowerCase())) : filteredProfitCenter;
 
   useEffect(() => {
     const data = MaterialDetails?.material_onboarding;
@@ -147,7 +148,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
 
   return (
     <div className="bg-[#F4F4F6] overflow-hidden">
-      <div className="flex flex-col justify-between pt-4 bg-white rounded-[8px] p-1">
+      <div className="flex flex-col justify-between bg-white rounded-[8px] p-1">
         <div className="space-y-1">
           <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
             Others Data
@@ -341,15 +342,18 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
 
                 {(role === "Material CP" || role === "Store") && (
                   <div className="col-span-1 space-y-[5px]">
-                    <Label htmlFor="fileinput">
+                    <Label htmlFor="material_information_fileinput">
                       Upload Material Information File
                     </Label>
-                    <div className="border-2 border-dashed border-gray-400 rounded-lg">
+                    <div 
+                      className="border-2 border-dashed border-gray-400 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                      onClick={() => !fileSelected && handleLabelClick("material_information_fileinput")}
+                    >
                       <div className="items-center">
                         <div className="flex items-center justify-between gap-4 mt-1 px-2 py-2">
                           <input
                             type="file"
-                            id="fileinput"
+                            id="material_information_fileinput"
                             name="material_information"
                             key="material_information"
                             className="hidden"
@@ -357,28 +361,33 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                               handleImageChange(event, "material_information")
                             }
                           />
-                          <div className="flex items-center gap-2">
-                            {!fileSelected && (
-                              <Paperclip
-                                size={18}
-                                className="cursor-pointer text-blue-600 hover:text-blue-800"
-                                onClick={() => handleLabelClick("fileinput")}
-                              />
-                            )}
-
-                            {!fileSelected ? (
-                              <span className="text-sm text-gray-500">
-                                No file selected
-                              </span>
-                            ) : (
+                          <div className="flex items-center gap-2 w-full">
+                            {isFileUploading ? (
+                              <div className="flex items-center gap-2 w-full">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                                <span className="text-sm text-gray-500">Uploading...</span>
+                              </div>
+                            ) : !fileSelected ? (
                               <>
+                                <Paperclip
+                                  size={18}
+                                  className="text-blue-600"
+                                />
+                                <span className="text-sm text-gray-500 w-full">
+                                  Click to upload material information file
+                                </span>
+                              </>
+                            ) : (
+                              <div className="flex w-full items-center justify-between gap-2">
                                 <a
-                                  href={`${process.env.NEXT_PUBLIC_BASE_URL}${form.getValues(
-                                    "material_information"
-                                  )}`}
+                                  href={
+                                    localLineItemFiles?.["material_information"]?.fileURL 
+                                    || (form.getValues("material_information") && typeof form.getValues("material_information") === "string" ? `${process.env.NEXT_PUBLIC_BASE_URL}${form.getValues("material_information")}` : "#")
+                                  }
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-sm text-blue-600 underline"
+                                  className="text-sm text-blue-600 underline truncate"
+                                  onClick={(e) => e.stopPropagation()}
                                 >
                                   {fileName}
                                 </a>
@@ -386,13 +395,14 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                                   type="button"
                                   variant="ghost"
                                   className="text-red-500 font-bold p-0 h-auto"
-                                  onClick={() =>
-                                    handleRemoveFile("fileinput", setFileName)
-                                  }
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRemoveFile("material_information_fileinput", setFileName);
+                                  }}
                                 >
                                   ✕
                                 </Button>
-                              </>
+                              </div>
                             )}
                           </div>
                         </div>

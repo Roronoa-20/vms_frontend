@@ -13,7 +13,8 @@ export const BuildingForm = ({ vendor_onboarding }: { vendor_onboarding: string;
   const currentTab = params.get("tabtype")?.toLowerCase() || "building";
   const { formData, handleTextareaChange, handleCheckboxChange, handleBack, handleNext } = useQMSForm(vendor_onboarding, currentTab);
 
-  const isQATeamApproved = formData?.qa_team_approved === 1;
+  // const isQATeamApproved = formData?.qa_team_approved === 1;
+  const isQATeamApproved = formData?.form_fully_submitted === 1;
   const requiredFields = ["area_of_facility", "no_of_employees", "valid_license", "air_handling_unit", "humidity", "pest_control", "adequate_sizes", "clean_rooms", "water_disposal", "safety_committee"];
 
   const isFormValid = () => {

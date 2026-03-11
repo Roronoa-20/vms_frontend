@@ -24,7 +24,8 @@ export const MDPLQualityAgreementForm = ({ vendor_onboarding, ref_no, company_co
   const qms = useQMSForm(vendor_onboarding, currentTab);
   const { formData, handleBack } = qms
   const router = useRouter();
-  const isQATeamApproved = formData?.qa_team_approved === 1;
+  // const isQATeamApproved = formData?.qa_team_approved === 1;
+  const isQATeamApproved = formData?.form_fully_submitted === 1;
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
 

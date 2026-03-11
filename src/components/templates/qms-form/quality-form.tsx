@@ -12,7 +12,8 @@ export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; 
   const currentTab = params.get("tabtype")?.toLowerCase() || "quality";
   const { formData, handleCheckboxChange, handleBack, handleNext } = useQMSForm(vendor_onboarding, currentTab);
 
-  const isQATeamApproved = formData?.qa_team_approved === 1;
+  // const isQATeamApproved = formData?.qa_team_approved === 1;
+  const isQATeamApproved = formData?.form_fully_submitted === 1;
   const requiredFields = ["qc_independent_of_production", "analytical_methods_validated", "testing_laboratories", "failure_investigation"];
 
   const isFormValid = () => {

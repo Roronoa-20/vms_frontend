@@ -17,7 +17,8 @@ export const QASForm = ({ vendor_onboarding, ref_no }: { vendor_onboarding: stri
   const currentTab = params.get("tabtype")?.toLowerCase() || "qas";
   const { formData, handleBack, handleNext, handleMultipleCheckboxChange, handleTextareaChange, handleSingleCheckboxChange } = useQMSForm(vendor_onboarding, currentTab);
   const multiSelectOptions = useMultiSelectOptions(vendor_onboarding);
-  const isQATeamApproved = formData?.qa_team_approved === 1;
+  // const isQATeamApproved = formData?.qa_team_approved === 1;
+  const isQATeamApproved = formData?.form_fully_submitted === 1;
 
   const isFormValid = () => {
     if (!formData) return false;

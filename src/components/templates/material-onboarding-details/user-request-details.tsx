@@ -158,7 +158,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
                                         <Select onValueChange={field.onChange} value={field.value || ""} disabled>
                                             <SelectTrigger className="p-3 w-full text-sm"><SelectValue placeholder="Select Plant Code" /></SelectTrigger>
                                             <SelectContent>
-                                                {filteredPlants?.map(p => <SelectItem key={p.plant_name} value={p.plant_name ?? ""}>{p.plant_name}</SelectItem>)}
+                                                {filteredPlants?.map(p => <SelectItem key={p.name} value={p.name ?? ""}>{p.plant_name}</SelectItem>)}
                                             </SelectContent>
                                         </Select>
                                     </FormControl>

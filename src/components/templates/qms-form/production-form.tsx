@@ -27,7 +27,9 @@ export const ProductionForm = ({ vendor_onboarding }: { vendor_onboarding: strin
   ];
   const multiSelectOptions = useMultiSelectOptions(vendor_onboarding);
 
-  const isQATeamApproved = formData?.qa_team_approved === 1;
+  // const isQATeamApproved = formData?.qa_team_approved === 1;
+  const isQATeamApproved = formData?.form_fully_submitted === 1;
+
   const isFormValid = () => {
     if (!formData) return false;
 

@@ -15,7 +15,8 @@ export const VendorInfoForm = ({ vendor_onboarding, ref_no, company_code }: { ve
     const currentTab = params.get("tabtype")?.toLowerCase() || "vendor information";
     const { formData, handleTextareaChange, handleClearSignature, setSignaturePreviews, signaturePreviews, handleSignatureUpload, handleNext } = useQMSForm(vendor_onboarding, currentTab);
 
-    const isQATeamApproved = formData?.qa_team_approved === 1;
+    // const isQATeamApproved = formData?.qa_team_approved === 1;
+    const isQATeamApproved = formData?.form_fully_submitted === 1;
 
     useEffect(() => {
         const sign = formData?.vendor_sign_attachment;

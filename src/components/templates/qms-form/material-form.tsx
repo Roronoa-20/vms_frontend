@@ -16,7 +16,8 @@ export const MaterialForm = ({ vendor_onboarding }: { vendor_onboarding: string;
   const { formData, handleMultipleCheckboxChange, handleCheckboxChange, handleBack, handleNext } = useQMSForm(vendor_onboarding, currentTab);
   const multiSelectOptions = useMultiSelectOptions(vendor_onboarding);
 
-  const isQATeamApproved = formData?.qa_team_approved === 1;
+  // const isQATeamApproved = formData?.qa_team_approved === 1;
+  const isQATeamApproved = formData?.form_fully_submitted === 1;
   const requiredFields = ["approved_supplierlist", "agreements", "control_and_inspection", "defined_areas"];
 
   const isFormValid = () => {
