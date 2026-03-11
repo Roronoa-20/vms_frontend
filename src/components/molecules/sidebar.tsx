@@ -80,12 +80,11 @@ const Sidebar = () => {
 
     if (!btn || !sidebar) return;
 
-    const sidebarRect = sidebar.getBoundingClientRect();
     const btnRect = btn.getBoundingClientRect();
 
     setSubmenuPos({
-      top: btnRect.top - sidebarRect.top + sidebar.scrollTop,
-      left: sidebar.clientWidth + 4,
+      top: btnRect.top,
+      left: btnRect.right + 4,
     });
   };
 
@@ -161,8 +160,8 @@ const Sidebar = () => {
   return (
     <div className="relative">
       {/* SIDEBAR */}
-      <div className={`${getSidebarWidth(designation || "", role)} bg-[#0C2741] flex flex-col h-screen sidebar-scroll relative`}>
-        <div className="flex flex-col items-center gap-3 overflow-y-auto no-scrollbar relative">
+      <div className={`${getSidebarWidth(designation || "", role)} bg-[#0C2741] flex flex-col h-screen relative overflow-hidden`}>
+        <div className="flex flex-col flex-1 items-center gap-3 overflow-y-auto no-scrollbar sidebar-scroll w-full pb-6">
           <div className="pb-3 pt-2.5">
             <Logo />
           </div>
@@ -185,24 +184,13 @@ const Sidebar = () => {
             </button>
           ))}
         </div>
-        {/* {isMaterialCPSidebar && (
-          <div className="mt-auto pb-4 flex justify-center">
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="flex flex-col items-center gap-1 text-white hover:bg-[#2C567E] px-2 py-2 rounded-lg w-full"
-            >
-              <span className="text-xl">←</span>
-              <span className="text-sm">Back</span>
-            </button>
-          </div>
-        )} */}
-
+        
         {openMenu?.children && (
           <div
             ref={submenuRef}
             onMouseDown={(e) => e.stopPropagation()}
             style={{ top: submenuPos.top, left: submenuPos.left }}
-            className="absolute bg-[#15395B] rounded-md shadow-lg flex flex-col gap-2 py-2 px-2 min-w-[180px] z-50"
+            className="fixed bg-[#15395B] rounded-md shadow-lg flex flex-col gap-2 py-2 px-2 min-w-[180px] z-50"
           >
             {openMenu.children.map((child, idx) => (
               <button
@@ -219,6 +207,5 @@ const Sidebar = () => {
       </div>
     </div>
   );
-
 };
 export default Sidebar;
