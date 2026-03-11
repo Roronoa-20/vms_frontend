@@ -93,7 +93,7 @@ const API_END_POINTS = {
   updateProductionForm: `${url}/api/method/vms.APIs.qms_api.update_production_control_details.update_production_details`,
   updateComplaintForm: `${url}/api/method/vms.APIs.qms_api.update_complaint_details.update_complaint_details`,
   updateSupplementForm: `${url}/api/method/vms.APIs.qms_api.update_supplemental_details.update_supplemental_details`,
-  getusersignature: `${url}/api/method/vms.APIs.qms_apis.qms_api.send_signature_image`,
+  getusersignature: `${url}/api/method/vms.APIs.qms_api.qms_api.send_signature_image`,
   qmstablemultiselect: `${url}/api/method/vms.APIs.qms_api.get_or_create_qms_multiselect_data.get_all_multiselect_masters`,
   qmsqadocumenttypelist: `${url}/api/method/vms.APIs.qms_api.get_or_create_qms_multiselect_data.get_quality_agreement_list`,
   createsubmitQualityAgreement: `${url}/api/method/vms.APIs.qms_api.update_quality_agreement.create_qms_quality_agreement`,

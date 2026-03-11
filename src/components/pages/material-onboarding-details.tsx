@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import MaterialOnboardingForm from "@/src/components/molecules/material-onboarding-details/material-onboarding-form";
+import MaterialOnboardingForm from "@/src/components/templates/material-onboarding-details/material-onboarding-form";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";

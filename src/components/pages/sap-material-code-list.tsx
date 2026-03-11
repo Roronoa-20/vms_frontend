@@ -23,7 +23,6 @@ export default async function SAPMaterialCodeView() {
         cookie: cookieHeaderString,
       },
     });
-    console.log("Employee API response for Material Code List---->", employeeRes);
 
     if (employeeRes?.status === 200 && employeeRes?.data?.message?.message === "Success") {
       const employee = employeeRes.data.message.data;
@@ -74,7 +73,7 @@ export default async function SAPMaterialCodeView() {
   const MaterialCodeData = msg?.data || [];
 
   return (
-    <div className="p-4">
+    <div className="p-3">
       <ViewSAPMaterialCodeTable
         data={MaterialCodeData}
         loading={false}

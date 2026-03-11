@@ -239,6 +239,8 @@ export type VendorQMSForm = {
   quality_manual?: string | File | null;
   attach_person_signature?: File | null;
   attach_meril_signature?: File | null;
+  form_fully_submitted?: number | boolean;
+  quality_agreement_submitted?: number | boolean;
 };
 
 export type VendorQualityAgreementForm = {

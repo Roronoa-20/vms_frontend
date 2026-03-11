@@ -12,7 +12,14 @@ export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; 
   const currentTab = params.get("tabtype")?.toLowerCase() || "quality";
   const { formData, handleCheckboxChange, handleBack, handleNext } = useQMSForm(vendor_onboarding, currentTab);
 
-  const isQATeamApproved = formData?.qa_team_approved === 1;
+  // const isQATeamApproved = formData?.qa_team_approved === 1;
+  const isQATeamApproved = formData?.form_fully_submitted === 1;
+  const requiredFields = ["qc_independent_of_production", "analytical_methods_validated", "testing_laboratories", "failure_investigation"];
+
+  const isFormValid = () => {
+    if (!formData) return false;
+    return requiredFields.every(field => !!formData[field as keyof typeof formData]);
+  };
 
   const handleSubmit = async () => {
     try {
@@ -60,7 +67,7 @@ export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; 
           value={formData.qc_independent_of_production || ""}
           onChange={(e) => handleCheckboxChange(e, 'qc_independent_of_production')}
           disabled={isQATeamApproved}
-
+          required={true}
         />
 
         <YesNoNAGroup
@@ -69,8 +76,7 @@ export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; 
           value={formData.analytical_methods_validated || ""}
           onChange={(e) => handleCheckboxChange(e, 'analytical_methods_validated')}
           disabled={isQATeamApproved}
-
-
+          required={true}
         />
 
         <YesNoNAGroup
@@ -79,8 +85,7 @@ export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; 
           value={formData.testing_laboratories || ""}
           onChange={(e) => handleCheckboxChange(e, 'testing_laboratories')}
           disabled={isQATeamApproved}
-
-
+          required={true}
         />
 
         <YesNoNAGroup
@@ -89,7 +94,7 @@ export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; 
           value={formData.failure_investigation || ""}
           onChange={(e) => handleCheckboxChange(e, 'failure_investigation')}
           disabled={isQATeamApproved}
-
+          required={true}
         />
 
         <div className="flex justify-end space-x-5 items-center">
@@ -106,6 +111,7 @@ export const QualityForm = ({ vendor_onboarding }: { vendor_onboarding: string; 
             size="nextbtnsize"
             className="py-2.5"
             onClick={handleSubmit}
+            disabled={!isFormValid() || isQATeamApproved}
           >
             Next
           </Button>

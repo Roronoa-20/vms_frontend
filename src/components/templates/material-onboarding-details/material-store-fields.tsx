@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup} from "@/components/ui/newselect";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup } from "@/components/ui/newselect";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { MaterialRegistrationFormData, Company, Plant, ClassType, UOMMaster, MaterialGroupMaster, ProfitCenter, AvailabilityCheck, SerialNumber, MaterialType, MaterialRequestData } from "@/src/types/MaterialCodeRequestFormTypes";
 import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
 
@@ -107,7 +107,7 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
     <div className="bg-[#F4F4F6] overflow-hidden">
       <div className="flex flex-col justify-between bg-white rounded-[8px] p-1">
         <div className="space-y-1">
-          <div className="flex items-center justify-between text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1 mt-4">
+          <div className="flex items-center justify-between text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
             <span>Store Data</span>
           </div>
           <div className="grid grid-cols-3 gap-4 pb-2">

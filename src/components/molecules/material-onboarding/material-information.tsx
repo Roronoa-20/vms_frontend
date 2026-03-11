@@ -7,8 +7,8 @@ import { UseFormReturn } from "react-hook-form";
 import { MaterialRegistrationFormData } from "@/src/types/MaterialCodeRequestFormTypes";
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
-import requestWrapper from '@/src/services/apiCall'
-
+import requestWrapper from '@/src/services/apiCall';
+import { EmployeeDetail } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface MaterialInformationProps {
   form: UseFormReturn<any>;
@@ -18,9 +18,11 @@ interface MaterialInformationProps {
     uomMaster: any[];
   };
   MaterialOnboarding?: MaterialRegistrationFormData;
+  EmployeeDetails: EmployeeDetail | null;
+
 }
 
-export default function MaterialInformation({ form, basicMasters, MaterialOnboarding }: MaterialInformationProps) {
+export default function MaterialInformation({ form, basicMasters, MaterialOnboarding, EmployeeDetails }: MaterialInformationProps) {
 
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -125,14 +127,21 @@ export default function MaterialInformation({ form, basicMasters, MaterialOnboar
     if (!selectedCodeLogic) return;
 
     const company = form.getValues("material_company_code");
+    if (!company) return;
 
-    const res = await requestWrapper({
-      method: "GET",
-      url: `${API_END_POINTS.getLatestMaterialCode}?prefix=${selectedCodeLogic}&company=${company}`,
-    });
-
-    if (res?.data?.message) {
-      setLatestCodeSuggestions([res.data.message]);
+    try {
+        const res = await requestWrapper({
+          method: "GET",
+          url: `${API_END_POINTS.getLatestMaterialCode}?prefix=${selectedCodeLogic}&company=${company}`,
+        });
+    
+        if (res?.data?.message && Object.keys(res.data.message).length > 0) {
+          setLatestCodeSuggestions([res.data.message]);
+        } else {
+          setLatestCodeSuggestions([{ material_code: "No existing code found for this logic" } as any]);
+        }
+    } catch (e) {
+        console.error("fetchLatestCode API Failed", e);
     }
   };
 
@@ -250,6 +259,7 @@ export default function MaterialInformation({ form, basicMasters, MaterialOnboar
         selectedCodeLogic={selectedCodeLogic}
         setSelectedCodeLogic={setSelectedCodeLogic}
         latestCodeSuggestions={latestCodeSuggestions}
+        EmployeeDetails={EmployeeDetails}
       />
     </div>
   );

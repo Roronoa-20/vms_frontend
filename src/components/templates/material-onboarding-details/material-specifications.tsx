@@ -41,7 +41,7 @@ const MaterialSpecificationsForm: React.FC<MaterialSpecificationsFormProps> = ({
 
   return (
     <div className="bg-[#F4F4F6] overflow-hidden">
-      <div className="flex flex-col justify-between pt-4 bg-white rounded-[8px] p-1">
+      <div className="flex flex-col justify-between bg-white rounded-[8px] p-1">
         <div className="space-y-1">
           <div className="flex items-center justify-between text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
             <span>Characteristics & Specifications</span>

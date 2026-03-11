@@ -42,7 +42,7 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
     return fileOrUrl.name;
   };
 
-  const isQATeamApproved = formData?.qa_team_approved === 1;
+  const isQATeamApproved = formData?.form_fully_submitted === 1;
 
   const handleSubmit = async () => {
     try {
@@ -77,7 +77,7 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
       });
       console.log("API response:", response);
       if (response?.status === 200) {
-        // handleNext();
+        handleNext();
       }
     } catch (error) {
       console.error("Submit error:", error);
@@ -97,6 +97,7 @@ export const SupplementForm = ({ vendor_onboarding, ref_no, company_code }: { ve
           onChange={(e) => { handleTextareaChange(e, "additional_or_supplement_information") }}
           rows={2}
           disabled={isQATeamApproved}
+          required={true}
         />
 
         {is7000 && (

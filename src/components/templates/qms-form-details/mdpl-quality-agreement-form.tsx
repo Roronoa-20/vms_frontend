@@ -17,7 +17,8 @@ export const MDPLQualityAgreementForm = ({ vendor_onboarding, company_code }: { 
   const params = useSearchParams();
   const formRef = useRef<HTMLDivElement | null>(null);
   const currentTab = params.get("tabtype")?.toLowerCase() || "quality agreement";
-  const { handleBack } = useQMSForm(vendor_onboarding, currentTab);
+  const qms = useQMSForm(vendor_onboarding, currentTab);
+  const { handleBack } = qms;
 
   return (
     <div className="flex flex-col items-center px-4 pb-10 min-h-screen">
@@ -35,7 +36,7 @@ export const MDPLQualityAgreementForm = ({ vendor_onboarding, company_code }: { 
         <Form4 />
       </div>
       <div className="page w-[75%] mb-2">
-        <Form5 vendor_onboarding={vendor_onboarding} />
+        <Form5 vendor_onboarding={vendor_onboarding} qms={qms} />
       </div>
       <div className="page w-[75%] mb-2">
         <Form6 vendor_onboarding={vendor_onboarding} />
@@ -57,7 +58,7 @@ export const MDPLQualityAgreementForm = ({ vendor_onboarding, company_code }: { 
             variant="nextbtn"
             size="nextbtnsize"
             className="py-2.5"
-            // onClick={handleSubmit}
+          // onClick={handleSubmit}
           >
             Submit
           </Button>

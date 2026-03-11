@@ -15,7 +15,8 @@ export const VendorInfoForm = ({ vendor_onboarding, ref_no, company_code }: { ve
     const currentTab = params.get("tabtype")?.toLowerCase() || "vendor information";
     const { formData, handleTextareaChange, handleClearSignature, setSignaturePreviews, signaturePreviews, handleSignatureUpload, handleNext } = useQMSForm(vendor_onboarding, currentTab);
 
-    const isQATeamApproved = formData?.qa_team_approved === 1;
+    // const isQATeamApproved = formData?.qa_team_approved === 1;
+    const isQATeamApproved = formData?.form_fully_submitted === 1;
 
     useEffect(() => {
         const sign = formData?.vendor_sign_attachment;
@@ -108,7 +109,7 @@ export const VendorInfoForm = ({ vendor_onboarding, ref_no, company_code }: { ve
                             <div className="grid grid-cols-1 relative">
                                 <div className="col-span-1 space-y-[5px]">
                                     <Label className="text-[13px]" htmlFor="vendor_name1">
-                                        Name
+                                        Name <span className="text-red-500">*</span>
                                     </Label>
                                     <Input
                                         type="text"
@@ -122,7 +123,7 @@ export const VendorInfoForm = ({ vendor_onboarding, ref_no, company_code }: { ve
 
                                 <div className="col-span-1 space-y-[5px] mt-4">
                                     <Label className="text-[13px]" htmlFor="date">
-                                        Date
+                                        Date <span className="text-red-500">*</span>
                                     </Label>
                                     <Input
                                         type="date"
@@ -136,7 +137,7 @@ export const VendorInfoForm = ({ vendor_onboarding, ref_no, company_code }: { ve
 
                             {/* Signature Upload */}
                             <div className="col-span-2 space-y-[5px]">
-                                <Label className="text-[13px]">Vendor Signature</Label>
+                                <Label className="text-[13px]">Vendor Signature <span className="text-red-500">*</span></Label>
 
                                 {signaturePreviews["vendor_signature"] ? (
                                     <div className="relative w-fit">
@@ -179,7 +180,7 @@ export const VendorInfoForm = ({ vendor_onboarding, ref_no, company_code }: { ve
                     {(is2000 || is7000) && (
                         <div className="col-span-3 space-y-[5px]">
                             <Label htmlFor="name_of_parent_company" className="font-semibold text-[16px] text-[#03111F]">
-                                If a division of a subsidiary, please provide name and address of parent company
+                                If a division of a subsidiary, please provide name and address of parent company <span className="text-red-500">*</span>
                             </Label>
                             <div className="border-b border-gray-300 mt-2">
                                 <textarea
@@ -200,7 +201,7 @@ export const VendorInfoForm = ({ vendor_onboarding, ref_no, company_code }: { ve
                                 htmlFor="name_of_manufacturer_of_supplied_material"
                                 className="font-semibold text-[16px] text-[#03111F]"
                             >
-                                If supplier is a distributor, please provide name and address of the manufacturer of supplied material
+                                If supplier is a distributor, please provide name and address of the manufacturer of supplied material <span className="text-red-500">*</span>
                             </Label>
                             <div className="border-b border-gray-300 mt-2">
                                 <textarea

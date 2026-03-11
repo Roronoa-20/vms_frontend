@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup } from "../atoms/select";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
@@ -28,7 +29,7 @@ const useDebounce = (value: any, delay: number) => {
 };
 
 const ViewMaterialCodeTable = ({ data, loading, companyDropdown, allowedCompanyCodes, isMaterialUser }: Props) => {
-  console.log("Allowed Company Code in Material Code Data----->", allowedCompanyCodes)
+  // console.log("Allowed Company Code in Material Code Data----->", allowedCompanyCodes)
   const [table, setTable] = useState<MaterialCode[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [materialtype, setMaterialType] = useState<string>("");
@@ -37,6 +38,8 @@ const ViewMaterialCodeTable = ({ data, loading, companyDropdown, allowedCompanyC
   const [record_per_page, setRecordPerPage] = useState<number>(1000);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+
   const debouncedSearchName = useDebounce(search, 300);
 
   useEffect(() => {
@@ -44,26 +47,30 @@ const ViewMaterialCodeTable = ({ data, loading, companyDropdown, allowedCompanyC
   }, [debouncedSearchName, selectedCompany, materialtype, currentPage]);
 
   const fetchTable = async () => {
-    const filters: any = {};
-    if (isMaterialUser && allowedCompanyCodes?.length) {
-      filters.company = ["in", allowedCompanyCodes];
-    }
-    else if (selectedCompany) {
-      filters.company = selectedCompany;
-    }
+    setIsFetching(true);
+    try {
+      const filters: any = {};
+      if (selectedCompany) {
+        filters.company = selectedCompany;
+      } else if (isMaterialUser && allowedCompanyCodes?.length) {
+        filters.company = ["in", allowedCompanyCodes];
+      }
 
-    const url =
-      `${API_END_POINTS.MaterialCodeSearchApi}` +
-      `?filters=${encodeURIComponent(JSON.stringify(filters))}` +
-      `&search_term=${encodeURIComponent(debouncedSearchName)}` +
-      `&page_no=${currentPage}&page_length=${record_per_page}`;
+      const url =
+        `${API_END_POINTS.MaterialCodeSearchApi}` +
+        `?filters=${encodeURIComponent(JSON.stringify(filters))}` +
+        `&search_term=${encodeURIComponent(debouncedSearchName)}` +
+        `&page_no=${currentPage}&page_length=${record_per_page}`;
 
-    const res = await requestWrapper({ url, method: "GET" });
+      const res = await requestWrapper({ url, method: "GET" });
 
-    if (res?.status === 200) {
-      const message = res?.data?.message;
-      setTable(message?.data || []);
-      settotalEventList(message?.pagination?.total_count || 0);
+      if (res?.status === 200) {
+        const message = res?.data?.message;
+        setTable(message?.data || []);
+        settotalEventList(message?.pagination?.total_count || 0);
+      }
+    } finally {
+      setIsFetching(false);
     }
   };
 
@@ -79,56 +86,76 @@ const ViewMaterialCodeTable = ({ data, loading, companyDropdown, allowedCompanyC
             onChange={(e) => setSearch(e.target.value)}
             className="w-[200px]"
           />
-          {!isMaterialUser && (
-            <Select
-              value={selectedCompany || "all"}
-              onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select Company" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="all">All</SelectItem>
-                  {companyDropdown?.map((item, index) => (
+          <Select
+            value={selectedCompany || "all"}
+            onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select Company" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="all">All</SelectItem>
+                {isMaterialUser && allowedCompanyCodes ? (
+                  allowedCompanyCodes.map((code, index) => {
+                    const company = companyDropdown?.find(c => c.name === code);
+                    return (
+                      <SelectItem key={index} value={code}>
+                        {company ? company.description : code}
+                      </SelectItem>
+                    );
+                  })
+                ) : (
+                  companyDropdown?.map((item, index) => (
                     <SelectItem key={index} value={item?.name}>
                       {item?.description}
                     </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          )}
+                  ))
+                )}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
 
         <Table>
           <TableHeader className="bg-blue-100">
             <TableRow>
-              <TableHead className="text-center text-black">Sr No.</TableHead>
-              <TableHead className="text-center text-black">Company</TableHead>
-              <TableHead className="text-center text-black">Material Code</TableHead>
-              <TableHead className="text-center text-black">Material Description</TableHead>
-              <TableHead className="text-center text-black">Material Type</TableHead>
-              <TableHead className="text-center text-black">Plant</TableHead>
+              <TableHead className="text-center text-black sticky left-0 z-20 bg-blue-100 w-[60px] min-w-[60px]">Sr No.</TableHead>
+              <TableHead className="text-center text-black sticky left-[60px] z-20 bg-blue-100 w-[150px] min-w-[150px]">Company</TableHead>
+              <TableHead className="text-center text-black sticky left-[210px] z-20 bg-blue-100 w-[150px] min-w-[150px]">Material Code</TableHead>
+              <TableHead className="text-center text-black sticky left-[360px] z-20 bg-blue-100 w-[300px] min-w-[300px] border-r shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Material Description</TableHead>
+              <TableHead className="text-center text-black min-w-[150px]">Material Type</TableHead>
+              <TableHead className="text-center text-black min-w-[150px]">Plant</TableHead>
+              <TableHead className="text-center text-black min-w-[150px]">Material Group</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {table.length === 0 ? (
+            {isFetching ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-gray-500 py-4">
+                <TableCell colSpan={7} className="text-center py-8">
+                  <div className="flex justify-center items-center gap-2 text-gray-500">
+                    <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
+                    <span>Loading material codes...</span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : table.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center text-gray-500 py-4">
                   No records found
                 </TableCell>
               </TableRow>
             ) : (
               table.map((row, index) => (
                 <TableRow key={index}>
-                  <TableCell className="text-center">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
-                  <TableCell className="text-center">{row.company}</TableCell>
-                  <TableCell className="text-center text-nowrap">{row.material_code}</TableCell>
-                  <TableCell className="text-center">{row.material_description}</TableCell>
-                  <TableCell className="text-center">{row.material_type}</TableCell>
-                  <TableCell className="text-center">{row.plant}</TableCell>
+                  <TableCell className="text-center sticky left-0 z-10 bg-white w-[60px] min-w-[60px]">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
+                  <TableCell className="text-center sticky left-[60px] z-10 bg-white w-[150px] min-w-[150px]">{row.company}</TableCell>
+                  <TableCell className="text-center text-nowrap sticky left-[210px] z-10 bg-white w-[150px] min-w-[150px]">{row.material_code}</TableCell>
+                  <TableCell className="text-center sticky left-[360px] z-10 bg-white w-[300px] min-w-[300px] border-r shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">{row.material_description}</TableCell>
+                  <TableCell className="text-center text-nowrap min-w-[150px]">{row.material_type}</TableCell>
+                  <TableCell className="text-center text-nowrap min-w-[150px]">{row.plant_description}</TableCell>
+                  <TableCell className="text-center text-nowrap min-w-[150px]">{row.material_group_new_description}</TableCell>
                 </TableRow>
               ))
             )}
