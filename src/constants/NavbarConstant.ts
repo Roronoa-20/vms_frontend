@@ -54,5 +54,6 @@ export const NavbarConstant: Record<string, string> = {
     "/view-asl": "Approved Supplier List",
     "/sap-material-code-list": "SAP Material Code List",
     "/view-po-details": "View PO Details",
-    "/quick-vendor": "Quick Vendor Creation"
+    "/quick-vendor": "Quick Vendor Creation",
+    "/view-quick-vendor": "View Quick Vendor Details"
 }

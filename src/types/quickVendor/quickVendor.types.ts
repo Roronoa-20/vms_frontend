@@ -242,6 +242,7 @@ export interface TInternationalBankDetail {
 }
 
 export interface TVendorDetails {
+    is_submitted: number
     vendor_title: string;
     vendor_name: string;
     vendors_primary_email: string;
@@ -342,6 +343,7 @@ export interface TBankDetailsAttachment {
 }
 
 export interface TOnboardingData {
+    can_approve: number;
     name: string;
     vendor_name: string;
     vendor_title: string;

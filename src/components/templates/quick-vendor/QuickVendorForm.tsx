@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../../atoms/select';
 import { Input } from '../../atoms/input';
 import {
@@ -40,8 +40,9 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
     const [formData, setFormData] = useState<TVendorDetails>({} as TVendorDetails);
 
     // Excise Details - single row input state
-    const [exciseRowData, setExciseRowData] = useState<{ gst_number: string; gst_ven_class: string; pan_number: string; attachment?: File | null }>({ gst_number: '', gst_ven_class: '', pan_number: '' });
+    const [exciseRowData, setExciseRowData] = useState<{ gst_number: string; gst_ven_class: string; attachment?: File | null }>({ gst_number: '', gst_ven_class: '' });
     const [editingExciseIndex, setEditingExciseIndex] = useState<number | null>(null);
+    const attachmentInputRef = useRef<HTMLInputElement>(null);
 
     // Contact Person - single row input state
     const [contactRowData, setContactRowData] = useState<{ first_name: string; last_name: string }>({ first_name: '', last_name: '' });
@@ -50,10 +51,12 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
     // Bank Detail (Domestic) - single row input state
     const [bankRowData, setBankRowData] = useState<{ country: string; bank_key: string; bank_name: string; account_number: string; name_of_account_holder: string; ak: string; bnkt: string; ifsc_code: string; bank_type: string; attachment?: File | null }>({ country: '', bank_key: '', bank_name: '', account_number: '', name_of_account_holder: '', ak: '', bnkt: '', ifsc_code: '', bank_type: '' });
     const [editingBankIndex, setEditingBankIndex] = useState<number | null>(null);
+    const bankAttachmentInputRef = useRef<HTMLInputElement>(null);
 
     // Bank Detail (International) - single row input state
-    const [intlBankRowData, setIntlBankRowData] = useState<{ beneficiary_name: string; beneficiary_bank_name: string; beneficiary_account_no: string; beneficiary_iban_no: string; beneficiary_bank_address: string; beneficiary_swift_code: string; beneficiary_ach_no: string; beneficiary_aba_no: string; beneficiary_routing_no: string }>({ beneficiary_name: '', beneficiary_bank_name: '', beneficiary_account_no: '', beneficiary_iban_no: '', beneficiary_bank_address: '', beneficiary_swift_code: '', beneficiary_ach_no: '', beneficiary_aba_no: '', beneficiary_routing_no: '' });
+    const [intlBankRowData, setIntlBankRowData] = useState<{ beneficiary_name: string; beneficiary_bank_name: string; beneficiary_account_no: string; beneficiary_iban_no: string; beneficiary_bank_address: string; beneficiary_swift_code: string; beneficiary_ach_no: string; beneficiary_aba_no: string; beneficiary_routing_no: string; attachment?: File | null }>({ beneficiary_name: '', beneficiary_bank_name: '', beneficiary_account_no: '', beneficiary_iban_no: '', beneficiary_bank_address: '', beneficiary_swift_code: '', beneficiary_ach_no: '', beneficiary_aba_no: '', beneficiary_routing_no: '' });
     const [editingIntlBankIndex, setEditingIntlBankIndex] = useState<number | null>(null);
+    const intlBankAttachmentInputRef = useRef<HTMLInputElement>(null);
 
     // File attachments
     const [files, setFiles] = useState<{
@@ -79,18 +82,25 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                     const data = responseData?.vendor_details ? responseData.vendor_details : responseData;
 
                     // Map international_bank_details fields from API format to form format
-                    const mappedInternationalBankDetails = data.international_bank_details?.map((bank: any) => ({
-                        meril_company_name: bank.meril_company_name || '',
-                        beneficiary_name: bank.beneficiary_name || '',
-                        beneficiary_bank_name: bank.beneficiary_bank_name || '',
-                        beneficiary_account_no: bank.beneficiary_account_no || '',
-                        beneficiary_iban_no: bank.iban_no || bank.beneficiary_iban_no || '',
-                        beneficiary_bank_address: bank.beneficiary_bank_address || '',
-                        beneficiary_swift_code: bank.swift_code || bank.beneficiary_swift_code || '',
-                        beneficiary_ach_no: bank.beneficiary_ach_no || '',
-                        beneficiary_aba_no: bank.beneficiary_aba_no || '',
-                        beneficiary_routing_no: bank.beneficiary_routing_no || '',
-                    })) || [];
+                    const mappedInternationalBankDetails = data.international_bank_details?.map((bank: any) => {
+                        let parsedProof = bank.import_bank_proof;
+                        if (typeof parsedProof === 'string' && parsedProof.trim().startsWith('{')) {
+                            try { parsedProof = JSON.parse(parsedProof); } catch (e) { }
+                        }
+                        return {
+                            meril_company_name: bank.meril_company_name || '',
+                            beneficiary_name: bank.beneficiary_name || '',
+                            beneficiary_bank_name: bank.beneficiary_bank_name || '',
+                            beneficiary_account_no: bank.beneficiary_account_no || '',
+                            beneficiary_iban_no: bank.iban_no || bank.beneficiary_iban_no || '',
+                            beneficiary_bank_address: bank.beneficiary_bank_address || '',
+                            beneficiary_swift_code: bank.swift_code || bank.beneficiary_swift_code || '',
+                            beneficiary_ach_no: bank.beneficiary_ach_no || '',
+                            beneficiary_aba_no: bank.beneficiary_aba_no || '',
+                            beneficiary_routing_no: bank.beneficiary_routing_no || '',
+                            import_bank_proof: parsedProof || undefined,
+                        };
+                    }) || [];
 
                     const mappedData: any = {
                         ...data,
@@ -214,50 +224,18 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             delete submitData.gr_based_inv_verif;
             delete submitData.service_based_inv_verif;
 
+            const payload: any = { vendor_details: submitData };
             if (onboarding_id) {
-                submitData.onboarding_id = onboarding_id;
+                payload.onboarding_id = onboarding_id;
             }
 
-            submitData.gst_details = formData.gst_details?.map(gst => ({
-                gst_state: formData.state || '',
-                gst_number: gst.gst_number || '',
-                gst_ven_class: gst.gst_ven_class || ''
-            })) || [];
-
-            submitData.bank_details = formData.bank_details?.map(bank => ({
-                country: bank.country || '',
-                bank_key: bank.bank_key || '',
-                account_number: bank.account_number || '',
-                name_of_account_holder: bank.name_of_account_holder || '',
-                bank_type: bank.bank_type || '',
-                ak: bank.ak || '',
-                bnkt: bank.bnkt || '',
-                ifsc_code: bank.ifsc_code || ''
-            })) || [];
-
-            submitData.international_bank_details = formData.international_bank_details?.map(bank => ({
-                meril_company_name: bank.meril_company_name || '',
-                beneficiary_name: bank.beneficiary_name || '',
-                swift_code: bank.beneficiary_swift_code || (bank as any).swift_code || '',
-                iban_no: bank.beneficiary_iban_no || (bank as any).iban_no || '',
-                beneficiary_bank_name: bank.beneficiary_bank_name || '',
-                beneficiary_account_no: bank.beneficiary_account_no || '',
-                beneficiary_bank_address: bank.beneficiary_bank_address || '',
-                beneficiary_currency: (bank as any).beneficiary_currency || '',
-                beneficiary_ach_no: bank.beneficiary_ach_no || '',
-                beneficiary_aba_no: bank.beneficiary_aba_no || '',
-                beneficiary_routing_no: bank.beneficiary_routing_no || ''
-            })) || [];
-
-            submitData.contact_persons = formData.contact_persons?.map(contact => ({
-                first_name: contact.first_name || '',
-                last_name: contact.last_name || '',
-                email: contact.email || '',
-                contact_number: contact.contact_number || ''
-            })) || [];
+            submitData.gst_details = [];
+            submitData.bank_details = [];
+            submitData.international_bank_details = [];
+            submitData.contact_persons = [];
 
             const body = new FormData();
-            body.append('data', JSON.stringify({ vendor_details: submitData }));
+            body.append('data', JSON.stringify(payload));
 
             if (files.gst_attachment) body.append('gst_attachment', files.gst_attachment);
             if (files.bank_details_attachment) body.append('bank_details_attachment', files.bank_details_attachment);
@@ -302,52 +280,19 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             delete submitData.gr_based_inv_verif;
             delete submitData.service_based_inv_verif;
 
-            submitData.gst_details = formData.gst_details?.map(gst => ({
-                gst_state: formData.state || "",
-                gst_number: gst.gst_number || "",
-                gst_ven_class: gst.gst_ven_class || ""
-            })) || [];
-
-            submitData.bank_details = formData.bank_details?.map(bank => ({
-                country: bank.country || "",
-                bank_key: bank.bank_key || "",
-                account_number: bank.account_number || "",
-                name_of_account_holder: bank.name_of_account_holder || "",
-                bank_type: bank.bank_type || "",
-                ak: bank.ak || "",
-                bnkt: bank.bnkt || "",
-                ifsc_code: bank.ifsc_code || ""
-                // bank_name intentionally excluded as requested
-            })) || [];
-
-            submitData.international_bank_details = formData.international_bank_details?.map(bank => ({
-                meril_company_name: bank.meril_company_name || "",
-                beneficiary_name: bank.beneficiary_name || "",
-                swift_code: bank.beneficiary_swift_code || (bank as any).swift_code || "",
-                iban_no: bank.beneficiary_iban_no || (bank as any).iban_no || "",
-                beneficiary_bank_name: bank.beneficiary_bank_name || "",
-                beneficiary_account_no: bank.beneficiary_account_no || "",
-                beneficiary_bank_address: bank.beneficiary_bank_address || "",
-                beneficiary_currency: (bank as any).beneficiary_currency || "",
-                beneficiary_ach_no: bank.beneficiary_ach_no || "",
-                beneficiary_aba_no: bank.beneficiary_aba_no || "",
-                beneficiary_routing_no: bank.beneficiary_routing_no || ""
-            })) || [];
-
-            submitData.contact_persons = formData.contact_persons?.map(contact => ({
-                first_name: contact.first_name || "",
-                last_name: contact.last_name || "",
-                email: contact.email || "",
-                contact_number: contact.contact_number || ""
-            })) || [];
+            submitData.gst_details = [];
+            submitData.bank_details = [];
+            submitData.international_bank_details = [];
+            submitData.contact_persons = [];
 
             const submitData2: any = JSON.parse(JSON.stringify(submitData));
+            const payload: any = { vendor_details: submitData2 };
             if (onboarding_id) {
-                submitData2.onboarding_id = onboarding_id;
+                payload.onboarding_id = onboarding_id;
             }
 
             const body = new FormData();
-            body.append('data', JSON.stringify({ vendor_details: submitData2 }));
+            body.append('data', JSON.stringify(payload));
 
             if (files.gst_attachment) body.append('gst_attachment', files.gst_attachment);
             if (files.bank_details_attachment) body.append('bank_details_attachment', files.bank_details_attachment);
@@ -487,10 +432,11 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             alert('Please enter GST Number');
             return;
         }
-        const newGstDetail: TGstDetail = {
+        const newGstDetail: any = {
             gst_state: formData.state || '',
             gst_number: exciseRowData.gst_number,
             gst_ven_class: exciseRowData.gst_ven_class,
+            attachment: exciseRowData.attachment,
         };
 
         if (onboarding_id) {
@@ -506,10 +452,11 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 const details = await getQuickVendorOnboardingDetails(onboarding_id);
                 if (details?.message?.data) {
                     const d = details.message.data;
-                    setFormData(prev => ({ ...prev, gst_details: d.gst_details || [], pan_number: d.pan_number || exciseRowData.pan_number }));
+                    setFormData(prev => ({ ...prev, gst_details: d.gst_details || [], pan_number: d.pan_number || prev.pan_number }));
                 }
             } catch (error: any) {
                 alert(error?.message?.message || 'Error saving GST detail');
+                return;
             }
         } else {
             const updatedGstDetails = [...(formData?.gst_details || [])];
@@ -518,10 +465,13 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             } else {
                 updatedGstDetails.push(newGstDetail);
             }
-            setFormData(prev => ({ ...prev, gst_details: updatedGstDetails, pan_number: exciseRowData.pan_number }));
+            setFormData(prev => ({ ...prev, gst_details: updatedGstDetails }));
         }
         setEditingExciseIndex(null);
-        setExciseRowData({ gst_number: '', gst_ven_class: '', pan_number: '', attachment: null });
+        setExciseRowData({ gst_number: '', gst_ven_class: '', attachment: null });
+        if (attachmentInputRef.current) {
+            attachmentInputRef.current.value = "";
+        }
     };
 
     const handleGstEdit = (index: number) => {
@@ -530,7 +480,6 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
         setExciseRowData({
             gst_number: item.gst_number,
             gst_ven_class: item.gst_ven_class,
-            pan_number: formData?.pan_number || '',
             attachment: null,
         });
         setEditingExciseIndex(index);
@@ -592,6 +541,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 }
             } catch (error: any) {
                 alert(error?.message?.message || 'Error saving contact person');
+                return;
             }
         } else {
             const updatedContacts = [...(formData?.contact_persons || [])];
@@ -667,11 +617,11 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                     name: editingBankIndex !== null ? (formData?.bank_details?.[editingBankIndex] as any)?.name || '' : '',
                     country: newBankDetail.country,
                     bank_key: newBankDetail.bank_key,
-                    bank_type: newBankDetail.bank_type,
+                    bank_name: newBankDetail.bank_name,
                     name_of_account_holder: newBankDetail.name_of_account_holder,
                     account_number: newBankDetail.account_number,
                     ifsc_code: newBankDetail.ifsc_code,
-                });
+                }, bankRowData.attachment);
                 alert(res?.message || 'Domestic bank detail saved successfully');
                 const details = await getQuickVendorOnboardingDetails(onboarding_id);
                 if (details?.message?.data) {
@@ -679,6 +629,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 }
             } catch (error: any) {
                 alert(error?.message?.message || 'Error saving domestic bank detail');
+                return;
             }
         } else {
             const updatedBankDetails = [...(formData?.bank_details || [])];
@@ -691,6 +642,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
         }
         setEditingBankIndex(null);
         setBankRowData({ country: '', bank_key: '', bank_name: '', account_number: '', name_of_account_holder: '', ak: '', bnkt: '', ifsc_code: '', bank_type: '' });
+        if (bankAttachmentInputRef.current) bankAttachmentInputRef.current.value = "";
     };
 
     const handleBankEdit = (index: number) => {
@@ -768,7 +720,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                     beneficiary_ach_no: newIntlBank.beneficiary_ach_no,
                     beneficiary_routing_no: newIntlBank.beneficiary_routing_no,
                     beneficiary_currency: '',
-                });
+                }, intlBankRowData.attachment);
                 alert(res?.message || 'International bank detail saved successfully');
                 const details = await getQuickVendorOnboardingDetails(onboarding_id);
                 if (details?.message?.data) {
@@ -776,6 +728,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 }
             } catch (error: any) {
                 alert(error?.message?.message || 'Error saving international bank detail');
+                return;
             }
         } else {
             const updatedIntlBank = [...(formData?.international_bank_details || [])];
@@ -788,6 +741,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
         }
         setEditingIntlBankIndex(null);
         setIntlBankRowData({ beneficiary_name: '', beneficiary_bank_name: '', beneficiary_account_no: '', beneficiary_iban_no: '', beneficiary_bank_address: '', beneficiary_swift_code: '', beneficiary_ach_no: '', beneficiary_aba_no: '', beneficiary_routing_no: '' });
+        if (intlBankAttachmentInputRef.current) intlBankAttachmentInputRef.current.value = "";
     };
 
     const handleIntlBankEdit = (index: number) => {
@@ -844,7 +798,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 <div className="col-span-1 flex gap-2">
                     <div className="flex flex-col gap-2 w-[35%]">
                         <h2 className="text-[13px] font-medium text-[#64748B]">Title</h2>
-                        <Select onValueChange={(value) => handleSelectChange(value, 'vendor_title')} value={formData.vendor_title}>
+                        <Select onValueChange={(value) => handleSelectChange(value, 'vendor_title')} value={formData.vendor_title} disabled={formData?.is_submitted === 1}>
                             <SelectTrigger className="w-full text-black h-10 bg-white rounded-xl border-gray-200">
                                 <SelectValue placeholder="Select" />
                             </SelectTrigger>
@@ -867,6 +821,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                             value={formData?.vendor_name ?? ''}
                             onChange={handleInputChange}
                             maxLength={40}
+                            disabled={formData?.is_submitted === 1}
                         />
                     </div>
                 </div>
@@ -881,6 +836,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         value={formData?.search_term ?? ''}
                         onChange={handleInputChange}
                         maxLength={20}
+                        disabled={formData?.is_submitted === 1}
                     />
                 </div>
 
@@ -894,6 +850,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         value={formData?.street_house_no ?? ''}
                         onChange={handleInputChange}
                         maxLength={60}
+                        disabled={formData?.is_submitted === 1}
                     />
                 </div>
 
@@ -907,6 +864,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         value={formData?.street_2 ?? ''}
                         onChange={handleInputChange}
                         maxLength={40}
+                        disabled={formData?.is_submitted === 1}
                     />
                 </div>
 
@@ -920,6 +878,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         value={formData?.street_4 ?? ''}
                         onChange={handleInputChange}
                         maxLength={40}
+                        disabled={formData?.is_submitted === 1}
                     />
                 </div>
 
@@ -933,6 +892,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         value={formData?.postal_code ?? ''}
                         onChange={handleInputChange}
                         maxLength={10}
+                        disabled={formData?.is_submitted === 1}
                     />
                 </div>
 
@@ -973,6 +933,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                             handleInputChange(e);
                         }}
                         maxLength={10}
+                        disabled={formData?.is_submitted === 1}
                     />
                 </div>
 
@@ -985,6 +946,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         className="rounded-xl h-10 bg-white border-gray-200"
                         value={formData?.vendors_primary_email ?? ''}
                         onChange={handleInputChange}
+                        disabled={formData?.is_submitted === 1}
                     />
                 </div>
 
@@ -1005,7 +967,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 {/* Select Type */}
                 <div className="col-span-1 flex flex-col gap-2">
                     <h2 className="text-[13px] font-medium text-[#64748B]">Select Type</h2>
-                    <Select onValueChange={(value) => handleSelectChange(value, 'vendor_type')} value={formData.vendor_type}>
+                    <Select onValueChange={(value) => handleSelectChange(value, 'vendor_type')} value={formData.vendor_type} disabled={formData?.is_submitted === 1}>
                         <SelectTrigger className="w-full text-black h-10 bg-white rounded-xl border-gray-200">
                             <SelectValue placeholder="Select Type" />
                         </SelectTrigger>
@@ -1024,7 +986,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 {/* Company Code */}
                 <div className="col-span-1 flex flex-col gap-2">
                     <h2 className="text-[13px] font-medium text-[#64748B]">Company Code</h2>
-                    <Select onValueChange={(value) => handleSelectChange(value, 'company_code')} value={formData.company_code}>
+                    <Select onValueChange={(value) => handleSelectChange(value, 'company_code')} value={formData.company_code} disabled={formData?.is_submitted === 1}>
                         <SelectTrigger className="w-full text-black h-10 bg-white rounded-xl border-gray-200">
                             <SelectValue placeholder="Company Code" />
                         </SelectTrigger>
@@ -1052,6 +1014,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         setData={(value) => handleSelectChange(value ?? '', 'purchase_organization')}
                         data={formData.purchase_organization}
                         placeholder="Search Purchase Organization"
+                        disabled={formData?.is_submitted === 1}
                     />
                 </div>
 
@@ -1067,6 +1030,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         setData={(value) => handleSelectChange(value ?? '', 'account_group')}
                         data={formData.account_group}
                         placeholder="Search Account Group"
+                        disabled={formData?.is_submitted === 1}
                     />
                 </div>
 
@@ -1146,6 +1110,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                             setData={(value) => handleSelectChange(value ?? '', 'reconciliation_account')}
                             data={formData.reconciliation_account}
                             placeholder="Sundry creditors - Employees"
+                            disabled={formData?.is_submitted === 1}
                         />
                     </div>
 
@@ -1161,6 +1126,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                             setData={(value) => handleSelectChange(value ?? '', 'order_currency')}
                             data={formData.order_currency}
                             placeholder="INR"
+                            disabled={formData?.is_submitted === 1}
                         />
                     </div>
 
@@ -1176,6 +1142,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                             setData={(value) => handleSelectChange(value ?? '', 'terms_of_payment')}
                             data={formData.terms_of_payment}
                             placeholder="Pay Immediately"
+                            disabled={formData?.is_submitted === 1}
                         />
                     </div>
 
@@ -1191,6 +1158,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                             setData={(value) => handleSelectChange(value ?? '', 'incoterms')}
                             data={formData.incoterms}
                             placeholder="EX Works - State Name"
+                            disabled={formData?.is_submitted === 1}
                         />
                     </div>
 
@@ -1206,6 +1174,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                             setData={(value) => handleSelectChange(value ?? '', 'state')}
                             data={formData.state}
                             placeholder="Select"
+                            disabled={formData?.is_submitted === 1}
                         />
                     </div>
 
@@ -1218,82 +1187,122 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                     </h1>
                 </div>
 
+                {/* PAN - standalone field */}
                 <div className="py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
-
-                    {/* GST No. */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">GST No.</h2>
-                        <Input
-                            name="gst_number"
-                            placeholder="0 - If Non available"
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={exciseRowData.gst_number}
-                            onChange={(e) => setExciseRowData(prev => ({ ...prev, gst_number: e.target.value }))}
-                        />
-                    </div>
-
-                    {/* GST ven class */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">GST ven class</h2>
-                        <Input
-                            name="gst_ven_class"
-                            placeholder="0"
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={exciseRowData.gst_ven_class}
-                            onChange={(e) => setExciseRowData(prev => ({ ...prev, gst_ven_class: e.target.value }))}
-                        />
-                    </div>
-
-                    {/* PAN */}
                     <div className="col-span-1 flex flex-col gap-2">
                         <h2 className="text-[13px] font-medium text-[#64748B]">PAN</h2>
                         <Input
                             name="pan_number"
                             placeholder="PAN Number"
                             className="rounded-xl h-10 bg-white border-gray-200"
-                            value={exciseRowData.pan_number}
-                            onChange={(e) => setExciseRowData(prev => ({ ...prev, pan_number: e.target.value }))}
+                            value={formData?.pan_number || ''}
+                            onChange={(e) => setFormData(prev => ({ ...prev, pan_number: e.target.value }))}
+                            disabled={formData?.is_submitted === 1}
                         />
                     </div>
-
-                    {/* Attachment */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Attachment</h2>
-                        <Input
-                            type="file"
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            onChange={(e) => {
-                                if (e.target.files && e.target.files.length > 0) {
-                                    setExciseRowData(prev => ({ ...prev, attachment: e.target.files![0] }));
-                                }
-                            }}
-                        />
-                    </div>
-
-                    {/* Add Button */}
-                    <div className="col-span-1 flex items-end">
-                        <button
-                            type="button"
-                            onClick={addGstDetail}
-                            className="px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10"
-                        >
-                            {editingExciseIndex !== null ? 'Update' : 'Add'}
-                        </button>
-                    </div>
-
                 </div>
+                {
 
+                    formData?.is_submitted !== 1 ?
+                        <div className="py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                            {/* GST No. */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">GST No.</h2>
+                                <Input
+                                    name="gst_number"
+                                    placeholder="0 - If Non available"
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={exciseRowData.gst_number}
+                                    onChange={(e) => setExciseRowData(prev => ({ ...prev, gst_number: e.target.value }))}
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
+
+                            {/* GST ven class */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">GST ven class</h2>
+                                <Input
+                                    name="gst_ven_class"
+                                    placeholder="0"
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={exciseRowData.gst_ven_class}
+                                    onChange={(e) => setExciseRowData(prev => ({ ...prev, gst_ven_class: e.target.value }))}
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
+
+                            {/* Attachment */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Attachment</h2>
+                                <div className="flex items-center gap-2">
+                                    <Input
+                                        type="file"
+                                        ref={attachmentInputRef}
+                                        className="rounded-xl h-10 bg-white border-gray-200"
+                                        onChange={(e) => {
+                                            if (e.target.files && e.target.files.length > 0) {
+                                                setExciseRowData(prev => ({ ...prev, attachment: e.target.files![0] }));
+                                            }
+                                        }}
+                                        disabled={formData?.is_submitted === 1}
+                                    />
+                                    {editingExciseIndex !== null && (() => {
+                                        const item = formData?.gst_details?.[editingExciseIndex] as any;
+                                        const doc = item?.gst_document || item?.attachment;
+                                        const fileUrl = doc?.url || doc?.file_url;
+                                        const fileName = doc?.file_name || doc?.name;
+                                        if (fileUrl) {
+                                            return (
+                                                <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 text-xs underline whitespace-nowrap hover:text-blue-700" title={fileName}>
+                                                    {fileName || 'View File'}
+                                                </a>
+                                            );
+                                        }
+                                        return null;
+                                    })()}
+                                </div>
+                            </div>
+
+                            {/* Add/Reset Buttons */}
+                            <div className="col-span-1 flex items-end gap-2">
+                                <button
+                                    type="button"
+                                    onClick={addGstDetail}
+                                    className={`px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
+                                >
+                                    {editingExciseIndex !== null ? 'Update' : 'Add'}
+                                </button>
+                                {editingExciseIndex !== null && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setEditingExciseIndex(null);
+                                            setExciseRowData({ gst_number: '', gst_ven_class: '', attachment: null });
+                                            if (attachmentInputRef.current) attachmentInputRef.current.value = "";
+                                        }}
+                                        className={`px-6 py-2 text-[14px] font-medium text-[#3B82F6] bg-white border border-[#3B82F6] rounded-lg hover:bg-blue-50 transition-colors h-10 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
+                                    >
+                                        Reset
+                                    </button>
+                                )}
+                            </div>
+
+                        </div> : ""
+                }
                 {/* Excise Details Table */}
                 {(formData?.gst_details?.length ?? 0) > 0 && (
-                    <Table className="overflow-y-scroll border border-black/20">
+                    <Table className="overflow-y-scroll border border-black/20 mb-6">
                         <TableHeader className="text-center">
                             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
                                 <TableHead className="text-center w-[8%]">Sr.no</TableHead>
-                                <TableHead className="w-[22%]">GST Number</TableHead>
-                                <TableHead className="w-[18%]">GST ven class</TableHead>
-                                <TableHead className="w-[22%]">PAN Number</TableHead>
-                                <TableHead className="w-[18%]">Attachment</TableHead>
-                                <TableHead className="w-[12%] text-center">Action</TableHead>
+                                <TableHead className="w-[28%]">GST Number</TableHead>
+                                <TableHead className="w-[22%]">GST ven class</TableHead>
+                                <TableHead className="w-[28%]">Attachment</TableHead>
+                                {
+                                    formData?.is_submitted !== 1 ?
+                                        <TableHead className="w-[14%] text-center">Action</TableHead> : ""
+                                }
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -1302,41 +1311,55 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                                     <TableCell className="font-medium text-center">{index + 1}</TableCell>
                                     <TableCell className="font-medium">{item.gst_number}</TableCell>
                                     <TableCell className="font-medium">{item.gst_ven_class}</TableCell>
-                                    <TableCell className="font-medium">{formData?.pan_number}</TableCell>
                                     <TableCell className="font-medium">
-                                        {exciseRowData.attachment ? (
-                                            <span className="text-blue-500 underline cursor-pointer">{exciseRowData.attachment.name}</span>
-                                        ) : (
-                                            <span className="text-gray-400">-</span>
-                                        )}
+                                        {(() => {
+                                            const doc = (item as any)?.gst_document || (item as any)?.attachment;
+                                            const fileUrl = doc?.url || doc?.file_url;
+                                            const fileName = doc?.file_name || doc?.name;
+
+                                            if (fileUrl) {
+                                                return (
+                                                    <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline hover:text-blue-700" title={fileName}>
+                                                        {fileName || 'View File'}
+                                                    </a>
+                                                );
+                                            } else if (doc?.name) {
+                                                return <span className="text-blue-500">{doc.name}</span>;
+                                            }
+                                            return <span className="text-gray-400">-</span>;
+                                        })()}
                                     </TableCell>
-                                    <TableCell className="font-medium">
-                                        <div className="flex gap-4 justify-center items-center">
-                                            {/* Edit Icon */}
-                                            <svg
-                                                onClick={() => handleGstEdit(index)}
-                                                className="hover:cursor-pointer"
-                                                width="20"
-                                                height="20"
-                                                viewBox="0 0 22 22"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                    d="M12 20.0008H20.0001M14.0001 4.00045L18.0001 8.00054M20.1741 5.81249C20.7028 5.2839 20.9999 4.56693 21 3.8193C21.0001 3.07167 20.7032 2.35462 20.1746 1.8259C19.646 1.29718 18.9291 1.00009 18.1814 1C17.4338 0.999906 16.7168 1.29681 16.1881 1.8254L2.84195 15.1747C2.60977 15.4062 2.43806 15.6912 2.34195 16.0047L1.02093 20.3568C0.99509 20.4433 0.993138 20.5352 1.01529 20.6227C1.03743 20.7102 1.08286 20.7901 1.14673 20.8538C1.21061 20.9176 1.29056 20.9629 1.3781 20.9849C1.46564 21.0069 1.5575 21.0048 1.64394 20.9788L5.99698 19.6588C6.31015 19.5636 6.59516 19.3929 6.82699 19.1618L20.1741 5.81249Z"
-                                                    stroke="#03111F"
-                                                    strokeWidth="2"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                />
-                                            </svg>
-                                            {/* Delete Icon */}
-                                            <Trash2
-                                                className="text-red-400 hover:cursor-pointer w-5 h-5"
-                                                onClick={() => handleGstDelete(index)}
-                                            />
-                                        </div>
-                                    </TableCell>
+                                    {
+                                        formData?.is_submitted !== 1 ?
+
+                                            <TableCell className="font-medium">
+                                                <div className="flex gap-4 justify-center items-center">
+                                                    {/* Edit Icon */}
+                                                    <svg
+                                                        onClick={() => handleGstEdit(index)}
+                                                        className="hover:cursor-pointer"
+                                                        width="20"
+                                                        height="20"
+                                                        viewBox="0 0 22 22"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path
+                                                            d="M12 20.0008H20.0001M14.0001 4.00045L18.0001 8.00054M20.1741 5.81249C20.7028 5.2839 20.9999 4.56693 21 3.8193C21.0001 3.07167 20.7032 2.35462 20.1746 1.8259C19.646 1.29718 18.9291 1.00009 18.1814 1C17.4338 0.999906 16.7168 1.29681 16.1881 1.8254L2.84195 15.1747C2.60977 15.4062 2.43806 15.6912 2.34195 16.0047L1.02093 20.3568C0.99509 20.4433 0.993138 20.5352 1.01529 20.6227C1.03743 20.7102 1.08286 20.7901 1.14673 20.8538C1.21061 20.9176 1.29056 20.9629 1.3781 20.9849C1.46564 21.0069 1.5575 21.0048 1.64394 20.9788L5.99698 19.6588C6.31015 19.5636 6.59516 19.3929 6.82699 19.1618L20.1741 5.81249Z"
+                                                            stroke="#03111F"
+                                                            strokeWidth="2"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                        />
+                                                    </svg>
+                                                    {/* Delete Icon */}
+                                                    <Trash2
+                                                        className="text-red-400 hover:cursor-pointer w-5 h-5"
+                                                        onClick={() => handleGstDelete(index)}
+                                                    />
+                                                </div>
+                                            </TableCell> : ""
+                                    }
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -1349,55 +1372,74 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         Contact Person
                     </h1>
                 </div>
+                {
 
-                <div className="py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    formData?.is_submitted !== 1 ?
+                        <div className="py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                    {/* First Name */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">First Name</h2>
-                        <Input
-                            name="first_name"
-                            placeholder="Enter First Name"
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={contactRowData.first_name}
-                            onChange={(e) => setContactRowData(prev => ({ ...prev, first_name: e.target.value }))}
-                        />
-                    </div>
+                            {/* First Name */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">First Name</h2>
+                                <Input
+                                    name="first_name"
+                                    placeholder="Enter First Name"
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={contactRowData.first_name}
+                                    onChange={(e) => setContactRowData(prev => ({ ...prev, first_name: e.target.value }))}
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
 
-                    {/* Last Name */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Last Name</h2>
-                        <Input
-                            name="last_name"
-                            placeholder="Enter Last Name"
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={contactRowData.last_name}
-                            onChange={(e) => setContactRowData(prev => ({ ...prev, last_name: e.target.value }))}
-                        />
-                    </div>
+                            {/* Last Name */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Last Name</h2>
+                                <Input
+                                    name="last_name"
+                                    placeholder="Enter Last Name"
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={contactRowData.last_name}
+                                    onChange={(e) => setContactRowData(prev => ({ ...prev, last_name: e.target.value }))}
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
 
-                    {/* Add Button */}
-                    <div className="col-span-1 flex items-end">
-                        <button
-                            type="button"
-                            onClick={addContact}
-                            className="px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10"
-                        >
-                            {editingContactIndex !== null ? 'Update' : 'Add'}
-                        </button>
-                    </div>
+                            {/* Add/Reset Buttons */}
+                            <div className="col-span-1 flex items-end gap-2">
+                                <button
+                                    type="button"
+                                    onClick={addContact}
+                                    className={`px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
+                                >
+                                    {editingContactIndex !== null ? 'Update' : 'Add'}
+                                </button>
+                                {editingContactIndex !== null && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setEditingContactIndex(null);
+                                            setContactRowData({ first_name: '', last_name: '' });
+                                        }}
+                                        className={`px-6 py-2 text-[14px] font-medium text-[#3B82F6] bg-white border border-[#3B82F6] rounded-lg hover:bg-blue-50 transition-colors h-10 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
+                                    >
+                                        Reset
+                                    </button>
+                                )}
+                            </div>
 
-                </div>
-
+                        </div> : ""
+                }
                 {/* Contact Person Table */}
                 {(formData?.contact_persons?.length ?? 0) > 0 && (
-                    <Table className="overflow-y-scroll border border-black/20">
+                    <Table className="overflow-y-scroll border border-black/20 mb-6">
                         <TableHeader className="text-center">
                             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
                                 <TableHead className="text-center w-[10%]">Sr.no</TableHead>
                                 <TableHead className="w-[35%]">First Name</TableHead>
                                 <TableHead className="w-[35%]">Last Name</TableHead>
-                                <TableHead className="w-[20%] text-center">Action</TableHead>
+                                {
+                                    formData?.is_submitted !== 1 ?
+                                        <TableHead className="w-[20%] text-center">Action</TableHead> : ""
+                                }
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -1406,33 +1448,37 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                                     <TableCell className="font-medium text-center">{index + 1}</TableCell>
                                     <TableCell className="font-medium">{item.first_name}</TableCell>
                                     <TableCell className="font-medium">{item.last_name}</TableCell>
-                                    <TableCell className="font-medium">
-                                        <div className="flex gap-4 justify-center items-center">
-                                            {/* Edit Icon */}
-                                            <svg
-                                                onClick={() => handleContactEdit(index)}
-                                                className="hover:cursor-pointer"
-                                                width="20"
-                                                height="20"
-                                                viewBox="0 0 22 22"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                    d="M12 20.0008H20.0001M14.0001 4.00045L18.0001 8.00054M20.1741 5.81249C20.7028 5.2839 20.9999 4.56693 21 3.8193C21.0001 3.07167 20.7032 2.35462 20.1746 1.8259C19.646 1.29718 18.9291 1.00009 18.1814 1C17.4338 0.999906 16.7168 1.29681 16.1881 1.8254L2.84195 15.1747C2.60977 15.4062 2.43806 15.6912 2.34195 16.0047L1.02093 20.3568C0.99509 20.4433 0.993138 20.5352 1.01529 20.6227C1.03743 20.7102 1.08286 20.7901 1.14673 20.8538C1.21061 20.9176 1.29056 20.9629 1.3781 20.9849C1.46564 21.0069 1.5575 21.0048 1.64394 20.9788L5.99698 19.6588C6.31015 19.5636 6.59516 19.3929 6.82699 19.1618L20.1741 5.81249Z"
-                                                    stroke="#03111F"
-                                                    strokeWidth="2"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                />
-                                            </svg>
-                                            {/* Delete Icon */}
-                                            <Trash2
-                                                className="text-red-400 hover:cursor-pointer w-5 h-5"
-                                                onClick={() => handleContactDelete(index)}
-                                            />
-                                        </div>
-                                    </TableCell>
+                                    {
+                                        formData?.is_submitted !== 1 ?
+
+                                            <TableCell className="font-medium">
+                                                <div className="flex gap-4 justify-center items-center">
+                                                    {/* Edit Icon */}
+                                                    <svg
+                                                        onClick={() => handleContactEdit(index)}
+                                                        className="hover:cursor-pointer"
+                                                        width="20"
+                                                        height="20"
+                                                        viewBox="0 0 22 22"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path
+                                                            d="M12 20.0008H20.0001M14.0001 4.00045L18.0001 8.00054M20.1741 5.81249C20.7028 5.2839 20.9999 4.56693 21 3.8193C21.0001 3.07167 20.7032 2.35462 20.1746 1.8259C19.646 1.29718 18.9291 1.00009 18.1814 1C17.4338 0.999906 16.7168 1.29681 16.1881 1.8254L2.84195 15.1747C2.60977 15.4062 2.43806 15.6912 2.34195 16.0047L1.02093 20.3568C0.99509 20.4433 0.993138 20.5352 1.01529 20.6227C1.03743 20.7102 1.08286 20.7901 1.14673 20.8538C1.21061 20.9176 1.29056 20.9629 1.3781 20.9849C1.46564 21.0069 1.5575 21.0048 1.64394 20.9788L5.99698 19.6588C6.31015 19.5636 6.59516 19.3929 6.82699 19.1618L20.1741 5.81249Z"
+                                                            stroke="#03111F"
+                                                            strokeWidth="2"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                        />
+                                                    </svg>
+                                                    {/* Delete Icon */}
+                                                    <Trash2
+                                                        className="text-red-400 hover:cursor-pointer w-5 h-5"
+                                                        onClick={() => handleContactDelete(index)}
+                                                    />
+                                                </div>
+                                            </TableCell> : ""
+                                    }
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -1445,156 +1491,194 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         Bank Detail (Domestic)
                     </h1>
                 </div>
+                {
+                    formData?.is_submitted !== 1 ?
 
-                <div className="py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                    {/* Country */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Country</h2>
-                        <SearchSelectComponent
-                            searchApi={(query?: string) => {
-                                return getCountryMasterList(query)
-                                    .then((res) => { setCountryDropdown(res?.message?.data); return res?.message?.data; })
-                                    .catch((err) => { console.error(err); return []; });
-                            }}
-                            getLabel={(item) => item?.name}
-                            getValue={(item) => item?.name}
-                            setDropdown={setCountryDropdown}
-                            dropdown={countryDropdown}
-                            setData={(value) => setBankRowData(prev => ({ ...prev, country: value ?? '' }))}
-                            data={bankRowData.country}
-                            placeholder="IN"
-                        />
-                    </div>
+                            {/* Country */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Country</h2>
+                                <SearchSelectComponent
+                                    searchApi={(query?: string) => {
+                                        return getCountryMasterList(query)
+                                            .then((res) => { setCountryDropdown(res?.message?.data); return res?.message?.data; })
+                                            .catch((err) => { console.error(err); return []; });
+                                    }}
+                                    getLabel={(item) => item?.name}
+                                    getValue={(item) => item?.name}
+                                    setDropdown={setCountryDropdown}
+                                    dropdown={countryDropdown}
+                                    setData={(value) => setBankRowData(prev => ({ ...prev, country: value ?? '' }))}
+                                    data={bankRowData.country}
+                                    placeholder="IN"
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
 
-                    {/* Bank Key */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Bank Key</h2>
-                        <SearchSelectComponent
-                            searchApi={(query?: string) => {
-                                return getBankKeyMasterData(bankRowData.country || undefined, query)
-                                    .then((res) => { setBankKeyDropdown(res?.message?.data); return res?.message?.data; })
-                                    .catch((err) => { console.error(err); return []; });
-                            }}
-                            getLabel={(item) => item?.bank_code}
-                            getValue={(item) => item?.name}
-                            setDropdown={setBankKeyDropdown}
-                            dropdown={bankKeyDropdown}
-                            setData={(value) => {
-                                const selectedBank = bankKeyDropdown.find((item) => item.name === value);
-                                setBankRowData(prev => ({
-                                    ...prev,
-                                    bank_key: selectedBank?.bank_code ?? '',
-                                    bank_name: value ?? '',
-                                }));
-                            }}
-                            data={bankRowData.bank_name}
-                            placeholder="Select Bank Key"
-                        />
-                    </div>
+                            {/* Bank Key */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Bank Key</h2>
+                                <SearchSelectComponent
+                                    searchApi={(query?: string) => {
+                                        return getBankKeyMasterData(bankRowData.country || undefined, query)
+                                            .then((res) => { setBankKeyDropdown(res?.message?.data); return res?.message?.data; })
+                                            .catch((err) => { console.error(err); return []; });
+                                    }}
+                                    getLabel={(item) => item?.bank_code}
+                                    getValue={(item) => item?.name}
+                                    setDropdown={setBankKeyDropdown}
+                                    dropdown={bankKeyDropdown}
+                                    setData={(value) => {
+                                        const selectedBank = bankKeyDropdown.find((item) => item.name === value);
+                                        setBankRowData(prev => ({
+                                            ...prev,
+                                            bank_key: selectedBank?.name ?? '',
+                                            bank_name: value ?? '',
+                                        }));
+                                    }}
+                                    data={bankRowData.bank_name}
+                                    placeholder="Select Bank Key"
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
 
-                    {/* Bank Name */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Bank Name</h2>
-                        <Input
-                            name="bank_name"
-                            placeholder="Bank Name"
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={bankRowData.bank_name}
-                            disabled
-                        />
-                    </div>
+                            {/* Bank Name */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Bank Name</h2>
+                                <Input
+                                    name="bank_name"
+                                    placeholder="Bank Name"
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={bankRowData.bank_name}
+                                    disabled
+                                />
+                            </div>
 
-                    {/* Bank Account */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Bank Account</h2>
-                        <Input
-                            name="account_number"
-                            placeholder="Account Number"
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={bankRowData.account_number}
-                            onChange={(e) => setBankRowData(prev => ({ ...prev, account_number: e.target.value }))}
-                        />
-                    </div>
+                            {/* Bank Account */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Bank Account</h2>
+                                <Input
+                                    name="account_number"
+                                    placeholder="Account Number"
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={bankRowData.account_number}
+                                    onChange={(e) => setBankRowData(prev => ({ ...prev, account_number: e.target.value }))}
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
 
-                    {/* Account Holder */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Account Holder</h2>
-                        <Input
-                            name="name_of_account_holder"
-                            placeholder="Name of Account Holder"
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={bankRowData.name_of_account_holder}
-                            onChange={(e) => setBankRowData(prev => ({ ...prev, name_of_account_holder: e.target.value }))}
-                        />
-                    </div>
+                            {/* Account Holder */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Account Holder</h2>
+                                <Input
+                                    name="name_of_account_holder"
+                                    placeholder="Name of Account Holder"
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={bankRowData.name_of_account_holder}
+                                    onChange={(e) => setBankRowData(prev => ({ ...prev, name_of_account_holder: e.target.value }))}
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
 
-                    {/* AK */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">AK</h2>
-                        <Input
-                            name="ak"
-                            placeholder=""
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={bankRowData.ak}
-                            disabled
-                        />
-                    </div>
+                            {/* AK */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">AK</h2>
+                                <Input
+                                    name="ak"
+                                    placeholder=""
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={bankRowData.ak}
+                                    disabled
+                                />
+                            </div>
 
-                    {/* BnkT */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">BnkT</h2>
-                        <Input
-                            name="bnkt"
-                            placeholder=""
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={bankRowData.bnkt}
-                            disabled
-                        />
-                    </div>
+                            {/* BnkT */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">BnkT</h2>
+                                <Input
+                                    name="bnkt"
+                                    placeholder=""
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={bankRowData.bnkt}
+                                    disabled
+                                />
+                            </div>
 
-                    {/* Reference Detail */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Reference Detail</h2>
-                        <Input
-                            name="ifsc_code"
-                            placeholder="IFSC Code"
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={bankRowData.ifsc_code}
-                            onChange={(e) => setBankRowData(prev => ({ ...prev, ifsc_code: e.target.value }))}
-                        />
-                    </div>
+                            {/* Reference Detail */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Reference Detail</h2>
+                                <Input
+                                    name="ifsc_code"
+                                    placeholder="IFSC Code"
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={bankRowData.ifsc_code}
+                                    onChange={(e) => setBankRowData(prev => ({ ...prev, ifsc_code: e.target.value }))}
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
 
-                    {/* Attachment */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Attachment</h2>
-                        <Input
-                            type="file"
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            onChange={(e) => {
-                                if (e.target.files && e.target.files.length > 0) {
-                                    setBankRowData(prev => ({ ...prev, attachment: e.target.files![0] }));
-                                }
-                            }}
-                        />
-                    </div>
+                            {/* Attachment */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Attachment</h2>
+                                <div className="flex items-center gap-2">
+                                    <Input
+                                        type="file"
+                                        ref={bankAttachmentInputRef}
+                                        className="rounded-xl h-10 bg-white border-gray-200"
+                                        disabled={formData?.is_submitted === 1}
+                                        onChange={(e) => {
+                                            if (e.target.files && e.target.files.length > 0) {
+                                                setBankRowData(prev => ({ ...prev, attachment: e.target.files![0] }));
+                                            }
+                                        }}
+                                    />
+                                    {editingBankIndex !== null && (() => {
+                                        const item = formData?.bank_details?.[editingBankIndex] as any;
+                                        const doc = item?.domestic_bank_proof || item?.attachment;
+                                        const fileUrl = doc?.url || doc?.file_url;
+                                        const fileName = doc?.file_name || doc?.name;
+                                        if (fileUrl) {
+                                            return (
+                                                <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 text-xs underline whitespace-nowrap hover:text-blue-700" title={fileName}>
+                                                    {fileName || 'View File'}
+                                                </a>
+                                            );
+                                        }
+                                        return null;
+                                    })()}
+                                </div>
+                            </div>
 
-                </div>
-
-                {/* Add Button */}
-                <div className="flex justify-end pb-4">
+                        </div> : ""
+                }
+                {/* Add/Reset Buttons */}
+                <div className="flex justify-end gap-2 pb-4">
                     <button
                         type="button"
                         onClick={addBankDetail}
-                        className="px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10"
+                        className={`px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
                     >
                         {editingBankIndex !== null ? 'Update' : 'Add'}
                     </button>
+                    {editingBankIndex !== null && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setEditingBankIndex(null);
+                                setBankRowData({ country: '', bank_key: '', bank_name: '', account_number: '', name_of_account_holder: '', ak: '', bnkt: '', ifsc_code: '', bank_type: '' });
+                                if (bankAttachmentInputRef.current) bankAttachmentInputRef.current.value = "";
+                            }}
+                            className={`px-6 py-2 text-[14px] font-medium text-[#3B82F6] bg-white border border-[#3B82F6] rounded-lg hover:bg-blue-50 transition-colors h-10 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
+                        >
+                            Reset
+                        </button>
+                    )}
                 </div>
 
                 {/* Bank Detail (Domestic) Table */}
                 {(formData?.bank_details?.length ?? 0) > 0 && (
-                    <Table className="overflow-x-auto border border-black/20">
+                    <Table className="overflow-x-auto border border-black/20 mb-6">
                         <TableHeader className="text-center">
                             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
                                 <TableHead className="text-center">Sr.no</TableHead>
@@ -1606,7 +1690,11 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                                 <TableHead>AK</TableHead>
                                 <TableHead>BnkT</TableHead>
                                 <TableHead>Reference Detail</TableHead>
-                                <TableHead className="text-center">Action</TableHead>
+                                <TableHead>Attachment</TableHead>
+                                {
+                                    formData?.is_submitted !== 1 ?
+                                        <TableHead className="text-center">Action</TableHead> : ""
+                                }
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -1622,32 +1710,54 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                                     <TableCell className="font-medium">{item.bnkt}</TableCell>
                                     <TableCell className="font-medium">{item.ifsc_code}</TableCell>
                                     <TableCell className="font-medium">
-                                        <div className="flex gap-4 justify-center items-center">
-                                            {/* Edit Icon */}
-                                            <svg
-                                                onClick={() => handleBankEdit(index)}
-                                                className="hover:cursor-pointer"
-                                                width="20"
-                                                height="20"
-                                                viewBox="0 0 22 22"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                    d="M12 20.0008H20.0001M14.0001 4.00045L18.0001 8.00054M20.1741 5.81249C20.7028 5.2839 20.9999 4.56693 21 3.8193C21.0001 3.07167 20.7032 2.35462 20.1746 1.8259C19.646 1.29718 18.9291 1.00009 18.1814 1C17.4338 0.999906 16.7168 1.29681 16.1881 1.8254L2.84195 15.1747C2.60977 15.4062 2.43806 15.6912 2.34195 16.0047L1.02093 20.3568C0.99509 20.4433 0.993138 20.5352 1.01529 20.6227C1.03743 20.7102 1.08286 20.7901 1.14673 20.8538C1.21061 20.9176 1.29056 20.9629 1.3781 20.9849C1.46564 21.0069 1.5575 21.0048 1.64394 20.9788L5.99698 19.6588C6.31015 19.5636 6.59516 19.3929 6.82699 19.1618L20.1741 5.81249Z"
-                                                    stroke="#03111F"
-                                                    strokeWidth="2"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                />
-                                            </svg>
-                                            {/* Delete Icon */}
-                                            <Trash2
-                                                className="text-red-400 hover:cursor-pointer w-5 h-5"
-                                                onClick={() => handleBankDelete(index)}
-                                            />
-                                        </div>
+                                        {(() => {
+                                            const doc = (item as any)?.domestic_bank_proof || (item as any)?.attachment;
+                                            const fileUrl = doc?.url || doc?.file_url;
+                                            const fileName = doc?.file_name || doc?.name;
+
+                                            if (fileUrl) {
+                                                return (
+                                                    <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline hover:text-blue-700" title={fileName}>
+                                                        {fileName || 'View File'}
+                                                    </a>
+                                                );
+                                            } else if (doc?.name) {
+                                                return <span className="text-blue-500">{doc.name}</span>;
+                                            }
+                                            return <span className="text-gray-400">-</span>;
+                                        })()}
                                     </TableCell>
+                                    {
+                                        formData?.is_submitted !== 1 ?
+
+                                            <TableCell className="font-medium">
+                                                <div className="flex gap-4 justify-center items-center">
+                                                    {/* Edit Icon */}
+                                                    <svg
+                                                        onClick={() => handleBankEdit(index)}
+                                                        className="hover:cursor-pointer"
+                                                        width="20"
+                                                        height="20"
+                                                        viewBox="0 0 22 22"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path
+                                                            d="M12 20.0008H20.0001M14.0001 4.00045L18.0001 8.00054M20.1741 5.81249C20.7028 5.2839 20.9999 4.56693 21 3.8193C21.0001 3.07167 20.7032 2.35462 20.1746 1.8259C19.646 1.29718 18.9291 1.00009 18.1814 1C17.4338 0.999906 16.7168 1.29681 16.1881 1.8254L2.84195 15.1747C2.60977 15.4062 2.43806 15.6912 2.34195 16.0047L1.02093 20.3568C0.99509 20.4433 0.993138 20.5352 1.01529 20.6227C1.03743 20.7102 1.08286 20.7901 1.14673 20.8538C1.21061 20.9176 1.29056 20.9629 1.3781 20.9849C1.46564 21.0069 1.5575 21.0048 1.64394 20.9788L5.99698 19.6588C6.31015 19.5636 6.59516 19.3929 6.82699 19.1618L20.1741 5.81249Z"
+                                                            stroke="#03111F"
+                                                            strokeWidth="2"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                        />
+                                                    </svg>
+                                                    {/* Delete Icon */}
+                                                    <Trash2
+                                                        className="text-red-400 hover:cursor-pointer w-5 h-5"
+                                                        onClick={() => handleBankDelete(index)}
+                                                    />
+                                                </div>
+                                            </TableCell> : ""
+                                    }
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -1660,133 +1770,189 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         Bank Detail (International)
                     </h1>
                 </div>
+                {
+                    formData?.is_submitted !== 1 ?
+                        <div className="py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                <div className="py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Beneficiary Name */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary Name</h2>
+                                <Input
+                                    name="beneficiary_name"
+                                    placeholder="Beneficiary Name"
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={intlBankRowData.beneficiary_name}
+                                    onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_name: e.target.value }))}
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
 
-                    {/* Beneficiary Name */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary Name</h2>
-                        <Input
-                            name="beneficiary_name"
-                            placeholder="Beneficiary Name"
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={intlBankRowData.beneficiary_name}
-                            onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_name: e.target.value }))}
-                        />
-                    </div>
+                            {/* Beneficiary Bank Name */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary Bank Name</h2>
+                                <Input
+                                    name="beneficiary_bank_name"
+                                    placeholder="Beneficiary Bank Name"
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={intlBankRowData.beneficiary_bank_name}
+                                    onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_bank_name: e.target.value }))}
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
 
-                    {/* Beneficiary Bank Name */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary Bank Name</h2>
-                        <Input
-                            name="beneficiary_bank_name"
-                            placeholder="Beneficiary Bank Name"
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={intlBankRowData.beneficiary_bank_name}
-                            onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_bank_name: e.target.value }))}
-                        />
-                    </div>
+                            {/* Beneficiary Account No. */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary Account No.</h2>
+                                <Input
+                                    name="beneficiary_account_no"
+                                    placeholder="Beneficiary Account No."
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={intlBankRowData.beneficiary_account_no}
+                                    onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_account_no: e.target.value }))}
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
 
-                    {/* Beneficiary Account No. */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary Account No.</h2>
-                        <Input
-                            name="beneficiary_account_no"
-                            placeholder="Beneficiary Account No."
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={intlBankRowData.beneficiary_account_no}
-                            onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_account_no: e.target.value }))}
-                        />
-                    </div>
+                            {/* Beneficiary IBAN No. */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary IBAN No.</h2>
+                                <Input
+                                    name="beneficiary_iban_no"
+                                    placeholder="Beneficiary IBAN No."
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={intlBankRowData.beneficiary_iban_no}
+                                    onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_iban_no: e.target.value }))}
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
 
-                    {/* Beneficiary IBAN No. */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary IBAN No.</h2>
-                        <Input
-                            name="beneficiary_iban_no"
-                            placeholder="Beneficiary IBAN No."
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={intlBankRowData.beneficiary_iban_no}
-                            onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_iban_no: e.target.value }))}
-                        />
-                    </div>
+                            {/* Beneficiary Bank Address */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary Bank Address</h2>
+                                <Input
+                                    name="beneficiary_bank_address"
+                                    placeholder="Beneficiary Bank Address"
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={intlBankRowData.beneficiary_bank_address}
+                                    onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_bank_address: e.target.value }))}
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
 
-                    {/* Beneficiary Bank Address */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary Bank Address</h2>
-                        <Input
-                            name="beneficiary_bank_address"
-                            placeholder="Beneficiary Bank Address"
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={intlBankRowData.beneficiary_bank_address}
-                            onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_bank_address: e.target.value }))}
-                        />
-                    </div>
+                            {/* Beneficiary Bank Swift Code */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary Bank Swift Code</h2>
+                                <Input
+                                    name="beneficiary_swift_code"
+                                    placeholder="Beneficiary Bank Swift Code"
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={intlBankRowData.beneficiary_swift_code}
+                                    onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_swift_code: e.target.value }))}
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
 
-                    {/* Beneficiary Bank Swift Code */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary Bank Swift Code</h2>
-                        <Input
-                            name="beneficiary_swift_code"
-                            placeholder="Beneficiary Bank Swift Code"
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={intlBankRowData.beneficiary_swift_code}
-                            onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_swift_code: e.target.value }))}
-                        />
-                    </div>
+                            {/* Beneficiary ACH No. */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary ACH No.</h2>
+                                <Input
+                                    name="beneficiary_ach_no"
+                                    placeholder="Beneficiary ACH No."
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={intlBankRowData.beneficiary_ach_no}
+                                    onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_ach_no: e.target.value }))}
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
 
-                    {/* Beneficiary ACH No. */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary ACH No.</h2>
-                        <Input
-                            name="beneficiary_ach_no"
-                            placeholder="Beneficiary ACH No."
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={intlBankRowData.beneficiary_ach_no}
-                            onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_ach_no: e.target.value }))}
-                        />
-                    </div>
+                            {/* Beneficiary ABA No. */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary ABA No.</h2>
+                                <Input
+                                    name="beneficiary_aba_no"
+                                    placeholder="Beneficiary ABA No."
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={intlBankRowData.beneficiary_aba_no}
+                                    onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_aba_no: e.target.value }))}
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
 
-                    {/* Beneficiary ABA No. */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary ABA No.</h2>
-                        <Input
-                            name="beneficiary_aba_no"
-                            placeholder="Beneficiary ABA No."
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={intlBankRowData.beneficiary_aba_no}
-                            onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_aba_no: e.target.value }))}
-                        />
-                    </div>
+                            {/* Beneficiary Routing No. */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary Routing No.</h2>
+                                <Input
+                                    name="beneficiary_routing_no"
+                                    placeholder="Beneficiary Routing No."
+                                    className="rounded-xl h-10 bg-white border-gray-200"
+                                    value={intlBankRowData.beneficiary_routing_no}
+                                    onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_routing_no: e.target.value }))}
+                                    disabled={formData?.is_submitted === 1}
+                                />
+                            </div>
 
-                    {/* Beneficiary Routing No. */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Beneficiary Routing No.</h2>
-                        <Input
-                            name="beneficiary_routing_no"
-                            placeholder="Beneficiary Routing No."
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={intlBankRowData.beneficiary_routing_no}
-                            onChange={(e) => setIntlBankRowData(prev => ({ ...prev, beneficiary_routing_no: e.target.value }))}
-                        />
-                    </div>
+                            {/* Attachment */}
+                            <div className="col-span-1 flex flex-col gap-2">
+                                <h2 className="text-[13px] font-medium text-[#64748B]">Attachment</h2>
+                                <div className="flex items-center gap-2">
+                                    <Input
+                                        type="file"
+                                        ref={intlBankAttachmentInputRef}
+                                        className="rounded-xl h-10 bg-white border-gray-200"
+                                        disabled={formData?.is_submitted === 1}
+                                        onChange={(e) => {
+                                            if (e.target.files && e.target.files.length > 0) {
+                                                setIntlBankRowData(prev => ({ ...prev, attachment: e.target.files![0] }));
+                                            }
+                                        }}
+                                    />
+                                    {editingIntlBankIndex !== null && (() => {
+                                        const item = formData?.international_bank_details?.[editingIntlBankIndex] as any;
+                                        const doc = item?.import_bank_proof || item?.attachment;
+                                        const fileUrl = doc?.url || doc?.file_url;
+                                        const fileName = doc?.file_name || doc?.name;
+                                        if (fileUrl) {
+                                            return (
+                                                <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 text-xs underline whitespace-nowrap hover:text-blue-700" title={fileName}>
+                                                    {fileName || 'View File'}
+                                                </a>
+                                            );
+                                        }
+                                        return null;
+                                    })()}
+                                </div>
+                            </div>
 
-                </div>
+                        </div> : ""
+                }
 
-                {/* Add Button */}
-                <div className="flex justify-end pb-4">
+                {/* Add/Reset Buttons */}
+                <div className="flex justify-end gap-2 pb-4">
                     <button
                         type="button"
                         onClick={addIntlBankDetail}
-                        className="px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10"
+                        className={`px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
                     >
                         {editingIntlBankIndex !== null ? 'Update' : 'Add'}
                     </button>
+                    {editingIntlBankIndex !== null && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setEditingIntlBankIndex(null);
+                                setIntlBankRowData({ beneficiary_name: '', beneficiary_bank_name: '', beneficiary_account_no: '', beneficiary_iban_no: '', beneficiary_bank_address: '', beneficiary_swift_code: '', beneficiary_ach_no: '', beneficiary_aba_no: '', beneficiary_routing_no: '' });
+                                if (intlBankAttachmentInputRef.current) intlBankAttachmentInputRef.current.value = "";
+                            }}
+                            className={`px-6 py-2 text-[14px] font-medium text-[#3B82F6] bg-white border border-[#3B82F6] rounded-lg hover:bg-blue-50 transition-colors h-10 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
+                        >
+                            Reset
+                        </button>
+                    )}
                 </div>
 
                 {/* Bank Detail (International) Table */}
                 {(formData?.international_bank_details?.length ?? 0) > 0 && (
-                    <Table className="overflow-x-auto border border-black/20">
+                    <Table className="overflow-x-auto border border-black/20 mb-6">
                         <TableHeader className="text-center">
                             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
                                 <TableHead className="text-center">Sr.no</TableHead>
@@ -1796,7 +1962,11 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                                 <TableHead>Beneficiary IBAN No.</TableHead>
                                 <TableHead>Beneficiary Bank Address</TableHead>
                                 <TableHead>Benef</TableHead>
-                                <TableHead className="text-center">Action</TableHead>
+                                <TableHead>Attachment</TableHead>
+                                {
+                                    formData?.is_submitted !== 1 ?
+                                        <TableHead className="text-center">Action</TableHead> : ""
+                                }
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -1810,32 +1980,54 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                                     <TableCell className="font-medium">{item.beneficiary_bank_address}</TableCell>
                                     <TableCell className="font-medium">{item.beneficiary_swift_code}</TableCell>
                                     <TableCell className="font-medium">
-                                        <div className="flex gap-4 justify-center items-center">
-                                            {/* Edit Icon */}
-                                            <svg
-                                                onClick={() => handleIntlBankEdit(index)}
-                                                className="hover:cursor-pointer"
-                                                width="20"
-                                                height="20"
-                                                viewBox="0 0 22 22"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                    d="M12 20.0008H20.0001M14.0001 4.00045L18.0001 8.00054M20.1741 5.81249C20.7028 5.2839 20.9999 4.56693 21 3.8193C21.0001 3.07167 20.7032 2.35462 20.1746 1.8259C19.646 1.29718 18.9291 1.00009 18.1814 1C17.4338 0.999906 16.7168 1.29681 16.1881 1.8254L2.84195 15.1747C2.60977 15.4062 2.43806 15.6912 2.34195 16.0047L1.02093 20.3568C0.99509 20.4433 0.993138 20.5352 1.01529 20.6227C1.03743 20.7102 1.08286 20.7901 1.14673 20.8538C1.21061 20.9176 1.29056 20.9629 1.3781 20.9849C1.46564 21.0069 1.5575 21.0048 1.64394 20.9788L5.99698 19.6588C6.31015 19.5636 6.59516 19.3929 6.82699 19.1618L20.1741 5.81249Z"
-                                                    stroke="#03111F"
-                                                    strokeWidth="2"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                />
-                                            </svg>
-                                            {/* Delete Icon */}
-                                            <Trash2
-                                                className="text-red-400 hover:cursor-pointer w-5 h-5"
-                                                onClick={() => handleIntlBankDelete(index)}
-                                            />
-                                        </div>
+                                        {(() => {
+                                            const doc = (item as any)?.import_bank_proof || (item as any)?.attachment;
+                                            const fileUrl = doc?.url || doc?.file_url;
+                                            const fileName = doc?.file_name || doc?.name;
+
+                                            if (fileUrl) {
+                                                return (
+                                                    <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline hover:text-blue-700" title={fileName}>
+                                                        {fileName || 'View File'}
+                                                    </a>
+                                                );
+                                            } else if (doc?.name) {
+                                                return <span className="text-blue-500">{doc.name}</span>;
+                                            }
+                                            return <span className="text-gray-400">-</span>;
+                                        })()}
                                     </TableCell>
+                                    {
+                                        formData?.is_submitted !== 1 ?
+
+                                            <TableCell className="font-medium">
+                                                <div className="flex gap-4 justify-center items-center">
+                                                    {/* Edit Icon */}
+                                                    <svg
+                                                        onClick={() => handleIntlBankEdit(index)}
+                                                        className="hover:cursor-pointer"
+                                                        width="20"
+                                                        height="20"
+                                                        viewBox="0 0 22 22"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path
+                                                            d="M12 20.0008H20.0001M14.0001 4.00045L18.0001 8.00054M20.1741 5.81249C20.7028 5.2839 20.9999 4.56693 21 3.8193C21.0001 3.07167 20.7032 2.35462 20.1746 1.8259C19.646 1.29718 18.9291 1.00009 18.1814 1C17.4338 0.999906 16.7168 1.29681 16.1881 1.8254L2.84195 15.1747C2.60977 15.4062 2.43806 15.6912 2.34195 16.0047L1.02093 20.3568C0.99509 20.4433 0.993138 20.5352 1.01529 20.6227C1.03743 20.7102 1.08286 20.7901 1.14673 20.8538C1.21061 20.9176 1.29056 20.9629 1.3781 20.9849C1.46564 21.0069 1.5575 21.0048 1.64394 20.9788L5.99698 19.6588C6.31015 19.5636 6.59516 19.3929 6.82699 19.1618L20.1741 5.81249Z"
+                                                            stroke="#03111F"
+                                                            strokeWidth="2"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                        />
+                                                    </svg>
+                                                    {/* Delete Icon */}
+                                                    <Trash2
+                                                        className="text-red-400 hover:cursor-pointer w-5 h-5"
+                                                        onClick={() => handleIntlBankDelete(index)}
+                                                    />
+                                                </div>
+                                            </TableCell> : ""
+                                    }
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -1860,6 +2052,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                             className="rounded-xl h-10 bg-white border-gray-200"
                             value={formData?.vendors_primary_email ?? ''}
                             onChange={handleInputChange}
+                            disabled={formData?.is_submitted === 1}
                         />
                     </div>
 
@@ -1870,14 +2063,14 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                     <button
                         type="button"
                         onClick={handleSaveAsDraft}
-                        className="px-6 py-2 text-[14px] font-medium text-[#3B82F6] border border-[#3B82F6] rounded-lg hover:bg-blue-50 transition-colors"
+                        className={`px-6 py-2 text-[14px] font-medium text-[#3B82F6] border border-[#3B82F6] rounded-lg hover:bg-blue-50 transition-colors ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
                     >
                         Save as Draft
                     </button>
                     <button
                         type="button"
                         onClick={handleSubmit}
-                        className="px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors"
+                        className={`px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
                     >
                         Submit
                     </button>

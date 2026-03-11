@@ -503,15 +503,17 @@ export const deleteContactDetailRow = async (onboarding_id: string, row_name: st
     }
 };
 
-export const updateDomesticBankDetails = async (body: { onboarding_id: string; name?: string; country: string; bank_key: string; bank_type: string; name_of_account_holder: string; account_number: string; ifsc_code: string }): Promise<any> => {
+export const updateDomesticBankDetails = async (data: { onboarding_id: string; name?: string; country: string; bank_key: string; bank_name?: string; name_of_account_holder: string; account_number: string; ifsc_code: string }, domestic_bank_proof?: File | null): Promise<any> => {
     try {
+        const formData = new FormData();
+        formData.append('data', JSON.stringify(data));
+        if (domestic_bank_proof) {
+            formData.append('domestic_bank_proof', domestic_bank_proof);
+        }
         const response = await fetch(`${QUICK_VENDOR_END_POINTS.updateDomesticBankDetails}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             credentials: 'include',
-            body: JSON.stringify(body)
+            body: formData
         });
         if (response.ok) {
             return Promise.resolve(response.json()?.then((data) => data?.message));
@@ -546,15 +548,17 @@ export const deleteDomesticBankDetailRow = async (onboarding_id: string, row_nam
     }
 };
 
-export const updateImportBankDetails = async (body: { onboarding_id: string; name?: string; meril_company_name: string; beneficiary_name: string; beneficiary_swift_code: string; beneficiary_iban_no: string; beneficiary_aba_no: string; beneficiary_bank_address: string; beneficiary_bank_name: string; beneficiary_account_no: string; beneficiary_ach_no: string; beneficiary_routing_no: string; beneficiary_currency: string }): Promise<any> => {
+export const updateImportBankDetails = async (data: { onboarding_id: string; name?: string; meril_company_name: string; beneficiary_name: string; beneficiary_swift_code: string; beneficiary_iban_no: string; beneficiary_aba_no: string; beneficiary_bank_address: string; beneficiary_bank_name: string; beneficiary_account_no: string; beneficiary_ach_no: string; beneficiary_routing_no: string; beneficiary_currency: string }, import_bank_proof?: File | null): Promise<any> => {
     try {
+        const formData = new FormData();
+        formData.append('data', JSON.stringify(data));
+        if (import_bank_proof) {
+            formData.append('import_bank_proof', import_bank_proof);
+        }
         const response = await fetch(`${QUICK_VENDOR_END_POINTS.updateImportBankDetails}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             credentials: 'include',
-            body: JSON.stringify(body)
+            body: formData
         });
         if (response.ok) {
             return Promise.resolve(response.json()?.then((data) => data?.message));
@@ -605,6 +609,117 @@ export const submitOnboardingForm = async (formData: FormData, cookie?: string):
         }
     } catch (error) {
         console.error("Error submitting onboarding form:", error);
+        return Promise.reject(error);
+    }
+};
+
+export const accountsTeamApproval = async (body: { data: { onboarding_id: string; action: number; remarks: string } }, cookie?: string): Promise<any> => {
+    try {
+        const response = await fetch(`${QUICK_VENDOR_END_POINTS.accountsTeamApproval}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(cookie ? { 'Cookie': cookie } : {})
+            },
+            credentials: 'include',
+            body: JSON.stringify(body) // Body contains action 1 for approve, 0 for reject
+        });
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response);
+        }
+    } catch (error) {
+        console.error("Error on accounts team approval:", error);
+        return Promise.reject(error);
+    }
+};
+
+export const getQuickOnboardingRequesterRecords = async (
+    params: {
+        onboarding_id?: string;
+        status?: string;
+        company?: string;
+        page_no?: number;
+        page_size?: number;
+    },
+    cookie?: string
+): Promise<any> => {
+    try {
+        const queryParams = new URLSearchParams();
+        if (params.onboarding_id) queryParams.append("onboarding_id", params.onboarding_id);
+        if (params.status) queryParams.append("status", params.status);
+        if (params.company) queryParams.append("company", params.company);
+        if (params.page_no) queryParams.append("page_no", params.page_no.toString());
+        if (params.page_size) queryParams.append("page_size", params.page_size.toString());
+
+        const queryString = queryParams.toString() ? `?${queryParams.toString()}` : "";
+
+        const response = await fetch(
+            `${QUICK_VENDOR_END_POINTS.getQuickOnboardingRequesterRecords}${queryString}`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(cookie ? { Cookie: cookie } : {}),
+                },
+                credentials: "include",
+            }
+        );
+
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response);
+        }
+    } catch (error) {
+        console.error("Error fetching quick onboarding requester records:", error);
+        return Promise.reject(error);
+    }
+};
+
+export const getQuickOnboardingApprovalRecords = async (
+    params: {
+        onboarding_id?: string;
+        status?: string;
+        company?: string;
+        page_no?: number;
+        page_size?: number;
+    },
+    cookie?: string
+): Promise<any> => {
+    try {
+        const queryParams = new URLSearchParams();
+        if (params.onboarding_id) queryParams.append("onboarding_id", params.onboarding_id);
+        if (params.status) queryParams.append("status", params.status);
+        if (params.company) queryParams.append("company", params.company);
+        if (params.page_no) queryParams.append("page_no", params.page_no.toString());
+        if (params.page_size) queryParams.append("page_size", params.page_size.toString());
+
+        const queryString = queryParams.toString() ? `?${queryParams.toString()}` : "";
+
+        const response = await fetch(
+            `${QUICK_VENDOR_END_POINTS.getQuickOnboardingApprovalRecords}${queryString}`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(cookie ? { Cookie: cookie } : {}),
+                },
+                credentials: "include",
+            }
+        );
+
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response);
+        }
+    } catch (error) {
+        console.error("Error fetching quick onboarding approval records:", error);
         return Promise.reject(error);
     }
 };

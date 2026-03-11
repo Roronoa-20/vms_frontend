@@ -25,4 +25,7 @@ export const QUICK_VENDOR_END_POINTS = {
     deleteImportBankDetailRow: `${url}/api/method/vms.APIs.quick_onboarding.v1.update_import_bank_details.delete_import_bank_detail_row`,
     submitOnboardingForm: `${url}/api/method/vms.APIs.quick_onboarding.v1.vendor_registration.submit_onboarding_form`,
     deleteGstDetailRow: `${url}/api/method/vms.APIs.quick_onboarding.v1.update_gst_detail.delete_gst_detail_row`,
+    accountsTeamApproval: `${url}/api/method/vms.APIs.quick_onboarding.v1.quick_onboarding_approval.accounts_team_approval`,
+    getQuickOnboardingRequesterRecords: `${url}/api/method/vms.APIs.quick_onboarding.v1.vendor_request_dashboard.get_quick_onboarding_requester_records`,
+    getQuickOnboardingApprovalRecords: `${url}/api/method/vms.APIs.quick_onboarding.v1.vendor_approval_dashboard.get_quick_onboarding_approval_records`,
 }
