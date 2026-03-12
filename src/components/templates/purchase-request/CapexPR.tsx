@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "../../atoms/select";
 import { Input } from "../../atoms/input";
-import { Trash2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -31,10 +31,13 @@ import { deleteEnquiryItems } from "@/src/services/prEnquiry/prEnquiry.services"
 import SearchSelectComponent from "../../molecules/Selectsearchcomponent";
 import MultiSelect from 'react-select';
 import { multiSelectStyles } from "../../common/sharedStyles";
+import { Button } from "../../atoms/button";
 
 type Props = {
   prData?: purchaseRequisitionDataType
   materialDropdown: PurchaseRequisitionMaterialDropdownType[]
+  submitLoaderRef: React.RefObject<HTMLSpanElement | null>
+  handlePurchaseRequisitionSubmit: (isAlert: boolean) => void
 };
 
 
@@ -216,6 +219,27 @@ const CapexPR = (props: Props) => {
 
 
   return (
+    <>
+    <div className='flex justify-end'>
+                {
+                    pr_id && !props?.prData?.is_submitted &&
+                    <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
+                      let isAlert = true;
+                      if (singleRowData?.material || singleRowData?.plant || singleRowData?.asset_code || singleRowData?.quantity || singleRowData?.purchasing_group || singleRowData?.required_delivery_date) {
+                        if (!confirm("You have unsaved changes in the table. Do you want to continue without saving?")) {
+                          return;
+                        }
+                        isAlert = false;
+                      }
+                      props?.handlePurchaseRequisitionSubmit(isAlert);
+                    }}>
+                        Submit PR
+                        <span ref={props?.submitLoaderRef} className="hidden">
+                            <Loader2 className="w-5 h-5" />
+                        </span>
+                    </Button>
+                }
+            </div>
     <div className="">
       <div className="flex w-full justify-between pb-4">
         <h1 className="text-[20px] text-[#03111F] font-semibold">Items List</h1>
@@ -454,6 +478,7 @@ const CapexPR = (props: Props) => {
         </TableBody>
       </Table>
     </div>
+    </>
   );
 };
 

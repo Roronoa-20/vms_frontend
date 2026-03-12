@@ -39,8 +39,12 @@ const PrRequest = (props: Props) => {
         })
     }
 
-    const handlePurchaseRequisitionSubmit = () => {
-        if (confirm("Are you sure you want to submit this purchase requisition?")) {
+    const handlePurchaseRequisitionSubmit = (isAlert:boolean) => {
+        if(isAlert){
+            if (!confirm("Are you sure you want to submit this purchase requisition?")) {
+                return;
+            }
+        }
             if (submitLoaderRef?.current) {
                 submitLoaderRef.current.className = "inline-flex animate-spin ml-2";
             }
@@ -56,13 +60,12 @@ const PrRequest = (props: Props) => {
                     submitLoaderRef.current.className = "hidden";
                 }
             })
-        }
     }
 
     return (
         <div className='py-8 px-5'>
             <CreatePurchaseRequest purchaseRequisitionTypeDropdown={props.purchaseRequisitionTypeDropdown} companyDropdown={props?.companyDropdown} prData={prData} pr_id={props?.pr_id} fetchPrData={fetchPrData} />
-            <div className='flex justify-end'>
+            {/* <div className='flex justify-end'>
                 {
                     props?.pr_id && !prData?.is_submitted &&
                     <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => { handlePurchaseRequisitionSubmit() }}>
@@ -72,28 +75,28 @@ const PrRequest = (props: Props) => {
                         </span>
                     </Button>
                 }
-            </div>
+            </div> */}
 
             {/* normal pr component */}
             {
-                props?.prData?.pr_type === PurchaseType.nbNormal && <NormalPR prData={prData} materialDropdown={props?.materialDropdown} />
+                props?.prData?.pr_type === PurchaseType.nbNormal && <NormalPR prData={prData} materialDropdown={props?.materialDropdown} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />
             }
 
             {/* capex pr component */}
             {
-                props?.prData?.pr_type === PurchaseType.nbCapex && <CapexPR prData={prData} materialDropdown={props?.materialDropdown} />
+                props?.prData?.pr_type === PurchaseType.nbCapex && <CapexPR prData={prData} materialDropdown={props?.materialDropdown} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />
             }
 
             {/* ZSB SERVICE */}
 
             {
-                props?.prData?.pr_type === PurchaseType.zsbService && <ZSBService prData={prData} plantDropdown={props?.plantDropdown} />
+                props?.prData?.pr_type === PurchaseType.zsbService && <ZSBService prData={prData} plantDropdown={props?.plantDropdown} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />
             }
 
             {/* ZSB ASSET */}
 
             {
-                props?.prData?.pr_type === PurchaseType.zsbAsset && <ZSBAsset prData={prData} />
+                props?.prData?.pr_type === PurchaseType.zsbAsset && <ZSBAsset prData={prData} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />
             }
 
         </div>

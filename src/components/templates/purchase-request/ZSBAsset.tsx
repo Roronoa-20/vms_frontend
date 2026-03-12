@@ -67,6 +67,8 @@ import { Button } from "../../atoms/button";
 
 type Props = {
   prData?: purchaseRequisitionDataType;
+  submitLoaderRef: React.RefObject<HTMLSpanElement | null>;
+  handlePurchaseRequisitionSubmit: (isAlert: boolean) => void;
 };
 
 const AssetPR = (props: Props) => {
@@ -381,6 +383,26 @@ const AssetPR = (props: Props) => {
 
   return (
     <>
+      <div className='flex justify-end'>
+        {
+          pr_id && !props?.prData?.is_submitted &&
+          <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
+            let isAlert = true;
+            if (singleRowData?.material_description || singleRowData?.plant || singleRowData?.quantity || singleRowData?.asset_code || singleRowData?.material_group || singleRowData?.short_text) {
+              if (!confirm("You have unsaved changes in the table. Do you want to continue without saving?")) {
+                return;
+              }
+              isAlert = false;
+            }
+            props?.handlePurchaseRequisitionSubmit(isAlert);
+          }}>
+            Submit PR
+            <span ref={props?.submitLoaderRef} className="hidden">
+              <Loader2 className="w-5 h-5" />
+            </span>
+          </Button>
+        }
+      </div>
       <div className="">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
