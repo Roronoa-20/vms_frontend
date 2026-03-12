@@ -45,7 +45,7 @@ const PrRequest = (props: Props) => {
                 submitLoaderRef.current.className = "inline-flex animate-spin ml-2";
             }
             submitPurchaseRequisition(props?.pr_id as string).then((res) => {
-                alert(res?.message || `PR Created Successfully with PR Number:- ${res?.pr_number}`);
+                alert(res?.message || `PR Created Successfully with PR Number:- ${res?.sap_pr_number}`);
                 fetchPrData();
                 if (submitLoaderRef?.current) {
                     submitLoaderRef.current.className = "hidden";
