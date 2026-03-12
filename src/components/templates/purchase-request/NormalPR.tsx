@@ -213,16 +213,16 @@ const NormalPR = (props: Props) => {
       <Table className=" max-h-40 overflow-y-scroll border border-black/20">
         <TableHeader className="text-center">
           <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-            <TableHead className="text-center max-w-[60px]">Sr No.</TableHead>
-            <TableHead className="text-center min-w-[200px]">Materials</TableHead>
-            <TableHead className="text-center min-w-[100px]">UOM</TableHead>
-            <TableHead className="text-center min-w-[150px]">Plant</TableHead>
-            <TableHead className="text-center min-w-[120px]">Quantity</TableHead>
-            <TableHead className="text-center min-w-[200px]">Purchasing Group</TableHead>
-            <TableHead className="text-center min-w-[150px]">Required Delivery Date</TableHead>
+            <TableHead className="text-center w-[50px]">Sr No.</TableHead>
+            <TableHead className="text-center w-[25%]">Materials</TableHead>
+            <TableHead className="text-center w-[10%]">UOM</TableHead>
+            <TableHead className="text-center w-[15%]">Plant</TableHead>
+            <TableHead className="text-center w-[10%]">Quantity</TableHead>
+            <TableHead className="text-center w-[20%]">Purchasing Group</TableHead>
+            <TableHead className="text-center w-[15%]">Required Delivery Date</TableHead>
             {
               props?.prData?.is_submitted !== 1 &&
-              <TableHead className="text-center min-w-[120px]">Action</TableHead>
+              <TableHead className="text-center w-[10%]">Action</TableHead>
             }
           </TableRow>
         </TableHeader>
@@ -230,7 +230,7 @@ const NormalPR = (props: Props) => {
           {
             tableData?.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="font-medium text-center">{index + 1}</TableCell>
+                <TableCell className="font-medium text-center w-[50px]">{index + 1}</TableCell>
                 <TableCell className="font-medium text-center max-w-[200px] truncate" title={item.material}>{item.material}</TableCell>
                 <TableCell className="font-medium text-center max-w-[100px] truncate" title={item.uom}>{item.uom}</TableCell>
                 <TableCell className="font-medium text-center max-w-[150px] truncate" title={item.plant}>{item.plant}</TableCell>
