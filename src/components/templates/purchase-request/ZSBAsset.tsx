@@ -390,37 +390,37 @@ const AssetPR = (props: Props) => {
         <Table className=" max-h-40 overflow-y-scroll border border-black/20">
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-              <TableHead className="text-center max-w-[60px]">Sr No.</TableHead>
-              <TableHead className="w-[10%]">Material Description</TableHead>
+              <TableHead className="text-center w-[50px]">Sr No.</TableHead>
+              <TableHead className="w-[20%] text-center">Material Description</TableHead>
               <TableHead className="w-[10%] text-center">UOM</TableHead>
-              <TableHead className="w-[10%]">Plant</TableHead>
-              <TableHead className="w-[10%]">Quantity</TableHead>
-              <TableHead className="w-[10%]">Material Group</TableHead>
-              <TableHead className="w-[10%]">Asset Code</TableHead>
-              <TableHead className="w-[10%]">Short Text</TableHead>
-              <TableHead className="w-[5%] max-w-[10%]">Action</TableHead>
+              <TableHead className="w-[10%] text-center">Plant</TableHead>
+              <TableHead className="w-[10%] text-center">Quantity</TableHead>
+              <TableHead className="w-[15%] text-center">Material Group</TableHead>
+              <TableHead className="w-[10%] text-center">Asset Code</TableHead>
+              <TableHead className="w-[15%] text-center">Short Text</TableHead>
+              <TableHead className="w-[10%] text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="">
             {tableData?.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="font-medium text-center">
+                <TableCell className="font-medium text-center w-[50px]">
                   {index + 1}
                 </TableCell>
-                <TableCell className="font-medium">
+                <TableCell className="font-medium text-center">
                   {item.material_description}
                 </TableCell>
-                <TableCell className="font-medium">{item.uom}</TableCell>
-                <TableCell className="font-medium">{item.plant}</TableCell>
-                <TableCell className="font-medium">{item.quantity}</TableCell>
-                <TableCell className="font-medium">
+                <TableCell className="font-medium text-center">{item.uom}</TableCell>
+                <TableCell className="font-medium text-center">{item.plant}</TableCell>
+                <TableCell className="font-medium text-center">{item.quantity}</TableCell>
+                <TableCell className="font-medium text-center">
                   {item.material_group}
                 </TableCell>
-                <TableCell className="font-medium">
+                <TableCell className="font-medium text-center">
                   {item.asset_code}
                 </TableCell>
-                <TableCell className="font-medium">{item.short_text}</TableCell>
-                <TableCell className="font-medium">
+                <TableCell className="font-medium text-center">{item.short_text}</TableCell>
+                <TableCell className="font-medium text-center flex justify-center">
                   <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
                     {
                       props?.prData?.is_submitted !== 1 &&
@@ -713,13 +713,13 @@ const AssetPR = (props: Props) => {
           <Table className=" max-h-40 overflow-y-scroll border border-black/20">
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                <TableHead className="text-center max-w-[60px]">Sr No.</TableHead>
-                <TableHead className="w-[10%]">Service No</TableHead>
-                <TableHead className="w-[10%]">Short Text</TableHead>
-                <TableHead className="w-[10%]">UOM</TableHead>
-                <TableHead className="w-[10%]">Quantity</TableHead>
+                <TableHead className="text-center w-[50px]">Sr No.</TableHead>
+                <TableHead className="w-[15%]">Service No</TableHead>
+                <TableHead className="w-[40%]">Short Text</TableHead>
+                <TableHead className="w-[15%]">UOM</TableHead>
+                <TableHead className="w-[15%]">Quantity</TableHead>
                 {props?.prData?.is_submitted !== 1 && !isSubItemsView && (
-                  <TableHead className="w-[5%] max-w-[10%]">Action</TableHead>
+                  <TableHead className="w-[15%]">Action</TableHead>
                 )}
               </TableRow>
             </TableHeader>
@@ -727,7 +727,7 @@ const AssetPR = (props: Props) => {
               {tableData?.[selectedSubItemIndex?.index as number]?.sub_items?.map(
                 (item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium text-center">
+                    <TableCell className="font-medium text-center w-[50px]">
                       {index + 1}
                     </TableCell>
                     <TableCell className="font-medium">
