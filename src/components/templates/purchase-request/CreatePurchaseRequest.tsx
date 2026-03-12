@@ -200,32 +200,32 @@ const CreatePurchaseRequest = (props: Props) => {
 
       {props?.pr_id && (
         <>
-          <div className="col-span-1 border border-black/10 rounded-xl px-4 py-2 flex flex-col justify-center">
-            <h1 className="text-[12px] font-normal text-[#626973] uppercase -mb-1">
-              PR Ref No
+          <div className="col-span-1 flex flex-row items-baseline gap-2 flex-wrap">
+            <h1 className="text-[12px] font-normal text-[#626973] uppercase whitespace-nowrap">
+              PR Ref No :
             </h1>
-            <h1 className="text-[16px] font-medium text-black truncate">
+            <h1 className="text-[16px] font-medium text-black break-words">
               {(form as any)?.name ?? "-"}
             </h1>
           </div>
 
-          <div className="col-span-1 border border-black/10 rounded-xl px-4 py-2 flex flex-col justify-center">
-            <h1 className="text-[12px] font-normal text-[#626973] uppercase -mb-1">
-              SAP Ref No
+          <div className="col-span-1 flex flex-row items-baseline gap-2 flex-wrap">
+            <h1 className="text-[12px] font-normal text-[#626973] uppercase whitespace-nowrap">
+              SAP Ref No :
             </h1>
-            <h1 className="text-[16px] font-medium text-black truncate">
+            <h1 className="text-[16px] font-medium text-black break-words">
               {(form as any)?.sap_pr_no || "-"}
             </h1>
           </div>
 
-          <div className="col-span-1 border border-black/10 rounded-xl px-4 py-2 flex flex-col justify-center">
-            <h1 className="text-[12px] font-normal text-[#626973] uppercase -mb-1">
-              SAP Error Message
+          <div className="col-span-1 flex flex-row items-baseline gap-2 flex-wrap">
+            <h1 className="text-[12px] font-normal text-[#626973] uppercase whitespace-nowrap">
+              SAP Error Message :
             </h1>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <h1 className="text-[16px] font-medium text-black truncate cursor-default">
+                  <h1 className="text-[16px] font-medium text-black break-words cursor-default">
                     {(form as any)?.sap_error || "-"}
                   </h1>
                 </TooltipTrigger>
