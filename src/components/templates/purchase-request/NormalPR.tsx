@@ -213,7 +213,7 @@ const NormalPR = (props: Props) => {
       <Table className=" max-h-40 overflow-y-scroll border border-black/20">
         <TableHeader className="text-center">
           <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-            <TableHead className="text-center ">Sr No.</TableHead>
+            <TableHead className="text-center max-w-[60px]">Sr No.</TableHead>
             <TableHead className="text-center min-w-[200px]">Materials</TableHead>
             <TableHead className="text-center min-w-[100px]">UOM</TableHead>
             <TableHead className="text-center min-w-[150px]">Plant</TableHead>
