@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   dashboardCardData,
   DashboardPOTableData,
@@ -37,7 +38,7 @@ import {
   SelectValue,
 } from "../atoms/select";
 import { useMultipleVendorCodeStore } from "@/src/store/MultipleVendorCodeStore";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/src/context/AuthContext";
 import DashboardPurchaseEnquiryTable from "./Dashboard-Purchase-Enquiry-Table";
 import DashboardPurchaseRequisitionTable from "./Dashboard-Purchase-Requisition-Table";
@@ -80,6 +81,9 @@ const DashboardCards = ({ ...Props }: Props) => {
   const { designation } = useAuth();
   const user = designation as string;
   const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState<string>("");
 
   console.log(user, "this is desingation");
   let allCardData: any[] = [];
@@ -293,34 +297,51 @@ const DashboardCards = ({ ...Props }: Props) => {
     ];
   }
 
-  let EnquirerCard = [
-    {
-      name: "Purchase Enquiry",
-      count: Props.cardData?.cart_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/doc.svg",
-      text_color: "text-rose-800",
-      bg_color: "bg-rose-100",
-      hover: "hover:border-rose-400",
-    },
-    {
-      name: "Purchase Requisition Request",
-      subname: "Generated through VMS",
-      count: Props.cardData?.pr_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/file-search.svg",
-      text_color: "text-rose-800",
-      bg_color: "bg-green-200",
-      hover: "hover:border-rose-400",
-    },
-  ];
+  const cardData = useMemo(() => {
+    const EnquirerCard = [
+      {
+        name: "Purchase Enquiry",
+        count: Props.cardData?.cart_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/doc.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-rose-100",
+        hover: "hover:border-rose-400",
+      },
+      {
+        name: "Purchase Requisition Request",
+        subname: "Generated through VMS",
+        count: Props.cardData?.pr_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-green-200",
+        hover: "hover:border-rose-400",
+      },
+    ];
 
-
-  let cardData = user === "Enquirer" ? EnquirerCard : allCardData;
+    return user === "Enquirer" ? EnquirerCard : allCardData;
+  }, [user, Props.cardData?.cart_count, Props.cardData?.pr_count]);
 
   useEffect(() => {
     if (user) {
       setLoading(false);
     }
   }, [user]);
+
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam) {
+      setActiveTab(tabParam);
+    } else if (cardData.length > 0) {
+      setActiveTab(cardData[0].name);
+    }
+  }, [searchParams, cardData]);
+
+  const handleTabChange = (tabName: string) => {
+    setActiveTab(tabName);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tabName);
+    router.push(`?${params.toString()}`);
+  };
 
   const fetchPoBasedOnVendorCode = async () => {
     const url = `${API_END_POINTS?.vendorPOTable}?vendor_code`;
@@ -350,7 +371,7 @@ const DashboardCards = ({ ...Props }: Props) => {
           </Select>
         </div>
       )}
-      <Tabs defaultValue={cardData?.[0]?.name} className="">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="">
         <div className="">
           <TabsList className="grid grid-cols-4 gap-4 h-full pb-6 bg-white">
             {cardData?.map((item, index) => (
