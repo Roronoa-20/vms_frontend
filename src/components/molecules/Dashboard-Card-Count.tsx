@@ -19,6 +19,8 @@ import DashboardRejectedVendorsTable from "./Dashboard-Rejected-Vendors-Table";
 import DashboardASAOnboardedVendorsList from "./Dashboard-ASA-Onboarded-Vendors-List";
 import DashboardASAFormTable from "./Dashboard-ASA-Vendors-Form-Table";
 import DashboardASAPendingVendorFormTableList from "./Dashboard-ASA-Pending-Vendor-List";
+import DashboardMyVendorsTable from "./Dashboard-My-Vendors-Table";
+import DashboardMyApprovalsTable from "./Dashboard-My-Approvals-Table";
 import DashboardDispatchVendorsTable from "./Dashboard-Dispatch-Vendors-Table";
 import DashboardPaymentVendorsTable from "./Dashboard-Payment-Vendors-Table";
 import DashboardCurrentMonthsVendorsTable from "./Dashboard-Current-Months-Vendors-Table";
@@ -63,11 +65,13 @@ type Props = {
   dashboardASAFormTableData: DashboardTableType["asa_form_data"];
   dashboardASAPendingVendorListTableData: DashboardTableType["asa_form_data"];
   sapErrorDashboardData: DashboardTableType["sapErrorDashboardData"];
-  dashboardAccountsPending: any;
+  // dashboardAccountsPending: any;
   dashboardAccountsOnboarded: any;
   dashboardAccountsRejected: any;
   dashboardAccountsSapErrors: any;
   ASAdashboardOnboardedVendorListTableData: DashboardTableType["asa_form_data"];
+  myVendorsData: any;
+  myApprovalsData: any;
 };
 
 const DashboardCards = ({ ...Props }: Props) => {
@@ -255,20 +259,20 @@ const DashboardCards = ({ ...Props }: Props) => {
         hover: "hover:border-violet-400",
       },
       {
-        name: "Accounts Pending Vendors",
-        count: Props?.cardData?.pending_vendor_count_by_accounts_team ?? 0,
+        name: "My Vendors",
+        count: Props?.myVendorsData?.message?.overall_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-violet-800",
         bg_color: "bg-violet-100",
         hover: "hover:border-violet-400",
       },
       {
-        name: "Accounts Onboarded Vendors",
-        count: Props?.cardData?.approved_vendor_count_by_accounts_team ?? 0,
-        icon: "/dashboard-assests/cards_icon/file-search.svg",
-        text_color: "text-violet-800",
-        bg_color: "bg-violet-100",
-        hover: "hover:border-violet-400",
+        name: "My Approvals",
+        count: Props?.myApprovalsData?.message?.overall_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/tick.svg",
+        text_color: "text-emerald-800",
+        bg_color: "bg-emerald-100",
+        hover: "hover:border-emerald-400",
       },
       {
         name: "Accounts Rejected Vendors",
@@ -480,18 +484,30 @@ const DashboardCards = ({ ...Props }: Props) => {
                   companyDropdown={Props?.companyDropdown}
                 />
               )}
-              {item.name === "Accounts Pending Vendors" && (
+              {item.name === "My Approvals" && (
+                <DashboardMyApprovalsTable
+                  dashboardTableData={Props?.myApprovalsData}
+                  companyDropdown={Props?.companyDropdown}
+                />
+              )}
+              {item.name === "My Vendors" && (
+                <DashboardMyVendorsTable
+                  dashboardTableData={Props?.myVendorsData}
+                  companyDropdown={Props?.companyDropdown}
+                />
+              )}
+              {/* {item.name === "Accounts Pending Vendors" && (
                 <DashboardAccountsPendingTable
                   dashboardTableData={Props?.dashboardAccountsPending}
                   companyDropdown={Props?.companyDropdown}
                 />
-              )}
-              {item.name === "Accounts Onboarded Vendors" && (
+              )} */}
+              {/* {item.name === "Accounts Onboarded Vendors" && (
                 <DashboardAccountsOnboardedTable
                   dashboardTableData={Props?.dashboardAccountsOnboarded}
                   companyDropdown={Props?.companyDropdown}
                 />
-              )}
+              )} */}
               {item.name === "Accounts Rejected Vendors" && (
                 <DashboardAccountsRejectedTable
                   dashboardTableData={Props?.dashboardAccountsRejected}
