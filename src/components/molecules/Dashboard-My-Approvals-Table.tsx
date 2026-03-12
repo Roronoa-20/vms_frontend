@@ -89,8 +89,14 @@ const DashboardMyApprovalsTable = ({ dashboardTableData, companyDropdown }: Prop
     }
   };
 
-  const handleView = (onboarding_id: string) => {
-    router.push(`/view-quick-vendor?onboarding_id=${onboarding_id}`);
+  const handleView = (can_edit: number, onboarding_id: string) => {
+    let link = "";
+    if (can_edit) {
+      link = `/quick-vendor?onboarding_id=${onboarding_id}`;
+    } else {
+      link = `/view-quick-vendor?onboarding_id=${onboarding_id}`;
+    }
+    router.push(link);
   };
 
   return (
@@ -158,11 +164,13 @@ const DashboardMyApprovalsTable = ({ dashboardTableData, companyDropdown }: Prop
                   <TableCell>{item.country || "-"}</TableCell>
                   <TableCell className="text-center">
                     <span
-                      className={`px-3 py-1 rounded-full text-[12px] font-medium uppercase ${item.status === "Pending"
-                          ? "bg-yellow-100 text-yellow-700"
-                          : item.status === "Approved"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-red-100 text-red-700"
+                      className={`px-3 py-1 rounded-full text-[12px] font-medium uppercase ${item?.status?.toUpperCase().includes("PENDING")
+                        ? "bg-yellow-100 text-yellow-700"
+                        : item?.status?.toUpperCase().includes("APPROVED")
+                          ? "bg-green-100 text-green-700"
+                          : item?.status?.toUpperCase().includes("REJECTED")
+                            ? "bg-red-100 text-red-700"
+                            : ""
                         }`}
                     >
                       {item.status}
@@ -175,7 +183,7 @@ const DashboardMyApprovalsTable = ({ dashboardTableData, companyDropdown }: Prop
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => handleView(item.name)}
+                      onClick={() => handleView(item?.can_edit, item.name)}
                       className="bg-[#5291CD] text-white hover:bg-[#3d70a1] hover:text-white rounded-xl"
                     >
                       View
