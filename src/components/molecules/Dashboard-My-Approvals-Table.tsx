@@ -23,6 +23,7 @@ import Cookies from "js-cookie";
 import { getQuickOnboardingApprovalRecords } from "@/src/services/quickVendor/quickVendor.services";
 import Pagination from "./Pagination";
 import { useRouter } from "next/navigation";
+import { useDashboardCardCountStore } from "@/src/store/DashboardCardCountStore";
 
 type Props = {
   dashboardTableData: any;
@@ -54,6 +55,8 @@ const DashboardMyApprovalsTable = ({ dashboardTableData, companyDropdown }: Prop
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isInitialMount, setIsInitialMount] = useState(true);
 
+  const { cardCounts, setCardCounts, updateCardCount } = useDashboardCardCountStore();
+
   const router = useRouter();
   const debouncedSearchName = useDebounce(search, 300);
 
@@ -81,6 +84,7 @@ const DashboardMyApprovalsTable = ({ dashboardTableData, companyDropdown }: Prop
       });
 
       if (response?.message?.status === "success") {
+        updateCardCount("my_vendors_count",response?.message?.total_count)
         setTable(response.message.data || []);
         setTotalCount(response.message.total_count || 0);
       }
@@ -163,19 +167,19 @@ const DashboardMyApprovalsTable = ({ dashboardTableData, companyDropdown }: Prop
                   <TableCell className="text-gray-500">{item.email_requester}</TableCell>
                   <TableCell>{item.country || "-"}</TableCell>
                   <TableCell className="text-center">
-                    <span
-                      className={`px-3 py-1 rounded-full text-[12px] font-medium uppercase ${item?.status?.toUpperCase().includes("PENDING")
-                        ? "bg-yellow-100 text-yellow-700"
-                        : item?.status?.toUpperCase().includes("APPROVED")
-                          ? "bg-green-100 text-green-700"
-                          : item?.status?.toUpperCase().includes("REJECTED")
-                            ? "bg-red-100 text-red-700"
-                            : ""
-                        }`}
-                    >
-                      {item.status}
-                    </span>
-                  </TableCell>
+                                      <span
+                                        className={`px-3 py-1 rounded-full text-[12px] font-medium uppercase ${item?.approval_status?.toUpperCase().includes("PENDING")
+                                          ? "bg-yellow-100 text-yellow-700"
+                                          : item?.approval_status?.toUpperCase().includes("APPROVED")
+                                            ? "bg-green-100 text-green-700"
+                                            : item?.approval_status?.toUpperCase().includes("REJECTED")
+                                              ? "bg-red-100 text-red-700"
+                                              : ""
+                                          }`}
+                                      >
+                                        {item.approval_status}
+                                      </span>
+                                    </TableCell>
                   <TableCell className="text-center text-gray-500">
                     {item.modified ? new Date(item.modified).toLocaleDateString() : "-"}
                   </TableCell>

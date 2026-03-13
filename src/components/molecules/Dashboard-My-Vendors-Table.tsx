@@ -23,6 +23,7 @@ import Cookies from "js-cookie";
 import { getQuickOnboardingRequesterRecords } from "@/src/services/quickVendor/quickVendor.services";
 import Pagination from "./Pagination";
 import { useRouter } from "next/navigation";
+import { useDashboardCardCountStore } from "@/src/store/DashboardCardCountStore";
 
 type Props = {
   dashboardTableData: any;
@@ -53,6 +54,7 @@ const DashboardMyVendorsTable = ({ dashboardTableData, companyDropdown }: Props)
   const [record_per_page, setRecordPerPage] = useState<number>(dashboardTableData?.message?.page_size || 5);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isInitialMount, setIsInitialMount] = useState(true);
+  const { cardCounts, setCardCounts, updateCardCount } = useDashboardCardCountStore();
 
   const router = useRouter();
   const debouncedSearchName = useDebounce(search, 300);
@@ -83,6 +85,7 @@ const DashboardMyVendorsTable = ({ dashboardTableData, companyDropdown }: Props)
       });
 
       if (response?.message?.status === "success") {
+        updateCardCount("my_approvals_count",response?.message?.total_count)
         setTable(response.message.data || []);
         setTotalCount(response.message.total_count || 0);
       }

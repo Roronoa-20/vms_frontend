@@ -246,6 +246,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             const response = await createQuickVendorOnboarding(body);
             if (response?.message?.status === 'success') {
                 alert('Draft saved successfully!');
+                await fetchVendorDetails();
             } else {
                 alert(response?.message?.message || 'Something went wrong.');
             }
@@ -303,6 +304,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             const response = await submitOnboardingForm(body);
             if (response?.message?.status === 'success') {
                 alert("Form submitted successfully!");
+                await fetchVendorDetails();
                 router.push(`/quick-vendor?onboarding_id=${response?.message?.onboarding_id}`);
             } else {
                 alert(response?.message?.message || "Something went wrong.");
@@ -424,7 +426,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
         if (onboarding_id) {
             fetchVendorDetails();
         }
-    }, [])
+    }, [onboarding_id])
 
     // ==================== GST / Excise Detail CRUD ====================
     const addGstDetail = async () => {
