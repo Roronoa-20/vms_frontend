@@ -165,7 +165,7 @@ const DashboardMyVendorsTable = ({ dashboardTableData, companyDropdown }: Props)
                   <TableCell className="font-medium">{item.name}</TableCell>
                   <TableCell>{item.vendor_name || "-"}</TableCell>
                   <TableCell>{item.company_code || "-"}</TableCell>
-                  <TableCell className="text-gray-500">{item.email_requester}</TableCell>
+                  <TableCell className="text-gray-500">{item.requestor_name}</TableCell>
                   <TableCell>{item.country || "-"}</TableCell>
                   <TableCell className="text-center">
                     <span
