@@ -48,7 +48,7 @@ const NormalPR = (props: Props) => {
   const [uomDrop, setUOM] = useState<purchaseRequisitionUOMType>();
   const [isPurchaseGroupDropdown, setIsPurchaseGroupDropdown] = useState(false);
   const [isPlantDropdown, setIsPlantDropdown] = useState(false);
-  const [plantDropdown, setPlantDropdown] = useState<purchaseRequisitionPlantDropdownType[]>();
+  const [plantDropdown, setPlantDropdown] = useState<string[]>();
 
   const [singleRowData, setSingleRowData] = useState<nbItemsType>();
 
@@ -89,11 +89,11 @@ const NormalPR = (props: Props) => {
 
   const getPlantBasedOnMaterial = (material: string) => {
     getPlantByMaterial(material).then((res: any) => {
-      if (Array.isArray(res)) {
-        setPlantDropdown(res);
+      if (Array.isArray(res?.plants)) {
+        setPlantDropdown(res?.plants);
         setIsPlantDropdown(true);
       } else {
-        setSingleRowData(prev => ({ ...prev, plant: res?.plant }) as nbItemsType);
+        setSingleRowData(prev => ({ ...prev, plant: res?.plants?.[0] }) as nbItemsType);
         setIsPlantDropdown(false);
       }
     }).catch((err) => {
@@ -354,8 +354,8 @@ const NormalPR = (props: Props) => {
                 {
                   isPlantDropdown ?
                     <MultiSelect
-                      options={plantDropdown?.map(item => ({ label: item?.plant_name || item?.name, value: item?.name })) || []}
-                      value={singleRowData?.plant ? { label: plantDropdown?.find(p => p.name === singleRowData.plant)?.plant_name || singleRowData.plant, value: singleRowData.plant } : null}
+                      options={plantDropdown?.map(item => ({ label: item || item, value: item })) || []}
+                      value={singleRowData?.plant ? { label: plantDropdown?.find(p => p === singleRowData.plant)|| singleRowData.plant, value: singleRowData.plant } : null}
                       onChange={(selectedOption: any) => {
                         setSingleRowData(prev => ({ ...prev, plant: selectedOption?.value } as nbItemsType));
                       }}
