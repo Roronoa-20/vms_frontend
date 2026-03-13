@@ -343,6 +343,7 @@ export interface TBankDetailsAttachment {
 }
 
 export interface TOnboardingData {
+    requestor_name:string
     can_approve: number;
     name: string;
     vendor_name: string;
