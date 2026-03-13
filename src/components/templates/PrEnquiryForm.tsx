@@ -106,8 +106,6 @@ const PRInquiryForm = ({
   const addLoaderRef = useRef<HTMLSpanElement>(null);
   const submitLoaderRef = useRef<HTMLSpanElement>(null);
 
-  console.log(cityDropdown, "this is city");
-
   useEffect(() => {
     if (selectedProductName) {
       const data = productNameDropdown?.filter((item) => {
@@ -309,6 +307,16 @@ const PRInquiryForm = ({
       formData?.cart_product[index]?.product_details?.name,
     );
     setSelectedLocation(formData?.cart_product[index]?.location_details?.name);
+  };
+
+  const handleReset = () => {
+    setSingleTableRow(null);
+    setSelectedProductName("");
+    setSelectedLocation("");
+    setAttachment(undefined);
+    if (fileUploadRef?.current) {
+      fileUploadRef.current.value = "";
+    }
   };
 
   const handleRowDelete = async (row_id: string) => {
@@ -674,7 +682,7 @@ const PRInquiryForm = ({
                   </div>
                 </div>
 
-                <div className="col-span-1 flex items-end pb-[2px]">
+                <div className="col-span-1 flex items-end pb-[2px] gap-2">
                   <Button
                     className=" rounded-xl px-3 py-2 font-normal"
                     variant="nextbtn"
@@ -683,11 +691,19 @@ const PRInquiryForm = ({
                       addItems();
                     }}
                   >
-                    Add
+                    {singleTableRow?.name ? "Update" : "Add"}
                     <span ref={addLoaderRef} className="hidden">
                       <Loader2 />
                     </span>
                   </Button>
+                  {singleTableRow?.name && (
+                    <Button
+                      className="rounded-xl px-3 py-2 font-normal bg-red-500 text-white hover:bg-red-600"
+                      onClick={handleReset}
+                    >
+                      Cancel
+                    </Button>
+                  )}
                 </div>
               </div>
             </>
@@ -734,7 +750,7 @@ const PRInquiryForm = ({
                       {item?.purchase_type ?? ""}
                     </TableCell>
                     <TableCell>{item?.product_details?.product_name}</TableCell>
-                    <TableCell className="flex justify-center">
+                    <TableCell className="flex justify-center items-center">
                       <Input
                         className="w-5"
                         type="checkbox"
