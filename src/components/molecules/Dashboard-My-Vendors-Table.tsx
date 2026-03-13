@@ -85,7 +85,7 @@ const DashboardMyVendorsTable = ({ dashboardTableData, companyDropdown }: Props)
       });
 
       if (response?.message?.status === "success") {
-        updateCardCount("my_approvals_count",response?.message?.total_count)
+        updateCardCount("my_vendors_count",response?.message?.total_count)
         setTable(response.message.data || []);
         setTotalCount(response.message.total_count || 0);
       }
