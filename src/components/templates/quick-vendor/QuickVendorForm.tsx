@@ -394,6 +394,14 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
     }, [formData?.vendor_type, formData?.company_code, formData?.purchase_organization])
 
     useEffect(() => {
+        if (bankRowData.country) {
+            getBankKeyMasterData(bankRowData.country)
+                .then((res) => { setBankKeyDropdown(res?.message?.data || []); })
+                .catch((err) => console.error(err));
+        }
+    }, [bankRowData.country]);
+
+    useEffect(() => {
         if (formData?.postal_code && formData?.postal_code?.length >= 6) {
             getLocationByPincode(formData.postal_code)
                 .then((res) => {
@@ -1295,22 +1303,22 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 {/* Excise Details Table */}
                 {(formData?.gst_details?.length ?? 0) > 0 && (
                     <Table className="overflow-y-scroll border border-black/20 mb-6">
-                        <TableHeader className="text-center">
-                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                                <TableHead className="text-center w-[8%]">Sr.no</TableHead>
+                        <TableHeader>
+                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-nowrap">
+                                <TableHead className="w-[8%]">Sr.no</TableHead>
                                 <TableHead className="w-[28%]">GST Number</TableHead>
                                 <TableHead className="w-[22%]">GST ven class</TableHead>
                                 <TableHead className="w-[28%]">Attachment</TableHead>
                                 {
                                     formData?.is_submitted !== 1 ?
-                                        <TableHead className="w-[14%] text-center">Action</TableHead> : ""
+                                        <TableHead className="w-[14%]">Action</TableHead> : ""
                                 }
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {formData?.gst_details?.map((item, index) => (
                                 <TableRow key={index}>
-                                    <TableCell className="font-medium text-center">{index + 1}</TableCell>
+                                    <TableCell className="font-medium">{index + 1}</TableCell>
                                     <TableCell className="font-medium">{item.gst_number}</TableCell>
                                     <TableCell className="font-medium">{item.gst_ven_class}</TableCell>
                                     <TableCell className="font-medium">
@@ -1433,21 +1441,21 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 {/* Contact Person Table */}
                 {(formData?.contact_persons?.length ?? 0) > 0 && (
                     <Table className="overflow-y-scroll border border-black/20 mb-6">
-                        <TableHeader className="text-center">
-                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                                <TableHead className="text-center w-[10%]">Sr.no</TableHead>
+                        <TableHeader>
+                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-nowrap">
+                                <TableHead className="w-[10%]">Sr.no</TableHead>
                                 <TableHead className="w-[35%]">First Name</TableHead>
                                 <TableHead className="w-[35%]">Last Name</TableHead>
                                 {
                                     formData?.is_submitted !== 1 ?
-                                        <TableHead className="w-[20%] text-center">Action</TableHead> : ""
+                                        <TableHead className="w-[20%]">Action</TableHead> : ""
                                 }
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {formData?.contact_persons?.map((item, index) => (
                                 <TableRow key={index}>
-                                    <TableCell className="font-medium text-center">{index + 1}</TableCell>
+                                    <TableCell className="font-medium">{index + 1}</TableCell>
                                     <TableCell className="font-medium">{item.first_name}</TableCell>
                                     <TableCell className="font-medium">{item.last_name}</TableCell>
                                     {
@@ -1681,9 +1689,9 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 {/* Bank Detail (Domestic) Table */}
                 {(formData?.bank_details?.length ?? 0) > 0 && (
                     <Table className="overflow-x-auto border border-black/20 mb-6">
-                        <TableHeader className="text-center">
-                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                                <TableHead className="text-center">Sr.no</TableHead>
+                        <TableHeader>
+                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-nowrap">
+                                <TableHead>Sr.no</TableHead>
                                 <TableHead>Country</TableHead>
                                 <TableHead>Bank Key</TableHead>
                                 <TableHead>Bank Name</TableHead>
@@ -1695,14 +1703,14 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                                 <TableHead>Attachment</TableHead>
                                 {
                                     formData?.is_submitted !== 1 ?
-                                        <TableHead className="text-center">Action</TableHead> : ""
+                                        <TableHead>Action</TableHead> : ""
                                 }
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {formData?.bank_details?.map((item, index) => (
                                 <TableRow key={index}>
-                                    <TableCell className="font-medium text-center">{index + 1}</TableCell>
+                                    <TableCell className="font-medium">{index + 1}</TableCell>
                                     <TableCell className="font-medium">{item.country}</TableCell>
                                     <TableCell className="font-medium">{item.bank_key}</TableCell>
                                     <TableCell className="font-medium">{item.bank_name}</TableCell>
@@ -1955,9 +1963,9 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 {/* Bank Detail (International) Table */}
                 {(formData?.international_bank_details?.length ?? 0) > 0 && (
                     <Table className="overflow-x-auto border border-black/20 mb-6">
-                        <TableHeader className="text-center">
-                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                                <TableHead className="text-center">Sr.no</TableHead>
+                        <TableHeader>
+                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-nowrap">
+                                <TableHead>Sr.no</TableHead>
                                 <TableHead>Beneficiary Name</TableHead>
                                 <TableHead>Beneficiary Bank Name</TableHead>
                                 <TableHead>Beneficiary Account No.</TableHead>
@@ -1967,14 +1975,14 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                                 <TableHead>Attachment</TableHead>
                                 {
                                     formData?.is_submitted !== 1 ?
-                                        <TableHead className="text-center">Action</TableHead> : ""
+                                        <TableHead>Action</TableHead> : ""
                                 }
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {formData?.international_bank_details?.map((item, index) => (
                                 <TableRow key={index}>
-                                    <TableCell className="font-medium text-center">{index + 1}</TableCell>
+                                    <TableCell className="font-medium">{index + 1}</TableCell>
                                     <TableCell className="font-medium">{item.beneficiary_name}</TableCell>
                                     <TableCell className="font-medium">{item.beneficiary_bank_name}</TableCell>
                                     <TableCell className="font-medium">{item.beneficiary_account_no}</TableCell>
