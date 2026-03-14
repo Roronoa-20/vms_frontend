@@ -145,11 +145,11 @@ const DashboardMyVendorsTable = ({ dashboardTableData, companyDropdown }: Props)
           <TableHeader>
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE]">
               <TableHead className="w-[80px] text-center">Sr No.</TableHead>
-              <TableHead>Onboarding ID</TableHead>
-              <TableHead>Vendor Name</TableHead>
-              <TableHead>Company</TableHead>
-              <TableHead>Requester</TableHead>
-              <TableHead>Country</TableHead>
+              <TableHead className="text-center">Onboarding ID</TableHead>
+              <TableHead className="text-center">Vendor Name</TableHead>
+              <TableHead className="text-center">Company</TableHead>
+              <TableHead className="text-center">Requester</TableHead>
+              <TableHead className="text-center">Country</TableHead>
               <TableHead className="text-center">Status</TableHead>
               <TableHead className="text-center">Modified</TableHead>
               <TableHead className="text-center">Action</TableHead>
@@ -162,11 +162,11 @@ const DashboardMyVendorsTable = ({ dashboardTableData, companyDropdown }: Props)
                   <TableCell className="text-center">
                     {(currentPage - 1) * record_per_page + index + 1}
                   </TableCell>
-                  <TableCell className="font-medium">{item.name}</TableCell>
-                  <TableCell>{item.vendor_name || "-"}</TableCell>
-                  <TableCell>{item.company_code || "-"}</TableCell>
-                  <TableCell className="text-gray-500">{item.requestor_name}</TableCell>
-                  <TableCell>{item.country || "-"}</TableCell>
+                  <TableCell className="text-center font-medium">{item.name}</TableCell>
+                  <TableCell className="text-center">{item.vendor_name || "-"}</TableCell>
+                  <TableCell className="text-center">{item.company_code || "-"}</TableCell>
+                  <TableCell className="text-center text-gray-500">{item.requestor_name}</TableCell>
+                  <TableCell className="text-center">{item.country || "-"}</TableCell>
                   <TableCell className="text-center">
                     <span
                       className={`px-3 py-1 rounded-full text-[12px] font-medium uppercase ${item?.approval_status?.toUpperCase().includes("PENDING")

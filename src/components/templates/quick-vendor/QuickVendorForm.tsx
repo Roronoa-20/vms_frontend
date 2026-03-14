@@ -10,7 +10,7 @@ import {
     TableHeader,
     TableRow,
 } from '../../atoms/table';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Loader2 } from 'lucide-react';
 import { TVendorType, TCompanyCode, TPurchaseOrg, TAccountGroup, TVendorDetails, TReconciliation, TCurrency, TTermsOfPayment, TState, TCountry, TBankKey, TIncoterm, TGstDetail } from '@/src/types/quickVendor/quickVendor.types';
 import SearchSelectComponent from '../../molecules/Selectsearchcomponent';
 import { getPurchaseOrgMasterData, getAccountGroupMasterData, getLocationByPincode, getReconciliationMasterData, getCurrencyMasterList, getTermsOfPaymentMasterData, getStateMasterList, getCountryMasterList, getBankKeyMasterData, createQuickVendorOnboarding, getQuickVendorOnboardingDetails, getIncotermsMasterData, updateGstDetail, deleteGstDetailRow, updateContactDetail, deleteContactDetailRow, updateDomesticBankDetails, deleteDomesticBankDetailRow, updateImportBankDetails, deleteImportBankDetailRow, submitOnboardingForm } from '@/src/services/quickVendor/quickVendor.services';
@@ -38,6 +38,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
     const [incotermsDropdown, setIncotermsDropdown] = useState<TIncoterm[]>([]);
 
     const [formData, setFormData] = useState<TVendorDetails>({} as TVendorDetails);
+    const [loadingAction, setLoadingAction] = useState<string | null>(null);
 
     // Excise Details - single row input state
     const [exciseRowData, setExciseRowData] = useState<{ gst_number: string; gst_ven_class: string; attachment?: File | null }>({ gst_number: '', gst_ven_class: '' });
@@ -178,6 +179,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 alert('Please select Account Group');
                 return;
             }
+            setLoadingAction('createRequest');
 
             const vendorDetails = {
                 vendor_title: formData.vendor_title || '',
@@ -203,21 +205,24 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             const body = new FormData();
             body.append('data', JSON.stringify({ vendor_details: vendorDetails }));
 
-            const response = await createQuickVendorOnboarding(body);
-            if (response?.message?.status === 'success') {
-                alert('Vendor created successfully!');
-                router.push(`/quick-vendor?onboarding_id=${response?.message?.onboarding_id}`);
-            } else {
-                alert(response?.message?.message || 'Something went wrong.');
-            }
+            await createQuickVendorOnboarding(body).then((data)=>{
+                alert(data?.message?.message);
+                router.push(`/quick-vendor?onboarding_id=${data?.message?.onboarding_id}`);
+            }).catch((err)=>{
+                alert(err?.message?.message || 'Something went wrong.');
+            });
+            
         } catch (error) {
             console.error(error);
             alert('Failed to create request.');
+        } finally {
+            setLoadingAction(null);
         }
     };
 
     const handleSaveAsDraft = async () => {
         try {
+            setLoadingAction('saveAsDraft');
             const submitData: any = JSON.parse(JSON.stringify(formData));
             delete submitData.payee_in_document;
             delete submitData.check_double_invoice;
@@ -243,16 +248,17 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             if (files.import_bank_proof) body.append('import_bank_proof', files.import_bank_proof);
             if (files.domestic_bank_proof) body.append('domestic_bank_proof', files.domestic_bank_proof);
 
-            const response = await createQuickVendorOnboarding(body);
-            if (response?.message?.status === 'success') {
-                alert('Draft saved successfully!');
-                await fetchVendorDetails();
-            } else {
-                alert(response?.message?.message || 'Something went wrong.');
-            }
+            await createQuickVendorOnboarding(body).then((data)=>{
+                alert(data?.message?.message);
+                fetchVendorDetails();
+            }).catch((err)=>{
+                alert(err?.message?.message || 'Something went wrong.');
+            });
         } catch (error) {
             console.error(error);
             alert('Failed to save draft.');
+        } finally {
+            setLoadingAction(null);
         }
     };
 
@@ -274,6 +280,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 alert("Please select Account Group");
                 return;
             }
+            setLoadingAction('submit');
 
             const submitData: any = JSON.parse(JSON.stringify(formData));
             delete submitData.payee_in_document;
@@ -301,17 +308,20 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             if (files.import_bank_proof) body.append('import_bank_proof', files.import_bank_proof);
             if (files.domestic_bank_proof) body.append('domestic_bank_proof', files.domestic_bank_proof);
 
-            const response = await submitOnboardingForm(body);
-            if (response?.message?.status === 'success') {
-                alert("Form submitted successfully!");
-                await fetchVendorDetails();
-                router.push(`/quick-vendor?onboarding_id=${response?.message?.onboarding_id}`);
-            } else {
-                alert(response?.message?.message || "Something went wrong.");
-            }
+            await submitOnboardingForm(body).then((data)=>{
+                alert(data?.message?.message);
+                fetchVendorDetails();
+                router.push(`/quick-vendor?onboarding_id=${data?.message?.onboarding_id}`);
+            }).catch((err)=>{
+                alert(err?.message?.message || "Something went wrong.");
+            })
+            
+            
         } catch (error) {
             console.error(error);
             alert("Failed to submit form.");
+        } finally {
+            setLoadingAction(null);
         }
     };
 
@@ -394,6 +404,14 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
     }, [formData?.vendor_type, formData?.company_code, formData?.purchase_organization])
 
     useEffect(() => {
+        if (bankRowData.country) {
+            getBankKeyMasterData(bankRowData.country)
+                .then((res) => { setBankKeyDropdown(res?.message?.data || []); })
+                .catch((err) => console.error(err));
+        }
+    }, [bankRowData.country]);
+
+    useEffect(() => {
         if (formData?.postal_code && formData?.postal_code?.length >= 6) {
             getLocationByPincode(formData.postal_code)
                 .then((res) => {
@@ -434,6 +452,8 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             alert('Please enter GST Number');
             return;
         }
+        setLoadingAction('addGst');
+        try {
         const newGstDetail: any = {
             gst_state: formData.state || '',
             gst_number: exciseRowData.gst_number,
@@ -473,6 +493,9 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
         setExciseRowData({ gst_number: '', gst_ven_class: '', attachment: null });
         if (attachmentInputRef.current) {
             attachmentInputRef.current.value = "";
+        }
+        } finally {
+            setLoadingAction(null);
         }
     };
 
@@ -516,6 +539,8 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             alert('Please enter First Name');
             return;
         }
+        setLoadingAction('addContact');
+        try {
         const newContact = {
             first_name: contactRowData.first_name,
             last_name: contactRowData.last_name,
@@ -556,6 +581,9 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
         }
         setEditingContactIndex(null);
         setContactRowData({ first_name: '', last_name: '' });
+        } finally {
+            setLoadingAction(null);
+        }
     };
 
     const handleContactEdit = (index: number) => {
@@ -600,6 +628,8 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             alert('Please select Bank Key');
             return;
         }
+        setLoadingAction('addBank');
+        try {
         const newBankDetail = {
             country: bankRowData.country,
             bank_key: bankRowData.bank_key,
@@ -645,6 +675,9 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
         setEditingBankIndex(null);
         setBankRowData({ country: '', bank_key: '', bank_name: '', account_number: '', name_of_account_holder: '', ak: '', bnkt: '', ifsc_code: '', bank_type: '' });
         if (bankAttachmentInputRef.current) bankAttachmentInputRef.current.value = "";
+        } finally {
+            setLoadingAction(null);
+        }
     };
 
     const handleBankEdit = (index: number) => {
@@ -693,6 +726,8 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             alert('Please enter Beneficiary Name');
             return;
         }
+        setLoadingAction('addIntlBank');
+        try {
         const newIntlBank = {
             meril_company_name: '',
             beneficiary_name: intlBankRowData.beneficiary_name,
@@ -744,6 +779,9 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
         setEditingIntlBankIndex(null);
         setIntlBankRowData({ beneficiary_name: '', beneficiary_bank_name: '', beneficiary_account_no: '', beneficiary_iban_no: '', beneficiary_bank_address: '', beneficiary_swift_code: '', beneficiary_ach_no: '', beneficiary_aba_no: '', beneficiary_routing_no: '' });
         if (intlBankAttachmentInputRef.current) intlBankAttachmentInputRef.current.value = "";
+        } finally {
+            setLoadingAction(null);
+        }
     };
 
     const handleIntlBankEdit = (index: number) => {
@@ -1042,8 +1080,10 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                     <button
                         type="button"
                         onClick={handleCreateRequest}
-                        className="px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10"
+                        disabled={loadingAction === 'createRequest'}
+                        className="px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10 flex items-center gap-2 disabled:opacity-50"
                     >
+                        {loadingAction === 'createRequest' && <Loader2 className="w-4 h-4 animate-spin" />}
                         Create Request
                     </button>
                 </div>
@@ -1271,8 +1311,10 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                                 <button
                                     type="button"
                                     onClick={addGstDetail}
-                                    className={`px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
+                                    disabled={loadingAction === 'addGst'}
+                                    className={`px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10 flex items-center gap-2 disabled:opacity-50 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
                                 >
+                                    {loadingAction === 'addGst' && <Loader2 className="w-4 h-4 animate-spin" />}
                                     {editingExciseIndex !== null ? 'Update' : 'Add'}
                                 </button>
                                 {editingExciseIndex !== null && (
@@ -1295,22 +1337,22 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 {/* Excise Details Table */}
                 {(formData?.gst_details?.length ?? 0) > 0 && (
                     <Table className="overflow-y-scroll border border-black/20 mb-6">
-                        <TableHeader className="text-center">
-                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                                <TableHead className="text-center w-[8%]">Sr.no</TableHead>
+                        <TableHeader>
+                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-nowrap">
+                                <TableHead className="w-[8%]">Sr.no</TableHead>
                                 <TableHead className="w-[28%]">GST Number</TableHead>
                                 <TableHead className="w-[22%]">GST ven class</TableHead>
                                 <TableHead className="w-[28%]">Attachment</TableHead>
                                 {
                                     formData?.is_submitted !== 1 ?
-                                        <TableHead className="w-[14%] text-center">Action</TableHead> : ""
+                                        <TableHead className="w-[14%]">Action</TableHead> : ""
                                 }
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {formData?.gst_details?.map((item, index) => (
                                 <TableRow key={index}>
-                                    <TableCell className="font-medium text-center">{index + 1}</TableCell>
+                                    <TableCell className="font-medium">{index + 1}</TableCell>
                                     <TableCell className="font-medium">{item.gst_number}</TableCell>
                                     <TableCell className="font-medium">{item.gst_ven_class}</TableCell>
                                     <TableCell className="font-medium">
@@ -1410,8 +1452,10 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                                 <button
                                     type="button"
                                     onClick={addContact}
-                                    className={`px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
+                                    disabled={loadingAction === 'addContact'}
+                                    className={`px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10 flex items-center gap-2 disabled:opacity-50 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
                                 >
+                                    {loadingAction === 'addContact' && <Loader2 className="w-4 h-4 animate-spin" />}
                                     {editingContactIndex !== null ? 'Update' : 'Add'}
                                 </button>
                                 {editingContactIndex !== null && (
@@ -1433,21 +1477,21 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 {/* Contact Person Table */}
                 {(formData?.contact_persons?.length ?? 0) > 0 && (
                     <Table className="overflow-y-scroll border border-black/20 mb-6">
-                        <TableHeader className="text-center">
-                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                                <TableHead className="text-center w-[10%]">Sr.no</TableHead>
+                        <TableHeader>
+                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-nowrap">
+                                <TableHead className="w-[10%]">Sr.no</TableHead>
                                 <TableHead className="w-[35%]">First Name</TableHead>
                                 <TableHead className="w-[35%]">Last Name</TableHead>
                                 {
                                     formData?.is_submitted !== 1 ?
-                                        <TableHead className="w-[20%] text-center">Action</TableHead> : ""
+                                        <TableHead className="w-[20%]">Action</TableHead> : ""
                                 }
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {formData?.contact_persons?.map((item, index) => (
                                 <TableRow key={index}>
-                                    <TableCell className="font-medium text-center">{index + 1}</TableCell>
+                                    <TableCell className="font-medium">{index + 1}</TableCell>
                                     <TableCell className="font-medium">{item.first_name}</TableCell>
                                     <TableCell className="font-medium">{item.last_name}</TableCell>
                                     {
@@ -1659,8 +1703,10 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                     <button
                         type="button"
                         onClick={addBankDetail}
-                        className={`px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
+                        disabled={loadingAction === 'addBank'}
+                        className={`px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10 flex items-center gap-2 disabled:opacity-50 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
                     >
+                        {loadingAction === 'addBank' && <Loader2 className="w-4 h-4 animate-spin" />}
                         {editingBankIndex !== null ? 'Update' : 'Add'}
                     </button>
                     {editingBankIndex !== null && (
@@ -1681,9 +1727,9 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 {/* Bank Detail (Domestic) Table */}
                 {(formData?.bank_details?.length ?? 0) > 0 && (
                     <Table className="overflow-x-auto border border-black/20 mb-6">
-                        <TableHeader className="text-center">
-                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                                <TableHead className="text-center">Sr.no</TableHead>
+                        <TableHeader>
+                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-nowrap">
+                                <TableHead>Sr.no</TableHead>
                                 <TableHead>Country</TableHead>
                                 <TableHead>Bank Key</TableHead>
                                 <TableHead>Bank Name</TableHead>
@@ -1695,14 +1741,14 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                                 <TableHead>Attachment</TableHead>
                                 {
                                     formData?.is_submitted !== 1 ?
-                                        <TableHead className="text-center">Action</TableHead> : ""
+                                        <TableHead>Action</TableHead> : ""
                                 }
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {formData?.bank_details?.map((item, index) => (
                                 <TableRow key={index}>
-                                    <TableCell className="font-medium text-center">{index + 1}</TableCell>
+                                    <TableCell className="font-medium">{index + 1}</TableCell>
                                     <TableCell className="font-medium">{item.country}</TableCell>
                                     <TableCell className="font-medium">{item.bank_key}</TableCell>
                                     <TableCell className="font-medium">{item.bank_name}</TableCell>
@@ -1933,8 +1979,10 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                     <button
                         type="button"
                         onClick={addIntlBankDetail}
-                        className={`px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
+                        disabled={loadingAction === 'addIntlBank'}
+                        className={`px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors h-10 flex items-center gap-2 disabled:opacity-50 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
                     >
+                        {loadingAction === 'addIntlBank' && <Loader2 className="w-4 h-4 animate-spin" />}
                         {editingIntlBankIndex !== null ? 'Update' : 'Add'}
                     </button>
                     {editingIntlBankIndex !== null && (
@@ -1955,9 +2003,9 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 {/* Bank Detail (International) Table */}
                 {(formData?.international_bank_details?.length ?? 0) > 0 && (
                     <Table className="overflow-x-auto border border-black/20 mb-6">
-                        <TableHeader className="text-center">
-                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                                <TableHead className="text-center">Sr.no</TableHead>
+                        <TableHeader>
+                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-nowrap">
+                                <TableHead>Sr.no</TableHead>
                                 <TableHead>Beneficiary Name</TableHead>
                                 <TableHead>Beneficiary Bank Name</TableHead>
                                 <TableHead>Beneficiary Account No.</TableHead>
@@ -1967,14 +2015,14 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                                 <TableHead>Attachment</TableHead>
                                 {
                                     formData?.is_submitted !== 1 ?
-                                        <TableHead className="text-center">Action</TableHead> : ""
+                                        <TableHead>Action</TableHead> : ""
                                 }
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {formData?.international_bank_details?.map((item, index) => (
                                 <TableRow key={index}>
-                                    <TableCell className="font-medium text-center">{index + 1}</TableCell>
+                                    <TableCell className="font-medium">{index + 1}</TableCell>
                                     <TableCell className="font-medium">{item.beneficiary_name}</TableCell>
                                     <TableCell className="font-medium">{item.beneficiary_bank_name}</TableCell>
                                     <TableCell className="font-medium">{item.beneficiary_account_no}</TableCell>
@@ -2065,15 +2113,19 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                     <button
                         type="button"
                         onClick={handleSaveAsDraft}
-                        className={`px-6 py-2 text-[14px] font-medium text-[#3B82F6] border border-[#3B82F6] rounded-lg hover:bg-blue-50 transition-colors ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
+                        disabled={loadingAction === 'saveAsDraft'}
+                        className={`px-6 py-2 text-[14px] font-medium text-[#3B82F6] border border-[#3B82F6] rounded-lg hover:bg-blue-50 transition-colors flex items-center gap-2 disabled:opacity-50 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
                     >
+                        {loadingAction === 'saveAsDraft' && <Loader2 className="w-4 h-4 animate-spin" />}
                         Save as Draft
                     </button>
                     <button
                         type="button"
                         onClick={handleSubmit}
-                        className={`px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
+                        disabled={loadingAction === 'submit'}
+                        className={`px-6 py-2 text-[14px] font-medium text-white bg-[#3B82F6] rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2 disabled:opacity-50 ${formData?.is_submitted === 1 ? 'hidden' : ''}`}
                     >
+                        {loadingAction === 'submit' && <Loader2 className="w-4 h-4 animate-spin" />}
                         Submit
                     </button>
                 </div>

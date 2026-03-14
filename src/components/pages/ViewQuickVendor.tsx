@@ -9,18 +9,19 @@ import Link from 'next/link';
 import { Button } from '@/src/components/atoms/button';
 import { Input } from '@/src/components/atoms/input';
 import PopUp from '@/src/components/molecules/PopUp';
+import { Loader2 } from 'lucide-react';
 
 const DataField = ({ label, value }: { label: string, value: React.ReactNode }) => (
     <div className='col-span-1 flex flex-col gap-1'>
-        <h1 className='text-[#626973]'>{label}</h1>
-        <span className='font-medium text-[#03111F]'>{value || '-'}</span>
+        <h1 className='text-[14px] text-[#626973]'>{label}</h1>
+        <span className='text-[13px] font-medium text-[#03111F]'>{value || '-'}</span>
     </div>
 );
 
 const Section = ({ title, children }: { title: string, children: React.ReactNode }) => (
-    <div className="shadow-sm bg-[#f6f6f7] mb-4 p-4 rounded-2xl mt-4">
+    <div className="shadow-sm mb-4 p-4 rounded-2xl mt-4">
         <div className="flex w-full justify-between pb-4">
-            <h1 className="text-[20px] text-[#03111F] font-semibold">{title}</h1>
+            <h1 className="text-[16px] text-[#03111F] font-semibold">{title}</h1>
         </div>
         {children}
     </div>
@@ -45,6 +46,7 @@ const ViewQuickOnboardingContent = () => {
     const [isApprovedDialog, setIsApprovedDialog] = useState(false);
     const [isRejectDialog, setIsRejectDialog] = useState(false);
     const [comment, setComment] = useState<string>("");
+    const [loadingAction, setLoadingAction] = useState<string | null>(null);
 
     const handleClose = () => {
         setIsApprovedDialog(false);
@@ -54,6 +56,7 @@ const ViewQuickOnboardingContent = () => {
 
     const handleApprovalSubmit = async () => {
         try {
+            setLoadingAction('approve');
             if (onboardingId) {
                 const response = await accountsTeamApproval({
                     data: {
@@ -62,15 +65,16 @@ const ViewQuickOnboardingContent = () => {
                         remarks: comment || "Approved"
                     }
                 });
-                console.log("Approval Success:", response);
-                alert("Approved successfully");
+                console.log(response);
+                alert(response?.message?.message);
                 fetchData();
                 // TODO: router.push('/dashboard') or similar navigation
             }
-        } catch (error) {
+        } catch (error:any) {
             console.error("Approval flow error:", error);
-            alert("Approval flow error");
+            alert(error?.message?.message);
         } finally {
+            setLoadingAction(null);
             setIsApprovedDialog(false);
             setComment("");
         }
@@ -78,6 +82,7 @@ const ViewQuickOnboardingContent = () => {
 
     const handleRejectSubmit = async () => {
         try {
+            setLoadingAction('reject');
             if (onboardingId) {
                 const response = await accountsTeamApproval({
                     data: {
@@ -86,15 +91,16 @@ const ViewQuickOnboardingContent = () => {
                         remarks: comment || "Rejected"
                     }
                 });
-                console.log("Reject Success:", response);
-                alert("Rejected successfully");
+                console.log(response?.message?.message);
+                alert(response?.message?.message);
                 fetchData();
                 // TODO: router.push('/dashboard') or similar navigation
             }
-        } catch (error) {
-            console.error("Reject flow error:", error);
-            alert("Reject flow error");
+        } catch (error:any) {
+            console.error(error);
+            alert(error?.message?.message);
         } finally {
+            setLoadingAction(null);
             setIsRejectDialog(false);
             setComment("");
         }
@@ -127,6 +133,15 @@ const ViewQuickOnboardingContent = () => {
 
     return (
         <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[85vh] overflow-y-auto w-full">
+            <Section title="Company Data">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 p-3">
+                    <DataField label="Vendor Type" value={data?.vendor_types?.join(', ')} />
+                    <DataField label="Company Code" value={data?.company_code} />
+                    <DataField label="Purchase Organization" value={data?.purchase_organization} />
+                    <DataField label="Account Group" value={data?.account_group} />
+                </div>
+            </Section>
+
             <Section title="General Data">
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 p-3">
                     <DataField label="Name" value={`${title}${name}`} />
@@ -163,16 +178,16 @@ const ViewQuickOnboardingContent = () => {
             <Section title="Excise / GST Details">
                 {data?.gst_details && data.gst_details.length > 0 ? (
                     <Table className="relative">
-                        <TableHeader className="text-center">
-                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                                <TableHead className="w-[100px] text-center">Sr No.</TableHead>
-                                <TableHead className="text-center">GST State</TableHead>
-                                <TableHead className="text-center">GST No.</TableHead>
-                                <TableHead className="text-center">GST ven class</TableHead>
-                                <TableHead className="text-center">Attachment</TableHead>
+                        <TableHeader>
+                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-nowrap">
+                                <TableHead className="w-[100px]">Sr No.</TableHead>
+                                <TableHead>GST State</TableHead>
+                                <TableHead>GST No.</TableHead>
+                                <TableHead>GST ven class</TableHead>
+                                <TableHead>Attachment</TableHead>
                             </TableRow>
                         </TableHeader>
-                        <TableBody className="text-center">
+                        <TableBody>
                             {data.gst_details.map((item, index) => (
                                 <TableRow key={index} className='bg-white'>
                                     <TableCell className="font-medium">{index + 1}</TableCell>
@@ -192,16 +207,16 @@ const ViewQuickOnboardingContent = () => {
             <Section title="Contact Person">
                 {data?.contact_persons && data.contact_persons.length > 0 ? (
                     <Table className="relative">
-                        <TableHeader className="text-center">
-                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                                <TableHead className="w-[100px] text-center">Sr No.</TableHead>
-                                <TableHead className="text-center">First Name</TableHead>
-                                <TableHead className="text-center">Last Name</TableHead>
-                                <TableHead className="text-center">Email</TableHead>
-                                <TableHead className="text-center">Contact</TableHead>
+                        <TableHeader>
+                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-nowrap">
+                                <TableHead className="w-[100px]">Sr No.</TableHead>
+                                <TableHead>First Name</TableHead>
+                                <TableHead>Last Name</TableHead>
+                                <TableHead>Email</TableHead>
+                                <TableHead>Contact</TableHead>
                             </TableRow>
                         </TableHeader>
-                        <TableBody className="text-center">
+                        <TableBody>
                             {data.contact_persons.map((item, index) => (
                                 <TableRow key={index} className='bg-white'>
                                     <TableCell className="font-medium">{index + 1}</TableCell>
@@ -221,19 +236,19 @@ const ViewQuickOnboardingContent = () => {
             <Section title="Domestic Bank Detail">
                 {data?.bank_details && data.bank_details.length > 0 ? (
                     <Table className="relative">
-                        <TableHeader className="text-center">
-                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                                <TableHead className="w-[80px] text-center">Sr No.</TableHead>
-                                <TableHead className="text-center">Country</TableHead>
-                                <TableHead className="text-center">Bank Key / Name</TableHead>
-                                <TableHead className="text-center">Account Number</TableHead>
-                                <TableHead className="text-center">Account Holder</TableHead>
-                                <TableHead className="text-center">AK / BnkT</TableHead>
-                                <TableHead className="text-center">IFSC</TableHead>
-                                <TableHead className="text-center">Attachment</TableHead>
+                        <TableHeader>
+                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-nowrap">
+                                <TableHead className="w-[80px]">Sr No.</TableHead>
+                                <TableHead>Country</TableHead>
+                                <TableHead>Bank Key / Name</TableHead>
+                                <TableHead>Account Number</TableHead>
+                                <TableHead>Account Holder</TableHead>
+                                <TableHead>AK / BnkT</TableHead>
+                                <TableHead>IFSC</TableHead>
+                                <TableHead>Attachment</TableHead>
                             </TableRow>
                         </TableHeader>
-                        <TableBody className="text-center">
+                        <TableBody>
                             {data.bank_details.map((item, index) => (
                                 <TableRow key={index} className='bg-white'>
                                     <TableCell className="font-medium">{index + 1}</TableCell>
@@ -256,18 +271,18 @@ const ViewQuickOnboardingContent = () => {
             {data?.international_bank_details && data.international_bank_details.length > 0 && (
                 <Section title="International Bank Detail">
                     <Table className="relative max-w-full overflow-x-auto">
-                        <TableHeader className="text-center">
-                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                                <TableHead className="text-center">Sr No.</TableHead>
-                                <TableHead className="text-center">Beneficiary Name</TableHead>
-                                <TableHead className="text-center">Beneficiary Bank</TableHead>
-                                <TableHead className="text-center">Beneficiary Account</TableHead>
-                                <TableHead className="text-center">IBAN No.</TableHead>
-                                <TableHead className="text-center">Swift Code</TableHead>
-                                <TableHead className="text-center">Attachment</TableHead>
+                        <TableHeader>
+                            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-nowrap">
+                                <TableHead>Sr No.</TableHead>
+                                <TableHead>Beneficiary Name</TableHead>
+                                <TableHead>Beneficiary Bank</TableHead>
+                                <TableHead>Beneficiary Account</TableHead>
+                                <TableHead>IBAN No.</TableHead>
+                                <TableHead>Swift Code</TableHead>
+                                <TableHead>Attachment</TableHead>
                             </TableRow>
                         </TableHeader>
-                        <TableBody className="text-center">
+                        <TableBody>
                             {data.international_bank_details.map((item, index) => (
                                 <TableRow key={index} className='bg-white text-nowrap'>
                                     <TableCell className="font-medium">{index + 1}</TableCell>
@@ -291,17 +306,21 @@ const ViewQuickOnboardingContent = () => {
                         <Button
                             variant="backbtn"
                             size="backbtnsize"
-                            className="py-2"
+                            className="py-2 flex items-center gap-2"
+                            disabled={loadingAction === 'reject'}
                             onClick={() => { setIsRejectDialog(true); }}
                         >
+                            {loadingAction === 'reject' && <Loader2 className="w-4 h-4 animate-spin" />}
                             Reject
                         </Button>
                         <Button
                             variant="nextbtn"
                             size="nextbtnsize"
-                            className="py-2"
+                            className="py-2 flex items-center gap-2"
+                            disabled={loadingAction === 'approve'}
                             onClick={() => { setIsApprovedDialog(true); }}
                         >
+                            {loadingAction === 'approve' && <Loader2 className="w-4 h-4 animate-spin" />}
                             Approve
                         </Button>
                     </div> : ""
