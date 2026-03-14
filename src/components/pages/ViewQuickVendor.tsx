@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { Button } from '@/src/components/atoms/button';
 import { Input } from '@/src/components/atoms/input';
 import PopUp from '@/src/components/molecules/PopUp';
+import { Loader2 } from 'lucide-react';
 
 const DataField = ({ label, value }: { label: string, value: React.ReactNode }) => (
     <div className='col-span-1 flex flex-col gap-1'>
@@ -45,6 +46,7 @@ const ViewQuickOnboardingContent = () => {
     const [isApprovedDialog, setIsApprovedDialog] = useState(false);
     const [isRejectDialog, setIsRejectDialog] = useState(false);
     const [comment, setComment] = useState<string>("");
+    const [loadingAction, setLoadingAction] = useState<string | null>(null);
 
     const handleClose = () => {
         setIsApprovedDialog(false);
@@ -54,6 +56,7 @@ const ViewQuickOnboardingContent = () => {
 
     const handleApprovalSubmit = async () => {
         try {
+            setLoadingAction('approve');
             if (onboardingId) {
                 const response = await accountsTeamApproval({
                     data: {
@@ -62,15 +65,16 @@ const ViewQuickOnboardingContent = () => {
                         remarks: comment || "Approved"
                     }
                 });
-                console.log("Approval Success:", response);
-                alert("Approved successfully");
+                console.log(response);
+                alert(response?.message?.message);
                 fetchData();
                 // TODO: router.push('/dashboard') or similar navigation
             }
-        } catch (error) {
+        } catch (error:any) {
             console.error("Approval flow error:", error);
-            alert("Approval flow error");
+            alert(error?.message?.message);
         } finally {
+            setLoadingAction(null);
             setIsApprovedDialog(false);
             setComment("");
         }
@@ -78,6 +82,7 @@ const ViewQuickOnboardingContent = () => {
 
     const handleRejectSubmit = async () => {
         try {
+            setLoadingAction('reject');
             if (onboardingId) {
                 const response = await accountsTeamApproval({
                     data: {
@@ -86,15 +91,16 @@ const ViewQuickOnboardingContent = () => {
                         remarks: comment || "Rejected"
                     }
                 });
-                console.log("Reject Success:", response);
-                alert("Rejected successfully");
+                console.log(response?.message?.message);
+                alert(response?.message?.message);
                 fetchData();
                 // TODO: router.push('/dashboard') or similar navigation
             }
-        } catch (error) {
-            console.error("Reject flow error:", error);
-            alert("Reject flow error");
+        } catch (error:any) {
+            console.error(error);
+            alert(error?.message?.message);
         } finally {
+            setLoadingAction(null);
             setIsRejectDialog(false);
             setComment("");
         }
@@ -300,17 +306,21 @@ const ViewQuickOnboardingContent = () => {
                         <Button
                             variant="backbtn"
                             size="backbtnsize"
-                            className="py-2"
+                            className="py-2 flex items-center gap-2"
+                            disabled={loadingAction === 'reject'}
                             onClick={() => { setIsRejectDialog(true); }}
                         >
+                            {loadingAction === 'reject' && <Loader2 className="w-4 h-4 animate-spin" />}
                             Reject
                         </Button>
                         <Button
                             variant="nextbtn"
                             size="nextbtnsize"
-                            className="py-2"
+                            className="py-2 flex items-center gap-2"
+                            disabled={loadingAction === 'approve'}
                             onClick={() => { setIsApprovedDialog(true); }}
                         >
+                            {loadingAction === 'approve' && <Loader2 className="w-4 h-4 animate-spin" />}
                             Approve
                         </Button>
                     </div> : ""
