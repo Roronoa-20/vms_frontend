@@ -15,6 +15,7 @@ import { TVendorType, TCompanyCode, TPurchaseOrg, TAccountGroup, TVendorDetails,
 import SearchSelectComponent from '../../molecules/Selectsearchcomponent';
 import { getPurchaseOrgMasterData, getAccountGroupMasterData, getLocationByPincode, getReconciliationMasterData, getCurrencyMasterList, getTermsOfPaymentMasterData, getStateMasterList, getCountryMasterList, getBankKeyMasterData, createQuickVendorOnboarding, getQuickVendorOnboardingDetails, getIncotermsMasterData, updateGstDetail, deleteGstDetailRow, updateContactDetail, deleteContactDetailRow, updateDomesticBankDetails, deleteDomesticBankDetailRow, updateImportBankDetails, deleteImportBankDetailRow, submitOnboardingForm } from '@/src/services/quickVendor/quickVendor.services';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { verifyGstNumber, verifyPanNumber } from "@/src/services/documentVerification";
 
 interface Props {
     initialVendorTypes: TVendorType[];
@@ -44,6 +45,32 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
     const [exciseRowData, setExciseRowData] = useState<{ gst_number: string; gst_ven_class: string; attachment?: File | null }>({ gst_number: '', gst_ven_class: '' });
     const [editingExciseIndex, setEditingExciseIndex] = useState<number | null>(null);
     const attachmentInputRef = useRef<HTMLInputElement>(null);
+
+    const checkPAN = (str: string) => {
+        const regex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+        if (str == null) return false;
+        return regex.test(str);
+    };
+
+    const checkGST = (str: string) => {
+        let regex = new RegExp(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/);
+        if (str == null) return false;
+        return regex.test(str);
+    };
+
+    const panVerification = async (panNumber: string): Promise<boolean> => {
+        if (!checkPAN(panNumber)) return false;
+        return await verifyPanNumber(panNumber)
+            .then((data) => { console.log(data, "this is pan verification data"); return true; })
+            .catch((error) => { console.log(error, "this is error in pan verification"); return false; });
+    };
+
+    const gstVerification = async (gstNumber: string): Promise<boolean> => {
+        if (!checkGST(gstNumber)) return false;
+        return await verifyGstNumber(gstNumber)
+            .then((data) => { console.log(data, "this is gst verification data"); return true; })
+            .catch((error) => { console.log(error, "this is error in gst verification"); return false; });
+    };
 
     // Contact Person - single row input state
     const [contactRowData, setContactRowData] = useState<{ first_name: string; last_name: string }>({ first_name: '', last_name: '' });
@@ -222,6 +249,17 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
 
     const handleSaveAsDraft = async () => {
         try {
+            if (formData?.pan_number) {
+                if (!checkPAN(formData.pan_number)) {
+                    alert('Please enter a valid PAN Number');
+                    return;
+                }
+                const panValid = await panVerification(formData.pan_number);
+                if (!panValid) {
+                    alert('PAN verification failed');
+                    return;
+                }
+            }
             setLoadingAction('saveAsDraft');
             const submitData: any = JSON.parse(JSON.stringify(formData));
             delete submitData.payee_in_document;
@@ -279,6 +317,17 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             if (!formData?.account_group) {
                 alert("Please select Account Group");
                 return;
+            }
+            if (formData?.pan_number) {
+                if (!checkPAN(formData.pan_number)) {
+                    alert('Please enter a valid PAN Number');
+                    return;
+                }
+                const panValid = await panVerification(formData.pan_number);
+                if (!panValid) {
+                    alert('PAN verification failed');
+                    return;
+                }
             }
             setLoadingAction('submit');
 
@@ -452,6 +501,14 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             alert('Please enter GST Number');
             return;
         }
+        if (!checkGST(exciseRowData.gst_number)) {
+            alert('Please enter a valid GST Number');
+            return;
+        }
+        if(!await gstVerification(exciseRowData.gst_number)){
+            alert("GST Number Failed to verify !");
+            return;
+        };
         setLoadingAction('addGst');
         try {
         const newGstDetail: any = {
