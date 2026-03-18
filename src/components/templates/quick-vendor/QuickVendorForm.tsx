@@ -1159,7 +1159,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                     <label className="flex items-center gap-2 text-[13px] font-medium text-[#64748B]">
                         <input
                             type="checkbox"
-                            defaultChecked
+                            checked={!!formData?.payee_in_document}
                             disabled
                             className="w-4 h-4 accent-blue-500"
                         />
@@ -1168,7 +1168,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                     <label className="flex items-center gap-2 text-[13px] font-medium text-[#64748B]">
                         <input
                             type="checkbox"
-                            defaultChecked
+                            checked={!!formData?.check_double_invoice}
                             disabled
                             className="w-4 h-4 accent-blue-500"
                         />
@@ -1177,7 +1177,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                     <label className="flex items-center gap-2 text-[13px] font-medium text-[#64748B]">
                         <input
                             type="checkbox"
-                            defaultChecked
+                            checked={!!formData?.gr_based_inv_verif}
                             disabled
                             className="w-4 h-4 accent-blue-500"
                         />
@@ -1186,7 +1186,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                     <label className="flex items-center gap-2 text-[13px] font-medium text-[#64748B]">
                         <input
                             type="checkbox"
-                            defaultChecked
+                            checked={!!formData?.service_based_inv_verif}
                             disabled
                             className="w-4 h-4 accent-blue-500"
                         />
