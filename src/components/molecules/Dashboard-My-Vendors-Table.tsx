@@ -146,6 +146,7 @@ const DashboardMyVendorsTable = ({ dashboardTableData, companyDropdown }: Props)
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE]">
               <TableHead className="w-[80px] text-center">Sr No.</TableHead>
               <TableHead className="text-center">Onboarding ID</TableHead>
+              <TableHead className="text-center">Vendor Code</TableHead>
               <TableHead className="text-center">Vendor Name</TableHead>
               <TableHead className="text-center">Company</TableHead>
               <TableHead className="text-center">Requester</TableHead>
@@ -163,6 +164,7 @@ const DashboardMyVendorsTable = ({ dashboardTableData, companyDropdown }: Props)
                     {(currentPage - 1) * record_per_page + index + 1}
                   </TableCell>
                   <TableCell className="text-center font-medium">{item.name}</TableCell>
+                  <TableCell className="text-center">{item.vendor_code || "-"}</TableCell>
                   <TableCell className="text-center">{item.vendor_name || "-"}</TableCell>
                   <TableCell className="text-center">{item.company_code || "-"}</TableCell>
                   <TableCell className="text-center text-gray-500">{item.requestor_name}</TableCell>
@@ -198,7 +200,7 @@ const DashboardMyVendorsTable = ({ dashboardTableData, companyDropdown }: Props)
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={9} className="text-center text-gray-500 py-10">
+                <TableCell colSpan={10} className="text-center text-gray-500 py-10">
                   No vendors found.
                 </TableCell>
               </TableRow>

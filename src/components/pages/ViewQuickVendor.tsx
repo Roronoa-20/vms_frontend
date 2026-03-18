@@ -190,6 +190,7 @@ const ViewQuickOnboardingContent = () => {
             <Section title="Administrative Data">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-3">
                     <DataField label="Email Requestor" value={data?.requestor_name} />
+                    <DataField label="Vendor Code" value={data?.vendor_code} />
                 </div>
             </Section>
 

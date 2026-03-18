@@ -505,6 +505,13 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
             alert('Please enter a valid GST Number');
             return;
         }
+        if (formData?.pan_number) {
+            const panFromGst = exciseRowData.gst_number.substring(2, 12);
+            if (panFromGst !== formData.pan_number) {
+                alert('PAN Number and PAN in GST Number do not match');
+                return;
+            }
+        }
         if(!await gstVerification(exciseRowData.gst_number)){
             alert("GST Number Failed to verify !");
             return;
@@ -1160,8 +1167,9 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         <input
                             type="checkbox"
                             checked={!!formData?.payee_in_document}
-                            disabled
-                            className="w-4 h-4 accent-blue-500"
+                            onChange={() => {}}
+                            readOnly
+                            className="w-4 h-4 accent-blue-500 pointer-events-none"
                         />
                         Payee in document
                     </label>
@@ -1169,8 +1177,9 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         <input
                             type="checkbox"
                             checked={!!formData?.check_double_invoice}
-                            disabled
-                            className="w-4 h-4 accent-blue-500"
+                            onChange={() => {}}
+                            readOnly
+                            className="w-4 h-4 accent-blue-500 pointer-events-none"
                         />
                         Check double invoice
                     </label>
@@ -1178,8 +1187,9 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         <input
                             type="checkbox"
                             checked={!!formData?.gr_based_inv_verif}
-                            disabled
-                            className="w-4 h-4 accent-blue-500"
+                            onChange={() => {}}
+                            readOnly
+                            className="w-4 h-4 accent-blue-500 pointer-events-none"
                         />
                         GR-Based Inv. Verif.
                     </label>
@@ -1187,8 +1197,9 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         <input
                             type="checkbox"
                             checked={!!formData?.service_based_inv_verif}
-                            disabled
-                            className="w-4 h-4 accent-blue-500"
+                            onChange={() => {}}
+                            readOnly
+                            className="w-4 h-4 accent-blue-500 pointer-events-none"
                         />
                         Service-Based Invoice Verification
                     </label>
