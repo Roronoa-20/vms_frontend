@@ -114,8 +114,6 @@ const AssetPR = (props: Props) => {
     }
 
     fetchServiceCode();
-
-    fetchMatrialGroup();
   }, []);
 
   const fetchUom = () => {
@@ -138,8 +136,8 @@ const AssetPR = (props: Props) => {
       });
   };
 
-  const fetchMatrialGroup = () => {
-    getMaterialGroupDropdown()
+  const fetchMatrialGroup = (plant:string) => {
+    getMaterialGroupDropdown(plant)
       .then((res) => {
         setMaterialGroupDropdown(res);
         console.log(res);
@@ -606,6 +604,7 @@ const AssetPR = (props: Props) => {
                         (prev) =>
                           ({ ...prev, plant: selectedOption?.value }) as zsbAssetItemsType,
                       );
+                      fetchMatrialGroup(selectedOption?.value);
                     }}
                     instanceId="zsbasset-plant-select"
                     placeholder="Select Plant..."

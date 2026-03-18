@@ -49,9 +49,9 @@ export const getPurchaseRequisitionUom = async(cookie?:string):Promise<uomType[]
 }
 
 
-export const getMaterialGroupDropdown = async(cookie?:string):Promise<MaterialGroupDropdownType[]>=>{
+export const getMaterialGroupDropdown = async(plant:string,cookie?:string):Promise<MaterialGroupDropdownType[]>=>{
     try {
-        const response = await fetch(API_END_POINTS.getMaterialGroupDropdown, {
+        const response = await fetch(`${API_END_POINTS.getMaterialGroupDropdown}?plant=${plant}`, {
             method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
