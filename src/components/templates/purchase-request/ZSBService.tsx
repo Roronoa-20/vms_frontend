@@ -700,13 +700,16 @@ const ServicePR = (props: Props) => {
                 <TableCell className="font-medium">
                   <Input
                     type="number"
+                    min="0"
                     value={singleRowData?.quantity ?? ""}
                     onChange={(e) => {
+                      const val = Number(e.target.value);
+                      if (val < 0) return;
                       setSingleRowData(
                         (prev) =>
                           ({
                             ...prev,
-                            quantity: Number(e.target.value),
+                            quantity: val,
                           }) as zsbServiceItemsType,
                       );
                     }}
@@ -1025,7 +1028,7 @@ const ServicePR = (props: Props) => {
                     />
                   </TableCell>
                   <TableCell className="font-medium">
-                    <Input value={subLineItem?.quantity ?? ""} onChange={(e) => { setSubLineItem((prev: any) => ({ ...prev, quantity: e.target.value })) }} />
+                    <Input type="number" min="0" value={subLineItem?.quantity ?? ""} onChange={(e) => { if (Number(e.target.value) < 0) return; setSubLineItem((prev: any) => ({ ...prev, quantity: e.target.value })) }} />
                   </TableCell>
                   <TableCell className="">
                     <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
