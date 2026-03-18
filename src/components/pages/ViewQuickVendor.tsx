@@ -161,6 +161,24 @@ const ViewQuickOnboardingContent = () => {
             </Section>
 
             <Section title="Purchasing Data">
+                <div className="flex justify-evenly gap-6 w-full pb-4">
+                    <label className="flex items-center gap-2 text-[13px] font-medium text-[#64748B]">
+                        <input type="checkbox" checked={!!(data?.payee_in_document)} disabled className="w-4 h-4 accent-blue-500" />
+                        Payee in document
+                    </label>
+                    <label className="flex items-center gap-2 text-[13px] font-medium text-[#64748B]">
+                        <input type="checkbox" checked={!!(data?.check_double_invoice)} disabled className="w-4 h-4 accent-blue-500" />
+                        Check double invoice
+                    </label>
+                    <label className="flex items-center gap-2 text-[13px] font-medium text-[#64748B]">
+                        <input type="checkbox" checked={!!(data?.gr_base_inv_ver)} disabled className="w-4 h-4 accent-blue-500" />
+                        GR-Based Inv. Verif.
+                    </label>
+                    <label className="flex items-center gap-2 text-[13px] font-medium text-[#64748B]">
+                        <input type="checkbox" checked={!!(data?.service_base_inv_ver)} disabled className="w-4 h-4 accent-blue-500" />
+                        Service-Based Invoice Verification
+                    </label>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 p-3">
                     <DataField label="Reconciliation Account" value={data?.reconciliation_account} />
                     <DataField label="Order Currency" value={data?.order_currency} />
