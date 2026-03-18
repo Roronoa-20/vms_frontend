@@ -133,7 +133,7 @@ const ServicePR = (props: Props) => {
 
     fetchServiceCode();
 
-    // fetchMatrialGroup();
+    fetchMatrialGroup(props?.prData?.company as string);
   }, []);
 
   const fetchUom = () => {
@@ -156,8 +156,8 @@ const ServicePR = (props: Props) => {
       });
   };
 
-  const fetchMatrialGroup = (plant:string) => {
-    getMaterialGroupDropdown(plant)
+  const fetchMatrialGroup = (company:string) => {
+    getMaterialGroupDropdown(company)
       .then((res) => {
         setMaterialGroupDropdown(res);
         console.log(res);
@@ -380,7 +380,7 @@ const ServicePR = (props: Props) => {
           if (addLoaderRef?.current) {
             addLoaderRef.current.className = "hidden";
           }
-          alert(err);
+          alert(err?.map((item:any)=>item));
         });
     } else {
       addZsbLineItems(body, "service")
@@ -420,7 +420,6 @@ const ServicePR = (props: Props) => {
   };
 
   const handleUpdateItem = (index: number) => {
-    fetchMatrialGroup(tableData[index]?.material_group);
     setSingleRowData(tableData[index]);
   };
 
@@ -680,7 +679,6 @@ const ServicePR = (props: Props) => {
                         (prev) =>
                           ({ ...prev, plant: selectedOption?.value }) as zsbServiceItemsType,
                       );
-                      fetchMatrialGroup(selectedOption?.value);
                     }}
                     instanceId="zsbservice-plant-select"
                     placeholder="Select Plant..."
