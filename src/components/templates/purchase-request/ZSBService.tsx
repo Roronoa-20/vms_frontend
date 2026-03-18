@@ -133,7 +133,7 @@ const ServicePR = (props: Props) => {
 
     fetchServiceCode();
 
-    fetchMatrialGroup();
+    // fetchMatrialGroup();
   }, []);
 
   const fetchUom = () => {
@@ -156,8 +156,8 @@ const ServicePR = (props: Props) => {
       });
   };
 
-  const fetchMatrialGroup = () => {
-    getMaterialGroupDropdown()
+  const fetchMatrialGroup = (plant:string) => {
+    getMaterialGroupDropdown(plant)
       .then((res) => {
         setMaterialGroupDropdown(res);
         console.log(res);
@@ -420,6 +420,7 @@ const ServicePR = (props: Props) => {
   };
 
   const handleUpdateItem = (index: number) => {
+    fetchMatrialGroup(tableData[index]?.material_group);
     setSingleRowData(tableData[index]);
   };
 
@@ -679,6 +680,7 @@ const ServicePR = (props: Props) => {
                         (prev) =>
                           ({ ...prev, plant: selectedOption?.value }) as zsbServiceItemsType,
                       );
+                      fetchMatrialGroup(selectedOption?.value);
                     }}
                     instanceId="zsbservice-plant-select"
                     placeholder="Select Plant..."
