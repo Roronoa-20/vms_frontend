@@ -347,6 +347,7 @@ export interface TOnboardingData {
     can_approve: number;
     name: string;
     vendor_name: string;
+    vendor_code: string;
     vendor_title: string;
     email: string;
     mobile_number: string;
