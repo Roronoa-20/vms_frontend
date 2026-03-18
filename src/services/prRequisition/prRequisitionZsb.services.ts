@@ -49,9 +49,9 @@ export const getPurchaseRequisitionUom = async(cookie?:string):Promise<uomType[]
 }
 
 
-export const getMaterialGroupDropdown = async(plant?:string,cookie?:string):Promise<MaterialGroupDropdownType[]>=>{
+export const getMaterialGroupDropdown = async(company?:string,cookie?:string):Promise<MaterialGroupDropdownType[]>=>{
     try {
-        const response = await fetch(`${API_END_POINTS.getMaterialGroupDropdown}?plant=${plant}`, {
+        const response = await fetch(`${API_END_POINTS.getMaterialGroupDropdown}?company=${company}`, {
             method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -197,7 +197,7 @@ export const updateZsbLineItems = async(body:any,type:string,cookie?:string):Pro
             return Promise.resolve(response.json()?.then((data)=>data?.message));
         }else{
             const Response = await response.json();
-            return Promise.reject(Response);
+            return Promise.reject(Response?.message?.errors);
         }
     } catch (error) {
         console.error("Error updating ZSB Line Items :", error);

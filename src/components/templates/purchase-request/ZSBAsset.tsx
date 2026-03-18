@@ -114,6 +114,8 @@ const AssetPR = (props: Props) => {
     }
 
     fetchServiceCode();
+
+    fetchMatrialGroup(props?.prData?.company as string);
   }, []);
 
   const fetchUom = () => {
@@ -136,8 +138,8 @@ const AssetPR = (props: Props) => {
       });
   };
 
-  const fetchMatrialGroup = (plant:string) => {
-    getMaterialGroupDropdown(plant)
+  const fetchMatrialGroup = (company:string) => {
+    getMaterialGroupDropdown(company)
       .then((res) => {
         setMaterialGroupDropdown(res);
         console.log(res);
@@ -312,7 +314,7 @@ const AssetPR = (props: Props) => {
           if (addLoaderRef?.current) {
             addLoaderRef.current.className = "hidden";
           }
-          alert(err);
+          alert(err?.map((item:any)=>item));
         });
     } else {
       addZsbLineItems(body, "asset")
@@ -352,7 +354,7 @@ const AssetPR = (props: Props) => {
   };
 
   const handleUpdateItem = (index: number) => {
-    fetchMatrialGroup(tableData[index]?.material_group);
+    fetchMatrialGroup(props?.prData?.company as string);
     setSingleRowData(tableData[index]);
   };
 
@@ -605,7 +607,6 @@ const AssetPR = (props: Props) => {
                         (prev) =>
                           ({ ...prev, plant: selectedOption?.value }) as zsbAssetItemsType,
                       );
-                      fetchMatrialGroup(selectedOption?.value);
                     }}
                     instanceId="zsbasset-plant-select"
                     placeholder="Select Plant..."
