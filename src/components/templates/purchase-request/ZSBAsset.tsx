@@ -352,6 +352,7 @@ const AssetPR = (props: Props) => {
   };
 
   const handleUpdateItem = (index: number) => {
+    fetchMatrialGroup(tableData[index]?.material_group);
     setSingleRowData(tableData[index]);
   };
 
