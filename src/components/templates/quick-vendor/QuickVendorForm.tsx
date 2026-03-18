@@ -882,6 +882,88 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
 
     return (
         <div className="flex flex-col w-full mb-4 p-4">
+            {/* Create Request Section */}
+            <div className="pb-4 border-b border-gray-100">
+                <h1 className="text-[18px] text-[#1E293B] font-semibold">
+                    Create Request
+                </h1>
+            </div>
+
+            <div className="py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                {/* Select Type */}
+                <div className="col-span-1 flex flex-col gap-2">
+                    <h2 className="text-[13px] font-medium text-[#64748B]">Select Type</h2>
+                    <Select onValueChange={(value) => handleSelectChange(value, 'vendor_type')} value={formData.vendor_type} disabled={formData?.is_submitted === 1}>
+                        <SelectTrigger className="w-full text-black h-10 bg-white rounded-xl border-gray-200">
+                            <SelectValue placeholder="Select Type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                {vendorTypes?.map((vendorType) => (
+                                    <SelectItem key={vendorType?.name} value={vendorType?.name}>
+                                        {vendorType?.description}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {/* Company Code */}
+                <div className="col-span-1 flex flex-col gap-2">
+                    <h2 className="text-[13px] font-medium text-[#64748B]">Company Code</h2>
+                    <Select onValueChange={(value) => handleSelectChange(value, 'company_code')} value={formData.company_code} disabled={formData?.is_submitted === 1}>
+                        <SelectTrigger className="w-full text-black h-10 bg-white rounded-xl border-gray-200">
+                            <SelectValue placeholder="Company Code" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                {companyCodes?.map((companyCode) => (
+                                    <SelectItem key={companyCode?.name} value={companyCode?.name}>
+                                        {companyCode?.company_name}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {/* Purchase Organization */}
+                <div className="col-span-1 flex flex-col gap-2">
+                    <h2 className="text-[13px] font-medium text-[#64748B]">Purchase Organization</h2>
+                    <SearchSelectComponent
+                        searchApi={fetchPurchaseOrgDropdown}
+                        getLabel={(item) => item?.purchase_organization_name}
+                        getValue={(item) => item?.name}
+                        setDropdown={setPurchaseOrgDropdown}
+                        dropdown={purchaseOrgDropdown}
+                        setData={(value) => handleSelectChange(value ?? '', 'purchase_organization')}
+                        data={formData.purchase_organization}
+                        placeholder="Search Purchase Organization"
+                        disabled={formData?.is_submitted === 1}
+                    />
+                </div>
+
+                {/* Account Group */}
+                <div className="col-span-1 flex flex-col gap-2">
+                    <h2 className="text-[13px] font-medium text-[#64748B]">Account Group</h2>
+                    <SearchSelectComponent
+                        searchApi={fetchAccountGroupDropdown}
+                        getLabel={(item) => item?.account_group_name}
+                        getValue={(item) => item?.name}
+                        setDropdown={setAccountGroupDropdown}
+                        dropdown={accountGroupDropdown}
+                        setData={(value) => handleSelectChange(value ?? '', 'account_group')}
+                        data={formData.account_group}
+                        placeholder="Search Account Group"
+                        disabled={formData?.is_submitted === 1}
+                    />
+                </div>
+
+            </div>
+
+
             {/* General Data Section */}
             <div className="pb-4 border-b border-gray-100">
                 <h1 className="text-[18px] text-[#1E293B] font-semibold">
@@ -1047,91 +1129,8 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                     />
                 </div>
 
-
-
             </div>
 
-
-            {/* Create Request Section */}
-            <div className="pb-4 border-b border-gray-100">
-                <h1 className="text-[18px] text-[#1E293B] font-semibold">
-                    Create Request
-                </h1>
-            </div>
-
-            <div className="py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
-
-                {/* Select Type */}
-                <div className="col-span-1 flex flex-col gap-2">
-                    <h2 className="text-[13px] font-medium text-[#64748B]">Select Type</h2>
-                    <Select onValueChange={(value) => handleSelectChange(value, 'vendor_type')} value={formData.vendor_type} disabled={formData?.is_submitted === 1}>
-                        <SelectTrigger className="w-full text-black h-10 bg-white rounded-xl border-gray-200">
-                            <SelectValue placeholder="Select Type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                {vendorTypes?.map((vendorType) => (
-                                    <SelectItem key={vendorType?.name} value={vendorType?.name}>
-                                        {vendorType?.description}
-                                    </SelectItem>
-                                ))}
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                {/* Company Code */}
-                <div className="col-span-1 flex flex-col gap-2">
-                    <h2 className="text-[13px] font-medium text-[#64748B]">Company Code</h2>
-                    <Select onValueChange={(value) => handleSelectChange(value, 'company_code')} value={formData.company_code} disabled={formData?.is_submitted === 1}>
-                        <SelectTrigger className="w-full text-black h-10 bg-white rounded-xl border-gray-200">
-                            <SelectValue placeholder="Company Code" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                {companyCodes?.map((companyCode) => (
-                                    <SelectItem key={companyCode?.name} value={companyCode?.name}>
-                                        {companyCode?.company_name}
-                                    </SelectItem>
-                                ))}
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                {/* Purchase Organization */}
-                <div className="col-span-1 flex flex-col gap-2">
-                    <h2 className="text-[13px] font-medium text-[#64748B]">Purchase Organization</h2>
-                    <SearchSelectComponent
-                        searchApi={fetchPurchaseOrgDropdown}
-                        getLabel={(item) => item?.purchase_organization_name}
-                        getValue={(item) => item?.name}
-                        setDropdown={setPurchaseOrgDropdown}
-                        dropdown={purchaseOrgDropdown}
-                        setData={(value) => handleSelectChange(value ?? '', 'purchase_organization')}
-                        data={formData.purchase_organization}
-                        placeholder="Search Purchase Organization"
-                        disabled={formData?.is_submitted === 1}
-                    />
-                </div>
-
-                {/* Account Group */}
-                <div className="col-span-1 flex flex-col gap-2">
-                    <h2 className="text-[13px] font-medium text-[#64748B]">Account Group</h2>
-                    <SearchSelectComponent
-                        searchApi={fetchAccountGroupDropdown}
-                        getLabel={(item) => item?.account_group_name}
-                        getValue={(item) => item?.name}
-                        setDropdown={setAccountGroupDropdown}
-                        dropdown={accountGroupDropdown}
-                        setData={(value) => handleSelectChange(value ?? '', 'account_group')}
-                        data={formData.account_group}
-                        placeholder="Search Account Group"
-                        disabled={formData?.is_submitted === 1}
-                    />
-                </div>
-
-            </div>
             {!onboarding_id && (
                 <div className="flex justify-end pt-4">
                     <button
