@@ -420,8 +420,10 @@ const ServicePR = (props: Props) => {
   };
 
   const handleUpdateItem = (index: number) => {
-    fetchMatrialGroup(tableData[index]?.material_group);
-    setSingleRowData(tableData[index]);
+    fetchMatrialGroup(props?.prData?.company as string);
+    let material = materialGroupDropdown?.find((item)=>item?.material_group_name == tableData[index]?.material_group)?.name;
+    setSingleRowData({...tableData[index],material_group:material as string});
+    // setSingleRowData(tableData[index]);
   };
 
   const handleUpdateSubItem = (index: number) => {
