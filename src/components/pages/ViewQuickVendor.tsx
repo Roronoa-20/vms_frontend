@@ -133,15 +133,6 @@ const ViewQuickOnboardingContent = () => {
 
     return (
         <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[85vh] overflow-y-auto w-full">
-            <Section title="Company Data">
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 p-3">
-                    <DataField label="Vendor Type" value={data?.vendor_types?.join(', ')} />
-                    <DataField label="Company Code" value={data?.company_code} />
-                    <DataField label="Purchase Organization" value={data?.purchase_organization} />
-                    <DataField label="Account Group" value={data?.account_group} />
-                </div>
-            </Section>
-
             <Section title="General Data">
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 p-3">
                     <DataField label="Name" value={`${title}${name}`} />
@@ -157,6 +148,15 @@ const ViewQuickOnboardingContent = () => {
                     <DataField label="Region" value={data?.region} />
                     <DataField label="Mobile No." value={data?.mobile_number} />
                     <DataField label="E-Mail Address" value={data?.email} />
+                </div>
+            </Section>
+
+            <Section title="Company Data">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 p-3">
+                    <DataField label="Vendor Type" value={data?.vendor_types?.join(', ')} />
+                    <DataField label="Company Code" value={data?.company_code} />
+                    <DataField label="Purchase Organization" value={data?.purchase_organization} />
+                    <DataField label="Account Group" value={data?.account_group} />
                 </div>
             </Section>
 
