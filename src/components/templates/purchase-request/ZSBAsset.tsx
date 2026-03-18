@@ -355,7 +355,8 @@ const AssetPR = (props: Props) => {
 
   const handleUpdateItem = (index: number) => {
     fetchMatrialGroup(props?.prData?.company as string);
-    setSingleRowData(tableData[index]);
+    let material = materialGroupDropdown?.find((item)=>item?.material_group_name == tableData[index]?.material_group)?.name;
+    setSingleRowData({...tableData[index],material_group:material as string});
   };
 
   const handleUpdateSubItem = (index: number) => {
