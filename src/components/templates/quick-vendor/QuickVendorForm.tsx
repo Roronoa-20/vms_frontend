@@ -264,6 +264,26 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                     return;
                 }
             }
+            if (!formData?.reconciliation_account) {
+                alert('Please select Reconciliation Account');
+                return;
+            }
+            if (!formData?.order_currency) {
+                alert('Please select Order Currency');
+                return;
+            }
+            if (!formData?.terms_of_payment) {
+                alert('Please select Term of Payment');
+                return;
+            }
+            if (!formData?.incoterms) {
+                alert('Please select Inco Terms');
+                return;
+            }
+            if (!formData?.state) {
+                alert('Please select State');
+                return;
+            }
             setLoadingAction('saveAsDraft');
             const submitData: any = JSON.parse(JSON.stringify(formData));
             delete submitData.payee_in_document;
@@ -336,6 +356,26 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                     alert('PAN verification failed');
                     return;
                 }
+            }
+            if (!formData?.reconciliation_account) {
+                alert('Please select Reconciliation Account');
+                return;
+            }
+            if (!formData?.order_currency) {
+                alert('Please select Order Currency');
+                return;
+            }
+            if (!formData?.terms_of_payment) {
+                alert('Please select Term of Payment');
+                return;
+            }
+            if (!formData?.incoterms) {
+                alert('Please select Inco Terms');
+                return;
+            }
+            if (!formData?.state) {
+                alert('Please select State');
+                return;
             }
             setLoadingAction('submit');
 
@@ -908,7 +948,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
 
                 {/* Select Type */}
                 <div className="col-span-1 flex flex-col gap-2">
-                    <h2 className="text-[13px] font-medium text-[#64748B]">Select Type</h2>
+                    <h2 className="text-[13px] font-medium text-[#64748B]">Select Type <span className="text-red-500">*</span></h2>
                     <Select onValueChange={(value) => handleSelectChange(value, 'vendor_type')} value={formData.vendor_type} disabled={formData?.is_submitted === 1}>
                         <SelectTrigger className="w-full text-black h-10 bg-white rounded-xl border-gray-200">
                             <SelectValue placeholder="Select Type" />
@@ -927,7 +967,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
 
                 {/* Company Code */}
                 <div className="col-span-1 flex flex-col gap-2">
-                    <h2 className="text-[13px] font-medium text-[#64748B]">Company Code</h2>
+                    <h2 className="text-[13px] font-medium text-[#64748B]">Company Code <span className="text-red-500">*</span></h2>
                     <Select onValueChange={(value) => handleSelectChange(value, 'company_code')} value={formData.company_code} disabled={formData?.is_submitted === 1}>
                         <SelectTrigger className="w-full text-black h-10 bg-white rounded-xl border-gray-200">
                             <SelectValue placeholder="Company Code" />
@@ -946,7 +986,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
 
                 {/* Purchase Organization */}
                 <div className="col-span-1 flex flex-col gap-2">
-                    <h2 className="text-[13px] font-medium text-[#64748B]">Purchase Organization</h2>
+                    <h2 className="text-[13px] font-medium text-[#64748B]">Purchase Organization <span className="text-red-500">*</span></h2>
                     <SearchSelectComponent
                         searchApi={fetchPurchaseOrgDropdown}
                         getLabel={(item) => item?.purchase_organization_name}
@@ -962,7 +1002,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
 
                 {/* Account Group */}
                 <div className="col-span-1 flex flex-col gap-2">
-                    <h2 className="text-[13px] font-medium text-[#64748B]">Account Group</h2>
+                    <h2 className="text-[13px] font-medium text-[#64748B]">Account Group <span className="text-red-500">*</span></h2>
                     <SearchSelectComponent
                         searchApi={fetchAccountGroupDropdown}
                         getLabel={(item) => item?.account_group_name}
@@ -1017,6 +1057,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                             maxLength={35}
                             disabled={formData?.is_submitted === 1}
                         />
+                        <span className="text-[11px] text-gray-400">Max 35 chars allowed</span>
                     </div>
                 </div>
 
@@ -1032,6 +1073,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         maxLength={20}
                         disabled={formData?.is_submitted === 1}
                     />
+                    <span className="text-[11px] text-gray-400">Max 20 chars allowed</span>
                 </div>
 
                 {/* Street/House Number */}
@@ -1046,6 +1088,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         maxLength={40}
                         disabled={formData?.is_submitted === 1}
                     />
+                    <span className="text-[11px] text-gray-400">Max 40 chars allowed</span>
                 </div>
 
                 {/* Street 2 */}
@@ -1060,6 +1103,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         maxLength={40}
                         disabled={formData?.is_submitted === 1}
                     />
+                    <span className="text-[11px] text-gray-400">Max 40 chars allowed</span>
                 </div>
 
                 {/* Street 4 */}
@@ -1074,6 +1118,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         maxLength={40}
                         disabled={formData?.is_submitted === 1}
                     />
+                    <span className="text-[11px] text-gray-400">Max 40 chars allowed</span>
                 </div>
 
                 {/* Postal Code */}
@@ -1088,6 +1133,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         maxLength={10}
                         disabled={formData?.is_submitted === 1}
                     />
+                    <span className="text-[11px] text-gray-400">Max 10 chars allowed</span>
                 </div>
 
                 {/* Country */}
@@ -1129,6 +1175,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         maxLength={10}
                         disabled={formData?.is_submitted === 1}
                     />
+                    <span className="text-[11px] text-gray-400">Max 10 chars allowed</span>
                 </div>
 
                 {/* E-Mail Address */}
@@ -1217,7 +1264,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
 
                     {/* Reconciliation Account */}
                     <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Reconciliation Account</h2>
+                        <h2 className="text-[13px] font-medium text-[#64748B]">Reconciliation Account <span className="text-red-500">*</span></h2>
                         <SearchSelectComponent
                             searchApi={fetchReconciliationDropdown}
                             getLabel={(item) => item?.name}
@@ -1233,7 +1280,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
 
                     {/* Order Currency */}
                     <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Order Currency</h2>
+                        <h2 className="text-[13px] font-medium text-[#64748B]">Order Currency <span className="text-red-500">*</span></h2>
                         <SearchSelectComponent
                             searchApi={fetchCurrencyDropdown}
                             getLabel={(item) => item?.currency_name}
@@ -1249,7 +1296,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
 
                     {/* Term of Payment */}
                     <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Term of Payment</h2>
+                        <h2 className="text-[13px] font-medium text-[#64748B]">Term of Payment <span className="text-red-500">*</span></h2>
                         <SearchSelectComponent
                             searchApi={fetchTermsOfPaymentDropdown}
                             getLabel={(item) => item?.terms_of_payment_name || item?.name}
@@ -1265,7 +1312,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
 
                     {/* Inco Terms */}
                     <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">Inco Terms</h2>
+                        <h2 className="text-[13px] font-medium text-[#64748B]">Inco Terms <span className="text-red-500">*</span></h2>
                         <SearchSelectComponent
                             searchApi={fetchIncotermsDropdown}
                             getLabel={(item) => item?.incoterm_name || item?.name}
@@ -1281,7 +1328,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
 
                     {/* State */}
                     <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">State</h2>
+                        <h2 className="text-[13px] font-medium text-[#64748B]">State <span className="text-red-500">*</span></h2>
                         <SearchSelectComponent
                             searchApi={fetchStateDropdown}
                             getLabel={(item) => item?.name}
@@ -1307,7 +1354,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 {/* PAN - standalone field */}
                 <div className="py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="col-span-1 flex flex-col gap-2">
-                        <h2 className="text-[13px] font-medium text-[#64748B]">PAN</h2>
+                        <h2 className="text-[13px] font-medium text-[#64748B]">PAN {formData?.vendor_type?.toLowerCase().includes('employee') && <span className="text-red-500">*</span>}</h2>
                         <Input
                             name="pan_number"
                             placeholder="PAN Number"
