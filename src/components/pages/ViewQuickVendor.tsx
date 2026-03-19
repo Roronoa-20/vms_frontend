@@ -134,7 +134,7 @@ const ViewQuickOnboardingContent = () => {
     return (
         <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[85vh] overflow-y-auto w-full">
             <Section title="General Data">
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 p-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 p-3">
                     <DataField label="Name" value={`${title}${name}`} />
                     <DataField label="Search Term" value={data?.search_term} />
                     <DataField label="Street / House No." value={data?.street_house_no} />
@@ -152,7 +152,7 @@ const ViewQuickOnboardingContent = () => {
             </Section>
 
             <Section title="Company Data">
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 p-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 p-3">
                     <DataField label="Vendor Type" value={data?.vendor_types?.join(', ')} />
                     <DataField label="Company Code" value={data?.company_code} />
                     <DataField label="Purchase Organization" value={data?.purchase_organization} />
@@ -161,7 +161,7 @@ const ViewQuickOnboardingContent = () => {
             </Section>
 
             <Section title="Purchasing Data">
-                <div className="flex justify-evenly gap-6 w-full pb-4">
+                <div className="flex gap-6 w-full pb-4">
                     <label className="flex items-center gap-2 text-[13px] font-medium text-[#64748B]">
                         <input type="checkbox" checked={!!(data?.payee_in_document)} disabled className="w-4 h-4 accent-blue-500" />
                         Payee in document
@@ -179,7 +179,7 @@ const ViewQuickOnboardingContent = () => {
                         Service-Based Invoice Verification
                     </label>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 p-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 p-3">
                     <DataField label="PAN Number" value={data?.pan_number} />
                     <DataField label="Reconciliation Account" value={data?.reconciliation_account} />
                     <DataField label="Order Currency" value={data?.order_currency} />
