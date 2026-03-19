@@ -1014,7 +1014,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                             className="rounded-xl h-10 bg-white border-gray-200"
                             value={formData?.vendor_name ?? ''}
                             onChange={handleInputChange}
-                            maxLength={40}
+                            maxLength={35}
                             disabled={formData?.is_submitted === 1}
                         />
                     </div>
@@ -1043,7 +1043,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                         className="rounded-xl h-10 bg-white border-gray-200"
                         value={formData?.street_house_no ?? ''}
                         onChange={handleInputChange}
-                        maxLength={60}
+                        maxLength={40}
                         disabled={formData?.is_submitted === 1}
                     />
                 </div>
