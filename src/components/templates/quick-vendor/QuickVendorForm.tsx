@@ -1219,7 +1219,7 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 </div>
 
                 {/* Checkboxes */}
-                <div className="py-4 flex justify-evenly gap-6 w-full">
+                <div className="py-4 flex gap-6 w-full">
                     <label className="flex items-center gap-2 text-[13px] font-medium text-[#64748B]">
                         <input
                             type="checkbox"

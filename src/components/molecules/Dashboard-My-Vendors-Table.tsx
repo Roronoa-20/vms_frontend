@@ -169,7 +169,7 @@ const DashboardMyVendorsTable = ({ dashboardTableData, companyDropdown }: Props)
               <TableHead className="text-left">Vendor Code</TableHead>
               <TableHead className="text-left">Vendor Name</TableHead>
               <TableHead className="text-left">Company</TableHead>
-              <TableHead className="text-left">Requester</TableHead>
+              <TableHead className="text-left w-auto">Requestor</TableHead>
               <TableHead className="text-left">Country</TableHead>
               <TableHead className="text-left">Status</TableHead>
               <TableHead className="text-left">Date</TableHead>
@@ -191,7 +191,7 @@ const DashboardMyVendorsTable = ({ dashboardTableData, companyDropdown }: Props)
                   <TableCell className="text-left">{item.country || "-"}</TableCell>
                   <TableCell className="text-left">
                     <span
-                      className={`px-3 py-1 rounded-full text-[12px] font-medium ${item?.approval_status?.toUpperCase().includes("PENDING")
+                      className={`py-1 rounded-full text-[12px] font-medium ${item?.approval_status?.toUpperCase().includes("PENDING")
                         ? "bg-yellow-100 text-yellow-700"
                         : item?.approval_status?.toUpperCase().includes("APPROVED")
                           ? "bg-green-100 text-green-700"
