@@ -180,6 +180,7 @@ const ViewQuickOnboardingContent = () => {
                     </label>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 p-3">
+                    <DataField label="PAN Number" value={data?.pan_number} />
                     <DataField label="Reconciliation Account" value={data?.reconciliation_account} />
                     <DataField label="Order Currency" value={data?.order_currency} />
                     <DataField label="Term of Payment" value={data?.terms_of_payment} />
@@ -347,14 +348,16 @@ const ViewQuickOnboardingContent = () => {
 
             {
                 isApprovedDialog &&
-                <PopUp Submitbutton={handleApprovalSubmit} isSubmit={true} headerText='Are You Sure You Want to Approve ?' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[600px] md:max-h-[400px]' isHeaderTextUnderline={true}>
+                <PopUp Submitbutton={handleApprovalSubmit} isSubmit={true} disableSubmit={loadingAction === 'approve'} headerText='Are You Sure You Want to Approve ?' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[600px] md:max-h-[400px]' isHeaderTextUnderline={true}>
                     <Input className='mt-3 rounded-xl py-2' placeholder='Enter your comment here...' onChange={(e) => { setComment(e.target.value) }} />
+                    {loadingAction === 'approve' && <div className="flex items-center gap-2 mt-2 text-sm text-gray-500"><Loader2 className="w-4 h-4 animate-spin" /> Processing...</div>}
                 </PopUp>
             }
             {
                 isRejectDialog &&
-                <PopUp Submitbutton={handleRejectSubmit} isSubmit={true} headerText='Are You Sure You Want to Reject ?' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[600px] md:max-h-[400px]' isHeaderTextUnderline={true}>
+                <PopUp Submitbutton={handleRejectSubmit} isSubmit={true} disableSubmit={loadingAction === 'reject'} headerText='Are You Sure You Want to Reject ?' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[600px] md:max-h-[400px]' isHeaderTextUnderline={true}>
                     <Input className='mt-3 rounded-xl py-2' placeholder='Enter your comment here...' onChange={(e) => { setComment(e.target.value) }} />
+                    {loadingAction === 'reject' && <div className="flex items-center gap-2 mt-2 text-sm text-gray-500"><Loader2 className="w-4 h-4 animate-spin" /> Processing...</div>}
                 </PopUp>
             }
         </div>
