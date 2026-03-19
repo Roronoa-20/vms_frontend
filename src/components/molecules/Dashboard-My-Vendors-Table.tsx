@@ -172,7 +172,7 @@ const DashboardMyVendorsTable = ({ dashboardTableData, companyDropdown }: Props)
               <TableHead className="text-center">Requester</TableHead>
               <TableHead className="text-center">Country</TableHead>
               <TableHead className="text-center">Status</TableHead>
-              <TableHead className="text-center">Modified</TableHead>
+              <TableHead className="text-center">Date</TableHead>
               <TableHead className="text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
