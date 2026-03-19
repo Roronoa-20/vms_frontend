@@ -163,32 +163,32 @@ const DashboardMyApprovalsTable = ({ dashboardTableData, companyDropdown }: Prop
         <Table>
           <TableHeader>
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE]">
-              <TableHead className="w-[80px] text-center">Sr No.</TableHead>
-              <TableHead className="text-center">Onboarding ID</TableHead>
-              <TableHead className="text-center">Vendor Code</TableHead>
-              <TableHead className="text-center">Vendor Name</TableHead>
-              <TableHead className="text-center">Company</TableHead>
-              <TableHead className="text-center">Requester</TableHead>
-              <TableHead className="text-center">Country</TableHead>
-              <TableHead className="text-center">Status</TableHead>
-              <TableHead className="text-center">Date</TableHead>
-              <TableHead className="text-center">Action</TableHead>
+              <TableHead className="text-left">Sr No.</TableHead>
+              <TableHead className="text-left">Onboarding ID</TableHead>
+              <TableHead className="text-left">Vendor Code</TableHead>
+              <TableHead className="text-left">Vendor Name</TableHead>
+              <TableHead className="text-left">Company</TableHead>
+              <TableHead className="text-left">Requester</TableHead>
+              <TableHead className="text-left">Country</TableHead>
+              <TableHead className="text-left">Status</TableHead>
+              <TableHead className="text-left">Date</TableHead>
+              <TableHead className="text-left">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {table.length > 0 ? (
               table.map((item, index) => (
                 <TableRow key={item.name} className="text-[13px]">
-                  <TableCell className="text-center">
+                  <TableCell className="text-left">
                     {(currentPage - 1) * record_per_page + index + 1}
                   </TableCell>
-                  <TableCell className="text-center font-medium">{item.name}</TableCell>
-                  <TableCell className="text-center">{item.vendor_code || "-"}</TableCell>
-                  <TableCell className="text-center">{item.vendor_name || "-"}</TableCell>
-                  <TableCell className="text-center">{item.company_code || "-"}</TableCell>
-                  <TableCell className="text-center text-gray-500">{item.requestor_name}</TableCell>
-                  <TableCell className="text-center">{item.country || "-"}</TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="text-left font-medium">{item.name}</TableCell>
+                  <TableCell className="text-left">{item.vendor_code || "-"}</TableCell>
+                  <TableCell className="text-left">{item.vendor_name || "-"}</TableCell>
+                  <TableCell className="text-left">{item.company || "-"}</TableCell>
+                  <TableCell className="text-left text-gray-500">{item.requestor_name}</TableCell>
+                  <TableCell className="text-left">{item.country || "-"}</TableCell>
+                  <TableCell className="text-left">
                                       <span
                                         className={`px-3 py-1 rounded-full text-[12px] font-medium ${item?.approval_status?.toUpperCase().includes("PENDING")
                                           ? "bg-yellow-100 text-yellow-700"
@@ -202,7 +202,7 @@ const DashboardMyApprovalsTable = ({ dashboardTableData, companyDropdown }: Prop
                                         {item.approval_status}
                                       </span>
                                     </TableCell>
-                  <TableCell className="text-center text-gray-500">
+                  <TableCell className="text-left text-gray-500">
                     {item.modified ?item.modified : "-"}
                   </TableCell>
                   <TableCell className="text-center">
@@ -219,7 +219,7 @@ const DashboardMyApprovalsTable = ({ dashboardTableData, companyDropdown }: Prop
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={10} className="text-center text-gray-500 py-10">
+                <TableCell colSpan={10} className="text-left text-gray-500 py-10">
                   No approval records found.
                 </TableCell>
               </TableRow>
