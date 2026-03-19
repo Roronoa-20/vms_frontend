@@ -10,7 +10,7 @@ import {
     TableHeader,
     TableRow,
 } from '../../atoms/table';
-import { Trash2, Loader2 } from 'lucide-react';
+import { Trash2, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { TVendorType, TCompanyCode, TPurchaseOrg, TAccountGroup, TVendorDetails, TReconciliation, TCurrency, TTermsOfPayment, TState, TCountry, TBankKey, TIncoterm, TGstDetail } from '@/src/types/quickVendor/quickVendor.types';
 import SearchSelectComponent from '../../molecules/Selectsearchcomponent';
 import { getPurchaseOrgMasterData, getAccountGroupMasterData, getLocationByPincode, getReconciliationMasterData, getCurrencyMasterList, getTermsOfPaymentMasterData, getStateMasterList, getCountryMasterList, getBankKeyMasterData, createQuickVendorOnboarding, getQuickVendorOnboardingDetails, getIncotermsMasterData, updateGstDetail, deleteGstDetailRow, updateContactDetail, deleteContactDetailRow, updateDomesticBankDetails, deleteDomesticBankDetailRow, updateImportBankDetails, deleteImportBankDetailRow, submitOnboardingForm } from '@/src/services/quickVendor/quickVendor.services';
@@ -40,6 +40,8 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
 
     const [formData, setFormData] = useState<TVendorDetails>({} as TVendorDetails);
     const [loadingAction, setLoadingAction] = useState<string | null>(null);
+    const [panVerifyStatus, setPanVerifyStatus] = useState<'success' | 'failed' | null>(null);
+    const [gstVerifyStatus, setGstVerifyStatus] = useState<'success' | 'failed' | null>(null);
 
     // Excise Details - single row input state
     const [exciseRowData, setExciseRowData] = useState<{ gst_number: string; gst_ven_class: string; attachment?: File | null }>({ gst_number: '', gst_ven_class: '' });
@@ -59,17 +61,17 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
     };
 
     const panVerification = async (panNumber: string): Promise<boolean> => {
-        if (!checkPAN(panNumber)) return false;
+        if (!checkPAN(panNumber)) { setPanVerifyStatus('failed'); return false; }
         return await verifyPanNumber(panNumber)
-            .then((data) => { console.log(data, "this is pan verification data"); return true; })
-            .catch((error) => { console.log(error, "this is error in pan verification"); return false; });
+            .then((data) => { console.log(data, "this is pan verification data"); setPanVerifyStatus('success'); return true; })
+            .catch((error) => { console.log(error, "this is error in pan verification"); setPanVerifyStatus('failed'); return false; });
     };
 
     const gstVerification = async (gstNumber: string): Promise<boolean> => {
-        if (!checkGST(gstNumber)) return false;
+        if (!checkGST(gstNumber)) { setGstVerifyStatus('failed'); return false; }
         return await verifyGstNumber(gstNumber)
-            .then((data) => { console.log(data, "this is gst verification data"); return true; })
-            .catch((error) => { console.log(error, "this is error in gst verification"); return false; });
+            .then((data) => { console.log(data, "this is gst verification data"); setGstVerifyStatus('success'); return true; })
+            .catch((error) => { console.log(error, "this is error in gst verification"); setGstVerifyStatus('failed'); return false; });
     };
 
     // Contact Person - single row input state
@@ -1355,14 +1357,24 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 <div className="py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="col-span-1 flex flex-col gap-2">
                         <h2 className="text-[13px] font-medium text-[#64748B]">PAN {formData?.vendor_type?.toLowerCase().includes('employee') && <span className="text-red-500">*</span>}</h2>
-                        <Input
-                            name="pan_number"
-                            placeholder="PAN Number"
-                            className="rounded-xl h-10 bg-white border-gray-200"
-                            value={formData?.pan_number || ''}
-                            onChange={(e) => setFormData(prev => ({ ...prev, pan_number: e.target.value }))}
-                            disabled={formData?.is_submitted === 1}
-                        />
+                        <div className="relative">
+                            <Input
+                                name="pan_number"
+                                placeholder="PAN Number"
+                                className="rounded-xl h-10 bg-white border-gray-200 pr-9"
+                                value={formData?.pan_number || ''}
+                                onChange={(e) => {
+                                    const val = e.target.value.toUpperCase();
+                                    setPanVerifyStatus(null);
+                                    setFormData(prev => ({ ...prev, pan_number: val }));
+                                    if (val.length === 10) { panVerification(val); }
+                                }}
+                                maxLength={10}
+                                disabled={formData?.is_submitted === 1}
+                            />
+                            {panVerifyStatus === 'success' && <CheckCircle2 className="w-5 h-5 text-green-500 absolute right-2 top-1/2 -translate-y-1/2" />}
+                            {panVerifyStatus === 'failed' && <XCircle className="w-5 h-5 text-red-500 absolute right-2 top-1/2 -translate-y-1/2" />}
+                        </div>
                     </div>
                 </div>
                 {
@@ -1373,14 +1385,24 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                             {/* GST No. */}
                             <div className="col-span-1 flex flex-col gap-2">
                                 <h2 className="text-[13px] font-medium text-[#64748B]">GST No.</h2>
-                                <Input
-                                    name="gst_number"
-                                    placeholder="0 - If Non available"
-                                    className="rounded-xl h-10 bg-white border-gray-200"
-                                    value={exciseRowData.gst_number}
-                                    onChange={(e) => setExciseRowData(prev => ({ ...prev, gst_number: e.target.value }))}
-                                    disabled={formData?.is_submitted === 1}
-                                />
+                                <div className="relative">
+                                    <Input
+                                        name="gst_number"
+                                        placeholder="0 - If Non available"
+                                        className="rounded-xl h-10 bg-white border-gray-200 pr-9"
+                                        value={exciseRowData.gst_number}
+                                        onChange={(e) => {
+                                            const val = e.target.value.toUpperCase();
+                                            setGstVerifyStatus(null);
+                                            setExciseRowData(prev => ({ ...prev, gst_number: val }));
+                                            if (val.length === 15) { gstVerification(val); }
+                                        }}
+                                        maxLength={15}
+                                        disabled={formData?.is_submitted === 1}
+                                    />
+                                    {gstVerifyStatus === 'success' && <CheckCircle2 className="w-5 h-5 text-green-500 absolute right-2 top-1/2 -translate-y-1/2" />}
+                                    {gstVerifyStatus === 'failed' && <XCircle className="w-5 h-5 text-red-500 absolute right-2 top-1/2 -translate-y-1/2" />}
+                                </div>
                             </div>
 
                             {/* GST ven class */}

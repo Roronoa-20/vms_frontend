@@ -48,6 +48,7 @@ const useDebounce = (value: any, delay: any) => {
 const DashboardMyApprovalsTable = ({ dashboardTableData, companyDropdown }: Props) => {
   const [table, setTable] = useState<any[]>(dashboardTableData?.message?.data || []);
   const [selectedCompany, setSelectedCompany] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("Pending");
   const [search, setSearch] = useState<string>("");
 
   const [total_count, setTotalCount] = useState(dashboardTableData?.message?.total_count || 0);
@@ -66,7 +67,7 @@ const DashboardMyApprovalsTable = ({ dashboardTableData, companyDropdown }: Prop
       return;
     }
     fetchTable();
-  }, [debouncedSearchName, selectedCompany, currentPage]);
+  }, [debouncedSearchName, selectedCompany, selectedStatus, currentPage]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -77,7 +78,7 @@ const DashboardMyApprovalsTable = ({ dashboardTableData, companyDropdown }: Prop
     try {
       const response = await getQuickOnboardingApprovalRecords({
         onboarding_id: search,
-        status: "Pending",
+        status: selectedStatus,
         company: selectedCompany,
         page_no: currentPage,
         page_size: record_per_page,
@@ -117,6 +118,25 @@ const DashboardMyApprovalsTable = ({ dashboardTableData, companyDropdown }: Prop
               onChange={handleSearchChange}
               className="w-64"
             />
+            <Select
+              value={selectedStatus || "all"}
+              onValueChange={(value) => {
+                setSelectedStatus(value === "all" ? "" : value);
+                setCurrentPage(1);
+              }}
+            >
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Filter by Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="Pending">Pending</SelectItem>
+                  <SelectItem value="Approved">Approved</SelectItem>
+                  <SelectItem value="Rejected">Rejected</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
             <Select
               value={selectedCompany || "all"}
               onValueChange={(value) => {
