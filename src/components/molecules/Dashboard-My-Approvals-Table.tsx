@@ -77,7 +77,7 @@ const DashboardMyApprovalsTable = ({ dashboardTableData, companyDropdown }: Prop
   const fetchTable = async () => {
     try {
       const response = await getQuickOnboardingApprovalRecords({
-        onboarding_id: search,
+        search_term: search,
         status: selectedStatus,
         company: selectedCompany,
         page_no: currentPage,
