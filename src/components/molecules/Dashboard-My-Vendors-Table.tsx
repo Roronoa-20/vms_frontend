@@ -191,7 +191,7 @@ const DashboardMyVendorsTable = ({ dashboardTableData, companyDropdown }: Props)
                   <TableCell className="text-center">{item.country || "-"}</TableCell>
                   <TableCell className="text-center">
                     <span
-                      className={`px-3 py-1 rounded-full text-[12px] font-medium uppercase ${item?.approval_status?.toUpperCase().includes("PENDING")
+                      className={`px-3 py-1 rounded-full text-[12px] font-medium ${item?.approval_status?.toUpperCase().includes("PENDING")
                         ? "bg-yellow-100 text-yellow-700"
                         : item?.approval_status?.toUpperCase().includes("APPROVED")
                           ? "bg-green-100 text-green-700"
@@ -204,7 +204,7 @@ const DashboardMyVendorsTable = ({ dashboardTableData, companyDropdown }: Props)
                     </span>
                   </TableCell>
                   <TableCell className="text-center text-gray-500">
-                    {item.modified ? new Date(item.modified).toLocaleDateString() : "-"}
+                    {item.modified ? item.modified : "-"}
                   </TableCell>
                   <TableCell className="text-center">
                     <Button
