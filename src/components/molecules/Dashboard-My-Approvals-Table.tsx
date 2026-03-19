@@ -163,7 +163,7 @@ const DashboardMyApprovalsTable = ({ dashboardTableData, companyDropdown }: Prop
         <Table>
           <TableHeader>
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE]">
-              <TableHead className="text-left">Sr No.</TableHead>
+              <TableHead className="text-left">#</TableHead>
               <TableHead className="text-left">Onboarding ID</TableHead>
               <TableHead className="text-left">Vendor Code</TableHead>
               <TableHead className="text-left">Vendor Name</TableHead>
