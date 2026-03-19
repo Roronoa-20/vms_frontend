@@ -638,7 +638,7 @@ export const accountsTeamApproval = async (body: { data: { onboarding_id: string
 
 export const getQuickOnboardingRequesterRecords = async (
     params: {
-        onboarding_id?: string;
+        search_term?: string;
         status?: string;
         company?: string;
         page_no?: number;
@@ -648,7 +648,7 @@ export const getQuickOnboardingRequesterRecords = async (
 ): Promise<any> => {
     try {
         const queryParams = new URLSearchParams();
-        if (params.onboarding_id) queryParams.append("onboarding_id", params.onboarding_id);
+        if (params.search_term) queryParams.append("onboarding_id", params.search_term);
         if (params.status) queryParams.append("status", params.status);
         if (params.company) queryParams.append("company", params.company);
         if (params.page_no) queryParams.append("page_no", params.page_no.toString());
@@ -682,7 +682,7 @@ export const getQuickOnboardingRequesterRecords = async (
 
 export const getQuickOnboardingApprovalRecords = async (
     params: {
-        onboarding_id?: string;
+        search_term?: string;
         status?: string;
         company?: string;
         page_no?: number;
@@ -692,7 +692,7 @@ export const getQuickOnboardingApprovalRecords = async (
 ): Promise<any> => {
     try {
         const queryParams = new URLSearchParams();
-        if (params.onboarding_id) queryParams.append("onboarding_id", params.onboarding_id);
+        if (params.search_term) queryParams.append("search_term", params.search_term);
         if (params.status) queryParams.append("status", params.status);
         if (params.company) queryParams.append("company", params.company);
         if (params.page_no) queryParams.append("page_no", params.page_no.toString());

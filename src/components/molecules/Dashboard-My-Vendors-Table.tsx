@@ -78,7 +78,7 @@ const DashboardMyVendorsTable = ({ dashboardTableData, companyDropdown }: Props)
   const fetchTable = async () => {
     try {
       const response = await getQuickOnboardingRequesterRecords({
-        onboarding_id: search,
+        search_term: search,
         status: selectedStatus,
         company: selectedCompany,
         page_no: currentPage,
