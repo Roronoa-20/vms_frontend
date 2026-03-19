@@ -249,17 +249,9 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
 
     const handleSaveAsDraft = async () => {
         try {
-            const isEmployeeVendor = formData?.vendor_type?.toLowerCase().includes('employee');
-            if (isEmployeeVendor) {
-                if (!formData?.pan_number) {
-                    alert('PAN Number is mandatory for Employee Vendor');
-                    return;
-                }
-            } else {
-                if (!formData?.gst_details || formData.gst_details.length === 0) {
-                    alert('GST Details are mandatory for non-Employee Vendor');
-                    return;
-                }
+            if (formData?.vendor_type?.toLowerCase().includes('employee') && !formData?.pan_number) {
+                alert('PAN Number is mandatory for Employee Vendor');
+                return;
             }
             if (formData?.pan_number) {
                 if (!checkPAN(formData.pan_number)) {
@@ -330,17 +322,9 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 alert("Please select Account Group");
                 return;
             }
-            const isEmployeeVendor = formData?.vendor_type?.toLowerCase().includes('employee');
-            if (isEmployeeVendor) {
-                if (!formData?.pan_number) {
-                    alert('PAN Number is mandatory for Employee Vendor');
-                    return;
-                }
-            } else {
-                if (!formData?.gst_details || formData.gst_details.length === 0) {
-                    alert('GST Details are mandatory for non-Employee Vendor');
-                    return;
-                }
+            if (formData?.vendor_type?.toLowerCase().includes('employee') && !formData?.pan_number) {
+                alert('PAN Number is mandatory for Employee Vendor');
+                return;
             }
             if (formData?.pan_number) {
                 if (!checkPAN(formData.pan_number)) {
