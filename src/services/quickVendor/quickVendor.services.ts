@@ -648,7 +648,7 @@ export const getQuickOnboardingRequesterRecords = async (
 ): Promise<any> => {
     try {
         const queryParams = new URLSearchParams();
-        if (params.search_term) queryParams.append("onboarding_id", params.search_term);
+        if (params.search_term) queryParams.append("search_term", params.search_term);
         if (params.status) queryParams.append("status", params.status);
         if (params.company) queryParams.append("company", params.company);
         if (params.page_no) queryParams.append("page_no", params.page_no.toString());
