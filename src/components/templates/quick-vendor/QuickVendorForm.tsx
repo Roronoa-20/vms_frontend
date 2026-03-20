@@ -1108,6 +1108,21 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                     <span className="text-[11px] text-gray-400">Max 40 chars allowed</span>
                 </div>
 
+                {/* Street 3 */}
+                <div className="col-span-1 flex flex-col gap-2">
+                    <h2 className="text-[13px] font-medium text-[#64748B]">Street 3</h2>
+                    <Input
+                        name="street_3"
+                        placeholder="Street 3"
+                        className="rounded-xl h-10 bg-white border-gray-200"
+                        value={formData?.street_3 ?? ''}
+                        onChange={handleInputChange}
+                        maxLength={40}
+                        disabled={formData?.is_submitted === 1}
+                    />
+                    <span className="text-[11px] text-gray-400">Max 40 chars allowed</span>
+                </div>
+
                 {/* Street 4 */}
                 <div className="col-span-1 flex flex-col gap-2">
                     <h2 className="text-[13px] font-medium text-[#64748B]">Street 4</h2>
@@ -1347,11 +1362,13 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 </div>
 
                 {/* Excise Details Section */}
+                {(formData?.is_submitted !== 1 || (formData?.gst_details?.length ?? 0) > 0) && (
                 <div className="pb-4 border-b border-gray-100">
                     <h1 className="text-[18px] text-[#1E293B] font-semibold">
                         Excise Details
                     </h1>
                 </div>
+                )}
 
                 {/* PAN - standalone field */}
                 <div className="py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -1555,11 +1572,13 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 )}
 
                 {/* Contact Person Section */}
+                {(formData?.is_submitted !== 1 || (formData?.contact_persons?.length ?? 0) > 0) && (
                 <div className="pb-4 border-b border-gray-100">
                     <h1 className="text-[18px] text-[#1E293B] font-semibold">
                         Contact Person
                     </h1>
                 </div>
+                )}
                 {
 
                     formData?.is_submitted !== 1 ?
@@ -1676,11 +1695,13 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 )}
 
                 {/* Bank Detail (Domestic) Section */}
+                {(formData?.is_submitted !== 1 || (formData?.bank_details?.length ?? 0) > 0) && (
                 <div className="pb-4 border-b border-gray-100">
                     <h1 className="text-[18px] text-[#1E293B] font-semibold">
                         Bank Detail (Domestic)
                     </h1>
                 </div>
+                )}
                 {
                     formData?.is_submitted !== 1 ?
 
@@ -1957,11 +1978,13 @@ const QuickVendorForm = ({ initialVendorTypes, initialCompanyCodes }: Props) => 
                 )}
 
                 {/* Bank Detail (International) Section */}
+                {(formData?.is_submitted !== 1 || (formData?.international_bank_details?.length ?? 0) > 0) && (
                 <div className="pb-4 border-b border-gray-100">
                     <h1 className="text-[18px] text-[#1E293B] font-semibold">
                         Bank Detail (International)
                     </h1>
                 </div>
+                )}
                 {
                     formData?.is_submitted !== 1 ?
                         <div className="py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
