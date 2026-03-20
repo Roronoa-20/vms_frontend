@@ -28,67 +28,8 @@ const Navbar = () => {
     if (storedVendorName) setVendorName(storedVendorName);
   }, []);
 
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
-
-  const fetchNotifications = async () => {
-    try {
-      const res = await requestWrapper({
-        url: API_END_POINTS.notificationlist,
-        method: "GET",
-      });
-
-      const data: NotificationListResponse = res.data;
-
-      if (data?.message?.success) {
-        const allNotifs = data.message.data.notifications;
-        setNotifications(allNotifs);
-
-        const unread = allNotifs.filter((n) => !n.read).length;
-        setUnreadCount(unread);
-
-        setTotalCount(data.message.data.pagination.total_count);
-      }
-    } catch (err) {
-      console.error("Error fetching notifications:", err);
-    }
-  };
-
   const handleClose = () => {
     setIsDialog(false);
-  };
-
-  const handleMarkAllRead = async () => {
-    try {
-      const res = await requestWrapper({
-        url: API_END_POINTS.markallnotificationread,
-        method: "POST",
-      });
-
-      const data = res.data;
-
-      if (data.message.success) {
-        // Optimistic update: mark all locally as read
-        const updated = notifications.map((n) => ({ ...n, read: true }));
-        setNotifications(updated);
-        setUnreadCount(0);
-
-        setTotalCount(data.message.data.total_notifications);
-      }
-    } catch (err) {
-      console.error("Error marking all notifications as read:", err);
-    }
-  };
-
-  const handleNotificationRead = (name: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.name === name ? { ...n, read: true } : n))
-    );
-  };
-
-  const handleClearUnread = () => {
-    setUnreadCount(0);
   };
 
 
@@ -128,53 +69,6 @@ const Navbar = () => {
       </div>
 
       <div className="flex items-center gap-3 relative">
-        {/* Notification Bell */}
-        <div
-          ref={bellRef}
-          className="relative cursor-pointer"
-          onClick={() => setIsNotifOpen((prev) => !prev)}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 text-gray-700"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.8}
-              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 
-              6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 
-              6.165 6 8.388 6 11v3.159c0 .538-.214 
-              1.055-.595 1.436L4 17h5m6 0v1a3 
-              3 0 11-6 0v-1m6 0H9"
-            />
-          </svg>
-          {totalCount > 0 && (
-            <div className="group relative">
-              <span
-                className={`absolute -top-[2rem] -right-[0.5rem] text-white text-xs w-5 h-5 flex items-center justify-center rounded-full
-        ${unreadCount > 0 ? "bg-red-500" : "bg-gray-400"}`}
-              >
-                {totalCount}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {isNotifOpen && (
-          <NotificationPanel
-            notifications={notifications}
-            onClose={() => setIsNotifOpen(false)}
-            anchorRef={bellRef}
-            onMarkAllRead={handleMarkAllRead}
-            onNotificationRead={handleNotificationRead}
-            onClearUnread={handleClearUnread}
-          />
-        )}
-
         {/* User Info */}
         <div className="flex flex-col justify-center items-end">
           <h1 className="text-[16px] font-semibold">{name}</h1>
