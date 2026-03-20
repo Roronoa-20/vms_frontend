@@ -44,19 +44,19 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
 
   useEffect(() => {
     const currentPriceControl = form.getValues("price_control");
-    const matched = PriceControl.find(
-      (item) => item.name === (currentPriceControl || "V")
-    );
+
+    if (currentPriceControl === "S") {
+      form.setValue("do_not_cost", null);
+      return;
+    }
+
+    const matched = PriceControl.find((item) => item.name === (currentPriceControl || "V"));
 
     if (!currentPriceControl && matched) {
       form.setValue("price_control", matched.name);
     }
 
-    if (matched?.do_not_cost !== undefined) {
-      form.setValue("do_not_cost", matched.do_not_cost);
-    } else {
-      form.setValue("do_not_cost", "");
-    }
+    form.setValue("do_not_cost", matched?.do_not_cost ? matched.do_not_cost : null);
   }, [form.watch("price_control"), PriceControl, form]);
 
   useEffect(() => {
@@ -330,7 +330,10 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                         <FormControl>
                           <Input
                             {...field}
+                            value={field.value ?? ""}
+                            onChange={(e) => field.onChange(e.target.value || null)}
                             readOnly
+                            disabled={form.watch("price_control") === "S"}
                             className="p-3 w-full text-sm placeholder:text-gray-500"
                           />
                         </FormControl>
@@ -345,7 +348,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                     <Label htmlFor="material_information_fileinput">
                       Upload Material Information File
                     </Label>
-                    <div 
+                    <div
                       className="border-2 border-dashed border-gray-400 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
                       onClick={() => !fileSelected && handleLabelClick("material_information_fileinput")}
                     >
@@ -381,7 +384,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                               <div className="flex w-full items-center justify-between gap-2">
                                 <a
                                   href={
-                                    localLineItemFiles?.["material_information"]?.fileURL 
+                                    localLineItemFiles?.["material_information"]?.fileURL
                                     || (form.getValues("material_information") && typeof form.getValues("material_information") === "string" ? `${process.env.NEXT_PUBLIC_BASE_URL}${form.getValues("material_information")}` : "#")
                                   }
                                   target="_blank"

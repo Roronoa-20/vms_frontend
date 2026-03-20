@@ -153,7 +153,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
 
       setFileSelected(true);
       setFileName(file.name);
-      
+
       // Simulate slightly slow upload so loader is visible
       setTimeout(() => {
         setIsFileUploading(false);
@@ -246,6 +246,21 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
   const isLastTab = activeTab === availableTabs[availableTabs.length - 1];
 
   const handleNextTab = () => {
+    if (activeTab === "basic-data") {
+      const value = form.getValues("material_code_revised")?.trim() || "";
+
+      const isInvalid = !value || value.endsWith("-");
+
+      if (isInvalid) {
+        form.setError("material_code_revised", {
+          type: "manual",
+          message: "Enter a valid Material Code",
+        });
+        return;
+      }
+
+      form.clearErrors("material_code_revised");
+    }
     const idx = availableTabs.indexOf(activeTab);
     if (idx !== -1 && idx < availableTabs.length - 1) {
       handleTabChange(availableTabs[idx + 1]);
@@ -297,7 +312,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
           formData.append(key, String(value));
         }
       });
-      
+
       if (localLineItemFiles?.["material_information"]?.file) {
         formData.append("material_information", localLineItemFiles["material_information"].file);
       }
@@ -375,7 +390,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
           formData.append(key, String(value));
         }
       });
-      
+
       if (localLineItemFiles?.["material_information"]?.file) {
         formData.append("material_information", localLineItemFiles["material_information"].file);
       }
@@ -394,6 +409,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
 
         if (sapStatus === "success") {
           alert("Material details sent to SAP successfully!!!");
+          router.push("/material-onboarding-dashboard");
         } else {
           alert("Material saved, but SAP integration failed.\n\n" + (sapMessage || ""));
         }

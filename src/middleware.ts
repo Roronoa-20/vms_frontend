@@ -1,13 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import {frappeAuthMiddleware} from '../middleware/frappeAuthMiddleware';
+import { frappeAuthMiddleware } from '../middleware/frappeAuthMiddleware';
 
-export async function middleware(req:any) {
+interface AuthenticatedRequest extends NextRequest {
+    user?: any;
+}
+
+export async function middleware(req: AuthenticatedRequest) {
     const response = NextResponse.next();
-    await frappeAuthMiddleware(req, response, () => {});
-    
+    await frappeAuthMiddleware(req, response, () => { });
+
     console.log("this is middleware user")
 
-    if (req.pathname === '/login' || req.pathname === '/') {
+    const { pathname } = req.nextUrl;
+
+    if (pathname === '/login' || pathname === '/material_login' || pathname === '/') {
         return response;
     }
     if (!req.user) {
@@ -22,5 +28,5 @@ export const config = {
     // matcher: ['/awareness_program'],
     // matcher: ['/dashboard'],
     // matcher:["/((?!api/login|_next|login).*)"]
-     matcher: ["/((?!api/login|_next|login|vendor-details-form|.*\\..*).*)"],
+    matcher: ["/((?!api/login|_next|login|material_login|qms-form|vendor-details-form|.*\\..*).*)"],
 };
