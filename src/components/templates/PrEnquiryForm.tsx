@@ -264,7 +264,6 @@ const PRInquiryForm = ({
     }
     addEnquiryItems(body)
       .then(() => {
-        alert("Items added successfully!");
         getPurchaseEnquiryData(refno as string).then((data) =>
           setFormData(data),
         );
@@ -322,7 +321,6 @@ const PRInquiryForm = ({
   const handleRowDelete = async (row_id: string) => {
     if (confirm("are you sure you want to delete this row?")) {
       deleteEnquiryItems(refno as string, row_id).then((data) => {
-        alert("Row deleted successfully!");
         getPurchaseEnquiryData(refno as string).then((data) => {
           setFormData(data);
         });
