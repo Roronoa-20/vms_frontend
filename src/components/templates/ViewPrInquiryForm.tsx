@@ -104,7 +104,7 @@ const ViewPRInquiryForm = ({PRInquiryData}:Props) => {
         action:1
       }
     }
-  approvalEnquiry(body).then((data)=>{alert("approved successfully");}).finally(()=>{setApprovalBody(null);setIsApprovalDialog(false);getPurchaseEnquiryData(refno as string).then((data)=>(setFormData(data)))})
+  approvalEnquiry(body).then((data)=>{alert("approved successfully");setApprovalBody(null);setIsApprovalDialog(false);getPurchaseEnquiryData(refno as string).then((data)=>(setFormData(data)))}).catch((err)=>{alert(err?.message?.message); return}).finally(()=>{})
   }
 
   const handleReject = ()=>{
