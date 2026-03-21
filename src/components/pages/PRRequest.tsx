@@ -142,13 +142,13 @@ const PrRequest = (props: Props) => {
             )}
 
             {isApprovalDialog &&
-                <PopUp Submitbutton={handleApprove} isSubmit={true} headerText='Are You Sure You Want to Approve ?' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[900px] md:max-h-[700px]' isHeaderTextUnderline={true}>
+                <PopUp Submitbutton={handleApprove} isSubmit={true} headerText='Are you sure you want to approve ?' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[900px] md:max-h-[700px]' isHeaderTextUnderline={true}>
                     <Input className='mt-3' placeholder='Enter your comment here...' onChange={(e) => { setRemarks(e.target.value); }} />
                 </PopUp>
             }
 
             {isRejectionDialog &&
-                <PopUp Submitbutton={handleReject} isSubmit={true} headerText='Are You Sure You Want to Reject ?' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[900px] md:max-h-[700px]' isHeaderTextUnderline={true}>
+                <PopUp Submitbutton={handleReject} isSubmit={true} headerText='Are you sure you want to reject ?' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[900px] md:max-h-[700px]' isHeaderTextUnderline={true}>
                     <Input className='mt-3' placeholder='Enter your comment here...' onChange={(e) => { setRemarks(e.target.value); }} />
                 </PopUp>
             }
