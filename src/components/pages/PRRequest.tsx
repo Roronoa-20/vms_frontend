@@ -9,6 +9,8 @@ import { companyDropdownBasedOnUserType, purchaseRequisitionDataType, PurchaseRe
 import { getPurchaseReqisitionData, processApprovalAction, submitPurchaseRequisition } from '@/src/services/prRequisition/prRequisitionNb.services'
 import ZSBService from '../templates/purchase-request/ZSBService'
 import ZSBAsset from '../templates/purchase-request/ZSBAsset'
+import PopUp from '../molecules/PopUp'
+import { Input } from '../atoms/input'
 
 interface Props {
     purchaseRequisitionTypeDropdown: purchaseRequisitionTypeDropdownType[]
@@ -29,6 +31,9 @@ enum PurchaseType {
 const PrRequest = (props: Props) => {
     const [prData, setPrData] = useState<purchaseRequisitionDataType>(props?.prData as purchaseRequisitionDataType);
     const submitLoaderRef = useRef<HTMLSpanElement>(null);
+    const [isApprovalDialog, setIsApprovalDialog] = useState<boolean>(false);
+    const [isRejectionDialog, setIsRejectionDialog] = useState<boolean>(false);
+    const [remarks, setRemarks] = useState<string>("");
 
     const fetchPrData = (prId?: string) => {
         getPurchaseReqisitionData(prId ?? props?.pr_id as string).then((res) => {
@@ -37,6 +42,32 @@ const PrRequest = (props: Props) => {
         }).catch((err) => {
             console.error("Error fetching PR data:", err);
         })
+    }
+
+    const handleApprove = () => {
+        processApprovalAction(props.pr_id as string, "Approve", remarks).then((res) => {
+            alert(res?.message || "Approved Successfully");
+            fetchPrData();
+        }).catch((err) => {
+            console.error(err);
+            alert(err || "Error approving PR");
+        }).finally(() => { setIsApprovalDialog(false); setRemarks(""); });
+    }
+
+    const handleReject = () => {
+        processApprovalAction(props.pr_id as string, "Reject", remarks).then((res) => {
+            alert(res?.message || "Rejected Successfully");
+            fetchPrData();
+        }).catch((err) => {
+            console.error(err);
+            alert(err || "Error rejecting PR");
+        }).finally(() => { setIsRejectionDialog(false); setRemarks(""); });
+    }
+
+    const handleClose = () => {
+        setIsApprovalDialog(false);
+        setIsRejectionDialog(false);
+        setRemarks("");
     }
 
     const handlePurchaseRequisitionSubmit = (isAlert:boolean) => {
@@ -101,32 +132,26 @@ const PrRequest = (props: Props) => {
 
             {props?.pr_id && prData?.can_approve === 1 && (
                 <div className='flex justify-end gap-4 mt-5'>
-                    <Button className='bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
-                        const remarks = prompt("Enter remarks for approval:") ?? "";
-                        processApprovalAction(props.pr_id as string, "Approve", remarks).then((res) => {
-                            alert(res?.message || "Approved Successfully");
-                            fetchPrData();
-                        }).catch((err) => {
-                            console.error(err);
-                            alert(err || "Error approving PR");
-                        });
-                    }}>
+                    <Button className='bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => { setIsApprovalDialog(true); setRemarks(""); }}>
                         Approve
                     </Button>
-                    <Button variant={"destructive"} className='rounded-lg px-6 py-2' onClick={() => {
-                        const remarks = prompt("Enter remarks for rejection:") ?? "";
-                        processApprovalAction(props.pr_id as string, "Reject", remarks).then((res) => {
-                            alert(res?.message || "Rejected Successfully");
-                            fetchPrData();
-                        }).catch((err) => {
-                            console.error(err);
-                            alert(err || "Error rejecting PR");
-                        });
-                    }}>
+                    <Button variant={"destructive"} className='rounded-lg px-6 py-2' onClick={() => { setIsRejectionDialog(true); setRemarks(""); }}>
                         Reject
                     </Button>
                 </div>
             )}
+
+            {isApprovalDialog &&
+                <PopUp Submitbutton={handleApprove} isSubmit={true} headerText='Are You Sure You Want to Approve ?' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[900px] md:max-h-[700px]' isHeaderTextUnderline={true}>
+                    <Input className='mt-3' placeholder='Enter your comment here...' onChange={(e) => { setRemarks(e.target.value); }} />
+                </PopUp>
+            }
+
+            {isRejectionDialog &&
+                <PopUp Submitbutton={handleReject} isSubmit={true} headerText='Are You Sure You Want to Reject ?' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[900px] md:max-h-[700px]' isHeaderTextUnderline={true}>
+                    <Input className='mt-3' placeholder='Enter your comment here...' onChange={(e) => { setRemarks(e.target.value); }} />
+                </PopUp>
+            }
 
         </div>
     )
