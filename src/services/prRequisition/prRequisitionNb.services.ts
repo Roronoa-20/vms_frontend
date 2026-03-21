@@ -319,6 +319,33 @@ export const updatePurchaseRequisitionNBItems = async (body: any, type: string, 
 
 
 
+export const processApprovalAction = async (doc_name: string, action: "Approve" | "Reject", remarks: string): Promise<any> => {
+    try {
+        const response = await fetch(API_END_POINTS.processApprovalAction, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                doctype: "VMS Purchase Requisition",
+                doc_name,
+                action,
+                remarks,
+            })
+        });
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response?.message);
+        }
+    } catch (error) {
+        console.error("Error processing approval action:", error);
+        return Promise.reject("error processing approval action");
+    }
+}
+
 export const submitPurchaseRequisition = async (name: any, cookie?: string): Promise<any> => {
     try {
         const response = await fetch(`${API_END_POINTS.submitPurchaseRequisition}?name=${name}`, {

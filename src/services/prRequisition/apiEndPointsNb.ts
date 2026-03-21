@@ -21,6 +21,9 @@ const API_END_POINTS = {
   addPurchaseRequisitionCapexItems: `${url}/api/method/vms.APIs.purchase_api.nb_capex_api.create_nb_capex_item`,
   updatePurchaseRequisitionCapexItems: `${url}/api/method/vms.APIs.purchase_api.nb_capex_api.update_nb_capex_item`,
   deletePurchaseRequisitionCapexItems: `${url}/api/method/vms.APIs.purchase_api.nb_capex_api.delete_nb_capex_item`,
+
+  // Approval
+  processApprovalAction: `${url}/api/method/vms.approval.approval_router.process_approval_action`,
 }
 
 export default API_END_POINTS;

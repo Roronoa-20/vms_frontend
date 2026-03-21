@@ -6,7 +6,7 @@ import { Button } from '../atoms/button'
 import NormalPR from '../templates/purchase-request/NormalPR'
 import CapexPR from '../templates/purchase-request/CapexPR'
 import { companyDropdownBasedOnUserType, purchaseRequisitionDataType, PurchaseRequisitionMaterialDropdownType, purchaseRequisitionPlantDropdownType, purchaseRequisitionTypeDropdownType } from '@/src/types/prRequisition/prRequisition.types'
-import { getPurchaseReqisitionData, submitPurchaseRequisition } from '@/src/services/prRequisition/prRequisitionNb.services'
+import { getPurchaseReqisitionData, processApprovalAction, submitPurchaseRequisition } from '@/src/services/prRequisition/prRequisitionNb.services'
 import ZSBService from '../templates/purchase-request/ZSBService'
 import ZSBAsset from '../templates/purchase-request/ZSBAsset'
 
@@ -98,6 +98,35 @@ const PrRequest = (props: Props) => {
             {
                 props?.prData?.pr_type === PurchaseType.zsbAsset && <ZSBAsset prData={prData} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />
             }
+
+            {props?.pr_id && prData?.can_approve === 1 && (
+                <div className='flex justify-end gap-4 mt-5'>
+                    <Button className='bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
+                        const remarks = prompt("Enter remarks for approval:") ?? "";
+                        processApprovalAction(props.pr_id as string, "Approve", remarks).then((res) => {
+                            alert(res?.message || "Approved Successfully");
+                            fetchPrData();
+                        }).catch((err) => {
+                            console.error(err);
+                            alert(err || "Error approving PR");
+                        });
+                    }}>
+                        Approve
+                    </Button>
+                    <Button variant={"destructive"} className='rounded-lg px-6 py-2' onClick={() => {
+                        const remarks = prompt("Enter remarks for rejection:") ?? "";
+                        processApprovalAction(props.pr_id as string, "Reject", remarks).then((res) => {
+                            alert(res?.message || "Rejected Successfully");
+                            fetchPrData();
+                        }).catch((err) => {
+                            console.error(err);
+                            alert(err || "Error rejecting PR");
+                        });
+                    }}>
+                        Reject
+                    </Button>
+                </div>
+            )}
 
         </div>
     )
