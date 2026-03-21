@@ -154,9 +154,9 @@ const ViewQuickOnboardingContent = () => {
             <Section title="Company Data">
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 p-3">
                     <DataField label="Vendor Type" value={data?.vendor_types?.join(', ')} />
-                    <DataField label="Company Code" value={data?.company_code} />
-                    <DataField label="Purchase Organization" value={data?.purchase_organization} />
-                    <DataField label="Account Group" value={data?.account_group} />
+                    <DataField label="Company Code" value={data?.company_desc} />
+                    <DataField label="Purchase Organization" value={data?.pur_org_desc} />
+                    <DataField label="Account Group" value={data?.acc_grp_dec} />
                 </div>
             </Section>
 
@@ -181,10 +181,10 @@ const ViewQuickOnboardingContent = () => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 p-3">
                     <DataField label="PAN Number" value={data?.pan_number} />
-                    <DataField label="Reconciliation Account" value={data?.reconciliation_account} />
+                    <DataField label="Reconciliation Account" value={data?.recon_acc_dec} />
                     <DataField label="Order Currency" value={data?.order_currency} />
-                    <DataField label="Term of Payment" value={data?.terms_of_payment} />
-                    <DataField label="Inco Terms" value={data?.incoterms} />
+                    <DataField label="Term of Payment" value={data?.term_pay_desc} />
+                    <DataField label="Inco Terms" value={data?.incoterms_desc} />
                 </div>
             </Section>
 
