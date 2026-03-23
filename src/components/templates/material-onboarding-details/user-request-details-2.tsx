@@ -50,7 +50,7 @@ interface UserRequestFormProps {
 }
 
 const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllMaterialType, StorageLocation, AllMaterialCodes, MaterialDetails, MaterialOnboardingDetails, handleMaterialSearch, handleMaterialSelect, searchResults = [], showSuggestions, setShowSuggestions, selectedMaterialType, setSelectedMaterialType, setMaterialCompanyCode, materialCompanyCode, setIsMaterialCodeEdited, setShouldShowAllFields, shouldShowAllFields, setIsMatchedMaterial, materialCodeStatus, selectedCodeLogic, latestCodeSuggestions, materialSelectedFromList, setMaterialCodeAutoFetched, materialCodeAutoFetched }) => {
-
+    console.log("MaterialOnboardingDetails", MaterialOnboardingDetails);
     const { designation } = useAuth();
     const role = designation || "";
     const [originalMaterialCode, setOriginalMaterialCode] = useState<string>("");
@@ -141,9 +141,13 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
         let revisedCode = getCodeFromDescription(materialDescValue);
 
         const approvalStatus = MaterialOnboardingDetails?.approval_status;
-        const shouldPrefill = ["Sent to SAP", "Re-Opened by CP", "Saved as Draft"].includes(approvalStatus || "");
+        console.log("approvalStatus", MaterialOnboardingDetails);
+        const isDraftStatus = approvalStatus === "Draft" || approvalStatus === "Saved as Draft";
+        const shouldPrefill = ["Sent to SAP", "Re-Opened by CP", "Saved as Draft", "Draft"].includes(approvalStatus || "");
 
-        if (shouldPrefill && storage) {
+        if (isDraftStatus) {
+            revisedCode = MaterialDetails?.material_master?.material_code_revised || MaterialDetails?.material_master?.material_code || revisedCode;
+        } else if (shouldPrefill && storage) {
             revisedCode = storage?.material_code_revised || revisedCode;
         }
 
@@ -170,7 +174,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
         if (!currentCode || currentCode === initialCode) {
             form.setValue("material_code_revised", initialCode);
         }
-        
+
         setOriginalMaterialCode(initialCode);
         setOriginalDesc(materialDescValue.trim().toLowerCase());
 
@@ -284,18 +288,19 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
 
         const existingCode = form.getValues("material_code_revised") || "";
 
-        if (!existingCode) {form.setValue("material_code_revised", selectedMaterialCategory, {shouldDirty: false, shouldValidate: true});
+        if (!existingCode) {
+            form.setValue("material_code_revised", selectedMaterialCategory, { shouldDirty: false, shouldValidate: true });
             return;
         }
 
         const stripped = existingCode.replace(/^(R|P)/, "");
 
         if (selectedMaterialCategory === "R") {
-            form.setValue("material_code_revised", `R${stripped}`, {shouldDirty: false, shouldValidate: true});
+            form.setValue("material_code_revised", `R${stripped}`, { shouldDirty: false, shouldValidate: true });
         }
 
         if (selectedMaterialCategory === "P") {
-            form.setValue("material_code_revised", `P${stripped}`, {shouldDirty: false, shouldValidate: true});
+            form.setValue("material_code_revised", `P${stripped}`, { shouldDirty: false, shouldValidate: true });
         }
     }, [selectedMaterialCategory, isNewMaterial, isSAPGenerated, selectedCodeLogic, shouldShowMaterialCode, form, MaterialDetails]);
 
@@ -441,16 +446,6 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                                             )}
                                                         </div>
                                                     )}
-
-                                                    {(()=>{
-                                                        console.log("Debug Rendering:", {
-                                                            isSAPGenerated,
-                                                            isNewMaterial,
-                                                            latestCodeSuggestions: latestCodeSuggestions[0],
-                                                            materialSelectedFromList
-                                                        });
-                                                        return null;
-                                                    })()}
 
                                                     {!isSAPGenerated && isNewMaterial && latestCodeSuggestions[0] && !materialSelectedFromList && (
                                                         <p className="mt-1 text-xs text-gray-500">

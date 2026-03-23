@@ -168,18 +168,18 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
     if (!companyCodeVal) return;
 
     try {
-        const res = await requestWrapper({
-          method: "GET",
-          url: `${API_END_POINTS.getLatestMaterialCode}?prefix=${selectedCodeLogic}&company=${companyCodeVal}`,
-        });
-        
-        if (res?.data?.message && Object.keys(res.data.message).length > 0) {
-          setLatestCodeSuggestions([res.data.message]);
-        } else {
-             setLatestCodeSuggestions([{ material_code: "No existing code found for this logic" } as any]);
-        }
+      const res = await requestWrapper({
+        method: "GET",
+        url: `${API_END_POINTS.getLatestMaterialCode}?prefix=${selectedCodeLogic}&company=${companyCodeVal}`,
+      });
+
+      if (res?.data?.message && Object.keys(res.data.message).length > 0) {
+        setLatestCodeSuggestions([res.data.message]);
+      } else {
+        setLatestCodeSuggestions([{ material_code: "No existing code found for this logic" } as any]);
+      }
     } catch (e) {
-        console.error("fetchLatestCode API Failed", e);
+      console.error("fetchLatestCode API Failed", e);
     }
   };
 
