@@ -19,7 +19,6 @@ const page = async({ searchParams }: PageProps) => {
   const vendor_onboarding = params["vendor_onboarding"];
   const tabtype = params["tabtype"];
   const refno = params["refno"]
-  console.log(vendor_onboarding,tabtype)
   return <VendorDetail vendor_onboarding={ vendor_onboarding as string} tabtype={tabtype as string} refno={refno as string}/>;
 };
 

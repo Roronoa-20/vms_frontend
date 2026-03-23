@@ -9,8 +9,6 @@ export async function middleware(req: AuthenticatedRequest) {
     const response = NextResponse.next();
     await frappeAuthMiddleware(req, response, () => { });
 
-    console.log("this is middleware user")
-
     const { pathname } = req.nextUrl;
 
     if (pathname === '/login' || pathname === '/material_login' || pathname === '/') {

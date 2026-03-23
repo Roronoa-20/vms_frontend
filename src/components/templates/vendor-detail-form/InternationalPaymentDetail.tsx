@@ -121,7 +121,6 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
     if (OnboardingDetail?.intermediate_bank_details?.[0]) {
       setIsIntermediateCheck(true);
     }
-    console.log(OnboardingDetail, "payment details data")
     const fetchCurrency = async () => {
 
       const currencyUrl = `${API_END_POINTS?.currencyDropdown}`;
@@ -215,7 +214,6 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
       setFormData((prev: any) => ({ ...prev, intermediate_bank_details: { ...prev?.intermediate_bank_details, [name]: value } }));
     }
   }
-  console.log(OnboardingDetail?.bank_proof?.file_name, "thiskjdvb")
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
       <h1 className="border-b-2 pb-1 font-semibold sticky top-0 bg-white py-4 text-lg">

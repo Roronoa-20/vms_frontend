@@ -155,7 +155,6 @@ const VendorRegistration = ({ ...Props }: Props) => {
 
     const submitButton = document.getElementById("submitButton") as HTMLButtonElement | null;
     if (submitButton) {
-      console.log("inside button")
       submitButton.disabled = true;
     }
     const url = API_END_POINTS?.vendorRegistrationSubmit;
@@ -188,13 +187,11 @@ const VendorRegistration = ({ ...Props }: Props) => {
       method: "POST",
       data: { data: updateFormData }
     });
-    console.log("response checking for ref no--->", response);
     if (response?.status == 500) {
-      // console.log("error in submitting this form");
+      console.log("error in submitting this form");
       toast?.error("Error submitting this form");
       return;
     }
-    console.log("response", response);
     if (response?.status == 200) {
       if (response?.data?.message?.status == "duplicate") {
         // toast.warn(response?.data?.message?.message);

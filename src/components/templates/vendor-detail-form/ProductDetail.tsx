@@ -48,7 +48,6 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
 
   const uploadProductImageRef = useRef<HTMLInputElement>(null);
 
-  console.log(OnboardingDetail, "this is console")
 
   // const handleAddMaterial = () => {
   //   if (

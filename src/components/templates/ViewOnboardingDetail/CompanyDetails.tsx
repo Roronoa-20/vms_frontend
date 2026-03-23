@@ -55,7 +55,6 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
     return errors;
   };
 
-  console.log(OnboardingDetail, "this is onboarding detail")
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

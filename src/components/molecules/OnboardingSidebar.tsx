@@ -18,7 +18,6 @@ const OnboardingSidebar = ({ onboarding_refno, refno, isAccountsTeam, vendor_typ
   const tabType = param?.get("tabtype");
   const router = useRouter();
   const isMaterialType = vendor_type && vendor_type.includes("Material Vendor") && nature_of_business == "Manufacturer" ? true : false;
-  console.log(vendor_type , "hfkjsdhkfkjsdhfkusdhd");
   let tabs;
   if (isAccountsTeam == 1) {
     tabs = AccountsTeamOnboardingSidebar;
