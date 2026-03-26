@@ -129,10 +129,11 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
         ]);
     }, [isSAPGenerated, MaterialOnboardingDetails, form]);
 
-    // -------------------- INITIALIZE FORM --------------------
+    // // -------------------- INITIALIZE FORM --------------------
     useEffect(() => {
         if (isSAPGenerated) return;
         if (!MaterialDetails?.material_request_item) return;
+        if (!MaterialDetails?.material_master) return;
 
         const item = MaterialDetails.material_request_item;
         const storage = MaterialDetails.material_master;
@@ -151,21 +152,37 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
             revisedCode = storage?.material_code_revised || revisedCode;
         }
 
-        form.setValue("material_name_description", materialDescValue);
-        form.setValue("comment_by_user", item.comment_by_user || "");
-        form.setValue("material_specifications", item.material_specifications || "");
-        form.setValue("base_unit_of_measure", item.unit_of_measure || "");
-        form.setValue("material_category", item.material_category || "");
+        if (!form.getValues("material_name_description")) {
+            form.setValue("material_name_description", materialDescValue);
+        }
+        if (!form.getValues("comment_by_user")) {
+            form.setValue("comment_by_user", item.comment_by_user || "");
+        }
+        if (!form.getValues("material_specifications")) {
+            form.setValue("material_specifications", item.material_specifications || "");
+        }
+        if (!form.getValues("base_unit_of_measure")) {
+            form.setValue("base_unit_of_measure", item.unit_of_measure || "");
+        }
+        if (!form.getValues("material_category")) {
+            form.setValue("material_category", item.material_category || "");
+        }
 
-        if (filteredPlants.length && item.plant) form.setValue("plant_name", item.plant);
+        if (filteredPlants.length && item.plant && !form.getValues("plant_name")) {
+            form.setValue("plant_name", item.plant);
+        }
         if (filteredMaterialTypes.length && item.material_type) {
-            form.setValue("material_type", item.material_type);
+            if (!form.getValues("material_type")) {
+                form.setValue("material_type", item.material_type);
+            }
             form.setValue("material_type_category", item.material_type_category || "");
             setSelectedMaterialType(item.material_type);
         }
         if (item.company_name) {
             setMaterialCompanyCode(item.company_name);
-            form.setValue("material_company_code", item.company_name);
+            if (!form.getValues("material_company_code")) {
+                form.setValue("material_company_code", item.company_name);
+            }
         }
 
         const initialCode = revisedCode || item.material_code_revised || "";
@@ -178,12 +195,9 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
         setOriginalMaterialCode(initialCode);
         setOriginalDesc(materialDescValue.trim().toLowerCase());
 
-        if (shouldPrefill && storage) {
-            form.setValue("storage_location", storage.storage_location || "");
-            form.setValue("division", storage.division || "");
-            form.setValue("old_material_code", storage.old_material_code || "");
-        }
+
     }, [MaterialDetails, filteredPlants, filteredMaterialTypes, MaterialOnboardingDetails, AllMaterialCodes, form, setMaterialCompanyCode, setSelectedMaterialType]);
+
 
     // -------------------- AUTO-UPDATE MATERIAL CODE FOR CP / STORE --------------------
     useEffect(() => {
