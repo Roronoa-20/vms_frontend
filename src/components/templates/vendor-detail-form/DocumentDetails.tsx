@@ -144,7 +144,6 @@ const DocumentDetails = ({
           value: item?.name,
         }))
       );
-      console.log(response?.data?.message, "this is state dropdown");
     }
   };
 
@@ -270,7 +269,6 @@ const DocumentDetails = ({
     } 
     await verifyPanNumber(panNumber)
     .then((data)=>{
-        console.log(data,"this is pan verification data")
     })
     .catch((error)=>{
         console.log(error,"this is error in pan verification")
@@ -283,7 +281,6 @@ const DocumentDetails = ({
     } 
     await verifyGstNumber(gstNumber)
     .then((data)=>{
-        console.log(data,"this is gst verification data")
     })
     .catch((error)=>{
         console.log(error,"this is error in gst verification")
@@ -510,9 +507,6 @@ const DocumentDetails = ({
     const companyList = value?.map((item)=>(item?.value));
     setSingleRow((prev:any)=>({...prev,company:companyList}));
   }
-
-  console.log(singlerow);
-  console.log(gstStateDropdown, "this is dropown");
 
   return (
     <div className="flex flex-col bg-white rounded-lg p-4 w-full overflow-y-scroll max-h-[80vh]">

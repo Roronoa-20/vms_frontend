@@ -77,6 +77,8 @@ import { Button } from "../../atoms/button";
 type Props = {
   prData?: purchaseRequisitionDataType;
   plantDropdown: purchaseRequisitionPlantDropdownType[];
+  submitLoaderRef: React.RefObject<HTMLSpanElement | null>;
+  handlePurchaseRequisitionSubmit: (isAlert: boolean) => void;
 };
 
 const ServicePR = (props: Props) => {
@@ -131,7 +133,7 @@ const ServicePR = (props: Props) => {
 
     fetchServiceCode();
 
-    fetchMatrialGroup();
+    fetchMatrialGroup(props?.prData?.company as string);
   }, []);
 
   const fetchUom = () => {
@@ -154,8 +156,8 @@ const ServicePR = (props: Props) => {
       });
   };
 
-  const fetchMatrialGroup = () => {
-    getMaterialGroupDropdown()
+  const fetchMatrialGroup = (company:string) => {
+    getMaterialGroupDropdown(company)
       .then((res) => {
         setMaterialGroupDropdown(res);
         console.log(res);
@@ -378,7 +380,7 @@ const ServicePR = (props: Props) => {
           if (addLoaderRef?.current) {
             addLoaderRef.current.className = "hidden";
           }
-          alert(err);
+          alert(err?.map((item:any)=>item));
         });
     } else {
       addZsbLineItems(body, "service")
@@ -418,7 +420,10 @@ const ServicePR = (props: Props) => {
   };
 
   const handleUpdateItem = (index: number) => {
-    setSingleRowData(tableData[index]);
+    fetchMatrialGroup(props?.prData?.company as string);
+    let material = materialGroupDropdown?.find((item)=>item?.material_group_name == tableData[index]?.material_group)?.name;
+    setSingleRowData({...tableData[index],material_group:material as string});
+    // setSingleRowData(tableData[index]);
   };
 
   const handleUpdateSubItem = (index: number) => {
@@ -447,6 +452,26 @@ const ServicePR = (props: Props) => {
 
   return (
     <>
+      <div className='flex justify-end'>
+        {
+          pr_id && !props?.prData?.is_submitted &&
+          <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
+            let isAlert = true;
+            if (singleRowData?.material_description || singleRowData?.plant || singleRowData?.quantity || singleRowData?.material_group || singleRowData?.cost_center || singleRowData?.gl_account) {
+              if (!confirm("You have unsaved changes in the table. Do you want to continue without saving?")) {
+                return;
+              }
+              isAlert = false;
+            }
+            props?.handlePurchaseRequisitionSubmit(isAlert);
+          }}>
+            Submit PR
+            <span ref={props?.submitLoaderRef} className="hidden">
+              <Loader2 className="w-5 h-5" />
+            </span>
+          </Button>
+        }
+      </div>
       <div className="">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
@@ -456,22 +481,22 @@ const ServicePR = (props: Props) => {
         <Table className=" max-h-40 overflow-y-scroll border border-black/20">
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-              <TableHead className="text-center w-[10%]">Sr No.</TableHead>
-              <TableHead className="w-[10%]">Material Description</TableHead>
-              <TableHead className="w-[10%]">UOM</TableHead>
+              <TableHead className="text-center w-[50px]">Sr No.</TableHead>
+              <TableHead className="w-[15%]">Material Description</TableHead>
+              <TableHead className="w-[8%]">UOM</TableHead>
               <TableHead className="w-[10%]">Plant</TableHead>
-              <TableHead className="w-[10%]">Quantity</TableHead>
-              <TableHead className="w-[10%]">Material Group</TableHead>
-              <TableHead className="w-[10%]">Cost Center</TableHead>
-              <TableHead className="w-[10%]">G/L Account</TableHead>
-              <TableHead className="w-[10%]">Short Text</TableHead>
-              <TableHead className="w-[5%] max-w-[10%]">Action</TableHead>
+              <TableHead className="w-[8%]">Quantity</TableHead>
+              <TableHead className="w-[12%]">Material Group</TableHead>
+              <TableHead className="w-[12%]">Cost Center</TableHead>
+              <TableHead className="w-[12%]">G/L Account</TableHead>
+              <TableHead className="w-[13%]">Short Text</TableHead>
+              <TableHead className="w-[10%]">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="">
             {tableData?.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="font-medium text-center">
+                <TableCell className="font-medium text-center w-[50px]">
                   {index + 1}
                 </TableCell>
                 <TableCell className="font-medium">
@@ -657,6 +682,7 @@ const ServicePR = (props: Props) => {
                         (prev) =>
                           ({ ...prev, plant: selectedOption?.value }) as zsbServiceItemsType,
                       );
+                      fetchMatrialGroup(selectedOption?.value);
                     }}
                     instanceId="zsbservice-plant-select"
                     placeholder="Select Plant..."
@@ -678,13 +704,16 @@ const ServicePR = (props: Props) => {
                 <TableCell className="font-medium">
                   <Input
                     type="number"
+                    min="0"
                     value={singleRowData?.quantity ?? ""}
                     onChange={(e) => {
+                      const val = Number(e.target.value);
+                      if (val < 0) return;
                       setSingleRowData(
                         (prev) =>
                           ({
                             ...prev,
-                            quantity: Number(e.target.value),
+                            quantity: val,
                           }) as zsbServiceItemsType,
                       );
                     }}
@@ -844,13 +873,13 @@ const ServicePR = (props: Props) => {
           <Table className=" max-h-40 overflow-y-scroll border border-black/20">
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                <TableHead className="text-center w-[10%]">Sr No.</TableHead>
-                <TableHead className="w-[10%]">Service No</TableHead>
-                <TableHead className="w-[10%]">Short Text</TableHead>
-                <TableHead className="w-[10%]">UOM</TableHead>
-                <TableHead className="w-[10%]">Quantity</TableHead>
+                <TableHead className="text-center w-[50px]">Sr No.</TableHead>
+                <TableHead className="w-[15%]">Service No</TableHead>
+                <TableHead className="w-[40%]">Short Text</TableHead>
+                <TableHead className="w-[15%]">UOM</TableHead>
+                <TableHead className="w-[15%]">Quantity</TableHead>
                 {props?.prData?.is_submitted !== 1 && !isSubItemsView && (
-                  <TableHead className="w-[5%] max-w-[10%]">Action</TableHead>
+                  <TableHead className="w-[15%]">Action</TableHead>
                 )}
               </TableRow>
             </TableHeader>
@@ -858,7 +887,7 @@ const ServicePR = (props: Props) => {
               {tableData?.[selectedSubItemIndex?.index as number]?.sub_items?.map(
                 (item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium text-center">
+                    <TableCell className="font-medium text-center w-[50px]">
                       {index + 1}
                     </TableCell>
                     <TableCell className="font-medium">
@@ -1003,7 +1032,7 @@ const ServicePR = (props: Props) => {
                     />
                   </TableCell>
                   <TableCell className="font-medium">
-                    <Input value={subLineItem?.quantity ?? ""} onChange={(e) => { setSubLineItem((prev: any) => ({ ...prev, quantity: e.target.value })) }} />
+                    <Input type="number" min="0" value={subLineItem?.quantity ?? ""} onChange={(e) => { if (Number(e.target.value) < 0) return; setSubLineItem((prev: any) => ({ ...prev, quantity: e.target.value })) }} />
                   </TableCell>
                   <TableCell className="">
                     <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">

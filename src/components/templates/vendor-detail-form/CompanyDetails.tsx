@@ -40,7 +40,6 @@ const CompanyDetailForm = ({
   multipleCompany,
   ismulticompany,
 }: Props) => {
-  console.log("Onboarding Details---->",companyDetailDropdown);
   const router = useRouter();
 
   const [errors, setErrors] = useState<any>({});
@@ -59,7 +58,6 @@ const CompanyDetailForm = ({
   },[OnboardingDetail])
 
   if(OnboardingDetail){
-    console.log("Company Detail Form Data--->",data);
   }
 
   const validate = () => {
@@ -141,7 +139,6 @@ const CompanyDetailForm = ({
     }
   };
   
-  console.log("dropdown",companyDetailDropdown);
 
   return (
     <div className="flex flex-col bg-white rounded-lg p-4 w-full overflow-y-scroll max-h-[80vh]">

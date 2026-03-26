@@ -67,6 +67,8 @@ import { Button } from "../../atoms/button";
 
 type Props = {
   prData?: purchaseRequisitionDataType;
+  submitLoaderRef: React.RefObject<HTMLSpanElement | null>;
+  handlePurchaseRequisitionSubmit: (isAlert: boolean) => void;
 };
 
 const AssetPR = (props: Props) => {
@@ -113,7 +115,7 @@ const AssetPR = (props: Props) => {
 
     fetchServiceCode();
 
-    fetchMatrialGroup();
+    fetchMatrialGroup(props?.prData?.company as string);
   }, []);
 
   const fetchUom = () => {
@@ -136,8 +138,8 @@ const AssetPR = (props: Props) => {
       });
   };
 
-  const fetchMatrialGroup = () => {
-    getMaterialGroupDropdown()
+  const fetchMatrialGroup = (company:string) => {
+    getMaterialGroupDropdown(company)
       .then((res) => {
         setMaterialGroupDropdown(res);
         console.log(res);
@@ -312,7 +314,7 @@ const AssetPR = (props: Props) => {
           if (addLoaderRef?.current) {
             addLoaderRef.current.className = "hidden";
           }
-          alert(err);
+          alert(err?.map((item:any)=>item));
         });
     } else {
       addZsbLineItems(body, "asset")
@@ -352,7 +354,9 @@ const AssetPR = (props: Props) => {
   };
 
   const handleUpdateItem = (index: number) => {
-    setSingleRowData(tableData[index]);
+    fetchMatrialGroup(props?.prData?.company as string);
+    let material = materialGroupDropdown?.find((item)=>item?.material_group_name == tableData[index]?.material_group)?.name;
+    setSingleRowData({...tableData[index],material_group:material as string});
   };
 
   const handleUpdateSubItem = (index: number) => {
@@ -381,6 +385,26 @@ const AssetPR = (props: Props) => {
 
   return (
     <>
+      <div className='flex justify-end'>
+        {
+          pr_id && !props?.prData?.is_submitted &&
+          <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
+            let isAlert = true;
+            if (singleRowData?.material_description || singleRowData?.plant || singleRowData?.quantity || singleRowData?.asset_code || singleRowData?.material_group || singleRowData?.short_text) {
+              if (!confirm("You have unsaved changes in the table. Do you want to continue without saving?")) {
+                return;
+              }
+              isAlert = false;
+            }
+            props?.handlePurchaseRequisitionSubmit(isAlert);
+          }}>
+            Submit PR
+            <span ref={props?.submitLoaderRef} className="hidden">
+              <Loader2 className="w-5 h-5" />
+            </span>
+          </Button>
+        }
+      </div>
       <div className="">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
@@ -390,37 +414,37 @@ const AssetPR = (props: Props) => {
         <Table className=" max-h-40 overflow-y-scroll border border-black/20">
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-              <TableHead className="text-center w-[10%]">Sr No.</TableHead>
-              <TableHead className="w-[10%]">Material Description</TableHead>
+              <TableHead className="text-center w-[50px]">Sr No.</TableHead>
+              <TableHead className="w-[20%] text-center">Material Description</TableHead>
               <TableHead className="w-[10%] text-center">UOM</TableHead>
-              <TableHead className="w-[10%]">Plant</TableHead>
-              <TableHead className="w-[10%]">Quantity</TableHead>
-              <TableHead className="w-[10%]">Material Group</TableHead>
-              <TableHead className="w-[10%]">Asset Code</TableHead>
-              <TableHead className="w-[10%]">Short Text</TableHead>
-              <TableHead className="w-[5%] max-w-[10%]">Action</TableHead>
+              <TableHead className="w-[10%] text-center">Plant</TableHead>
+              <TableHead className="w-[10%] text-center">Quantity</TableHead>
+              <TableHead className="w-[15%] text-center">Material Group</TableHead>
+              <TableHead className="w-[10%] text-center">Asset Code</TableHead>
+              <TableHead className="w-[15%] text-center">Short Text</TableHead>
+              <TableHead className="w-[10%] text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="">
             {tableData?.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="font-medium text-center">
+                <TableCell className="font-medium text-center w-[50px]">
                   {index + 1}
                 </TableCell>
-                <TableCell className="font-medium">
+                <TableCell className="font-medium text-center">
                   {item.material_description}
                 </TableCell>
-                <TableCell className="font-medium">{item.uom}</TableCell>
-                <TableCell className="font-medium">{item.plant}</TableCell>
-                <TableCell className="font-medium">{item.quantity}</TableCell>
-                <TableCell className="font-medium">
+                <TableCell className="font-medium text-center">{item.uom}</TableCell>
+                <TableCell className="font-medium text-center">{item.plant}</TableCell>
+                <TableCell className="font-medium text-center">{item.quantity}</TableCell>
+                <TableCell className="font-medium text-center">
                   {item.material_group}
                 </TableCell>
-                <TableCell className="font-medium">
+                <TableCell className="font-medium text-center">
                   {item.asset_code}
                 </TableCell>
-                <TableCell className="font-medium">{item.short_text}</TableCell>
-                <TableCell className="font-medium">
+                <TableCell className="font-medium text-center">{item.short_text}</TableCell>
+                <TableCell className="font-medium text-center flex justify-center">
                   <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
                     {
                       props?.prData?.is_submitted !== 1 &&
@@ -605,13 +629,16 @@ const AssetPR = (props: Props) => {
                 <TableCell className="font-medium">
                   <Input
                     type="number"
+                    min="0"
                     value={singleRowData?.quantity ?? ""}
                     onChange={(e) => {
+                      const val = Number(e.target.value);
+                      if (val < 0) return;
                       setSingleRowData(
                         (prev) =>
                           ({
                             ...prev,
-                            quantity: Number(e.target.value),
+                            quantity: val,
                           }) as zsbServiceItemsType,
                       );
                     }}
@@ -713,13 +740,13 @@ const AssetPR = (props: Props) => {
           <Table className=" max-h-40 overflow-y-scroll border border-black/20">
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                <TableHead className="text-center w-[10%]">Sr No.</TableHead>
-                <TableHead className="w-[10%]">Service No</TableHead>
-                <TableHead className="w-[10%]">Short Text</TableHead>
-                <TableHead className="w-[10%]">UOM</TableHead>
-                <TableHead className="w-[10%]">Quantity</TableHead>
+                <TableHead className="text-center w-[50px]">Sr No.</TableHead>
+                <TableHead className="w-[15%]">Service No</TableHead>
+                <TableHead className="w-[40%]">Short Text</TableHead>
+                <TableHead className="w-[15%]">UOM</TableHead>
+                <TableHead className="w-[15%]">Quantity</TableHead>
                 {props?.prData?.is_submitted !== 1 && !isSubItemsView && (
-                  <TableHead className="w-[5%] max-w-[10%]">Action</TableHead>
+                  <TableHead className="w-[15%]">Action</TableHead>
                 )}
               </TableRow>
             </TableHeader>
@@ -727,7 +754,7 @@ const AssetPR = (props: Props) => {
               {tableData?.[selectedSubItemIndex?.index as number]?.sub_items?.map(
                 (item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium text-center">
+                    <TableCell className="font-medium text-center w-[50px]">
                       {index + 1}
                     </TableCell>
                     <TableCell className="font-medium">
@@ -871,7 +898,7 @@ const AssetPR = (props: Props) => {
                     />
                   </TableCell>
                   <TableCell className="font-medium">
-                    <Input value={subLineItem?.quantity ?? ""} onChange={(e) => { setSubLineItem((prev: any) => ({ ...prev, quantity: e.target.value })) }} />
+                    <Input type="number" min="0" value={subLineItem?.quantity ?? ""} onChange={(e) => { if (Number(e.target.value) < 0) return; setSubLineItem((prev: any) => ({ ...prev, quantity: e.target.value })) }} />
                   </TableCell>
                   <TableCell className="">
                     <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">

@@ -5,6 +5,7 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import { DashboardPOTableData, dashboardCardData, DashboardTableType, TvendorRegistrationDropdown, TuserRegistrationDropdown, TPRInquiryTable, PurchaseRequisition, RFQTable } from "@/src/types/types";
 import { cookies } from "next/headers";
+import { getQuickOnboardingRequesterRecords, getQuickOnboardingApprovalRecords } from "@/src/services/quickVendor/quickVendor.services";
 
 const Dashboard = async () => {
   const cookieStore = await cookies();
@@ -115,7 +116,7 @@ const Dashboard = async () => {
 
   const prInquiryDashboardUrl = API_END_POINTS?.prInquiryDashboardTable;
   const prInquiryApi: AxiosResponse = await requestWrapper({
-    url: prInquiryDashboardUrl,
+    url: `${prInquiryDashboardUrl}?company=""`,
     method: "GET",
     headers: {
       cookie: cookieHeaderString
@@ -176,13 +177,13 @@ const Dashboard = async () => {
   const sapErrorDashboardData = dashboardSAPErrorTable?.status == 200 ? dashboardSAPErrorTable?.data?.message?.sap_error_vendor_onboarding : ""
 
 
-  const dashboardPendingVendorAccounts: AxiosResponse = await requestWrapper({
-    url: API_END_POINTS?.dashboardPendingVendorsAccounts,
-    method: "GET",
-    headers: {
-      cookie: cookieHeaderString
-    }
-  })
+  // const dashboardPendingVendorAccounts: AxiosResponse = await requestWrapper({
+  //   url: API_END_POINTS?.dashboardPendingVendorsAccounts,
+  //   method: "GET",
+  //   headers: {
+  //     cookie: cookieHeaderString
+  //   }
+  // })
 
   const dashboardOnboardedVendorAccounts: AxiosResponse = await requestWrapper({
     url: API_END_POINTS?.dashboardOnboardedVendorsAccounts,
@@ -191,6 +192,21 @@ const Dashboard = async () => {
       cookie: cookieHeaderString
     }
   })
+
+  const myVendors = await getQuickOnboardingRequesterRecords({
+    status: "",
+    company: "",
+    page_no: 1,
+    page_size: 10,
+  }, cookieHeaderString);
+
+  const myApprovals = await getQuickOnboardingApprovalRecords({
+    status: "Pending",
+    company: "",
+    page_no: 1,
+    page_size: 10,
+  }, cookieHeaderString);
+
   const dashboardRejectedVendorAccounts: AxiosResponse = await requestWrapper({
     url: API_END_POINTS?.dashboardRejectedVendorsAccounts,
     method: "GET",
@@ -206,7 +222,7 @@ const Dashboard = async () => {
     }
   })
 
-  const dashboardAccountsPending = dashboardPendingVendorAccounts?.status == 200 ? dashboardPendingVendorAccounts?.data?.message : ""
+  // const dashboardAccountsPending = dashboardPendingVendorAccounts?.status == 200 ? dashboardPendingVendorAccounts?.data?.message : ""
   const dashboardAccountsOnboarded = dashboardOnboardedVendorAccounts?.status == 200 ? dashboardOnboardedVendorAccounts?.data?.message : ""
   const dashboardAccountsRejected = dashboardRejectedVendorAccounts?.status == 200 ? dashboardRejectedVendorAccounts?.data?.message : ""
   const dashboardAccountsSapErrors = dashboardSapErrorAccounts?.status == 200 ? dashboardSapErrorAccounts?.data?.message : ""
@@ -232,11 +248,13 @@ const Dashboard = async () => {
         dashboardASAFormTableData={dashboardASAFormTableData}
         dashboardASAPendingVendorListTableData={dashboardASAPendingVendorListTableData}
         sapErrorDashboardData={sapErrorDashboardData}
-        dashboardAccountsPending={dashboardAccountsPending}
+        // dashboardAccountsPending={myVendors}
         dashboardAccountsOnboarded={dashboardAccountsOnboarded}
         dashboardAccountsRejected={dashboardAccountsRejected}
         dashboardAccountsSapErrors={dashboardAccountsSapErrors}
         ASAdashboardOnboardedVendorListTableData={ASAdashboardOnboardedVendorListTableData}
+        myVendorsData={myVendors}
+        myApprovalsData={myApprovals}
       />
     </div>
   )

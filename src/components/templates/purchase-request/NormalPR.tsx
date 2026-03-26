@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef, ReactElement, ReactSVGElement } from "react";
 import {
   Table,
   TableBody,
@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "../../atoms/select";
 import { Input } from "../../atoms/input";
-import { Trash2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -31,10 +31,13 @@ import { deleteEnquiryItems } from "@/src/services/prEnquiry/prEnquiry.services"
 import SearchSelectComponent from "../../molecules/Selectsearchcomponent";
 import MultiSelect from 'react-select';
 import { multiSelectStyles } from "../../common/sharedStyles";
+import { Button } from "../../atoms/button";
 
 type Props = {
   prData?: purchaseRequisitionDataType
   materialDropdown: PurchaseRequisitionMaterialDropdownType[]
+  submitLoaderRef:  React.RefObject<HTMLSpanElement | null>
+  handlePurchaseRequisitionSubmit:(isAlert:boolean)=>void
 };
 
 
@@ -45,7 +48,7 @@ const NormalPR = (props: Props) => {
   const [uomDrop, setUOM] = useState<purchaseRequisitionUOMType>();
   const [isPurchaseGroupDropdown, setIsPurchaseGroupDropdown] = useState(false);
   const [isPlantDropdown, setIsPlantDropdown] = useState(false);
-  const [plantDropdown, setPlantDropdown] = useState<purchaseRequisitionPlantDropdownType[]>();
+  const [plantDropdown, setPlantDropdown] = useState<string[]>();
 
   const [singleRowData, setSingleRowData] = useState<nbItemsType>();
 
@@ -86,11 +89,11 @@ const NormalPR = (props: Props) => {
 
   const getPlantBasedOnMaterial = (material: string) => {
     getPlantByMaterial(material).then((res: any) => {
-      if (Array.isArray(res)) {
-        setPlantDropdown(res);
+      if (Array.isArray(res?.plants)) {
+        setPlantDropdown(res?.plants);
         setIsPlantDropdown(true);
       } else {
-        setSingleRowData(prev => ({ ...prev, plant: res?.plant }) as nbItemsType);
+        setSingleRowData(prev => ({ ...prev, plant: res?.plants?.[0] }) as nbItemsType);
         setIsPlantDropdown(false);
       }
     }).catch((err) => {
@@ -206,6 +209,27 @@ const NormalPR = (props: Props) => {
 
 
   return (
+    <>
+    <div className='flex justify-end'>
+                {
+                    pr_id && !props?.prData?.is_submitted &&
+                    <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
+                      let isAlert = true;
+                      if (singleRowData?.material || singleRowData?.quantity || singleRowData?.plant || singleRowData?.purchasing_group || singleRowData?.required_delivery_date) {
+                        if (!confirm("You have unsaved changes in the table. Do you want to continue without saving?")) {
+                          return;
+                        }
+                        isAlert = false;
+                      }
+                      props?.handlePurchaseRequisitionSubmit(isAlert);
+                    }}>
+                        Submit PR
+                        <span ref={props?.submitLoaderRef} className="hidden">
+                            <Loader2 className="w-5 h-5" />
+                        </span>
+                    </Button>
+                }
+            </div>
     <div className="">
       <div className="flex w-full justify-between pb-4">
         <h1 className="text-[20px] text-[#03111F] font-semibold">Items List</h1>
@@ -213,16 +237,16 @@ const NormalPR = (props: Props) => {
       <Table className=" max-h-40 overflow-y-scroll border border-black/20">
         <TableHeader className="text-center">
           <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-            <TableHead className="text-center w-[10%]">Sr No.</TableHead>
-            <TableHead className="text-center w-[15%]">Materials</TableHead>
+            <TableHead className="text-center w-[50px]">Sr No.</TableHead>
+            <TableHead className="text-center w-[25%]">Materials</TableHead>
             <TableHead className="text-center w-[10%]">UOM</TableHead>
-            <TableHead className="text-center w-[10%]">Plant</TableHead>
+            <TableHead className="text-center w-[15%]">Plant</TableHead>
             <TableHead className="text-center w-[10%]">Quantity</TableHead>
-            <TableHead className="text-center w-[10%]">Purchasing Group</TableHead>
-            <TableHead className="text-center w-[10%]">Required Delivery Date</TableHead>
+            <TableHead className="text-center w-[20%]">Purchasing Group</TableHead>
+            <TableHead className="text-center w-[15%]">Required Delivery Date</TableHead>
             {
               props?.prData?.is_submitted !== 1 &&
-              <TableHead className="w-[5%] max-w-[10%]">Action</TableHead>
+              <TableHead className="text-center w-[10%]">Action</TableHead>
             }
           </TableRow>
         </TableHeader>
@@ -230,13 +254,13 @@ const NormalPR = (props: Props) => {
           {
             tableData?.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="font-medium text-center">{index + 1}</TableCell>
-                <TableCell className="font-medium text-center">{item.material}</TableCell>
-                <TableCell className="font-medium text-center">{item.uom}</TableCell>
-                <TableCell className="font-medium text-center">{item.plant}</TableCell>
-                <TableCell className="font-medium text-center">{item.quantity}</TableCell>
-                <TableCell className="font-medium text-center">{item.purchasing_group}</TableCell>
-                <TableCell className="font-medium text-center">{item.required_delivery_date}</TableCell>
+                <TableCell className="font-medium text-center w-[50px]">{index + 1}</TableCell>
+                <TableCell className="font-medium text-center max-w-[200px] truncate" title={item.material}>{item.material}</TableCell>
+                <TableCell className="font-medium text-center max-w-[100px] truncate" title={item.uom}>{item.uom}</TableCell>
+                <TableCell className="font-medium text-center max-w-[150px] truncate" title={item.plant}>{item.plant}</TableCell>
+                <TableCell className="font-medium text-center max-w-[120px] truncate" title={item.quantity?.toString()}>{item.quantity}</TableCell>
+                <TableCell className="font-medium text-center max-w-[200px] truncate" title={item.purchasing_group}>{item.purchasing_group}</TableCell>
+                <TableCell className="font-medium text-center max-w-[150px] truncate" title={item.required_delivery_date}>{item.required_delivery_date}</TableCell>
                 {
 
                   props?.prData?.is_submitted !== 1 &&
@@ -330,8 +354,8 @@ const NormalPR = (props: Props) => {
                 {
                   isPlantDropdown ?
                     <MultiSelect
-                      options={plantDropdown?.map(item => ({ label: item?.plant_name || item?.name, value: item?.name })) || []}
-                      value={singleRowData?.plant ? { label: plantDropdown?.find(p => p.name === singleRowData.plant)?.plant_name || singleRowData.plant, value: singleRowData.plant } : null}
+                      options={plantDropdown?.map(item => ({ label: item || item, value: item })) || []}
+                      value={singleRowData?.plant ? { label: plantDropdown?.find(p => p === singleRowData.plant)|| singleRowData.plant, value: singleRowData.plant } : null}
                       onChange={(selectedOption: any) => {
                         setSingleRowData(prev => ({ ...prev, plant: selectedOption?.value } as nbItemsType));
                       }}
@@ -439,6 +463,7 @@ const NormalPR = (props: Props) => {
         </TableBody>
       </Table>
     </div>
+    </>
   );
 };
 

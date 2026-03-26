@@ -60,6 +60,7 @@ export type purchaseRequisitionDataType = {
     nb_capex_items:nbCapexItemsType[],
     zsb_asset_items:zsbAssetItemsType[],
     zsb_service_items:zsbServiceItemsType[],
+    can_approve:number,
 }
 
 export type nbItemsType = {

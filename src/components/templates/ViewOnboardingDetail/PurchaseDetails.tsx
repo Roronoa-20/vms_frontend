@@ -120,7 +120,6 @@ const PurchaseDetails = ({ ref_no, onboarding_ref_no, OnboardingDetail, reconcil
         reconciliation_account: reconciliationAccount?.value,
       },
     };
-    console.log("Submitting purchasing details:", payload);
     const submitResponse: AxiosResponse = await requestWrapper({
       url: submitUrl,
       data: payload,

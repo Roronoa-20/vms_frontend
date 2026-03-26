@@ -93,8 +93,6 @@ const CompanyAddress = ({
 
   const { designation } = useAuth();
 
-  console.log(OnboardingDetail, "htis is onboarding data")
-
 
 
   const handleMultipleAdd = () => {
@@ -185,7 +183,6 @@ const CompanyAddress = ({
     }
   }
 
-  console.log(formdata, "this is form data")
 
   return (
     <div className="flex flex-col bg-white rounded-lg p-3 max-h-[80vh] overflow-y-scroll w-full">
