@@ -9,13 +9,14 @@ interface Props {
   refno: string,
   isAccountsTeam?: number,
   vendor_type?: string[]
-  nature_of_business: string
+  nature_of_business: string,
+  activeTab?: string
 }
 
 
-const OnboardingSidebar = ({ onboarding_refno, refno, isAccountsTeam, vendor_type, nature_of_business }: Props) => {
+const OnboardingSidebar = ({ onboarding_refno, refno, isAccountsTeam, vendor_type, nature_of_business, activeTab }: Props) => {
   const param = useSearchParams();
-  const tabType = param?.get("tabtype");
+  const tabType = activeTab || param?.get("tabtype");
   const router = useRouter();
   const isMaterialType = vendor_type && vendor_type.includes("Material Vendor") && nature_of_business == "Manufacturer" ? true : false;
   console.log(vendor_type, "hfkjsdhkfkjsdhfkusdhd");

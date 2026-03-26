@@ -1,4 +1,5 @@
-"use client";
+"use client"
+import { toast } from "react-toastify";
 import React, { useEffect } from "react";
 import { Input } from "../../atoms/input";
 import {
@@ -80,20 +81,21 @@ const DocumentDetails = ({
     }
 
     const response: AxiosResponse = await requestWrapper({ url: url, data: formdata, method: "POST" });
-    if (response?.status == 200) {
+    if (response?.status == 200 || response?.status == 2000) {
+      toast.success("Your details have been updated and informed to Meri Purchase Team");
       setFormData(null)
       setIECProof(null);
       setFile10FProof(null);
       setTRCProof(null);
       setPEProof(null);
-      router.push(
+      if (onNextTab) onNextTab(); else router.push(
         `/vendor-details-form?tabtype=Payment%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
       );
     }
   };
 
   const handleBack = () => {
-    router.push(`/vendor-details-form?tabtype=Company%20Address&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    if (onBackTab) onBackTab(); else router.push(`/vendor-details-form?tabtype=Company%20Address&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   };
 
   const handleFieldChange = (e: React.ChangeEvent<
@@ -104,12 +106,12 @@ const DocumentDetails = ({
   }
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-4 w-full max-h-[80vh]">
-      <h1 className="border-b-2 pb-2 text-lg">Document Details</h1>
+    <div className="flex flex-col bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto w-full">
+      <h1 className="border-b-2 text-lg">Document Details</h1>
       <div className="overflow-y-scroll">
-        <div className="grid grid-cols-2 gap-6 p-5 ">
+        <div className="grid grid-cols-2 gap-4">
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Import/Export Code
             </h1>
             <Input
@@ -127,7 +129,7 @@ const DocumentDetails = ({
             />
           </div>
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Upload IEC Proof
             </h1>
             <div className="flex gap-4">
@@ -162,7 +164,7 @@ const DocumentDetails = ({
             </div>
           </div>
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               TRC Number
             </h1>
             <Input
@@ -180,7 +182,7 @@ const DocumentDetails = ({
             />
           </div>
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               TRC Certificate Proof
             </h1>
             <div className="flex gap-4">
@@ -224,7 +226,7 @@ const DocumentDetails = ({
             </ul>
           </div>
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Digital Form 10F Proof
             </h1>
             <div className="flex gap-4">
@@ -259,7 +261,7 @@ const DocumentDetails = ({
             </div>
           </div>
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Permanent Establishment Certificate
             </h1>
             <Link className="text-blue-400 text-sm underline" href={""}>Download PE Certificate Format File</Link>

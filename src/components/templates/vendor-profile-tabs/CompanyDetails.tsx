@@ -1,5 +1,5 @@
 "use client";
-
+import { toast } from "react-toastify";
 import React, { FormEvent, useState, useEffect } from "react";
 import { Input } from "../../atoms/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../../atoms/select";
@@ -54,8 +54,8 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
         method: "POST",
         data: { data: updatedData },
       });
-      if (response?.status === 200) {
-        alert("Saved successfully");
+      if (response?.status === 200 || response?.status === 2000) {
+        toast.success("Your details have been updated and informed to Meri Purchase Team");
         onNextTab();
       }
     } catch (error) {
@@ -64,8 +64,8 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
   };
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-4 h-[500px] overflow-y-scroll w-full">
-      <div className="flex justify-between items-center border-b-2 pb-2">
+    <div className="flex flex-col bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto w-full">
+      <div className="flex justify-between items-center border-b-2">
         <h1 className="font-semibold text-lg">Company Detail</h1>
         <Button
           type="button"
@@ -78,11 +78,11 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-3 gap-6 p-2 max-h-[80vh]">
+        <div className="grid grid-cols-3 gap-4 p-2 max-h-[80vh]">
           {/* Vendor Title */}
           <div className="grid grid-cols-4 gap-1">
             <div className="flex flex-col col-span-1">
-              <h1 className="text-[12px] font-normal text-[#626973]">
+              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
                 Vendor Title
               </h1>
               <Input
@@ -94,7 +94,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
               />
             </div>
             <div className="col-span-3">
-              <h1 className="text-[12px] font-normal text-[#626973]">
+              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
                 Company Name
               </h1>
               <Input
@@ -107,7 +107,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
           </div>
 
           <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973] flex">
+            <h1 className="text-[12px] font-normal text-[#626973] flex pb-2">
               Type Of Business
             </h1>
             <Select
@@ -133,9 +133,9 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
           </div>
 
           <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973]">Size of Company</h1>
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">Size of Company</h1>
             <Input
-              
+
               disabled={isDisabled("size_of_company")}
               onChange={(e) => updateField("size_of_company", e.target.value)}
               value={data?.size_of_company ?? OnboardingDetail?.size_of_company ?? ""}
@@ -143,7 +143,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
           </div>
 
           <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973]">Mobile Number</h1>
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">Mobile Number</h1>
             <Input
               disabled={isDisabled("telephone_number")}
               onChange={(e) => updateField("telephone_number", e.target.value)}
@@ -152,7 +152,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
           </div>
 
           <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973]">Office Email Primary</h1>
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">Office Email Primary</h1>
             <Input
               disabled={isDisabled("office_email_primary")}
               onChange={(e) => updateField("office_email_primary", e.target.value)}
@@ -161,7 +161,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
           </div>
 
           <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973]">Website</h1>
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">Website</h1>
             <Input
               defaultValue={OnboardingDetail?.website ?? ""}
               disabled={isDisabled("website")}
@@ -171,7 +171,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
           </div>
 
           <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973]">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Reg No.
             </h1>
             <Input
@@ -184,7 +184,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
           </div>
 
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973]">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               WhatsApp Number (If applicable)
             </h1>
             <Input
@@ -195,7 +195,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
           </div>
 
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973]">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Established Year
             </h1>
             <Input
@@ -208,7 +208,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
           </div>
 
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973]">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Office Email (Secondary)
             </h1>
             <Input
@@ -221,7 +221,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
           </div>
 
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] flex">
+            <h1 className="text-[12px] font-normal text-[#626973] flex pb-2">
               Corporate Identification No.(CIN No.)
             </h1>
             <Input
@@ -234,7 +234,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
           </div>
 
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] flex">
+            <h1 className="text-[12px] font-normal text-[#626973] flex pb-2">
               Cin Date
             </h1>
             <Input
@@ -248,7 +248,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
           </div>
 
           <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973]">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Nature of Company
             </h1>
             <Select
@@ -275,7 +275,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
           </div>
 
           <div className="flex flex-col">
-            <h1 className="text-[12px] font-normal text-[#626973]">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Nature of Business
             </h1>
             <Select
@@ -302,7 +302,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
           </div>
 
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973]">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Meril Associated Companies
             </h1>
             {ismulticompany ? (
@@ -322,7 +322,7 @@ const CompanyDetailForm = ({ companyDetailDropdown, onboarding_refno, refno, Onb
           </div>
 
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973]">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Vendor Type
             </h1>
             <textarea
