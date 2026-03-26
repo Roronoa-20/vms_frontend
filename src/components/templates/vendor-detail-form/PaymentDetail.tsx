@@ -59,7 +59,6 @@ const PaymentDetail = ({
   //   )
   // }
   const router = useRouter();
-  console.log(OnboardingDetail, "this is country");
   useEffect(() => {
     const fetchBank = async () => {
       const bankNameDropdownUrl = `${API_END_POINTS?.bankNameDropdown}`;
@@ -71,7 +70,6 @@ const PaymentDetail = ({
         setBankNameDropown(bankNameResponse?.data?.message?.data);
       }
     };
-    console.log(OnboardingDetail, "payment details data");
     const fetchCurrency = async () => {
       const currencyUrl = `${API_END_POINTS?.currencyDropdown}`;
       const currencyResponse: AxiosResponse = await requestWrapper({
@@ -165,7 +163,6 @@ const PaymentDetail = ({
     );
   };
 
-  console.log(OnboardingDetail?.bank_proof?.file_name, "thiskjdvb");
 
   return (
     <div className="flex flex-col bg-white px-4 pb-4 rounded-lg max-h-[80vh] w-full">

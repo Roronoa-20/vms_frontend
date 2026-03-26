@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   dashboardCardData,
   DashboardPOTableData,
@@ -19,6 +20,8 @@ import DashboardRejectedVendorsTable from "./Dashboard-Rejected-Vendors-Table";
 import DashboardASAOnboardedVendorsList from "./Dashboard-ASA-Onboarded-Vendors-List";
 import DashboardASAFormTable from "./Dashboard-ASA-Vendors-Form-Table";
 import DashboardASAPendingVendorFormTableList from "./Dashboard-ASA-Pending-Vendor-List";
+import DashboardMyVendorsTable from "./Dashboard-My-Vendors-Table";
+import DashboardMyApprovalsTable from "./Dashboard-My-Approvals-Table";
 import DashboardDispatchVendorsTable from "./Dashboard-Dispatch-Vendors-Table";
 import DashboardPaymentVendorsTable from "./Dashboard-Payment-Vendors-Table";
 import DashboardCurrentMonthsVendorsTable from "./Dashboard-Current-Months-Vendors-Table";
@@ -35,7 +38,8 @@ import {
   SelectValue,
 } from "../atoms/select";
 import { useMultipleVendorCodeStore } from "@/src/store/MultipleVendorCodeStore";
-import { useEffect, useState } from "react";
+import { useDashboardCardCountStore } from "@/src/store/DashboardCardCountStore";
+import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/src/context/AuthContext";
 import DashboardPurchaseEnquiryTable from "./Dashboard-Purchase-Enquiry-Table";
 import DashboardPurchaseRequisitionTable from "./Dashboard-Purchase-Requisition-Table";
@@ -63,19 +67,25 @@ type Props = {
   dashboardASAFormTableData: DashboardTableType["asa_form_data"];
   dashboardASAPendingVendorListTableData: DashboardTableType["asa_form_data"];
   sapErrorDashboardData: DashboardTableType["sapErrorDashboardData"];
-  dashboardAccountsPending: any;
+  // dashboardAccountsPending: any;
   dashboardAccountsOnboarded: any;
   dashboardAccountsRejected: any;
   dashboardAccountsSapErrors: any;
   ASAdashboardOnboardedVendorListTableData: DashboardTableType["asa_form_data"];
+  myVendorsData: any;
+  myApprovalsData: any;
 };
 
 const DashboardCards = ({ ...Props }: Props) => {
   console.log(Props?.cardData, "this is card data");
   const { MultipleVendorCode } = useMultipleVendorCodeStore();
+  const { cardCounts, setCardCounts, updateCardCount } = useDashboardCardCountStore();
   const { designation } = useAuth();
   const user = designation as string;
   const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState<string>("");
 
   console.log(user, "this is desingation");
   let allCardData: any[] = [];
@@ -84,7 +94,7 @@ const DashboardCards = ({ ...Props }: Props) => {
     allCardData = [
       {
         name: "Total ASA Vendor",
-        count: Props.ASAdashboardOnboardedVendorListTableData?.overall_count ?? 0,
+        count: cardCounts.asa_onboarded_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-emerald-800",
         bg_color: "bg-emerald-100",
@@ -92,7 +102,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       },
       {
         name: "Submitted ASA Form",
-        count: Props.dashboardASAFormTableData?.overall_total_asa ?? 0,
+        count: cardCounts.asa_form_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-violet-800",
         bg_color: "bg-violet-100",
@@ -100,7 +110,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       },
       {
         name: "Pending ASA Form",
-        count: Props.dashboardASAPendingVendorListTableData?.overall_count ?? 0,
+        count: cardCounts.asa_pending_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-rose-800",
         bg_color: "bg-rose-100",
@@ -111,7 +121,7 @@ const DashboardCards = ({ ...Props }: Props) => {
     allCardData = [
       {
         name: "Pending Vendors",
-        count: Props.cardData?.pending_vendor_count ?? 0,
+        count: cardCounts.pending_vendor_count ?? 0,
         icon: "/dashboard-assests/cards_icon/doc.svg",
         text_color: "text-rose-800",
         bg_color: "bg-rose-100",
@@ -119,7 +129,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       },
       {
         name: "Onboarded Vendors",
-        count: Props.cardData?.approved_vendor_count ?? 0,
+        count: cardCounts.approved_vendor_count ?? 0,
         icon: "/dashboard-assests/cards_icon/tick.svg",
         text_color: "text-emerald-800",
         bg_color: "bg-emerald-100",
@@ -127,41 +137,15 @@ const DashboardCards = ({ ...Props }: Props) => {
       },
       {
         name: "Rejcted Vendors",
-        count: Props.cardData?.rejected_vendor_count ?? 0,
+        count: cardCounts.rejected_vendor_count ?? 0,
         icon: "/dashboard-assests/cards_icon/doc.svg",
         text_color: "text-rose-800",
         bg_color: "bg-rose-100",
         hover: "hover:border-rose-400",
       },
-      // {
-      //   name: "Dispatch Details",
-      //   count: 0,
-      //   icon: "/dashboard-assests/cards_icon/truck.svg",
-      //   text_color: "text-blue-800",
-      //   bg_color: "bg-blue-100",
-      //   hover: "hover:border-blue-400",
-      // },
-
-      // {
-      //   name: "Payment Request",
-      //   count: 0,
-      //   icon: "/dashboard-assests/cards_icon/hand.svg",
-      //   text_color: "text-orange-800",
-      //   bg_color: "bg-orange-100",
-      //   hover: "hover:border-orange-400",
-      // },
-      // {
-      //   name: "Current Month Vendors",
-      //   count: Props.cardData?.current_month_vendor ?? 0,
-      //   icon: "/dashboard-assests/cards_icon/calender.svg",
-      //   text_color: "text-black-800",
-      //   bg_color: "bg-gray-100",
-      //   hover: "hover:border-gray-400",
-      // },
-
       {
         name: "Purchase Enquiry",
-        count: Props.cardData?.cart_count ?? 0,
+        count: cardCounts.cart_count ?? 0,
         icon: "/dashboard-assests/cards_icon/doc.svg",
         text_color: "text-rose-800",
         bg_color: "bg-rose-100",
@@ -170,7 +154,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       {
         name: "Purchase Requisition Request",
         subname: "Generated through VMS",
-        count: Props.cardData?.pr_count ?? 0,
+        count: cardCounts.pr_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-rose-800",
         bg_color: "bg-green-200",
@@ -178,7 +162,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       },
       {
         name: "Purchase & Ongoing Orders",
-        count: Props.cardData?.purchase_order_count ?? 0,
+        count: cardCounts.purchase_order_count ?? 0,
         icon: "/dashboard-assests/cards_icon/package.svg",
         text_color: "text-violet-800",
         bg_color: "bg-violet-100",
@@ -186,7 +170,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       },
       {
         name: "RFQ Comparision",
-        count: Props?.rfqData?.overall_total_rfq ?? 0,
+        count: cardCounts.overall_total_rfq ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-violet-800",
         bg_color: "bg-violet-100",
@@ -194,7 +178,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       },
       {
         name: "SAP Error Log",
-        count: Props?.cardData?.sap_error_vendor_count ?? 0,
+        count: cardCounts.sap_error_vendor_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-violet-800",
         bg_color: "bg-violet-100",
@@ -205,7 +189,7 @@ const DashboardCards = ({ ...Props }: Props) => {
     allCardData = [
       {
         name: "Onboarded Vendors",
-        count: Props.cardData?.approved_vendor_count ?? 0,
+        count: cardCounts.approved_vendor_count ?? 0,
         icon: "/dashboard-assests/cards_icon/tick.svg",
         text_color: "text-emerald-800",
         bg_color: "bg-emerald-100",
@@ -213,7 +197,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       },
       {
         name: "Accounts Onboarded Vendors",
-        count: Props?.cardData?.approved_vendor_count_by_accounts_team ?? 0,
+        count: cardCounts.approved_vendor_count_by_accounts_team ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-violet-800",
         bg_color: "bg-violet-100",
@@ -224,7 +208,7 @@ const DashboardCards = ({ ...Props }: Props) => {
     allCardData = [
       {
         name: "Pending Vendors",
-        count: Props.cardData?.pending_vendor_count ?? 0,
+        count: cardCounts.pending_vendor_count ?? 0,
         icon: "/dashboard-assests/cards_icon/doc.svg",
         text_color: "text-rose-800",
         bg_color: "bg-rose-100",
@@ -232,7 +216,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       },
       {
         name: "Onboarded Vendors",
-        count: Props.cardData?.approved_vendor_count ?? 0,
+        count: cardCounts.approved_vendor_count ?? 0,
         icon: "/dashboard-assests/cards_icon/tick.svg",
         text_color: "text-emerald-800",
         bg_color: "bg-emerald-100",
@@ -240,7 +224,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       },
       {
         name: "Rejcted Vendors",
-        count: Props.cardData?.rejected_vendor_count ?? 0,
+        count: cardCounts.rejected_vendor_count ?? 0,
         icon: "/dashboard-assests/cards_icon/doc.svg",
         text_color: "text-rose-800",
         bg_color: "bg-rose-100",
@@ -248,31 +232,31 @@ const DashboardCards = ({ ...Props }: Props) => {
       },
       {
         name: "SAP Error Log",
-        count: Props?.cardData?.sap_error_vendor_count ?? 0,
+        count: cardCounts.sap_error_vendor_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-violet-800",
         bg_color: "bg-violet-100",
         hover: "hover:border-violet-400",
       },
       {
-        name: "Accounts Pending Vendors",
-        count: Props?.cardData?.pending_vendor_count_by_accounts_team ?? 0,
+        name: "My Vendors",
+        count: cardCounts.my_vendors_count ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-violet-800",
         bg_color: "bg-violet-100",
         hover: "hover:border-violet-400",
       },
       {
-        name: "Accounts Onboarded Vendors",
-        count: Props?.cardData?.approved_vendor_count_by_accounts_team ?? 0,
-        icon: "/dashboard-assests/cards_icon/file-search.svg",
-        text_color: "text-violet-800",
-        bg_color: "bg-violet-100",
-        hover: "hover:border-violet-400",
+        name: "My Approvals",
+        count: cardCounts.my_approvals_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/tick.svg",
+        text_color: "text-emerald-800",
+        bg_color: "bg-emerald-100",
+        hover: "hover:border-emerald-400",
       },
       {
         name: "Accounts Rejected Vendors",
-        count: Props?.cardData?.rejected_vendor_count_by_accounts_team ?? 0,
+        count: cardCounts.rejected_vendor_count_by_accounts_team ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-violet-800",
         bg_color: "bg-violet-100",
@@ -280,7 +264,7 @@ const DashboardCards = ({ ...Props }: Props) => {
       },
       {
         name: "Accounts SAP Error Log",
-        count: Props?.cardData?.sap_error_vendor_count_by_accounts_team ?? 0,
+        count: cardCounts.sap_error_vendor_count_by_accounts_team ?? 0,
         icon: "/dashboard-assests/cards_icon/file-search.svg",
         text_color: "text-violet-800",
         bg_color: "bg-violet-100",
@@ -289,34 +273,74 @@ const DashboardCards = ({ ...Props }: Props) => {
     ];
   }
 
-  let EnquirerCard = [
-    {
-      name: "Purchase Enquiry",
-      count: Props.cardData?.cart_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/doc.svg",
-      text_color: "text-rose-800",
-      bg_color: "bg-rose-100",
-      hover: "hover:border-rose-400",
-    },
-    {
-      name: "Purchase Requisition Request",
-      subname: "Generated through VMS",
-      count: Props.cardData?.pr_count ?? 0,
-      icon: "/dashboard-assests/cards_icon/file-search.svg",
-      text_color: "text-rose-800",
-      bg_color: "bg-green-200",
-      hover: "hover:border-rose-400",
-    },
-  ];
+  const cardData = useMemo(() => {
+    const EnquirerCard = [
+      {
+        name: "Purchase Enquiry",
+        count: cardCounts.cart_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/doc.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-rose-100",
+        hover: "hover:border-rose-400",
+      },
+      {
+        name: "Purchase Requisition Request",
+        subname: "Generated through VMS",
+        count: cardCounts.pr_count ?? 0,
+        icon: "/dashboard-assests/cards_icon/file-search.svg",
+        text_color: "text-rose-800",
+        bg_color: "bg-green-200",
+        hover: "hover:border-rose-400",
+      },
+    ];
 
+    return user === "Enquirer" ? EnquirerCard : allCardData;
+  }, [user, cardCounts]);
 
-  let cardData = user === "Enquirer" ? EnquirerCard : allCardData;
+  useEffect(() => {
+    const counts: Record<string, number> = {
+      pending_vendor_count: Props.cardData?.pending_vendor_count ?? 0,
+      approved_vendor_count: Props.cardData?.approved_vendor_count ?? 0,
+      rejected_vendor_count: Props.cardData?.rejected_vendor_count ?? 0,
+      purchase_order_count: Props.cardData?.purchase_order_count ?? 0,
+      pr_count: Props.cardData?.pr_count ?? 0,
+      cart_count: Props.cardData?.cart_count ?? 0,
+      sap_error_vendor_count: Props.cardData?.sap_error_vendor_count ?? 0,
+      current_month_vendor: Props.cardData?.current_month_vendor ?? 0,
+      sap_error_vendor_count_by_accounts_team: Props.cardData?.sap_error_vendor_count_by_accounts_team ?? 0,
+      rejected_vendor_count_by_accounts_team: Props.cardData?.rejected_vendor_count_by_accounts_team ?? 0,
+      approved_vendor_count_by_accounts_team: Props.cardData?.approved_vendor_count_by_accounts_team ?? 0,
+      overall_total_rfq: Number(Props?.rfqData?.overall_total_rfq) || 0,
+      asa_onboarded_count: Props.ASAdashboardOnboardedVendorListTableData?.overall_count ?? 0,
+      asa_form_count: Props.dashboardASAFormTableData?.overall_total_asa ?? 0,
+      asa_pending_count: Props.dashboardASAPendingVendorListTableData?.overall_count ?? 0,
+      my_vendors_count: Props?.myVendorsData?.message?.total_count ?? 0,
+      my_approvals_count: Props?.myApprovalsData?.message?.total_count ?? 0,
+    };
+    setCardCounts(counts);
+  }, [Props.cardData, Props.rfqData, Props.ASAdashboardOnboardedVendorListTableData, Props.dashboardASAFormTableData, Props.dashboardASAPendingVendorListTableData, Props.myVendorsData, Props.myApprovalsData]);
 
   useEffect(() => {
     if (user) {
       setLoading(false);
     }
   }, [user]);
+
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam) {
+      setActiveTab(tabParam);
+    } else if (cardData.length > 0) {
+      setActiveTab(cardData[0].name);
+    }
+  }, [searchParams, cardData]);
+
+  const handleTabChange = (tabName: string) => {
+    setActiveTab(tabName);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tabName);
+    router.push(`?${params.toString()}`);
+  };
 
   const fetchPoBasedOnVendorCode = async () => {
     const url = `${API_END_POINTS?.vendorPOTable}?vendor_code`;
@@ -346,7 +370,7 @@ const DashboardCards = ({ ...Props }: Props) => {
           </Select>
         </div>
       )}
-      <Tabs defaultValue={cardData?.[0]?.name} className="">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="">
         <div className="">
           <TabsList className="grid grid-cols-4 gap-4 h-full pb-6 bg-white">
             {cardData?.map((item, index) => (
@@ -480,18 +504,30 @@ const DashboardCards = ({ ...Props }: Props) => {
                   companyDropdown={Props?.companyDropdown}
                 />
               )}
-              {item.name === "Accounts Pending Vendors" && (
+              {item.name === "My Approvals" && (
+                <DashboardMyApprovalsTable
+                  dashboardTableData={Props?.myApprovalsData}
+                  companyDropdown={Props?.companyDropdown}
+                />
+              )}
+              {item.name === "My Vendors" && (
+                <DashboardMyVendorsTable
+                  dashboardTableData={Props?.myVendorsData}
+                  companyDropdown={Props?.companyDropdown}
+                />
+              )}
+              {/* {item.name === "Accounts Pending Vendors" && (
                 <DashboardAccountsPendingTable
                   dashboardTableData={Props?.dashboardAccountsPending}
                   companyDropdown={Props?.companyDropdown}
                 />
-              )}
-              {item.name === "Accounts Onboarded Vendors" && (
+              )} */}
+              {/* {item.name === "Accounts Onboarded Vendors" && (
                 <DashboardAccountsOnboardedTable
                   dashboardTableData={Props?.dashboardAccountsOnboarded}
                   companyDropdown={Props?.companyDropdown}
                 />
-              )}
+              )} */}
               {item.name === "Accounts Rejected Vendors" && (
                 <DashboardAccountsRejectedTable
                   dashboardTableData={Props?.dashboardAccountsRejected}

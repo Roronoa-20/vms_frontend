@@ -47,7 +47,6 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, validation
 
   const uploadProductImageRef = useRef<HTMLInputElement>(null);
 
-  console.log(OnboardingDetail, "this is console")
 
   const fetchTable = async () => {
     const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
@@ -142,7 +141,6 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, validation
     fetchTable();
   }
 
-  console.log("Mamafbaeofb", validation_check);
 
   return (
     <div className="flex flex-col bg-white rounded-lg p-2 max-h-[80vh] w-full">

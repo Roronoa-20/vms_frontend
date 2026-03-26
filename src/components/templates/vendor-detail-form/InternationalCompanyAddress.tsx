@@ -92,7 +92,6 @@ const CompanyAddress = ({
 
 
 
-  console.log(OnboardingDetail, "htis is onboarding data")
 
 
 
@@ -197,7 +196,6 @@ const CompanyAddress = ({
     }
   }
 
-  console.log(formdata, "this is form data")
 
   return (
     <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">

@@ -71,7 +71,6 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
         setBankNameDropown(bankNameResponse?.data?.message?.data)
       }
     }
-    console.log(OnboardingDetail, "payment details data")
     const fetchCurrency = async () => {
 
       const currencyUrl = `${API_END_POINTS?.currencyDropdown}`;

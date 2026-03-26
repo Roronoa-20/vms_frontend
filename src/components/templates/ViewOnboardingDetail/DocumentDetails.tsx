@@ -293,7 +293,6 @@ const DocumentDetails = ({
     }
   }
 
-  console.log(singlerow)
 
   return (
     <>

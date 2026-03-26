@@ -51,7 +51,6 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
   useEffect(() => {
   }, [multipleCertificateData])
 
-  console.log(OnboardingDetail, "this is data of certificate")
   const fileInput = useRef<HTMLInputElement>(null);
   const handleSubmit = async () => {
     if (OnboardingDetail?.length < 1) {
@@ -76,7 +75,6 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
     if (certificateData?.file) {
       formData.append("certificate_attach", certificateData.file[0])
     }
-    console?.log(formData?.values)
     const certificateSubmit: AxiosResponse = await requestWrapper({ url: url, data: formData, method: "POST" })
     if (certificateSubmit?.status == 200) {
       console.log("Successfully submit")
@@ -85,7 +83,6 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
     if (fileInput?.current) {
       fileInput.current.value = ''
     }
-    console.log("pushring")
     location.reload()
     // router.push(`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
     // tableFetch();
