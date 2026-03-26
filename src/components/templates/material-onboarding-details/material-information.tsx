@@ -8,7 +8,11 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import { MaterialCode } from "@/src/types/PurchaseRequestType";
+<<<<<<< HEAD
 import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, ClassType, UOMMaster, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, StorageLocation, SerialNumber, MaterialType as MaterialTypeT, MaterialRequestData, LatestCodeSuggestions } from "@/src/types/MaterialCodeRequestFormTypes";
+=======
+import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, ClassType, UOMMaster, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, StorageLocation, SerialNumber, MaterialType, MaterialRequestData, LatestCodeSuggestions } from "@/src/types/MaterialCodeRequestFormTypes";
+>>>>>>> e56a3ef (Changes in Material Onboarding)
 
 interface MaterialInformationFormProps {
   form: any;
@@ -44,6 +48,7 @@ interface MaterialInformationFormProps {
 }
 
 
+<<<<<<< HEAD
 const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({
   form,
   companyName,
@@ -69,6 +74,9 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({
   selectedCodeLogic,
   setSelectedCodeLogic
 }) => {
+=======
+const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form, companyName, plantcode, EmployeeDetailsJSON, DivisionDetails = [], role, UnitOfMeasure, MaterialGroup, MaterialOnboardingDetails, companyInfo, AvailabilityCheck, MaterialType, StorageLocation = [], ClassType, SerialProfile, materialCompanyCode, setMaterialCompanyCode, MaterialCategory, setIsMaterialCodeEdited, setShouldShowAllFields, shouldShowAllFields, setIsMatchedMaterial, isZCAPMaterial, MaterialDetails }) => {
+>>>>>>> e56a3ef (Changes in Material Onboarding)
 
   const [selectedMaterialType, setSelectedMaterialType] = useState<string>("");
   const [filteredMaterialGroup, setFilteredMaterialGroup] = useState<MaterialGroupMaster[]>([]);
@@ -80,6 +88,11 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({
   const [materialCodeAutoFetched, setMaterialCodeAutoFetched] = useState(false);
   const [AllMaterialCodes, setAllMaterialCodes] = useState<MaterialCode[]>([]);
   const [materialCodeStatus, setMaterialCodeStatus] = useState<"idle" | "checking" | "exists" | "available">("idle");
+<<<<<<< HEAD
+=======
+  const [selectedCodeLogic, setSelectedCodeLogic] = useState<string>("");
+  const [latestCodeSuggestions, setLatestCodeSuggestions] = useState<LatestCodeSuggestions | null>(null);
+>>>>>>> e56a3ef (Changes in Material Onboarding)
 
   const company = useWatch({ control: form.control, name: "material_company_code" });
   const materialType = useWatch({ control: form.control, name: "material_type" });
@@ -131,7 +144,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({
       }
 
       const url =
-        `${API_END_POINTS.MaterialCodeSearchApi}` +
+        `${API_END_POINTS.CheckMaterialCode}` +
         `?filters=${encodeURIComponent(
           JSON.stringify({
             company,
@@ -168,6 +181,55 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({
     // Logic for selectedCodeLogic moved to parent MaterialOnboardingForm
   }, [category, materialType, propsMaterialType]);
 
+<<<<<<< HEAD
+=======
+    const matchedType = MaterialType.find(t => t.name === materialType);
+    if (!matchedType?.material_code_logic?.length) return;
+
+    const normalize = (v: string) => (v || "").trim().toLowerCase();
+
+    const matchedLogic = matchedType.material_code_logic.find(
+      (m) => normalize(m.material_type_category) === normalize(category)
+    );
+
+    if (matchedLogic?.code_logic) {
+      setSelectedCodeLogic(matchedLogic.code_logic);
+    }
+  }, [
+    category,
+    materialType,
+    MaterialType
+  ]);
+
+
+  const fetchLatestCode = async () => {
+    if (!selectedCodeLogic) return;
+
+    const companyCodeVal = form.getValues("material_company_code");
+    if (!companyCodeVal) return;
+
+    try {
+      const res = await requestWrapper({
+        method: "GET",
+        url: `${API_END_POINTS.getLatestMaterialCode}?prefix=${selectedCodeLogic}&company=${companyCodeVal}`,
+      });
+      console.log("Latest Code API Response:", res);
+      if (res?.data?.message) {
+        const { sap, onboarding, next_suggested } = res.data.message;
+
+        const suggestions = {
+          next: next_suggested || null,
+          sap: sap || null,
+          onboarding: onboarding || null
+        };
+
+        setLatestCodeSuggestions(suggestions);
+      }
+    } catch (e) {
+      console.error("fetchLatestCode API Failed", e);
+    }
+  };
+>>>>>>> e56a3ef (Changes in Material Onboarding)
 
   useEffect(() => {
     // fetchLatestCode handled by parent
