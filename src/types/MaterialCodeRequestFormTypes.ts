@@ -36,6 +36,12 @@ export type MaterialRegistrationFormData = {
   [key: string]: any;
 };
 
+export type LatestCodeSuggestions = {
+  next: string | null;
+  sap: string | null;
+  onboarding: string | null;
+};
+
 export type MaterialSafePrefillData = {
   material_company_code: string;
   material_category: string;
@@ -476,4 +482,5 @@ export interface MaterialRequestAPIResponse {
     data: MaterialRequestData;
   };
 }
+
 

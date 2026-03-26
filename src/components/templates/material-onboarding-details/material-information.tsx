@@ -8,7 +8,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import { MaterialCode } from "@/src/types/PurchaseRequestType";
-import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, ClassType, UOMMaster, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, StorageLocation, SerialNumber, MaterialType, MaterialRequestData } from "@/src/types/MaterialCodeRequestFormTypes";
+import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, ClassType, UOMMaster, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, StorageLocation, SerialNumber, MaterialType, MaterialRequestData, LatestCodeSuggestions } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface MaterialInformationFormProps {
   form: any;
@@ -40,6 +40,7 @@ interface MaterialInformationFormProps {
   MaterialDetails?: MaterialRequestData;
 }
 
+
 const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form, companyName, plantcode, EmployeeDetailsJSON, DivisionDetails = [], role, UnitOfMeasure, MaterialGroup, MaterialOnboardingDetails, companyInfo, AvailabilityCheck, MaterialType, StorageLocation = [], ClassType, SerialProfile, materialCompanyCode, setMaterialCompanyCode, MaterialCategory, setIsMaterialCodeEdited, setShouldShowAllFields, shouldShowAllFields, setIsMatchedMaterial, isZCAPMaterial, MaterialDetails }) => {
 
   const [selectedMaterialType, setSelectedMaterialType] = useState<string>("");
@@ -53,7 +54,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
   const [AllMaterialCodes, setAllMaterialCodes] = useState<MaterialCode[]>([]);
   const [materialCodeStatus, setMaterialCodeStatus] = useState<"idle" | "checking" | "exists" | "available">("idle");
   const [selectedCodeLogic, setSelectedCodeLogic] = useState<string>("");
-  const [latestCodeSuggestions, setLatestCodeSuggestions] = useState<MaterialCode[]>([]);
+  const [latestCodeSuggestions, setLatestCodeSuggestions] = useState<LatestCodeSuggestions | null>(null);
 
   const company = useWatch({ control: form.control, name: "material_company_code" });
   const materialType = useWatch({ control: form.control, name: "material_type" });
@@ -105,7 +106,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
       }
 
       const url =
-        `${API_END_POINTS.MaterialCodeSearchApi}` +
+        `${API_END_POINTS.CheckMaterialCode}` +
         `?filters=${encodeURIComponent(
           JSON.stringify({
             company,
@@ -172,11 +173,17 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
         method: "GET",
         url: `${API_END_POINTS.getLatestMaterialCode}?prefix=${selectedCodeLogic}&company=${companyCodeVal}`,
       });
+      console.log("Latest Code API Response:", res);
+      if (res?.data?.message) {
+        const { sap, onboarding, next_suggested } = res.data.message;
 
-      if (res?.data?.message && Object.keys(res.data.message).length > 0) {
-        setLatestCodeSuggestions([res.data.message]);
-      } else {
-        setLatestCodeSuggestions([{ material_code: "No existing code found for this logic" } as any]);
+        const suggestions = {
+          next: next_suggested || null,
+          sap: sap || null,
+          onboarding: onboarding || null
+        };
+
+        setLatestCodeSuggestions(suggestions);
       }
     } catch (e) {
       console.error("fetchLatestCode API Failed", e);
