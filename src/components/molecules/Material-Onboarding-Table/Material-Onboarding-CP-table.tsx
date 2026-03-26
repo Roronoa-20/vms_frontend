@@ -12,14 +12,24 @@ interface MaterialRequestTableProps {
     data: MaterialRequestItem[];
     companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"];
     TableTitle?: string;
+    currentPage: number;
+    setCurrentPage: (page: number) => void;
+    totalRecords: number;
+    recordPerPage: number;
 }
 
-const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], companyDropdown, TableTitle }) => {
+const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ 
+    data = [], 
+    companyDropdown, 
+    TableTitle,
+    currentPage = 1,
+    setCurrentPage,
+    totalRecords = 0,
+    recordPerPage = 20
+}) => {
     console.log("Table Data---->", data)
     const [search, setSearch] = useState("");
     const [selectedCompany, setSelectedCompany] = useState("");
-    const [currentPage, setCurrentPage] = useState(1);
-    const recordPerPage = 20;
 
     // Filtered & flattened data
     const flattenedData = useMemo(() => {
@@ -42,9 +52,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
         );
     }, [data, search, selectedCompany]);
 
-    const totalRecords = flattenedData.length;
-    const startIndex = (currentPage - 1) * recordPerPage;
-    const paginatedData = flattenedData.slice(startIndex, startIndex + recordPerPage);
+    const paginatedData = flattenedData;
 
     const formatDate = (dateStr?: string | null) => {
         if (!dateStr) return "-";
@@ -52,7 +60,11 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
         return `${day}-${month}-${year}`;
     };
 
-    React.useEffect(() => setCurrentPage(1), [search, selectedCompany]);
+    React.useEffect(() => {
+        if (typeof setCurrentPage === "function") {
+            setCurrentPage(1);
+        }
+    }, [search, selectedCompany]);
 
     return (
         <>
