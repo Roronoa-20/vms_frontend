@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, ChangeEvent } from "react";
 import { useWatch } from "react-hook-form";
 import UserRequestDetails from "@/src/components/templates/material-onboarding-details/user-request-details";
 import UserRequestDetails2 from "@/src/components/templates/material-onboarding-details/user-request-details-2";
@@ -8,11 +8,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import { MaterialCode } from "@/src/types/PurchaseRequestType";
-<<<<<<< HEAD
-import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, ClassType, UOMMaster, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, StorageLocation, SerialNumber, MaterialType as MaterialTypeT, MaterialRequestData, LatestCodeSuggestions } from "@/src/types/MaterialCodeRequestFormTypes";
-=======
 import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, ClassType, UOMMaster, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, StorageLocation, SerialNumber, MaterialType, MaterialRequestData, LatestCodeSuggestions } from "@/src/types/MaterialCodeRequestFormTypes";
->>>>>>> e56a3ef (Changes in Material Onboarding)
 
 interface MaterialInformationFormProps {
   form: any;
@@ -28,7 +24,7 @@ interface MaterialInformationFormProps {
   companyInfo?: Company[];
   ProfitCenter?: ProfitCenter[];
   AvailabilityCheck?: AvailabilityCheck[];
-  MaterialType?: MaterialTypeT[];
+  MaterialType?: MaterialType[];
   StorageLocation?: StorageLocation[];
   ClassType?: ClassType[];
   SerialProfile?: SerialNumber[];
@@ -48,35 +44,7 @@ interface MaterialInformationFormProps {
 }
 
 
-<<<<<<< HEAD
-const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({
-  form,
-  companyName,
-  plantcode,
-  EmployeeDetailsJSON,
-  DivisionDetails = [],
-  role,
-  UnitOfMeasure,
-  MaterialGroup,
-  MaterialOnboardingDetails,
-  MaterialType: propsMaterialType,
-  StorageLocation = [],
-  materialCompanyCode,
-  setMaterialCompanyCode,
-  MaterialCategory,
-  setIsMaterialCodeEdited,
-  setShouldShowAllFields,
-  shouldShowAllFields,
-  setIsMatchedMaterial,
-  isZCAPMaterial,
-  MaterialDetails,
-  latestCodeSuggestions,
-  selectedCodeLogic,
-  setSelectedCodeLogic
-}) => {
-=======
 const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form, companyName, plantcode, EmployeeDetailsJSON, DivisionDetails = [], role, UnitOfMeasure, MaterialGroup, MaterialOnboardingDetails, companyInfo, AvailabilityCheck, MaterialType, StorageLocation = [], ClassType, SerialProfile, materialCompanyCode, setMaterialCompanyCode, MaterialCategory, setIsMaterialCodeEdited, setShouldShowAllFields, shouldShowAllFields, setIsMatchedMaterial, isZCAPMaterial, MaterialDetails }) => {
->>>>>>> e56a3ef (Changes in Material Onboarding)
 
   const [selectedMaterialType, setSelectedMaterialType] = useState<string>("");
   const [filteredMaterialGroup, setFilteredMaterialGroup] = useState<MaterialGroupMaster[]>([]);
@@ -88,11 +56,8 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
   const [materialCodeAutoFetched, setMaterialCodeAutoFetched] = useState(false);
   const [AllMaterialCodes, setAllMaterialCodes] = useState<MaterialCode[]>([]);
   const [materialCodeStatus, setMaterialCodeStatus] = useState<"idle" | "checking" | "exists" | "available">("idle");
-<<<<<<< HEAD
-=======
   const [selectedCodeLogic, setSelectedCodeLogic] = useState<string>("");
   const [latestCodeSuggestions, setLatestCodeSuggestions] = useState<LatestCodeSuggestions | null>(null);
->>>>>>> e56a3ef (Changes in Material Onboarding)
 
   const company = useWatch({ control: form.control, name: "material_company_code" });
   const materialType = useWatch({ control: form.control, name: "material_type" });
@@ -178,11 +143,9 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
   const category = useWatch({ control: form.control, name: "material_type_category" });
 
   useEffect(() => {
-    // Logic for selectedCodeLogic moved to parent MaterialOnboardingForm
-  }, [category, materialType, propsMaterialType]);
+    if (!category || !MaterialType?.length) return;
+    if (!materialType) return;
 
-<<<<<<< HEAD
-=======
     const matchedType = MaterialType.find(t => t.name === materialType);
     if (!matchedType?.material_code_logic?.length) return;
 
@@ -229,7 +192,6 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
       console.error("fetchLatestCode API Failed", e);
     }
   };
->>>>>>> e56a3ef (Changes in Material Onboarding)
 
   useEffect(() => {
     // fetchLatestCode handled by parent
