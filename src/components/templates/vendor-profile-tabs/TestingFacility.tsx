@@ -1,5 +1,4 @@
 "use client";
-import { toast } from "react-toastify";
 import React, { useEffect, useState } from "react";
 import { Input } from "../../atoms/input";
 import { Button } from "../../atoms/button";
@@ -35,8 +34,6 @@ const TestingDetail = ({
   ref_no,
   onboarding_ref_no,
   OnboardingDetail,
-  onNextTab,
-  onBackTab
 }: Props) => {
   const [multipleTestingDetail, setMultipleTestingDetail] =
     useState<Partial<TTestingFacility>>();
@@ -70,16 +67,14 @@ const TestingDetail = ({
       method: "POST",
     });
 
-    if (machineDetailResponse?.status == 200 || machineDetailResponse?.status == 2000) {
-      toast.success("Your details have been updated and informed to Meri Purchase Team");
-      if (onNextTab) onNextTab(); else router.push(
+    if (machineDetailResponse?.status == 200)
+      router.push(
         `/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
       );
-    }
   };
 
   const handleBack = () => {
-    if (onBackTab) onBackTab(); else router.push(
+    router.push(
       `/vendor-details-form?tabtype=Machinery%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
     );
   };
@@ -98,13 +93,13 @@ const TestingDetail = ({
     updatedTestingDetails.forEach((item) => updateTestingDetail(item));
   };
   return (
-    <div className="flex flex-col bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto w-full">
-      <h1 className="border-b-2 sticky top-0 bg-white py-2 text-lg">
+    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
+      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
         Details of Testing Facility
       </h1>
-      <div className="grid grid-cols-3 gap-4 p-2">
+      <div className="grid grid-cols-3 gap-6 p-5">
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Equipment Name
           </h1>
           <Input
@@ -119,7 +114,7 @@ const TestingDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Equipment Qty.
           </h1>
           <Input
@@ -134,7 +129,7 @@ const TestingDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Capacity
           </h1>
           <Input
@@ -149,7 +144,7 @@ const TestingDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Remarks
           </h1>
           <Input
@@ -165,9 +160,7 @@ const TestingDetail = ({
         </div>
         <div className="col-span-1 flex items-end">
           <Button
-            className="py-2"
-            variant={"nextbtn"}
-            size={"nextbtnsize"}
+            className={`bg-blue-400 hover:bg-blue-300`}
             onClick={() => {
               handleAdd();
             }}

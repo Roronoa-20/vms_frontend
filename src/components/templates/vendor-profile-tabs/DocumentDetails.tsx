@@ -1,5 +1,4 @@
 "use client";
-import { toast } from "react-toastify";
 import React, { useEffect, useRef } from "react";
 import { Input } from "../../atoms/input";
 import {
@@ -138,7 +137,7 @@ const DocumentDetails = ({
       url: url,
       method: "GET",
     });
-    if (response?.status == 200 || response?.status == 2000) {
+    if (response?.status == 200) {
       setGstStateDropdown(response?.data?.message?.data);
       console.log(response?.data?.message, "this is state dropdown");
     }
@@ -308,14 +307,14 @@ const DocumentDetails = ({
       data: formData,
       method: "POST",
     });
-    if (Response?.status == 200 || Response?.status == 2000) setDocumentDetail({});
-    if (onNextTab) onNextTab(); else router.push(
+    if (Response?.status == 200) setDocumentDetail({});
+    router.push(
       `/vendor-details-form?tabtype=Payment Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
     );
   };
 
   const handleBack = () => {
-    if (onBackTab) onBackTab(); else router.push(
+    router.push(
       `/vendor-details-form?tabtype=Company%20Address&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
     );
   };
@@ -400,8 +399,8 @@ const DocumentDetails = ({
       data: formdata,
       method: "POST",
     });
-    if (response?.status == 200 || response?.status == 2000) {
-      toast.success("Your details have been updated and informed to Meri Purchase Team");
+    if (response?.status == 200) {
+      alert("submittes successfully");
       fetchGstTable();
       setSingleRow(null);
       setShowGSTTable(true);
@@ -418,8 +417,8 @@ const DocumentDetails = ({
       url: deleteUrl,
       method: "GET",
     });
-    if (response?.status == 200 || response?.status == 2000) {
-      toast.success("Your details have been updated and informed to Meri Purchase Team");
+    if (response?.status == 200) {
+      alert("Sccessfully Deleted");
       fetchGstTable();
     }
   };
@@ -431,7 +430,7 @@ const DocumentDetails = ({
       method: "GET",
     });
     const OnboardingDetail: VendorOnboardingResponse["message"]["document_details_tab"]["gst_table"] =
-      fetchOnboardingDetailResponse?.status == 200 || fetchOnboardingDetailResponse?.status == 2000
+      fetchOnboardingDetailResponse?.status == 200
         ? fetchOnboardingDetailResponse?.data?.message?.document_details_tab
           ?.gst_table
         : "";
@@ -451,7 +450,7 @@ const DocumentDetails = ({
       url: url,
       method: "GET",
     });
-    if (response?.status == 200 || response?.status == 2000) {
+    if (response?.status == 200) {
       setSingleRow((prev: any) => ({
         ...prev,
         gst_state: response?.data?.message?.data?.state?.name,
@@ -477,12 +476,12 @@ const DocumentDetails = ({
   console.log(gstStateDropdown, "this is dropown");
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto w-full">
-      <h1 className="border-b-2 text-lg">Document Details</h1>
+    <div className="flex flex-col bg-white rounded-lg p-4 w-full max-h-[80vh]">
+      <h1 className="border-b-2 pb-2 text-lg">Document Details</h1>
       <div className="overflow-y-scroll">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-6 p-5 ">
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Company PAN Number{" "}
               <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
@@ -508,7 +507,7 @@ const DocumentDetails = ({
               )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Name of Company on PAN Card{" "}
               <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
@@ -534,7 +533,7 @@ const DocumentDetails = ({
               )}
           </div>
           <div>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Upload PAN Document{" "}
               <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
@@ -574,9 +573,9 @@ const DocumentDetails = ({
               )}
             </div>
           </div>
-          <div className="col-span-3 grid grid-cols-3 gap-4">
+          <div className="col-span-3 grid grid-cols-3 gap-6">
             <div className="flex flex-col">
-              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 GST Vendor Type{" "}
                 <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
@@ -616,7 +615,7 @@ const DocumentDetails = ({
               )}
             </div>
             <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Meril Company <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Select
@@ -643,7 +642,7 @@ const DocumentDetails = ({
               )}
             </div>
             <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Pincode <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               {/* <Input
@@ -691,7 +690,7 @@ const DocumentDetails = ({
               )}
             </div>
             <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 State <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               {/* <Input placeholder="Enter State" value={documentDetails?.gst_state ?? OnboardingDetail?.gst_table[0]?.gst_state} onChange={(e)=>{setDocumentDetail((prev)=>({...prev,gst_state:e.target.value}))}}/> */}
@@ -724,10 +723,10 @@ const DocumentDetails = ({
             </div>
           </div>
           <div
-            className={`col-span-3 grid grid-cols-3 gap-4 ${singlerow?.gst_ven_type == "Not-Registered" ? "hidden" : ""}`}
+            className={`col-span-3 grid grid-cols-3 gap-6 ${singlerow?.gst_ven_type == "Not-Registered" ? "hidden" : ""}`}
           >
             <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 GST Number <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
               <Input
@@ -751,7 +750,7 @@ const DocumentDetails = ({
               )}
             </div>
             <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 GST Registration Date{" "}
                 <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
@@ -778,7 +777,7 @@ const DocumentDetails = ({
                 )}
             </div>
             <div>
-              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
                 Upload GST Document{" "}
                 <span className="pl-2 text-red-400 text-2xl">*</span>
               </h1>
@@ -897,11 +896,10 @@ const DocumentDetails = ({
             </Table>
           </div>
         )}
-        <div className="grid grid-cols-3 p-5 gap-4">
+        <div className="grid grid-cols-3 p-5 gap-6">
           <div className="flex flex-col col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-[26px]">
               MSME Registered?
-              <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
             <Select
               onValueChange={(value) => {
@@ -927,7 +925,7 @@ const DocumentDetails = ({
           <div
             className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}
           >
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               MSME Enterprise Type{" "}
               <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
@@ -964,7 +962,7 @@ const DocumentDetails = ({
           <div
             className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}
           >
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Udyam Registration No.{" "}
               <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
@@ -989,7 +987,7 @@ const DocumentDetails = ({
           <div
             className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}
           >
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Name of Company in Udyam Certificate{" "}
               <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
@@ -1017,7 +1015,7 @@ const DocumentDetails = ({
           <div
             className={`flex flex-col col-span-1 ${isMSME == "Yes" ? "" : "hidden"}`}
           >
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Upload Udyam Certificate{" "}
               <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
@@ -1061,7 +1059,7 @@ const DocumentDetails = ({
             </div>
           </div>
           <div className={`flex flex-col col-span-1`} title="Type NA for if you don't have the Number">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
               Enterprise Registration Number{" "}
               <span className="pl-2 text-red-400 text-2xl">*</span>
             </h1>
@@ -1087,9 +1085,9 @@ const DocumentDetails = ({
               )}
           </div>
           <div className={`flex flex-col col-span-1`}>
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-6">
               Upload Enterprise Registration Document{" "}
-              {/* <span className="pl-2 text-red-400 text-2xl hidden">*</span> */}
+              {/* <span className="pl-2 text-red-400 text-2xl">*</span> */}
             </h1>
             <div className="flex gap-4 w-full">
               <Input
