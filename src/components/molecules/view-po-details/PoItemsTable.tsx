@@ -9,8 +9,7 @@ import PopUp from '../PopUp'
 import { Input } from '../../atoms/input'
 import MultiSelect, { MultiValue } from "react-select";
 import API_END_POINTS from '@/src/services/apiEndPoints'
-import { AxiosResponse } from 'axios'
-import requestWrapper from '@/src/services/apiCall'
+import { sendPoConfirmationEmail } from '@/src/services/purchaseOrder/purchaseOrder.services'
 import { useRouter } from 'next/navigation'
 
 
@@ -21,7 +20,7 @@ interface Props {
 
 const PoItemsTable = ({POTableData,poName}: Props) => {
 
-    const [total_event_list, settotalEventList] = useState(0);
+        const [total_event_list, settotalEventList] = useState(0);
         const [record_per_page, setRecordPerPage] = useState<number>(10);
         const [currentPage, setCurrentPage] = useState<number>(1);
         const [isEmailDialog, setIsEmailDialog] = useState<boolean>(false);
@@ -30,29 +29,38 @@ const PoItemsTable = ({POTableData,poName}: Props) => {
         
 
           const [email, setEmail] = useState<any>();
+          const [toTags, setToTags] = useState<string[]>([]);
+          const [toInput, setToInput] = useState("");
 
           const router = useRouter();
 
           useEffect(() => {
-            const fetchEmails = async () => {
-             const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.dataBasedOnPo, method: "GET", params: { po_number: poName } });
-    if (response?.status == 200) {
-      setEmail((prev: any) => ({ ...prev, to: response?.data?.message?.vendor_emails?.office_email_primary }));
-      console.log(response?.data?.message?.team_members?.all_team_user_ids, "this is cc emails")
-      const emailList = response?.data?.message?.team_members?.all_team_user_ids?.map((item: any, index: any) => {
+            if(poName){
+    fetchPurchaseEmailIds();
+  }
+          },[]);
+
+
+           const fetchPurchaseEmailIds = async()=>{
+    const response = await fetch(`${API_END_POINTS?.getPurchaseTeamEmailList}?po_no=${poName}`,{
+      method:"get",
+      credentials:"include"
+    });
+    const data = await response?.json();
+    const emails = data?.message?.pur_team_emails?.map((item: any, index: any) => {
         const obj = {
           label: item,
           value: item
         }
         return obj;
       })
-      setCCEmailsList(emailList);
-    }
-  }
-  if(poName){
-    fetchEmails();
-  }
-          },[]);
+      const vendorEmail = data?.message?.vendor_email || "";
+      if (vendorEmail) {
+        setToTags([vendorEmail]);
+      }
+      setEmail((prev:any)=>({...prev,to:vendorEmail}))
+      setCCEmailsList(emails);
+  } 
 
     const handleClose = () => {
     setIsEmailDialog(false);
@@ -62,21 +70,46 @@ const PoItemsTable = ({POTableData,poName}: Props) => {
 
   const handleSubmit = async () => {
 
-    if (!email?.cc) {
+    if (!email?.cc || email?.cc?.length === 0) {
       alert("please select at least 1 cc email");
       return;
     }
 
-    const sendPoEmailUrl = `${API_END_POINTS.sendPOEmailVendor}?po_name=${poName}`;
-    const formdata = new FormData();
-    formdata.append("to", JSON.stringify(email?.to))
-    formdata.append("cc", JSON.stringify(email?.cc))
-    const response: AxiosResponse = await requestWrapper({ url: sendPoEmailUrl, data: formdata, method: "POST" });
-    if (response?.status === 200) {
-      setIsSuccessDialog(true);
-      handleClose();
+    
+      await sendPoConfirmationEmail({
+        po_no: poName,
+        vendor_emails: toTags,
+        pur_team_emails: email?.cc,
+      }).then(()=>{
+        setIsSuccessDialog(true);
+        handleClose();
+      })
+      .catch((error)=>{
+        console.error(error);
+        alert("Failed to send email");
+      })
+    } 
+
+   const handleToInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      if (value.includes(",")) {
+        const newEmail = value.replace(",", "").trim();
+        if (newEmail) {
+          const updatedTags = [...toTags, newEmail];
+          setToTags(updatedTags);
+          setEmail((prev: any) => ({ ...prev, to: updatedTags.join(",") }));
+        }
+        setToInput("");
+      } else {
+        setToInput(value);
+      }
     }
-  };
+
+    const removeToTag = (index: number) => {
+      const updatedTags = toTags.filter((_, i) => i !== index);
+      setToTags(updatedTags);
+      setEmail((prev: any) => ({ ...prev, to: updatedTags.join(",") }));
+    }
 
    const handleCcEmailChange = (value: MultiValue<{ value: string; label: string; }>) => {
       const emailList = value?.map((item) => (item?.value));
@@ -88,7 +121,7 @@ const PoItemsTable = ({POTableData,poName}: Props) => {
   return (
     <>
     <div className='bg-white mt-4 border rounded-xl p-4'>
-        <h1></h1>
+        <h1 className='pb-5 font-semibold'> PO Items</h1>
     <Table>
           {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader className="text-center">
@@ -142,7 +175,21 @@ const PoItemsTable = ({POTableData,poName}: Props) => {
             <h1 className="text-[14px] font-normal text-[#626973] pb-2">
               To
             </h1>
-            <Input onChange={(e) => { setEmail((prev: any) => ({ ...prev, to: e.target.value })); }} value={email?.to ?? ""} />
+            <div className="flex flex-wrap items-center gap-1 border rounded-md p-2 min-h-[40px]">
+              {toTags.map((tag, index) => (
+                <span key={index} className="bg-gray-200 text-black text-[13px] px-2 py-1 rounded-md flex items-center gap-1">
+                  {tag}
+                  {index !== 0 && <button type="button" onClick={() => removeToTag(index)} className="text-gray-500 hover:text-red-500 text-xs ml-1">&times;</button>}
+                </span>
+              ))}
+              <input
+                type="text"
+                value={toInput}
+                onChange={handleToInputChange}
+                placeholder={toTags.length === 0 ? "Enter email address..." : ""}
+                className="flex-1 min-w-[120px] outline-none text-[14px] border-none bg-transparent"
+              />
+            </div>
           </div>
           <div>
             <h1 className="text-[12px] font-normal text-[#626973] pb-2">

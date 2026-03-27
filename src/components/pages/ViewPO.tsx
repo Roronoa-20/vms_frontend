@@ -83,6 +83,7 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
   useEffect(() => {
     if (po_name) {
       handlePOChange(po_name);
+      fetchPurchaseEmailIds();
     }
   }, [])
 
@@ -94,6 +95,21 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
 
 
   // const base64Image = await toBase64("/images/coronary_balloon_catheters.png");
+
+  const fetchPurchaseEmailIds = async()=>{
+    const response = await fetch(`${API_END_POINTS?.getPurchaseTeamEmailList}?po_no=${po_name}`,{
+      method:"get",
+    });
+    const data = await response?.json();
+    const emails = data?.map((item: any, index: any) => {
+        const obj = {
+          label: item,
+          value: item
+        }
+        return obj;
+      })
+      setCCEmailsList(emails);
+  } 
 
   const handleClose = () => {
     setIsEarlyDeliveryDialog(false);
@@ -215,14 +231,14 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
     if (response?.status == 200) {
       setEmail((prev: any) => ({ ...prev, to: response?.data?.message?.vendor_emails?.office_email_primary }));
       console.log(response?.data?.message?.team_members?.all_team_user_ids, "this is cc emails")
-      const emailList = response?.data?.message?.team_members?.all_team_user_ids?.map((item: any, index: any) => {
-        const obj = {
-          label: item,
-          value: item
-        }
-        return obj;
-      })
-      setCCEmailsList(emailList);
+      // const emailList = response?.data?.message?.team_members?.all_team_user_ids?.map((item: any, index: any) => {
+      //   const obj = {
+      //     label: item,
+      //     value: item
+      //   }
+      //   return obj;
+      // })
+      // setCCEmailsList(emailList);
     }
   }
 
@@ -295,17 +311,17 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
 
                   </div>
 
-                <div className="flex gap-4">
+                {/* <div className="flex gap-4"> */}
           {/* <Button id="viewPrintBtn" onClick={() => { getPODetails(); }} variant={"nextbtn"} size={"nextbtnsize"} className="px-5 py-2 transition text-nowrap">
             View PO Details
           </Button> */}
-          <Button onClick={() => { router.push(`/view-all-po-changes`) }} variant={"nextbtn"} size={"nextbtnsize"} className="px-5 py-2 transition text-nowrap">
+          {/* <Button onClick={() => { router.push(`/view-all-po-changes`) }} variant={"nextbtn"} size={"nextbtnsize"} className="px-5 py-2 transition text-nowrap">
             View All Changed PO Details
           </Button>
           <Button onClick={() => { router.push(`/view-invalid-po`) }} variant={"nextbtn"} size={"nextbtnsize"} className="px-5 py-2 transition text-nowrap">
             View Invalid PO
           </Button>
-                </div>
+                </div> */}
         </div>
       {/* </div> */}
 
@@ -318,6 +334,8 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
               <TableHead className="text-center text-black text-nowrap">PO Date</TableHead>
               <TableHead className="text-center text-black">Vendor Name</TableHead>
               <TableHead className="text-center text-black">company</TableHead>
+              <TableHead className="text-center text-black">Total PO Amount</TableHead>
+              <TableHead className="text-center text-black">Total Advance Payment</TableHead>
               <TableHead className="text-center text-black text-nowrap">View PO</TableHead>
             </TableRow>
           </TableHeader>
@@ -329,6 +347,8 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
                   <TableCell className="text-center">{item?.po_no}</TableCell>
                   <TableCell className="text-center text-nowrap">{item?.po_date}</TableCell>
                   <TableCell className="text-center text-nowrap">{item?.supplier_name ? item.supplier_name : "-"}</TableCell>
+                   <TableCell className="text-center text-nowrap">{item?.company_code}</TableCell>
+                   <TableCell className="text-center text-nowrap">{item?.company_code}</TableCell>
                    <TableCell className="text-center text-nowrap">{item?.company_code}</TableCell>
                   <TableCell>
                     <Button

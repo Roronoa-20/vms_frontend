@@ -33,7 +33,7 @@ export default function Pagination({ ...Props }: props) {
   // console.log("total_pages:", Math.ceil(Props.total_event_list / Props.record_per_page));
   
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between px-4 py-2">
       <div>
         <p className="text-gray-500 text-xs font-normal">Showing {(Props.currentPage - 1) * Props.record_per_page + 1} to {Math.min(Props.currentPage * Props.record_per_page, Props.total_event_list)} of {Props.total_event_list} entries</p>
         {/* <p className="text-gray-500 text-xs font-normal">Showing {(Props.currentPage - 1) * 10 + 1} to {(Props.currentPage -1 ) *(10) + Props?.record_per_page} of {Props.total_event_list} entries</p> */}

@@ -112,7 +112,7 @@ const BasicPoDetilails = ({poBasicDetails}: Props) => {
 
   return (
     <>
-    <div className='bg-white shadow-md border grid grid-cols-3 gap-3 p-4 rounded-xl mt-3 mx-2'>
+    <div className='bg-white shadow-md border grid grid-cols-4 gap-3 p-4 rounded-xl mt-3 mx-2'>
         <div className='flex gap-2'>
             <h1 className='font-semibold'>PO Number: </h1>
             <p>{poBasicDetailsState?.po_name}</p>
@@ -135,6 +135,10 @@ const BasicPoDetilails = ({poBasicDetails}: Props) => {
         </div>
         <div className='flex gap-2'>
             <h1 className='font-semibold'>Purchase Contact Person: </h1>
+            <p>{poBasicDetailsState?.contact_person}</p>
+        </div>
+        <div className='flex gap-2'>
+            <h1 className='font-semibold'>Total Value of PO/SO: </h1>
             <p>{poBasicDetailsState?.contact_person}</p>
         </div>
         <div className="flex gap-2">
