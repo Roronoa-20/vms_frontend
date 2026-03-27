@@ -8,7 +8,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import { MaterialCode } from "@/src/types/PurchaseRequestType";
-import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, ClassType, UOMMaster, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, StorageLocation, SerialNumber, MaterialType as MaterialTypeT, MaterialRequestData, LatestCodeSuggestions } from "@/src/types/MaterialCodeRequestFormTypes";
+import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, ClassType, UOMMaster, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, StorageLocation, SerialNumber, MaterialType, MaterialRequestData, LatestCodeSuggestions } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface MaterialInformationFormProps {
   form: any;
@@ -24,7 +24,7 @@ interface MaterialInformationFormProps {
   companyInfo?: Company[];
   ProfitCenter?: ProfitCenter[];
   AvailabilityCheck?: AvailabilityCheck[];
-  MaterialType?: MaterialTypeT[];
+  MaterialType?: MaterialType[];
   StorageLocation?: StorageLocation[];
   ClassType?: ClassType[];
   SerialProfile?: SerialNumber[];
