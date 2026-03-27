@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback, ChangeEvent } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useWatch } from "react-hook-form";
 import UserRequestDetails from "@/src/components/templates/material-onboarding-details/user-request-details";
 import UserRequestDetails2 from "@/src/components/templates/material-onboarding-details/user-request-details-2";
@@ -54,12 +54,8 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({
   UnitOfMeasure,
   MaterialGroup,
   MaterialOnboardingDetails,
-  companyInfo,
-  AvailabilityCheck,
   MaterialType: propsMaterialType,
   StorageLocation = [],
-  ClassType,
-  SerialProfile,
   materialCompanyCode,
   setMaterialCompanyCode,
   MaterialCategory,
