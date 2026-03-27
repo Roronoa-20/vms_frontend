@@ -8,7 +8,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import { MaterialCode } from "@/src/types/PurchaseRequestType";
-import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, ClassType, UOMMaster, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, StorageLocation, SerialNumber, MaterialType, MaterialRequestData, LatestCodeSuggestions } from "@/src/types/MaterialCodeRequestFormTypes";
+import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, ClassType, UOMMaster, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, StorageLocation, SerialNumber, MaterialType as MaterialTypeT, MaterialRequestData, LatestCodeSuggestions } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface MaterialInformationFormProps {
   form: any;
@@ -24,7 +24,7 @@ interface MaterialInformationFormProps {
   companyInfo?: Company[];
   ProfitCenter?: ProfitCenter[];
   AvailabilityCheck?: AvailabilityCheck[];
-  MaterialType?: MaterialType[];
+  MaterialType?: MaterialTypeT[];
   StorageLocation?: StorageLocation[];
   ClassType?: ClassType[];
   SerialProfile?: SerialNumber[];
@@ -38,10 +38,41 @@ interface MaterialInformationFormProps {
   setIsMatchedMaterial: React.Dispatch<React.SetStateAction<boolean>>;
   isZCAPMaterial?: boolean;
   MaterialDetails?: MaterialRequestData;
+  latestCodeSuggestions: LatestCodeSuggestions | null;
+  selectedCodeLogic: string;
+  setSelectedCodeLogic: React.Dispatch<React.SetStateAction<string>>;
 }
 
 
-const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form, companyName, plantcode, EmployeeDetailsJSON, DivisionDetails = [], role, UnitOfMeasure, MaterialGroup, MaterialOnboardingDetails, companyInfo, AvailabilityCheck, MaterialType, StorageLocation = [], ClassType, SerialProfile, materialCompanyCode, setMaterialCompanyCode, MaterialCategory, setIsMaterialCodeEdited, setShouldShowAllFields, shouldShowAllFields, setIsMatchedMaterial, isZCAPMaterial, MaterialDetails }) => {
+const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({
+  form,
+  companyName,
+  plantcode,
+  EmployeeDetailsJSON,
+  DivisionDetails = [],
+  role,
+  UnitOfMeasure,
+  MaterialGroup,
+  MaterialOnboardingDetails,
+  companyInfo,
+  AvailabilityCheck,
+  MaterialType: propsMaterialType,
+  StorageLocation = [],
+  ClassType,
+  SerialProfile,
+  materialCompanyCode,
+  setMaterialCompanyCode,
+  MaterialCategory,
+  setIsMaterialCodeEdited,
+  setShouldShowAllFields,
+  shouldShowAllFields,
+  setIsMatchedMaterial,
+  isZCAPMaterial,
+  MaterialDetails,
+  latestCodeSuggestions,
+  selectedCodeLogic,
+  setSelectedCodeLogic
+}) => {
 
   const [selectedMaterialType, setSelectedMaterialType] = useState<string>("");
   const [filteredMaterialGroup, setFilteredMaterialGroup] = useState<MaterialGroupMaster[]>([]);
@@ -53,8 +84,6 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
   const [materialCodeAutoFetched, setMaterialCodeAutoFetched] = useState(false);
   const [AllMaterialCodes, setAllMaterialCodes] = useState<MaterialCode[]>([]);
   const [materialCodeStatus, setMaterialCodeStatus] = useState<"idle" | "checking" | "exists" | "available">("idle");
-  const [selectedCodeLogic, setSelectedCodeLogic] = useState<string>("");
-  const [latestCodeSuggestions, setLatestCodeSuggestions] = useState<LatestCodeSuggestions | null>(null);
 
   const company = useWatch({ control: form.control, name: "material_company_code" });
   const materialType = useWatch({ control: form.control, name: "material_type" });
@@ -140,58 +169,12 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
   const category = useWatch({ control: form.control, name: "material_type_category" });
 
   useEffect(() => {
-    if (!category || !MaterialType?.length) return;
-    if (!materialType) return;
+    // Logic for selectedCodeLogic moved to parent MaterialOnboardingForm
+  }, [category, materialType, propsMaterialType]);
 
-    const matchedType = MaterialType.find(t => t.name === materialType);
-    if (!matchedType?.material_code_logic?.length) return;
-
-    const normalize = (v: string) => (v || "").trim().toLowerCase();
-
-    const matchedLogic = matchedType.material_code_logic.find(
-      (m) => normalize(m.material_type_category) === normalize(category)
-    );
-
-    if (matchedLogic?.code_logic) {
-      setSelectedCodeLogic(matchedLogic.code_logic);
-    }
-  }, [
-    category,
-    materialType,
-    MaterialType
-  ]);
-
-
-  const fetchLatestCode = async () => {
-    if (!selectedCodeLogic) return;
-
-    const companyCodeVal = form.getValues("material_company_code");
-    if (!companyCodeVal) return;
-
-    try {
-      const res = await requestWrapper({
-        method: "GET",
-        url: `${API_END_POINTS.getLatestMaterialCode}?prefix=${selectedCodeLogic}&company=${companyCodeVal}`,
-      });
-      console.log("Latest Code API Response:", res);
-      if (res?.data?.message) {
-        const { sap, onboarding, next_suggested } = res.data.message;
-
-        const suggestions = {
-          next: next_suggested || null,
-          sap: sap || null,
-          onboarding: onboarding || null
-        };
-
-        setLatestCodeSuggestions(suggestions);
-      }
-    } catch (e) {
-      console.error("fetchLatestCode API Failed", e);
-    }
-  };
 
   useEffect(() => {
-    fetchLatestCode();
+    // fetchLatestCode handled by parent
   }, [selectedCodeLogic, company]);
 
   useEffect(() => {
@@ -318,7 +301,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
             MaterialCategory={MaterialCategory}
             filteredDivision={filteredDivision}
             StorageLocation={StorageLocation}
-            AllMaterialType={MaterialType}
+            AllMaterialType={propsMaterialType}
             AllMaterialCodes={AllMaterialCodes}
           />
 
@@ -345,7 +328,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
             MaterialCategory={MaterialCategory}
             filteredDivision={filteredDivision}
             StorageLocation={StorageLocation}
-            AllMaterialType={MaterialType}
+            AllMaterialType={propsMaterialType}
             setIsMaterialCodeEdited={setIsMaterialCodeEdited}
             materialCodeAutoFetched={materialCodeAutoFetched}
             setMaterialCodeAutoFetched={setMaterialCodeAutoFetched}

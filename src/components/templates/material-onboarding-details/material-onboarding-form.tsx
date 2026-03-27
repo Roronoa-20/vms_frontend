@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useWatch } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Form } from "@/components/ui/form";
+import { MaterialCode } from "@/src/types/PurchaseRequestType";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Save } from "lucide-react";
 import Alertbox from "@/src/components/common/vendor-onboarding-alertbox";
@@ -20,11 +21,12 @@ import MaterialOtherData from "@/src/components/templates/material-onboarding-de
 import Storefields from "@/src/components/templates/material-onboarding-details/material-store-fields";
 import SAPMaterialModal from "@/src/components/molecules/material-onboarding-modal/SAPMaterialModal";
 import RevertRemarkModal from "@/src/components/molecules/material-onboarding-modal/revert-remark-field";
-import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialRequestData, MaterialType, MRPGroup } from "@/src/types/MaterialCodeRequestFormTypes";
+import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialRequestData, MaterialType, MRPGroup, LatestCodeSuggestions } from "@/src/types/MaterialCodeRequestFormTypes";
 import { TcompanyNameBasedDropdown } from "@/src/types/types";
 import { useSearchParams, usePathname } from "next/navigation";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
+import { AxiosResponse } from "axios";
 import { getMaterialTabs } from "@/src/constants/materialTabs";
 import MaterialFormFooter from "../../molecules/MaterialFormFooter";
 import MaterialFormSections from "../../molecules/MaterialFormSections";
@@ -99,6 +101,54 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
   const [materialCompanyCode, setMaterialCompanyCode] = useState<string>("");
   const { designation } = useAuth();
   const role = designation || "";
+
+  const [selectedCodeLogic, setSelectedCodeLogic] = useState<string>("");
+  const [latestCodeSuggestions, setLatestCodeSuggestions] = useState<LatestCodeSuggestions | null>(null);
+
+  const materialTypeField = form.watch("material_type");
+  const category = useWatch({ control: form.control, name: "material_type_category" });
+  const companyField = form.watch("material_company_code");
+
+  useEffect(() => {
+    if (!category || !MaterialType?.length || !materialTypeField) return;
+
+    const matchedType = MaterialType.find((t) => t.name === materialTypeField);
+    if (!matchedType?.material_code_logic?.length) return;
+
+    const normalize = (v: string) => (v || "").trim().toLowerCase();
+    const matchedLogic = matchedType.material_code_logic.find(
+      (m) => normalize(m.material_type_category) === normalize(category)
+    );
+
+    if (matchedLogic?.code_logic) {
+      setSelectedCodeLogic(matchedLogic.code_logic);
+    }
+  }, [category, materialTypeField, MaterialType]);
+
+  const fetchLatestCode = React.useCallback(async () => {
+    if (!selectedCodeLogic || !companyField) return;
+
+    try {
+      const res = await requestWrapper({
+        method: "GET",
+        url: `${API_END_POINTS.getLatestMaterialCode}?prefix=${selectedCodeLogic}&company=${companyField}`,
+      });
+      if (res?.data?.message) {
+        const { sap, onboarding, next_suggested } = res.data.message;
+        setLatestCodeSuggestions({
+          next: next_suggested || null,
+          sap: sap || null,
+          onboarding: onboarding || null,
+        });
+      }
+    } catch (e) {
+      console.error("fetchLatestCode API Failed", e);
+    }
+  }, [selectedCodeLogic, companyField]);
+
+  useEffect(() => {
+    fetchLatestCode();
+  }, [selectedCodeLogic, companyField, fetchLatestCode]);
 
   useEffect(() => {
     const currentDate = new Date().toISOString().split("T")[0];
@@ -277,6 +327,28 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
           message: "Enter a valid Material Code",
         });
         isValid = false;
+      } else if (latestCodeSuggestions) {
+        // Validation: Must match NEXT suggested
+        if (latestCodeSuggestions.next && value !== latestCodeSuggestions.next) {
+          const errMsg = `Material Code must match next suggested code: ${latestCodeSuggestions.next}`;
+          form.setError("material_code_revised", {
+            type: "manual",
+            message: errMsg,
+          });
+          alert(errMsg);
+          isValid = false;
+        }
+
+        // Validation: Must NOT match SAP or Onboarding latest suggestions
+        if (value === latestCodeSuggestions.sap || value === latestCodeSuggestions.onboarding) {
+          const errMsg = "Material Code cannot match existing SAP or Onboarding values";
+          form.setError("material_code_revised", {
+            type: "manual",
+            message: errMsg,
+          });
+          alert(errMsg);
+          isValid = false;
+        }
       }
     }
 
@@ -550,6 +622,9 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
                     isMaterialCodeEdited={isMaterialCodeEdited}
                     isFileUploading={isFileUploading}
                     localLineItemFiles={localLineItemFiles}
+                    latestCodeSuggestions={latestCodeSuggestions}
+                    selectedCodeLogic={selectedCodeLogic}
+                    setSelectedCodeLogic={setSelectedCodeLogic}
                   />
                 </TabsContent>
               ))}
@@ -646,6 +721,9 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
                 materialCompanyCode={materialCompanyCode}
                 setMaterialCompanyCode={setMaterialCompanyCode}
                 role={role}
+                latestCodeSuggestions={latestCodeSuggestions}
+                selectedCodeLogic={selectedCodeLogic}
+                setSelectedCodeLogic={setSelectedCodeLogic}
               />
 
               {finalShouldShowAllFields && EDIT_ROLES.includes(role) && (
