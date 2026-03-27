@@ -24,7 +24,7 @@ interface MaterialInformationFormProps {
   companyInfo?: Company[];
   ProfitCenter?: ProfitCenter[];
   AvailabilityCheck?: AvailabilityCheck[];
-  MaterialType?: MaterialType[];
+  MaterialType?: MaterialTypeT[];
   StorageLocation?: StorageLocation[];
   ClassType?: ClassType[];
   SerialProfile?: SerialNumber[];
@@ -38,6 +38,9 @@ interface MaterialInformationFormProps {
   setIsMatchedMaterial: React.Dispatch<React.SetStateAction<boolean>>;
   isZCAPMaterial?: boolean;
   MaterialDetails?: MaterialRequestData;
+  latestCodeSuggestions: LatestCodeSuggestions | null;
+  selectedCodeLogic: string;
+  setSelectedCodeLogic: React.Dispatch<React.SetStateAction<string>>;
 }
 
 
@@ -140,30 +143,8 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
   const category = useWatch({ control: form.control, name: "material_type_category" });
 
   useEffect(() => {
-    if (!category || !MaterialType?.length) return;
-    if (!materialType) return;
-
-    const matchedType = MaterialType.find(t => t.name === materialType);
-    if (!matchedType?.material_code_logic?.length) return;
-
-    const normalize = (v: string) => (v || "").trim().toLowerCase();
-
-    const matchedLogic = matchedType.material_code_logic.find(
-      (m) => normalize(m.material_type_category) === normalize(category)
-    );
-
-    if (matchedLogic?.code_logic) {
-      setSelectedCodeLogic(matchedLogic.code_logic);
-    }
-  }, [
-    category,
-    materialType,
-    MaterialType
-  ]);
-
-
-  const fetchLatestCode = async () => {
-    if (!selectedCodeLogic) return;
+    // Logic for selectedCodeLogic moved to parent MaterialOnboardingForm
+  }, [category, materialType, propsMaterialType]);
 
     const companyCodeVal = form.getValues("material_company_code");
     if (!companyCodeVal) return;
@@ -191,7 +172,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
   };
 
   useEffect(() => {
-    fetchLatestCode();
+    // fetchLatestCode handled by parent
   }, [selectedCodeLogic, company]);
 
   useEffect(() => {
@@ -318,7 +299,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
             MaterialCategory={MaterialCategory}
             filteredDivision={filteredDivision}
             StorageLocation={StorageLocation}
-            AllMaterialType={MaterialType}
+            AllMaterialType={propsMaterialType}
             AllMaterialCodes={AllMaterialCodes}
           />
 
@@ -345,7 +326,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form,
             MaterialCategory={MaterialCategory}
             filteredDivision={filteredDivision}
             StorageLocation={StorageLocation}
-            AllMaterialType={MaterialType}
+            AllMaterialType={propsMaterialType}
             setIsMaterialCodeEdited={setIsMaterialCodeEdited}
             materialCodeAutoFetched={materialCodeAutoFetched}
             setMaterialCodeAutoFetched={setMaterialCodeAutoFetched}

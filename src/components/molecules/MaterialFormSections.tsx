@@ -32,6 +32,9 @@ interface MaterialFormSectionsProps {
     shouldShowAllFields: boolean;
     isFileUploading?: boolean;
     localLineItemFiles?: any;
+    latestCodeSuggestions: any;
+    selectedCodeLogic: string;
+    setSelectedCodeLogic: (logic: string) => void;
 }
 
 export default function MaterialFormSections({
@@ -56,7 +59,9 @@ export default function MaterialFormSections({
     isMaterialCodeEdited,
     isFileUploading,
     localLineItemFiles,
-
+    latestCodeSuggestions,
+    selectedCodeLogic,
+    setSelectedCodeLogic,
 }: MaterialFormSectionsProps) {
 
     if (tab === "basic-data") {
@@ -78,7 +83,11 @@ export default function MaterialFormSections({
                     setShouldShowAllFields={setShouldShowAllFields}
                     shouldShowAllFields={finalShouldShowAllFields}
                     isMaterialCodeEdited={isMaterialCodeEdited}
-
+                    isFileUploading={isFileUploading}
+                    localLineItemFiles={localLineItemFiles}
+                    latestCodeSuggestions={latestCodeSuggestions}
+                    selectedCodeLogic={selectedCodeLogic}
+                    setSelectedCodeLogic={setSelectedCodeLogic}
                 />
             </>
         );
