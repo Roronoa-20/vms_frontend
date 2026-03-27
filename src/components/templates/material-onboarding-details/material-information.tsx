@@ -8,7 +8,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
 import { MaterialCode } from "@/src/types/PurchaseRequestType";
-import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, ClassType, UOMMaster, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, StorageLocation, SerialNumber, MaterialType as MaterialTypeT, MaterialRequestData, LatestCodeSuggestions } from "@/src/types/MaterialCodeRequestFormTypes";
+import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, ClassType, UOMMaster, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, StorageLocation, SerialNumber, MaterialType, MaterialRequestData, LatestCodeSuggestions } from "@/src/types/MaterialCodeRequestFormTypes";
 
 interface MaterialInformationFormProps {
   form: any;
@@ -44,35 +44,7 @@ interface MaterialInformationFormProps {
 }
 
 
-const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({
-  form,
-  companyName,
-  plantcode,
-  EmployeeDetailsJSON,
-  DivisionDetails = [],
-  role,
-  UnitOfMeasure,
-  MaterialGroup,
-  MaterialOnboardingDetails,
-  companyInfo,
-  AvailabilityCheck,
-  MaterialType: propsMaterialType,
-  StorageLocation = [],
-  ClassType,
-  SerialProfile,
-  materialCompanyCode,
-  setMaterialCompanyCode,
-  MaterialCategory,
-  setIsMaterialCodeEdited,
-  setShouldShowAllFields,
-  shouldShowAllFields,
-  setIsMatchedMaterial,
-  isZCAPMaterial,
-  MaterialDetails,
-  latestCodeSuggestions,
-  selectedCodeLogic,
-  setSelectedCodeLogic
-}) => {
+const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({ form, companyName, plantcode, EmployeeDetailsJSON, DivisionDetails = [], role, UnitOfMeasure, MaterialGroup, MaterialOnboardingDetails, companyInfo, AvailabilityCheck, MaterialType, StorageLocation = [], ClassType, SerialProfile, materialCompanyCode, setMaterialCompanyCode, MaterialCategory, setIsMaterialCodeEdited, setShouldShowAllFields, shouldShowAllFields, setIsMatchedMaterial, isZCAPMaterial, MaterialDetails }) => {
 
   const [selectedMaterialType, setSelectedMaterialType] = useState<string>("");
   const [filteredMaterialGroup, setFilteredMaterialGroup] = useState<MaterialGroupMaster[]>([]);
@@ -84,6 +56,8 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({
   const [materialCodeAutoFetched, setMaterialCodeAutoFetched] = useState(false);
   const [AllMaterialCodes, setAllMaterialCodes] = useState<MaterialCode[]>([]);
   const [materialCodeStatus, setMaterialCodeStatus] = useState<"idle" | "checking" | "exists" | "available">("idle");
+  const [selectedCodeLogic, setSelectedCodeLogic] = useState<string>("");
+  const [latestCodeSuggestions, setLatestCodeSuggestions] = useState<LatestCodeSuggestions | null>(null);
 
   const company = useWatch({ control: form.control, name: "material_company_code" });
   const materialType = useWatch({ control: form.control, name: "material_type" });
@@ -135,7 +109,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({
       }
 
       const url =
-        `${API_END_POINTS.MaterialCodeSearchApi}` +
+        `${API_END_POINTS.CheckMaterialCode}` +
         `?filters=${encodeURIComponent(
           JSON.stringify({
             company,
@@ -172,6 +146,30 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({
     // Logic for selectedCodeLogic moved to parent MaterialOnboardingForm
   }, [category, materialType, propsMaterialType]);
 
+    const companyCodeVal = form.getValues("material_company_code");
+    if (!companyCodeVal) return;
+
+    try {
+      const res = await requestWrapper({
+        method: "GET",
+        url: `${API_END_POINTS.getLatestMaterialCode}?prefix=${selectedCodeLogic}&company=${companyCodeVal}`,
+      });
+      console.log("Latest Code API Response:", res);
+      if (res?.data?.message) {
+        const { sap, onboarding, next_suggested } = res.data.message;
+
+        const suggestions = {
+          next: next_suggested || null,
+          sap: sap || null,
+          onboarding: onboarding || null
+        };
+
+        setLatestCodeSuggestions(suggestions);
+      }
+    } catch (e) {
+      console.error("fetchLatestCode API Failed", e);
+    }
+  };
 
   useEffect(() => {
     // fetchLatestCode handled by parent

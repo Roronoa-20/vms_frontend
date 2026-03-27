@@ -1,4 +1,5 @@
 "use client";
+import { toast } from "react-toastify";
 import React, { FormEvent, useEffect, useState } from "react";
 import { Input } from "../../atoms/input";
 import {
@@ -65,7 +66,7 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, onBackTab,
   };
 
   const handleSubmit = async (e: FormEvent) => {
-      e.preventDefault();
+    e.preventDefault();
     if (contactDetail?.length < 1) {
       alert("Please Enter At Least 1 Contact Details");
       return;
@@ -82,16 +83,16 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, onBackTab,
       },
       method: "POST",
     });
-    if (submitResponse?.status === 200) {
-        alert("Saved successfully ✅");
-        onNextTab?.();
-      }
+    if (submitResponse?.status === 200 || submitResponse?.status === 2000) {
+      toast.success("Your details have been updated and informed to Meri Purchase Team");
+      onNextTab?.();
+    }
   };
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-4 max-h-[85vh] overflow-y-auto w-full">
+    <div className="flex flex-col bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto w-full">
       {/* Heading + Edit toggle */}
-      <div className="flex justify-between items-center border-b pb-1 mb-2 sticky top-0 bg-white z-10">
+      <div className="flex justify-between items-center border-b sticky top-0 bg-white z-10">
         <h1 className="text-lg font-semibold">Contact Detail</h1>
         <Button
           type="button"
@@ -104,7 +105,7 @@ const ContactDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, onBackTab,
       </div>
 
       {/* Form grid */}
-      <div className="grid grid-cols-3 gap-6 p-2">
+      <div className="grid grid-cols-3 gap-4 p-2">
         {[
           { label: "First Name", key: "first_name" },
           { label: "Last Name", key: "last_name" },

@@ -295,44 +295,43 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
   const isFirstTab = activeTab === availableTabs[0];
   const isLastTab = activeTab === availableTabs[availableTabs.length - 1];
 
-  const handleNextTab = () => {
+  const tabFieldValidationMap: Record<string, string[]> = {
+    "basic-data": shouldShowAllFields ? ["material_code_revised", "division", "storage_location"] : ["material_code_revised"],
+  };
+
+  const handleNextTab = async () => {
+    const fieldsToValidate = tabFieldValidationMap[activeTab] || [];
+
+    let isValid = true;
+
+    fieldsToValidate.forEach((field) => {
+      const value = form.getValues(field);
+
+      if (!value || (typeof value === "string" && !value.trim())) {
+        form.setError(field, {
+          type: "manual",
+          message: "This field is required",
+        });
+        isValid = false;
+      } else {
+        form.clearErrors(field);
+      }
+    });
+
     if (activeTab === "basic-data") {
       const value = form.getValues("material_code_revised")?.trim() || "";
 
-      const isInvalid = !value || value.endsWith("-");
-
-      if (isInvalid) {
+      if (!value || value.endsWith("-")) {
         form.setError("material_code_revised", {
           type: "manual",
           message: "Enter a valid Material Code",
         });
         isValid = false;
-      } else if (latestCodeSuggestions) {
-        // Validation: Must match NEXT suggested
-        if (latestCodeSuggestions.next && value !== latestCodeSuggestions.next) {
-          const errMsg = `Material Code must match next suggested code: ${latestCodeSuggestions.next}`;
-          form.setError("material_code_revised", {
-            type: "manual",
-            message: errMsg,
-          });
-          alert(errMsg);
-          isValid = false;
-        }
-
-        // Validation: Must NOT match SAP or Onboarding latest suggestions
-        if (value === latestCodeSuggestions.sap || value === latestCodeSuggestions.onboarding) {
-          const errMsg = "Material Code cannot match existing SAP or Onboarding values";
-          form.setError("material_code_revised", {
-            type: "manual",
-            message: errMsg,
-          });
-          alert(errMsg);
-          isValid = false;
-        }
       }
-
-      form.clearErrors("material_code_revised");
     }
+
+    if (!isValid) return;
+
     const idx = availableTabs.indexOf(activeTab);
     if (idx !== -1 && idx < availableTabs.length - 1) {
       handleTabChange(availableTabs[idx + 1]);

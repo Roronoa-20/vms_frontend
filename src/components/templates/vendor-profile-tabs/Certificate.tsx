@@ -1,4 +1,5 @@
 'use client'
+import { toast } from "react-toastify";
 import React, { useEffect, useRef, useState } from "react";
 import { Input } from "../../atoms/input";
 import { Button } from "../../atoms/button";
@@ -20,12 +21,14 @@ import { it } from "node:test";
 import { useAuth } from "@/src/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Alertbox from "../../common/vendor-onboarding-alertbox";
 
 interface Props {
   certificateCodeDropdown: TcertificateCodeDropdown["message"]["data"]["certificate_names"];
   ref_no: string,
   onboarding_ref_no: string
   OnboardingDetail: VendorOnboardingResponse["message"]["certificate_details_tab"]
+  onNextTab?: () => void;
   onBackTab?: () => void;
 }
 
@@ -39,7 +42,7 @@ type certificateData = {
   others?: string
 }
 
-const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, OnboardingDetail }: Props) => {
+const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, OnboardingDetail, onNextTab, onBackTab }: Props) => {
   console.log(OnboardingDetail)
   const [certificateData, setCertificateData] = useState<Partial<certificateData>>({});
   const [multipleCertificateData, setMultipleCertificateData] = useState<certificateData[]>(OnboardingDetail);
@@ -47,6 +50,7 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
   const router = useRouter();
 
   const [isOtherField, setIsOtherField] = useState<boolean>(false);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
 
   useEffect(() => {
 
@@ -60,19 +64,21 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
 
 
   const handleSubmit = async () => {
-    if (OnboardingDetail?.length < 1) {
-      alert("Upload At Least 1 Certificate")
-      return;
-    }
+    // if (OnboardingDetail?.length < 1) {
+    //   alert("Upload At Least 1 Certificate")
+    //   return;
+    // }
     const url = API_END_POINTS?.certificateSubmit;
     const certificateSubmit: AxiosResponse = await requestWrapper({ url: url, data: { data: { onb_id: onboarding_ref_no, completed: 1 } }, method: "POST" })
-    if (certificateSubmit?.status == 200) {
-      router.push("/Success");
+    console.log(certificateSubmit, "certificateSubmit")
+    if (certificateSubmit?.status == 200 || certificateSubmit?.data?.message?.status == "Success") {
+      setShowAlert(true);
+      console.log("Successfully submit")
     }
-  }
+  };
 
   const handleBack = () => {
-    router.push(`/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    if (onBackTab) onBackTab(); else router.push(`/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   };
 
   const handleAdd = async () => {
@@ -84,7 +90,7 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
     }
     console?.log(formData?.values)
     const certificateSubmit: AxiosResponse = await requestWrapper({ url: url, data: formData, method: "POST" })
-    if (certificateSubmit?.status == 200) {
+    if (certificateSubmit?.status == 200 || certificateSubmit?.status == 2000) {
       console.log("Successfully submit")
     }
     setCertificateData({})
@@ -92,8 +98,8 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
       fileInput.current.value = ''
     }
     console.log("pushring")
-    location.reload()
-    // router.push(`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    // location.reload()
+    if (onNextTab) onNextTab(); else router.push(`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
     // tableFetch();
   }
 
@@ -101,7 +107,7 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
   const tableFetch = async () => {
     const url = `${API_END_POINTS?.fetchDetails}?ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
     const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
-    const OnboardingDetails: VendorOnboardingResponse["message"]["certificate_details_tab"] = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message?.certificate_details_tab : "";
+    const OnboardingDetails: VendorOnboardingResponse["message"]["certificate_details_tab"] = fetchOnboardingDetailResponse?.status == 200 || fetchOnboardingDetailResponse?.status == 2000 ? fetchOnboardingDetailResponse?.data?.message?.certificate_details_tab : "";
     console.log(OnboardingDetails, "this is after api")
     setMultipleCertificateData([]);
     OnboardingDetails?.map((item) => {
@@ -112,7 +118,7 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
   const deleteRow = async (certificate_code: string) => {
     const url = `${API_END_POINTS?.deleteCertificate}?certificate_code=${certificate_code}&ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`
     const deleteResponse: AxiosResponse = await requestWrapper({ url: url, method: "POST" });
-    if (deleteResponse?.status == 200) {
+    if (deleteResponse?.status == 200 || deleteResponse?.status == 2000) {
       setMultipleCertificateData([]);
       // tableFetch();
       location.reload()
@@ -121,13 +127,13 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
 
 
   return (
-    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
+    <div className="flex flex-col bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto w-full">
+      <h1 className="border-b-2 sticky top-0 bg-white py-2 text-lg">
         Certificate Details
       </h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
+      <div className="grid grid-cols-3 gap-4 p-2">
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Certificate Name
           </h1>
           <Select
@@ -155,20 +161,20 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
           </Select>
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Valid Till
           </h1>
           <Input value={certificateData?.valid_till ?? ""} placeholder="" type="date" onChange={(e) => { setCertificateData((prev: any) => ({ ...prev, valid_till: e.target.value })) }} />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Upload Certificate File
           </h1>
           <Input ref={fileInput} placeholder="" type="file" onChange={(e) => { setCertificateData((prev: any) => ({ ...prev, file: e?.target?.files, fileDetail: { file_name: e?.target?.files != null ? e.target.files[0].name : "" } })) }} />
         </div>
         {certificateData?.certificate_code == "Others" &&
           <div className="col-span-1">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+            <h1 className="text-[12px] font-normal text-[#626973] pb-2">
               Others
             </h1>
             <Input value={certificateData?.others ?? ""} onChange={(e) => { setCertificateData((prev: any) => ({ ...prev, others: e.target.value })) }} />
@@ -176,7 +182,7 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
         }
       </div>
 
-      <div className={`flex justify-end pr-6 pb-6`}><Button className="bg-blue-400 hover:bg-blue-400" onClick={() => { handleAdd() }}>Add</Button></div>
+      <div className={`flex justify-end pr-4 pb-4`}><Button className="py-2" variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleAdd() }}>Add</Button></div>
       {multipleCertificateData?.length > 0 && (
         <div className="shadow- bg-[#f6f6f7] p-4 mb-4 rounded-2xl">
           <div className="flex w-full justify-between pb-4">
@@ -228,6 +234,13 @@ const Certificate = ({ certificateCodeDropdown, ref_no, onboarding_ref_no, Onboa
           Submit
         </Button>
       </div>
+      {showAlert && (
+        <Alertbox
+          content="Your Details have been submitted successfully and information will be verified by the internal team."
+          submit={showAlert}
+          url="/vendor-dashboard"
+        />
+      )}
     </div>
   );
 };

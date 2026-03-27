@@ -1,4 +1,5 @@
 "use client";
+import { toast } from "react-toastify";
 import React, { useState } from "react";
 import {
   Select,
@@ -62,20 +63,20 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAc
       data: formData,
       method: "POST",
     });
-    if (manufacturingDetailResponse?.status == 200)
-      alert("Saved successfully ✅");
+    if (manufacturingDetailResponse?.status == 200 || manufacturingDetailResponse?.status == 2000)
+      toast.success("Your details have been updated and informed to Meri Purchase Team");
     onNextTab?.();
   };
 
 
   return (
-    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
+    <div className="flex flex-col bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto w-full">
+      <h1 className="border-b-2 sticky top-0 bg-white py-2 text-lg">
         Manufacturing Detail
       </h1>
-      <div className="grid grid-cols-3 gap-6 p-2">
+      <div className="grid grid-cols-3 gap-4 p-2">
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Total Godown Area (Sq. ft.)
           </h1>
           <Input
@@ -91,7 +92,7 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAc
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Storage Capacity, (Sq. ft.)
           </h1>
           <Input
@@ -107,7 +108,7 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAc
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Spare Capacity(Sq. ft.)
           </h1>
           <Input
@@ -123,7 +124,7 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAc
           />
         </div>
         <div className="flex flex-col">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Type Of Premises
           </h1>
           <Select
@@ -149,7 +150,7 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAc
           </Select>
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Working Hours
           </h1>
           <Input
@@ -165,7 +166,7 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAc
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Weekly Holidays
           </h1>
           <Input
@@ -181,7 +182,7 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAc
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             No. of Manpower/Strength
           </h1>
           <Input
@@ -197,7 +198,7 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAc
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Annual Revenue
           </h1>
           <Input
@@ -233,7 +234,7 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAc
 
       <div className="grid grid-cols-2 gap-3 p-2">
         <div className="col-span-1">
-          <h1 className="text-[16px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[16px] font-normal text-[#626973] pb-2">
             Upload your Material Brochure (PDF)
           </h1>
           <div className="flex gap-4">
@@ -267,7 +268,7 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAc
           </div>
         </div>
         <div className="col-span-1">
-          <h1 className="text-[16px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[16px] font-normal text-[#626973] pb-2">
             Organization Structure Document
           </h1>
           <div className="flex gap-4">

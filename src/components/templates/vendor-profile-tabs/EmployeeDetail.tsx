@@ -1,4 +1,5 @@
 "use client";
+import { toast } from "react-toastify";
 import React, { useEffect, useState } from "react";
 import { Input } from "../../atoms/input";
 import {
@@ -34,6 +35,8 @@ const EmployeeDetail = ({
   ref_no,
   onboarding_ref_no,
   OnboardingDetail,
+  onNextTab,
+  onBackTab
 }: Props) => {
   const { employeeDetail, updateEmployeeDetail, resetEmployeeDetail } =
     useEmployeeDetailStore();
@@ -62,10 +65,12 @@ const EmployeeDetail = ({
       data: updatedData,
       method: "POST",
     });
-    if (employeeDetailResponse?.status == 200)
-      router.push(
+    if (employeeDetailResponse?.status == 200 || employeeDetailResponse?.status == 2000) {
+      toast.success("Your details have been updated and informed to Meri Purchase Team");
+      if (onNextTab) onNextTab(); else router.push(
         `/vendor-details-form?tabtype=Machinery%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
       );
+    }
   };
 
   const handleAdd = () => {
@@ -83,19 +88,19 @@ const EmployeeDetail = ({
   };
 
   const handleBack = () => {
-    router.push(
+    if (onBackTab) onBackTab(); else router.push(
       `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
     );
   };
 
   return (
-    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
+    <div className="flex flex-col bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto w-full">
+      <h1 className="border-b-2 sticky top-0 bg-white py-2 text-lg">
         Number of Employees in Various Divisions
       </h1>
-      <div className="grid grid-cols-3 gap-6 p-5">
+      <div className="grid grid-cols-3 gap-4 p-2">
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Employees in Production
           </h1>
           <Input
@@ -110,7 +115,7 @@ const EmployeeDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Employees in QA/QC
           </h1>
           <Input
@@ -125,7 +130,7 @@ const EmployeeDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Employees in Logistics
           </h1>
           <Input
@@ -140,7 +145,7 @@ const EmployeeDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Employees in Marketing
           </h1>
           <Input
@@ -155,7 +160,7 @@ const EmployeeDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Employees in R&D
           </h1>
           <Input
@@ -170,7 +175,7 @@ const EmployeeDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Employees in HSE
           </h1>
           <Input
@@ -185,7 +190,7 @@ const EmployeeDetail = ({
           />
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Employees in Other Department
           </h1>
           <Input
@@ -204,7 +209,9 @@ const EmployeeDetail = ({
             onClick={() => {
               handleAdd();
             }}
-            className="bg-blue-400 hover:bg-blue-400"
+            className="py-2"
+            variant={"nextbtn"}
+            size={"nextbtnsize"}
           >
             Add
           </Button>

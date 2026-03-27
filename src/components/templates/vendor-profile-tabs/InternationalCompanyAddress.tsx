@@ -1,4 +1,5 @@
 "use client";
+import { toast } from "react-toastify";
 import React, { useEffect, useState } from "react";
 import { Input } from "../../atoms/input";
 import {
@@ -32,6 +33,8 @@ interface Props {
   ref_no: string;
   onboarding_ref_no: string;
   OnboardingDetail: VendorOnboardingResponse["message"]["company_address_tab"];
+  onNextTab?: () => void;
+  onBackTab?: () => void;
 }
 
 
@@ -56,24 +59,26 @@ interface billingData {
 }
 
 type formdataT = {
-  billing_address:billingData,
-  shipping_address:shippingData
+  billing_address: billingData,
+  shipping_address: shippingData
 }
 
 interface multipleAddress {
   address_line_1: string;
   address_line_2: string;
   pincode: string;
-  city:string
+  city: string
   state: string
   country: string
-  zipcode:string
+  zipcode: string
 }
 
 const CompanyAddress = ({
   ref_no,
   onboarding_ref_no,
-  OnboardingDetail
+  OnboardingDetail,
+  onNextTab,
+  onBackTab
 }: Props) => {
 
   const router = useRouter();
@@ -83,9 +88,9 @@ const CompanyAddress = ({
   } = useCompanyAddressFormStore();
   const [file, setFile] = useState<FileList | null>(null);
   const [isFilePreview, setIsFilePreview] = useState<boolean>(true);
-  const [formdata,setformdata] = useState<formdataT | null | any>({...OnboardingDetail});
-  const [multipleTable,setMultipleTable] = useState<multipleAddress[] | null>(OnboardingDetail?.multiple_location_table);
-  const [singlerow,setSingleRow] = useState<Partial<multipleAddress>>();
+  const [formdata, setformdata] = useState<formdataT | null | any>({ ...OnboardingDetail });
+  const [multipleTable, setMultipleTable] = useState<multipleAddress[] | null>(OnboardingDetail?.multiple_location_table);
+  const [singlerow, setSingleRow] = useState<Partial<multipleAddress>>();
 
 
 
@@ -94,31 +99,31 @@ const CompanyAddress = ({
 
 
   const handleMultipleAdd = () => {
-    setMultipleTable((prev:any)=>([...prev,singlerow]));
+    setMultipleTable((prev: any) => ([...prev, singlerow]));
     setSingleRow({});
   };
 
   const [errors, setErrors] = useState<any>({});
   const validate = () => {
-  const errors:any = {};
+    const errors: any = {};
 
-  const addressLine1 = formdata?.billing_address?.address_line_1 ?? OnboardingDetail?.billing_address?.address_line_1;
-  if (!addressLine1) {
-    errors.address_line_1 = "Please Enter Address 1";
-  }
+    const addressLine1 = formdata?.billing_address?.address_line_1 ?? OnboardingDetail?.billing_address?.address_line_1;
+    if (!addressLine1) {
+      errors.address_line_1 = "Please Enter Address 1";
+    }
 
-  const addressLine2 = formdata?.billing_address?.address_line_2 ?? OnboardingDetail?.billing_address?.address_line_2;
-  if (!addressLine2) {
-    errors.address_line_2 = "Please Enter Address Line 2";
-  }
+    const addressLine2 = formdata?.billing_address?.address_line_2 ?? OnboardingDetail?.billing_address?.address_line_2;
+    if (!addressLine2) {
+      errors.address_line_2 = "Please Enter Address Line 2";
+    }
 
-  const pincode = formdata?.billing_address?.international_zipcode ?? OnboardingDetail?.billing_address?.international_zipcode;
-  if (!pincode) {
-    errors.pincode = "Please Enter Pincode";
-  }
+    const pincode = formdata?.billing_address?.international_zipcode ?? OnboardingDetail?.billing_address?.international_zipcode;
+    if (!pincode) {
+      errors.pincode = "Please Enter Pincode";
+    }
 
-  return errors;
-};
+    return errors;
+  };
 
   const handleSubmit = async () => {
 
@@ -137,7 +142,7 @@ const CompanyAddress = ({
       same_as_above: formdata?.same_as_above ? 1 : 0,
       vendor_onboarding: onboarding_ref_no,
       multiple_locations: formdata?.multiple_locations ? 1 : 0,
-      multiple_location_table:multipleTable
+      multiple_location_table: multipleTable
     };
     // const updatedData = {data:Data}
 
@@ -147,76 +152,79 @@ const CompanyAddress = ({
       formData.append("file", file[0])
     }
     const submitResponse: AxiosResponse = await requestWrapper({ url: submitUrl, method: "POST", data: formData });
-    if (submitResponse?.status == 200) router.push(`/vendor-details-form?tabtype=Document%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    if (submitResponse?.status == 200 || submitResponse?.status == 2000) {
+      toast.success("Your details have been updated and informed to Meri Purchase Team");
+      if (onNextTab) onNextTab(); else router.push(`/vendor-details-form?tabtype=Document%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    }
   };
 
   const handleBack = () => {
-    router.push(`/vendor-details-form?tabtype=Company%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
+    if (onBackTab) onBackTab(); else router.push(`/vendor-details-form?tabtype=Company%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   };
 
   const handleRowDelete = (index: number) => {
-  const updatedContacts = multipleTable?.filter((_, itemIndex) => itemIndex !== index);
-  setMultipleTable(updatedContacts ?? []);
-}
+    const updatedContacts = multipleTable?.filter((_, itemIndex) => itemIndex !== index);
+    setMultipleTable(updatedContacts ?? []);
+  }
 
-  
-    const handleFieldChange = (e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,type:string) => {
-      const { name, value } = e.target;
-      if(type == "billing_address"){
-        setformdata((prev: any) => ({
-  ...prev,
-  billing_address: {
-    ...(prev?.billing_address ?? {}),
-    [name]: value
-  }
-}));
-      }else if(type == "shipping_address"){
-        setformdata((prev: any) => ({
-  ...prev,
-  shipping_address: {
-    ...(prev?.shipping_address ?? {}),
-    [name]: value
-  }
-}));
-      }
+
+  const handleFieldChange = (e: React.ChangeEvent<
+    HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+  >, type: string) => {
+    const { name, value } = e.target;
+    if (type == "billing_address") {
+      setformdata((prev: any) => ({
+        ...prev,
+        billing_address: {
+          ...(prev?.billing_address ?? {}),
+          [name]: value
+        }
+      }));
+    } else if (type == "shipping_address") {
+      setformdata((prev: any) => ({
+        ...prev,
+        shipping_address: {
+          ...(prev?.shipping_address ?? {}),
+          [name]: value
+        }
+      }));
     }
+  }
 
-    console.log(formdata,"this is form data")
+  console.log(formdata, "this is form data")
 
   return (
-    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
-      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg z-50">
+    <div className="flex flex-col bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto w-full">
+      <h1 className="border-b-2 sticky top-0 bg-white py-2 text-lg z-50">
         Company Address
       </h1>
-      <h1 className="pl-2 ">Office Address</h1>
-      <div className="grid grid-cols-4 gap-6 p-5">
+      <h1 className="px-2 pt-2 ">Office Address</h1>
+      <div className="grid grid-cols-4 gap-4">
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Street Line 1 <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
-          maxLength={40}
+            maxLength={40}
             placeholder=""
             name="address_line_1"
             onChange={(e) => {
-              handleFieldChange(e,"billing_address");
+              handleFieldChange(e, "billing_address");
             }}
             value={formdata?.billing_address?.address_line_1 as string ?? OnboardingDetail?.billing_address?.address_line_1 ?? ""}
           />
           {errors?.address_line_1 && <span style={{ color: 'red' }}>{errors?.address_line_1}</span>}
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Street Line 2 <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
-          maxLength={40}
+            maxLength={40}
             placeholder=""
             name="address_line_2"
             onChange={(e) => {
-              handleFieldChange(e,"billing_address");
+              handleFieldChange(e, "billing_address");
             }}
             value={formdata?.billing_address?.address_line_2 ?? OnboardingDetail?.billing_address?.address_line_2 ?? ""}
           // defaultValue={}
@@ -224,7 +232,7 @@ const CompanyAddress = ({
           {errors?.address_line_2 && <span style={{ color: 'red' }}>{errors?.address_line_2}</span>}
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Pincode/Zipcode <span className="pl-2 text-red-400 text-2xl">*</span>
           </h1>
           <Input
@@ -232,48 +240,48 @@ const CompanyAddress = ({
             type="number"
             name="international_zipcode"
             onChange={(e) => {
-              handleFieldChange(e,"billing_address")
+              handleFieldChange(e, "billing_address")
             }}
             value={formdata?.billing_address?.international_zipcode ?? OnboardingDetail?.billing_address?.international_zipcode ?? ""}
           />
           {errors?.international_zipcode && <span style={{ color: 'red' }}>{errors?.international_zipcode}</span>}
         </div>
-        
-          <div className="col-span-2">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              City <span className="pl-2 text-red-400 text-2xl">*</span>
-            </h1>
-            <Input
-              placeholder=""
-              name="international_city"
-              onChange={(e)=>{handleFieldChange(e,"billing_address")}}
-              value={formdata?.billing_address?.international_city ?? OnboardingDetail?.billing_address?.international_city ?? ""}
-            />
-          </div>
-          <div className="col-span-2">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              State <span className="pl-2 text-red-400 text-2xl">*</span>
-            </h1>
-            <Input
-              placeholder=""
-              name="international_state"
-              onChange={(e)=>{handleFieldChange(e,"billing_address")}}
-              value={formdata?.billing_address?.international_state ?? OnboardingDetail?.billing_address?.international_state ?? ""}
-              // defaultValue={}
-            />
-          </div>
-          <div className="col-span-2">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Country <span className="pl-2 text-red-400 text-2xl">*</span>
-            </h1>
-            <Input
-              placeholder=""
-              name="international_country"
-              onChange={(e)=>{handleFieldChange(e,"billing_address")}}
-              value={formdata?.billing_address?.international_country ?? OnboardingDetail?.billing_address?.international_country ?? ""}
-            />
-          </div>
-        
+
+        <div className="col-span-2">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            City <span className="pl-2 text-red-400 text-2xl">*</span>
+          </h1>
+          <Input
+            placeholder=""
+            name="international_city"
+            onChange={(e) => { handleFieldChange(e, "billing_address") }}
+            value={formdata?.billing_address?.international_city ?? OnboardingDetail?.billing_address?.international_city ?? ""}
+          />
+        </div>
+        <div className="col-span-2">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            State <span className="pl-2 text-red-400 text-2xl">*</span>
+          </h1>
+          <Input
+            placeholder=""
+            name="international_state"
+            onChange={(e) => { handleFieldChange(e, "billing_address") }}
+            value={formdata?.billing_address?.international_state ?? OnboardingDetail?.billing_address?.international_state ?? ""}
+          // defaultValue={}
+          />
+        </div>
+        <div className="col-span-2">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            Country <span className="pl-2 text-red-400 text-2xl">*</span>
+          </h1>
+          <Input
+            placeholder=""
+            name="international_country"
+            onChange={(e) => { handleFieldChange(e, "billing_address") }}
+            value={formdata?.billing_address?.international_country ?? OnboardingDetail?.billing_address?.international_country ?? ""}
+          />
+        </div>
+
       </div>
       <div className="flex justify-start gap-6 items-center">
         <h1 className="pl-2 ">Manufacturing Address</h1>
@@ -282,7 +290,7 @@ const CompanyAddress = ({
             type="checkbox"
             className="w-4"
             onChange={(e) => {
-              setformdata((prev:any)=>({...prev,same_as_above:e.target.checked}));
+              setformdata((prev: any) => ({ ...prev, same_as_above: e.target.checked }));
             }}
             value={formdata?.same_as_above ? 1 : 0}
 
@@ -291,38 +299,38 @@ const CompanyAddress = ({
           <h1 className="font-normal">Same as above</h1>
         </div>
       </div>
-      <div className={`grid grid-cols-4 gap-6 p-5 ${formdata?.same_as_above ? "hidden" : ""}`}>
+      <div className={`grid grid-cols-4 gap-4 ${formdata?.same_as_above ? "hidden" : ""}`}>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Address 1
           </h1>
           <Input
-          maxLength={40}
+            maxLength={40}
             // placeholder={shippingData?.address1}
             name="street_1"
             value={formdata?.shipping_address?.street_1 ?? OnboardingDetail?.shipping_address?.street_1 ?? ""}
             disabled={formdata?.same_as_above ? true : false}
             onChange={(e) => {
-              handleFieldChange(e,"shipping_address");
+              handleFieldChange(e, "shipping_address");
             }}
           />
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Address 2
           </h1>
           <Input
-          maxLength={40}
+            maxLength={40}
             name="street_2"
             value={formdata?.shipping_address?.street_2 ?? OnboardingDetail?.shipping_address?.street_2 ?? ""}
             disabled={formdata?.same_as_above ? true : false}
             onChange={(e) => {
-              handleFieldChange(e,"shipping_address");
+              handleFieldChange(e, "shipping_address");
             }}
           />
         </div>
         <div className="col-span-2">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
             Pincode/Zipcode
           </h1>
           <Input
@@ -330,44 +338,44 @@ const CompanyAddress = ({
             value={formdata?.shipping_address?.inter_manufacture_zipcode ?? OnboardingDetail?.shipping_address?.inter_manufacture_zipcode ?? ""}
             disabled={formdata?.same_as_above ? true : false}
             onChange={(e) => {
-              handleFieldChange(e,"shipping_address");
+              handleFieldChange(e, "shipping_address");
             }}
           />
         </div>
-          <div className="col-span-2">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              City
-            </h1>
-            <Input
-              // placeholder={shippingData?.city}
-              name="inter_manufacture_city"
-              value={formdata?.shipping_address?.inter_manufacture_city ?? OnboardingDetail?.shipping_address?.inter_manufacture_city ?? ""}
-              disabled={formdata?.same_as_above ? true : false}
-              onChange={(e) => {handleFieldChange(e,"shipping_address") }}
-            />
-          </div>
-          <div className="col-span-2">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              State
-            </h1>
-            <Input
-              // placeholder={shippingData?.state}
-              name="inter_manufacture_state"
-              value={formdata?.shipping_address?.inter_manufacture_state ?? OnboardingDetail?.shipping_address?.inter_manufacture_state ?? ""}
-              disabled={formdata?.same_as_above ? true : false}
-              onChange={(e) => {handleFieldChange(e,"shipping_address") }}
-            />
-          </div>
-          <div className="col-span-2">
-            <h1 className="text-[12px] font-normal text-[#626973] pb-3">
-              Country
-            </h1>
-            <Input
+        <div className="col-span-2">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            City
+          </h1>
+          <Input
+            // placeholder={shippingData?.city}
+            name="inter_manufacture_city"
+            value={formdata?.shipping_address?.inter_manufacture_city ?? OnboardingDetail?.shipping_address?.inter_manufacture_city ?? ""}
+            disabled={formdata?.same_as_above ? true : false}
+            onChange={(e) => { handleFieldChange(e, "shipping_address") }}
+          />
+        </div>
+        <div className="col-span-2">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            State
+          </h1>
+          <Input
+            // placeholder={shippingData?.state}
+            name="inter_manufacture_state"
+            value={formdata?.shipping_address?.inter_manufacture_state ?? OnboardingDetail?.shipping_address?.inter_manufacture_state ?? ""}
+            disabled={formdata?.same_as_above ? true : false}
+            onChange={(e) => { handleFieldChange(e, "shipping_address") }}
+          />
+        </div>
+        <div className="col-span-2">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+            Country
+          </h1>
+          <Input
             name="inter_manufacture_country"
-              value={formdata?.shipping_address?.inter_manufacture_country ?? OnboardingDetail?.shipping_address?.inter_manufacture_country ?? ""}
-              disabled={formdata?.same_as_above ? true : false}
-              onChange={(e) => { handleFieldChange(e,"shipping_address") }}
-            />
+            value={formdata?.shipping_address?.inter_manufacture_country ?? OnboardingDetail?.shipping_address?.inter_manufacture_country ?? ""}
+            disabled={formdata?.same_as_above ? true : false}
+            onChange={(e) => { handleFieldChange(e, "shipping_address") }}
+          />
         </div>
       </div>
       <div className="pl-4 flex gap-4 items-center">
@@ -375,89 +383,91 @@ const CompanyAddress = ({
           type="checkbox"
           className="w-4"
           onChange={(e) => {
-            setformdata((prev:any)=>({...prev,multiple_locations:e.target.checked}));
+            setformdata((prev: any) => ({ ...prev, multiple_locations: e.target.checked }));
           }}
           checked={formdata?.multiple_locations ?? OnboardingDetail?.multiple_locations == 1}
         />
         <h1>Do you have multiple locations?</h1>
       </div>
       {formdata?.multiple_locations && (
-        <>
-          <div className="grid grid-cols-4 gap-6 p-5">
+        <div className="pt-4">
+          <div className="grid grid-cols-4 gap-4">
             <div className="col-span-2">
-              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
                 Address 1
               </h1>
               <Input
-              maxLength={40}
+                maxLength={40}
                 onChange={(e) => {
-                  setSingleRow((prev:any)=>({...prev,address_line_1:e.target.value}))
+                  setSingleRow((prev: any) => ({ ...prev, address_line_1: e.target.value }))
                 }}
                 value={singlerow?.address_line_1 ?? ""}
               />
             </div>
             <div className="col-span-2">
-              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
                 Address 2
               </h1>
               <Input
-              maxLength={40}
+                maxLength={40}
                 onChange={(e) => {
-                  setSingleRow((prev:any)=>({...prev,address_line_2:e.target.value}))
+                  setSingleRow((prev: any) => ({ ...prev, address_line_2: e.target.value }))
                 }}
                 value={singlerow?.address_line_2 ?? ""}
               />
             </div>
             <div className="col-span-2">
-              <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+              <h1 className="text-[12px] font-normal text-[#626973] pb-2">
                 Pincode/Zipcode
               </h1>
               <Input
                 onChange={(e) => {
-                  setSingleRow((prev:any)=>({...prev,zipcode:e.target.value}))
+                  setSingleRow((prev: any) => ({ ...prev, zipcode: e.target.value }))
                 }}
                 value={singlerow?.zipcode ? singlerow?.zipcode : ""}
               />
             </div>
             <div className="grid grid-cols-3 col-span-4 gap-4">
               <div>
-                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                <h1 className="text-[12px] font-normal text-[#626973] pb-2">
                   City
                 </h1>
                 <Input
                   value={singlerow?.city ?? ""}
                   onChange={(e) => {
-                  setSingleRow((prev:any)=>({...prev,city:e.target.value}))
-                }}
+                    setSingleRow((prev: any) => ({ ...prev, city: e.target.value }))
+                  }}
                 />
               </div>
               <div>
-                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                <h1 className="text-[12px] font-normal text-[#626973] pb-2">
                   State
                 </h1>
                 <Input
                   value={singlerow?.state ?? ""}
                   onChange={
-                    (e)=>{
-                      setSingleRow((prev:any)=>({...prev,state:e.target.value}))
+                    (e) => {
+                      setSingleRow((prev: any) => ({ ...prev, state: e.target.value }))
                     }
                   }
                 />
               </div>
               <div>
-                <h1 className="text-[12px] font-normal text-[#626973] pb-3">
+                <h1 className="text-[12px] font-normal text-[#626973] pb-2">
                   Country
                 </h1>
                 <Input
-                onChange={(e)=>{
-                  setSingleRow((prev:any)=>({...prev,country:e.target.value}))
-                }}
+                  onChange={(e) => {
+                    setSingleRow((prev: any) => ({ ...prev, country: e.target.value }))
+                  }}
                   value={singlerow?.country ?? ""}
                 />
               </div>
               <div className={``}>
                 <Button
-                  className="bg-blue-400 hover:bg-blue-400 rounded-3xl"
+                  className="py-2"
+                  variant={"nextbtn"}
+                  size={"nextbtnsize"}
                   onClick={() => {
                     handleMultipleAdd();
                   }}
@@ -491,7 +501,7 @@ const CompanyAddress = ({
                 </TableRow>
               </TableHeader>
               <TableBody className="text-center">
-                {multipleTable?.map((item:any, index:any) => (
+                {multipleTable?.map((item: any, index: any) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">{index + 1}</TableCell>
                     <TableCell>{item?.address_line_1}</TableCell>
@@ -500,13 +510,13 @@ const CompanyAddress = ({
                     <TableCell>{item?.city}</TableCell>
                     <TableCell>{item?.state}</TableCell>
                     <TableCell>{item?.country}</TableCell>
-                    <TableCell className="flex justify-center"><Trash2 className="text-red-400 cursor-pointer" onClick={()=>{handleRowDelete(index)}}/></TableCell>
+                    <TableCell className="flex justify-center"><Trash2 className="text-red-400 cursor-pointer" onClick={() => { handleRowDelete(index) }} /></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
-        </>
+        </div>
       )}
 
       <div className="flex flex-col gap-2 justify-center pl-4 pt-2">

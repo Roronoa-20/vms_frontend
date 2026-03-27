@@ -237,6 +237,7 @@ const API_END_POINTS = {
   bankProofByPurchaseTeam: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_payment_details.update_bank_proof_purchase_team`,
   DispatchStateAndPlant: `${url}/api/method/vms.APIs.dispatch.vehicle_details.get_state_and_plant_data`,
   MaterialCodeSearchApi: `${url}/api/method/vms.APIs.master_apis.material_code.get_material_code_list`,
+  CheckMaterialCode: `${url}/api/method/vms.APIs.master_apis.material_code.check_material_code`,
   getLatestMaterialCode: `${url}/api/method/vms.APIs.master_apis.material_code.get_latest_material_code`,
   MaterialGroupSearchApi: `${url}/api/method/vms.APIs.master_apis.material_group_master.get_material_group_list_custom`,
   ValuationAreaSearchApi: `${url}/api/method/vms.APIs.master_apis.valuation_class_master.get_valuation_class_list_custom`,
