@@ -327,28 +327,6 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
           message: "Enter a valid Material Code",
         });
         isValid = false;
-      } else if (latestCodeSuggestions) {
-        // Validation: Must match NEXT suggested
-        if (latestCodeSuggestions.next && value !== latestCodeSuggestions.next) {
-          const errMsg = `Material Code must match next suggested code: ${latestCodeSuggestions.next}`;
-          form.setError("material_code_revised", {
-            type: "manual",
-            message: errMsg,
-          });
-          alert(errMsg);
-          isValid = false;
-        }
-
-        // Validation: Must NOT match SAP or Onboarding latest suggestions
-        if (value === latestCodeSuggestions.sap || value === latestCodeSuggestions.onboarding) {
-          const errMsg = "Material Code cannot match existing SAP or Onboarding values";
-          form.setError("material_code_revised", {
-            type: "manual",
-            message: errMsg,
-          });
-          alert(errMsg);
-          isValid = false;
-        }
       }
     }
 
