@@ -132,124 +132,97 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
         revisedCode = getCodeFromDescription(materialDescValue);
     }
 
-    // useEffect(() => {
-    //     if (!isSAPGenerated) return;
+    useEffect(() => {
+        if (!isSAPGenerated) return;
 
-    //     const sapCode = MaterialOnboardingDetails?.material_code_revised || "";
-    //     const sapDesc = MaterialOnboardingDetails?.material_name_description || "";
+        const sapCode = MaterialOnboardingDetails?.material_code_revised || "";
+        const sapDesc = MaterialOnboardingDetails?.material_name_description || "";
 
-    //     if (!sapCode) return;
+        if (!sapCode) return;
 
-    //     form.setValue("material_code_revised", sapCode, { shouldDirty: false, shouldTouch: false, shouldValidate: true });
-    //     form.setValue("material_name_description", MaterialOnboardingDetails?.material_name_description || "", { shouldDirty: false });
-    //     form.setValue("material_specifications", MaterialOnboardingDetails?.material_specifications || "", { shouldDirty: false });
-    //     setOriginalMaterialCode(sapCode);
-    //     setOriginalDesc(sapDesc.trim().toLowerCase());
-    //     form.clearErrors([
-    //         "material_name_description",
-    //         "material_specifications",
-    //         "material_code_revised",
-    //     ]);
-    // }, [isSAPGenerated, MaterialOnboardingDetails, form]);
+        form.setValue("material_code_revised", sapCode, { shouldDirty: false, shouldTouch: false, shouldValidate: true });
+        form.setValue("material_name_description", MaterialOnboardingDetails?.material_name_description || "", { shouldDirty: false });
+        form.setValue("material_specifications", MaterialOnboardingDetails?.material_specifications || "", { shouldDirty: false });
+        setOriginalMaterialCode(sapCode);
+        setOriginalDesc(sapDesc.trim().toLowerCase());
+        form.clearErrors([
+            "material_name_description",
+            "material_specifications",
+            "material_code_revised",
+        ]);
+    }, [isSAPGenerated, MaterialOnboardingDetails, form]);
 
     // // -------------------- INITIALIZE FORM --------------------
-    // useEffect(() => {
-    //     if (isSAPGenerated) return;
-    //     if (!MaterialDetails?.material_request_item) return;
-    //     if (!MaterialDetails?.material_master) return;
+    useEffect(() => {
+        if (isSAPGenerated) return;
+        if (!MaterialDetails?.material_request_item) return;
+        if (!MaterialDetails?.material_master) return;
 
-    //     const item = MaterialDetails.material_request_item;
-    //     const storage = MaterialDetails.material_master;
+        const item = MaterialDetails.material_request_item;
+        const storage = MaterialDetails.material_master;
 
-    //     const materialDescValue = item.material_name_description || "";
-    //     let revisedCode = getCodeFromDescription(materialDescValue);
+        const materialDescValue = item.material_name_description || "";
+        let revisedCode = getCodeFromDescription(materialDescValue);
 
-    //     const approvalStatus = MaterialOnboardingDetails?.approval_status;
-    //     console.log("approvalStatus", MaterialOnboardingDetails);
-    //     const isDraftStatus = approvalStatus === "Draft" || approvalStatus === "Saved as Draft";
-    //     const shouldPrefill = ["Sent to SAP", "Re-Opened by CP", "Saved as Draft", "Draft"].includes(approvalStatus || "");
+        const approvalStatus = MaterialOnboardingDetails?.approval_status;
+        console.log("approvalStatus", MaterialOnboardingDetails);
+        const isDraftStatus = approvalStatus === "Draft" || approvalStatus === "Saved as Draft";
+        const shouldPrefill = ["Sent to SAP", "Re-Opened by CP", "Saved as Draft", "Draft"].includes(approvalStatus || "");
 
-    //     if (isDraftStatus) {
-    //         revisedCode = MaterialDetails?.material_master?.material_code_revised || MaterialDetails?.material_master?.material_code || revisedCode;
-    //     } else if (shouldPrefill && storage) {
-    //         revisedCode = storage?.material_code_revised || revisedCode;
-    //     }
+        if (isDraftStatus) {
+            revisedCode = MaterialDetails?.material_master?.material_code_revised || MaterialDetails?.material_master?.material_code || revisedCode;
+        } else if (shouldPrefill && storage) {
+            revisedCode = storage?.material_code_revised || revisedCode;
+        }
 
-    //     form.setValue("material_name_description", materialDescValue);
-    //     form.setValue("comment_by_user", item.comment_by_user || "");
-    //     form.setValue("material_specifications", item.material_specifications || "");
-    //     form.setValue("base_unit_of_measure", item.unit_of_measure || "");
-    //     form.setValue("material_category", item.material_category || "");
+        if (!form.getValues("material_name_description")) {
+            form.setValue("material_name_description", materialDescValue);
+        }
+        if (!form.getValues("comment_by_user")) {
+            form.setValue("comment_by_user", item.comment_by_user || "");
+        }
+        if (!form.getValues("material_specifications")) {
+            form.setValue("material_specifications", item.material_specifications || "");
+        }
+        if (!form.getValues("base_unit_of_measure")) {
+            form.setValue("base_unit_of_measure", item.unit_of_measure || "");
+        }
+        if (!form.getValues("material_category")) {
+            form.setValue("material_category", item.material_category || "");
+        }
 
-    //     if (filteredPlants.length && item.plant) form.setValue("plant_name", item.plant);
-    //     if (filteredMaterialTypes.length && item.material_type) {
-    //         form.setValue("material_type", item.material_type);
-    //         form.setValue("material_type_category", item.material_type_category || "");
-    //         setSelectedMaterialType(item.material_type);
-    //     }
-    //     if (item.company_name) {
-    //         setMaterialCompanyCode(item.company_name);
-    //         form.setValue("material_company_code", item.company_name);
-    //     }
+        if (filteredPlants.length && item.plant && !form.getValues("plant_name")) {
+            form.setValue("plant_name", item.plant);
+        }
+        if (filteredMaterialTypes.length && item.material_type) {
+            if (!form.getValues("material_type")) {
+                form.setValue("material_type", item.material_type);
+            }
+            form.setValue("material_type_category", item.material_type_category || "");
+            setSelectedMaterialType(item.material_type);
+        }
+        if (item.company_name) {
+            setMaterialCompanyCode(item.company_name);
+            if (!form.getValues("material_company_code")) {
+                form.setValue("material_company_code", item.company_name);
+            }
+        }
 
-    //     const initialCode = revisedCode || item.material_code_revised || "";
-    //     const currentCode = form.getValues("material_code_revised");
+        const initialCode = revisedCode || item.material_code_revised || "";
+        const currentCode = form.getValues("material_code_revised");
 
-    //     if (!currentCode || currentCode === initialCode) {
-    //         form.setValue("material_code_revised", initialCode);
-    //     }
+        if (!currentCode || currentCode === initialCode) {
+            form.setValue("material_code_revised", initialCode);
+        }
 
-    //     setOriginalMaterialCode(initialCode);
-    //     setOriginalDesc(materialDescValue.trim().toLowerCase());
+        setOriginalMaterialCode(initialCode);
+        setOriginalDesc(materialDescValue.trim().toLowerCase());
 
 
-    // }, [MaterialDetails, filteredPlants, filteredMaterialTypes, MaterialOnboardingDetails, AllMaterialCodes, form, setMaterialCompanyCode, setSelectedMaterialType]);
+    }, [MaterialDetails, filteredPlants, filteredMaterialTypes, MaterialOnboardingDetails, AllMaterialCodes, form, setMaterialCompanyCode, setSelectedMaterialType]);
 
 
     // -------------------- AUTO-UPDATE MATERIAL CODE FOR CP / STORE --------------------
-
-    useEffect(() => {
-        if (hasInitialized.current) return;
-
-        if (isSAPGenerated && MaterialOnboardingDetails) {
-            form.reset({
-                material_code_revised: MaterialOnboardingDetails.material_code_revised || "",
-                material_name_description: MaterialOnboardingDetails.material_name_description || "",
-                material_specifications: MaterialOnboardingDetails.material_specifications || "",
-            });
-
-            hasInitialized.current = true;
-            return;
-        }
-
-        if (MaterialDetails?.material_request_item && MaterialDetails?.material_master) {
-            const item = MaterialDetails.material_request_item;
-            const storage = MaterialDetails.material_master;
-
-            form.reset({
-                material_name_description: item.material_name_description || "",
-                material_specifications: item.material_specifications || "",
-                comment_by_user: item.comment_by_user || "",
-                base_unit_of_measure: item.unit_of_measure || "",
-                material_category: item.material_category || "",
-                plant_name: item.plant || "",
-                material_type: item.material_type || "",
-                material_company_code: item.company_name || "",
-                division: storage.division || "",
-                storage_location: storage.storage_location || "",
-                material_code_revised:
-                    item.material_code_revised ||
-                    storage.material_code_revised ||
-                    "",
-            });
-
-            setMaterialCompanyCode(item.company_name || "");
-            setSelectedMaterialType(item.material_type || "");
-
-            hasInitialized.current = true;
-        }
-    }, []);
-
     useEffect(() => {
         if (isSAPGenerated || isExistingMaterial) return;
         if (!(role === "Material CP" || role === "Store")) return;

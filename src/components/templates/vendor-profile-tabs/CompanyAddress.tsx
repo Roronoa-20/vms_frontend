@@ -1,4 +1,5 @@
 "use client";
+import { toast } from "react-toastify";
 import React, { useEffect, useState } from "react";
 import { Input } from "../../atoms/input";
 import {
@@ -99,12 +100,12 @@ const CompanyAddress = ({ ref_no, onboarding_ref_no, OnboardingDetail, onNextTab
   };
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-4 w-full h-[calc(100vh-120px)] overflow-y-auto">
+    <div className="flex flex-col bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto w-full">
       {/* Header with Change Request button */}
-      <div className="flex justify-between items-center border-b-2 pb-2">
+      <div className="flex justify-between items-center border-b-2">
         <h1 className="text-lg">Company Address</h1>
         <Button
-          className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-2xl"
+          className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl"
           onClick={() => setIsDialogOpen(true)}
         >
           Change Request
