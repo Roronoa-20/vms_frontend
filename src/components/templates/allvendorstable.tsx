@@ -3,9 +3,11 @@ import { Vendor, AllVendorsCompanyCodeResponse, CompanyVendorCodeRecord, VendorR
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/src/components/atoms/table";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { FileText, CheckSquare, Square } from "lucide-react";
+import { FileText, CheckSquare, Square, Send, FilePlus, Eye, Copy, ExternalLink, Plus, Trash2, Mail, X, Check, CheckCircle } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import PopUp from "@/src/components/molecules/AllvendortablePopUp";
 import API_END_POINTS from "@/src/services/apiEndPoints";
+import { Badge } from "@/components/ui/badge";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import Pagination from "@/src/components/molecules/Pagination-at-all-vendors";
@@ -14,6 +16,7 @@ import { TvendorRegistrationDropdown } from "@/src/types/types";
 import { Label } from "@/components/ui/label";
 import { Select, SelectGroup, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/src/components/atoms/select";
 import { RowData, ExtendRowData, MultipleCompanyData } from "@/src/types/rowdata";
+import { useAuth } from "@/src/context/AuthContext";
 
 interface Props {
     vendors: VendorRow[];
@@ -23,16 +26,35 @@ interface Props {
     pageSize: number;
     totalPages: number;
     totalRecords: number;
+    searchVendorType: string;
+    setSearchVendorType: (value: string) => void;
+    vendorTypeOptions: any[];
 }
 
-const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurrentPage, pageSize, totalPages, totalRecords }) => {
+const VendorTable: React.FC<Props> = ({
+    vendors,
+    activeTab,
+    currentPage,
+    setCurrentPage,
+    pageSize,
+    totalPages,
+    totalRecords,
+    searchVendorType,
+    setSearchVendorType,
+    vendorTypeOptions
+}) => {
     console.log("Vendors of the table-------->", vendors);
     const router = useRouter();
+    const { userid } = useAuth();
     const [isVendorCodeDialog, setIsVendorCodeDialog] = React.useState(false);
     const [selectedVendorCodes, setSelectedVendorCodes] = React.useState<CompanyVendorCodeRecord[] | null>(null);
     const [copiedRow, setCopiedRow] = React.useState<RowData | null>(null);
     const [isExtendDialogOpen, setIsExtendDialogOpen] = React.useState(false);
     const [extendRow, setExtendRow] = React.useState<ExtendRowData | null>(null);
+    const [isASAPopupOpen, setIsASAPopupOpen] = React.useState(false);
+    const [asaAdditionalEmails, setAsaAdditionalEmails] = React.useState<string[]>([]);
+    const [asaEmailInput, setAsaEmailInput] = React.useState("");
+    const [selectedRowForASA, setSelectedRowForASA] = React.useState<RowData | null>(null);
     const copyFormRef = React.useRef<HTMLDivElement | null>(null);
     const extendFormRef = React.useRef<HTMLDivElement | null>(null);
     const stickyKeys: (keyof RowData | "srno")[] = ["srno", "company_code", "name", "vendor_name"];
@@ -101,30 +123,23 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
             }];
 
         return companyDataList.map((company) => {
-            const approvedRecord = vendor.vendor_onb_records?.find((record) => record.onboarding_form_status === "Approved");
-            const normalizedCompany = normalizeCompanyData(company);
+            const approvedRecord = vendor.onboarding_records?.find((record: any) => record.onboarding_form_status === "Approved");
+            const normalizedCompany = normalizeCompanyData(company) as unknown as CompanyData;
 
             return {
+                ...vendor,
                 company_data: [normalizedCompany],
-                name: vendor.vendor_id ?? "N.A.",
-                ref_no: approvedRecord?.vendor_onboarding_no ?? "N.A.",
                 multiple_company: vendor.bank_details?.registered_for_multi_companies ?? 0,
                 company_code: normalizedCompany.company_name,
                 vendor_code: normalizedCompany.company_vendor_code,
-                vendor_name: vendor.vendor_name ?? "N.A.",
-                office_email_primary: vendor.office_email_primary ?? "N.A.",
+                ref_no: approvedRecord?.vendor_onboarding_no ?? "N.A.",
                 pan_number: vendor.bank_details?.company_pan_number ?? "N.A.",
                 gst_no: vendor.document_details ?? "N.A.",
                 state: normalizedCompany.company_display_name,
-                country: vendor.country ?? "N.A.",
-                pincode: vendor.mobile_number ?? "N.A.",
-                bank_name: vendor.bank_details?.bank_name ?? "N.A.",
-                ifsc_code: vendor.bank_details?.ifsc_code ?? "N.A.",
                 sap_client_code: normalizedCompany.sap_client_code,
                 purchase_org: normalizedCompany.purchase_organization,
-                via_data_import: vendor.via_data_import != null ? Number(vendor.via_data_import) : 0,
-                created_from_registration: vendor.created_from_registration != null ? Number(vendor.created_from_registration) : 0,
-            } as RowData;
+                vendor_type: vendor.vendor_types?.map((t: any) => t.vendor_type).join(", "),
+            } as unknown as RowData;
         });
     });
 
@@ -136,11 +151,10 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
         { key: "company_code", label: "Company Code", sticky: true },
         { key: "name", label: "Vendor Ref No.", sticky: true },
         { key: "vendor_name", label: "Vendor Name", sticky: true },
+        { key: "vendor_type", label: "Vendor Type" },
         { key: "country", label: "Country" },
         { key: "office_email_primary", label: "Official Email" },
         { key: "pan_number", label: "PAN Number" },
-        { key: "bank_name", label: "Bank Name" },
-        { key: "ifsc_code", label: "IFSC Code" },
     ];
 
     const renderCell = (row: RowData, col: typeof columns[0]) => {
@@ -170,6 +184,66 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
         }
     };
 
+
+    const handleSendASA = (row: RowData) => {
+        setSelectedRowForASA(row);
+        setAsaAdditionalEmails([]);
+        setAsaEmailInput("");
+        setIsASAPopupOpen(true);
+    };
+
+    const handleAddAdditionalEmail = (email: string) => {
+        const trimmedEmail = email.trim().replace(/,$/, "");
+        if (trimmedEmail && !asaAdditionalEmails.includes(trimmedEmail)) {
+            // Simple email validation
+            if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+                setAsaAdditionalEmails((prev) => [...prev, trimmedEmail]);
+                setAsaEmailInput("");
+            }
+        }
+    };
+
+    const handleRemoveAdditionalEmail = (index: number) => {
+        setAsaAdditionalEmails((prev) => prev.filter((_, i) => i !== index));
+    };
+
+    const handleEmailKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter" || e.key === ",") {
+            e.preventDefault();
+            handleAddAdditionalEmail(asaEmailInput);
+        }
+    };
+
+    const handleASASubmit = async () => {
+        if (!selectedRowForASA) return;
+
+        // Merge primary email with additional ones
+        const allEmails = [
+            selectedRowForASA.office_email_primary,
+            ...asaAdditionalEmails
+        ].filter(email => email?.trim() !== "");
+
+        try {
+            const response = await requestWrapper({
+                url: API_END_POINTS?.sendasaemail,
+                method: "POST",
+                data: {
+                    vendor_id: selectedRowForASA.name,
+                    emails: allEmails.join(","),
+                    asa_required: 1,
+                    user_id: userid
+                },
+            });
+
+            if (response?.status === 200) {
+                alert("ASA Form sent successfully to all recipients.");
+                setIsASAPopupOpen(false);
+            }
+        } catch (err) {
+            console.error("Error sending ASA Form:", err);
+            alert("Failed to send ASA Form. Check console for details.");
+        }
+    };
 
     const handleView = (row: RowData) => {
         const isImported = row.company_data?.some(c => String(c.via_import) === "1");
@@ -234,10 +308,10 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
         };
 
         fetchDropdownData();
-    }, [activeTab,vendors]);
+    }, [activeTab, vendors]);
 
     const companyDropdown = dropdownData?.company_master;
-    
+
     const handleCopy = (row: RowData) => {
         if (copiedRow?.name === row.name && copiedRow?.company_code === row.company_code) {
             setCopiedRow(null);
@@ -313,7 +387,7 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
             alert("Cannot extend vendor in the same company.");
             return;
         }
-        console.log("Submitting the extend row info---->",extendRow);
+        console.log("Submitting the extend row info---->", extendRow);
 
         try {
             const response = await requestWrapper({
@@ -341,20 +415,40 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
 
     return (
         <>
-            {noVendors ? (
-                <p className="text-gray-500">
-                    No vendors found for company code <b>{activeTab}</b>.
+            <div className="flex items-center justify-between mb-2">
+                <h2 className="text-xl font-semibold text-gray-800">Vendors List</h2>
+                <div className="w-[200px]">
+                    <Select onValueChange={(value: string) => setSearchVendorType(value)} value={searchVendorType} >
+                        <SelectTrigger className="w-full h-9 text-xs bg-white border-blue-200 focus:ring-0 focus:ring-offset-0">
+                            <SelectValue placeholder="Vendor Type" />
+                        </SelectTrigger>
+                        <SelectContent className="z-[100] bg-white border border-gray-200">
+                            <SelectGroup>
+                                <SelectItem value="All" className="text-xs">All Vendor Types</SelectItem>
+                                {vendorTypeOptions.map((option) => (
+                                    <SelectItem key={option.name} value={option.name} className="text-xs">
+                                        {option.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+
+            {vendors.length === 0 ? (
+                <p className="text-center text-gray-500 py-10 bg-white rounded-xl shadow-md border animate-fade-in">
+                    No vendors found matching your current search criteria.
                 </p>
             ) : (
                 <div>
-                    <h2 className="text-xl font-semibold text-gray-800 mb-2">Vendors List</h2>
                     <div className="overflow-x-auto rounded-xl shadow-md border">
-                        <Table className="min-w-full text-sm border-collapse">
-                            <TableHeader className="sticky top-0 z-10 bg-blue-100">
+                        <Table className="min-w-full text-[13px] border-collapse">
+                            <TableHeader className="sticky top-0 z-10 bg-blue-100 border-b">
                                 <TableRow>
                                     <TableHead
                                         ref={(el) => { headerRefs.current["srno"] = el; }}
-                                        className="sticky left-0 z-20 bg-blue-100 text-center text-black text-nowrap px-4 py-2"
+                                        className="sticky left-0 z-20 bg-blue-100 text-center text-black font-semibold text-nowrap px-3 py-2"
                                         style={{ left: getStickyLeft("srno") }}
                                     >
                                         Sr. No.
@@ -364,22 +458,22 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
                                             <TableHead
                                                 key={col.key}
                                                 ref={(el) => { headerRefs.current[col.key] = el; }}
-                                                className={`text-black text-center px-4 py-2 whitespace-wrap ${col.sticky ? "sticky left-0 bg-blue-100 z-20" : ""}`}
+                                                className={`text-black text-center font-semibold px-3 py-2 whitespace-nowrap ${col.sticky ? "sticky left-0 bg-blue-100 z-20" : "bg-blue-100 border-b border-blue-200 shadow-sm"}`}
                                                 style={stickyKeys.includes(col.key) ? { left: getStickyLeft(col.key) } : {}}
                                             >
                                                 {col.label}
                                             </TableHead>
                                             {index === 2 && (
-                                                <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
-                                                    Vendor Codes <br />& GST
+                                                <TableHead className="text-black text-center font-semibold px-3 py-2 whitespace-nowrap bg-blue-100 border-b border-blue-200 shadow-sm">
+                                                    Vendor Codes & GST
                                                 </TableHead>
                                             )}
                                         </React.Fragment>
                                     ))}
-                                    <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
-                                        View Details
+                                    <TableHead className="text-black text-center font-semibold px-3 py-2 whitespace-nowrap bg-blue-100 border-b border-blue-200 shadow-sm">
+                                        Actions
                                     </TableHead>
-                                    <TableHead className="text-black text-center px-4 py-2 whitespace-nowrap">
+                                    <TableHead className="text-black text-center font-semibold px-3 py-2 whitespace-nowrap bg-blue-100 border-b border-blue-200 shadow-sm rounded-tr-xl">
                                         Extend Vendor
                                     </TableHead>
                                 </TableRow>
@@ -388,17 +482,16 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
                                 {paginatedRows.map((row, idx) => (
                                     <TableRow
                                         key={`${row.name}-${row.company_code}-${idx}`}
-                                        className={
-                                            copiedRow?.name === row.name && copiedRow?.company_code === row.company_code
-                                                ? "bg-yellow-100 border-2 border-yellow-400"
-                                                : idx % 2 === 0
-                                                    ? "bg-gray-50"
-                                                    : "bg-white"
-                                        }
+                                        className={`group transition-colors ${copiedRow?.name === row.name && copiedRow?.company_code === row.company_code
+                                            ? "bg-yellow-100 border-2 border-yellow-400"
+                                            : "bg-white hover:bg-gray-100"
+                                            }`}
                                     >
                                         {/* Sr. No */}
                                         <TableCell
-                                            className={`text-center px-4 py-2 whitespace-nowrap sticky z-10 ${stickyKeys.includes("srno") ? "bg-white" : "bg-[#f7f7f7]"
+                                            className={`text-center px-3 py-2 whitespace-nowrap sticky left-0 z-[30] transition-colors ${stickyKeys.includes("srno")
+                                                ? "bg-white group-hover:bg-gray-100"
+                                                : "bg-[#f7f7f7]"
                                                 }`}
                                             style={{ left: getStickyLeft("srno") }}
                                         >
@@ -409,7 +502,9 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
                                         {columns.map((col, index) => (
                                             <React.Fragment key={`${row.name}-${col.key}-${index}`}>
                                                 <TableCell
-                                                    className={`text-center px-4 py-2 whitespace-nowrap ${stickyKeys.includes(col.key) ? "sticky bg-white z-10" : "bg-[#f7f7f7]"
+                                                    className={`text-center px-3 py-2 whitespace-nowrap text-black transition-colors ${stickyKeys.includes(col.key)
+                                                        ? "sticky left-0 bg-white group-hover:bg-gray-100 z-[30]"
+                                                        : "border-b border-gray-50"
                                                         }`}
                                                     style={stickyKeys.includes(col.key) ? { left: getStickyLeft(col.key) } : {}}
                                                 >
@@ -418,13 +513,13 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
 
                                                 {/* Vendor Codes & GST Button */}
                                                 {index === 2 && (
-                                                    <TableCell className="text-center px-4 py-2 bg-[#f7f7f7]">
+                                                    <TableCell className="text-center px-3 py-2 border-b border-gray-100">
                                                         <Button
                                                             variant="outline"
                                                             onClick={() => fetchVendorCodes(row.name, row.company_code)}
-                                                            className="whitespace-nowrap bg-[#5291CD] text-white text-sm rounded-xl px-3 py-1"
+                                                            className="whitespace-nowrap h-7 bg-[#5291CD]/90 hover:bg-[#5291CD] hover:text-white text-white border-none text-[10.5px] font-medium rounded-md px-2.5 transition-all relative z-0 shadow-sm"
                                                         >
-                                                            View
+                                                            View Codes
                                                         </Button>
                                                     </TableCell>
                                                 )}
@@ -432,38 +527,94 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
                                         ))}
 
                                         {/* Actions */}
-                                        <TableCell className="text-center bg-[#f7f7f7]">
-                                            <Button
-                                                onClick={() => handleView(row)}
-                                                className="whitespace-nowrap bg-[#5291CD] text-white text-sm rounded-xl px-3 py-1"
-                                            >
-                                                View
-                                            </Button>
+                                        <TableCell className="text-center px-3 py-2">
+                                            <div className="flex gap-2 justify-start relative z-0 pl-1">
+                                                <TooltipProvider delayDuration={0}>
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <Button
+                                                                variant="ghost"
+                                                                onClick={() => handleView(row)}
+                                                                className="p-2 h-8 w-8 hover:bg-gray-100 transition-colors"
+                                                            >
+                                                                <Eye className="w-5 h-5 text-gray-500" />
+                                                            </Button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent side="bottom" sideOffset={5}>View Details</TooltipContent>
+                                                    </Tooltip>
+
+                                                    {(row.vendor_type?.includes("Material") ||
+                                                        row.vendor_types?.some(vt => vt.vendor_type?.includes("Material"))) && (
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        onClick={() => {
+                                                                            if (row.asa_form_link_sent !== 1) {
+                                                                                handleSendASA(row);
+                                                                            }
+                                                                        }}
+                                                                        className={`p-2 h-8 w-8 hover:bg-gray-100 transition-colors ${row.asa_form_link_sent === 1 ? "cursor-default opacity-80" : ""}`}
+                                                                    >
+                                                                        {row.asa_form_link_sent === 1 ? (
+                                                                            <CheckCircle className="w-5 h-5 text-green-600" />
+                                                                        ) : (
+                                                                            <Send className="w-5 h-5 text-blue-600" />
+                                                                        )}
+                                                                    </Button>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent side="bottom">
+                                                                    {row.asa_form_link_sent === 1 ? "ASA Form Sent" : "Send ASA Form"}
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        )}
+                                                </TooltipProvider>
+                                            </div>
                                         </TableCell>
-                                        <TableCell className="text-center bg-[#f7f7f7]">
-                                            {["1012", "1022", "1000", "1025", "1030"].includes(row.company_code) ? (
-                                                <div className="flex gap-2 justify-center">
-                                                    <Button
-                                                        onClick={() => handleExtend(row)}
-                                                        className="bg-blue-600 text-white text-sm rounded-xl px-3 py-1"
-                                                    >
-                                                        Extend
-                                                    </Button>
-                                                    <Button
-                                                        onClick={() => handleCopy(row)}
-                                                        className="bg-green-600 text-white text-sm rounded-xl px-3 py-1"
-                                                    >
-                                                        Copy
-                                                    </Button>
-                                                </div>
-                                            ) : (
-                                                <Button
-                                                    onClick={() => handleCopy(row)}
-                                                    className="bg-green-600 text-white text-sm rounded-xl px-3 py-1"
-                                                >
-                                                    Copy
-                                                </Button>
-                                            )}
+                                        <TableCell className="text-center px-3 py-2">
+                                            <TooltipProvider delayDuration={0}>
+                                                {["1012", "1022", "1000", "1025", "1030"].includes(row.company_code) ? (
+                                                    <div className="flex gap-2 justify-center relative z-0">
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    onClick={() => handleExtend(row)}
+                                                                    className="p-2 h-8 w-8 hover:bg-gray-100 transition-colors"
+                                                                >
+                                                                    <ExternalLink className="w-5 h-5 text-[#854D0E]" />
+                                                                </Button>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent side="bottom">Extend Vendor</TooltipContent>
+                                                        </Tooltip>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    onClick={() => handleCopy(row)}
+                                                                    className="p-2 h-8 w-8 hover:bg-gray-100 transition-colors"
+                                                                >
+                                                                    <Copy className="w-5 h-5 text-green-600" />
+                                                                </Button>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent side="bottom">Copy Vendor</TooltipContent>
+                                                        </Tooltip>
+                                                    </div>
+                                                ) : (
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <Button
+                                                                variant="ghost"
+                                                                onClick={() => handleCopy(row)}
+                                                                className="p-2 h-8 w-8 hover:bg-gray-100 transition-colors"
+                                                            >
+                                                                <Copy className="w-5 h-5 text-green-600" />
+                                                            </Button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent side="bottom">Copy Vendor</TooltipContent>
+                                                    </Tooltip>
+                                                )}
+                                            </TooltipProvider>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -507,9 +658,11 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
                     handleClose={() => setIsVendorCodeDialog(false)}
                     headerText="Vendor Codes"
                     classname="relative"
+                    showBackButton={false}
+                    padding="p-3"
                 >
                     <div className="overflow-y-auto md:max-w-3xl md:max-h-[80vh] relative">
-                        <div className="overflow-x-auto">
+                        <div className="overflow-x-auto rounded-xl border border-gray-100 shadow-sm overflow-hidden">
                             <Table className="min-w-full text-sm">
                                 <TableBody>
                                     {selectedVendorCodes.map((company) => (
@@ -627,6 +780,65 @@ const VendorTable: React.FC<Props> = ({ vendors, activeTab, currentPage, setCurr
                         </div>
                     </div >
                 </div >
+            )}
+            {/* Send ASA PopUp */}
+            {isASAPopupOpen && selectedRowForASA && (
+                <PopUp
+                    handleClose={() => setIsASAPopupOpen(false)}
+                    headerText="Send ASA Form"
+                    isSubmit={true}
+                    Submitbutton={handleASASubmit}
+                    submitLabel="Send"
+                    classname="md:max-w-md"
+                    padding="p-4"
+                >
+                    <div className="space-y-5 py-2">
+                        <div className="bg-gray-50/50 p-3 rounded-lg border border-gray-100 mb-2">
+                            <p className="text-xs text-gray-900 font-medium mb-1 capitalize">Primary Recipient of {selectedRowForASA.vendor_name}</p>
+                            <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-md border border-gray-100 shadow-sm">
+                                <Mail className="w-3.5 h-3.5 text-blue-500" />
+                                <span className="text-sm text-gray-700 font-semibold">{selectedRowForASA.office_email_primary}</span>
+                                <Badge variant="secondary" className="ml-auto text-[10px] h-4 bg-gray-100 text-gray-600 border-none px-1.5 uppercase font-bold tracking-wider">Primary</Badge>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label className="text-xs font-bold text-gray-700 flex items-center gap-2 uppercase tracking-wide">
+                                Add More Recipients
+                            </Label>
+
+                            <div className="space-y-3">
+                                <div className="flex flex-wrap gap-2 p-2 border border-gray-200 rounded-lg min-h-[44px] bg-white focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 transition-all outline-none">
+                                    {asaAdditionalEmails.map((email, index) => (
+                                        <Badge
+                                            key={index}
+                                            variant="secondary"
+                                            className="flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-100 px-2 py-1 rounded-md animate-in zoom-in-95 duration-200"
+                                        >
+                                            <span className="text-[11px] font-medium">{email}</span>
+                                            <button
+                                                onClick={() => handleRemoveAdditionalEmail(index)}
+                                                className="hover:bg-blue-200 rounded-full p-0.5 transition-colors"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        </Badge>
+                                    ))}
+                                    <input
+                                        type="text"
+                                        value={asaEmailInput}
+                                        onChange={(e) => setAsaEmailInput(e.target.value)}
+                                        onKeyDown={handleEmailKeyDown}
+                                        onBlur={() => handleAddAdditionalEmail(asaEmailInput)}
+                                        placeholder={asaAdditionalEmails.length === 0 ? "Enter additional email..." : ""}
+                                        className="flex-1 min-w-[120px] h-7 text-sm focus:outline-none bg-transparent"
+                                    />
+                                </div>
+                                <p className="text-[10px] text-gray-600 italic">Press Enter or Comma to add recipient</p>
+                            </div>
+                        </div>
+                    </div>
+                </PopUp>
             )}
         </>
     );
