@@ -12,6 +12,7 @@ import ZSBAsset from '../templates/purchase-request/ZSBAsset'
 import PopUp from '../molecules/PopUp'
 import { Input } from '../atoms/input'
 import FileList from '../templates/purchase-request/FileList'
+import FinanceFields from '../templates/purchase-request/FinanceFields'
 
 interface Props {
     purchaseRequisitionTypeDropdown: purchaseRequisitionTypeDropdownType[]
@@ -43,6 +44,7 @@ const PrRequest = (props: Props) => {
 
     const isFinanceApproval = prData?.is_finance_visible === 1 && prData?.can_approve === 1;
     const isNormalPR = props?.prData?.pr_type === PurchaseType.nbNormal;
+    const showFinanceFields = isFinanceApproval && isNormalPR;
 
     const fetchPrData = (prId?: string) => {
         getPurchaseReqisitionData(prId ?? props?.pr_id as string).then((res) => {
@@ -127,7 +129,7 @@ const PrRequest = (props: Props) => {
 
             {/* normal pr component */}
             {
-                props?.prData?.pr_type === PurchaseType.nbNormal && <NormalPR prData={prData} materialDropdown={props?.materialDropdown} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} financeFields={financeFields} setFinanceFields={setFinanceFields} />
+                props?.prData?.pr_type === PurchaseType.nbNormal && <NormalPR prData={prData} materialDropdown={props?.materialDropdown} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />
             }
 
             {/* capex pr component */}
@@ -146,6 +148,12 @@ const PrRequest = (props: Props) => {
             {
                 props?.prData?.pr_type === PurchaseType.zsbAsset && <ZSBAsset prData={prData} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />
             }
+
+            {props?.pr_id && <FileList data={prData?.attachment || []} fetchPrData={fetchPrData} prId={prData?.name} canEdit={!!prData?.can_edit}/>}
+
+            {showFinanceFields && (
+                <FinanceFields company={prData?.company as string} financeFields={financeFields} setFinanceFields={setFinanceFields} />
+            )}
 
             {props?.pr_id && prData?.can_approve === 1 && (
                 <div className='flex justify-end gap-4 mt-5'>
@@ -169,8 +177,6 @@ const PrRequest = (props: Props) => {
                     <Input className='mt-3' placeholder='Enter your comment here...' onChange={(e) => { setRemarks(e.target.value); }} />
                 </PopUp>
             }
-
-            <FileList data={prData?.attachment || []} fetchPrData={fetchPrData} prId={prData?.name} canEdit={!!prData?.can_edit}/>
 
         </div>
     )
