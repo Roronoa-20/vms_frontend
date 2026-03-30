@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/src/components/atoms/select";
 import { Vendor } from "@/src/types/allvendorstypes";
 import VendorTable from "@/src/components/templates/allvendorstable";
 import API_END_POINTS from "@/src/services/apiEndPoints";
@@ -39,6 +40,8 @@ const AllVendors = () => {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCountry, setSearchCountry] = useState("");
+  const [searchVendorType, setSearchVendorType] = useState<string>("All");
+  const [vendorTypeOptions, setVendorTypeOptions] = useState<any[]>([]);
   const [defaultTab, setDefaultTab] = useState<string>("1000");
   const [activeVendorTab, setActiveVendorTab] = useState<"vms_registered" | "imported_vendors" | "both_registered_and_import">("vms_registered");
   const [pagination, setPagination] = useState({
@@ -78,6 +81,23 @@ const AllVendors = () => {
     fetchCompanyWiseAnalytics();
   }, []);
 
+  useEffect(() => {
+    const fetchVendorTypes = async () => {
+      try {
+        const res: AxiosResponse<any> = await requestWrapper({
+          url: API_END_POINTS.vendorRegistrationDropdown,
+          method: "GET",
+        });
+        if (res.data?.message?.data?.vendor_type) {
+          setVendorTypeOptions(res.data.message.data.vendor_type);
+        }
+      } catch (err) {
+        console.error("Error fetching vendor types:", err);
+      }
+    };
+    fetchVendorTypes();
+  }, []);
+
   /* ================= FETCH VENDORS ================= */
 
   useEffect(() => {
@@ -109,13 +129,13 @@ const AllVendors = () => {
           params.created_from_registration = 1;
           params.via_data_import = 1;
         }
-        console.log("Sending params:", params);
+        console.log("Sending params for fetching vendors:", params);
         const res: AxiosResponse<ApiResponse> = await requestWrapper({
           url: API_END_POINTS.allvendorsdetails,
           method: "GET",
           params,
         });
-        console.log("Fetched Vendors:", res.data.message.data);
+        console.log("Fetched Vendors Result:", res.data.message.data);
         setVendors(res.data.message.data.vendor_data_list || []);
         setPagination(res.data.message.data.pagination);
       } catch (err) {
@@ -141,13 +161,23 @@ const AllVendors = () => {
           return false;
         }
 
+        if (searchVendorType !== "All") {
+          const hasType = vendor.vendor_types?.some(
+            (t: any) => t.vendor_type === searchVendorType
+          );
+          if (!hasType) return false;
+        }
+
         return true;
       })
       .map((vendor) => vendor);
-  }, [vendors, defaultTab, searchTerm, searchCountry]);
+  }, [vendors, defaultTab, searchTerm, searchCountry, searchVendorType]);
 
   useEffect(() => {
     setTablePage(1);
+    setSearchVendorType("All");
+    setSearchTerm("");
+    setSearchCountry("");
   }, [defaultTab, activeVendorTab]);
 
   /* ================= RENDER ================= */
@@ -157,59 +187,40 @@ const AllVendors = () => {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6 mt-2">
         <StatCard
-          icon={<Users className="h-6 w-6 text-blue-600" />}
+          icon={<Users className="h-5 w-5 text-blue-600" />}
           label="Total Vendors"
           value={analytics.total_vendors}
+          color="blue"
         />
         <StatCard
-          icon={<CheckCircle className="h-6 w-6 text-green-600" />}
+          icon={<CheckCircle className="h-5 w-5 text-green-600" />}
           label="VMS Registered"
           value={analytics.vms_registered}
           active={activeVendorTab === "vms_registered"}
           onClick={() => setActiveVendorTab("vms_registered")}
+          color="green"
         />
         <StatCard
-          icon={<Upload className="h-6 w-6 text-indigo-600" />}
-          label="Imported Vendors"
+          icon={<Upload className="h-5 w-5 text-indigo-600" />}
+          label="Vendors from SAP"
           value={analytics.imported_vendors}
           active={activeVendorTab === "imported_vendors"}
           onClick={() => setActiveVendorTab("imported_vendors")}
+          color="indigo"
         />
         <StatCard
-          icon={<Upload className="h-6 w-6 text-indigo-600" />}
-          label="Registered & Imported"
+          icon={<IdCard className="h-5 w-5 text-purple-600" />}
+          label="VMS & SAP Registered"
           value={analytics.both_imported_and_vms_registered}
           active={activeVendorTab === "both_registered_and_import"}
-          onClick={() =>
-            setActiveVendorTab("both_registered_and_import")
-          }
+          onClick={() => setActiveVendorTab("both_registered_and_import")}
+          color="purple"
         />
         {/* <StatCard
           icon={<IdCard className="h-6 w-6 text-indigo-600" />}
           label="Vendor Code Count"
           value={analytics.total_vc_code}
         /> */}
-      </div>
-
-      {/* Search */}
-      <div className="bg-white rounded-2xl shadow p-3 mb-6">
-        <h2 className="text-lg font-semibold text-gray-700 mb-4">
-          Search Vendors
-        </h2>
-        <div className="flex flex-wrap gap-4">
-          <Input
-            placeholder="Search by vendor name..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full md:w-1/3"
-          />
-          <Input
-            placeholder="Search by country..."
-            value={searchCountry}
-            onChange={(e) => setSearchCountry(e.target.value)}
-            className="w-full md:w-1/3"
-          />
-        </div>
       </div>
 
       {/* Company Tabs */}
@@ -248,16 +259,32 @@ const AllVendors = () => {
         </div>
       </div>
 
+      {/* Search */}
+      <div className="bg-white rounded-2xl shadow p-3 mb-6">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4">
+          Search Vendors
+        </h2>
+        <div className="flex flex-wrap gap-4">
+          <Input
+            placeholder="Search by vendor name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full md:w-1/2"
+          />
+          <Input
+            placeholder="Search by country..."
+            value={searchCountry}
+            onChange={(e) => setSearchCountry(e.target.value)}
+            className="w-full md:w-1/3"
+          />
+        </div>
+      </div>
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-lg font-semibold text-gray-700">
           {activeVendorTab === "vms_registered" && "VMS Registered Vendors"}
           {activeVendorTab === "imported_vendors" && "Imported Vendors"}
           {activeVendorTab === "both_registered_and_import" && "Registered & Imported Vendors"}
         </h2>
-
-        <span className="text-sm text-gray-500">
-          {pagination.total_records} records
-        </span>
       </div>
 
 
@@ -279,6 +306,9 @@ const AllVendors = () => {
           totalRecords={pagination.total_records}
           setCurrentPage={setTablePage}
           pageSize={pageSize}
+          searchVendorType={searchVendorType}
+          setSearchVendorType={setSearchVendorType}
+          vendorTypeOptions={vendorTypeOptions}
         />
       </div>
     </div>
@@ -295,19 +325,47 @@ interface StatCardProps {
   value: number;
   active?: boolean;
   onClick?: () => void;
+  color: "blue" | "green" | "indigo" | "purple";
 }
 
-const StatCard: React.FC<StatCardProps> = ({ icon, label, value, active, onClick }) => (
-  <div
-    onClick={onClick}
-    className={`cursor-pointer bg-white rounded-2xl shadow-sm p-1 flex items-center gap-4 border-l-4 border-blue-500 transition ${active ? "ring-2 ring-blue-500" : ""}`}
-  >
-    <div className="bg-indigo-100 p-3 rounded-xl">{icon}</div>
-    <div>
-      <p className="text-sm text-gray-500">{label}</p>
-      <h3 className="text-xl font-bold text-gray-800">
-        <CountUp end={value} duration={1.5} separator="," />
-      </h3>
+const StatCard: React.FC<StatCardProps> = ({ icon, label, value, active, onClick, color }) => {
+  const colorMap = {
+    blue: "text-blue-600 bg-blue-50 border-blue-200",
+    green: "text-green-600 bg-green-50 border-green-200",
+    indigo: "text-indigo-600 bg-indigo-50 border-indigo-200",
+    purple: "text-purple-600 bg-purple-50 border-purple-200",
+  };
+
+  const activeColorMap = {
+    blue: "ring-blue-500 bg-blue-50/50 shadow-blue-100",
+    green: "ring-green-500 bg-green-50/50 shadow-green-100",
+    indigo: "ring-indigo-500 bg-indigo-50/50 shadow-indigo-100",
+    purple: "ring-purple-500 bg-purple-50/50 shadow-purple-100",
+  };
+
+  return (
+    <div
+      onClick={onClick}
+      className={`group cursor-pointer bg-white rounded-2xl p-2 flex flex-col transition-all duration-300 border border-gray-100 hover:shadow-md hover:-translate-y-0.5
+        ${active ? `ring-2 shadow-lg ${activeColorMap[color]}` : "shadow-sm"}
+      `}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className={`p-2 rounded-xl transition-colors duration-300 ${colorMap[color]}`}>
+            {icon}
+          </div>
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">{label}</p>
+        </div>
+        {active && (
+          <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${color === 'blue' ? 'bg-blue-500' : color === 'green' ? 'bg-green-500' : color === 'indigo' ? 'bg-indigo-500' : 'bg-purple-500'}`} />
+        )}
+      </div>
+      <div className="pl-11">
+        <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight">
+          <CountUp end={value} duration={1.5} separator="," />
+        </h3>
+      </div>
     </div>
-  </div>
-);
+  );
+};
