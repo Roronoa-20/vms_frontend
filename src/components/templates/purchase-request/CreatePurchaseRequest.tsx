@@ -241,6 +241,37 @@ const CreatePurchaseRequest = (props: Props) => {
         </>
       )}
 
+      {props?.prData?.cost_center && (
+        <>
+          <div className="col-span-1 flex flex-row items-baseline gap-2 flex-wrap">
+            <h1 className="text-[12px] font-normal text-[#626973] uppercase whitespace-nowrap">
+              Cost Center :
+            </h1>
+            <h1 className="text-[16px] font-medium text-black break-words">
+              {props?.prData?.cost_center ?? "-"}
+            </h1>
+          </div>
+
+          <div className="col-span-1 flex flex-row items-baseline gap-2 flex-wrap">
+            <h1 className="text-[12px] font-normal text-[#626973] uppercase whitespace-nowrap">
+              Budget Amount :
+            </h1>
+            <h1 className="text-[16px] font-medium text-black break-words">
+              {props?.prData?.budget_amount ?? "-"}
+            </h1>
+          </div>
+
+          <div className="col-span-1 flex flex-row items-baseline gap-2 flex-wrap">
+            <h1 className="text-[12px] font-normal text-[#626973] uppercase whitespace-nowrap">
+              Actual Amount :
+            </h1>
+            <h1 className="text-[16px] font-medium text-black break-words">
+              {props?.prData?.actual_amount ?? "-"}
+            </h1>
+          </div>
+        </>
+      )}
+
     </div>
   );
 };
