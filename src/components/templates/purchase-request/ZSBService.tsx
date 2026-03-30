@@ -129,11 +129,11 @@ const ServicePR = (props: Props) => {
       fetchPlantBAsedOnCompany(props.prData.company);
       fetchGlAccountBasedOnCommpany(props.prData.company);
       fetchCostCenterBasedOnCompany(props.prData.company);
+      fetchMatrialGroup(props?.prData?.company as string);
     }
 
     fetchServiceCode();
 
-    fetchMatrialGroup(props?.prData?.company as string);
   }, []);
 
   const fetchUom = () => {
@@ -682,7 +682,7 @@ const ServicePR = (props: Props) => {
                         (prev) =>
                           ({ ...prev, plant: selectedOption?.value }) as zsbServiceItemsType,
                       );
-                      fetchMatrialGroup(selectedOption?.value);
+                      // fetchMatrialGroup(selectedOption?.value);
                     }}
                     instanceId="zsbservice-plant-select"
                     placeholder="Select Plant..."
