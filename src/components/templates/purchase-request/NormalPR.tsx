@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef, ReactElement, ReactSVGElement } from "react";
+import React, { useState,useRef, ReactElement, ReactSVGElement } from "react";
 import {
   Table,
   TableBody,
@@ -23,9 +23,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CostCenterDropdownType, nbItemsType, purchaseRequisitionDataType, PurchaseRequisitionMaterialDropdownType, purchaseRequisitionPlantDropdownType, purchaseRequisitionPurchaseGroupDropdownType, purchaseRequisitionUOMType } from "@/src/types/prRequisition/prRequisition.types";
+import { nbItemsType, purchaseRequisitionDataType, PurchaseRequisitionMaterialDropdownType, purchaseRequisitionPlantDropdownType, purchaseRequisitionPurchaseGroupDropdownType, purchaseRequisitionUOMType } from "@/src/types/prRequisition/prRequisition.types";
 import { addPurchaseRequisitionNBItems, deletePurchaseRequisitionNBItems, getPurchaseReqisitionData, getPurchaseRequisitionMaterialDropdown, getPurchaseRequisitionPurchaseGroupDropdown, getPurchaseRequisitionUOM, updatePurchaseRequisitionNBItems, getPlantByMaterial, getMaterialNameByCode } from "@/src/services/prRequisition/prRequisitionNb.services";
-import { getCostCenterBasedOnCompanyDropdown } from "@/src/services/prRequisition/prRequisitionZsb.services";
 import { set } from "nprogress";
 import { useSearchParams } from "next/navigation";
 import { deleteEnquiryItems } from "@/src/services/prEnquiry/prEnquiry.services";
@@ -34,19 +33,11 @@ import MultiSelect from 'react-select';
 import { multiSelectStyles } from "../../common/sharedStyles";
 import { Button } from "../../atoms/button";
 
-type FinanceFields = {
-  costCenter: string;
-  budgetAmount: string;
-  actualAmount: string;
-};
-
 type Props = {
   prData?: purchaseRequisitionDataType
   materialDropdown: PurchaseRequisitionMaterialDropdownType[]
   submitLoaderRef:  React.RefObject<HTMLSpanElement | null>
   handlePurchaseRequisitionSubmit:(isAlert:boolean)=>void
-  financeFields?: FinanceFields
-  setFinanceFields?: React.Dispatch<React.SetStateAction<FinanceFields>>
 };
 
 
@@ -64,17 +55,6 @@ const NormalPR = (props: Props) => {
   const [tableData, setTableData] = useState<nbItemsType[]>(props?.prData?.nb_normal_items || []);
 
   const [materialDropdown, setMaterialDropdown] = useState<PurchaseRequisitionMaterialDropdownType[]>([]);
-  const [costCenterDropdown, setCostCenterDropdown] = useState<CostCenterDropdownType[]>([]);
-
-  const showFinanceFields = props?.prData?.is_finance_visible === 1 && props?.prData?.can_approve === 1;
-
-  useEffect(() => {
-    if (showFinanceFields && props?.prData?.company) {
-      getCostCenterBasedOnCompanyDropdown(props.prData.company).then((res) => {
-        setCostCenterDropdown(res);
-      }).catch(console.error);
-    }
-  }, [showFinanceFields, props?.prData?.company]);
 
   const getPurchaseGroupBasedOnMaterial = (material: string) => {
     getPurchaseRequisitionPurchaseGroupDropdown(material).then((res: any) => {
@@ -250,38 +230,6 @@ const NormalPR = (props: Props) => {
                     </Button>
                 }
             </div>
-    {showFinanceFields && (
-      <div className="mt-5">
-        <h1 className="text-[16px] text-[#03111F] font-semibold mb-3">Fill Additional Details</h1>
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <label className="text-sm text-gray-600 mb-1 block">Cost Center</label>
-            <Select value={props?.financeFields?.costCenter} onValueChange={(value) => props?.setFinanceFields?.((prev) => ({ ...prev, costCenter: value }))}>
-              <SelectTrigger className="rounded-xl">
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {costCenterDropdown?.map((item) => (
-                    <SelectItem key={item?.name} value={item?.name}>
-                      {item?.cost_center_code} - {item?.cost_center_name}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <label className="text-sm text-gray-600 mb-1 block">Budget Amount</label>
-            <Input type="number" min="0" value={props?.financeFields?.budgetAmount} onChange={(e) => props?.setFinanceFields?.((prev) => ({ ...prev, budgetAmount: e.target.value }))} placeholder="0.00" />
-          </div>
-          <div>
-            <label className="text-sm text-gray-600 mb-1 block">Actual Amount</label>
-            <Input type="number" min="0" value={props?.financeFields?.actualAmount} onChange={(e) => props?.setFinanceFields?.((prev) => ({ ...prev, actualAmount: e.target.value }))} placeholder="0.00" />
-          </div>
-        </div>
-      </div>
-    )}
     <div className="">
       <div className="flex w-full justify-between pb-4">
         <h1 className="text-[20px] text-[#03111F] font-semibold">Items List</h1>
