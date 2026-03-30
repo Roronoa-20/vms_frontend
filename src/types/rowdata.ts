@@ -1,28 +1,22 @@
-export interface RowData {
-  name: string;
+import { Vendor, CompanyData, VendorOnboardingRecord } from "./allvendorstypes";
+
+export interface RowData extends Vendor {
   ref_no: string;
   multiple_company: number;
   company_code: string;
   vendor_code: string;
-  vendor_name: string;
-  office_email_primary: string;
+  vendor_type?: string; 
   pan_number: string;
   pan_file?: string;
   gst_no?: string;
   gst_file?: string;
   state?: string;
-  country?: string;
   pincode?: string;
   bank_name?: string;
   ifsc_code?: string;
   bank_file?: string;
   sap_client_code?: string;
   purchase_org?: string;
-  via_data_import: string | number;
-  created_from_registration: string | number;
-  multiple_company_data: MultipleCompanyData[];
-  company_data: MultipleCompanyData[];
-  vendor_id: string | null;
 }
 
 export interface ExtendRowData extends RowData {
