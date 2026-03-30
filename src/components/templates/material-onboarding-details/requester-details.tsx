@@ -12,7 +12,8 @@ interface MaterialRequesterDetailsFormProps {
   MaterialOnboardingDetails?: MaterialRegistrationFormData;
 }
 
-const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> = ({ form, MaterialOnboardingDetails}) => {
+const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> = ({ form, MaterialOnboardingDetails }) => {
+  
   useEffect(() => {
     if (MaterialOnboardingDetails) {
       const d = MaterialOnboardingDetails;

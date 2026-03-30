@@ -63,7 +63,7 @@ const ViewProfile = ({ vendor_onboarding, tabtype, refno, company, onChangeCompa
         const companyDetailresponse: AxiosResponse = await requestWrapper({
           url: API_END_POINTS?.companyDetailDropdown,
           method: "GET",
-          params:{ref_no:refno},
+          params: { ref_no: refno },
         });
         setCompanyDetailDropdown(
           companyDetailresponse?.status == 200

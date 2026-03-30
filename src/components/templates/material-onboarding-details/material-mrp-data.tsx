@@ -65,7 +65,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
     const currentIssueUnit = form.getValues("issue_unit");
 
     if (defaultUOM && !currentIssueUnit) {
-      form.setValue("issue_unit", defaultUOM, {shouldDirty: false, shouldTouch: false, shouldValidate: false});
+      form.setValue("issue_unit", defaultUOM, { shouldDirty: false, shouldTouch: false, shouldValidate: false });
     }
   }, [MaterialDetails?.material_request_item?.unit_of_measure, form]);
 

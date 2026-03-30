@@ -12,39 +12,63 @@ interface MaterialRequestTableProps {
     data: MaterialRequestItem[];
     companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"];
     TableTitle?: string;
+    currentPage: number;
+    setCurrentPage: (page: number) => void;
+    totalRecords: number;
+    recordPerPage: number;
 }
 
-const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], companyDropdown, TableTitle }) => {
+const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ 
+    data = [], 
+    companyDropdown, 
+    TableTitle,
+    currentPage = 1,
+    setCurrentPage,
+    totalRecords = 0,
+    recordPerPage = 20
+}) => {
     console.log("Table Data---->", data)
     const [search, setSearch] = useState("");
     const [selectedCompany, setSelectedCompany] = useState("");
-    const [currentPage, setCurrentPage] = useState(1);
-    const recordPerPage = 20;
 
     // Filtered & flattened data
     const flattenedData = useMemo(() => {
         const filtered = data.filter((parent) => {
-            const matchesSearch = parent.material_request_items?.some((child) =>
-                child.material_description?.toLowerCase().includes(search.toLowerCase())
+            const matchesSearch = 
+                (parent.name || "").toLowerCase().includes(search.toLowerCase()) || 
+                (parent.request_id || "").toLowerCase().includes(search.toLowerCase()) ||
+                (parent.material_request_items || []).some((child) =>
+                (child.material_description || "").toLowerCase().includes(search.toLowerCase())
             );
             const matchesCompany = selectedCompany ? parent.requestor_company === selectedCompany : true;
             return matchesSearch && matchesCompany;
         });
 
-        return filtered.flatMap((parent) =>
-            parent.material_request_items?.map((child) => ({
+        return filtered.flatMap((parent) => {
+            const items = parent.material_request_items || [];
+            if (items.length === 0) {
+                return [{
+                    child_name: "",
+                    company_code: parent.requestor_company || "-",
+                    material_description: parent.maktx || "No description",
+                    material_type: "-",
+                    requestor_ref_no: parent.name,
+                    request_date: parent.request_date,
+                    approval_status: parent.approval_status,
+                    request_id: parent.request_id
+                }];
+            }
+            return items.map((child) => ({
                 ...child,
                 requestor_ref_no: parent.name,
                 request_date: parent.request_date,
                 approval_status: parent.approval_status,
                 request_id: parent.request_id
-            })) || []
-        );
+            }));
+        });
     }, [data, search, selectedCompany]);
 
-    const totalRecords = flattenedData.length;
-    const startIndex = (currentPage - 1) * recordPerPage;
-    const paginatedData = flattenedData.slice(startIndex, startIndex + recordPerPage);
+    const paginatedData = flattenedData;
 
     const formatDate = (dateStr?: string | null) => {
         if (!dateStr) return "-";
@@ -52,7 +76,11 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
         return `${day}-${month}-${year}`;
     };
 
-    React.useEffect(() => setCurrentPage(1), [search, selectedCompany]);
+    React.useEffect(() => {
+        if (typeof setCurrentPage === "function") {
+            setCurrentPage(1);
+        }
+    }, [search, selectedCompany]);
 
     return (
         <>
@@ -63,7 +91,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 mt-2 md:mt-0">
                             <Input
                                 type="text"
-                                placeholder="Search by Material Description..."
+                                placeholder="Search by Request ID or Material Description..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 className="border px-3 py-2 rounded-md text-sm w-full sm:w-[250px]"
