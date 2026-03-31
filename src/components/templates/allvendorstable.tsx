@@ -548,24 +548,31 @@ const VendorTable: React.FC<Props> = ({
                                                         row.vendor_types?.some(vt => vt.vendor_type?.includes("Material"))) && (
                                                             <Tooltip>
                                                                 <TooltipTrigger asChild>
-                                                                    <Button
-                                                                        variant="ghost"
-                                                                        onClick={() => {
-                                                                            if (row.asa_form_link_sent !== 1) {
-                                                                                handleSendASA(row);
-                                                                            }
-                                                                        }}
-                                                                        className={`p-2 h-8 w-8 hover:bg-gray-100 transition-colors ${row.asa_form_link_sent === 1 ? "cursor-default opacity-80" : ""}`}
-                                                                    >
-                                                                        {row.asa_form_link_sent === 1 ? (
-                                                                            <CheckCircle className="w-5 h-5 text-green-600" />
-                                                                        ) : (
-                                                                            <Send className="w-5 h-5 text-blue-600" />
-                                                                        )}
-                                                                    </Button>
+                                                                    <div className="inline-block">
+                                                                        <Button
+                                                                            variant="ghost"
+                                                                            disabled={Number(row.user_create) === 0 && row.asa_form_link_sent !== 1}
+                                                                            onClick={() => {
+                                                                                if (row.asa_form_link_sent !== 1) {
+                                                                                    handleSendASA(row);
+                                                                                }
+                                                                            }}
+                                                                            className={`p-2 h-8 w-8 hover:bg-gray-100 transition-colors ${row.asa_form_link_sent === 1 ? "cursor-default opacity-80" : ""} ${Number(row.user_create) === 0 && row.asa_form_link_sent !== 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+                                                                        >
+                                                                            {row.asa_form_link_sent === 1 ? (
+                                                                                <CheckCircle className="w-5 h-5 text-green-600" />
+                                                                            ) : (
+                                                                                <Send className={`w-5 h-5 ${Number(row.user_create) === 0 ? "text-gray-400" : "text-blue-600"}`} />
+                                                                            )}
+                                                                        </Button>
+                                                                    </div>
                                                                 </TooltipTrigger>
                                                                 <TooltipContent side="bottom">
-                                                                    {row.asa_form_link_sent === 1 ? "ASA Form Sent" : "Send ASA Form"}
+                                                                    {row.asa_form_link_sent === 1
+                                                                        ? "ASA Form Sent"
+                                                                        : Number(row.user_create) === 0
+                                                                            ? "User not Created. Contact VMS Team"
+                                                                            : "Send ASA Form"}
                                                                 </TooltipContent>
                                                             </Tooltip>
                                                         )}
