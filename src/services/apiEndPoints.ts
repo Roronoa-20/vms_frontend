@@ -68,7 +68,7 @@ const API_END_POINTS = {
   submitPrInquiryNextButton: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry.create_purchase_inquiry`,
   prInquiryCount: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.dashboard_card`,
   prInquiryDashboardTable: `${url}/api/method/vms.APIs.cart_details.v1.cart_details_dashboard.get_cart_dashboard_list`,
-  viewEnquiryTable:`${url}/api/method/vms.APIs.cart_details.v1.cart_details_dashboard.get_cart_dashboard_with_status`,
+  viewEnquiryTable: `${url}/api/method/vms.APIs.cart_details.v1.cart_details_dashboard.get_cart_dashboard_with_status`,
   prInquiryData: `${url}/api/method/vms.APIs.dashboard_api.po_pi_gen_api.get_pi_details`,
   prInquiryHodApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.hod_approval_check`,
   prInquiryPurchaseApproval: `${url}/api/method/vms.APIs.purchase_api.purchase_inquiry_approvals.purchase_approval_check`,
@@ -201,6 +201,7 @@ const API_END_POINTS = {
   asapendingVendorcount: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.pending_asa_count`,
   asapendingVendorList: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.pending_asa_vendor_list`,
   asasendremindermail: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.send_asa_reminder_email`,
+  sendasaemail: `${url}/api/method/vms.APIs.assessment_apis.asa.trigger_asa_email`,
   asaonboardedvendorlist: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.approved_vendor_list`,
   verifyasaform: `${url}/api/method/vms.APIs.assessment_apis.asa.verify_asa_form`,
   revertasaform: `${url}/api/method/vms.APIs.assessment_apis.asa.revert_asa_form`,
@@ -371,31 +372,31 @@ const API_END_POINTS = {
   GRwaiverDashboardTable: `${url}/api/method/vms.APIs.gr_waiver.get_gr_waiver.get_gr_waiver_list`,
   fetchGRWaiverDetails: `${url}/api/method/vms.APIs.gr_waiver.get_gr_waiver.get_gr_waiver_details`,
 
-  alreadyOnboardedVendorDialogSubmit:`${url}/api/method/vms.APIs.vendor_onboarding.update_vendors_gst_email.update_vendor_gst_email`,
+  alreadyOnboardedVendorDialogSubmit: `${url}/api/method/vms.APIs.vendor_onboarding.update_vendors_gst_email.update_vendor_gst_email`,
 
-  uploadPoDocument:`${url}/api/method/vms.APIs.purchase_api.purchase_order.attach_purchase_order_details`,
-  deletePoDocument:`${url}/api/method/vms.APIs.purchase_api.purchase_order.remove_purchase_order_details_attachment`,
+  uploadPoDocument: `${url}/api/method/vms.APIs.purchase_api.purchase_order.attach_purchase_order_details`,
+  deletePoDocument: `${url}/api/method/vms.APIs.purchase_api.purchase_order.remove_purchase_order_details_attachment`,
 
   //DOCUMENT VERIFICATION APIs
-  
-  generateToken:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.generate_access_token`,
-  verifyGstNumber:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.verify_gst_details`,
-  verifyPanNumber:`${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.verify_pan_details`,
+
+  generateToken: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.generate_access_token`,
+  verifyGstNumber: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.verify_gst_details`,
+  verifyPanNumber: `${url}/api/method/vms.APIs.vendor_onboarding.vendor_document_details.verify_pan_details`,
 
   //purchase Enquiry 
-  createPurchaseEnquiry:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.create_cart_details`,
-  getCompanyDropdownBasedOUser:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_company_for_user`,
-  getPurchaseEnquiryData:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_full_data_cart_details`,
-  getProductNameDropdown:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_product_names`,
-  getPurchaseTypeDropdown:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.cart_details_masters`,
-  getLocationDropdown:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_plant_master`,
-  addEnquiryItems:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.update_cart_products`,
-  deleteEnquiryItem:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.delete_cart_product`,
-  submitEnquiry:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.submit_cart_details`,
-  acknowledgeEnquiry:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.acknowledge_cart_details`,
-  approvalEnquiry:`${url}/api/method/vms.APIs.cart_details.v1.cart_details_approval.purchase_approval_check`,
-  getCityDropdown:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_location_master`,
-  proceedToPR:`${url}/api/method/vms.APIs.cart_details.v1.cart_details.create_vms_pr_from_cart`
+  createPurchaseEnquiry: `${url}/api/method/vms.APIs.cart_details.v1.cart_details.create_cart_details`,
+  getCompanyDropdownBasedOUser: `${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_company_for_user`,
+  getPurchaseEnquiryData: `${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_full_data_cart_details`,
+  getProductNameDropdown: `${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_product_names`,
+  getPurchaseTypeDropdown: `${url}/api/method/vms.APIs.cart_details.v1.cart_details.cart_details_masters`,
+  getLocationDropdown: `${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_plant_master`,
+  addEnquiryItems: `${url}/api/method/vms.APIs.cart_details.v1.cart_details.update_cart_products`,
+  deleteEnquiryItem: `${url}/api/method/vms.APIs.cart_details.v1.cart_details.delete_cart_product`,
+  submitEnquiry: `${url}/api/method/vms.APIs.cart_details.v1.cart_details.submit_cart_details`,
+  acknowledgeEnquiry: `${url}/api/method/vms.APIs.cart_details.v1.cart_details.acknowledge_cart_details`,
+  approvalEnquiry: `${url}/api/method/vms.APIs.cart_details.v1.cart_details_approval.purchase_approval_check`,
+  getCityDropdown: `${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_location_master`,
+  proceedToPR: `${url}/api/method/vms.APIs.cart_details.v1.cart_details.create_vms_pr_from_cart`
 }
 
 export default API_END_POINTS;

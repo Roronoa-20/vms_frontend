@@ -45,9 +45,9 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
         }
 
         setMaterialCategoryTypeOptions(matchedType.material_code_logic.map(item => ({
-                material_type_category: item.material_type_category,
-                code_logic: item.code_logic
-            }))
+            material_type_category: item.material_type_category,
+            code_logic: item.code_logic
+        }))
         );
     }, [materialType, AllMaterialType]);
 
@@ -65,8 +65,8 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
         const normalize = (v: string) => v.trim().toLowerCase();
 
         const matchedOption = materialCategoryTypeOptions.find(o =>
-                normalize(o.material_type_category) ===
-                normalize(backendCategory)
+            normalize(o.material_type_category) ===
+            normalize(backendCategory)
         );
 
         if (!matchedOption) {

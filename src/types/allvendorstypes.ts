@@ -51,6 +51,7 @@ export interface Vendor {
   created_from_registration: number;
   user_create: number;
   asa_required: number;
+  asa_form_link_sent?: number;
   service_provider_type: string | null;
   bank_details: BankDetails | null;
   document_details: string | null;
@@ -61,8 +62,7 @@ export interface Vendor {
   via_data_import: number;
   remarks: string | null;
   multiple_company_data: CompanyData[];
-  vendor_onb_records: VendorOnboardingRecord[];
-  vendor_types: any[];
+  vendor_types: { vendor_type: string }[];
   company_data: CompanyData[];
   onboarding_records: VendorOnboardingRecord[];
 }
