@@ -113,7 +113,6 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
     if (OnboardingDetail?.intermediate_bank_details?.[0]) {
       setIsIntermediateCheck(true);
     }
-    console.log(OnboardingDetail, "payment details data")
     const fetchCurrency = async () => {
 
       const currencyUrl = `${API_END_POINTS?.currencyDropdown}`;

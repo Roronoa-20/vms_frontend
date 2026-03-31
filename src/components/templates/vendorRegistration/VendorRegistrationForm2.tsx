@@ -69,7 +69,6 @@ const VendorRegistration2 = ({ incoTermsDropdown, companyDropdown, currencyDropd
       setCurrencyDropdownList(newList);
     }
   }, [])
-  console.log(singleTableData, "this is after loading")
 
 
   const handleCompanyDropdownChange = async (value: string) => {

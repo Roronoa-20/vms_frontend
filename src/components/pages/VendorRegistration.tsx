@@ -52,22 +52,22 @@ type gstDetailsType = {
 }
 
 type vendorNameDialogDataType = {
-  name:string,
-  vendor_name:string,
-  office_email_primary:string,
-  country:string,
-  first_name:string,
-  mobile_number:string,
-  search_term:string,
-  pan_number:string,
-  gst_details:gstDetailsType[]
+  name: string,
+  vendor_name: string,
+  office_email_primary: string,
+  country: string,
+  first_name: string,
+  mobile_number: string,
+  search_term: string,
+  pan_number: string,
+  gst_details: gstDetailsType[]
 }
 
 type VendorOnboardingIdsType = {
-  company_name:string,
-  onboarding_id:string,
-  owner:string,
-  created_on:string
+  company_name: string,
+  onboarding_id: string,
+  owner: string,
+  created_on: string
 }
 
 const VendorRegistration = ({ ...Props }: Props) => {
@@ -75,14 +75,14 @@ const VendorRegistration = ({ ...Props }: Props) => {
   const [formData, setFormData] = useState<Partial<VendorRegistrationData>>({})
   const [multiVendor, setMultiVendor] = useState();
   const [tableData, setTableData] = useState<TtableData[]>([]);
-  const [vendorNameDialog,setVendorNameDialog] = useState<boolean>(false);
-  const [vendorNameDialogData,setVendorNameDialogData] = useState<vendorNameDialogDataType[]>([]);
-  const [fieldDisable,setFieldDisable] = useState<boolean>(false);
-  const [isalreadyRegisteredVendorDialog,setIsalreadyRegisteredVendorDialog] = useState<boolean>(false);
-  const [refno,setRefno] = useState<string>();
-  const [vendorOnboardingIds,setVendorOnboardingIds] = useState<VendorOnboardingIdsType[]>([]);
-  const [isSameCompanyRegister,setIsSameCompanyRegister] = useState<Boolean>(false);
-  
+  const [vendorNameDialog, setVendorNameDialog] = useState<boolean>(false);
+  const [vendorNameDialogData, setVendorNameDialogData] = useState<vendorNameDialogDataType[]>([]);
+  const [fieldDisable, setFieldDisable] = useState<boolean>(false);
+  const [isalreadyRegisteredVendorDialog, setIsalreadyRegisteredVendorDialog] = useState<boolean>(false);
+  const [refno, setRefno] = useState<string>();
+  const [vendorOnboardingIds, setVendorOnboardingIds] = useState<VendorOnboardingIdsType[]>([]);
+  const [isSameCompanyRegister, setIsSameCompanyRegister] = useState<Boolean>(false);
+
   const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
 
   const handlefieldChange = (
@@ -155,7 +155,6 @@ const VendorRegistration = ({ ...Props }: Props) => {
 
     const submitButton = document.getElementById("submitButton") as HTMLButtonElement | null;
     if (submitButton) {
-      console.log("inside button")
       submitButton.disabled = true;
     }
     const url = API_END_POINTS?.vendorRegistrationSubmit;
@@ -188,13 +187,11 @@ const VendorRegistration = ({ ...Props }: Props) => {
       method: "POST",
       data: { data: updateFormData }
     });
-
     if (response?.status == 500) {
-      // console.log("error in submitting this form");
+      console.log("error in submitting this form");
       toast?.error("Error submitting this form");
       return;
     }
-
     if (response?.status == 200) {
       if (response?.data?.message?.status == "duplicate") {
         // toast.warn(response?.data?.message?.message);
@@ -224,17 +221,17 @@ const VendorRegistration = ({ ...Props }: Props) => {
     router.push("/dashboard");
   };
 
-  const VendorNameCheckApi = async(email:string)=>{
+  const VendorNameCheckApi = async (email: string) => {
 
     // if(name.length < 3){
     //   return;
     // }
-    
+
     try {
 
-      const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.VendorNameCheckApi,params:{vendor_name:formData?.vendor_name,primary_email:email},method:"GET"});
-      
-      if(response?.status == 404){
+      const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.VendorNameCheckApi, params: { vendor_name: formData?.vendor_name, primary_email: email }, method: "GET" });
+
+      if (response?.status == 404) {
         return;
       }
 
@@ -247,10 +244,10 @@ const VendorRegistration = ({ ...Props }: Props) => {
     }
   }
 
-    const handleClose = ()=>{
-      setVendorNameDialog(false);
-      setIsalreadyRegisteredVendorDialog(false);
-    }
+  const handleClose = () => {
+    setVendorNameDialog(false);
+    setIsalreadyRegisteredVendorDialog(false);
+  }
 
 
   const toggleRow = (index: number) => {
@@ -263,19 +260,19 @@ const VendorRegistration = ({ ...Props }: Props) => {
     setFieldDisable(true);
   }
 
-  const handleAlreadyOnboardedCompanyDialogSubmit = async()=>{
-    if(!isSameCompanyRegister){
+  const handleAlreadyOnboardedCompanyDialogSubmit = async () => {
+    if (!isSameCompanyRegister) {
       router?.push("/dashboard");
-    }else{
+    } else {
       const body = {
-        ref_no:refno,
-        onboarding_id:vendorOnboardingIds?.map((item)=>(
+        ref_no: refno,
+        onboarding_id: vendorOnboardingIds?.map((item) => (
           item?.onboarding_id
         ))
       }
-      const response:AxiosResponse = await requestWrapper({url:API_END_POINTS?.alreadyOnboardedVendorDialogSubmit,method:"POST",data:{data:body}});
-      
-      if(response?.status == 200){
+      const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.alreadyOnboardedVendorDialogSubmit, method: "POST", data: { data: body } });
+
+      if (response?.status == 200) {
         router.push("/dashboard");
       }
     }
@@ -413,19 +410,19 @@ const VendorRegistration = ({ ...Props }: Props) => {
       {
         isalreadyRegisteredVendorDialog &&
         <PopUp isSubmit={true} isHeaderTextUnderline={true} handleClose={handleClose} Submitbutton={handleAlreadyOnboardedCompanyDialogSubmit} classname="md:max-w-[800px] w-full" headerText="This Company is already Registered !">
-            <div className="flex items-center gap-4">
-              <input className="mt-2" type="radio" name="registerOption" onChange={()=>{setIsSameCompanyRegister(true)}} />
-              <h2 className="mt-2">
-                Do you want to Register in Same Company with new GST Number? OR
-              </h2>
-            </div>
+          <div className="flex items-center gap-4">
+            <input className="mt-2" type="radio" name="registerOption" onChange={() => { setIsSameCompanyRegister(true) }} />
+            <h2 className="mt-2">
+              Do you want to Register in Same Company with new GST Number? OR
+            </h2>
+          </div>
 
-            <div className="flex items-center gap-4">
-              <input className="mt-2" type="radio" name="registerOption" onChange={()=>{setIsSameCompanyRegister(false)}} />
-              <h2 className="mt-2">Go to Dashboard?</h2>
-            </div>
+          <div className="flex items-center gap-4">
+            <input className="mt-2" type="radio" name="registerOption" onChange={() => { setIsSameCompanyRegister(false) }} />
+            <h2 className="mt-2">Go to Dashboard?</h2>
+          </div>
         </PopUp>
-      } 
+      }
     </div>
   );
 };

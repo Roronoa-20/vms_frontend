@@ -14,15 +14,23 @@ type Props = {
 const MaterialOnboarding: React.FC<Props> = ({ companyDropdown }) => {
   const [loading, setLoading] = useState(false);
   const [allData, setAllData] = useState<MaterialRequestItem[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const recordPerPage = 20;
 
-  const fetchTableData = async () => {
+  const fetchTableData = async (page = 1) => {
     setLoading(true);
     try {
+      const offset = (page - 1) * recordPerPage;
       const response = await requestWrapper({
-        url: API_END_POINTS.getRequestorMasterTableList,
+        url: `${API_END_POINTS.getRequestorMasterTableList}?limit=${recordPerPage}&offset=${offset}`,
         method: "GET",
       });
-      setAllData(response.data?.message?.data || []);
+      
+      const apiData = response.data?.message;
+      setAllData(apiData?.data || []);
+      setTotalRecords(apiData?.pagination?.total_count || apiData?.total_count || 0);
+      setCurrentPage(page);
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
@@ -31,7 +39,7 @@ const MaterialOnboarding: React.FC<Props> = ({ companyDropdown }) => {
   };
 
   useEffect(() => {
-    fetchTableData();
+    fetchTableData(1);
   }, []);
 
   return (
@@ -40,6 +48,10 @@ const MaterialOnboarding: React.FC<Props> = ({ companyDropdown }) => {
         data={allData}
         companyDropdown={companyDropdown}
         TableTitle="Total Request"
+        currentPage={currentPage}
+        setCurrentPage={fetchTableData}
+        totalRecords={totalRecords}
+        recordPerPage={recordPerPage}
       />
     </div>
   );

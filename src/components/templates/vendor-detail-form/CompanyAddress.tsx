@@ -130,14 +130,12 @@ const CompanyAddress = ({
         pincodeChangeResponse?.status == 200
           ? pincodeChangeResponse?.data?.message
           : "";
-      console.log(data, "this is billing api data")
       if (data) {
         updatebillingAddress("city", data?.data?.city[0]);
         updatebillingAddress("district", data?.data?.district[0]);
         updatebillingAddress("state", data?.data?.state[0]);
         updatebillingAddress("country", data?.data?.country[0]);
       }
-      console.log("aftre api data set", billingAddress)
     }
   };
 
@@ -215,7 +213,6 @@ const CompanyAddress = ({
   };
 
   const handleShippingCheck = (e: boolean) => {
-    console.log(e, "this is check")
     setIsShippingSame(e);
     // setShippingData((prev)=>({...prev,address1:billingAddress?.address_line_1,address2:billingAddress?.address_line_2}))
     if (e) {
@@ -232,7 +229,6 @@ const CompanyAddress = ({
       }));
     }
   };
-  console.log(isShippingSame, "is shipping same");
 
   const [errors, setErrors] = useState<any>({});
   const validate = () => {

@@ -1,72 +1,50 @@
 "use client"
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import Logo from "@/src/components/atoms/vms-logo";
-import { sidebarMenu, VendorsidebarMenu, EnquirysidebarMenu, ASASideBarMenu, AccountSideBarMenu, AccountHeadSideBarMenu, PurchaseHeadsidebarMenu, QASideBarMenu, SuperHeadSidebarMenu, TreasurySideBarMenu, MaterialUserSideBar, MaterialCPSideBar, FinanceSideBarMenu, CategoryMastersidebarMenu } from "@/src/constants/sidebarMenu";
 import Image from "next/image";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/src/context/AuthContext";
 import { SidebarItem, SidebarChild } from "@/src/types/sidebar";
 
 
 const Sidebar = () => {
-  const router = useRouter();
   const pathname = usePathname();
-  const { designation, role } = useAuth();
-  const { vendorRef } = useAuth();
-  const { asaReqd } = useAuth();
+  const router = useRouter();
+  const { modules } = useAuth();
 
-  if (designation?.toLowerCase() === "security") {
-    return null;
-  }
+  const DEFAULT_ICON = "/sidebar-assests/home-logo.svg";
 
-  let sideBar = designation === "Vendor" ? VendorsidebarMenu : designation === "Enquirer" ? EnquirysidebarMenu : designation === "ASA" ? ASASideBarMenu : designation === "Accounts Team" ? AccountSideBarMenu : designation === "Accounts Head" ? AccountHeadSideBarMenu : designation === "Purchase Head" ? PurchaseHeadsidebarMenu : designation === "QA Team" ? QASideBarMenu : designation === "Super Head" ? SuperHeadSidebarMenu : designation === "Treasury" ? TreasurySideBarMenu : designation === "Material User" ? MaterialUserSideBar : designation === "Material CP" ? MaterialCPSideBar : designation === "Finance" ? FinanceSideBarMenu : designation === "Finance Head" ? FinanceSideBarMenu : designation === "Category Master" ? CategoryMastersidebarMenu : sidebarMenu;
+  const sideBar = useMemo(() => {
+    return [...modules]
+      .sort((a, b) => a.sequence - b.sequence)
+      .map((mod) => {
+        const validSubs = mod.sub_modules
+          .filter((sub) => sub.route)
+          .sort((a, b) => a.sequence - b.sequence);
 
+        if (validSubs.length === 0) {
+          return {
+            logo: mod.module_icon || DEFAULT_ICON,
+            name: mod.module,
+            href: mod.route || undefined,
+            defaultActive: mod.sequence === 0,
+            children: [],
+          };
+        }
 
-  if (designation === "Vendor") {
-    sideBar = sideBar.filter((item) => {
-      if (item.name === "ASA Form") {
-        return asaReqd === 1;
-      }
-      return true;
-    });
-  }
-
-  // // Show Material Onboarding only if Purchase Team + Material CP role
-  // if (designation === "Purchase Team") {
-  //   sideBar = sidebarMenu.filter(item => {
-  //     if (item.name === "Material Onboarding") {
-  //       return role?.includes("Material CP");
-  //     }
-  //     return true;
-  //   });
-  // }
-  // const materialCpPages = [
-  //   "/material-onboarding-dashboard",
-  //   "/view-material-code-request",
-  //   "/sap-material-code-list",
-  //   "/material-onboarding-details",
-  //   "/material-code-request-form",
-  // ];
-
-  // const isMaterialCPSidebar = materialCpPages.includes(pathname) && designation === "Purchase Team" && role?.includes("Material CP");
-
-  // if (isMaterialCPSidebar) {
-  //   sideBar = MaterialCPSideBar;
-  // }
-
-  // const forceCpCompact = isMaterialCPSidebar || designation === "Material CP";
-
-  const getSidebarWidth = (designation: string, role: string | null | undefined) => {
-    // if (forceCompact) return "w-[100px]";
-    const compactDesignations = ["Vendor", "Enquirer", "ASA", "QA Team", "Material User", "Material CP", "Finance", "Finance Head"];
-
-    const compactRoles = ["Material CP"];
-
-    const isCompactByDesignation = compactDesignations.includes(designation);
-    const isCompactByRole = role ? compactRoles.includes(role) : false;
-
-    return isCompactByDesignation || isCompactByRole ? "w-[100px]" : "w-[115px]";
-  };
+        return {
+          logo: mod.module_icon || DEFAULT_ICON,
+          name: mod.module,
+          href: mod.route || undefined,
+          defaultActive: mod.sequence === 0,
+          children: validSubs.map((sub) => ({
+            logo: sub.icon || DEFAULT_ICON,
+            name: sub.sub_module,
+            href: sub.route as string,
+          })),
+        };
+      });
+  }, [modules]);
 
   const [openMenuName, setOpenMenuName] = useState<string | null>(null);
   const [submenuPos, setSubmenuPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
@@ -119,21 +97,11 @@ const Sidebar = () => {
     };
   }, [openMenuName]);
 
-  const hasPurchaseAndCP = designation === "Purchase Team" && role?.includes("Material CP");
-
   const navigateTo = (item: SidebarItem | SidebarChild) => {
     if ("children" in item && item.children.length > 0) return;
 
-    if (item.name === "Material Onboarding" && hasPurchaseAndCP) {
-      router.push("/material-onboarding-dashboard");
-      return;
-    }
-
-    if (item.name === "ASA Form") {
-      router.push(`/asa-form?tabtype=company_information&vms_ref_no=${vendorRef}`);
-    } else if (item.href) {
-      // router.push(item.href);
-      window.location.href = item.href;
+    if (item.href) {
+      router.push(item.href);
     }
 
     setOpenMenuName(null);
@@ -153,15 +121,12 @@ const Sidebar = () => {
     };
   }, []);
 
-  useEffect(() => {
-    // console.log("OPEN MENU:", openMenuName);
-  }, [openMenuName]);
-
+  if (!sideBar.length) return null;
 
   return (
     <div className="relative">
       {/* SIDEBAR */}
-      <div className={`${getSidebarWidth(designation || "", role)} bg-[#0C2741] flex flex-col h-screen relative overflow-hidden`}>
+      <div className={`w-[115px] bg-[#0C2741] flex flex-col h-screen relative overflow-hidden`}>
         <div className="flex flex-col flex-1 items-center gap-3 overflow-y-auto no-scrollbar sidebar-scroll w-full pb-6">
           <div className="pb-3 pt-2.5">
             <Logo />

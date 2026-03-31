@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import RequestorInformation from "@/src/components/molecules/material-onboarding/requestor-information";
 import MaterialInformation from "@/src/components/molecules/material-onboarding/material-information";
 import { MaterialRegistrationFormData } from "@/src/types/MaterialCodeRequestFormTypes";
-import { MaterialCode } from '@/src/types/PurchaseRequestType';
 import AlertBox from "../../common/vendor-onboarding-alertbox";
 import { EmployeeDetail, Company, UOMMaster, MaterialCategory } from "@/src/types/MaterialCodeRequestFormTypes";
 import SAPMaterialModal from "@/src/components/molecules/material-onboarding-modal/SAPMaterialModal";
@@ -28,7 +27,6 @@ interface MaterialOnboardingFormProps {
     isButtonDisabled: any;
     materialRequestList: MaterialRegistrationFormData;
     EmployeeDetailsJSON: EmployeeDetail | null;
-
 }
 
 const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, onCancel, onSubmit, onUpdate, onError, materialRequestList, masters, isLoading, showAlert, EmployeeDetailsJSON }) => {
@@ -50,7 +48,6 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, o
     };
 
     return (
-        // <form onSubmit={onSubmit} className="bg-white p-4 rounded shadow">
         <form onSubmit={form.handleSubmit(onSubmit, onError)} className="bg-white p-4 rounded shadow">
             <div className="space-y-4">
 

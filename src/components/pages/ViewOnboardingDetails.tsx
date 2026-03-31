@@ -88,16 +88,11 @@ const ViewOnboardingDetails = async ({ vendor_onboarding, tabtype, refno, compan
     OnboardingDetail = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message : "";
   }
 
-  console.log(OnboardingDetail, "this is onboarding data");
-
 
   const reconsiliationUrl = API_END_POINTS?.reconsiliationDropdown;
   const ReconciliationdropDownApi: AxiosResponse = await requestWrapper({ url: reconsiliationUrl, method: "POST", data: { data: { company: OnboardingDetail?.purchasing_details?.[0]?.company_name } } });
   const reconciliationDropdown: TReconsiliationDropdown["message"]["data"] = ReconciliationdropDownApi?.status == 200 ? ReconciliationdropDownApi?.data?.message?.data : ""
 
-  console.log(reconciliationDropdown, "this is reconciliation")
-
-  console.log(OnboardingDetail?.purchasing_details?.[0]?.account_group, "this is onboarding details")
 
   const dropdownUrl = API_END_POINTS?.vendorRegistrationDropdown;
   const dropDownApi: AxiosResponse = await requestWrapper({
