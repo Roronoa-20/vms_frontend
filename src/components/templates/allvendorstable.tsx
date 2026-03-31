@@ -149,7 +149,7 @@ const VendorTable: React.FC<Props> = ({
 
     const columns: { key: keyof RowData; label: string; type?: "text" | "file" | "boolean"; sticky?: boolean; }[] = [
         { key: "company_code", label: "Company Code", sticky: true },
-        { key: "name", label: "Vendor Ref No.", sticky: true },
+        { key: "vendor_id", label: "Vendor Ref No.", sticky: true },
         { key: "vendor_name", label: "Vendor Name", sticky: true },
         { key: "vendor_type", label: "Vendor Type" },
         { key: "country", label: "Country" },
@@ -228,7 +228,7 @@ const VendorTable: React.FC<Props> = ({
                 url: API_END_POINTS?.sendasaemail,
                 method: "POST",
                 data: {
-                    vendor_id: selectedRowForASA.name,
+                    vendor_id: selectedRowForASA.vendor_id,
                     emails: allEmails.join(","),
                     asa_required: 1,
                     user_id: userid
@@ -238,6 +238,7 @@ const VendorTable: React.FC<Props> = ({
             if (response?.status === 200) {
                 alert("ASA Form sent successfully to all recipients.");
                 setIsASAPopupOpen(false);
+                window.location.reload();
             }
         } catch (err) {
             console.error("Error sending ASA Form:", err);
