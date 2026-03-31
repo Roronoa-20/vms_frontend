@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback, ReactNode } from "react";
 import Cookies from "js-cookie";
 import { ApiModule } from "@/src/types/sidebar";
 
@@ -72,7 +72,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }
 
-  const setAuthData = (newRole: string | null | undefined, newName: string | null | undefined, userid: string | null | undefined, designation?: string | null | undefined, VendorRefNo?: string | null | undefined,  user_email?: string | null | undefined, asaReqd?: number | null) => {
+  const setAuthData = useCallback((newRole: string | null | undefined, newName: string | null | undefined, userid: string | null | undefined, designation?: string | null | undefined, VendorRefNo?: string | null | undefined,  user_email?: string | null | undefined, asaReqd?: number | null) => {
     setRole(newRole);
     setName(newName);
     setUserId(userid);
@@ -80,14 +80,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (VendorRefNo) setvendorRef(VendorRefNo);
     if (user_email) setUser_Email(user_email);
     if (asaReqd !== undefined) setAsaReqd(asaReqd);
-  };
+  }, []);
 
-  const setModules = (newModules: ApiModule[]) => {
+  const setModules = useCallback((newModules: ApiModule[]) => {
     setModulesState(newModules);
     localStorage.setItem("sidebar_modules", JSON.stringify(newModules));
-  };
+  }, []);
 
-  const clearAuthData = () => {
+  const clearAuthData = useCallback(() => {
     setRole(null);
     setName(null);
     setUserId(null);
@@ -97,10 +97,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setAsaReqd(null);
     setModulesState([]);
     localStorage.removeItem("sidebar_modules");
-  };
+  }, []);
+
+  const contextValue = useMemo(() => ({
+    role, name, userid, designation, vendorRef, user_email, asaReqd, modules, setAuthData, setModules, clearAuthData
+  }), [role, name, userid, designation, vendorRef, user_email, asaReqd, modules, setAuthData, setModules, clearAuthData]);
 
   return (
-    <AuthContext.Provider value={{ role, name, userid, designation, vendorRef, user_email, asaReqd, modules, setAuthData, setModules, clearAuthData }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
