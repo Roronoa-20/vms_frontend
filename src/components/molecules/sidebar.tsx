@@ -1,20 +1,21 @@
 "use client"
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import Logo from "@/src/components/atoms/vms-logo";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/src/context/AuthContext";
-import { SidebarItem, SidebarChild, ApiModule } from "@/src/types/sidebar";
+import { SidebarItem, SidebarChild } from "@/src/types/sidebar";
 
 
 const Sidebar = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const { modules } = useAuth();
 
   const DEFAULT_ICON = "/sidebar-assests/home-logo.svg";
 
-  const buildSidebarFromModules = (apiModules: ApiModule[]): SidebarItem[] => {
-    return [...apiModules]
+  const sideBar = useMemo(() => {
+    return [...modules]
       .sort((a, b) => a.sequence - b.sequence)
       .map((mod) => {
         const validSubs = mod.sub_modules
@@ -43,9 +44,7 @@ const Sidebar = () => {
           })),
         };
       });
-  };
-
-  const sideBar = buildSidebarFromModules(modules);
+  }, [modules]);
 
   const [openMenuName, setOpenMenuName] = useState<string | null>(null);
   const [submenuPos, setSubmenuPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
@@ -102,7 +101,7 @@ const Sidebar = () => {
     if ("children" in item && item.children.length > 0) return;
 
     if (item.href) {
-      window.location.href = item.href;
+      router.push(item.href);
     }
 
     setOpenMenuName(null);
