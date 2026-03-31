@@ -66,7 +66,8 @@ export type purchaseRequisitionDataType = {
     is_finance_visible:number,
     cost_center:string,
     budget_amount:number,
-    actual_amount:number
+    actual_amount:number,
+    status:string
 }
 
 export type prAttachmentType = {

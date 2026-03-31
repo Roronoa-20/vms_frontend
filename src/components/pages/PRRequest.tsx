@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
 import CreatePurchaseRequest from '../templates/purchase-request/CreatePurchaseRequest'
 import { Button } from '../atoms/button'
@@ -13,6 +13,7 @@ import PopUp from '../molecules/PopUp'
 import { Input } from '../atoms/input'
 import FileList from '../templates/purchase-request/FileList'
 import FinanceFields from '../templates/purchase-request/FinanceFields'
+import { useAuth } from '@/src/context/AuthContext'
 
 interface Props {
     purchaseRequisitionTypeDropdown: purchaseRequisitionTypeDropdownType[]
@@ -32,6 +33,11 @@ enum PurchaseType {
 
 const PrRequest = (props: Props) => {
     const [prData, setPrData] = useState<purchaseRequisitionDataType>(props?.prData as purchaseRequisitionDataType);
+    const {setStatus} = useAuth();
+
+    useEffect(() => {
+        setStatus(props?.prData?.status ?? "");
+    }, [props?.prData?.status]);
     const submitLoaderRef = useRef<HTMLSpanElement>(null);
     const [isApprovalDialog, setIsApprovalDialog] = useState<boolean>(false);
     const [isRejectionDialog, setIsRejectionDialog] = useState<boolean>(false);
@@ -50,6 +56,7 @@ const PrRequest = (props: Props) => {
         getPurchaseReqisitionData(prId ?? props?.pr_id as string).then((res) => {
             console.log(res, "fetched pr data");
             setPrData(res);
+            setStatus(res?.status ?? "");
         }).catch((err) => {
             console.error("Error fetching PR data:", err);
         })

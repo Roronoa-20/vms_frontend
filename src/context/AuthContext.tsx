@@ -11,6 +11,7 @@ interface AuthContextType {
   vendorRef?: string | null | undefined;
   user_email?: string | null | undefined;
   asaReqd?: number | null;
+  status?: string | null | undefined;
 
   setAuthData: (
     role: string | null | undefined,
@@ -22,6 +23,7 @@ interface AuthContextType {
     asaReqd?: number | null
   ) => void;
 
+  setStatus: React.Dispatch<React.SetStateAction<string | null | undefined>>;
   clearAuthData: () => void;
 }
 
@@ -36,6 +38,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user_email, setUser_Email] = useState<string | null | undefined>(null);
   const [vendorRef, setvendorRef] = useState<string | null | undefined>(null);
   const [asaReqd, setAsaReqd] = useState<number | null>(null);
+  const [status, setStatus] = useState<string | null | undefined>(null);
 
   useEffect(() => {
     setcontextfunction();
@@ -81,7 +84,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider value={{ role, name, userid, designation, vendorRef, user_email, asaReqd, setAuthData, clearAuthData }}>
+    <AuthContext.Provider value={{ role, name, userid, designation, vendorRef, user_email, asaReqd, status, setStatus, setAuthData, clearAuthData }}>
       {children}
     </AuthContext.Provider>
   );
