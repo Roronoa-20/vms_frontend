@@ -23,7 +23,7 @@ export default function LoginForm({ loginType }: { loginType: "default" | "mater
   const [email, setEmail] = useState<string | "">("")
   const [isPasswordDialog, setIsPasswordDialog] = useState<boolean>(false);
   const [authorization, setAuthorization] = useState<string | "">("")
-  const { setAuthData } = useAuth();
+  const { setAuthData, setModules } = useAuth();
   const { MultipleVendorCode, addMultipleVendorCode, reset, resetVendorCode } = useMultipleVendorCodeStore();
   const [isLoading, setIsLoading] = useState(false);
   console.log("Body of the API---->", loginType)
@@ -84,6 +84,10 @@ export default function LoginForm({ loginType }: { loginType: "default" | "mater
         Cookies.set("designation", designation || designationVendor);
         Cookies.set("VendorRef", VendorRefNo);
         Cookies.set("VendorASA", VendorASA);
+
+        const apiModules = data?.message?.modules || [];
+        setModules(apiModules);
+
         console.log("Checking the saved role----->", savedRole)
         setAuthData(savedRole, savedName, savedid, designation || designationVendor, VendorRefNo, VendorASA);
         if (designationVendor) {
