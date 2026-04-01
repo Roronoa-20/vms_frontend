@@ -9,11 +9,7 @@ type props = {
 }
 
 export default function Pagination({ ...Props }: props) {
-  // const [perPage, setPerPage] = useState<number>(Props?.record_per_page);
-  // const total_pages = Math.ceil((Props?.total_event_list / 10))
   const total_pages = Math.ceil(Props.total_event_list / Props.record_per_page);
-
-  // const [totalPages, setTotalPages] = useState<number>(Math.ceil((Props?.total_event_list / 10)));
 
   const handlePrev = async () => {
     if (Props.currentPage > 1) {

@@ -387,7 +387,7 @@ const AssetPR = (props: Props) => {
     <>
       <div className='flex justify-end'>
         {
-          pr_id && !props?.prData?.is_submitted &&
+          props?.prData?.can_edit &&
           <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
             let isAlert = true;
             if (singleRowData?.material_description || singleRowData?.plant || singleRowData?.quantity || singleRowData?.asset_code || singleRowData?.material_group || singleRowData?.short_text) {
@@ -447,7 +447,7 @@ const AssetPR = (props: Props) => {
                 <TableCell className="font-medium text-center flex justify-center">
                   <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
                     {
-                      props?.prData?.is_submitted !== 1 &&
+                      props?.prData?.can_edit &&
                       <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
                         <TooltipProvider>
                           <Tooltip>
@@ -472,7 +472,7 @@ const AssetPR = (props: Props) => {
                     }
 
                     {
-                      props?.prData?.is_submitted == 1 &&
+                      !props?.prData?.can_edit &&
                       <div className="flex items-end gap-1">
                         <TooltipProvider>
                           <Tooltip>
@@ -524,7 +524,7 @@ const AssetPR = (props: Props) => {
                       </Tooltip>
                     </TooltipProvider>
                     {
-                      !props?.prData?.is_submitted &&
+                      props?.prData?.can_edit &&
                       <>
                         {/* Pencil Icon */}
                         <TooltipProvider>
@@ -579,7 +579,7 @@ const AssetPR = (props: Props) => {
               </TableRow>
             ))}
 
-            {props?.prData?.is_submitted !== 1 && (
+            {props?.prData?.can_edit && (
               <TableRow>
                 <TableCell className="font-medium text-center"></TableCell>
                 <TableCell className="font-medium">
@@ -709,7 +709,7 @@ const AssetPR = (props: Props) => {
             )}
           </TableBody>
         </Table>
-        {props?.prData?.is_submitted !== 1 && (
+        {props?.prData?.can_edit && (
           <div className='flex gap-4'>
             <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
               handleTableAdd();
@@ -745,7 +745,7 @@ const AssetPR = (props: Props) => {
                 <TableHead className="w-[40%]">Short Text</TableHead>
                 <TableHead className="w-[15%]">UOM</TableHead>
                 <TableHead className="w-[15%]">Quantity</TableHead>
-                {props?.prData?.is_submitted !== 1 && !isSubItemsView && (
+                {props?.prData?.can_edit && !isSubItemsView && (
                   <TableHead className="w-[15%]">Action</TableHead>
                 )}
               </TableRow>
@@ -767,7 +767,7 @@ const AssetPR = (props: Props) => {
                     <TableCell className="font-medium">
                       {item.quantity}
                     </TableCell>
-                    {props?.prData?.is_submitted !== 1 && !isSubItemsView && (
+                    {props?.prData?.can_edit && !isSubItemsView && (
                       <TableCell className="font-medium">
                         <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
                           {/* Pencil Icon */}
@@ -822,7 +822,7 @@ const AssetPR = (props: Props) => {
                 ),
               )}
 
-              {props?.prData?.is_submitted !== 1 && !isSubItemsView && (
+              {props?.prData?.can_edit && !isSubItemsView && (
                 <TableRow>
                   <TableCell className="font-medium text-center"></TableCell>
                   <TableCell className="font-medium">

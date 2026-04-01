@@ -45,9 +45,9 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
         }
 
         setMaterialCategoryTypeOptions(matchedType.material_code_logic.map(item => ({
-                material_type_category: item.material_type_category,
-                code_logic: item.code_logic
-            }))
+            material_type_category: item.material_type_category,
+            code_logic: item.code_logic
+        }))
         );
     }, [materialType, AllMaterialType]);
 
@@ -65,8 +65,8 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
         const normalize = (v: string) => v.trim().toLowerCase();
 
         const matchedOption = materialCategoryTypeOptions.find(o =>
-                normalize(o.material_type_category) ===
-                normalize(backendCategory)
+            normalize(o.material_type_category) ===
+            normalize(backendCategory)
         );
 
         if (!matchedOption) {
@@ -93,24 +93,42 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
 
         if (item.company_name) {
             setMaterialCompanyCode(item.company_name);
-            form.setValue("material_company_code", item.company_name);
+            if (!form.getValues("material_company_code")) {
+                form.setValue("material_company_code", item.company_name);
+            }
         }
 
         if (item.material_type) {
-            form.setValue("material_type", item.material_type);
+            if (!form.getValues("material_type")) {
+                form.setValue("material_type", item.material_type);
+            }
             setSelectedMaterialType(item.material_type);
         }
 
-        form.setValue("comment_by_user", item.comment_by_user || "");
-        form.setValue("base_unit_of_measure", item.unit_of_measure || "");
-        form.setValue("material_category", item.material_category || "");
+        if (!form.getValues("comment_by_user")) {
+            form.setValue("comment_by_user", item.comment_by_user || "");
+        }
+        if (!form.getValues("base_unit_of_measure")) {
+            form.setValue("base_unit_of_measure", item.unit_of_measure || "");
+        }
+        if (!form.getValues("material_category")) {
+            form.setValue("material_category", item.material_category || "");
+        }
 
-        if (filteredPlants.length && item.plant) form.setValue("plant_name", item.plant);
+        if (filteredPlants.length && item.plant && !form.getValues("plant_name")) {
+            form.setValue("plant_name", item.plant);
+        }
 
         if (storage) {
-            form.setValue("storage_location", storage.storage_location || "");
-            form.setValue("division", storage.division || "");
-            form.setValue("old_material_code", storage.old_material_code || "");
+            if (!form.getValues("storage_location")) {
+                form.setValue("storage_location", storage.storage_location || "");
+            }
+            if (!form.getValues("division")) {
+                form.setValue("division", storage.division || "");
+            }
+            if (!form.getValues("old_material_code")) {
+                form.setValue("old_material_code", storage.old_material_code || "");
+            }
         }
     }, [MaterialDetails, filteredPlants, filteredMaterialType, MaterialOnboardingDetails, AllMaterialCodes, form, setMaterialCompanyCode, setSelectedMaterialType]);
 

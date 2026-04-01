@@ -61,6 +61,21 @@ export type purchaseRequisitionDataType = {
     zsb_asset_items:zsbAssetItemsType[],
     zsb_service_items:zsbServiceItemsType[],
     can_approve:number,
+    attachment:prAttachmentType[],
+    can_edit:number,
+    is_finance_visible:number,
+    cost_center:string,
+    budget_amount:number,
+    actual_amount:number,
+    status:string
+}
+
+export type prAttachmentType = {
+    name:string,
+    filename:string,
+    url:string,
+    amount:number,
+    creation:string,
 }
 
 export type nbItemsType = {
