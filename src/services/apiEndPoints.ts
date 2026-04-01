@@ -398,7 +398,7 @@ const API_END_POINTS = {
   getCityDropdown: `${url}/api/method/vms.APIs.cart_details.v1.cart_details.get_location_master`,
   proceedToPR: `${url}/api/method/vms.APIs.cart_details.v1.cart_details.create_vms_pr_from_cart`,
 
-  getPurchaseTeamEmailList:`${url}/api/method/vms.APIs.purchase_order.v1.email_recipients_list.purchase_email_recipients_list
+  getPurchaseTeamEmailList:`${url}/api/method/vms.APIs.purchase_order.v1.email_recipients_list.purchase_email_recipients_list`
 }
 
 export default API_END_POINTS;
