@@ -3,13 +3,11 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
 import { Button } from '../atoms/button'
 import Pagination from '../molecules/Pagination'
-import { PoDetailsType } from '@/src/types/view-po-details/poDetailsType'
-import API_END_POINTS from '@/src/services/apiEndPoints'
-import { AxiosResponse } from 'axios'
-import requestWrapper from '@/src/services/apiCall'
+import { VendorPoDetailsType } from '@/src/types/view-po-details/poDetailsType'
 import { useRouter } from 'next/navigation'
 import PopUp from '../molecules/PopUp'
 import { Input } from '../atoms/input'
+import { acknowledgePo, fetchPoDetails as fetchPoDetailsApi, raiseAdvanceRequest } from '@/src/services/purchaseOrder/purchaseOrder.services'
 
 interface Props {
     poname: string
@@ -17,7 +15,7 @@ interface Props {
 
 const ViewVendorPoDetails = ({ poname }: Props) => {
     const router = useRouter();
-    const [poDetails, setPoDetails] = useState<PoDetailsType["message"] | null>(null);
+    const [poDetails, setPoDetails] = useState<VendorPoDetailsType["data"] | null>(null);
     const [isDialog, setIsDialog] = useState(false);
     const [comment, setComment] = useState("");
     const [isAdvanceDialog, setIsAdvanceDialog] = useState(false);
@@ -28,6 +26,7 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
     const [advanceCurrentPage, setAdvanceCurrentPage] = useState<number>(1);
     const advanceRecordPerPage = 5;
     const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set());
+    const [raiseAdvanceValues, setRaiseAdvanceValues] = useState<Record<number, number>>({});
 
     const [total_event_list, settotalEventList] = useState(0);
     const [record_per_page] = useState<number>(10);
@@ -40,24 +39,24 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
     }, [poname]);
 
     const fetchPoDetails = async () => {
-        const url = `${API_END_POINTS?.POItemsTable}?po_name=${poname}`;
-        const response: AxiosResponse = await requestWrapper({ url: url, method: "POST" });
-        if (response?.status == 200) {
-            setPoDetails(response?.data?.message);
-            settotalEventList(response?.data?.message?.items?.length || 0);
+        try {
+            const res = await fetchPoDetailsApi(poname);
+            setPoDetails(res?.data);
+            settotalEventList(res?.data?.items?.length || 0);
+        } catch (err) {
+            console.error("Error fetching PO details:", err);
         }
     };
 
     const handleAcknowledge = async () => {
-        const apiUrl = `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.vendors_dashboards_api.po_approve_reject.po_approve`;
-        const response: AxiosResponse = await requestWrapper({
-            url: apiUrl,
-            data: { data: { po_name: poname, comment: comment } },
-            method: "POST"
-        });
-        if (response?.status == 200) {
-            alert("Acknowledged successfully");
-            location.reload();
+        try {
+            const res = await acknowledgePo(poname, comment);
+            alert(res?.message || "Acknowledged successfully");
+            fetchPoDetails();
+        } catch (err: any) {
+            alert(err?.message || "Failed to acknowledge PO");
+        } finally {
+            handleClose();
         }
     };
 
@@ -71,7 +70,16 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
         setAdvanceClosureDate("");
         setAdvanceRemarks("");
         setAdvanceFile(null);
+        setRaiseAdvanceValues({});
         if (advanceFileRef.current) advanceFileRef.current.value = "";
+    };
+
+    const handleRaiseAdvanceChange = (idx: number, value: number, advanceBalance: number) => {
+        if (value > advanceBalance) {
+            alert(`Raise advance cannot exceed advance balance (${advanceBalance})`);
+            return;
+        }
+        setRaiseAdvanceValues(prev => ({ ...prev, [idx]: value }));
     };
 
     const handleAdvanceSubmit = async () => {
@@ -79,25 +87,24 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
             alert("Please select Advance Closure Date");
             return;
         }
-        const url = `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.vendors_dashboards_api.po_approve_reject.raise_advance_request`;
-        const formdata = new FormData();
-        formdata.append("data", JSON.stringify({
-            po_name: poname,
-            advance_closure_date: advanceClosureDate,
-            remarks: advanceRemarks,
-        }));
-        if (advanceFile) {
-            formdata.append("proforma_invoice", advanceFile);
-        }
-        const response: AxiosResponse = await requestWrapper({
-            url: url,
-            data: formdata,
-            method: "POST"
-        });
-        if (response?.status == 200) {
-            alert("Advance request raised successfully");
+        try {
+            const items = selectedItemsList.map((item, idx) => ({
+                material_code: item.material_code,
+                name: item.name,
+                total_amount: item.total_amount,
+                raise_advance: raiseAdvanceValues[idx] ?? item.raise_advance ?? item.total_amount,
+            }));
+            const res = await raiseAdvanceRequest({
+                po_no: poname,
+                delivery_date: advanceClosureDate,
+                remarks: advanceRemarks,
+                payment_request_items: items,
+            }, advanceFile || undefined);
+            alert(res?.message || "Advance request raised successfully");
             handleAdvanceClose();
-            location.reload();
+            fetchPoDetails();
+        } catch (err: any) {
+            alert(err?.message || "Failed to raise advance request");
         }
     };
 
@@ -123,7 +130,7 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
     };
 
     const selectedItemsList = poDetails?.items?.filter((_, index) => selectedItems.has(index)) || [];
-    const totalAmount = selectedItemsList.reduce((sum, item) => sum + (item.quantity * item.rate), 0);
+    const totalAmount = selectedItemsList.reduce((sum, item) => sum + (Number(item.quantity) * Number(item.rate)), 0);
 
     return (
         <>
@@ -131,7 +138,7 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
             <div className='bg-white shadow-md border grid grid-cols-4 gap-3 p-4 rounded-xl mt-3 mx-2'>
                 <div className='flex gap-2'>
                     <h1 className='font-semibold'>PO Number: </h1>
-                    <p>{poDetails?.po_name}</p>
+                    <p>{poDetails?.po_no}</p>
                 </div>
                 <div className='flex gap-2'>
                     <h1 className='font-semibold'>PO Date: </h1>
@@ -143,19 +150,19 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                 </div>
                 <div className='flex gap-2'>
                     <h1 className='font-semibold'>Vendor Name: </h1>
-                    <p>{poDetails?.supplier_name}</p>
+                    <p>{poDetails?.vendor_name}</p>
                 </div>
                 <div className='flex gap-2'>
                     <h1 className='font-semibold'>Purchase Group: </h1>
-                    <p>{poDetails?.purchase_group_name}</p>
+                    <p>{poDetails?.purchase_grp_name}</p>
                 </div>
                 <div className='flex gap-2'>
                     <h1 className='font-semibold'>Purchase Contact Person: </h1>
-                    <p>{poDetails?.contact_person}</p>
+                    <p>{poDetails?.purchase_person}</p>
                 </div>
                 <div className="flex gap-2">
                     <h1 className='font-semibold'>Status: </h1>
-                    <p>{poDetails?.po_status}</p>
+                    <p>{poDetails?.status}</p>
                 </div>
             </div>
 
@@ -177,6 +184,9 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                             <TableHead className="text-left text-black text-nowrap">Rate</TableHead>
                             <TableHead className="text-left text-black text-nowrap">Schedule Date</TableHead>
                             <TableHead className="text-left text-black text-nowrap">Schedule Quantity</TableHead>
+                            <TableHead className="text-left text-black text-nowrap">Total PO Amount</TableHead>
+                            <TableHead className="text-left text-black text-nowrap">Total Advance Approved</TableHead>
+                            <TableHead className="text-left text-black text-nowrap">Raise Advance</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody className="text-left text-black">
@@ -188,13 +198,16 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                                     </TableCell>
                                     <TableCell className="text-left">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                                     <TableCell className="text-left text-nowrap">{item?.material_code}</TableCell>
-                                    <TableCell className="text-left text-nowrap">{item?.short_text ? item.short_text : "-"}</TableCell>
-                                    <TableCell className="text-left text-nowrap">{item?.hsnsac}</TableCell>
+                                    <TableCell className="text-left text-nowrap">{item?.description ? item.description : "-"}</TableCell>
+                                    <TableCell className="text-left text-nowrap">{item?.hsn_code}</TableCell>
                                     <TableCell className="text-left text-nowrap">{item?.uom}</TableCell>
                                     <TableCell className="text-left text-nowrap">{item?.quantity}</TableCell>
                                     <TableCell className="text-left text-nowrap">{item?.rate}</TableCell>
                                     <TableCell className="text-left text-nowrap">{item?.schedule_date}</TableCell>
-                                    <TableCell className="text-left text-nowrap">{item?.schedule_date_qty_json}</TableCell>
+                                    <TableCell className="text-left text-nowrap">{item?.schedule_qty}</TableCell>
+                                    <TableCell className="text-left text-nowrap">{item?.total_amount}</TableCell>
+                                    <TableCell className="text-left text-nowrap">{item?.total_claimed_amt}</TableCell>
+                                    <TableCell className="text-left text-nowrap">{item?.raise_advance}</TableCell>
                                 </TableRow>
                             ))
                         ) : (
@@ -214,14 +227,14 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
             <div className='flex justify-between mt-4 mx-2'>
                 <Button variant={"backbtn"} size={"backbtnsize"} className="px-4 rounded-xl" onClick={() => { router.back() }}>Back</Button>
                 <div className="flex gap-4">
-                    <Button
+                    {poDetails?.po_ack_by_vendor !== 1 && <Button
                         variant={"nextbtn"}
                         size={"nextbtnsize"}
                         className="py-2 hover:bg-white hover:text-black border border-transparent hover:border-[#5291CD] rounded-[14px]"
                         onClick={() => setIsDialog(true)}
                     >
                         Acknowledge
-                    </Button>
+                    </Button>}
                     <Button
                         variant={"nextbtn"}
                         size={"nextbtnsize"}
@@ -254,7 +267,7 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                     <div className="grid grid-cols-4 gap-4 mt-4 text-sm">
                         <div className="flex gap-2">
                             <h1 className="font-semibold">PO Number:</h1>
-                            <p>{poDetails?.po_name}</p>
+                            <p>{poDetails?.po_no}</p>
                         </div>
                         <div className="flex gap-2">
                             <h1 className="font-semibold">PO Date:</h1>
@@ -262,11 +275,11 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                         </div>
                         <div className="flex gap-2">
                             <h1 className="font-semibold">Total PO Amount:</h1>
-                            <p>{poDetails?.total_gross_amount}</p>
+                            <p>{poDetails?.total_value}</p>
                         </div>
                         <div className="flex gap-2">
                             <h1 className="font-semibold">Terms of Payment:</h1>
-                            <p>{poDetails?.terms_of_payment}</p>
+                            <p>{poDetails?.payment_terms_name}</p>
                         </div>
                     </div>
 
@@ -285,6 +298,9 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                                     <TableHead className="text-left text-black">Rate</TableHead>
                                     <TableHead className="text-left text-black text-nowrap">Sche. Date</TableHead>
                                     <TableHead className="text-left text-black text-nowrap">Sche. Qty</TableHead>
+                                    <TableHead className="text-left text-black text-nowrap">Total PO Amount</TableHead>
+                            <TableHead className="text-left text-black text-nowrap">Total Advance Approved</TableHead>
+                            <TableHead className="text-left text-black text-nowrap">Raise Advance</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody className="text-left text-black text-sm">
@@ -295,18 +311,31 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                                         <TableRow key={index}>
                                             <TableCell className="text-left">{(advanceCurrentPage - 1) * advanceRecordPerPage + index + 1}</TableCell>
                                             <TableCell className="text-left text-nowrap">{item?.material_code}</TableCell>
-                                            <TableCell className="text-left text-nowrap">{item?.short_text || "-"}</TableCell>
-                                            <TableCell className="text-left text-nowrap">{item?.hsnsac}</TableCell>
+                                            <TableCell className="text-left text-nowrap">{item?.description || "-"}</TableCell>
+                                            <TableCell className="text-left text-nowrap">{item?.hsn_code}</TableCell>
                                             <TableCell className="text-left text-nowrap">{item?.uom}</TableCell>
                                             <TableCell className="text-left text-nowrap">{item?.quantity}</TableCell>
                                             <TableCell className="text-left text-nowrap">{item?.rate}</TableCell>
                                             <TableCell className="text-left text-nowrap">{item?.schedule_date}</TableCell>
-                                            <TableCell className="text-left text-nowrap">{item?.schedule_date_qty_json}</TableCell>
+                                            <TableCell className="text-left text-nowrap">{item?.schedule_qty}</TableCell>
+                                            <TableCell className="text-left text-nowrap">{item?.total_amount}</TableCell>
+                                    <TableCell className="text-left text-nowrap">{item?.total_claimed_amt}</TableCell>
+                                    <TableCell className="text-left text-nowrap">
+                                                <Input
+                                                    type="number"
+                                                    className="w-24"
+                                                    value={raiseAdvanceValues[selectedItemsList.indexOf(item)] ?? item?.raise_advance ?? ""}
+                                                    onChange={(e) => {
+                                                        const idx = selectedItemsList.indexOf(item);
+                                                        handleRaiseAdvanceChange(idx, Number(e.target.value), item.advance_balance);
+                                                    }}
+                                                />
+                                            </TableCell>
                                         </TableRow>
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={9} className="text-center text-gray-500 py-4">
+                                        <TableCell colSpan={12} className="text-center text-gray-500 py-4">
                                             No items selected
                                         </TableCell>
                                     </TableRow>

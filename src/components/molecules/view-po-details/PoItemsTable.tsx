@@ -16,9 +16,10 @@ import { useRouter } from 'next/navigation'
 interface Props {
     POTableData: PoDetailsType["message"]["items"]
     poName:string
+    po_mail_sent:number
 }
 
-const PoItemsTable = ({POTableData,poName}: Props) => {
+const PoItemsTable = ({POTableData,poName,po_mail_sent}: Props) => {
 
         const [total_event_list, settotalEventList] = useState(0);
         const [record_per_page, setRecordPerPage] = useState<number>(10);
@@ -166,7 +167,10 @@ const PoItemsTable = ({POTableData,poName}: Props) => {
         <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
         <div className='flex justify-between mt-4'>
             <Button variant={"nextbtn"} size={"nextbtnsize"} className="px-4 mt-4 mx-2 rounded-xl" onClick={()=>{router.back()}}>Back</Button>
-            <Button variant={"nextbtn"} size={"nextbtnsize"} className="px-4 mt-4 mx-2 rounded-xl" onClick={()=>{setIsEmailDialog(true)}}>Send Email</Button>
+            {
+              !po_mail_sent &&
+              <Button variant={"nextbtn"} size={"nextbtnsize"} className="px-4 mt-4 mx-2 rounded-xl" onClick={()=>{setIsEmailDialog(true)}}>Send Email</Button>
+            }
         </div>
 
             {isEmailDialog &&

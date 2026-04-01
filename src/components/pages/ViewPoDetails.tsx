@@ -20,7 +20,7 @@ const ViewPoDetails = async({poname}: Props) => {
   return (
     <div>
         <BasicPoDetilails poBasicDetails={poDetails?.message as PoDetailsType["message"]} />
-        <PoItemsTable poName={poname} POTableData={poDetails?.message.items as PoDetailsType["message"]["items"]} />
+        <PoItemsTable poName={poname} POTableData={poDetails?.message.items as PoDetailsType["message"]["items"]} po_mail_sent={poDetails?.message.po_mail_sent as number} />
     </div>
   )
 }
