@@ -129,9 +129,7 @@ const Sidebar = () => {
       return;
     }
 
-    if (item.name === "ASA Form") {
-      router.push(`/asa-form?tabtype=company_information&vms_ref_no=${vendorRef}`);
-    } else if (item.href) {
+    if (item.href) {
       // router.push(item.href);
       window.location.href = item.href;
     }
