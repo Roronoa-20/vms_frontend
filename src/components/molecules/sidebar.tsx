@@ -100,11 +100,6 @@ const Sidebar = () => {
   const navigateTo = (item: SidebarItem | SidebarChild) => {
     if ("children" in item && item.children.length > 0) return;
 
-    if (item.name === "Material Onboarding" && hasPurchaseAndCP) {
-      router.push("/material-onboarding-dashboard");
-      return;
-    }
-
     if (item.href) {
       router.push(item.href);
     }
