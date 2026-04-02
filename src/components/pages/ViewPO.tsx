@@ -14,7 +14,7 @@ import jsPDF from 'jspdf';
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import MultiSelect, { MultiValue } from "react-select";
-import { TvendorRegistrationDropdown } from "@/src/types/types";
+import { DashboardPOTableData, TvendorRegistrationDropdown } from "@/src/types/types";
 import Pagination from "../molecules/Pagination";
 import { PoListViewRecord } from "@/src/types/po/po.types";
 import { getPoListView } from "@/src/services/purchaseOrder/purchaseOrder.services";
@@ -46,6 +46,7 @@ interface PODropdown {
 
 interface Props {
   po_name?: string
+  POTableData:DashboardPOTableData["message"]
   companyDropdown : TvendorRegistrationDropdown["message"]["data"]["company_master"]
 }
 

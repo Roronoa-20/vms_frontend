@@ -4,7 +4,7 @@ import React, { use, useEffect, useState } from 'react'
 import { TableHeader } from '../../atoms/table'
 import { Button } from '../../atoms/button'
 import Pagination from '../Pagination'
-import { PoDetailsType } from '@/src/types/view-po-details/poDetailsType'
+import { PoDetailsType, VendorPoDetailsType } from '@/src/types/view-po-details/poDetailsType'
 import PopUp from '../PopUp'
 import { Input } from '../../atoms/input'
 import MultiSelect, { MultiValue } from "react-select";
@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation'
 
 
 interface Props {
-    POTableData: PoDetailsType["message"]["items"]
+    POTableData: VendorPoDetailsType["data"]["items"]
     poName:string
     po_mail_sent:number
 }
@@ -136,12 +136,14 @@ const PoItemsTable = ({POTableData,poName,po_mail_sent}: Props) => {
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
               <TableHead className="text-center text-black">Sr No.</TableHead>
+              <TableHead className="text-center text-black">Product Name</TableHead>
               <TableHead className="text-center text-black">Material Code</TableHead>
               <TableHead className="text-center text-black text-nowrap">Material Description</TableHead>
               <TableHead className="text-center text-black">HSN Code</TableHead>
               <TableHead className="text-center text-black">UOM</TableHead>
               <TableHead className="text-center text-black text-nowrap">Quantity</TableHead>
               <TableHead className="text-center text-black text-nowrap">Rate</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Total Amount</TableHead>
               <TableHead className="text-center text-black text-nowrap">Schedule Date</TableHead>
               <TableHead className="text-center text-black text-nowrap">Schedule Quantity</TableHead>
             </TableRow>
@@ -151,20 +153,21 @@ const PoItemsTable = ({POTableData,poName,po_mail_sent}: Props) => {
                 POTableData?.map((item, index) => (
                     <TableRow key={index}>
                   <TableCell className="text-center">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
-                  {/* <TableCell className="text-center">{item?.srNo}</TableCell> */}
+                  <TableCell className="text-center text-nowrap">{item?.product_name || "-"}</TableCell>
                   <TableCell className="text-center text-nowrap">{item?.material_code}</TableCell>
-                  <TableCell className="text-center text-nowrap">{item?.short_text? item.short_text:"-"}</TableCell>
-                   <TableCell className="text-center text-nowrap">{item?.hsnsac}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.description ? item.description : "-"}</TableCell>
+                   <TableCell className="text-center text-nowrap">{item?.hsn_code}</TableCell>
                    <TableCell className="text-center text-nowrap">{item?.uom}</TableCell>
                    <TableCell className="text-center text-nowrap">{item?.quantity}</TableCell>
                    <TableCell className="text-center text-nowrap">{item?.rate}</TableCell>
+                   <TableCell className="text-center text-nowrap">{item?.total_amount}</TableCell>
                    <TableCell className="text-center text-nowrap">{item?.schedule_date}</TableCell>
-                   <TableCell className="text-center text-nowrap">{item?.schedule_date_qty_json}</TableCell>
+                   <TableCell className="text-center text-nowrap">{item?.schedule_qty}</TableCell>
                 </TableRow>
               ))
             ) : (
                 <TableRow>
-                <TableCell colSpan={9} className="text-center text-gray-500 py-4">
+                <TableCell colSpan={11} className="text-center text-gray-500 py-4">
                   No results found
                 </TableCell>
               </TableRow>

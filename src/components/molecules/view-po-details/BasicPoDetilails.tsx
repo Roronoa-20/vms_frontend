@@ -4,11 +4,9 @@ import { Input } from '../../atoms/input'
 import { Button } from '../../atoms/button'
 import { Cross, Italic, Trash2 } from 'lucide-react'
 import { deleteFileApi } from './apiCalls'
-import { uploadPoDocument as uploadPoDocumentApi } from '@/src/services/purchaseOrder/purchaseOrder.services'
-import { PoDetailsType } from '@/src/types/view-po-details/poDetailsType'
+import { uploadPoDocument as uploadPoDocumentApi, fetchPoDetails } from '@/src/services/purchaseOrder/purchaseOrder.services'
+import { VendorPoDetailsType } from '@/src/types/view-po-details/poDetailsType'
 import Link from 'next/link'
-import { fetchPoDetailsData } from './fetchData'
-import { set } from 'nprogress'
 import PopUp from '../PopUp'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../atoms/table'
 import API_END_POINTS from '@/src/services/apiEndPoints'
@@ -28,13 +26,13 @@ interface POItemsTable {
 }
 
 interface Props {
-    poBasicDetails: PoDetailsType["message"]
+    poBasicDetails: VendorPoDetailsType["data"]
 }
 
 const BasicPoDetilails = ({poBasicDetails}: Props) => {
     const [poAttachment,setPoAttachment] = useState<File | null>(null);
     const uploadPoRef = useRef<HTMLInputElement>(null);
-    const [poBasicDetailsState, setPoBasicDetailsState] = useState<PoDetailsType["message"]>(poBasicDetails);
+    const [poBasicDetailsState, setPoBasicDetailsState] = useState<VendorPoDetailsType["data"]>(poBasicDetails as VendorPoDetailsType["data"]);
     const [POItemsTable, setPOItemsTable] = useState<POItemsTable[]>([]);
     const [isEarlyDeliveryDialog, setIsEarlyDeliveryDialog] = useState<boolean>(false);
 
@@ -49,22 +47,22 @@ const BasicPoDetilails = ({poBasicDetails}: Props) => {
             alert("Please select a file to upload");
             return;
         }
-        await uploadPoDocumentApi(poBasicDetailsState.po_name, poAttachment).then(async () => {
+        await uploadPoDocumentApi(poBasicDetailsState.po_no, poAttachment).then(async () => {
                 alert("File uploaded successfully");
                 resetFileUpload();
                 setPoAttachment(null);
-                const poDetails:PoDetailsType | undefined = await fetchPoDetailsData(poBasicDetailsState.po_name);
-            setPoBasicDetailsState(poDetails?.message as PoDetailsType["message"]);
+                const poDetails = await fetchPoDetails(poBasicDetailsState.po_no);
+            setPoBasicDetailsState(poDetails?.data);
         }).catch((err: any) => {
             alert(err?.message || "Failed to upload file");
         });
     }
 
     const deletePoDocument = async() => {
-        await deleteFileApi(poBasicDetailsState.po_name).then(async(res)=>{
+        await deleteFileApi(poBasicDetailsState.po_no).then(async()=>{
                 alert("File deleted successfully");
-            const poDetails:PoDetailsType | undefined = await fetchPoDetailsData(poBasicDetailsState.po_name);
-            setPoBasicDetailsState(poDetails?.message as PoDetailsType["message"]);
+            const poDetails = await fetchPoDetails(poBasicDetailsState.po_no);
+            setPoBasicDetailsState(poDetails?.data);
         }
     ).catch((err)=>{
         alert("Failed to delete file");
@@ -85,7 +83,7 @@ const BasicPoDetilails = ({poBasicDetails}: Props) => {
 
   const handlePoItemsSubmit = async () => {
     const url = API_END_POINTS?.submitPOItems;
-    const updatedData = { items: POItemsTable, po_name: poBasicDetailsState.po_name };
+    const updatedData = { items: POItemsTable, po_name: poBasicDetailsState.po_no };
     const response: AxiosResponse = await requestWrapper({ url: url, method: "POST", data: { data: updatedData } });
     if (response?.status == 200) {
       alert("submitted successfully");
@@ -106,7 +104,7 @@ const BasicPoDetilails = ({poBasicDetails}: Props) => {
   }
 
   const fetchPOItems = async () => {
-    const url = `${API_END_POINTS?.POItemsTable}?po_name=${poBasicDetailsState.po_name}`;
+    const url = `${API_END_POINTS?.POItemsTable}?po_name=${poBasicDetailsState.po_no}`;
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
       setPOItemsTable(response?.data?.message?.items)
@@ -118,7 +116,7 @@ const BasicPoDetilails = ({poBasicDetails}: Props) => {
     <div className='bg-white shadow-md border grid grid-cols-4 gap-3 p-4 rounded-xl mt-3 mx-2'>
         <div className='flex gap-2'>
             <h1 className='font-semibold'>PO Number: </h1>
-            <p>{poBasicDetailsState?.po_name}</p>
+            <p>{poBasicDetailsState?.po_no}</p>
         </div>
         <div className='flex gap-2'>
             <h1 className='font-semibold'>PO Date: </h1>
@@ -130,23 +128,31 @@ const BasicPoDetilails = ({poBasicDetails}: Props) => {
         </div>
         <div className='flex gap-2'>
             <h1 className='font-semibold'>Vendor Name: </h1>
-            <p>{poBasicDetailsState?.supplier_name}</p>
+            <p>{poBasicDetailsState?.vendor_name}</p>
         </div>
         <div className='flex gap-2'>
             <h1 className='font-semibold'>Purchase Group: </h1>
-            <p>{poBasicDetailsState?.purchase_group_name}</p>
+            <p>{poBasicDetailsState?.purchase_grp_name}</p>
         </div>
         <div className='flex gap-2'>
             <h1 className='font-semibold'>Purchase Contact Person: </h1>
-            <p>{poBasicDetailsState?.contact_person}</p>
+            <p>{poBasicDetailsState?.purchase_person}</p>
         </div>
         <div className='flex gap-2'>
             <h1 className='font-semibold'>Total Value of PO/SO: </h1>
-            <p>{poBasicDetailsState?.contact_person}</p>
+            <p>{poBasicDetailsState?.total_value}</p>
+        </div>
+        <div className='flex gap-2'>
+            <h1 className='font-semibold'>Terms of Payment: </h1>
+            <p>{poBasicDetailsState?.payment_terms_name}</p>
         </div>
         <div className="flex gap-2">
             <h1 className='font-semibold'>Status: </h1>
-            <p>{poBasicDetailsState?.po_status}</p>
+            <p>{poBasicDetailsState?.status}</p>
+        </div>
+        <div className="flex gap-2">
+            <h1 className='font-semibold'>PO Acknowledged by Vendor: </h1>
+            <p>{poBasicDetailsState?.po_ack_by_vendor === 1 ? "Yes" : "No"}</p>
         </div>
     </div>
     <div className='bg-white shadow-md border gap-3 p-4 rounded-xl mt-3 mx-2'>
@@ -170,10 +176,10 @@ const BasicPoDetilails = ({poBasicDetails}: Props) => {
         <Trash2 className={`cursor-pointer text-xl text-red-500 ${poAttachment ? '' : 'hidden'}`} onClick={(e)=>{setPoAttachment(null);resetFileUpload();}}/>
             {poBasicDetailsState?.po_mail_sent !== 1 && <Button variant={"nextbtn"} size={"nextbtnsize"} className="px-4 mx-2 rounded-xl" onClick={()=>uploadPoDocument()}>Upload</Button>}
         </div>
-        <div className='flex gap-4 items-end justify-start mt-2 pl-4'>
-        <h1 className='text-blue-500 mt-2'><Link target='blank' href={poBasicDetailsState?.po_details_attachment?.url}>{poBasicDetailsState?.po_details_attachment?.file_name}</Link></h1>
-        <h1 className={`cursor-pointer text-lg text-red-500 ${poBasicDetailsState?.po_details_attachment?.url ? '' : 'hidden'}`} onClick={()=>{deletePoDocument();}}> X </h1>
-        </div>
+        {poBasicDetailsState?.po_details_attachment?.url && <div className='flex gap-4 items-end justify-start mt-2 pl-4'>
+        <h1 className='text-blue-500 mt-2'><Link target='blank' href={poBasicDetailsState.po_details_attachment.url}>{poBasicDetailsState.po_details_attachment.file_name}</Link></h1>
+        <h1 className='cursor-pointer text-lg text-red-500' onClick={()=>{deletePoDocument();}}> X </h1>
+        </div>}
         </div>
 
         
