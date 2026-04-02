@@ -297,6 +297,8 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
 
   const tabFieldValidationMap: Record<string, string[]> = {
     "basic-data": shouldShowAllFields ? ["material_code_revised", "division", "storage_location"] : ["material_code_revised"],
+    "others-data": ["profit_center", "valuation_class", "price_control"],
+
   };
 
   const handleNextTab = async () => {
@@ -393,7 +395,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
         purchase_uom: form.getValues("purchase_uom"),
         purchasing_value_key: form.getValues("purchasing_value_key"),
         min_lot_size: form.getValues("min_lot_size"),
-        issue_unit: form.getValues("base_uom"),
+        issue_unit: form.getValues("issue_unit"),
         company: form.getValues("material_company_code"),
         plant: form.getValues("plant_name"),
         save_as_draft: true,
@@ -706,7 +708,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
             <div className="space-y-4">
               {/* === REGULAR VERITCAL LAYOUT === */}
 
-              <RequesterDetails MaterialOnboardingDetails={MaterialOnboardingDetails} form={form} />
+              <RequesterDetails MaterialOnboardingDetails={MaterialOnboardingDetails} MaterialDetails={MaterialDetails} form={form} />
 
               <MaterialInformation
                 {...props}
