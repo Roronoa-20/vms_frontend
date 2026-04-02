@@ -70,16 +70,24 @@ const PoItemsTable = ({POTableData,poName,po_mail_sent}: Props) => {
 
 
   const handleSubmit = async () => {
+    // Flush any pending email in the input that wasn't committed with a comma
+    const finalToTags = [...toTags];
+    const pendingEmail = toInput.trim();
+    if (pendingEmail) {
+      finalToTags.push(pendingEmail);
+      setToTags(finalToTags);
+      setToInput("");
+    }
 
     if (!email?.cc || email?.cc?.length === 0) {
       alert("please select at least 1 cc email");
       return;
     }
 
-    
+
       await sendPoConfirmationEmail({
         po_no: poName,
-        vendor_emails: toTags,
+        vendor_emails: finalToTags,
         pur_team_emails: email?.cc,
       }).then(()=>{
         setIsSuccessDialog(true);

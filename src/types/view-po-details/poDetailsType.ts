@@ -57,7 +57,7 @@ export type VendorPoItemType = {
     total_amount: number;
     advance_balance: number;
     total_claimed_amt: number;
-    raise_advance: number;
+    advance: number;
 }
 
 type PoItemsType = {

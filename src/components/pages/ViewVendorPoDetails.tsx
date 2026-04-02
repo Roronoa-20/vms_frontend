@@ -92,7 +92,7 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                 material_code: item.material_code,
                 name: item.name,
                 total_amount: item.total_amount,
-                raise_advance: raiseAdvanceValues[idx] ?? item.raise_advance ?? item.total_amount,
+                raise_advance: raiseAdvanceValues[idx] ?? item.advance ?? item.total_amount,
             }));
             const res = await raiseAdvanceRequest({
                 po_no: poname,
@@ -207,7 +207,7 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                                     <TableCell className="text-left text-nowrap">{item?.schedule_qty}</TableCell>
                                     <TableCell className="text-left text-nowrap">{item?.total_amount}</TableCell>
                                     <TableCell className="text-left text-nowrap">{item?.total_claimed_amt}</TableCell>
-                                    <TableCell className="text-left text-nowrap">{item?.raise_advance}</TableCell>
+                                    <TableCell className="text-left text-nowrap">{item?.advance}</TableCell>
                                 </TableRow>
                             ))
                         ) : (
@@ -324,7 +324,7 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                                                 <Input
                                                     type="number"
                                                     className="w-24"
-                                                    value={raiseAdvanceValues[selectedItemsList.indexOf(item)] ?? item?.raise_advance ?? ""}
+                                                    value={raiseAdvanceValues[selectedItemsList.indexOf(item)] ?? item?.advance ?? ""}
                                                     onChange={(e) => {
                                                         const idx = selectedItemsList.indexOf(item);
                                                         handleRaiseAdvanceChange(idx, Number(e.target.value), item.advance_balance);
