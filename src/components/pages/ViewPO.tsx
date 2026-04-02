@@ -14,9 +14,10 @@ import jsPDF from 'jspdf';
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import MultiSelect, { MultiValue } from "react-select";
-import { DashboardPOTableData, TvendorRegistrationDropdown } from "@/src/types/types";
+import { TvendorRegistrationDropdown } from "@/src/types/types";
 import Pagination from "../molecules/Pagination";
-import page from "@/src/app/maintainance/page";
+import { PoListViewRecord } from "@/src/types/po/po.types";
+import { getPoListView } from "@/src/services/purchaseOrder/purchaseOrder.services";
 
 interface POItemsTable {
   name: string,
@@ -45,17 +46,16 @@ interface PODropdown {
 
 interface Props {
   po_name?: string
-  POTableData: DashboardPOTableData["message"];
   companyDropdown : TvendorRegistrationDropdown["message"]["data"]["company_master"]
 }
 
 
 
-const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
+const ViewPO = ({ po_name,companyDropdown }: Props) => {
   const [prDetails, setPRDetails] = useState<any>();
   const [isSuccessDialog, setIsSuccessDialog] = useState(false);
 
-  const [poTableData,setPoTableData] = useState<DashboardPOTableData["message"]>(POTableData);
+  const [poTableData,setPoTableData] = useState<PoListViewRecord[]>([]);
 
   const [PRNumber, setPRNumber] = useState<string | undefined>(po_name);
   const [POItemsTable, setPOItemsTable] = useState<POItemsTable[]>([]);
@@ -74,8 +74,8 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
   const [POFile, setPOFile] = useState<File | null>(null)
   const [vendorName, setVendorName] = useState<string>("");
 
-  const [total_event_list, settotalEventList] = useState(poTableData?.total_count);
-    const [record_per_page, setRecordPerPage] = useState<number>(5);
+  const [total_event_list, settotalEventList] = useState(0);
+    const [record_per_page, setRecordPerPage] = useState<number>(10);
     const [currentPage, setCurrentPage] = useState<number>(1);
 
   const [ccEmailsList, setCCEmailsList] = useState<{ value: string, label: string }[]>([]);
@@ -150,23 +150,18 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
   },[currentPage,PRNumber,selectedCompany,vendorName]);
 
   const fetchPoTable = async()=>{
-    
-      const dashboardPOTableDataApi: AxiosResponse = await requestWrapper({
-    url: `${API_END_POINTS?.poTable}`,
-    method: "GET",
-    params:{
-      page_no:currentPage,
-      vendor_name:vendorName,
-      po_number:PRNumber,
-      company:selectedCompany
+    try {
+      const res = await getPoListView({
+        search_term: vendorName || PRNumber || "",
+        company: selectedCompany,
+        page_no: currentPage,
+        page_size: record_per_page,
+      });
+      setPoTableData(res?.data || []);
+      settotalEventList(res?.total_count || 0);
+    } catch (err) {
+      console.error("Error fetching PO table:", err);
     }
-  });
-
-  const dashboardPOTableData: DashboardPOTableData["message"] =
-    dashboardPOTableDataApi?.status == 200 ? dashboardPOTableDataApi?.data?.message : "";
-
-    setPoTableData(dashboardPOTableData);
-    settotalEventList(dashboardPOTableData?.total_count || 0);
   }
 
 
@@ -326,34 +321,37 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
       {/* </div> */}
 
                 <Table>
-          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader className="text-center">
             <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
               <TableHead className="text-center text-black">Sr No.</TableHead>
               <TableHead className="text-center text-black">PO No</TableHead>
               <TableHead className="text-center text-black text-nowrap">PO Date</TableHead>
               <TableHead className="text-center text-black">Vendor Name</TableHead>
-              <TableHead className="text-center text-black">company</TableHead>
-              <TableHead className="text-center text-black">Total PO Amount</TableHead>
-              <TableHead className="text-center text-black">Total Advance Payment</TableHead>
+              <TableHead className="text-center text-black">Company</TableHead>
+              <TableHead className="text-center text-black">Status</TableHead>
+              <TableHead className="text-center text-black">Purchase Group</TableHead>
+              <TableHead className="text-center text-black">Purchase Team</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Ack Date</TableHead>
               <TableHead className="text-center text-black text-nowrap">View PO</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="text-center text-black">
-            {poTableData ? (
-              poTableData?.total_po?.map((item, index) => (
+            {poTableData && poTableData.length > 0 ? (
+              poTableData.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell className="text-center">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
-                  <TableCell className="text-center">{item?.po_no}</TableCell>
+                  <TableCell className="text-center">{item?.name}</TableCell>
                   <TableCell className="text-center text-nowrap">{item?.po_date}</TableCell>
-                  <TableCell className="text-center text-nowrap">{item?.supplier_name ? item.supplier_name : "-"}</TableCell>
-                   <TableCell className="text-center text-nowrap">{item?.company_code}</TableCell>
-                   <TableCell className="text-center text-nowrap">{item?.company_code}</TableCell>
-                   <TableCell className="text-center text-nowrap">{item?.company_code}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.supplier_name || "-"}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.company_code}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.status || "-"}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.purchase_group || "-"}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.purchase_team || "-"}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.ack_date || "-"}</TableCell>
                   <TableCell>
                     <Button
                       className={`bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px] `}
-                      onClick={() => router.push(`/view-po-details?poname=${item?.po_number}`)}
+                      onClick={() => router.push(`/view-po-details?poname=${item?.name}`)}
                     >
                       View
                     </Button>
@@ -362,7 +360,7 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={9} className="text-center text-gray-500 py-4">
+                <TableCell colSpan={10} className="text-center text-gray-500 py-4">
                   No results found
                 </TableCell>
               </TableRow>

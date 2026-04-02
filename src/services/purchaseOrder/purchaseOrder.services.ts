@@ -1,4 +1,5 @@
 import { VendorPoDetailsType } from "@/src/types/view-po-details/poDetailsType";
+import { PoListViewResponse, PoListViewParams } from "@/src/types/po/po.types";
 import PO_API_END_POINTS from "./apiEndPoints";
 
 interface SendPoConfirmationEmailParams {
@@ -108,6 +109,32 @@ export const raiseAdvanceRequest = async (params: RaiseAdvanceRequestParams, pro
     } catch (error) {
         console.error("Error raising advance request:", error);
         return Promise.reject("Error raising advance request");
+    }
+}
+
+export const getPoListView = async (params: PoListViewParams, cookieHeaderString?: string): Promise<PoListViewResponse> => {
+    try {
+        const searchParams = new URLSearchParams();
+        if (params.search_term) searchParams.append("search_term", params.search_term);
+        if (params.company) searchParams.append("company", params.company);
+        if (params.status) searchParams.append("status", params.status);
+        if (params.page_no) searchParams.append("page_no", params.page_no.toString());
+        if (params.page_size) searchParams.append("page_size", params.page_size.toString());
+
+        const response = await fetch(`${PO_API_END_POINTS.poListView}?${searchParams.toString()}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: cookieHeaderString ? { 'Cookie': cookieHeaderString } : {},
+        });
+        if (response.ok) {
+            return response.json().then((data) => data?.message);
+        } else {
+            const errorResponse = await response.json();
+            return Promise.reject(errorResponse?.message);
+        }
+    } catch (error) {
+        console.error("Error fetching PO list:", error);
+        return Promise.reject("Error fetching PO list");
     }
 }
 
