@@ -257,7 +257,7 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
         <MultiSelect
           className="w-60 text-sm"
           instanceId="po-search-select"
-          options={PONumberDropdown.map(po => ({
+          options={PONumberDropdown?.map(po => ({
             value: po.name,
             label: `${po.name} - ${po.company_code || ""}`
           }))}
