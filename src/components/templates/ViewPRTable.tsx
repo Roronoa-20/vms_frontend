@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -47,9 +46,6 @@ const useDebounce = (value: any, delay: number) => {
 const ViewPRTable = ({ data, loading, companyDropdown }: Props) => {
   console.log(data, "this is data");
 
-  const [selectedRows, setSelectedRows] = useState<Record<string, boolean>>({});
-  const [selectedType, setSelectedType] = useState<string | null>(null);
-  const router = useRouter();
   const [table, setTable] = useState<PurchaseRequisition[]>(data || []);
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [search, setSearch] = useState<string>("");
@@ -60,43 +56,6 @@ const ViewPRTable = ({ data, loading, companyDropdown }: Props) => {
   const [selectedPRType, setSelectedPRType] = useState<string>("");
 
   const debouncedSearchName = useDebounce(search, 300);
-  const selectedData = data.filter((item) => selectedRows[item.name]);
-
-  const handleCheckboxChange = (prUniqueKey: string, clickedType: string | null) => {
-    if (!clickedType) return;
-
-    const isSelected = !!selectedRows[prUniqueKey];
-    if (selectedType && selectedType !== clickedType) return;
-
-    const updatedRows = { ...selectedRows };
-    if (isSelected) {
-      delete updatedRows[prUniqueKey];
-    } else {
-      updatedRows[prUniqueKey] = true;
-    }
-
-    const selectedCodesOfType = Object.entries(updatedRows)
-      .filter(([key]) => {
-        const pr = data.find((item) => item.name === key);
-        return pr?.pr_type === clickedType;
-      })
-      .map(([key]) => key);
-
-    setSelectedType(selectedCodesOfType.length > 0 ? clickedType : null);
-    setSelectedRows(updatedRows);
-  };
-
-  const handleCreateRFQ = () => {
-    const selectedPRCodes = Object.keys(selectedRows).filter((key) => selectedRows[key]);
-    if (selectedPRCodes.length === 0 || !selectedType) return;
-
-    const queryParams = new URLSearchParams({
-      pr_codes: selectedPRCodes.join(","),
-      pr_type: selectedType,
-    });
-
-    router.push(`/create-rfq?${queryParams.toString()}`);
-  };
 
   useEffect(() => {
     fetchTable();
@@ -179,17 +138,6 @@ const ViewPRTable = ({ data, loading, companyDropdown }: Props) => {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {selectedData.length > 0 && (
-              <Button
-                className="py-2.5"
-                variant="nextbtn"
-                size="nextbtnsize"
-                onClick={handleCreateRFQ}
-                disabled={Object.values(selectedRows).filter(Boolean).length === 0}
-              >
-                Create RFQ
-              </Button>
-            )}
           </div>
         </div>
         <div className="w-full pb-2">
@@ -199,7 +147,6 @@ const ViewPRTable = ({ data, loading, companyDropdown }: Props) => {
           <Table>
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-                <TableHead className="text-center text-black">Select</TableHead>
                 <TableHead className="text-center text-black">Sr No.</TableHead>
                 <TableHead className="text-center text-black">Ref No.</TableHead>
                 <TableHead className="text-center text-black">SAP Ref No</TableHead>
@@ -214,15 +161,6 @@ const ViewPRTable = ({ data, loading, companyDropdown }: Props) => {
               {table && table.length > 0 ? (
                 table.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="text-center">
-                      <input
-                        type="checkbox"
-                        checked={!!selectedRows[item.name]}
-                        disabled={!!selectedType && selectedType !== item.pr_type}
-                        onChange={() => handleCheckboxChange(item.name, item.pr_type)}
-                        className="cursor-pointer w-4 h-4"
-                      />
-                    </TableCell>
                     <TableCell className="font-medium text-center">
                       {(currentPage - 1) * record_per_page + (index + 1)}
                     </TableCell>
@@ -247,7 +185,7 @@ const ViewPRTable = ({ data, loading, companyDropdown }: Props) => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center text-gray-500 py-4">
+                  <TableCell colSpan={8} className="text-center text-gray-500 py-4">
                     No results found
                   </TableCell>
                 </TableRow>
