@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import PopUp from '../PopUp'
 import { processApprovalAction } from '@/src/services/advancePayment/advancePayment.services'
 import { PaymentRequestDetails } from '@/src/types/advancePayment/advancePayment.types'
+import { Input } from '../../atoms/input'
 
 interface Props {
     paymentDetails?: PaymentRequestDetails
@@ -23,17 +24,31 @@ const AdvancePaymentItemsTable = ({ paymentDetails, refno }: Props) => {
     const [status, setStatus] = useState<"approve" | "reject" | "">("");
     const [comments, setComments] = useState("");
     const [isDialog, setIsDialog] = useState(false);
+    const [tresuaryDetails, setTreasuryDetails] = useState({
+        utr_number: "",
+        payment_date: "",
+        payment_amount: ""
+    });
 
     const router = useRouter();
 
     const handleApproval = async () => {
         if (!status) return;
+        if(paymentDetails?.is_treasury_visible === 1){
+        if(!tresuaryDetails.utr_number || !tresuaryDetails.payment_date || !tresuaryDetails.payment_amount){
+            alert("Please fill all treasury details to approve the payment request.");
+            return;
+        }
+        }
         try {
             const res = await processApprovalAction({
                 doctype: "Payment Requisition",
                 doc_name: refno,
                 action: status === "approve" ? "Approve" : "Reject",
                 remarks: comments,
+                utr_number: tresuaryDetails.utr_number,
+                payment_date: tresuaryDetails.payment_date,
+                payment_amount: tresuaryDetails.payment_amount
             });
             alert(res?.message || (status === "approve" ? "Approved successfully" : "Rejected successfully"));
             location.reload();
@@ -89,6 +104,70 @@ const AdvancePaymentItemsTable = ({ paymentDetails, refno }: Props) => {
                 </Table>
             </div>
             <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
+                        {
+                            paymentDetails?.is_treasury_visible && 
+                            <div className="py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="col-span-1 flex flex-col gap-2">
+                        <h2 className="text-[13px] font-medium text-[#64748B]">UTR Number <span className="text-red-500">*</span></h2>
+                        <div className="relative">
+                            <Input
+                                name="UTR Number"
+                                placeholder="UTR Number"
+                                className="rounded-xl h-10 bg-white border-gray-200 pr-9"
+                                value={tresuaryDetails?.utr_number || ''}
+                                maxLength={20}
+                                onChange={(e)=>{
+                                    setTreasuryDetails((prev)=>({
+                                        ...prev,
+                                        utr_number: e.target.value
+                                    }))
+                                }}
+                                // disabled={formData?.is_submitted === 1}
+                            />
+                        </div>
+                    </div>
+                    <div className="col-span-1 flex flex-col gap-2">
+                        <h2 className="text-[13px] font-medium text-[#64748B]">Payment Date <span className="text-red-500">*</span></h2>
+                        <div className="relative">
+                            <Input
+                                name="Payment Date"
+                                placeholder="Payment Date"
+                                className="rounded-xl h-10 bg-white border-gray-200 pr-9"
+                                value={tresuaryDetails?.payment_date || ''}
+                                onChange={(e=>{
+                                    setTreasuryDetails((prev)=>({
+                                        ...prev,
+                                        payment_date: e.target.value
+                                    }))
+                                })}
+                                type="date"
+                                // disabled={formData?.is_submitted === 1}
+                            />
+                        </div>
+                    </div>
+                    <div className="col-span-1 flex flex-col gap-2">
+                        <h2 className="text-[13px] font-medium text-[#64748B]">Payment Amount <span className="text-red-500">*</span></h2>
+                        <div className="relative">
+                            <Input
+                                name="Payment Amount"
+                                placeholder="Payment Amount"
+                                className="rounded-xl h-10 bg-white border-gray-200 pr-9"
+                                value={tresuaryDetails?.payment_amount || ''}
+                                type='number'
+                                maxLength={10}
+                                onChange={(e)=>{
+                                    setTreasuryDetails((prev)=>({
+                                        ...prev,
+                                        payment_amount: e.target.value
+                                    }))
+                                }}
+                                // disabled={formData?.is_submitted === 1}
+                            />
+                        </div>
+                    </div>
+                </div>
+            }
+
             <div className='flex justify-between mt-4'>
                 <Button variant={"nextbtn"} size={"nextbtnsize"} className="px-4 mt-4 mx-2 rounded-xl" onClick={() => { router.back() }}>Back</Button>
                 {paymentDetails?.can_approve && (

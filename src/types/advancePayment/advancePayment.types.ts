@@ -106,6 +106,7 @@ export interface PaymentRequestDetails {
     approval_status: string;
     payment_request_items: PaymentRequestItemDetail[];
     purchase_details: PaymentRequestPurchaseDetails;
+    is_treasury_visible:number
 }
 
 export interface PaymentRequestDetailsResponse {
@@ -119,6 +120,9 @@ export interface ProcessApprovalActionParams {
     doc_name: string;
     action: string;
     remarks?: string;
+    utr_number?: string;
+    payment_date?: string;
+    payment_amount?: string;
 }
 
 export interface ProcessApprovalActionResponse {

@@ -176,8 +176,8 @@ const BasicPoDetilails = ({poBasicDetails}: Props) => {
         <Trash2 className={`cursor-pointer text-xl text-red-500 ${poAttachment ? '' : 'hidden'}`} onClick={(e)=>{setPoAttachment(null);resetFileUpload();}}/>
             {poBasicDetailsState?.po_mail_sent !== 1 && <Button variant={"nextbtn"} size={"nextbtnsize"} className="px-4 mx-2 rounded-xl" onClick={()=>uploadPoDocument()}>Upload</Button>}
         </div>
-        {poBasicDetailsState?.po_details_attachment?.url && <div className='flex gap-4 items-end justify-start mt-2 pl-4'>
-        <h1 className='text-blue-500 mt-2'><Link target='blank' href={poBasicDetailsState.po_details_attachment.url}>{poBasicDetailsState.po_details_attachment.file_name}</Link></h1>
+        {poBasicDetailsState?.po_attachment?.url && <div className='flex gap-4 items-end justify-start mt-2 pl-4'>
+        <h1 className='text-blue-500 mt-2'><Link target='blank' href={poBasicDetailsState?.po_attachment?.url}>{poBasicDetailsState?.po_attachment?.file_name}</Link></h1>
         <h1 className='cursor-pointer text-lg text-red-500' onClick={()=>{deletePoDocument();}}> X </h1>
         </div>}
         </div>

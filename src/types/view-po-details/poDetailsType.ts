@@ -40,7 +40,7 @@ export type VendorPoDetailsType = {
         po_ack_by_vendor: number;
         can_raise_advance:number
         can_acknowledge:number
-        po_details_attachment: FileAttachment;
+        po_attachment: FileAttachment;
         items: VendorPoItemType[];
     }
 }
