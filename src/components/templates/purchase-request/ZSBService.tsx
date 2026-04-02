@@ -129,11 +129,11 @@ const ServicePR = (props: Props) => {
       fetchPlantBAsedOnCompany(props.prData.company);
       fetchGlAccountBasedOnCommpany(props.prData.company);
       fetchCostCenterBasedOnCompany(props.prData.company);
+      fetchMatrialGroup(props?.prData?.company as string);
     }
 
     fetchServiceCode();
 
-    fetchMatrialGroup(props?.prData?.company as string);
   }, []);
 
   const fetchUom = () => {
@@ -454,14 +454,13 @@ const ServicePR = (props: Props) => {
     <>
       <div className='flex justify-end'>
         {
-          pr_id && !props?.prData?.is_submitted &&
+          props?.prData?.can_edit &&
           <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
             let isAlert = true;
             if (singleRowData?.material_description || singleRowData?.plant || singleRowData?.quantity || singleRowData?.material_group || singleRowData?.cost_center || singleRowData?.gl_account) {
-              if (!confirm("You have unsaved changes in the table. Do you want to continue without saving?")) {
-                return;
-              }
+              alert("You have unsaved changes in the table. Do you want to continue without saving?") 
               isAlert = false;
+                return;
             }
             props?.handlePurchaseRequisitionSubmit(isAlert);
           }}>
@@ -517,7 +516,7 @@ const ServicePR = (props: Props) => {
                 <TableCell className="font-medium">
                   <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
                     {
-                      props?.prData?.is_submitted !== 1 &&
+                      props?.prData?.can_edit &&
                       <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
                         <TooltipProvider>
                           <Tooltip>
@@ -544,7 +543,7 @@ const ServicePR = (props: Props) => {
                     {/* eye icom */}
                     {
 
-                      props?.prData?.is_submitted == 1 &&
+                      !props?.prData?.can_edit &&
                       <div className="flex items-end gap-1">
 
 
@@ -598,7 +597,7 @@ const ServicePR = (props: Props) => {
                       </Tooltip>
                     </TooltipProvider>
                     {
-                      !props?.prData?.is_submitted &&
+                      props?.prData?.can_edit &&
                       <>
                         {/* Pencil Icon */}
                         <TooltipProvider>
@@ -653,7 +652,7 @@ const ServicePR = (props: Props) => {
               </TableRow>
             ))}
 
-            {props?.prData?.is_submitted !== 1 && (
+            {props?.prData?.can_edit && (
               <TableRow>
                 <TableCell className="font-medium text-center"></TableCell>
                 <TableCell className="font-medium">
@@ -682,7 +681,7 @@ const ServicePR = (props: Props) => {
                         (prev) =>
                           ({ ...prev, plant: selectedOption?.value }) as zsbServiceItemsType,
                       );
-                      fetchMatrialGroup(selectedOption?.value);
+                      // fetchMatrialGroup(selectedOption?.value);
                     }}
                     instanceId="zsbservice-plant-select"
                     placeholder="Select Plant..."
@@ -841,7 +840,7 @@ const ServicePR = (props: Props) => {
             )}
           </TableBody>
         </Table>
-        {props?.prData?.is_submitted !== 1 && (
+        {props?.prData?.can_edit && (
           <div className='flex gap-4'>
             <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
               handleTableAdd();
@@ -878,7 +877,7 @@ const ServicePR = (props: Props) => {
                 <TableHead className="w-[40%]">Short Text</TableHead>
                 <TableHead className="w-[15%]">UOM</TableHead>
                 <TableHead className="w-[15%]">Quantity</TableHead>
-                {props?.prData?.is_submitted !== 1 && !isSubItemsView && (
+                {props?.prData?.can_edit && !isSubItemsView && (
                   <TableHead className="w-[15%]">Action</TableHead>
                 )}
               </TableRow>
@@ -900,7 +899,7 @@ const ServicePR = (props: Props) => {
                     <TableCell className="font-medium">
                       {item.quantity}
                     </TableCell>
-                    {props?.prData?.is_submitted !== 1 && !isSubItemsView && (
+                    {props?.prData?.can_edit && !isSubItemsView && (
                       <TableCell className="font-medium">
                         <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
 
@@ -956,7 +955,7 @@ const ServicePR = (props: Props) => {
                 ),
               )}
 
-              {props?.prData?.is_submitted !== 1 && !isSubItemsView && (
+              {props?.prData?.can_edit && !isSubItemsView && (
                 <TableRow>
                   <TableCell className="font-medium text-center"></TableCell>
                   <TableCell className="font-medium">

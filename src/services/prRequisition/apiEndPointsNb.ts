@@ -24,6 +24,10 @@ const API_END_POINTS = {
 
   // Approval
   processApprovalAction: `${url}/api/method/vms.approval.approval_router.process_approval_action`,
+
+  // Document Upload
+  uploadPrDocument: `${url}/api/method/vms.APIs.purchase_api.vms_pr_api.upload_vms_pr_document`,
+  deletePrDocument: `${url}/api/method/vms.APIs.purchase_api.vms_pr_api.delete_vms_pr_document`,
 }
 
 export default API_END_POINTS;

@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
 import CreatePurchaseRequest from '../templates/purchase-request/CreatePurchaseRequest'
 import { Button } from '../atoms/button'
@@ -11,6 +11,9 @@ import ZSBService from '../templates/purchase-request/ZSBService'
 import ZSBAsset from '../templates/purchase-request/ZSBAsset'
 import PopUp from '../molecules/PopUp'
 import { Input } from '../atoms/input'
+import FileList from '../templates/purchase-request/FileList'
+import FinanceFields from '../templates/purchase-request/FinanceFields'
+import { useAuth } from '@/src/context/AuthContext'
 
 interface Props {
     purchaseRequisitionTypeDropdown: purchaseRequisitionTypeDropdownType[]
@@ -30,27 +33,62 @@ enum PurchaseType {
 
 const PrRequest = (props: Props) => {
     const [prData, setPrData] = useState<purchaseRequisitionDataType>(props?.prData as purchaseRequisitionDataType);
+    const {setStatus} = useAuth();
+
+    useEffect(() => {
+        setStatus(props?.prData?.status ?? "");
+    }, [props?.prData?.status]);
     const submitLoaderRef = useRef<HTMLSpanElement>(null);
+    const isSubmittingRef = useRef<boolean>(false);
     const [isApprovalDialog, setIsApprovalDialog] = useState<boolean>(false);
     const [isRejectionDialog, setIsRejectionDialog] = useState<boolean>(false);
     const [remarks, setRemarks] = useState<string>("");
+    const [financeFields, setFinanceFields] = useState({
+        costCenter: props?.prData?.cost_center || "",
+        budgetAmount: props?.prData?.budget_amount?.toString() || "",
+        actualAmount: props?.prData?.actual_amount?.toString() || "",
+    });
+
+    const isFinanceApproval = prData?.is_finance_visible === 1 && prData?.can_approve === 1;
+    const isNormalPR = props?.prData?.pr_type === PurchaseType.nbNormal;
+    const showFinanceFields = isFinanceApproval && isNormalPR;
 
     const fetchPrData = (prId?: string) => {
         getPurchaseReqisitionData(prId ?? props?.pr_id as string).then((res) => {
             console.log(res, "fetched pr data");
             setPrData(res);
+            setStatus(res?.status ?? "");
         }).catch((err) => {
             console.error("Error fetching PR data:", err);
         })
     }
 
     const handleApprove = () => {
-        processApprovalAction(props.pr_id as string, "Approve", remarks).then((res) => {
+        if (isFinanceApproval && isNormalPR) {
+            if (!financeFields.costCenter) {
+                alert("Please select a Cost Center");
+                return;
+            }
+            if (!financeFields.budgetAmount || Number(financeFields.budgetAmount) <= 0) {
+                alert("Please enter a valid Budget Amount");
+                return;
+            }
+            if (!financeFields.actualAmount || Number(financeFields.actualAmount) <= 0) {
+                alert("Please enter a valid Actual Amount");
+                return;
+            }
+        }
+        const financeData = isFinanceApproval && isNormalPR ? {
+            cost_center: financeFields.costCenter,
+            budget_amount: financeFields.budgetAmount,
+            actual_amount: financeFields.actualAmount,
+        } : undefined;
+        processApprovalAction(props.pr_id as string, "Approve", remarks, financeData).then((res) => {
             alert(res?.message || "Approved Successfully");
             fetchPrData();
         }).catch((err) => {
             console.error(err);
-            alert(err || "Error approving PR");
+            alert(err?.message || "Error approving PR");
         }).finally(() => { setIsApprovalDialog(false); setRemarks(""); });
     }
 
@@ -60,7 +98,7 @@ const PrRequest = (props: Props) => {
             fetchPrData();
         }).catch((err) => {
             console.error(err);
-            alert(err || "Error rejecting PR");
+            alert(err?.message || "Error rejecting PR");
         }).finally(() => { setIsRejectionDialog(false); setRemarks(""); });
     }
 
@@ -79,6 +117,7 @@ const PrRequest = (props: Props) => {
             if (submitLoaderRef?.current) {
                 submitLoaderRef.current.className = "inline-flex animate-spin ml-2";
             }
+            isSubmittingRef.current = true;
             submitPurchaseRequisition(props?.pr_id as string).then((res) => {
                 alert(res?.message || `PR Created Successfully with PR Number:- ${res?.sap_pr_number}`);
                 fetchPrData();
@@ -90,23 +129,14 @@ const PrRequest = (props: Props) => {
                 if (submitLoaderRef?.current) {
                     submitLoaderRef.current.className = "hidden";
                 }
+            }).finally(() => {
+                isSubmittingRef.current = false;
             })
     }
 
     return (
         <div className='py-8 px-5'>
             <CreatePurchaseRequest purchaseRequisitionTypeDropdown={props.purchaseRequisitionTypeDropdown} companyDropdown={props?.companyDropdown} prData={prData} pr_id={props?.pr_id} fetchPrData={fetchPrData} />
-            {/* <div className='flex justify-end'>
-                {
-                    props?.pr_id && !prData?.is_submitted &&
-                    <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => { handlePurchaseRequisitionSubmit() }}>
-                        Submit PR
-                        <span ref={submitLoaderRef} className="hidden">
-                            <Loader2 className="w-5 h-5" />
-                        </span>
-                    </Button>
-                }
-            </div> */}
 
             {/* normal pr component */}
             {
@@ -129,6 +159,12 @@ const PrRequest = (props: Props) => {
             {
                 props?.prData?.pr_type === PurchaseType.zsbAsset && <ZSBAsset prData={prData} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />
             }
+
+            {props?.pr_id && <FileList data={prData?.attachment || []} fetchPrData={fetchPrData} prId={prData?.name} canEdit={!!prData?.can_edit} isSubmittingRef={isSubmittingRef}/>}
+
+            {showFinanceFields && (
+                <FinanceFields company={prData?.company as string} financeFields={financeFields} setFinanceFields={setFinanceFields} />
+            )}
 
             {props?.pr_id && prData?.can_approve === 1 && (
                 <div className='flex justify-end gap-4 mt-5'>

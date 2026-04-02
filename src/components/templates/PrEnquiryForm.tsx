@@ -111,6 +111,7 @@ const PRInquiryForm = ({
     const isAnySelected = selectedItems.size > 0;
 
     const [selectedStatus,setSelectedStatus] = useState<string>("");
+    const [selectedPurchaseType,setSelectedPurchaseType] = useState<string>("");
 
   useEffect(() => {
     if (selectedProductName) {
@@ -792,7 +793,7 @@ const PRInquiryForm = ({
                           <Select
                             onValueChange={(value) => {
                               setSelectedStatus(value);
-                              fetchTableBasedOnFilter(value == "All"?"":value,"");
+                              fetchTableBasedOnFilter(value == "All"?"":value,selectedPurchaseType);
                             }}
                             >
                             <SelectTrigger className="rounded-xl">
@@ -811,7 +812,9 @@ const PRInquiryForm = ({
                           </Select>
                           <Select
                             onValueChange={(value) => {
-                              fetchTableBasedOnFilter("",value);
+                              setSelectedPurchaseType(value);
+                              setSelectedItems(new Set());
+                              fetchTableBasedOnFilter(selectedStatus == "All"?"":selectedStatus,value);
                             }}
                             >
                             <SelectTrigger className="rounded-xl">

@@ -139,8 +139,6 @@ const ViewProfile = ({ vendor_onboarding, tabtype, refno, company, onChangeCompa
     );
   }
 
-  const isMaterialVendor = onboardingDetail.company_details_tab?.vendor_types?.includes("Material Vendor") && onboardingDetail.company_details_tab?.nature_of_business === "Manufacturer";
-
   return (
     <AuthProvider>
       <div className="h-screen bg-gray-200 ">
@@ -150,7 +148,6 @@ const ViewProfile = ({ vendor_onboarding, tabtype, refno, company, onChangeCompa
               nature_of_business=""
               onboarding_refno={vendor_onboarding}
               refno={refno}
-              activeTab={activeTab}
             />
 
             <div className="mt-2 w-full relative">
@@ -241,17 +238,17 @@ const ViewProfile = ({ vendor_onboarding, tabtype, refno, company, onChangeCompa
                 ref_no={refno}
                 onboarding_ref_no={vendor_onboarding}
                 OnboardingDetail={onboardingDetail?.contact_details_tab}
-                onNextTab={() => setActiveTab("Product Detail")}
+                onNextTab={() => setActiveTab("Manufacturing Detail")}
                 onBackTab={() => setActiveTab("Document Detail")}
               />
             ) : activeTab?.includes("Product Detail") ? (
               <ProductDetail
                 ref_no={refno}
                 onboarding_ref_no={vendor_onboarding}
-                OnboardingDetail={onboardingDetail?.product_details_tab}
+                OnboardingDetail={onboardingDetail?.contact_details_tab}
                 VendorType={onboardingDetail.company_details_tab.vendor_types ?? ""}
                 nature_of_business={onboardingDetail.company_details_tab.nature_of_business}
-                onNextTab={() => setActiveTab(isMaterialVendor ? "Manufacturing Detail" : "Reputed Partners")}
+                onNextTab={() => setActiveTab("Manufacturing Detail")}
                 onBackTab={() => setActiveTab("Contact Detail")}
               />
             ) : activeTab == "Manufacturing Detail" ? (
@@ -293,7 +290,7 @@ const ViewProfile = ({ vendor_onboarding, tabtype, refno, company, onChangeCompa
                 onboarding_ref_no={vendor_onboarding}
                 OnboardingDetail={onboardingDetail?.reputed_partners_details_tab}
                 onNextTab={() => setActiveTab("Certificate")}
-                onBackTab={() => setActiveTab(isMaterialVendor ? "Testing Facility" : "Product Detail")}
+                onBackTab={() => setActiveTab("Testing Facility")}
               />
             ) : activeTab == "Certificate" ? (
               <Certificate

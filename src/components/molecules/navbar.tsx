@@ -12,7 +12,7 @@ import requestWrapper from "@/src/services/apiCall";
 import { NotificationListResponse, Notification } from "@/src/types/notificationtypes";
 
 const Navbar = () => {
-  const { role, name, designation } = useAuth();
+  const { role, name, designation,status } = useAuth();
   const [isDialog, setIsDialog] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [vendorName, setVendorName] = useState("");
@@ -66,6 +66,18 @@ const Navbar = () => {
         >
           {heading}
         </h1>
+        {status && pathname !== "/dashboard" && (
+          <span className={`text-[14px] font-semibold px-3 py-1 rounded-full ${
+            status.toLowerCase().includes("draft") ? "bg-gray-100 text-gray-600" :
+            status.toLowerCase().includes("awaiting") ? "bg-yellow-100 text-yellow-700" :
+            status.toLowerCase().includes("release") ? "bg-blue-100 text-blue-700" :
+            status.toLowerCase().includes("approve") ? "bg-green-100 text-green-700" :
+            status.toLowerCase().includes("reject") ? "bg-red-100 text-red-700" :
+            "bg-gray-100 text-gray-600"
+          }`}>
+            {status}
+          </span>
+        )}
       </div>
 
       <div className="flex items-center gap-3 relative">
