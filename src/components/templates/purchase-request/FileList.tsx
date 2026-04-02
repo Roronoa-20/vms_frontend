@@ -25,6 +25,7 @@ const FileList = ({ data, prId, canEdit, fetchPrData, isSubmittingRef }: Props) 
   const [file, setFile] = useState<File | null>(null);
   const [amount, setAmount] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const isUploadingRef = useRef<boolean>(false);
 
   const handleReset = () => {
     setFile(null);
@@ -45,7 +46,7 @@ const FileList = ({ data, prId, canEdit, fetchPrData, isSubmittingRef }: Props) 
   }
 
   const handleAdd = async () => {
-    if (isSubmittingRef?.current) return;
+    if (isSubmittingRef?.current || isUploadingRef.current) return;
     if (!file) {
       alert("Please select a file");
       return;
@@ -54,12 +55,15 @@ const FileList = ({ data, prId, canEdit, fetchPrData, isSubmittingRef }: Props) 
       alert("Please enter a valid amount");
       return;
     }
+    isUploadingRef.current = true;
     try {
       await uploadPrDocument(prId, file, amount);
       handleReset();
       fetchPrData(prId);
     } catch (error) {
       alert("Failed to upload file");
+    } finally {
+      isUploadingRef.current = false;
     }
   }
 
