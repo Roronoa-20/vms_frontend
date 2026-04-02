@@ -18,10 +18,10 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        nextbtn: "text-[#FFFFFF] bg-[#5291CD]",
-        backbtn: "text-[#5291CD]",
+        nextbtn:"text-[#FFFFFF] bg-[#5291CD]",
+        backbtn:"text-[#2568EF]",
         esignbtn: "text-[#FFFFFF] bg-[#5291CD]",
-        clearesignbtn: "text-[#5291CD]",
+        clearesignbtn: "text-[#2568EF]",
         uploadbtn: "bg-[#fff] hover:bg-primary/30",
       },
       size: {
@@ -30,10 +30,10 @@ const buttonVariants = cva(
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
-        nextbtnsize: "leading-[19.36px] text-[16px] font-semibold px-6 py-1.5 rounded-[29px]",
-        backbtnsize: "leading-[19.36px] text-[16px] font-semibold px-6 py-1.5 rounded-[29px] border border-[#5291CD]",
+        nextbtnsize:"leading-[19.36px] text-[16px] font-semibold px-6 py-1.5 rounded-[29px]",
+        backbtnsize:"leading-[19.36px] text-[16px] font-semibold px-6 py-1.5 rounded-[29px] border border-[#2568EF]",
         esignsize: "leading-[19.36px] text-[16px] font-semibold px-6 py-1.5 rounded-[29px]",
-        clearesignsize: "leading-[19.36px] text-[16px] font-semibold px-6 py-1.5 rounded-[29px] border border-[#5291CD]",
+        clearesignsize: "leading-[19.36px] text-[16px] font-semibold px-6 py-1.5 rounded-[29px] border border-[#2568EF]",
       },
     },
     defaultVariants: {
@@ -45,7 +45,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-  VariantProps<typeof buttonVariants> {
+    VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 

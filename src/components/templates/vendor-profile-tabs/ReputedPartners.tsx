@@ -1,6 +1,4 @@
 'use client'
-
-import { toast } from "react-toastify";
 import React, { useEffect, useState } from "react";
 import { Input } from "../../atoms/input";
 import { Button } from "../../atoms/button";
@@ -22,13 +20,13 @@ type Props = {
   ref_no: string,
   onboarding_ref_no: string,
   OnboardingDetail: VendorOnboardingResponse["message"]["reputed_partners_details_tab"]
-  isAccountsTeam?: number,
-  VendorType?: string[]
+  isAccountsTeam?:number,
+  VendorType?:string[]
   onNextTab?: () => void;
   onBackTab?: () => void;
 }
 
-const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAccountsTeam, VendorType, onNextTab, onBackTab }: Props) => {
+const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail,isAccountsTeam,VendorType }: Props) => {
   const [reputedPartnersDetails, setReputedPartnersDetails] = useState<Partial<TReputedPartnerDetails[]>>([]);
   const [reputedPartners, setReputedPartners] = useState<Partial<TReputedPartnerDetails>>()
 
@@ -53,23 +51,20 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAccoun
     const url = API_END_POINTS?.reputedDetailSubmit;
     const updateData = { reputed_partners: reputedPartnersDetails }
     const response: AxiosResponse = await requestWrapper({ url: url, data: { data: { ...updateData, ref_no: ref_no, vendor_onboarding: onboarding_ref_no } }, method: "POST" })
-    if (response?.status == 200 || response?.status == 2000) {
-      if (onNextTab) onNextTab(); else router.push(`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
-    }
+    if (response?.status == 200) router.push(`/vendor-details-form?tabtype=Certificate&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   };
 
   const handleBack = () => {
-    if (onBackTab) onBackTab(); else {
-      if (isAccountsTeam == 1) {
+
+    if(isAccountsTeam == 1){
         router.push(`/vendor-details-form?Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`)
-      } else if (VendorType && !VendorType.includes("Material Vendor")) {
+      }else if(VendorType && !VendorType.includes("Material Vendor")){
         router.push(
           `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
         );
-      } else {
+      }else{
         router.push(`/vendor-details-form?tabtype=Testing%20Facility&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
       }
-    }
 
     // router.push(`/vendor-details-form?tabtype=Testing%20Facility&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`);
   };
@@ -87,11 +82,11 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAccoun
 
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto w-full">
-      <h1 className="border-b-2 sticky top-0 bg-white py-2 text-lg">
+    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
+      <h1 className="border-b-2 pb-2 mb-4 sticky top-0 bg-white py-4 text-lg">
         Reputed Partners
       </h1>
-      <div className="grid grid-cols-3 gap-4 p-2">
+      <div className="grid grid-cols-3 gap-6 p-5">
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] pb-3">
             Company Name
@@ -111,7 +106,7 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAccoun
           <Input placeholder="" value={reputedPartners?.remark ?? ""} onChange={(e) => { setReputedPartners((prev) => ({ ...prev, remark: e.target.value })) }} />
         </div>
         <div className="col-span-1 flex items-end">
-          <Button className={`py-2`} variant={"nextbtn"} size={"nextbtnsize"} onClick={() => { handleAdd() }}>Add</Button>
+          <Button className={`bg-blue-400 hover:bg-blue-300 `} onClick={() => { handleAdd() }}>Add</Button>
         </div>
       </div>
       {reputedPartnersDetails.length > 0 && (
@@ -139,7 +134,7 @@ const ReputedPartners = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAccoun
                   <TableCell>{item?.company_name}</TableCell>
                   <TableCell>{item?.supplied_qtyyear}</TableCell>
                   <TableCell>{item?.remark}</TableCell>
-                  <TableCell className="flex justify-center"><Trash2 onClick={() => { handleRowDelete(index) }} className="text-red-400 cursor-pointer" /></TableCell>
+                  <TableCell className="flex justify-center"><Trash2 onClick={() => { handleRowDelete(index) }} className="text-red-400 cursor-pointer"/></TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -3,7 +3,7 @@ import ViewPRTable from "@/src/components/templates/ViewPRTable";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
-import { TvendorRegistrationDropdown } from "@/src/types/types";
+import { TvendorRegistrationDropdown, PurchaseRequisition } from "@/src/types/types";
 
 export default async function ViewPurchaseRequisitionPage() {
 
@@ -24,16 +24,16 @@ export default async function ViewPurchaseRequisitionPage() {
 
   const companyDropdown = dropdownData?.company_master || [];
 
-  const prResponse = await requestWrapper({
-    url: `${API_END_POINTS.sapprcreated}`,
+  const prDashboardUrl = API_END_POINTS?.prTableData;
+  const prApi: AxiosResponse = await requestWrapper({
+    url: prDashboardUrl,
     method: "GET",
     headers: {
       cookie: cookieHeaderString,
     },
   });
 
-  const msg = prResponse?.status === 200 ? prResponse?.data?.message : {};
-  const prData = msg?.data || [];
+  const prData: PurchaseRequisition[] = prApi?.status == 200 ? prApi?.data?.message?.data : [];
 
   return (
     <div className="p-4">

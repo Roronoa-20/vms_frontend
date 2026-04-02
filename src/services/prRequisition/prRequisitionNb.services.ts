@@ -217,7 +217,7 @@ export const getPurchaseRequisitionUOM = async (material: string, cookie?: strin
             credentials: 'include',
         });
         if (response.ok) {
-            return Promise.resolve(response.json()?.then((data) => data?.message?.data?.base_uom));
+            return Promise.resolve(response.json()?.then((data) => data?.message?.data));
         } else {
             const Response = await response.json();
             return Promise.reject(Response);
@@ -319,7 +319,7 @@ export const updatePurchaseRequisitionNBItems = async (body: any, type: string, 
 
 
 
-export const processApprovalAction = async (doc_name: string, action: "Approve" | "Reject", remarks: string): Promise<any> => {
+export const processApprovalAction = async (doc_name: string, action: "Approve" | "Reject", remarks: string, financeData?: { cost_center: string; budget_amount: string; actual_amount: string }): Promise<any> => {
     try {
         const response = await fetch(API_END_POINTS.processApprovalAction, {
             method: 'POST',
@@ -332,6 +332,7 @@ export const processApprovalAction = async (doc_name: string, action: "Approve" 
                 doc_name,
                 action,
                 remarks,
+                ...financeData,
             })
         });
         if (response.ok) {
@@ -343,6 +344,50 @@ export const processApprovalAction = async (doc_name: string, action: "Approve" 
     } catch (error) {
         console.error("Error processing approval action:", error);
         return Promise.reject("error processing approval action");
+    }
+}
+
+export const uploadPrDocument = async (name: string, file: File, amount: string): Promise<any> => {
+    try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("amount", amount);
+
+        const response = await fetch(`${API_END_POINTS.uploadPrDocument}?name=${name}`, {
+            method: 'POST',
+            credentials: 'include',
+            body: formData
+        });
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response?.message);
+        }
+    } catch (error) {
+        console.error("Error uploading PR document:", error);
+        return Promise.reject("error uploading PR document");
+    }
+}
+
+export const deletePrDocument = async (name: string): Promise<any> => {
+    try {
+        const response = await fetch(`${API_END_POINTS.deletePrDocument}?name=${name}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        });
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response?.message);
+        }
+    } catch (error) {
+        console.error("Error deleting PR document:", error);
+        return Promise.reject("error deleting PR document");
     }
 }
 

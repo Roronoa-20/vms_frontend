@@ -1,5 +1,4 @@
 "use client";
-import { toast } from "react-toastify";
 import React, { useEffect, useState } from "react";
 import {
   Select,
@@ -35,7 +34,7 @@ interface Props {
   onBackTab?: () => void;
 }
 
-const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_name, onNextTab, onBackTab }: Props) => {
+const PaymentDetail = ({ref_no, onboarding_ref_no, OnboardingDetail, company_name, onNextTab, onBackTab}: Props) => {
   const { paymentDetail, updatePaymentDetail } = usePaymentDetailStore();
   const [bankProofFile, setBankProofFile] = useState<FileList | null>(null);
   const [isBankFilePreview, setIsBankFilePreview] = useState<boolean>(true);
@@ -45,7 +44,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
   const { designation } = useAuth();
 
   const { setBankProof, bank_proof } = UsePurchaseTeamApprovalStore();
-
+ 
   const router = useRouter();
   console.log(OnboardingDetail, "this is country");
   useEffect(() => {
@@ -55,7 +54,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
         url: bankNameDropdownUrl,
         method: "GET",
       });
-      if (bankNameResponse?.status == 200 || bankNameResponse?.status == 2000) {
+      if (bankNameResponse?.status == 200) {
         setBankNameDropown(bankNameResponse?.data?.message?.data);
       }
     };
@@ -66,7 +65,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
         url: currencyUrl,
         method: "GET",
       });
-      if (currencyResponse?.status == 200 || currencyResponse?.status == 2000) {
+      if (currencyResponse?.status == 200) {
         setCurrencyDropdown(currencyResponse?.data?.message?.data);
       }
     };
@@ -134,16 +133,14 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
       data: formData,
     });
 
-    if (response?.status == 200 || response?.status == 2000) {
-      toast.success("Your details have been updated and informed to Meri Purchase Team");
-      if (onNextTab) onNextTab(); else router.push(
+    if (response?.status == 200)
+      router.push(
         `/vendor-details-form?tabtype=Contact%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
       );
-    }
   };
 
   const handleBack = () => {
-    if (onBackTab) onBackTab(); else router.push(
+    router.push(
       `/vendor-details-form?tabtype=Document%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
     );
   };
@@ -151,13 +148,13 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
   console.log(OnboardingDetail?.bank_proof?.file_name, "thiskjdvb");
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto w-full">
-      <h1 className="border-b-2 sticky top-0 bg-white py-2 text-lg">
+    <div className="flex flex-col bg-white rounded-lg p-4 w-full h-[calc(100vh-120px)] overflow-y-auto">
+      <h1 className="border-b-2 pb-2 sticky top-0 bg-white text-lg">
         Bank Details
       </h1>
-      <div className="grid grid-cols-3 gap-4 p-2">
+      <div className="grid grid-cols-3 gap-6 p-2">
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-1">
             Bank Name
           </h1>
           <Select
@@ -186,7 +183,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
           )}
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-1">
             IFSC Code
           </h1>
           <Input
@@ -203,7 +200,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
           )}
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-1">
             Account Number
           </h1>
           <Input
@@ -222,9 +219,9 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
           )}
         </div>
         <div className="col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-1">
             Name of Account Holder{" "}
-
+          
           </h1>
           <Input
             placeholder=""
@@ -246,9 +243,9 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
         </div>
 
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-1">
             Type of Account{" "}
-
+          
           </h1>
           <Select
             value={
@@ -275,7 +272,7 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
           )}
         </div>
         <div className="flex flex-col col-span-1">
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-1">
             Currency
           </h1>
           <Select
@@ -299,9 +296,9 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
           </Select>
         </div>
         <div>
-          <h1 className="text-[12px] font-normal text-[#626973] pb-2">
+          <h1 className="text-[12px] font-normal text-[#626973] pb-1">
             Bank Proof (Upload Passbook Leaf/Cancelled Cheque){" "}
-
+          
           </h1>
           <div className="flex gap-4">
             <Input

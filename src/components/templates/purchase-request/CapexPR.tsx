@@ -222,14 +222,14 @@ const CapexPR = (props: Props) => {
     <>
     <div className='flex justify-end'>
                 {
-                    pr_id && !props?.prData?.is_submitted &&
+                    props?.prData?.can_edit &&
                     <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
                       let isAlert = true;
                       if (singleRowData?.material || singleRowData?.plant || singleRowData?.asset_code || singleRowData?.quantity || singleRowData?.purchasing_group || singleRowData?.required_delivery_date) {
-                        if (!confirm("You have unsaved changes in the table. Do you want to continue without saving?")) {
+                        alert("You have unsaved changes in the table. Do you want to continue without saving?")
+                          isAlert = false;
                           return;
-                        }
-                        isAlert = false;
+                        
                       }
                       props?.handlePurchaseRequisitionSubmit(isAlert);
                     }}>
@@ -256,7 +256,7 @@ const CapexPR = (props: Props) => {
             <TableHead className="text-center w-[15%]">Purchasing Group</TableHead>
             <TableHead className="text-center w-[15%]">Required Delivery Date</TableHead>
             {
-              props?.prData?.is_submitted !== 1 &&
+              props?.prData?.can_edit &&
               <TableHead className="text-center w-[10%]">Action</TableHead>
             }
           </TableRow>
@@ -274,7 +274,7 @@ const CapexPR = (props: Props) => {
                 <TableCell className="font-medium text-center max-w-[200px] truncate" title={item.purchasing_group}>{item.purchasing_group}</TableCell>
                 <TableCell className="font-medium text-center max-w-[150px] truncate" title={item.required_delivery_date}>{item.required_delivery_date}</TableCell>
                 {
-                  props?.prData?.is_submitted !== 1 &&
+                  props?.prData?.can_edit &&
                   <TableCell className="font-medium">
                     <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
                       {/* Pencil Icon */}
@@ -323,7 +323,7 @@ const CapexPR = (props: Props) => {
           }
 
           {
-            props?.prData?.is_submitted !== 1 &&
+            props?.prData?.can_edit &&
 
             <TableRow>
               <TableCell className="font-medium text-center"></TableCell>

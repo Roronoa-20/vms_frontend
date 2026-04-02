@@ -1,8 +1,7 @@
 "use client";
-import { toast } from "react-toastify";
 import React, { useEffect, useRef, useState } from "react";
 import { Input } from "../../atoms/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../atoms/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "../../atoms/table";
 import { Button } from "@/components/ui/button";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
@@ -17,14 +16,14 @@ import { useProductDetailStore } from "@/src/store/ProductDetailStore";
 type Props = {
   ref_no: string;
   onboarding_ref_no: string;
-  OnboardingDetail: VendorOnboardingResponse["message"]["product_details_tab"];
+  OnboardingDetail: VendorOnboardingResponse["message"]["contact_details_tab"];
   onNextTab?: () => void;
   onBackTab?: () => void;
   nature_of_business: string;
   VendorType: string[];
 };
 
-const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_business, VendorType, onNextTab, onBackTab }: Props) => {
+const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_business, VendorType }: Props) => {
   const router = useRouter();
 
   const [singleRow, SetSingleRow] = useState<any>()
@@ -38,14 +37,14 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
   const fetchTable = async () => {
     const fetchOnboardingDetailUrl = `${API_END_POINTS?.fetchDetails}?ref_no=${ref_no}&vendor_onboarding=${onboarding_ref_no}`;
     const fetchOnboardingDetailResponse: AxiosResponse = await requestWrapper({ url: fetchOnboardingDetailUrl, method: "GET" });
-    const OnboardingDetail: VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 || fetchOnboardingDetailResponse?.status == 2000 ? fetchOnboardingDetailResponse?.data?.message : "";
+    const OnboardingDetail: VendorOnboardingResponse["message"] = fetchOnboardingDetailResponse?.status == 200 ? fetchOnboardingDetailResponse?.data?.message : "";
     setMaterialsTable(OnboardingDetail?.product_details_tab)
   }
 
   const handleDelete = async (index: number) => {
     const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.deleteProductDetailItem, data: { data: { ref_no: ref_no, vendor_onboarding: onboarding_ref_no, idx: index } }, method: "DELETE" });
-    if (response?.status == 200 || response?.status == 2000) {
-      toast.success("Your details have been updated and informed to Meri Purchase Team");
+    if (response?.status == 200) {
+      alert("Record Deleted Successfully");
       fetchTable();
     }
   }
@@ -83,12 +82,12 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
       method: "POST",
     });
 
-    // if (submitResponse?.status == 200 || submitResponse?.status == 2000)
+    // if (submitResponse?.status == 200)
     //   router.push(
     //     `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
     //   );
-    if (submitResponse?.status == 200 || submitResponse?.status == 2000) {
-      toast.success("Your details have been updated and informed to Meri Purchase Team");
+    if (submitResponse?.status == 200) {
+      alert("data added successfully");
       fetchTable();
       SetSingleRow({});
       setProductImage(null);
@@ -100,37 +99,37 @@ const ProductDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, nature_of_
   };
 
   const handleNext = () => {
-    // if (materialsTable?.length == 0) {
-    //   alert("Please Enter At Least 1 Material Details")
-    //   return;
-    // }
+    if (materialsTable?.length == 0) {
+      alert("Please Enter At Least 1 Material Details")
+      return;
+    }
     if (nature_of_business == "Manufacturer" && VendorType?.includes("Material Vendor")) {
 
-      if (onNextTab) onNextTab(); else router.push(
+      router.push(
         `/vendor-details-form?tabtype=Manufacturing%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
       )
     } else {
-      if (onNextTab) onNextTab(); else router.push(
+      router.push(
         `/vendor-details-form?tabtype=Reputed%20Partners&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
       )
     }
   }
 
   const handleBack = () => {
-    if (onBackTab) onBackTab(); else router.push(
+    router.push(
       `/vendor-details-form?tabtype=Contact%20Detail&vendor_onboarding=${onboarding_ref_no}&refno=${ref_no}`
     );
   };
 
   return (
-    <div className="flex flex-col bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto w-full">
-      <h1 className="border-b-2 sticky top-0 bg-white py-2 text-lg font-semibold">
+    <div className="flex flex-col bg-white rounded-lg px-4 pb-4 max-h-[80vh] overflow-y-scroll w-full">
+      <h1 className="border-b-2 pb-1 sticky top-0 bg-white py-2 text-lg font-semibold">
         Product Details
       </h1>
       <div className="italic underline text-[12px] font-semibold text-[#626973] py-2">
         <p>(No Brocheure Allowed. Kindly list all the products one by one in the section)</p>
       </div>
-      <div className="grid grid-cols-3 gap-4 p-2">
+      <div className="grid grid-cols-3 gap-4 p-1">
         <div className="col-span-1">
           <h1 className="text-[12px] font-normal text-[#626973] flex">
             Product Manufactured <span className="pl-1 text-red-400 text-xl">*</span>
