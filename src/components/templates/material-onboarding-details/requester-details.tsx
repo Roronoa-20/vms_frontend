@@ -10,24 +10,25 @@ interface MaterialRequesterDetailsFormProps {
   form: UseFormReturn<any>;
   onSubmit?: () => void;
   MaterialOnboardingDetails?: MaterialRegistrationFormData;
+  MaterialDetails?: any;
 }
 
-const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> = ({ form, MaterialOnboardingDetails }) => {
+const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> = ({ form, MaterialOnboardingDetails, MaterialDetails }) => {
   
   useEffect(() => {
-    if (MaterialOnboardingDetails) {
-      const d = MaterialOnboardingDetails;
+    const d = MaterialOnboardingDetails || MaterialDetails?.requestor_master;
+    if (d) {
       form.setValue("request_date", d.request_date || "");
       form.setValue("requested_by", d.requested_by || "");
-      form.setValue("company", d.material_company_name || "");
-      form.setValue("department", d.department || "");
+      form.setValue("company", d.requestor_company || d.material_company_name || d.requestor_company_name || "");
+      form.setValue("department", d.requestor_department || d.department || "");
       form.setValue("sub_department", d.sub_department || "");
-      form.setValue("hod", d.hod || "");
+      form.setValue("hod", d.requestor_hod || d.hod || "");
       form.setValue("immediate_reporting_head", d.immediate_reporting_head || "");
-      form.setValue("contact_information_email", d.contact_information_email || "");
-      form.setValue("contact_information_phone", d.contact_information_phone || "");
+      form.setValue("contact_information_email", d.contact_information_email || d.requestor_email || "");
+      form.setValue("contact_information_phone", d.contact_information_phone || d.requestor_phone || "");
     }
-  }, [MaterialOnboardingDetails, form]);
+  }, [MaterialOnboardingDetails, MaterialDetails, form]);
 
 
   return (
