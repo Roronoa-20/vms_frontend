@@ -2,24 +2,37 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/src/components/atoms/table";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/src/components/atoms/select";
+import { Input } from "../atoms/input";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup } from "../atoms/select";
-import PopUp from "../molecules/PopUp";
-import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
+import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "../molecules/Pagination";
-import { PurchaseRequisitionDataItem } from '@/src/types/PurchaseRequisitionType';
-import { Label } from "@/components/ui/label";
-import { TvendorRegistrationDropdown } from "@/src/types/types";
-
+import { PurchaseRequisition } from "@/src/types/types";
+import { GetPurchaseRequisitionTypeDropdown } from "@/src/services/prRequisition/prRequisitionNb.services";
+import { purchaseRequisitionTypeDropdownType } from "@/src/types/prRequisition/prRequisition.types";
+import Link from "next/link";
 
 type Props = {
-  data: PurchaseRequisitionDataItem[];
+  data: PurchaseRequisition[];
   loading: boolean;
-  companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"];
+  companyDropdown: { description: string; name: string }[];
 };
 
 const useDebounce = (value: any, delay: number) => {
@@ -32,23 +45,22 @@ const useDebounce = (value: any, delay: number) => {
 };
 
 const ViewPRTable = ({ data, loading, companyDropdown }: Props) => {
-  console.log(data, "this is data")
+  console.log(data, "this is data");
 
   const [selectedRows, setSelectedRows] = useState<Record<string, boolean>>({});
   const [selectedType, setSelectedType] = useState<string | null>(null);
-  const [filterType, setFilterType] = useState<string>("All");
   const router = useRouter();
-  const [table, setTable] = useState<PurchaseRequisitionDataItem[]>([]);
-  const [prCreatedFromSAP, setPrCreatedFromSAP] = useState<boolean>(false);
+  const [table, setTable] = useState<PurchaseRequisition[]>(data || []);
   const [selectedCompany, setSelectedCompany] = useState<string>("");
   const [search, setSearch] = useState<string>("");
   const [total_event_list, settotalEventList] = useState(0);
-  const [record_per_page, setRecordPerPage] = useState<number>(5);
+  const [record_per_page, setRecordPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [prTypeDropdown, setPRTypeDropdown] = useState<purchaseRequisitionTypeDropdownType[]>([]);
+  const [selectedPRType, setSelectedPRType] = useState<string>("");
 
   const debouncedSearchName = useDebounce(search, 300);
-  const selectedData = data.filter((item) => selectedRows[item.sap_pr_code]);
-  const uniqueTypes = Array.from(new Set(data.map((pr) => pr.purchase_requisition_type))).filter(Boolean);
+  const selectedData = data.filter((item) => selectedRows[item.name]);
 
   const handleCheckboxChange = (prUniqueKey: string, clickedType: string | null) => {
     if (!clickedType) return;
@@ -65,8 +77,8 @@ const ViewPRTable = ({ data, loading, companyDropdown }: Props) => {
 
     const selectedCodesOfType = Object.entries(updatedRows)
       .filter(([key]) => {
-        const pr = data.find((item) => (item.sap_pr_code || item.name) === key);
-        return pr?.purchase_requisition_type === clickedType;
+        const pr = data.find((item) => item.name === key);
+        return pr?.pr_type === clickedType;
       })
       .map(([key]) => key);
 
@@ -88,202 +100,161 @@ const ViewPRTable = ({ data, loading, companyDropdown }: Props) => {
 
   useEffect(() => {
     fetchTable();
-  }, [debouncedSearchName, selectedCompany, filterType, currentPage, prCreatedFromSAP]);
+  }, [debouncedSearchName, selectedCompany, currentPage, selectedPRType]);
 
+  useEffect(() => {
+    GetPurchaseRequisitionTypeDropdown()
+      .then((res) => {
+        setPRTypeDropdown(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   const handlesearchname = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   };
 
-  const purReqFilter = filterType === "All" ? "" : filterType;
-
   const fetchTable = async () => {
+    const offset = (currentPage - 1) * record_per_page;
     const PRFormData: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.prTableData}?pur_req_type=${purReqFilter}&company=${selectedCompany}&pr_no=${debouncedSearchName}&page_no=${currentPage}&page_length=${record_per_page}&pr_created_from_sap=${prCreatedFromSAP ? 1 : ""}`,
+      url: `${API_END_POINTS?.prTableData}?limit=${record_per_page}&offset=${offset}&company=${selectedCompany}&search_term=${debouncedSearchName}&pr_type=${selectedPRType === "all" ? "" : selectedPRType}`,
       method: "GET",
     });
-    console.log("ijbnivjnsifvnesivnoer---->", PRFormData)
     if (PRFormData?.status == 200) {
-      const data = PRFormData?.data?.message;
-      setTable(data?.data || []);
-      settotalEventList(data?.total_count || 0);
-      setRecordPerPage(5);
+      setTable(PRFormData?.data?.message?.data);
+      settotalEventList(PRFormData?.data?.message?.pagination?.total_count);
     }
   };
-
-  const formatDate = (date: Date): string => {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
-
 
   if (loading) return <p className="text-center text-gray-500">Loading PR data...</p>;
 
   return (
     <>
-      <div className="shadow bg-[#f6f6f7] p-3 rounded-2xl">
-        <div className="flex items-center justify-between w-full">
-
-          {/* LEFT SIDE — Filters */}
-          <div className="flex items-center gap-4">
-
-            <Label className="text-sm font-medium">Filter by PR Type:</Label>
-            <Select onValueChange={(value) => setFilterType(value)} value={filterType}>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Select Type" />
+      <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
+        <div className="flex w-full justify-between pb-4">
+          <h1 className="text-[20px] text-[#03111F] font-semibold">
+            Purchase Requisition Request
+          </h1>
+          <div className="flex gap-4 items-center">
+            <Input
+              placeholder="Search PR Name"
+              value={search}
+              onChange={handlesearchname}
+            />
+            <Select
+              value={selectedCompany || "all"}
+              onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select Company" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="All">All</SelectItem>
-                {uniqueTypes.map((type) => (
-                  <SelectItem key={type as string} value={type as string}>
-                    {type}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  <SelectItem value="all">All</SelectItem>
+                  {companyDropdown?.map((item, index) => (
+                    <SelectItem key={index} value={item.name}>
+                      {item.description}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
-
-            {/* Search + Company */}
-            <div className="flex items-center gap-4">
-              <Input
-                placeholder="Search PR No..."
-                value={search}
-                onChange={handlesearchname}
-                className="min-w-[150px]"
-              />
-
-              <Select
-                value={selectedCompany || "all"}
-                onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
-              >
-                <SelectTrigger className="w-[150px]">
-                  <SelectValue placeholder="Select Company" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="all">All</SelectItem>
-                    {companyDropdown?.map((item, index) => (
-                      <SelectItem key={index} value={item?.name}>
-                        {item?.description}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="pr_created_from_sap"
-                checked={prCreatedFromSAP}
-                onChange={(e) => {
-                  setPrCreatedFromSAP(e.target.checked);
-                  setCurrentPage(1);
-                }}
-                className="w-4 h-4 cursor-pointer"
-              />
-              <Label htmlFor="pr_created_from_sap" className="text-sm">
-                PR Created from SAP
-              </Label>
-            </div>
-          </div>
-          {/* RIGHT SIDE — Create RFQ Button */}
-          {selectedData.length > 0 && (
-            <Button
-              className="py-2.5"
-              variant="nextbtn"
-              size="nextbtnsize"
-              onClick={handleCreateRFQ}
-              disabled={Object.values(selectedRows).filter(Boolean).length === 0}
+            <Select
+              value={selectedPRType}
+              onValueChange={(value) => setSelectedPRType(value)}
             >
-              Create RFQ
-            </Button>
-          )}
-
+              <SelectTrigger>
+                <SelectValue placeholder="Select PR Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="all">All</SelectItem>
+                  {prTypeDropdown?.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            {selectedData.length > 0 && (
+              <Button
+                className="py-2.5"
+                variant="nextbtn"
+                size="nextbtnsize"
+                onClick={handleCreateRFQ}
+                disabled={Object.values(selectedRows).filter(Boolean).length === 0}
+              >
+                Create RFQ
+              </Button>
+            )}
+          </div>
         </div>
         <div className="w-full pb-2">
-          
+
         </div>
-        <Table>
-          <TableHeader className="bg-blue-100 text-center">
-            <TableRow>
-              <TableHead className="text-center text-black">Select</TableHead>
-              <TableHead className="text-center text-black">Sr. No.</TableHead>
-              <TableHead className="text-center text-black">Company</TableHead>
-              <TableHead className="text-center text-black">PR Type</TableHead>
-              <TableHead className="text-center text-black">PR Name</TableHead>
-              <TableHead className="text-center text-black">PR No</TableHead>
-              <TableHead className="text-center text-black">Date</TableHead>
-              <TableHead className="text-center text-black">Plant</TableHead>
-              <TableHead className="text-center text-black">Status</TableHead>
-              <TableHead className="text-center text-black">View</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {table.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center py-4 text-gray-500">No PR records found.</TableCell>
+        <div className="max-h-[110vh]">
+          <Table>
+            <TableHeader className="text-center">
+              <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
+                <TableHead className="text-center text-black">Select</TableHead>
+                <TableHead className="text-center text-black">Sr No.</TableHead>
+                <TableHead className="text-center text-black">Ref No.</TableHead>
+                <TableHead className="text-center text-black">SAP Ref No</TableHead>
+                <TableHead className="text-center text-black">Company</TableHead>
+                <TableHead className="text-center text-black">PR Type</TableHead>
+                <TableHead className="text-center text-black">Requisitioner</TableHead>
+                <TableHead className="text-center text-black text-nowrap">Status</TableHead>
+                <TableHead className="text-center text-black">View PR</TableHead>
               </TableRow>
-            ) : (table.map((pr, index) => (
-              <React.Fragment key={pr.sap_pr_code ?? `row-${index}`}>
+            </TableHeader>
+            <TableBody className="text-center">
+              {table && table.length > 0 ? (
+                table.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="text-center">
+                      <input
+                        type="checkbox"
+                        checked={!!selectedRows[item.name]}
+                        disabled={!!selectedType && selectedType !== item.pr_type}
+                        onChange={() => handleCheckboxChange(item.name, item.pr_type)}
+                        className="cursor-pointer w-4 h-4"
+                      />
+                    </TableCell>
+                    <TableCell className="font-medium text-center">
+                      {(currentPage - 1) * record_per_page + (index + 1)}
+                    </TableCell>
+                    <TableCell className="text-nowrap text-center">{item?.name}</TableCell>
+                    <TableCell className="text-nowrap text-center">{item?.sap_pr_no ?? ""}</TableCell>
+                    <TableCell className="text-nowrap text-center">{item?.company}</TableCell>
+                    <TableCell className="text-nowrap text-center">{item?.pr_type}</TableCell>
+                    <TableCell className="text-nowrap text-center">{item?.requisitioner}</TableCell>
+                    <TableCell>
+                      <div className={`text-center px-2 py-3 rounded-xl`}>
+                        {item?.status ?? ""}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-nowrap text-center whitespace-nowrap">
+                      <Link href={`/pr-request?pr_id=${item?.name}`}>
+                        <Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">
+                          View PR
+                        </Button>
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
                 <TableRow>
-                  <TableCell className="text-center">
-                    <input
-                      type="checkbox"
-                      checked={!!selectedRows[pr.sap_pr_code || pr.name]}
-                      disabled={!!selectedType && selectedType !== pr.purchase_requisition_type}
-                      onChange={() => handleCheckboxChange(pr.sap_pr_code || pr.name, pr.purchase_requisition_type)}
-                      className="cursor-pointer w-4 h-4"
-                    />
-                  </TableCell>
-                  <TableCell className="text-center">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
-                  <TableCell className="text-center">{pr.company}</TableCell>
-                  <TableCell className="text-center">{pr.purchase_requisition_type}</TableCell>
-                  <TableCell className="text-center">{pr.prf_name_for_sap}</TableCell>
-                  <TableCell className="text-center">{pr.sap_pr_code}</TableCell>
-                  <TableCell className="text-center">{pr.purchase_requisition_date ? formatDate(new Date(pr.purchase_requisition_date)) : ""}</TableCell>
-                  <TableCell className="text-center">{pr.plant}</TableCell>
-                  <TableCell>
-                    <div
-                      className={`text-center px-2 py-3 rounded-xl ${pr?.sap_status === "Failed"
-                        ? "bg-red-100 text-red-800"
-                        : pr?.sap_status === "Success"
-                          ? "bg-green-100 text-green-800" : pr?.sap_status === "RELEASED"
-                            ? "bg-green-100 text-green-800" : pr?.sap_status === "RELEASED"
-                              ? "bg-orange-100 text-orange-800"
-                              : "bg-yellow-100 text-yellow-800"
-                        }`}
-                    >
-                      {pr?.sap_status || "--"}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <Button
-                      variant="nextbtn"
-                      size="nextbtnsize"
-                      className="py-2.5 hover:bg-white hover:text-black hover:border border-blue-500 w-[70px] rounded-[16px]"
-                      onClick={() => {
-                        if (pr?.pr_created_from_sap === 1) {
-                          const prfName = pr?.name;
-                          router.push(`/pr-request?prf_name=${prfName}`);
-                        } else {
-                          // Normal PR → use cart_id + pur_req
-                          const cartId = pr?.cart_id;
-                          const purReq = pr?.pur_req_webform_name;
-                          router.push(`/pr-request?cart_id=${cartId}&pur_req=${purReq}`);
-                        }
-                      }}
-                    >
-                      View
-                    </Button>
+                  <TableCell colSpan={9} className="text-center text-gray-500 py-4">
+                    No results found
                   </TableCell>
                 </TableRow>
-              </React.Fragment>
-            ))
-            )}
-          </TableBody>
-        </Table>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
       <Pagination
         currentPage={currentPage}

@@ -3,8 +3,7 @@ import ViewPRTable from "@/src/components/templates/ViewPRTable";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
-import { TvendorRegistrationDropdown } from "@/src/types/types";
-import { PurchaseRequisitionDataItem } from "@/src/types/PurchaseRequisitionType";
+import { TvendorRegistrationDropdown, PurchaseRequisition } from "@/src/types/types";
 
 export default async function ViewPurchaseRequisitionPage() {
 
@@ -34,7 +33,7 @@ export default async function ViewPurchaseRequisitionPage() {
     },
   });
 
-  const prData: PurchaseRequisitionDataItem[] = prApi?.status == 200 ? prApi?.data?.message?.data : [];
+  const prData: PurchaseRequisition[] = prApi?.status == 200 ? prApi?.data?.message?.data : [];
 
   return (
     <div className="p-4">
