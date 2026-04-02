@@ -92,7 +92,7 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                 material_code: item.material_code,
                 name: item.name,
                 total_amount: item.total_amount,
-                raise_advance: raiseAdvanceValues[idx] ?? item.advance ?? item.total_amount,
+                advance: raiseAdvanceValues[idx] ?? item.advance ?? item.total_amount,
             }));
             const res = await raiseAdvanceRequest({
                 po_no: poname,

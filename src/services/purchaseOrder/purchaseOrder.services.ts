@@ -77,7 +77,7 @@ interface PaymentRequestItem {
     material_code: string;
     name: string;
     total_amount: number;
-    raise_advance: number;
+    advance: number;
 }
 
 interface RaiseAdvanceRequestParams {
