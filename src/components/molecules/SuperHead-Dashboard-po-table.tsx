@@ -17,18 +17,18 @@ import {
   SelectValue,
 } from "@/src/components/atoms/select";
 import { Input } from "../atoms/input";
-// import { useEffect } from 'react';
-import { DashboardPOTableData, DashboardPOTableItem, TvendorRegistrationDropdown, VendorDashboardPOTableData } from "@/src/types/types";
+import { TvendorRegistrationDropdown } from "@/src/types/types";
 import { Button } from "@/components/ui/button";
 import PODialog from './PODialog'
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
-import { useMultipleVendorCodeStore } from "@/src/store/MultipleVendorCodeStore";
 import { useAuth } from "@/src/context/AuthContext";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import PopUp from "./PopUp";
-import { useOutsideClick } from "@/src/hooks/useOutsideClick";
 import { useRouter } from "next/navigation";
+import { PoListViewRecord } from "@/src/types/po/po.types";
+import { getPoListView } from "@/src/services/purchaseOrder/purchaseOrder.services";
+import Pagination from "./Pagination";
 
 type Props = {
   dashboardTableData: {
@@ -59,12 +59,13 @@ const PurchaseAndOngoingOrders = ({ dashboardTableData, companyDropdown }: Props
   const [comments, setComments] = useState("");
   const [isDialog, setIsDialog] = useState(false);
   const [poNumber, setPONumber] = useState("");
-  const [table, setTable] = useState<any[]>(dashboardTableData?.vendors || []);
-  const { MultipleVendorCode, addMultipleVendorCode, reset, selectedVendorCode } = useMultipleVendorCodeStore();
+  const [table, setTable] = useState<PoListViewRecord[]>([]);
   const [search, setSearch] = useState<string>("");
+  const [selectedCompany, setSelectedCompany] = useState<string>("");
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const [total_event_list, settotalEventList] = useState(0);
-  const [record_per_page, setRecordPerPage] = useState<number>(0);
+  const [record_per_page, setRecordPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const { designation } = useAuth();
@@ -76,20 +77,22 @@ const PurchaseAndOngoingOrders = ({ dashboardTableData, companyDropdown }: Props
 
   useEffect(() => {
     const fetchPoTable = async () => {
-      const POUrl = `${API_END_POINTS?.poTable}?vendor_name=${search}`
-      const dashboardPOTableDataApi: AxiosResponse = await requestWrapper({
-        url: POUrl,
-        method: "GET",
-      });
-
-      if (dashboardPOTableDataApi?.status == 200) {
-        setTable(dashboardPOTableDataApi?.data?.message?.total_po)
+      try {
+        const res = await getPoListView({
+          search_term: debouncedSearchName || "",
+          company: selectedCompany,
+          status: selectedStatus,
+          page_no: currentPage,
+          page_size: record_per_page,
+        });
+        setTable(res?.data || []);
+        settotalEventList(res?.total_count || 0);
+      } catch (err) {
+        console.error("Error fetching PO table:", err);
       }
     }
-    if (selectedVendorCode || debouncedSearchName || currentPage) {
-      fetchPoTable();
-    }
-  }, [selectedVendorCode, debouncedSearchName, currentPage])
+    fetchPoTable();
+  }, [debouncedSearchName, currentPage, selectedCompany, selectedStatus])
 
   console.log("PO Table Data--->", table);
 
@@ -190,7 +193,7 @@ const PurchaseAndOngoingOrders = ({ dashboardTableData, companyDropdown }: Props
           </h1>
           <div className="flex gap-4">
             <Input placeholder="Search..." onChange={(e) => { handlesearchname(e) }} />
-            <Select>
+            <Select onValueChange={(value) => { setSelectedCompany(value); setCurrentPage(1); }} value={selectedCompany}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
@@ -204,7 +207,7 @@ const PurchaseAndOngoingOrders = ({ dashboardTableData, companyDropdown }: Props
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <Select>
+            <Select onValueChange={(value) => { setSelectedStatus(value); setCurrentPage(1); }} value={selectedStatus}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
@@ -214,7 +217,7 @@ const PurchaseAndOngoingOrders = ({ dashboardTableData, companyDropdown }: Props
                   <SelectItem value="Revoked">Revoked</SelectItem>
                   <SelectItem value="Approved by Vendor">Approved by Vendor</SelectItem>
                   <SelectItem value="Rejected by Vendor">Rejected by Vendor</SelectItem>
-                  <SelectItem value="Confrimation Pending From User">Pineapple</SelectItem>
+                  <SelectItem value="Confrimation Pending From User">Confirmation Pending</SelectItem>
                   <SelectItem value="Confirmed By User">Confirmed By User</SelectItem>
                   <SelectItem value="Goods Not Received">Goods Not Received</SelectItem>
                   <SelectItem value="Send to Accounts Team For Payment Release">With Accounts Team</SelectItem>
@@ -234,25 +237,25 @@ const PurchaseAndOngoingOrders = ({ dashboardTableData, companyDropdown }: Props
               <TableHead className="text-center text-black">Vendor Name</TableHead>
               <TableHead className="text-center text-black">PO Date</TableHead>
               <TableHead className="text-center text-black">Delivery Date</TableHead>
-              <TableHead className="text-center text-black">PO Amount</TableHead>
+              <TableHead className="text-center text-black">Company</TableHead>
               <TableHead className="text-center text-black">Status</TableHead>
-              <TableHead className="text-center text-black">Early Delivery</TableHead>
+              <TableHead className="text-center text-black">Purchase Group</TableHead>
+              <TableHead className="text-center text-black">Ack Date</TableHead>
               <TableHead className="text-center text-black">View details</TableHead>
-              <TableHead className="text-center text-black">Send Email</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="text-center text-black">
-            {table ? (
-              table?.map((item, index) => (
+            {table && table.length > 0 ? (
+              table.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell className="font-medium">{index + 1}</TableCell>
+                  <TableCell className="font-medium">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
                   <TableCell>{item?.name}</TableCell>
                   <TableCell>
                     {item?.supplier_name ? item.supplier_name : "-"}
                   </TableCell>
                   <TableCell>{item?.po_date}</TableCell>
-                  <TableCell>{item?.delivery_date}</TableCell>
-                  <TableCell>{item?.total_gross_amount}</TableCell>
+                  <TableCell>{item?.delivery_date || "-"}</TableCell>
+                  <TableCell>{item?.company_code || "-"}</TableCell>
                   <TableCell>
                     <div
                       className={`px-2 py-3 rounded-xl ${item?.status === "Pending by Vendor"
@@ -265,29 +268,29 @@ const PurchaseAndOngoingOrders = ({ dashboardTableData, companyDropdown }: Props
                       {item?.status}
                     </div>
                   </TableCell>
-                  <TableCell className="text-right">{item?.name}</TableCell>
+                  <TableCell>{item?.purchase_group || "-"}</TableCell>
+                  <TableCell>{item?.ack_date || "-"}</TableCell>
                   <TableCell>
                     <Button
                       variant={"outline"}
                       className="bg-blue-400 hover:bg-blue-300 text-white font-medium"
-                      // onClick={() => downloadPoDetails(item?.name)}
-                      onClick={() => router.push(`/view-po?po_name=${item?.name}&email_to=${item?.email}`)}
+                      onClick={() => router.push(`/view-po-details?poname=${item?.name}`)}
                     >
                       View
                     </Button>
                   </TableCell>
-                  <TableCell><Button onClick={() => { setIsEmailDialog(true); setEmail((prev: any) => ({ ...prev, to: item?.email })) }} className="bg-blue-400 hover:bg-blue-300">Send</Button></TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={9} className="text-center text-gray-500 py-4">
+                <TableCell colSpan={10} className="text-center text-gray-500 py-4">
                   No results found
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
+        <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
       </div>
       {
         isDialog &&

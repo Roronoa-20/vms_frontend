@@ -17,23 +17,21 @@ import {
   SelectValue,
 } from "@/src/components/atoms/select";
 import { Input } from "../atoms/input";
-// import { useEffect } from 'react';
-import { DashboardPOTableData, DashboardPOTableItem, TvendorRegistrationDropdown, VendorDashboardPOTableData } from "@/src/types/types";
+import { TvendorRegistrationDropdown } from "@/src/types/types";
 import { Button } from "@/components/ui/button";
 import PODialog from './PODialog'
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
-import { useMultipleVendorCodeStore } from "@/src/store/MultipleVendorCodeStore";
 import { useAuth } from "@/src/context/AuthContext";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import PopUp from "./PopUp";
-import { useOutsideClick } from "@/src/hooks/useOutsideClick";
 import { useRouter } from "next/navigation";
 import Pagination from "./Pagination";
+import { PoListViewRecord } from "@/src/types/po/po.types";
+import { getPoListView } from "@/src/services/purchaseOrder/purchaseOrder.services";
 
 
 type Props = {
-  dashboardPOTableData?: DashboardPOTableData["message"];
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"]
 };
 
@@ -52,16 +50,16 @@ const useDebounce = (value: any, delay: any) => {
   return debouncedValue;
 };
 
-const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Props) => {
+const PurchaseAndOngoingOrders = ({ companyDropdown }: Props) => {
   const [status, setStatus] = useState<"approve" | "reject" | "">("");
   const [date, setDate] = useState("");
   const [comments, setComments] = useState("");
   const [isDialog, setIsDialog] = useState(false);
   const [poNumber, setPONumber] = useState("");
-  const [tableData, setTableData] = useState<DashboardPOTableItem[]>(dashboardPOTableData?.total_po ?? []);
-  const { MultipleVendorCode, addMultipleVendorCode, reset, selectedVendorCode } = useMultipleVendorCodeStore();
+  const [tableData, setTableData] = useState<PoListViewRecord[]>([]);
   const [search, setSearch] = useState<string>("");
   const [selectedCompany, setSelectedCompany] = useState<string>("");
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const [total_event_list, settotalEventList] = useState(0);
   const [record_per_page, setRecordPerPage] = useState<number>(10);
@@ -76,21 +74,22 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
 
   useEffect(() => {
     const fetchPoTable = async () => {
-      const POUrl = `${API_END_POINTS?.poTable}?vendor_name=${search}&page_no=${currentPage}&page_length=${record_per_page}`
-      const dashboardPOTableDataApi: AxiosResponse = await requestWrapper({
-        url: POUrl,
-        method: "GET",
-      });
-
-      if (dashboardPOTableDataApi?.status == 200) {
-        setTableData(dashboardPOTableDataApi?.data?.message?.total_po)
-        settotalEventList(dashboardPOTableDataApi?.data?.message?.total_count)
+      try {
+        const res = await getPoListView({
+          search_term: debouncedSearchName || "",
+          company: selectedCompany,
+          status: selectedStatus,
+          page_no: currentPage,
+          page_size: record_per_page,
+        });
+        setTableData(res?.data || []);
+        settotalEventList(res?.total_count || 0);
+      } catch (err) {
+        console.error("Error fetching PO table:", err);
       }
     }
-    if (selectedVendorCode || debouncedSearchName || currentPage) {
-      fetchPoTable();
-    }
-  }, [selectedVendorCode, debouncedSearchName, currentPage])
+    fetchPoTable();
+  }, [debouncedSearchName, currentPage, selectedCompany, selectedStatus])
 
   console.log("PO Table Data--->", tableData)
 
@@ -215,7 +214,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
 
             <Select
               value={selectedCompany || "all"}
-              onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
+              onValueChange={(value) => { setSelectedCompany(value === "all" ? "" : value); setCurrentPage(1); }}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select Company" />
@@ -232,17 +231,18 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
               </SelectContent>
             </Select>
 
-            <Select>
+            <Select onValueChange={(value) => { setSelectedStatus(value === "all" ? "" : value); setCurrentPage(1); }} value={selectedStatus || "all"}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
+                  <SelectItem value="all">All</SelectItem>
                   <SelectItem value="Release">Release</SelectItem>
                   <SelectItem value="Revoked">Revoked</SelectItem>
                   <SelectItem value="Approved by Vendor">Approved by Vendor</SelectItem>
                   <SelectItem value="Rejected by Vendor">Rejected by Vendor</SelectItem>
-                  <SelectItem value="Confrimation Pending From User">Pineapple</SelectItem>
+                  <SelectItem value="Confrimation Pending From User">Confirmation Pending</SelectItem>
                   <SelectItem value="Confirmed By User">Confirmed By User</SelectItem>
                   <SelectItem value="Goods Not Received">Goods Not Received</SelectItem>
                   <SelectItem value="Send to Accounts Team For Payment Release">With Accounts Team</SelectItem>
@@ -262,48 +262,43 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
               <TableHead className="text-center text-black">Vendor Name</TableHead>
               <TableHead className="text-center text-black text-nowrap">PO Date</TableHead>
               <TableHead className="text-center text-black text-nowrap">Delivery Date</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Company</TableHead>
               <TableHead className="text-center text-black text-nowrap">Status</TableHead>
-              <TableHead className="text-center text-black text-nowrap">Tentative Delivery</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Purchase Group</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Ack Date</TableHead>
               <TableHead className="text-center text-black text-nowrap">View PO</TableHead>
-              <TableHead className="text-center text-black text-nowrap">View Dispatch</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="text-center text-black">
-            {tableData ? (
-              tableData?.map((item, index) => (
+            {tableData && tableData.length > 0 ? (
+              tableData.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell className="text-center">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
-                  <TableCell className="text-center">{item?.po_no}</TableCell>
-                  <TableCell className="text-center text-nowrap">{item?.supplier_name ? item.supplier_name : "-"}</TableCell>
+                  <TableCell className="text-center">{item?.name}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.supplier_name || "-"}</TableCell>
                   <TableCell className="text-center text-nowrap">{formatDate(item?.po_date)}</TableCell>
                   <TableCell className="text-center text-nowrap">{formatDate(item?.delivery_date)}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.company_code || "-"}</TableCell>
                   <TableCell>
                     <div
-                      className={`px-2 py-3 rounded-xl text-nowrap ${item?.status === "Pending by Vendor"
+                      className={`px-2 py-3 rounded-xl text-nowrap ${item?.status?.toLowerCase().includes("pending")
                         ? "bg-yellow-100 text-yellow-800"
-                        : item?.status === "Approved by Vendor"
+                        : item?.status?.toLowerCase().includes("approved") || item?.status?.toLowerCase().includes("confirmed") || item?.status === "Release"
                           ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
+                          : item?.status?.toLowerCase().includes("rejected") || item?.status?.toLowerCase().includes("revoked")
+                            ? "bg-red-100 text-red-800"
+                            : "bg-gray-100 text-gray-800"
                         }`}
                     >
                       {item?.status}
                     </div>
                   </TableCell>
-                  <TableCell className="text-center whitespace-nowrap">{formatDate(item?.tentative_date)}</TableCell>
+                  <TableCell className="text-center text-nowrap">{item?.purchase_group || "-"}</TableCell>
+                  <TableCell className="text-center text-nowrap">{formatDate(item?.ack_date)}</TableCell>
                   <TableCell>
                     <Button
                       className="bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px]"
-                      // onClick={() => downloadPoDetails(item?.name)}
-                      onClick={() => router.push(`/view-po?po_name=${item?.name}&email_to=${item?.email}`)}
-                    >
-                      View
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      className={`bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px] `}
-                      onClick={() => router.push(`/view-dispatch-table?poname=${item?.po_number}`)}
-                      // onClick={() => router.push(`/view-dispatch-table?po_name=${item?.name}`)}
+                      onClick={() => router.push(`/view-po-details?poname=${item?.name}`)}
                     >
                       View
                     </Button>
@@ -312,7 +307,7 @@ const PurchaseAndOngoingOrders = ({ dashboardPOTableData, companyDropdown }: Pro
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={9} className="text-center text-gray-500 py-4">
+                <TableCell colSpan={10} className="text-center text-gray-500 py-4">
                   No results found
                 </TableCell>
               </TableRow>
