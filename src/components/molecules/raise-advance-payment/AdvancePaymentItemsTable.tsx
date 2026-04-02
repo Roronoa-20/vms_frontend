@@ -4,20 +4,20 @@ import React, { useState } from 'react'
 import { TableHeader } from '../../atoms/table'
 import { Button } from '../../atoms/button'
 import Pagination from '../Pagination'
-import { PoDetailsType } from '@/src/types/view-po-details/poDetailsType'
 import { useRouter } from 'next/navigation'
-import { AxiosResponse } from 'axios'
-import requestWrapper from '@/src/services/apiCall'
 import PopUp from '../PopUp'
+import { processApprovalAction } from '@/src/services/advancePayment/advancePayment.services'
+import { PaymentRequestDetails } from '@/src/types/advancePayment/advancePayment.types'
 
 interface Props {
-    POTableData: PoDetailsType["message"]["items"]
-    poName: string
+    paymentDetails?: PaymentRequestDetails
+    refno: string
 }
 
-const AdvancePaymentItemsTable = ({ POTableData, poName }: Props) => {
+const AdvancePaymentItemsTable = ({ paymentDetails, refno }: Props) => {
 
-    const [total_event_list, settotalEventList] = useState(0);
+    const items = paymentDetails?.payment_request_items || [];
+    const [total_event_list] = useState(items.length);
     const [record_per_page] = useState<number>(10);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [status, setStatus] = useState<"approve" | "reject" | "">("");
@@ -27,24 +27,19 @@ const AdvancePaymentItemsTable = ({ POTableData, poName }: Props) => {
     const router = useRouter();
 
     const handleApproval = async () => {
-        const url = {
-            approve: `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.vendors_dashboards_api.po_approve_reject.po_approve`,
-            reject: `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.vendors_dashboards_api.po_approve_reject.po_reject`,
-        };
         if (!status) return;
-        const response: AxiosResponse = await requestWrapper({
-            url: url[status],
-            data: {
-                data: {
-                    po_name: poName,
-                    comment: comments,
-                }
-            },
-            method: "POST"
-        });
-        if (response?.status == 200) {
-            alert(status === "approve" ? "Approved successfully" : "Rejected successfully");
+        try {
+            const res = await processApprovalAction({
+                doctype: "Payment Requisition",
+                doc_name: refno,
+                action: status === "approve" ? "Approve" : "Reject",
+                remarks: comments,
+            });
+            alert(res?.message || (status === "approve" ? "Approved successfully" : "Rejected successfully"));
             location.reload();
+        } catch (error: any) {
+            console.error(error);
+            alert(error?.message || "Error processing approval action");
         }
     };
 
@@ -57,45 +52,35 @@ const AdvancePaymentItemsTable = ({ POTableData, poName }: Props) => {
     return (
         <>
             <div className='bg-white mt-4 border rounded-xl p-4'>
-                <h1 className='pb-5 font-semibold'> PO Items</h1>
+                <h1 className='pb-5 font-semibold'>Payment Request Items</h1>
                 <Table>
                     <TableHeader className="text-center">
                         <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
                             <TableHead className="text-center text-black">Sr No.</TableHead>
-                            <TableHead className="text-center text-black">Material Code</TableHead>
-                            <TableHead className="text-center text-black text-nowrap">Material Description</TableHead>
-                            <TableHead className="text-center text-black">HSN Code</TableHead>
-                            <TableHead className="text-center text-black">UOM</TableHead>
-                            <TableHead className="text-center text-black text-nowrap">Quantity</TableHead>
-                            <TableHead className="text-center text-black text-nowrap">Rate</TableHead>
-                            <TableHead className="text-center text-black text-nowrap">Schedule Date</TableHead>
-                            <TableHead className="text-center text-black text-nowrap">Schedule Quantity</TableHead>
+                            <TableHead className="text-center text-black">Item Code</TableHead>
+                            <TableHead className="text-center text-black">Payment Type</TableHead>
+                            <TableHead className="text-center text-black text-nowrap">Payment %</TableHead>
                             <TableHead className="text-center text-black text-nowrap">Total Amount</TableHead>
-                            <TableHead className="text-center text-black text-nowrap">Raise Amount</TableHead>
-                            <TableHead className="text-center text-black text-nowrap">Total Advance Approved</TableHead>
+                            <TableHead className="text-center text-black text-nowrap">Raised Amount</TableHead>
+                            <TableHead className="text-center text-black text-nowrap">Balance Amount</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody className="text-center text-black">
-                        {POTableData ? (
-                            POTableData?.map((item, index) => (
-                                <TableRow key={index}>
+                        {items.length > 0 ? (
+                            items.map((item, index) => (
+                                <TableRow key={item.name}>
                                     <TableCell className="text-center">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
-                                    <TableCell className="text-center text-nowrap">{item?.material_code}</TableCell>
-                                    <TableCell className="text-center text-nowrap">{item?.short_text ? item.short_text : "-"}</TableCell>
-                                    <TableCell className="text-center text-nowrap">{item?.hsnsac}</TableCell>
-                                    <TableCell className="text-center text-nowrap">{item?.uom}</TableCell>
-                                    <TableCell className="text-center text-nowrap">{item?.quantity}</TableCell>
-                                    <TableCell className="text-center text-nowrap">{item?.rate}</TableCell>
-                                    <TableCell className="text-center text-nowrap">{item?.schedule_date}</TableCell>
-                                    <TableCell className="text-center text-nowrap">{item?.schedule_date_qty_json}</TableCell>
+                                    <TableCell className="text-center text-nowrap">{item?.item_code}</TableCell>
+                                    <TableCell className="text-center text-nowrap">{item?.payment_type}</TableCell>
+                                    <TableCell className="text-center text-nowrap">{item?.payment_percentage}%</TableCell>
                                     <TableCell className="text-center text-nowrap">{item?.total_amount}</TableCell>
-                                    <TableCell className="text-center text-nowrap">{item?.raise_amount}</TableCell>
-                                    <TableCell className="text-center text-nowrap">{item?.total_advance_approved}</TableCell>
+                                    <TableCell className="text-center text-nowrap">{item?.raised_amount}</TableCell>
+                                    <TableCell className="text-center text-nowrap">{item?.balance_amount}</TableCell>
                                 </TableRow>
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={12} className="text-center text-gray-500 py-4">
+                                <TableCell colSpan={7} className="text-center text-gray-500 py-4">
                                     No results found
                                 </TableCell>
                             </TableRow>
@@ -106,24 +91,26 @@ const AdvancePaymentItemsTable = ({ POTableData, poName }: Props) => {
             <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
             <div className='flex justify-between mt-4'>
                 <Button variant={"nextbtn"} size={"nextbtnsize"} className="px-4 mt-4 mx-2 rounded-xl" onClick={() => { router.back() }}>Back</Button>
-                <div className="flex gap-2">
-                    <Button
-                        variant={"nextbtn"}
-                        size={"nextbtnsize"}
-                        className="px-4 mt-4 rounded-xl hover:bg-white hover:text-black border border-transparent hover:border-[#5291CD]"
-                        onClick={() => { setStatus("approve"); setIsDialog(true); }}
-                    >
-                        Approve
-                    </Button>
-                    <Button
-                        variant={"backbtn"}
-                        size={"backbtnsize"}
-                        className="px-4 mt-4 rounded-xl hover:bg-[#5291CD] hover:text-white hover:border-[#5291CD]"
-                        onClick={() => { setStatus("reject"); setIsDialog(true); }}
-                    >
-                        Reject
-                    </Button>
-                </div>
+                {paymentDetails?.can_approve && (
+                    <div className="flex gap-2">
+                        <Button
+                            variant={"nextbtn"}
+                            size={"nextbtnsize"}
+                            className="px-4 mt-4 rounded-xl hover:bg-white hover:text-black border border-transparent hover:border-[#5291CD]"
+                            onClick={() => { setStatus("approve"); setIsDialog(true); }}
+                        >
+                            Approve
+                        </Button>
+                        <Button
+                            variant={"backbtn"}
+                            size={"backbtnsize"}
+                            className="px-4 mt-4 rounded-xl hover:bg-[#5291CD] hover:text-white hover:border-[#5291CD]"
+                            onClick={() => { setStatus("reject"); setIsDialog(true); }}
+                        >
+                            Reject
+                        </Button>
+                    </div>
+                )}
             </div>
 
             {isDialog &&

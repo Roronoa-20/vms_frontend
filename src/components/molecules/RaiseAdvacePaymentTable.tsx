@@ -4,26 +4,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Input } from '../atoms/input'
 import Pagination from './Pagination'
 import { Button } from '../atoms/button'
-import { AxiosResponse } from 'axios'
-import requestWrapper from '@/src/services/apiCall'
 import { useRouter } from 'next/navigation'
-
-interface AdvancePaymentRow {
-    po_number: string;
-    pr_number: string;
-    po_date: string;
-    vendor: string;
-    company: string;
-    total_po_amount: number;
-    advance_raised: number;
-    raised_date: string;
-    status: string;
-    name: string;
-}
+import { getPaymentRequestList } from '@/src/services/advancePayment/advancePayment.services'
+import { PaymentRequestRecord } from '@/src/types/advancePayment/advancePayment.types'
 
 const RaiseAdvacePaymentTable = () => {
     const router = useRouter();
-    const [tableData, setTableData] = useState<AdvancePaymentRow[]>([]);
+    const [tableData, setTableData] = useState<PaymentRequestRecord[]>([]);
     const [dateFilter, setDateFilter] = useState("");
     const [vendorSearch, setVendorSearch] = useState("");
     const [showAll, setShowAll] = useState(false);
@@ -38,34 +25,18 @@ const RaiseAdvacePaymentTable = () => {
 
     const fetchData = async () => {
         try {
-            const url = `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.vendors_dashboards_api.po_approve_reject.get_advance_payment_list`;
-            const response: AxiosResponse = await requestWrapper({
-                url: url,
-                method: "GET",
-                params: {
-                    page_no: currentPage,
-                    page_length: record_per_page,
-                    date: dateFilter,
-                    vendor: vendorSearch,
-                    show_all: showAll ? 1 : 0,
-                }
+            const res = await getPaymentRequestList({
+                search_term: vendorSearch || "",
+                status: showAll ? "Pending" : "",
+                date: dateFilter || "",
+                page_no: currentPage,
+                page_size: record_per_page,
             });
-            if (response?.status == 200) {
-                setTableData(response?.data?.message?.data ?? []);
-                settotalEventList(response?.data?.message?.total_count || 0);
-            }
+            setTableData(res?.data ?? []);
+            settotalEventList(res?.total_count || 0);
         } catch (error) {
             console.error(error);
         }
-    };
-
-    const formatDate = (dateStr: string | null | undefined) => {
-        if (!dateStr) return "-";
-        const cleanDate = dateStr.trim().split(" ")[0];
-        if (!cleanDate) return "-";
-        const [year, month, day] = cleanDate.split("-");
-        if (!year || !month || !day) return "-";
-        return `${day}-${month}-${year}`;
     };
 
     return (
@@ -102,14 +73,13 @@ const RaiseAdvacePaymentTable = () => {
                 <TableHeader>
                     <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE]">
                         <TableHead className="text-left text-black">Sr.no</TableHead>
+                        <TableHead className="text-left text-black">Payment Req</TableHead>
                         <TableHead className="text-left text-black">PO Number</TableHead>
-                        <TableHead className="text-left text-black">PR Number</TableHead>
-                        <TableHead className="text-left text-black">PO Date</TableHead>
-                        <TableHead className="text-left text-black">Vendor</TableHead>
+                        <TableHead className="text-left text-black">Date</TableHead>
                         <TableHead className="text-left text-black">Company</TableHead>
-                        <TableHead className="text-left text-black text-nowrap">Total PO Amount</TableHead>
-                        <TableHead className="text-left text-black text-nowrap">Advance Raised</TableHead>
-                        <TableHead className="text-left text-black text-nowrap">Raised Date</TableHead>
+                        <TableHead className="text-left text-black">Vendor</TableHead>
+                        <TableHead className="text-left text-black text-nowrap">Amount</TableHead>
+                        <TableHead className="text-left text-black text-nowrap">Payment Type</TableHead>
                         <TableHead className="text-left text-black">Status</TableHead>
                         <TableHead className="text-left text-black">View</TableHead>
                     </TableRow>
@@ -119,21 +89,20 @@ const RaiseAdvacePaymentTable = () => {
                         tableData.map((item, index) => (
                             <TableRow key={index}>
                                 <TableCell className="text-left">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
-                                <TableCell className="text-left text-nowrap">{item?.po_number}</TableCell>
-                                <TableCell className="text-left text-nowrap">{item?.pr_number}</TableCell>
-                                <TableCell className="text-left text-nowrap">{formatDate(item?.po_date)}</TableCell>
-                                <TableCell className="text-left text-nowrap">{item?.vendor}</TableCell>
-                                <TableCell className="text-left text-nowrap">{item?.company}</TableCell>
-                                <TableCell className="text-left text-nowrap">{item?.total_po_amount}</TableCell>
-                                <TableCell className="text-left text-nowrap">{item?.advance_raised}</TableCell>
-                                <TableCell className="text-left text-nowrap">{formatDate(item?.raised_date)}</TableCell>
+                                <TableCell className="text-left text-nowrap">{item?.name}</TableCell>
+                                <TableCell className="text-left text-nowrap">{item?.record}</TableCell>
+                                <TableCell className="text-left text-nowrap">{item?.date || "-"}</TableCell>
+                                <TableCell className="text-left text-nowrap">{item?.company || "-"}</TableCell>
+                                <TableCell className="text-left text-nowrap">{item?.vendor_name || "-"}</TableCell>
+                                <TableCell className="text-left text-nowrap">{item?.amount ?? "-"}</TableCell>
+                                <TableCell className="text-left text-nowrap">{item?.payment_type || "-"}</TableCell>
                                 <TableCell className="text-left text-nowrap">
-                                    <span className={`px-2 py-1 rounded-xl text-xs ${item?.status === "Pending" ? "bg-yellow-100 text-yellow-800" : item?.status === "Approved" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-                                        {item?.status}
+                                    <span className={`px-2 py-1 rounded-xl text-xs ${item?.approval_status?.toLowerCase().includes("awaiting") ? "bg-yellow-100 text-yellow-800" : item?.approval_status?.toLowerCase().includes("approved") ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                                        {item?.approval_status}
                                     </span>
                                 </TableCell>
                                 <TableCell>
-                                    <Button className="bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px]" onClick={() => router.push(`/view-vendor-po-details?poname=${item?.name}`)}>
+                                    <Button className="bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px]" onClick={() => router.push(`/view-vendor-po-details?poname=${item?.record}`)}>
                                         View
                                     </Button>
                                 </TableCell>
@@ -141,7 +110,7 @@ const RaiseAdvacePaymentTable = () => {
                         ))
                     ) : (
                         <TableRow>
-                            <TableCell colSpan={11} className="text-center text-gray-500 py-4">
+                            <TableCell colSpan={10} className="text-center text-gray-500 py-4">
                                 No results found
                             </TableCell>
                         </TableRow>

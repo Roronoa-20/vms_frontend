@@ -186,7 +186,7 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                             <TableHead className="text-left text-black text-nowrap">Schedule Quantity</TableHead>
                             <TableHead className="text-left text-black text-nowrap">Total PO Amount</TableHead>
                             <TableHead className="text-left text-black text-nowrap">Total Advance Approved</TableHead>
-                            <TableHead className="text-left text-black text-nowrap">Raise Advance</TableHead>
+                            <TableHead className="text-left text-black text-nowrap">Raised Advance</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody className="text-left text-black">
@@ -207,7 +207,7 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                                     <TableCell className="text-left text-nowrap">{item?.schedule_qty}</TableCell>
                                     <TableCell className="text-left text-nowrap">{item?.total_amount}</TableCell>
                                     <TableCell className="text-left text-nowrap">{item?.total_claimed_amt}</TableCell>
-                                    <TableCell className="text-left text-nowrap">{item?.advance}</TableCell>
+                                    <TableCell className="text-left text-nowrap">{item?.total_advance_requested}</TableCell>
                                 </TableRow>
                             ))
                         ) : (
@@ -227,7 +227,7 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
             <div className='flex justify-between mt-4 mx-2'>
                 <Button variant={"backbtn"} size={"backbtnsize"} className="px-4 rounded-xl" onClick={() => { router.back() }}>Back</Button>
                 <div className="flex gap-4">
-                    {poDetails?.po_ack_by_vendor !== 1 && <Button
+                    {poDetails?.can_acknowledge == 1 && <Button
                         variant={"nextbtn"}
                         size={"nextbtnsize"}
                         className="py-2 hover:bg-white hover:text-black border border-transparent hover:border-[#5291CD] rounded-[14px]"
@@ -235,14 +235,17 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                     >
                         Acknowledge
                     </Button>}
+                    {
+                        poDetails?.can_raise_advance == 1 && 
                     <Button
-                        variant={"nextbtn"}
-                        size={"nextbtnsize"}
-                        className="py-2 hover:bg-white hover:text-black border border-transparent hover:border-[#5291CD] rounded-[14px]"
-                        onClick={() => { if (selectedItems.size === 0) { alert("Please select at least 1 line item"); return; } setAdvanceCurrentPage(1); setIsAdvanceDialog(true); }}
+                    variant={"nextbtn"}
+                    size={"nextbtnsize"}
+                    className="py-2 hover:bg-white hover:text-black border border-transparent hover:border-[#5291CD] rounded-[14px]"
+                    onClick={() => { if (selectedItems.size === 0) { alert("Please select at least 1 line item"); return; } setAdvanceCurrentPage(1); setIsAdvanceDialog(true); }}
                     >
                         Raise Advance Request
                     </Button>
+                    }
                 </div>
             </div>
 

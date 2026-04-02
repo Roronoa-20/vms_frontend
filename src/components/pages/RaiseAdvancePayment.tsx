@@ -1,25 +1,31 @@
 import { cookies } from 'next/headers';
 import React from 'react'
-import { fetchPoDetailsData } from '../molecules/view-po-details/fetchData';
 import AdvancePaymentBasicDetails from '../molecules/raise-advance-payment/AdvancePaymentBasicDetails';
 import AdvancePaymentItemsTable from '../molecules/raise-advance-payment/AdvancePaymentItemsTable';
-import { PoDetailsType } from '@/src/types/view-po-details/poDetailsType';
+import { getPaymentRequestDetails } from '@/src/services/advancePayment/advancePayment.services';
+import { PaymentRequestDetails } from '@/src/types/advancePayment/advancePayment.types';
 
 interface Props {
-    poname: string
+    refno: string
 }
 
-const RaiseAdvancePayment = async ({ poname }: Props) => {
+const RaiseAdvancePayment = async ({ refno }: Props) => {
 
     const cookieStore = cookies();
     const cookieHeaderString = cookieStore.toString();
 
-    const poDetails: PoDetailsType | undefined = await fetchPoDetailsData(poname, cookieHeaderString);
+    let paymentDetails: PaymentRequestDetails | undefined;
+    try {
+        const res = await getPaymentRequestDetails(refno, cookieHeaderString);
+        paymentDetails = res?.data;
+    } catch (error) {
+        console.error("Error fetching payment request details:", error);
+    }
 
     return (
         <div>
-            <AdvancePaymentBasicDetails poBasicDetails={poDetails?.message as PoDetailsType["message"]} />
-            <AdvancePaymentItemsTable poName={poname} POTableData={poDetails?.message.items as PoDetailsType["message"]["items"]} />
+            <AdvancePaymentBasicDetails paymentDetails={paymentDetails} />
+            <AdvancePaymentItemsTable paymentDetails={paymentDetails} refno={refno} />
         </div>
     )
 }

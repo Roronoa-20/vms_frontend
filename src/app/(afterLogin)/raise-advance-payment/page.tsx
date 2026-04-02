@@ -3,15 +3,15 @@ import React from 'react'
 
 interface PageProps {
   searchParams: Promise<{
-    poname?: string
+    refno?: string
   }>
 }
 
 const page = async ({ searchParams }: PageProps) => {
   const params = await searchParams;
-  const poname = params["poname"] as string;
+  const refno = params["refno"] as string;
   return (
-    <RaiseAdvancePayment poname={poname} />
+    <RaiseAdvancePayment refno={refno} />
   )
 }
 

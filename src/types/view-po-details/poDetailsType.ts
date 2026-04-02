@@ -38,6 +38,8 @@ export type VendorPoDetailsType = {
         delivery_date: string | null;
         po_mail_sent: number;
         po_ack_by_vendor: number;
+        can_raise_advance:number
+        can_acknowledge:number
         items: VendorPoItemType[];
     }
 }
@@ -58,6 +60,7 @@ export type VendorPoItemType = {
     advance_balance: number;
     total_claimed_amt: number;
     advance: number;
+    total_advance_requested: number;
 }
 
 type PoItemsType = {
