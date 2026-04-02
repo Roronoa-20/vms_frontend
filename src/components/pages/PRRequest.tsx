@@ -39,6 +39,7 @@ const PrRequest = (props: Props) => {
         setStatus(props?.prData?.status ?? "");
     }, [props?.prData?.status]);
     const submitLoaderRef = useRef<HTMLSpanElement>(null);
+    const isSubmittingRef = useRef<boolean>(false);
     const [isApprovalDialog, setIsApprovalDialog] = useState<boolean>(false);
     const [isRejectionDialog, setIsRejectionDialog] = useState<boolean>(false);
     const [remarks, setRemarks] = useState<string>("");
@@ -116,6 +117,7 @@ const PrRequest = (props: Props) => {
             if (submitLoaderRef?.current) {
                 submitLoaderRef.current.className = "inline-flex animate-spin ml-2";
             }
+            isSubmittingRef.current = true;
             submitPurchaseRequisition(props?.pr_id as string).then((res) => {
                 alert(res?.message || `PR Created Successfully with PR Number:- ${res?.sap_pr_number}`);
                 fetchPrData();
@@ -127,6 +129,8 @@ const PrRequest = (props: Props) => {
                 if (submitLoaderRef?.current) {
                     submitLoaderRef.current.className = "hidden";
                 }
+            }).finally(() => {
+                isSubmittingRef.current = false;
             })
     }
 
@@ -156,7 +160,7 @@ const PrRequest = (props: Props) => {
                 props?.prData?.pr_type === PurchaseType.zsbAsset && <ZSBAsset prData={prData} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />
             }
 
-            {props?.pr_id && <FileList data={prData?.attachment || []} fetchPrData={fetchPrData} prId={prData?.name} canEdit={!!prData?.can_edit}/>}
+            {props?.pr_id && <FileList data={prData?.attachment || []} fetchPrData={fetchPrData} prId={prData?.name} canEdit={!!prData?.can_edit} isSubmittingRef={isSubmittingRef}/>}
 
             {showFinanceFields && (
                 <FinanceFields company={prData?.company as string} financeFields={financeFields} setFinanceFields={setFinanceFields} />

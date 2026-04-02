@@ -18,9 +18,10 @@ interface Props {
   prId: string;
   canEdit?: boolean;
   fetchPrData: (prId?: string) => void;
+  isSubmittingRef?: React.RefObject<boolean>;
 }
 
-const FileList = ({ data, prId, canEdit, fetchPrData }: Props) => {
+const FileList = ({ data, prId, canEdit, fetchPrData, isSubmittingRef }: Props) => {
   const [file, setFile] = useState<File | null>(null);
   const [amount, setAmount] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -44,6 +45,7 @@ const FileList = ({ data, prId, canEdit, fetchPrData }: Props) => {
   }
 
   const handleAdd = async () => {
+    if (isSubmittingRef?.current) return;
     if (!file) {
       alert("Please select a file");
       return;
@@ -132,7 +134,7 @@ const FileList = ({ data, prId, canEdit, fetchPrData }: Props) => {
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="bg-[#D1FAE5] flex justify-center items-center text-2xl text-[#065F46] w-[30px] h-[30px] hover:cursor-pointer" onClick={handleAdd}>
+                        <div className={`flex justify-center items-center text-2xl w-[30px] h-[30px] ${isSubmittingRef?.current ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-[#D1FAE5] text-[#065F46] hover:cursor-pointer"}`} onClick={handleAdd}>
                           +
                         </div>
                       </TooltipTrigger>
