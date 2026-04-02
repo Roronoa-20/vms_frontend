@@ -99,7 +99,7 @@ const ViewPRTable = ({ data, loading, companyDropdown }: Props) => {
 
   const fetchTable = async () => {
     const PRFormData: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.sapprcreated}?pur_req_type=${purReqFilter}&company=${selectedCompany}&pr_no=${debouncedSearchName}&page_no=${currentPage}&page_length=${record_per_page}&pr_created_from_sap=${prCreatedFromSAP ? 1 : ""}`,
+      url: `${API_END_POINTS?.prTableData}?pur_req_type=${purReqFilter}&company=${selectedCompany}&pr_no=${debouncedSearchName}&page_no=${currentPage}&page_length=${record_per_page}&pr_created_from_sap=${prCreatedFromSAP ? 1 : ""}`,
       method: "GET",
     });
     console.log("ijbnivjnsifvnesivnoer---->", PRFormData)
@@ -202,11 +202,8 @@ const ViewPRTable = ({ data, loading, companyDropdown }: Props) => {
           )}
 
         </div>
-        <div className="w-full">
-          <p className="text-[14px] text-center text-gray-600 italic bg-gray-100 py-1 rounded-md underline mt-4">
-            {/* Disclaimer: All PRs are visible here, whether created through VMS Portal or SAP. */}
-            Disclaimer: This list displays all Purchase Requisitions (PRs), regardless of whether they were generated via the VMS Portal or synchronized from SAP.
-          </p>
+        <div className="w-full pb-2">
+          
         </div>
         <Table>
           <TableHeader className="bg-blue-100 text-center">
