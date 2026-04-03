@@ -74,11 +74,11 @@ const PopUp = ({ handleClose, children, headerText, isSubmit, Submitbutton, clas
       <div
         ref={!disableRef ? null : DialogRef}
         className={cn(
-          `bg-white rounded-xl border p-4 w-full md:max-w-[700px] md:max-h-[500px] text-black font-light shadow-lg`,
+          `bg-white rounded-xl border w-full md:max-w-[700px] md:max-h-[500px] text-black font-light shadow-lg flex flex-col`,
           classname
         )}
       >
-        <div className={`flex justify-between items-center w-full ${isHeaderTextUnderline?"border-b pb-2 border-black":""}`}>
+        <div className={`flex justify-between items-center w-full p-4 flex-shrink-0 ${isHeaderTextUnderline?"border-b border-black":""}`}>
           <h1 className={`text-2xl font-poppins`}>{headerText}</h1>
           <Button
             variant="ghost"
@@ -90,13 +90,13 @@ const PopUp = ({ handleClose, children, headerText, isSubmit, Submitbutton, clas
           </Button>
         </div>
 
-        <div className="overflow-y-auto max-h-[calc(500px-140px)] my-4">
+        <div className="overflow-y-auto flex-1 px-4">
           {children}
         </div>
 
-        <div className="flex justify-end pt-3 gap-4 w-full">
+        <div className="flex justify-end items-center gap-3 w-full p-4 flex-shrink-0 border-t bg-white">
           <Button
-            className="py-2"
+            className="py-2 px-4 whitespace-nowrap"
             variant={"backbtn"}
             size={"backbtnsize"}
             onClick={handleClose}
@@ -106,7 +106,7 @@ const PopUp = ({ handleClose, children, headerText, isSubmit, Submitbutton, clas
           {isSubmit && (
             <Button
               disabled={disableSubmit}
-              className={`py-2 ${disableSubmit ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`py-2 px-4 whitespace-nowrap ${disableSubmit ? "opacity-50 cursor-not-allowed" : ""}`}
               variant={"nextbtn"}
               size={"nextbtnsize"}
               onClick={() => {
