@@ -90,7 +90,9 @@ const PopUp = ({ handleClose, children, headerText, isSubmit, Submitbutton, clas
           </Button>
         </div>
 
-        {children}
+        <div className="overflow-y-auto max-h-[calc(500px-140px)] my-4">
+          {children}
+        </div>
 
         <div className="flex justify-end pt-3 gap-4 w-full">
           <Button
