@@ -27,7 +27,7 @@ const RaiseAdvancePayment = async ({ refno }: Props) => {
         <div>
             <AdvancePaymentBasicDetails paymentDetails={paymentDetails} />
             <div className="m-3 mb-4 flex justify-end">
-                <Link href="/advance-payment-history">
+                <Link href={`/advance-payment-history?refno=${refno}`}>
                     <button className="bg-[#5291CD] hover:bg-[#3d6ba3] text-white font-medium py-2 px-4 rounded-lg transition-colors">
                         View Payment History
                     </button>
