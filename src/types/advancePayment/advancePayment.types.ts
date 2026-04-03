@@ -107,6 +107,9 @@ export interface PaymentRequestDetails {
     payment_request_items: PaymentRequestItemDetail[];
     purchase_details: PaymentRequestPurchaseDetails;
     is_treasury_visible:number
+    utr_number?: string;
+    payment_date?: string;
+    payment_amount?: string;
 }
 
 export interface PaymentRequestDetailsResponse {

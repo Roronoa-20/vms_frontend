@@ -23,8 +23,8 @@ const RaiseAdvancePayment = async ({ refno }: Props) => {
     }
 
     return (
-        <div>
-            <AdvancePaymentBasicDetails paymentDetails={paymentDetails} />
+        <div className="p-4 space-y-5">
+            <AdvancePaymentBasicDetails paymentDetails={paymentDetails} refno={refno} />
             <AdvancePaymentItemsTable paymentDetails={paymentDetails} refno={refno} />
         </div>
     )

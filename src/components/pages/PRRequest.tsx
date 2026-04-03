@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useRef, useEffect } from 'react'
-import { Loader2 } from 'lucide-react'
+import { Loader2, CheckCircle2, XCircle } from 'lucide-react'
 import CreatePurchaseRequest from '../templates/purchase-request/CreatePurchaseRequest'
 import { Button } from '../atoms/button'
 import NormalPR from '../templates/purchase-request/NormalPR'
@@ -14,6 +14,7 @@ import { Input } from '../atoms/input'
 import FileList from '../templates/purchase-request/FileList'
 import FinanceFields from '../templates/purchase-request/FinanceFields'
 import { useAuth } from '@/src/context/AuthContext'
+import { Card, CardContent } from '@/components/ui/card'
 
 interface Props {
     purchaseRequisitionTypeDropdown: purchaseRequisitionTypeDropdownType[]
@@ -131,60 +132,81 @@ const PrRequest = (props: Props) => {
     }
 
     return (
-        <div className='py-8 px-5'>
+        <div className='p-4 space-y-5'>
             <CreatePurchaseRequest purchaseRequisitionTypeDropdown={props.purchaseRequisitionTypeDropdown} companyDropdown={props?.companyDropdown} prData={prData} pr_id={props?.pr_id} fetchPrData={fetchPrData} />
 
-            {/* normal pr component */}
-            {
-                props?.prData?.pr_type === PurchaseType.nbNormal && <NormalPR prData={prData} materialDropdown={props?.materialDropdown} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />
-            }
+            {props?.prData?.pr_type === PurchaseType.nbNormal && <NormalPR prData={prData} materialDropdown={props?.materialDropdown} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />}
 
-            {/* capex pr component */}
-            {
-                props?.prData?.pr_type === PurchaseType.nbCapex && <CapexPR prData={prData} materialDropdown={props?.materialDropdown} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />
-            }
+            {props?.prData?.pr_type === PurchaseType.nbCapex && <CapexPR prData={prData} materialDropdown={props?.materialDropdown} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />}
 
-            {/* ZSB SERVICE */}
+            {props?.prData?.pr_type === PurchaseType.zsbService && <ZSBService prData={prData} plantDropdown={props?.plantDropdown} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />}
 
-            {
-                props?.prData?.pr_type === PurchaseType.zsbService && <ZSBService prData={prData} plantDropdown={props?.plantDropdown} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />
-            }
+            {props?.prData?.pr_type === PurchaseType.zsbAsset && <ZSBAsset prData={prData} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />}
 
-            {/* ZSB ASSET */}
-
-            {
-                props?.prData?.pr_type === PurchaseType.zsbAsset && <ZSBAsset prData={prData} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />
-            }
-
-            {props?.pr_id && <FileList data={prData?.attachment || []} fetchPrData={fetchPrData} prId={prData?.name} canEdit={!!prData?.can_edit}/>}
+            {props?.pr_id && <FileList data={prData?.attachment || []} fetchPrData={fetchPrData} prId={prData?.name} canEdit={!!prData?.can_edit} />}
 
             {showFinanceFields && (
                 <FinanceFields company={prData?.company as string} financeFields={financeFields} setFinanceFields={setFinanceFields} />
             )}
 
             {props?.pr_id && prData?.can_approve === 1 && (
-                <div className='flex justify-end gap-4 mt-5'>
-                    <Button className='bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => { setIsApprovalDialog(true); setRemarks(""); }}>
-                        Approve
-                    </Button>
-                    <Button variant={"destructive"} className='rounded-lg px-6 py-2' onClick={() => { setIsRejectionDialog(true); setRemarks(""); }}>
-                        Reject
-                    </Button>
-                </div>
+                <Card className="shadow-sm border-slate-200">
+                    <CardContent className="py-4">
+                        <div className="flex items-center justify-end gap-3">
+                            <Button
+                                variant={"backbtn"}
+                                size={"backbtnsize"}
+                                className="px-6 rounded-xl flex items-center gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 shadow-sm transition-colors"
+                                onClick={() => { setIsRejectionDialog(true); setRemarks(""); }}
+                            >
+                                <XCircle className="w-4 h-4" />
+                                Reject
+                            </Button>
+                            <Button
+                                variant={"nextbtn"}
+                                size={"nextbtnsize"}
+                                className="px-6 rounded-xl flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-colors"
+                                onClick={() => { setIsApprovalDialog(true); setRemarks(""); }}
+                            >
+                                <CheckCircle2 className="w-4 h-4" />
+                                Approve
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
             )}
 
             {isApprovalDialog &&
-                <PopUp Submitbutton={handleApprove} isSubmit={true} headerText='Are you sure you want to approve ?' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[900px] md:max-h-[700px]' isHeaderTextUnderline={true}>
-                    <Input className='mt-3' placeholder='Enter your comment here...' onChange={(e) => { setRemarks(e.target.value); }} />
+                <PopUp Submitbutton={handleApprove} isSubmit={true} headerText='Approve Purchase Requisition' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[500px] md:max-h-[380px]'>
+                    <div className="mt-4">
+                        <label className="text-sm font-semibold text-[#1E293B] pb-2 block">Comments</label>
+                        <textarea
+                            onChange={(e) => setRemarks(e.target.value)}
+                            value={remarks}
+                            className="w-full border border-slate-200 rounded-lg p-3 text-sm text-[#334155] focus:border-[#4F6BED] focus:ring-2 focus:ring-[#4F6BED]/20 outline-none transition-all resize-none"
+                            rows={4}
+                            placeholder="Enter your comment here..."
+                        />
+                    </div>
                 </PopUp>
             }
 
             {isRejectionDialog &&
-                <PopUp Submitbutton={handleReject} isSubmit={true} headerText='Are you sure you want to reject ?' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[900px] md:max-h-[700px]' isHeaderTextUnderline={true}>
-                    <Input className='mt-3' placeholder='Enter your comment here...' onChange={(e) => { setRemarks(e.target.value); }} />
+                <PopUp Submitbutton={handleReject} isSubmit={true} headerText='Reject Purchase Requisition' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[500px] md:max-h-[380px]'>
+                    <div className="mt-4">
+                        <label className="text-sm font-semibold text-[#1E293B] pb-2 block">
+                            Comments <span className="text-xs text-[#94A3B8] font-normal">(Provide a reason for rejection)</span>
+                        </label>
+                        <textarea
+                            onChange={(e) => setRemarks(e.target.value)}
+                            value={remarks}
+                            className="w-full border border-slate-200 rounded-lg p-3 text-sm text-[#334155] focus:border-[#4F6BED] focus:ring-2 focus:ring-[#4F6BED]/20 outline-none transition-all resize-none"
+                            rows={4}
+                            placeholder="Provide a reason for rejection..."
+                        />
+                    </div>
                 </PopUp>
             }
-
         </div>
     )
 }

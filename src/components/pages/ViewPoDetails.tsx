@@ -17,9 +17,8 @@ const ViewPoDetails = async({poname}: Props) => {
       const cookieHeaderString = cookieStore.toString();
 
     const poDetails:VendorPoDetailsType = await fetchPoDetails(poname, cookieHeaderString);
-    console.log(poDetails?.data,"this is po email flag")
   return (
-    <div>
+    <div className="p-4 space-y-5">
         <BasicPoDetilails poBasicDetails={poDetails?.data as VendorPoDetailsType["data"]} />
         <PoItemsTable poName={poname} POTableData={poDetails?.data?.items as VendorPoDetailsType["data"]["items"]} po_mail_sent={poDetails?.data?.po_mail_sent as number} />
     </div>
