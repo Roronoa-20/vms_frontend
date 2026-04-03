@@ -570,23 +570,51 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
               control={form.control}
               name="base_unit_of_measure"
               key="base_unit_of_measure"
+              rules={{ required: "Base UOM is required." }}
               render={({ field }: { field: { value?: string; onChange: (value: string) => void; ref?: React.Ref<any> } }) => (
                 <FormItem>
                   <FormLabel>Base Unit of Measure <span className="text-red-500">*</span></FormLabel>
                   <FormControl>
-                    <Select onValueChange={field.onChange} value={field.value || ""}>
-                      <SelectTrigger>
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        setUomSearch("");
+                      }}
+                      value={field.value || ""}
+                    >
+                      <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
                         <SelectValue placeholder="Select UOM" />
                       </SelectTrigger>
                       <SelectContent>
-                        {filteredUomOptions?.map((item: UOMMaster) => (
-                          <SelectItem key={item.name} value={item.name}>
-                            {item.description}
-                          </SelectItem>
-                        ))}
+                        <div className="px-2 py-1">
+                          <input
+                            type="text"
+                            value={uomSearch}
+                            onChange={(e) => setUomSearch(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (!["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
+                                e.stopPropagation();
+                              }
+                            }}
+                            placeholder="Search UOM..."
+                            className="w-full p-2 border border-gray-300 rounded text-sm"
+                          />
+                        </div>
+                        {filteredUomOptions?.length > 0 ? (
+                          filteredUomOptions.map((item: UOMMaster) => (
+                            <SelectItem key={item.name} value={item.name}>
+                              {item.name} - {item.description}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <div className="px-3 py-2 text-sm text-gray-500">
+                            No matching UOM found
+                          </div>
+                        )}
                       </SelectContent>
                     </Select>
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
