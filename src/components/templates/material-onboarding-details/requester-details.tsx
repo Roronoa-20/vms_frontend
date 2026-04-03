@@ -16,17 +16,39 @@ interface MaterialRequesterDetailsFormProps {
 const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> = ({ form, MaterialOnboardingDetails, MaterialDetails }) => {
   
   useEffect(() => {
-    const d = MaterialOnboardingDetails || MaterialDetails?.requestor_master;
-    if (d) {
-      form.setValue("request_date", d.request_date || "");
-      form.setValue("requested_by", d.requested_by || "");
-      form.setValue("company", d.requestor_company || d.material_company_name || d.requestor_company_name || "");
-      form.setValue("department", d.requestor_department || d.department || "");
-      form.setValue("sub_department", d.sub_department || "");
-      form.setValue("hod", d.requestor_hod || d.hod || "");
-      form.setValue("immediate_reporting_head", d.immediate_reporting_head || "");
-      form.setValue("contact_information_email", d.contact_information_email || d.requestor_email || "");
-      form.setValue("contact_information_phone", d.contact_information_phone || d.requestor_phone || "");
+    const listData = MaterialOnboardingDetails;
+    const fullData = MaterialDetails?.requestor_master;
+
+    // Helper to get value from either source, preferring fullData if listData value is missing
+    const getValue = (field: string, fallbacks: string[] = []) => {
+      const val = listData?.[field] || fullData?.[field];
+      if (val) return val;
+      for (const f of fallbacks) {
+        const fallVal = listData?.[f] || fullData?.[f];
+        if (fallVal) return fallVal;
+      }
+      return "";
+    };
+
+    if (listData || fullData) {
+      form.setValue("request_date", getValue("request_date") || "");
+      form.setValue("requested_by", getValue("requested_by", ["requested_by_name"]) || "");
+      
+      // Company fallback logic
+      const companyVal = getValue("requestor_company", [
+        "material_company_name", 
+        "requestor_company_name", 
+        "company_name_display",
+        "company_name"
+      ]) || MaterialDetails?.material_request_item?.company_name_display || "";
+      form.setValue("company", companyVal);
+
+      form.setValue("department", getValue("requestor_department", ["department"]) || "");
+      form.setValue("sub_department", getValue("sub_department") || "");
+      form.setValue("hod", getValue("requestor_hod", ["hod"]) || "");
+      form.setValue("immediate_reporting_head", getValue("immediate_reporting_head") || "");
+      form.setValue("contact_information_email", getValue("contact_information_email", ["requestor_email"]) || "");
+      form.setValue("contact_information_phone", getValue("contact_information_phone", ["requestor_phone"]) || "");
     }
   }, [MaterialOnboardingDetails, MaterialDetails, form]);
 
