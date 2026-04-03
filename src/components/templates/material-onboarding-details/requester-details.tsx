@@ -14,30 +14,45 @@ interface MaterialRequesterDetailsFormProps {
 }
 
 const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> = ({ form, MaterialOnboardingDetails, MaterialDetails }) => {
-  
+
   useEffect(() => {
     const listData = MaterialOnboardingDetails;
-    const fullData = MaterialDetails?.requestor_master;
+    // Flexibility for different API response structures
+    const fullData = MaterialDetails?.requestor_master || 
+                    (MaterialDetails?.doctype === "Requestor Master" ? MaterialDetails : null) || 
+                    MaterialDetails;
 
-    // Helper to get value from either source, preferring fullData if listData value is missing
+    console.log("Requestor Data Resolved:", fullData);
+
+    // Helper to get value from either source, prioritizing fullData (detailed record)
     const getValue = (field: string, fallbacks: string[] = []) => {
-      const val = listData?.[field] || fullData?.[field];
-      if (val) return val;
+      // Check primary field in fullData
+      if (fullData?.[field]) return fullData[field];
+      
+      // Check fallbacks in fullData
       for (const f of fallbacks) {
-        const fallVal = listData?.[f] || fullData?.[f];
-        if (fallVal) return fallVal;
+        if (fullData?.[f]) return fullData[f];
       }
+
+      // Check primary field in listData
+      if (listData?.[field]) return listData[field];
+
+      // Check fallbacks in listData
+      for (const f of fallbacks) {
+        if (listData?.[f]) return listData[f];
+      }
+
       return "";
     };
 
     if (listData || fullData) {
       form.setValue("request_date", getValue("request_date") || "");
       form.setValue("requested_by", getValue("requested_by", ["requested_by_name"]) || "");
-      
+
       // Company fallback logic
       const companyVal = getValue("requestor_company", [
-        "material_company_name", 
-        "requestor_company_name", 
+        "material_company_name",
+        "requestor_company_name",
         "company_name_display",
         "company_name"
       ]) || MaterialDetails?.material_request_item?.company_name_display || "";
