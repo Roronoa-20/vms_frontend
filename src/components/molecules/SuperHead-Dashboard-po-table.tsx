@@ -258,11 +258,13 @@ const PurchaseAndOngoingOrders = ({ dashboardTableData, companyDropdown }: Props
                   <TableCell>{item?.company_code || "-"}</TableCell>
                   <TableCell>
                     <div
-                      className={`px-2 py-3 rounded-xl ${item?.status === "Pending by Vendor"
+                      className={`px-2 py-3 rounded-xl ${item?.status?.toLowerCase().includes("pending")
                         ? "bg-yellow-100 text-yellow-800"
-                        : item?.status === "Approved by Vendor"
+                        : item?.status?.toLowerCase().includes("approved") || item?.status?.toLowerCase().includes("confirmed") || item?.status === "Release"
                           ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
+                          : item?.status?.toLowerCase().includes("rejected") || item?.status?.toLowerCase().includes("revoked")
+                            ? "bg-red-100 text-red-800"
+                            : "bg-gray-100 text-gray-800"
                         }`}
                     >
                       {item?.status}
