@@ -167,70 +167,69 @@ const ViewGRNEntry = ({ GRNData, companyDropdown }: Props) => {
 
 
     return (
-        <div className="p-3 bg-gray-300 min-h-screen">
-            <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
-                <div className="flex w-full justify-between pb-4">
-                    <h1 className="text-[20px] text-[#03111F] font-semibold">
-                        GRN Entries
-                    </h1>
-                    <div className="flex gap-4">
-                        <Input
-                            placeholder="Search by GRN No..."
-                            value={searchTerm}
-                            onChange={handleSearch}
-                        />
-                        <Select
-                            value={companyFilter}
-                            onValueChange={(value) => setCompanyFilter(value)}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select Company" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup className="w-full">
-                                    <SelectItem value="--Select--">
-                                        --Select--
+        <div className="bg-white p-3 rounded-2xl border border-gray-100">
+            <div className="flex w-full justify-between pb-4">
+                <h1 className="text-[20px] text-[#03111F] font-semibold">
+                    GRN Entries
+                </h1>
+                <div className="flex gap-4">
+                    <Input
+                        placeholder="Search by GRN No..."
+                        value={searchTerm}
+                        onChange={handleSearch}
+                    />
+                    <Select
+                        value={companyFilter}
+                        onValueChange={(value) => setCompanyFilter(value)}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select Company" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup className="w-full">
+                                <SelectItem value="--Select--">
+                                    --Select--
+                                </SelectItem>
+                                {companyDropdown?.map((item, index) => (
+                                    <SelectItem key={index} value={item?.name}>
+                                        {item?.description}
                                     </SelectItem>
-                                    {companyDropdown?.map((item, index) => (
-                                        <SelectItem key={index} value={item?.name}>
-                                            {item?.description}
-                                        </SelectItem>
-                                    ))}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    </div>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                 </div>
+            </div>
 
-                <Table>
-                    <TableHeader>
-                        <TableRow className="bg-[#a4c0fb] text-[14px] hover:bg-[#a4c0fb]">
-                            <TableHead className="text-black text-center text-nowrap">Sr No.</TableHead>
-                            <TableHead className="text-black text-center">Company</TableHead>
-                            <TableHead className="text-black text-center">GRN No.</TableHead>
-                            <TableHead className="text-black text-center text-nowrap">GRN Date</TableHead>
-                            <TableHead className="text-black text-center">Account Document No.</TableHead>
-                            <TableHead className="text-black text-center">MIRO No.</TableHead>
-                            <TableHead className="text-black text-center text-nowrap">SAP Status</TableHead>
-                            {designation !== "Purchase Team" && (
-                                <>
-                                    <TableHead className="text-black text-center">Upload Invoice</TableHead>
-                                    <TableHead className="text-black text-center">Action</TableHead>
-                                </>
-                            )}
-                            <TableHead className="text-black text-center">View GRN</TableHead>
-                        </TableRow>
-                    </TableHeader>
+            <Table>
+                <TableHeader>
+                    <TableRow className="bg-[#a4c0fb] text-[14px] hover:bg-[#a4c0fb]">
+                        <TableHead className="text-black text-center text-nowrap">Sr No.</TableHead>
+                        <TableHead className="text-black text-center">Company</TableHead>
+                        <TableHead className="text-black text-center">GRN No.</TableHead>
+                        <TableHead className="text-black text-center text-nowrap">GRN Date</TableHead>
+                        <TableHead className="text-black text-center">Account Document No.</TableHead>
+                        <TableHead className="text-black text-center">MIRO No.</TableHead>
+                        <TableHead className="text-black text-center text-nowrap">SAP Status</TableHead>
+                        {designation !== "Purchase Team" && (
+                            <>
+                                <TableHead className="text-black text-center">Upload Invoice</TableHead>
+                                <TableHead className="text-black text-center">Action</TableHead>
+                            </>
+                        )}
+                        <TableHead className="text-black text-center">View GRN</TableHead>
+                    </TableRow>
+                </TableHeader>
 
-                    <TableBody>
-                        {filteredData && filteredData.length > 0 ? (
-                            filteredData.map((item, index) => (
-                                <TableRow key={index}>
-                                    <TableCell className="text-center">{index + 1}</TableCell>
-                                    <TableCell className="text-center">{item?.company_code}</TableCell>
-                                    <TableCell className="text-center">{item?.grn_number}</TableCell>
-                                    <TableCell className="text-center text-nowrap">{formatDate(item?.grn_date)}</TableCell>
-                                    {/* <TableCell className="text-center">
+                <TableBody>
+                    {filteredData && filteredData.length > 0 ? (
+                        filteredData.map((item, index) => (
+                            <TableRow key={index}>
+                                <TableCell className="text-center">{index + 1}</TableCell>
+                                <TableCell className="text-center">{item?.company_code}</TableCell>
+                                <TableCell className="text-center">{item?.grn_number}</TableCell>
+                                <TableCell className="text-center text-nowrap">{formatDate(item?.grn_date)}</TableCell>
+                                {/* <TableCell className="text-center">
                                         {item.sap_booking_id ? (
                                             <span>{item.sap_booking_id}</span>
                                         ) : (
@@ -256,112 +255,111 @@ const ViewGRNEntry = ({ GRNData, companyDropdown }: Props) => {
                                             />
                                         )}
                                     </TableCell> */}
-                                    <TableCell className="text-center">
-                                        {item.sap_booking_id ? (
-                                            <span>{item.sap_booking_id}</span>
-                                        ) : designation === "Purchase Team" ? (
-                                            <span className="text-gray-600">{item.sap_booking_id}</span>
-                                        ) : (
-                                            <Input
-                                                value={editValues[item.grn_number]?.account_document_no || ""}
-                                                onChange={(e) =>
-                                                    handleInputChange(item.grn_number, "account_document_no", e.target.value)
-                                                }
-                                                placeholder="Enter Account Doc No"
-                                            />
-                                        )}
-                                    </TableCell>
-
-                                    <TableCell className="text-center">
-                                        {item?.miro_no ? (
-                                            <span>{item.miro_no}</span>
-                                        ) : designation === "Purchase Team" ? (
-                                            <span className="text-gray-600">{item.miro_no}</span>
-                                        ) : (
-                                            <Input
-                                                value={editValues[item.grn_number]?.miro_no || ""}
-                                                onChange={(e) =>
-                                                    handleInputChange(item.grn_number, "miro_no", e.target.value)
-                                                }
-                                                placeholder="Enter MIRO No"
-                                            />
-                                        )}
-                                    </TableCell>
-                                    <TableCell>
-                                        <div
-                                            className={`text-center px-2 py-3 rounded-xl uppercase ${item?.sap_status === "Open"
-                                                ? "bg-yellow-100 text-yellow-800"
-                                                : item?.sap_status === "Closed"
-                                                    ? "bg-green-100 text-green-800"
-                                                    : "bg-red-100 text-red-800"
-                                                }`}
-                                        >
-                                            {item?.sap_status}
-                                        </div>
-                                    </TableCell>
-
-                                    {designation !== "Purchase Team" && (
-                                        <>
-                                            <TableCell className="text-center">
-                                                <SimpleFileUpload
-                                                    buttonText="Upload Invoice"
-                                                    files={editValues[item.grn_number]?.files || []}
-                                                    setFiles={(newFiles) =>
-                                                        setEditValues((prev) => {
-                                                            const files =
-                                                                typeof newFiles === "function"
-                                                                    ? newFiles(prev[item.grn_number]?.files || [])
-                                                                    : newFiles;
-                                                            return {
-                                                                ...prev,
-                                                                [item.grn_number]: {
-                                                                    ...prev[item.grn_number],
-                                                                    files,
-                                                                },
-                                                            };
-                                                        })
-                                                    }
-                                                    setUploadedFiles={() => { }}
-                                                    onNext={() => handleSave(item.grn_number)}
-                                                />
-                                            </TableCell>
-
-                                            <TableCell className="text-center">
-                                                <Button
-                                                    size="sm"
-                                                    variant="default"
-                                                    onClick={() => handleSave(item.grn_number)}
-                                                    disabled={!canSave(item.grn_number)}
-                                                    className={`px-3 py-1 rounded-[28px] text-sm font-medium ${!canSave(item.grn_number)
-                                                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                                                            : "bg-green-600 text-white hover:bg-green-700"
-                                                        }`}
-                                                >
-                                                    Save
-                                                </Button>
-                                            </TableCell>
-                                        </>
+                                <TableCell className="text-center">
+                                    {item.sap_booking_id ? (
+                                        <span>{item.sap_booking_id}</span>
+                                    ) : designation === "Purchase Team" ? (
+                                        <span className="text-gray-600">{item.sap_booking_id}</span>
+                                    ) : (
+                                        <Input
+                                            value={editValues[item.grn_number]?.account_document_no || ""}
+                                            onChange={(e) =>
+                                                handleInputChange(item.grn_number, "account_document_no", e.target.value)
+                                            }
+                                            placeholder="Enter Account Doc No"
+                                        />
                                     )}
+                                </TableCell>
 
-                                    <TableCell className="text-center">
-                                        <Link href={`/view-grn-details?grn_ref=${item?.grn_number}`}>
-                                            <Button variant={"nextbtn"} size={"nextbtnsize"} className="py-2">
-                                                View
+                                <TableCell className="text-center">
+                                    {item?.miro_no ? (
+                                        <span>{item.miro_no}</span>
+                                    ) : designation === "Purchase Team" ? (
+                                        <span className="text-gray-600">{item.miro_no}</span>
+                                    ) : (
+                                        <Input
+                                            value={editValues[item.grn_number]?.miro_no || ""}
+                                            onChange={(e) =>
+                                                handleInputChange(item.grn_number, "miro_no", e.target.value)
+                                            }
+                                            placeholder="Enter MIRO No"
+                                        />
+                                    )}
+                                </TableCell>
+                                <TableCell>
+                                    <div
+                                        className={`text-center px-2 py-3 rounded-xl uppercase ${item?.sap_status === "Open"
+                                            ? "bg-yellow-100 text-yellow-800"
+                                            : item?.sap_status === "Closed"
+                                                ? "bg-green-100 text-green-800"
+                                                : "bg-red-100 text-red-800"
+                                            }`}
+                                    >
+                                        {item?.sap_status}
+                                    </div>
+                                </TableCell>
+
+                                {designation !== "Purchase Team" && (
+                                    <>
+                                        <TableCell className="text-center">
+                                            <SimpleFileUpload
+                                                buttonText="Upload Invoice"
+                                                files={editValues[item.grn_number]?.files || []}
+                                                setFiles={(newFiles) =>
+                                                    setEditValues((prev) => {
+                                                        const files =
+                                                            typeof newFiles === "function"
+                                                                ? newFiles(prev[item.grn_number]?.files || [])
+                                                                : newFiles;
+                                                        return {
+                                                            ...prev,
+                                                            [item.grn_number]: {
+                                                                ...prev[item.grn_number],
+                                                                files,
+                                                            },
+                                                        };
+                                                    })
+                                                }
+                                                setUploadedFiles={() => { }}
+                                                onNext={() => handleSave(item.grn_number)}
+                                            />
+                                        </TableCell>
+
+                                        <TableCell className="text-center">
+                                            <Button
+                                                size="sm"
+                                                variant="default"
+                                                onClick={() => handleSave(item.grn_number)}
+                                                disabled={!canSave(item.grn_number)}
+                                                className={`px-3 py-1 rounded-[28px] text-sm font-medium ${!canSave(item.grn_number)
+                                                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                                    : "bg-green-600 text-white hover:bg-green-700"
+                                                    }`}
+                                            >
+                                                Save
                                             </Button>
-                                        </Link>
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={10} className="text-center text-gray-500 py-4">
-                                    No GRN entries found.
+                                        </TableCell>
+                                    </>
+                                )}
+
+                                <TableCell className="text-center">
+                                    <Link href={`/view-grn-details?grn_ref=${item?.grn_number}`}>
+                                        <Button variant={"nextbtn"} size={"nextbtnsize"} className="py-2">
+                                            View
+                                        </Button>
+                                    </Link>
                                 </TableCell>
                             </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
+                        ))
+                    ) : (
+                        <TableRow>
+                            <TableCell colSpan={10} className="text-center text-gray-500 py-4">
+                                No GRN entries found.
+                            </TableCell>
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
         </div>
     );
 };

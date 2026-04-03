@@ -65,13 +65,18 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
   };
 
   useEffect(() => {
-    const numerator = form.getValues("numerator_purchase_uom");
-    const denominator = form.getValues("denominator_purchase_uom");
-
-    if (showConversionUOM && !numerator && !denominator && !showConversionModal) {
-      setShowConversionModal(true);
+    if (purchaseUOM && baseUOM && purchaseUOM !== baseUOM) {
+      const num = form.getValues("numerator_purchase_uom");
+      const den = form.getValues("denominator_purchase_uom");
+      if (!num || !den) {
+        setShowConversionModal(true);
+      }
+    } else if (purchaseUOM === baseUOM) {
+      form.setValue("numerator_purchase_uom", "");
+      form.setValue("denominator_purchase_uom", "");
+      setConversionRatio("");
     }
-  }, [showConversionUOM, form, showConversionModal]);
+  }, [purchaseUOM, baseUOM, form]);
 
   useEffect(() => {
     const employeeCompanyCode =
