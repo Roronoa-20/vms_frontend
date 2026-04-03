@@ -89,7 +89,7 @@ const VendorAdvancePaymentTable = () => {
                                     </span>
                                 </TableCell>
                                 <TableCell>
-                                    <Button className="bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px]" onClick={() => router.push(`/vendor-advance-payment-details?payment_req=${item?.name}`)}>
+                                    <Button className="bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px]" onClick={() => router.push(`/raise-advance-payment?refno=${item?.name}`)}>
                                         View
                                     </Button>
                                 </TableCell>

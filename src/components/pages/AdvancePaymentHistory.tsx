@@ -1,5 +1,6 @@
 "use client"
 import React, { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import AdvancePaymentHistoryTable from '../molecules/AdvancePaymentHistoryTable'
 import { getPaymentHistory } from '@/src/services/advancePayment/advancePayment.services'
 import { PaymentHistoryRecord } from '@/src/types/advancePayment/advancePayment.types'
@@ -21,6 +22,9 @@ interface ApprovalHistory {
 }
 
 const AdvancePaymentHistory = () => {
+    const searchParams = useSearchParams();
+    const refno = searchParams.get("refno") || "";
+
     const [approvalHistory, setApprovalHistory] = useState<ApprovalHistory[]>([]);
     const [totalAmount, setTotalAmount] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -28,7 +32,7 @@ const AdvancePaymentHistory = () => {
 
     useEffect(() => {
         fetchPaymentHistory();
-    }, []);
+    }, [refno]);
 
     const fetchPaymentHistory = async () => {
         try {
@@ -36,6 +40,8 @@ const AdvancePaymentHistory = () => {
             const response = await getPaymentHistory({
                 page_no: 1,
                 page_size: 100,
+                doctype: "Payment Requisition Form",
+                doc_name: refno,
             });
 
             if (response && response.data) {
