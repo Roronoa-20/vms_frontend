@@ -93,6 +93,11 @@ const CompanyAddress = ({
 
   const { designation } = useAuth();
 
+  const viewFile = (fileId: string) => {
+    const url = `${API_END_POINTS.securefileview}?file_id=${fileId}`;
+    window.open(url, "_blank");
+  };
+
 
 
   const handleMultipleAdd = () => {
@@ -592,13 +597,12 @@ const CompanyAddress = ({
         {/* Show existing preview if no new file is chosen */}
         {!file && isFilePreview && OnboardingDetail?.address_proofattachment?.url && (
           <div className="flex gap-2 items-center mt-1">
-            <Link
-              target="_blank"
-              href={OnboardingDetail.address_proofattachment.url}
-              className="underline text-blue-500 max-w-44 truncate"
+            <span
+              onClick={() => viewFile(OnboardingDetail.address_proofattachment.name)}
+              className="underline text-blue-500 max-w-44 truncate cursor-pointer uppercase"
             >
               {OnboardingDetail.address_proofattachment.file_name}
-            </Link>
+            </span>
             {!isDisabled && (
               <X
                 className="cursor-pointer"

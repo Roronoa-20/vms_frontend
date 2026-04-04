@@ -41,6 +41,11 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAm
 
   const router = useRouter();
 
+  const viewFile = (fileId: string) => {
+    const url = `${API_END_POINTS.securefileview}?file_id=${fileId}`;
+    window.open(url, "_blank");
+  };
+
   const handleSubmit = async () => {
     const manufacturingUrl = API_END_POINTS?.manufacturingDetailSubmit;
     const updatedData = { ...ManufacturingDetail, materials_supplied: [{ hsnsac_code: ManufacturingDetail?.hsnsac_code, annual_capacity: ManufacturingDetail?.annual_capacity, material_description: ManufacturingDetail?.material_description }], ref_no: ref_no, vendor_onboarding: onboarding_ref_no }
@@ -183,13 +188,12 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAm
               !brochure_proof &&
               OnboardingDetail?.brochure_proof?.url && (
                 <div className="flex gap-2">
-                  <Link
-                    target="blank"
-                    href={OnboardingDetail?.brochure_proof?.url}
-                    className="underline text-blue-300 max-w-44 truncate"
+                  <span
+                    onClick={() => viewFile(OnboardingDetail?.brochure_proof?.name)}
+                    className="underline text-blue-500 max-w-44 truncate cursor-pointer"
                   >
-                    <span>{OnboardingDetail?.brochure_proof?.file_name}</span>
-                  </Link>
+                    {OnboardingDetail?.brochure_proof?.file_name}
+                  </span>
                   <X
                     className={`cursor-pointer ${isDisabled ? "hidden" : ""}`}
                     onClick={() => setIsBrochureFilePreview((prev) => !prev)}
@@ -225,13 +229,12 @@ const ManufacturingDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, isAm
               !organisation_structure_document &&
               OnboardingDetail?.organisation_structure_document?.url && (
                 <div className="flex gap-2">
-                  <Link
-                    target="blank"
-                    href={OnboardingDetail?.organisation_structure_document?.url}
-                    className="underline text-blue-300 max-w-44 truncate"
+                  <span
+                    onClick={() => viewFile(OnboardingDetail?.organisation_structure_document?.name)}
+                    className="underline text-blue-500 max-w-44 truncate cursor-pointer"
                   >
-                    <span>{OnboardingDetail?.organisation_structure_document?.file_name}</span>
-                  </Link>
+                    {OnboardingDetail?.organisation_structure_document?.file_name}
+                  </span>
                   <X
                     className={`cursor-pointer ${isDisabled ? "hidden" : ""}`}
                     onClick={() => setIsStructureFilePreview((prev) => !prev)}

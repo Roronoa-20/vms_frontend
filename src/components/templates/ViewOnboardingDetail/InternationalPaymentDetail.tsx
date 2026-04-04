@@ -95,6 +95,11 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
 
   const router = useRouter();
 
+  const viewFile = (fileId: string) => {
+    const url = `${API_END_POINTS.securefileview}?file_id=${fileId}`;
+    window.open(url, "_blank");
+  };
+
   useEffect(() => {
     const fetchBank = async () => {
 
@@ -377,13 +382,12 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
             {
               OnboardingDetail?.international_bank_details?.[0]?.bank_proof_for_beneficiary_bank?.url && (
                 <div className="flex gap-2">
-                  <Link
-                    target="blank"
-                    href={OnboardingDetail?.international_bank_details?.[0]?.bank_proof_for_beneficiary_bank?.url}
-                    className="underline text-blue-300 max-w-44 truncate"
+                  <span
+                    onClick={() => viewFile(OnboardingDetail?.international_bank_details?.[0]?.bank_proof_for_beneficiary_bank?.name)}
+                    className="underline text-blue-500 max-w-44 truncate cursor-pointer"
                   >
-                    <span>{OnboardingDetail?.international_bank_details?.[0]?.bank_proof_for_beneficiary_bank?.file_name}</span>
-                  </Link>
+                    {OnboardingDetail?.international_bank_details?.[0]?.bank_proof_for_beneficiary_bank?.file_name}
+                  </span>
                   {
                     !isDisabled &&
                     <X
@@ -407,13 +411,12 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
               {(isAccountTeam === 0 && designation === "Purchase Team") ||
                 (isAccountTeam === 1 && designation === "Accounts Team") ? (
                 <div className="flex flex-col col-span-1">
-                  <a
-                    href={OnboardingDetail.international_bank_details[0].international_bank_proof_by_purchase_team.url}
-                    target="_blank"
-                    className="text-blue-500 underline text-sm"
+                  <span
+                    onClick={() => viewFile(OnboardingDetail.international_bank_details[0].international_bank_proof_by_purchase_team.name)}
+                    className="text-blue-500 underline text-sm cursor-pointer"
                   >
                     {OnboardingDetail.international_bank_details[0].international_bank_proof_by_purchase_team.file_name || "View File"}
-                  </a>
+                  </span>
                 </div>
               ) : null}
             </div>
@@ -446,13 +449,12 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
                 <div className="flex gap-2 items-center flex-col">
                   {OnboardingDetail.international_bank_proofs_by_purchase_team.map((item, index) => (
                     <div className="flex gap-2" key={index}>
-                      <Link
-                        target="_blank"
-                        href={item?.url}
-                        className="underline text-blue-300 max-w-44 truncate"
+                      <span
+                        onClick={() => viewFile(item?.name)}
+                        className="underline text-blue-500 max-w-44 truncate cursor-pointer"
                       >
-                        <span>{item?.file_name}</span>
-                      </Link>
+                        {item?.file_name}
+                      </span>
 
                       {/* Show delete only for uploader */}
                       {((isAccountTeam === 0 && designation === "Purchase Team") ||
@@ -569,13 +571,12 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
 
                   {OnboardingDetail?.intermediate_bank_details?.[0]?.bank_proof_for_intermediate_bank?.url && (
                     <div className="flex gap-2">
-                      <Link
-                        target="blank"
-                        href={OnboardingDetail?.intermediate_bank_details?.[0]?.bank_proof_for_intermediate_bank?.url}
-                        className="underline text-blue-300 max-w-44 truncate"
+                      <span
+                        onClick={() => viewFile(OnboardingDetail?.intermediate_bank_details?.[0]?.bank_proof_for_intermediate_bank?.name)}
+                        className="underline text-blue-500 max-w-44 truncate cursor-pointer"
                       >
-                        <span>{OnboardingDetail?.intermediate_bank_details?.[0]?.bank_proof_for_intermediate_bank?.file_name}</span>
-                      </Link>
+                        {OnboardingDetail?.intermediate_bank_details?.[0]?.bank_proof_for_intermediate_bank?.file_name}
+                      </span>
                       {
                         !isDisabled &&
                         <X
@@ -600,13 +601,12 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
                 {(isAccountTeam === 0 && designation === "Purchase Team") ||
                   (isAccountTeam === 1 && designation === "Accounts Team") ? (
                   <div className="flex flex-col col-span-1">
-                    <a
-                      href={OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_bank_proof_by_purchase_team?.url}
-                      target="_blank"
-                      className="text-blue-500 underline text-sm"
+                    <span
+                      onClick={() => viewFile(OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_bank_proof_by_purchase_team?.name)}
+                      className="text-blue-500 underline text-sm cursor-pointer"
                     >
                       {OnboardingDetail?.intermediate_bank_details?.[0]?.intermediate_bank_proof_by_purchase_team?.file_name || "View File"}
-                    </a>
+                    </span>
                   </div>
                 ) : null}
               </div>
@@ -658,13 +658,12 @@ const PaymentDetail = ({ ref_no, onboarding_ref_no, OnboardingDetail, company_na
                   <div className="flex gap-2 items-center flex-col">
                     {OnboardingDetail.intermediate_bank_proofs_by_purchase_team.map((item, index) => (
                       <div className="flex gap-2" key={index}>
-                        <Link
-                          target="_blank"
-                          href={item?.url}
-                          className="underline text-blue-300 max-w-44 truncate"
+                        <span
+                          onClick={() => viewFile(item?.name)}
+                          className="underline text-blue-500 max-w-44 truncate cursor-pointer"
                         >
-                          <span>{item?.file_name}</span>
-                        </Link>
+                          {item?.file_name}
+                        </span>
 
                         {/* Show delete only for uploader */}
                         {((isAccountTeam === 0 && designation === "Purchase Team") ||
