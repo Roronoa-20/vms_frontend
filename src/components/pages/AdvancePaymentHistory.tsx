@@ -1,79 +1,43 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import AdvancePaymentHistoryTable from '../molecules/AdvancePaymentHistoryTable'
 import { getPaymentHistory } from '@/src/services/advancePayment/advancePayment.services'
 import { PaymentHistoryRecord } from '@/src/types/advancePayment/advancePayment.types'
-
-interface ApprovalHistory {
-    team_name: string;
-    approval_status: string;
-    items: {
-        sr_no: number;
-        material_code: string;
-        material_description: string;
-        hsn_code: string;
-        uom: string;
-        quantity: number;
-        rate: number;
-        schedule_date: string;
-        schedule_quantity: number;
-    }[]
-}
+import { Loader2, AlertCircle } from 'lucide-react'
 
 const AdvancePaymentHistory = () => {
     const searchParams = useSearchParams();
     const refno = searchParams.get("refno") || "";
 
-    const [approvalHistory, setApprovalHistory] = useState<ApprovalHistory[]>([]);
+    const [records, setRecords] = useState<PaymentHistoryRecord[]>([]);
     const [totalAmount, setTotalAmount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchPaymentHistory();
-    }, [refno]);
-
-    const fetchPaymentHistory = async () => {
+    const fetchPaymentHistory = useCallback(async () => {
         try {
             setLoading(true);
             const response = await getPaymentHistory({
                 page_no: 1,
                 page_size: 100,
-                doctype: "Payment Requisition Form",
-                doc_name: refno,
+                doctype: "Purchase Order",
+                ...(refno ? { doc_name: "12312312312" } : {}),
             });
 
-            if (response && response.data) {
-                // Transform the response data to match the accordion structure
-                const transformedData: ApprovalHistory[] = response.data.map((record: PaymentHistoryRecord) => ({
-                    team_name: record.payment_req || "N/A",
-                    approval_status: record.status || "Pending",
-                    items: record.items?.map((item, index) => ({
-                        sr_no: index + 1,
-                        material_code: item.item || "-",
-                        material_description: item.payment_type || "-",
-                        hsn_code: "-",
-                        uom: "-",
-                        quantity: item.payment_percentage || 0,
-                        rate: item.raised_amount || 0,
-                        schedule_date: "-",
-                        schedule_quantity: item.total_amount || 0,
-                    })) || [],
-                }));
+            if (response?.data) {
+                setRecords(response.data);
 
-                setApprovalHistory(transformedData);
-
-                // Calculate total amount
                 let total = 0;
                 response.data.forEach((record: PaymentHistoryRecord) => {
-                    if (record.items) {
-                        record.items.forEach((item) => {
-                            total += item.total_amount || 0;
-                        });
-                    }
+                    record.items?.forEach((item) => {
+                        total += item.total_amount || 0;
+                    });
                 });
                 setTotalAmount(total);
+            } else {
+                setRecords([]);
+                setTotalAmount(0);
             }
 
             setError(null);
@@ -83,30 +47,48 @@ const AdvancePaymentHistory = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [refno]);
+
+    useEffect(() => {
+        fetchPaymentHistory();
+    }, [fetchPaymentHistory]);
 
     if (loading) {
         return (
-            <div className="p-4">
-                {/* <h1 className="text-2xl font-semibold text-black mb-4">Advance Payment History</h1> */}
-                <div className="text-center text-gray-500">Loading...</div>
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="flex flex-col items-center gap-3">
+                    <Loader2 className="w-7 h-7 text-[#4F6BED] animate-spin" />
+                    <p className="text-xs font-semibold text-[#1E293B]">Loading payment history...</p>
+                    <p className="text-[11px] text-[#94A3B8]">Please wait</p>
+                </div>
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="p-4">
-                {/* <h1 className="text-2xl font-semibold text-black mb-4">Advance Payment History</h1> */}
-                <div className="text-center text-red-500">{error}</div>
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="flex flex-col items-center gap-3 max-w-sm text-center">
+                    <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
+                        <AlertCircle className="w-5 h-5 text-red-500" />
+                    </div>
+                    <p className="text-xs font-semibold text-[#1E293B]">Failed to load history</p>
+                    <p className="text-[11px] text-[#94A3B8]">{error}</p>
+                    <button
+                        type="button"
+                        onClick={fetchPaymentHistory}
+                        className="mt-1 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-[#475569] shadow-sm transition-colors hover:bg-slate-50"
+                    >
+                        Try again
+                    </button>
+                </div>
             </div>
         );
     }
 
     return (
         <div className="p-4">
-            {/* <h1 className="text-2xl font-semibold text-black mb-4">Advance Payment History</h1> */}
-            <AdvancePaymentHistoryTable approvalHistory={approvalHistory} totalAmount={totalAmount} />
+            <AdvancePaymentHistoryTable records={records} totalAmount={totalAmount} refno={refno} />
         </div>
     )
 }

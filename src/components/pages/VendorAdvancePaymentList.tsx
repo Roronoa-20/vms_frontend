@@ -3,7 +3,9 @@ import VendorAdvancePaymentTable from '../molecules/VendorAdvancePaymentTable'
 
 const VendorAdvancePaymentList = () => {
   return (
-    <VendorAdvancePaymentTable />
+    <div className="p-4 max-w-[1600px] mx-auto">
+      <VendorAdvancePaymentTable />
+    </div>
   )
 }
 

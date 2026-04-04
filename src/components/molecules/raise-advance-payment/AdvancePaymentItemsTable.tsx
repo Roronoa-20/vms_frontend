@@ -1,6 +1,6 @@
 "use client"
 import { Table, TableBody, TableCell, TableHead, TableRow } from '../../atoms/table'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { TableHeader } from '../../atoms/table'
 import { Button } from '../../atoms/button'
 import Pagination from '../Pagination'
@@ -10,7 +10,8 @@ import { processApprovalAction } from '@/src/services/advancePayment/advancePaym
 import { PaymentRequestDetails } from '@/src/types/advancePayment/advancePayment.types'
 import { Input } from '../../atoms/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, CheckCircle2, XCircle, Package, Landmark, Hash, CalendarDays, IndianRupee } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { CheckCircle2, XCircle, Package, Landmark, Hash, CalendarDays, IndianRupee, Loader2 } from 'lucide-react'
 
 interface Props {
     paymentDetails?: PaymentRequestDetails
@@ -20,7 +21,7 @@ interface Props {
 const AdvancePaymentItemsTable = ({ paymentDetails, refno }: Props) => {
 
     const items = paymentDetails?.payment_request_items || [];
-    const [total_event_list] = useState(items.length);
+    const total_event_list = items.length;
     const [record_per_page] = useState<number>(10);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [status, setStatus] = useState<"approve" | "reject" | "">("");
@@ -31,8 +32,17 @@ const AdvancePaymentItemsTable = ({ paymentDetails, refno }: Props) => {
         payment_date: paymentDetails?.payment_date || "",
         payment_amount: paymentDetails?.payment_amount || ""
     });
+    const [isProcessing, setIsProcessing] = useState(false);
 
     const router = useRouter();
+
+    useEffect(() => {
+        setTreasuryDetails({
+            utr_number: paymentDetails?.utr_number || "",
+            payment_date: paymentDetails?.payment_date || "",
+            payment_amount: paymentDetails?.payment_amount || ""
+        });
+    }, [paymentDetails?.utr_number, paymentDetails?.payment_date, paymentDetails?.payment_amount]);
 
     const handleApproval = async () => {
         if (!status) return;
@@ -43,20 +53,26 @@ const AdvancePaymentItemsTable = ({ paymentDetails, refno }: Props) => {
             }
         }
         try {
+            setIsProcessing(true);
+            const wasApprove = status === "approve";
             const res = await processApprovalAction({
                 doctype: "Payment Requisition Form",
                 doc_name: refno,
-                action: status === "approve" ? "Approve" : "Reject",
+                action: wasApprove ? "Approve" : "Reject",
                 remarks: comments,
                 utr_number: tresuaryDetails.utr_number,
                 payment_date: tresuaryDetails.payment_date,
                 payment_amount: tresuaryDetails.payment_amount
             });
-            alert(res?.message || (status === "approve" ? "Approved successfully" : "Rejected successfully"));
-            location.reload();
-        } catch (error: any) {
+            handleClose();
+            setIsProcessing(false);
+            router.refresh();
+            alert(res?.message || (wasApprove ? "Approved successfully" : "Rejected successfully"));
+        } catch (error: unknown) {
+            setIsProcessing(false);
             console.error(error);
-            alert(error?.message || "Error processing approval action");
+            const message = error instanceof Error ? error.message : "Error processing approval action";
+            alert(message);
         }
     };
 
@@ -68,67 +84,76 @@ const AdvancePaymentItemsTable = ({ paymentDetails, refno }: Props) => {
 
     return (
         <div className="space-y-5">
+            {isProcessing && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+                    <div className="flex flex-col items-center gap-3 bg-white rounded-2xl px-8 py-6 shadow-xl">
+                        <Loader2 className="w-8 h-8 text-[#4F6BED] animate-spin" />
+                        <p className="text-sm font-semibold text-[#1E293B]">Processing...</p>
+                        <p className="text-xs text-[#94A3B8]">Please wait</p>
+                    </div>
+                </div>
+            )}
             <Card className="shadow-sm border-slate-200">
-                <CardHeader className="pb-4 border-b border-slate-100">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#F59E0B] to-[#F97316] flex items-center justify-center shadow-sm">
-                            <Package className="w-5 h-5 text-white" />
+                <CardHeader className="py-3 px-4 border-b border-slate-100">
+                    <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#F59E0B] to-[#F97316] flex items-center justify-center shadow-sm">
+                            <Package className="w-4 h-4 text-white" />
                         </div>
                         <div>
-                            <CardTitle className="text-lg font-bold text-[#0F172A] tracking-tight">Payment Request Items</CardTitle>
-                            <p className="text-xs text-[#94A3B8] mt-0.5 font-medium">{items.length} item{items.length !== 1 ? 's' : ''} in this request</p>
+                            <CardTitle className="text-sm font-bold text-[#0F172A] tracking-tight">Payment Request Items</CardTitle>
+                            <p className="text-[11px] text-[#94A3B8] mt-0.5 font-medium leading-none">{items.length} item{items.length !== 1 ? 's' : ''} in this request</p>
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent className="pt-4 px-0">
+                <CardContent className="pt-0 px-0">
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
-                                <TableRow className="bg-[#F8FAFC] text-[13px] hover:bg-[#F8FAFC] border-b border-slate-200">
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider">Sr No.</TableHead>
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider">Item Code</TableHead>
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider">Payment Type</TableHead>
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider text-nowrap">Payment %</TableHead>
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider text-nowrap">Total Amount</TableHead>
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider text-nowrap">Raised Amount</TableHead>
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider text-nowrap">Balance Amount</TableHead>
+                                <TableRow className="bg-[#F8FAFC] hover:bg-[#F8FAFC] border-b border-slate-200">
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Sr.</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Item Code</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Payment Type</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Pay %</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Total Amt</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Raised Amt</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Balance Amt</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {items.length > 0 ? (
                                     items.map((item, index) => (
                                         <TableRow key={item.name} className="hover:bg-slate-50 transition-colors border-b border-slate-100">
-                                            <TableCell className="text-center text-sm text-[#64748B] tabular-nums">
+                                            <TableCell className="text-center text-xs text-[#64748B] tabular-nums py-2 px-2">
                                                 {(currentPage - 1) * record_per_page + index + 1}
                                             </TableCell>
-                                            <TableCell className="text-center text-nowrap text-sm font-semibold text-[#0F172A]">
+                                            <TableCell className="text-center text-nowrap text-xs font-semibold text-[#0F172A] py-2 px-2">
                                                 {item?.item_code}
                                             </TableCell>
-                                            <TableCell className="text-center text-nowrap text-sm text-[#475569]">
+                                            <TableCell className="text-center text-nowrap text-xs text-[#475569] py-2 px-2">
                                                 {item?.payment_type}
                                             </TableCell>
-                                            <TableCell className="text-center text-nowrap">
-                                                <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700 tabular-nums">
+                                            <TableCell className="text-center text-nowrap py-2 px-2">
+                                                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-[10px] font-semibold px-2 py-0 tabular-nums">
                                                     {item?.payment_percentage}%
-                                                </span>
+                                                </Badge>
                                             </TableCell>
-                                            <TableCell className="text-center text-nowrap text-sm font-semibold text-[#0F172A] tabular-nums">
+                                            <TableCell className="text-center text-nowrap text-xs font-semibold text-[#0F172A] tabular-nums py-2 px-2">
                                                 {item?.total_amount}
                                             </TableCell>
-                                            <TableCell className="text-center text-nowrap text-sm text-emerald-600 font-semibold tabular-nums">
+                                            <TableCell className="text-center text-nowrap text-xs text-emerald-600 font-semibold tabular-nums py-2 px-2">
                                                 {item?.raised_amount}
                                             </TableCell>
-                                            <TableCell className="text-center text-nowrap text-sm text-amber-600 font-semibold tabular-nums">
+                                            <TableCell className="text-center text-nowrap text-xs text-amber-600 font-semibold tabular-nums py-2 px-2">
                                                 {item?.balance_amount}
                                             </TableCell>
                                         </TableRow>
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={7} className="text-center py-10">
+                                        <TableCell colSpan={7} className="text-center py-8">
                                             <div className="flex flex-col items-center gap-2">
-                                                <Package className="w-10 h-10 text-slate-300" />
-                                                <p className="text-sm font-medium text-[#94A3B8]">No items found</p>
+                                                <Package className="w-8 h-8 text-slate-300" />
+                                                <p className="text-xs font-medium text-[#94A3B8]">No items found</p>
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -137,7 +162,7 @@ const AdvancePaymentItemsTable = ({ paymentDetails, refno }: Props) => {
                         </Table>
                     </div>
                     {items.length > 0 && (
-                        <div className="px-4 pb-3 pt-1">
+                        <div className="px-4 pb-2 pt-1">
                             <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
                         </div>
                     )}
@@ -146,19 +171,19 @@ const AdvancePaymentItemsTable = ({ paymentDetails, refno }: Props) => {
 
             {paymentDetails?.is_treasury_visible ? (
                 <Card className="shadow-sm border-slate-200">
-                    <CardHeader className="pb-4 border-b border-slate-100">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] flex items-center justify-center shadow-sm">
-                                <Landmark className="w-5 h-5 text-white" />
+                    <CardHeader className="py-3 px-4 border-b border-slate-100">
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] flex items-center justify-center shadow-sm">
+                                <Landmark className="w-4 h-4 text-white" />
                             </div>
                             <div>
-                                <CardTitle className="text-lg font-bold text-[#0F172A] tracking-tight">Treasury Details</CardTitle>
-                                <p className="text-xs text-[#94A3B8] mt-0.5 font-medium">Fill in the payment transaction details</p>
+                                <CardTitle className="text-sm font-bold text-[#0F172A] tracking-tight">Treasury Details</CardTitle>
+                                <p className="text-[11px] text-[#94A3B8] mt-0.5 font-medium leading-none">Fill in the payment transaction details</p>
                             </div>
                         </div>
                     </CardHeader>
-                    <CardContent className="pt-5">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <CardContent className="pt-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="flex flex-col gap-2">
                                 <label className="text-xs font-semibold text-[#475569] flex items-center gap-1.5 uppercase tracking-wider">
                                     <Hash className="w-3.5 h-3.5 text-[#94A3B8]" />
@@ -222,43 +247,32 @@ const AdvancePaymentItemsTable = ({ paymentDetails, refno }: Props) => {
                 </Card>
             ) : null}
 
-            <Card className="shadow-sm border-slate-200">
-                <CardContent className="py-4">
-                    <div className="flex items-center justify-between">
-                        <Button
-                            variant={"backbtn"}
-                            size={"backbtnsize"}
-                            className="px-5 rounded-xl flex items-center gap-2 border-slate-200 text-[#475569] hover:bg-slate-50 hover:border-slate-300 shadow-sm transition-colors"
-                            onClick={() => { router.back() }}
-                        >
-                            <ArrowLeft className="w-4 h-4" />
-                            Back
-                        </Button>
-                        {paymentDetails?.can_approve && (
-                            <div className="flex items-center gap-3">
-                                <Button
-                                    variant={"backbtn"}
-                                    size={"backbtnsize"}
-                                    className="px-6 rounded-xl flex items-center gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 shadow-sm transition-colors"
-                                    onClick={() => { setStatus("reject"); setIsDialog(true); }}
-                                >
-                                    <XCircle className="w-4 h-4" />
-                                    Reject
-                                </Button>
-                                <Button
-                                    variant={"nextbtn"}
-                                    size={"nextbtnsize"}
-                                    className="px-6 rounded-xl flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-colors"
-                                    onClick={() => { setStatus("approve"); setIsDialog(true); }}
-                                >
-                                    <CheckCircle2 className="w-4 h-4" />
-                                    Approve
-                                </Button>
-                            </div>
-                        )}
-                    </div>
-                </CardContent>
-            </Card>
+            {paymentDetails?.can_approve && (
+                <Card className="shadow-sm border-slate-200">
+                    <CardContent className="py-4">
+                        <div className="flex items-center justify-end gap-3 flex-wrap">
+                            <Button
+                                variant={"backbtn"}
+                                size={"backbtnsize"}
+                                className="px-6 rounded-xl flex items-center gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 shadow-sm transition-colors"
+                                onClick={() => { setStatus("reject"); setIsDialog(true); }}
+                            >
+                                <XCircle className="w-4 h-4" />
+                                Reject
+                            </Button>
+                            <Button
+                                variant={"nextbtn"}
+                                size={"nextbtnsize"}
+                                className="px-6 rounded-xl flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-colors"
+                                onClick={() => { setStatus("approve"); setIsDialog(true); }}
+                            >
+                                <CheckCircle2 className="w-4 h-4" />
+                                Approve
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
 
             {isDialog &&
                 <PopUp
