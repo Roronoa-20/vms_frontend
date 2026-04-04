@@ -2,6 +2,7 @@ export interface PoListViewRecord {
     name: string;
     vendor_code: string;
     supplier_name: string;
+    company_name: string;
     company_code: string;
     status: string;
     po_date: string;

@@ -154,7 +154,7 @@ const ViewVendorPO = ({ po_name, dropdown, companyDropdown }: Props) => {
               <div className="flex-1 min-w-[200px] max-w-md">
                 <label className="sr-only">Search PO</label>
                 <div className="relative">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#94A3B8] pointer-events-none z-[1]" />
+                  {/* <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#94A3B8] pointer-events-none z-[1]" /> */}
                   <div className="pl-7">
                     <MultiSelect
                       className="text-sm"
@@ -189,7 +189,7 @@ const ViewVendorPO = ({ po_name, dropdown, companyDropdown }: Props) => {
               <div className="w-full sm:w-[220px] flex-shrink-0">
                 <label className="sr-only">Company</label>
                 <div className="flex items-center gap-2">
-                  <Building2 className="w-3.5 h-3.5 text-[#94A3B8] flex-shrink-0 hidden sm:block" />
+                  {/* <Building2 className="w-3.5 h-3.5 text-[#94A3B8] flex-shrink-0 hidden sm:block" /> */}
                   <Select
                     onValueChange={(value) => {
                       setSelectedCompany(value);

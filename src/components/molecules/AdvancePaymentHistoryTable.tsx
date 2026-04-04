@@ -9,7 +9,6 @@ import { PaymentHistoryRecord } from '@/src/types/advancePayment/advancePayment.
 
 interface Props {
     records: PaymentHistoryRecord[];
-    totalAmount?: number;
     refno?: string;
 }
 
@@ -30,7 +29,15 @@ const fmtAmt = (n: number) =>
 const fmtPct = (n: number) =>
     Number.isFinite(n) ? `${n.toLocaleString('en-IN', { maximumFractionDigits: 2 })}%` : '—'
 
-const AdvancePaymentHistoryTable = ({ records = [], totalAmount = 0, refno }: Props) => {
+const sumRaisedAmounts = (list: PaymentHistoryRecord[]) =>
+    list.reduce(
+        (sum, entry) =>
+            sum +
+            (entry.items?.reduce((row, item) => row + (Number(item.raised_amount) || 0), 0) ?? 0),
+        0
+    );
+
+const AdvancePaymentHistoryTable = ({ records = [], refno }: Props) => {
     const router = useRouter();
     const [expandedTeams, setExpandedTeams] = useState<Set<number>>(() => new Set(records.map((_, i) => i)));
 
@@ -39,6 +46,7 @@ const AdvancePaymentHistoryTable = ({ records = [], totalAmount = 0, refno }: Pr
     }, [records]);
 
     const totalItems = useMemo(() => records.reduce((acc, e) => acc + (e.items?.length || 0), 0), [records]);
+    const totalRaisedAmount = useMemo(() => sumRaisedAmounts(records), [records]);
 
     const toggleTeam = (index: number) => {
         setExpandedTeams(prev => {
@@ -75,14 +83,14 @@ const AdvancePaymentHistoryTable = ({ records = [], totalAmount = 0, refno }: Pr
                                 </p>
                             </div>
                         </div>
-                        {totalAmount > 0 && (
+                        {totalRaisedAmount > 0 && (
                             <div className="flex items-center gap-2 bg-gradient-to-r from-emerald-50 to-emerald-100/60 border border-emerald-200 rounded-xl px-3.5 py-2 shadow-sm">
                                 <div className="w-6 h-6 rounded-md bg-emerald-500 flex items-center justify-center">
                                     <IndianRupee className="w-3 h-3 text-white" />
                                 </div>
                                 <div>
-                                    <p className="text-[9px] font-semibold text-emerald-600/70 uppercase tracking-wider leading-none">Grand Total</p>
-                                    <p className="text-sm font-bold text-emerald-700 tabular-nums leading-tight">{fmtAmt(totalAmount)}</p>
+                                    <p className="text-[9px] font-semibold text-emerald-600/70 uppercase tracking-wider leading-none">Total raised</p>
+                                    <p className="text-sm font-bold text-emerald-700 tabular-nums leading-tight">{fmtAmt(totalRaisedAmount)}</p>
                                 </div>
                             </div>
                         )}
@@ -97,7 +105,7 @@ const AdvancePaymentHistoryTable = ({ records = [], totalAmount = 0, refno }: Pr
                         <Table>
                             <TableHeader>
                                 <TableRow className="bg-[#F8FAFC] hover:bg-[#F8FAFC] border-b border-slate-200">
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-3 w-12">Sr.</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-3 w-12">Sr. No.</TableHead>
                                     <TableHead className="text-left text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-3 text-nowrap">Item</TableHead>
                                     <TableHead className="text-left text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-3 text-nowrap">Payment Type</TableHead>
                                     <TableHead className="text-right text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-3 text-nowrap">Pay %</TableHead>

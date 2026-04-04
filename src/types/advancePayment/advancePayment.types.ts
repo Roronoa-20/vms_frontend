@@ -38,6 +38,7 @@ export interface PaymentRequestRecord {
     vendor_name: string | null;
     currency: string | null;
     amount: number | null;
+    total_raised_amt: number | null;
     record: string;
     payment_type: string;
     purchase_order_date: string | null;
@@ -72,6 +73,8 @@ export interface PaymentRequestItemDetail {
     payment_type: string;
     payment_percentage: number;
     total_amount: string;
+    advance_balance: string;
+    total_claimed_amt: string;
     raised_amount: string;
     balance_amount: string;
 }

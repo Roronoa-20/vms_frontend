@@ -115,7 +115,9 @@ const AdvancePaymentItemsTable = ({ paymentDetails, refno }: Props) => {
                                     <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Payment Type</TableHead>
                                     <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Pay %</TableHead>
                                     <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Total Amt</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Total Claimed Amt</TableHead>
                                     <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Raised Amt</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Advance Balance</TableHead>
                                     <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Balance Amt</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -140,8 +142,14 @@ const AdvancePaymentItemsTable = ({ paymentDetails, refno }: Props) => {
                                             <TableCell className="text-center text-nowrap text-xs font-semibold text-[#0F172A] tabular-nums py-2 px-2">
                                                 {item?.total_amount}
                                             </TableCell>
+                                            <TableCell className="text-center text-nowrap text-xs font-semibold text-[#0F172A] tabular-nums py-2 px-2">
+                                                {item?.total_claimed_amt}
+                                            </TableCell>
                                             <TableCell className="text-center text-nowrap text-xs text-emerald-600 font-semibold tabular-nums py-2 px-2">
                                                 {item?.raised_amount}
+                                            </TableCell>
+                                            <TableCell className="text-center text-nowrap text-xs text-amber-600 font-semibold tabular-nums py-2 px-2">
+                                                {item?.advance_balance}
                                             </TableCell>
                                             <TableCell className="text-center text-nowrap text-xs text-amber-600 font-semibold tabular-nums py-2 px-2">
                                                 {item?.balance_amount}

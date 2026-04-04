@@ -454,7 +454,7 @@ const ViewPO = ({ po_name, companyDropdown }: Props) => {
                             <span className="block truncate text-center" title={item?.supplier_name}>{item?.supplier_name || "—"}</span>
                           </TableCell>
                           <TableCell className="text-center text-xs text-[#64748B] py-2.5 px-2 min-w-0">
-                            <span className="block truncate text-center" title={item?.company_code}>{item?.company_code}</span>
+                            <span className="block truncate text-left text-nowrap" title={item?.company_name}>{item?.company_name}</span>
                           </TableCell>
                           <TableCell className="text-center py-2.5 px-2">
                             <Badge variant="outline" className={`text-[10px] font-semibold px-2 py-0.5 whitespace-nowrap ${statusColor(item?.status)}`}>

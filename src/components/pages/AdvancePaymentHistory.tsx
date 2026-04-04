@@ -9,9 +9,9 @@ import { Loader2, AlertCircle } from 'lucide-react'
 const AdvancePaymentHistory = () => {
     const searchParams = useSearchParams();
     const refno = searchParams.get("refno") || "";
+    const po_no = searchParams.get("po_no") || "";
 
     const [records, setRecords] = useState<PaymentHistoryRecord[]>([]);
-    const [totalAmount, setTotalAmount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -22,22 +22,13 @@ const AdvancePaymentHistory = () => {
                 page_no: 1,
                 page_size: 100,
                 doctype: "Purchase Order",
-                ...(refno ? { doc_name: "12312312312" } : {}),
+                ...(refno ? { doc_name: po_no } : {}),
             });
 
             if (response?.data) {
                 setRecords(response.data);
-
-                let total = 0;
-                response.data.forEach((record: PaymentHistoryRecord) => {
-                    record.items?.forEach((item) => {
-                        total += item.total_amount || 0;
-                    });
-                });
-                setTotalAmount(total);
             } else {
                 setRecords([]);
-                setTotalAmount(0);
             }
 
             setError(null);
@@ -47,7 +38,7 @@ const AdvancePaymentHistory = () => {
         } finally {
             setLoading(false);
         }
-    }, [refno]);
+    }, [refno, po_no]);
 
     useEffect(() => {
         fetchPaymentHistory();
@@ -88,7 +79,7 @@ const AdvancePaymentHistory = () => {
 
     return (
         <div className="p-4">
-            <AdvancePaymentHistoryTable records={records} totalAmount={totalAmount} refno={refno} />
+            <AdvancePaymentHistoryTable records={records} refno={refno} />
         </div>
     )
 }

@@ -125,9 +125,10 @@ const RaiseAdvacePaymentTable = () => {
                                     <TableHead className="text-left text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Payment Req</TableHead>
                                     <TableHead className="text-left text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">PO Number</TableHead>
                                     <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Date</TableHead>
-                                    <TableHead className="text-left text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Company</TableHead>
-                                    <TableHead className="text-left text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Vendor</TableHead>
-                                    <TableHead className="text-right text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Amount</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Company</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Vendor</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Amount</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Total Raised Amt.</TableHead>
                                     <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Type</TableHead>
                                     <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Status</TableHead>
                                     <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Action</TableHead>
@@ -160,14 +161,17 @@ const RaiseAdvacePaymentTable = () => {
                                                 <TableCell className="text-center text-xs text-[#64748B] py-2 px-2 text-nowrap">
                                                     {item?.date || "—"}
                                                 </TableCell>
-                                                <TableCell className="text-left text-xs text-[#475569] py-2 px-2 text-nowrap">
+                                                <TableCell className="text-center text-xs text-[#475569] py-2 px-2 text-nowrap">
                                                     {item?.company || "—"}
                                                 </TableCell>
-                                                <TableCell className="text-left text-xs text-[#475569] py-2 px-2 text-nowrap">
+                                                <TableCell className="text-center text-xs text-[#475569] py-2 px-2 text-nowrap">
                                                     {item?.vendor_name || "—"}
                                                 </TableCell>
-                                                <TableCell className="text-right text-xs font-semibold text-[#0F172A] tabular-nums py-2 px-2 text-nowrap">
+                                                <TableCell className="text-center text-xs font-semibold text-[#0F172A] tabular-nums py-2 px-2 text-nowrap">
                                                     {item?.amount != null ? Number(item.amount).toLocaleString('en-IN') : "—"}
+                                                </TableCell>
+                                                <TableCell className="text-center text-xs font-semibold text-[#0F172A] tabular-nums py-2 px-2 text-nowrap">
+                                                    {item?.total_raised_amt != null ? Number(item.total_raised_amt).toLocaleString('en-IN') : "—"}
                                                 </TableCell>
                                                 <TableCell className="text-center py-2 px-2">
                                                     <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-[10px] font-semibold px-2 py-0">

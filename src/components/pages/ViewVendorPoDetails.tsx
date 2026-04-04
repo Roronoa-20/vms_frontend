@@ -304,7 +304,8 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                                     <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Sche. Qty</TableHead>
                                     <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Total PO Amt</TableHead>
                                     <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Adv. Approved</TableHead>
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Raised Adv.</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Total Adv. Requested</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Adv. Balance</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -360,6 +361,9 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                                             </TableCell>
                                             <TableCell className="text-center text-nowrap text-xs text-[#475569] tabular-nums py-1.5 px-2">
                                                 {item?.total_advance_requested}
+                                            </TableCell>
+                                            <TableCell className="text-center text-nowrap text-xs text-[#475569] tabular-nums py-1.5 px-2">
+                                                {item?.advance_balance}
                                             </TableCell>
                                         </TableRow>
                                         );

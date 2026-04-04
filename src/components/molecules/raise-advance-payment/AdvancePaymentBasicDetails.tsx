@@ -23,6 +23,7 @@ import { BackButton } from '@/src/components/atoms/BackButton'
 interface Props {
     paymentDetails?: PaymentRequestDetails
     refno?: string
+    po_no?: string
 }
 
 const statusColor = (status?: string) => {
@@ -46,7 +47,7 @@ const DetailField = ({ icon: Icon, label, value }: { icon: React.ElementType; la
     </div>
 )
 
-const AdvancePaymentBasicDetails = ({ paymentDetails, refno }: Props) => {
+const AdvancePaymentBasicDetails = ({ paymentDetails, refno, po_no }: Props) => {
     return (
         <div className="space-y-4">
             <Card className="shadow-sm border-slate-200">
@@ -69,7 +70,7 @@ const AdvancePaymentBasicDetails = ({ paymentDetails, refno }: Props) => {
                         <div className="flex items-center gap-2 flex-wrap justify-end sm:justify-end sm:ml-auto">
                             {refno && (
                                 <Link
-                                    href={`/advance-payment-history?refno=${encodeURIComponent(refno)}`}
+                                    href={`/advance-payment-history?refno=${encodeURIComponent(refno)}&po_no=${encodeURIComponent(po_no)}`}
                                     className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-[#475569] shadow-sm transition-colors hover:border-[#4F6BED]/40 hover:bg-[#F8FAFF] hover:text-[#4F6BED]"
                                 >
                                     <History className="h-3.5 w-3.5" />
