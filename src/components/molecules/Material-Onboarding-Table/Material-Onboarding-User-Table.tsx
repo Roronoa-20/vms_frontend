@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { MaterialRequestItem, MaterialRequestChildItem } from "@/src/types/MaterialRequestTableTypes";
+import { MaterialRequestItem, MaterialRequestChildItem, TableFilters } from "@/src/types/MaterialRequestTableTypes";
 import { TvendorRegistrationDropdown } from "@/src/types/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -18,34 +18,28 @@ interface MaterialRequestTableProps {
     setCurrentPage: (page: number) => void;
     totalRecords: number;
     recordPerPage: number;
+    filters?: TableFilters;
+    onFilterChange: (filters: TableFilters) => void;
 }
 
-const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ 
-    data = [], 
-    companyDropdown, 
+const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({
+    data = [],
+    companyDropdown,
     TableTitle,
     currentPage = 1,
     setCurrentPage,
     totalRecords = 0,
-    recordPerPage = 20
+    recordPerPage = 20,
+    filters = {},
+    onFilterChange
 }) => {
-    const [search, setSearch] = useState("");
-    const [selectedCompany, setSelectedCompany] = useState("");
+    const [localSearch, setLocalSearch] = useState(filters.search || "");
 
-    // Filtered & flattened data
+    const showStatus = TableTitle?.toLowerCase().includes("total");
+
+    // Flatten data for display (no local filtering)
     const flattenedData = useMemo(() => {
-        const filtered = data.filter((parent) => {
-            const matchesSearch = 
-                (parent.name || "").toLowerCase().includes(search.toLowerCase()) || 
-                (parent.request_id || "").toLowerCase().includes(search.toLowerCase()) ||
-                (parent.material_request_items || []).some((child) =>
-                (child.material_description || "").toLowerCase().includes(search.toLowerCase())
-            );
-            const matchesCompany = selectedCompany ? parent.requestor_company === selectedCompany : true;
-            return matchesSearch && matchesCompany;
-        });
-
-        return filtered.flatMap((parent) => {
+        return data.flatMap((parent) => {
             const items = parent.material_request_items || [];
             if (items.length === 0) {
                 return [{
@@ -56,7 +50,8 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({
                     requestor_ref_no: parent.name,
                     request_date: parent.request_date,
                     approval_status: parent.approval_status,
-                    request_id: parent.request_id
+                    request_id: parent.request_id,
+                    company_name: parent.requestor_company || "-"
                 }];
             }
             return items.map((child) => ({
@@ -64,10 +59,11 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({
                 requestor_ref_no: parent.name,
                 request_date: parent.request_date,
                 approval_status: parent.approval_status,
-                request_id: parent.request_id
+                request_id: parent.request_id,
+                company_name: child.company_name || parent.requestor_company || "-"
             }));
         });
-    }, [data, search, selectedCompany]);
+    }, [data]);
 
     const paginatedData = flattenedData;
 
@@ -77,11 +73,26 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({
         return `${day}-${month}-${year}`;
     };
 
+    // Debounce search
     React.useEffect(() => {
-        if (typeof setCurrentPage === "function") {
-            setCurrentPage(1);
-        }
-    }, [search, selectedCompany]);
+        const handler = setTimeout(() => {
+            if (localSearch !== filters.search) {
+                onFilterChange({ ...filters, search: localSearch });
+            }
+        }, 500);
+        return () => clearTimeout(handler);
+    }, [localSearch]);
+
+    // Handle company and status changes immediately
+    const handleCompanyChange = (value: string) => {
+        const company = value === "all" ? "" : value;
+        onFilterChange({ ...filters, company_name: company });
+    };
+
+    const handleStatusChange = (value: string) => {
+        const status = value === "all" ? "" : value;
+        onFilterChange({ ...filters, approval_status: status });
+    };
 
     return (
         <div className="mt-4 border rounded-xl overflow-hidden shadow-md p-4 bg-white">
@@ -91,20 +102,20 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({
                     <Input
                         type="text"
                         placeholder="Search by Request ID or Material Description..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        value={localSearch}
+                        onChange={(e) => setLocalSearch(e.target.value)}
                         className="border px-3 py-2 rounded-md text-sm w-full sm:w-[250px]"
                     />
                     <Select
-                        value={selectedCompany || "all"}
-                        onValueChange={(value) => setSelectedCompany(value === "all" ? "" : value)}
+                        value={filters.company_name || "all"}
+                        onValueChange={handleCompanyChange}
                     >
-                        <SelectTrigger className="w-full sm:w-[200px]">
+                        <SelectTrigger className="w-full sm:w-[180px]">
                             <SelectValue placeholder="Select Company" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="all">All</SelectItem>
+                                <SelectItem value="all">All Company</SelectItem>
                                 {companyDropdown?.map((item) => (
                                     <SelectItem key={item.name} value={item.name}>
                                         {item.description}
@@ -113,6 +124,27 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({
                             </SelectGroup>
                         </SelectContent>
                     </Select>
+
+                    {showStatus && (
+                        <Select
+                            value={filters.approval_status || "all"}
+                            onValueChange={handleStatusChange}
+                        >
+                            <SelectTrigger className="w-full sm:w-[180px]">
+                                <SelectValue placeholder="Select Status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="all">All Status</SelectItem>
+                                    <SelectItem value="Pending by CP">Pending by CP</SelectItem>
+                                    <SelectItem value="Sent to SAP">Sent to SAP</SelectItem>
+                                    <SelectItem value="Code Generated by SAP">Code Generated by SAP</SelectItem>
+                                    <SelectItem value="SAP Error">SAP Error</SelectItem>
+                                    <SelectItem value="Use Existing Code">Use Existing Code</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    )}
                 </div>
             </div>
 
@@ -121,7 +153,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({
                     <TableHeader>
                         <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] text-center">
                             <TableHead className="text-center text-black">Sr.No.</TableHead>
-                            <TableHead className="text-center text-black text-nowrap">Requestor Ref No</TableHead>
+                            {/* <TableHead className="text-center text-black text-nowrap">Requestor Ref No</TableHead> */}
                             <TableHead className="text-center text-black text-nowrap">Request ID</TableHead>
                             <TableHead className="text-center text-black text-nowrap">Request Date</TableHead>
                             <TableHead className="text-center text-black text-nowrap">Company</TableHead>
@@ -136,7 +168,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({
                         {paginatedData.map((item, idx) => (
                             <TableRow key={item.child_name || idx}>
                                 <TableCell className="text-center text-nowrap">{(currentPage - 1) * recordPerPage + idx + 1}</TableCell>
-                                <TableCell className="text-center text-nowrap">{item.requestor_ref_no}</TableCell>
+                                {/* <TableCell className="text-center text-nowrap">{item.requestor_ref_no}</TableCell> */}
                                 <TableCell className="text-center text-nowrap">{item.request_id}</TableCell>
                                 <TableCell className="text-center text-nowrap">{formatDate(item.request_date)}</TableCell>
                                 <TableCell className="text-center text-nowrap">{item.company_code}</TableCell>
@@ -165,7 +197,9 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({
                                         className={`rounded-[10px] text-[14px] font-medium text-center text-nowrap py-[7px] mx-auto ${item.approval_status === "Code Generated by SAP" ? "w-[180px]" : "w-[150px]"}
                                             ${["Approved by CP", "Code Generated by SAP", "Sent to SAP"].includes(item.approval_status)
                                                 ? "bg-green-100 text-green-800"
-                                                : "bg-yellow-100 text-yellow-800"
+                                                : item.approval_status === "SAP Error"
+                                                    ? "bg-red-100 text-red-800"
+                                                    : "bg-yellow-100 text-yellow-800"
                                             }`}
                                     >
                                         {item.approval_status || "Pending"}

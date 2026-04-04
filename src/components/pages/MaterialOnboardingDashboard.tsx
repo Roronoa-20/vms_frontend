@@ -7,9 +7,10 @@ import { TvendorRegistrationDropdown } from "@/src/types/types";
 import { cookies } from "next/headers";
 
 export type cardCount = {
-  total_count:number,
-  approved:number,
-  pending:number,
+  total_count: number;
+  approved: number;
+  pending: number;
+  sap_error: number;
 }
 
 

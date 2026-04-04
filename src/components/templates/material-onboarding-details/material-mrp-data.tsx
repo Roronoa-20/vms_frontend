@@ -55,8 +55,6 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
   useEffect(() => {
     if (MRPTypeValue === "ND") {
       form.setValue("procurement_type", "F");
-    } else {
-      form.setValue("procurement_type", "");
     }
   }, [MRPTypeValue, form]);
 
@@ -183,14 +181,14 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                     key="mrp_group"
                     render={({ field }: { field: ControllerRenderProps<FieldValues, "mrp_group"> }) => (
                       <FormItem>
-                        <FormLabel>MRP Type</FormLabel>
+                        <FormLabel>MRP Group</FormLabel>
                         <FormControl>
                           <Select
                             onValueChange={field.onChange}
                             value={field.value ?? undefined}
                           >
                             <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
-                              <SelectValue placeholder="Select MRP GRoup" />
+                              <SelectValue placeholder="Select MRP Group" />
                             </SelectTrigger>
                             <SelectContent>
                               {MRPGroup?.map((mrp) => (
@@ -349,7 +347,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                             </SelectTrigger>
                             <SelectContent>
                               {ProcurementType?.map((procurement) => (
-                                <SelectItem key={procurement.name} value={procurement.name}>
+                                <SelectItem key={procurement.name} value={procurement.procurement_type_code}>
                                   {procurement.procurement_type_code} -{" "}
                                   {procurement.procurement_type_name}
                                 </SelectItem>

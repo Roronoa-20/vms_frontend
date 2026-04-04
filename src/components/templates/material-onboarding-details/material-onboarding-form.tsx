@@ -99,7 +99,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
   const [isMatchedMaterial, setIsMatchedMaterial] = useState(false);
   const [showRemarkDialog, setShowRemarkDialog] = useState(false);
   const [materialCompanyCode, setMaterialCompanyCode] = useState<string>("");
-  const { designation } = useAuth();
+  const { designation, user_email } = useAuth();
   const role = designation || "";
 
   const [selectedCodeLogic, setSelectedCodeLogic] = useState<string>("");
@@ -381,7 +381,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
 
   const saveAsDraft = async () => {
     const values = form.getValues();
-    const approvedByName = EmployeeDetailsJSON?.company_email || "";
+    const approvedByName = user_email || EmployeeDetailsJSON?.company_email || "";
     const { request_date, requested_by, company, department, sub_department, hod, immediate_reporting_head, contact_information_email, contact_information_phone, material_information,
       ...rest } = values;
 
@@ -460,7 +460,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
   };
 
   const handleSubmit = async (values: any) => {
-    const approvedByName = EmployeeDetailsJSON?.company_email || "";
+    const approvedByName = user_email || EmployeeDetailsJSON?.company_email || "";
     const { request_date, requested_by, company, department, sub_department, hod, immediate_reporting_head, contact_information_email, contact_information_phone, material_information,
       ...rest } = values;
 

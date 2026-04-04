@@ -46,7 +46,6 @@ export default function MaterialInformation({ form, basicMasters, MaterialOnboar
 
       const filters = {
         company,
-        material_type: materialtype,
       };
 
       let url =
@@ -94,7 +93,7 @@ export default function MaterialInformation({ form, basicMasters, MaterialOnboar
       const company = form.getValues("material_company_code");
       const materialtype = form.getValues("material_type");
 
-      if (!company || !materialtype) {
+      if (!company) {
         setMaterialCodeStatus("idle");
         return;
       }
@@ -104,7 +103,6 @@ export default function MaterialInformation({ form, basicMasters, MaterialOnboar
         `?filters=${encodeURIComponent(
           JSON.stringify({
             company,
-            material_type: materialtype,
           })
         )}&search_term=${encodeURIComponent(code)}`;
 
