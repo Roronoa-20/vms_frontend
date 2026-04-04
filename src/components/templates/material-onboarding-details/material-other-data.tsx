@@ -214,206 +214,202 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
               />
             </div>
 
-            {!isZCAPMaterial && (
-              <>
-                {/* Valuation Class */}
-                <div className="space-y-2">
-                  <FormField
-                    control={form.control}
-                    name="valuation_class"
-                    key="valuation_class"
-                    render={({ field }: { field: ControllerRenderProps<FieldValues, "valuation_class"> }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Valuation Class <span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value || undefined}
-                          >
-                            <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
-                              <SelectValue placeholder="Select Valuation Class" />
-                            </SelectTrigger>
-                            <SelectContent className="max-h-60 overflow-y-auto">
-                              {filteredValuationClass.map((vclass) => (
-                                <SelectItem key={vclass.name} value={vclass.name}>
-                                  {vclass.valuation_class_code} - {vclass.valuation_class_name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+            {/* Valuation Class */}
+            <div className="space-y-2">
+              <FormField
+                control={form.control}
+                name="valuation_class"
+                key="valuation_class"
+                render={({ field }: { field: ControllerRenderProps<FieldValues, "valuation_class"> }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Valuation Class <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value || undefined}
+                      >
+                        <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
+                          <SelectValue placeholder="Select Valuation Class" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-60 overflow-y-auto">
+                          {filteredValuationClass.map((vclass) => (
+                            <SelectItem key={vclass.name} value={vclass.name}>
+                              {vclass.valuation_class_code} - {vclass.valuation_class_name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-                {/* Price Control */}
-                <div className="space-y-2">
-                  <FormField
-                    control={form.control}
-                    name="price_control"
-                    key="price_control"
-                    render={({ field }: { field: ControllerRenderProps<FieldValues, "price_control"> }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Price Control <span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value || undefined}
-                          >
-                            <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
-                              <SelectValue placeholder="Select Price Control" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {PriceControl.map((price) => (
-                                <SelectItem key={price.name} value={price.name}>
-                                  {price.name} - {price.description}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+            {/* Price Control */}
+            <div className="space-y-2">
+              <FormField
+                control={form.control}
+                name="price_control"
+                key="price_control"
+                render={({ field }: { field: ControllerRenderProps<FieldValues, "price_control"> }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Price Control <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value || undefined}
+                      >
+                        <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
+                          <SelectValue placeholder="Select Price Control" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {PriceControl.map((price) => (
+                            <SelectItem key={price.name} value={price.name}>
+                              {price.name} - {price.description}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-                {/* HSN Code */}
-                <div className="space-y-2">
-                  <FormField
-                    control={form.control}
-                    name="hsn_code"
-                    key="hsn_code"
-                    render={({ field }: { field: ControllerRenderProps<FieldValues, "hsn_code"> }) => (
-                      <FormItem>
-                        <FormLabel>HSN Code</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            type="text"
-                            maxLength={8}
-                            inputMode="numeric"
-                            pattern="\d{8}"
-                            className="p-3 w-full text-sm placeholder:text-gray-500"
-                            placeholder="Enter HSN Code"
-                            onChange={(e) => {
-                              const formattedValue = e.target.value
-                                .toLowerCase()
-                                .replace(/\b\w/g, (char) =>
-                                  char.toUpperCase()
-                                );
-                              field.onChange(formattedValue);
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+            {/* HSN Code */}
+            <div className="space-y-2">
+              <FormField
+                control={form.control}
+                name="hsn_code"
+                key="hsn_code"
+                render={({ field }: { field: ControllerRenderProps<FieldValues, "hsn_code"> }) => (
+                  <FormItem>
+                    <FormLabel>HSN Code</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="text"
+                        maxLength={8}
+                        inputMode="numeric"
+                        pattern="\d{8}"
+                        className="p-3 w-full text-sm placeholder:text-gray-500"
+                        placeholder="Enter HSN Code"
+                        onChange={(e) => {
+                          const formattedValue = e.target.value
+                            .toLowerCase()
+                            .replace(/\b\w/g, (char) =>
+                              char.toUpperCase()
+                            );
+                          field.onChange(formattedValue);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-                {/* Do Not Cost */}
-                <div className="space-y-2">
-                  <FormField
-                    control={form.control}
-                    name="do_not_cost"
-                    key="do_not_cost"
-                    render={({ field }: { field: ControllerRenderProps<FieldValues, "do_not_cost"> }) => (
-                      <FormItem>
-                        <FormLabel>Do Not Cost</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            value={field.value ?? ""}
-                            onChange={(e) => field.onChange(e.target.value || null)}
-                            readOnly
-                            disabled={form.watch("price_control") === "S"}
-                            className="p-3 w-full text-sm placeholder:text-gray-500"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+            {/* Do Not Cost */}
+            <div className="space-y-2">
+              <FormField
+                control={form.control}
+                name="do_not_cost"
+                key="do_not_cost"
+                render={({ field }: { field: ControllerRenderProps<FieldValues, "do_not_cost"> }) => (
+                  <FormItem>
+                    <FormLabel>Do Not Cost</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value ?? ""}
+                        onChange={(e) => field.onChange(e.target.value || null)}
+                        readOnly
+                        disabled={form.watch("price_control") === "S"}
+                        className="p-3 w-full text-sm placeholder:text-gray-500"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-                {(role === "Material CP" || role === "Store") && (
-                  <div className="col-span-1 space-y-[5px]">
-                    <Label htmlFor="material_information_fileinput">
-                      Upload Material Information File
-                    </Label>
-                    <div
-                      className="border-2 border-dashed border-gray-400 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
-                      onClick={() => !fileSelected && handleLabelClick("material_information_fileinput")}
-                    >
-                      <div className="items-center">
-                        <div className="flex items-center justify-between gap-4 mt-1 px-2 py-2">
-                          <input
-                            type="file"
-                            id="material_information_fileinput"
-                            name="material_information"
-                            key="material_information"
-                            className="hidden"
-                            onChange={(event) =>
-                              handleImageChange(event, "material_information")
-                            }
-                          />
+            {(role === "Material CP" || role === "Store") && (
+              <div className="col-span-1 space-y-[5px]">
+                <Label htmlFor="material_information_fileinput">
+                  Upload Material Information File
+                </Label>
+                <div
+                  className="border-2 border-dashed border-gray-400 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                  onClick={() => !fileSelected && handleLabelClick("material_information_fileinput")}
+                >
+                  <div className="items-center">
+                    <div className="flex items-center justify-between gap-4 mt-1 px-2 py-2">
+                      <input
+                        type="file"
+                        id="material_information_fileinput"
+                        name="material_information"
+                        key="material_information"
+                        className="hidden"
+                        onChange={(event) =>
+                          handleImageChange(event, "material_information")
+                        }
+                      />
+                      <div className="flex items-center gap-2 w-full">
+                        {isFileUploading ? (
                           <div className="flex items-center gap-2 w-full">
-                            {isFileUploading ? (
-                              <div className="flex items-center gap-2 w-full">
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                                <span className="text-sm text-gray-500">Uploading...</span>
-                              </div>
-                            ) : !fileSelected ? (
-                              <>
-                                <Paperclip
-                                  size={18}
-                                  className="text-blue-600"
-                                />
-                                <span className="text-sm text-gray-500 w-full">
-                                  Click to upload material information file
-                                </span>
-                              </>
-                            ) : (
-                              <div className="flex w-full items-center justify-between gap-2">
-                                <a
-                                  href={
-                                    localLineItemFiles?.["material_information"]?.fileURL
-                                    || (form.getValues("material_information") && typeof form.getValues("material_information") === "string" ? `${process.env.NEXT_PUBLIC_BASE_URL}${form.getValues("material_information")}` : "#")
-                                  }
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-sm text-blue-600 underline truncate"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  {fileName}
-                                </a>
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  className="text-red-500 font-bold p-0 h-auto"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleRemoveFile("material_information_fileinput", setFileName);
-                                  }}
-                                >
-                                  ✕
-                                </Button>
-                              </div>
-                            )}
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                            <span className="text-sm text-gray-500">Uploading...</span>
                           </div>
-                        </div>
+                        ) : !fileSelected ? (
+                          <>
+                            <Paperclip
+                              size={18}
+                              className="text-blue-600"
+                            />
+                            <span className="text-sm text-gray-500 w-full">
+                              Click to upload material information file
+                            </span>
+                          </>
+                        ) : (
+                          <div className="flex w-full items-center justify-between gap-2">
+                            <a
+                              href={
+                                localLineItemFiles?.["material_information"]?.fileURL
+                                || (form.getValues("material_information") && typeof form.getValues("material_information") === "string" ? `${process.env.NEXT_PUBLIC_BASE_URL}${form.getValues("material_information")}` : "#")
+                              }
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sm text-blue-600 underline truncate"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {fileName}
+                            </a>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              className="text-red-500 font-bold p-0 h-auto"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRemoveFile("material_information_fileinput", setFileName);
+                              }}
+                            >
+                              ✕
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
-                )}
-              </>
+                </div>
+              </div>
             )}
           </div>
         </div>

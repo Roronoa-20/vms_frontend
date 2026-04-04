@@ -217,7 +217,7 @@ export const getPurchaseRequisitionUOM = async (material: string, cookie?: strin
             credentials: 'include',
         });
         if (response.ok) {
-            return Promise.resolve(response.json()?.then((data) => data?.message?.data?.base_uom));
+            return Promise.resolve(response.json()?.then((data) => data?.message?.data));
         } else {
             const Response = await response.json();
             return Promise.reject(Response);

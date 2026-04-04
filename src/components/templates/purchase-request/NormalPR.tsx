@@ -216,10 +216,10 @@ const NormalPR = (props: Props) => {
                     <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
                       let isAlert = true;
                       if (singleRowData?.material || singleRowData?.quantity || singleRowData?.plant || singleRowData?.purchasing_group || singleRowData?.required_delivery_date) {
-                        if (!confirm("You have unsaved changes in the table. Do you want to continue without saving?")) {
-                          return;
-                        }
+                        alert("You have unsaved changes in the table.") 
                         isAlert = false;
+                          return;
+                        
                       }
                       props?.handlePurchaseRequisitionSubmit(isAlert);
                     }}>
