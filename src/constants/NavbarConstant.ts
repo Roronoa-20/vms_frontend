@@ -56,5 +56,8 @@ export const NavbarConstant: Record<string, string> = {
     "/view-po-details": "View PO Details",
     "/quick-vendor": "Quick Vendor Creation",
     "/view-quick-vendor": "View Quick Vendor Details",
+    "/raise-advance-payment-list":"Raise Advance Payment List",
+    "/raise-advance-payment":"Raise Advance Payment",
+    "/advance-payment-history":"Advance Payment History",
     "/vendor-asa-list": "ASA List"
 }

@@ -1,6 +1,5 @@
 "use client"
-import React, { useEffect, useRef, useState } from "react";
-import POPrintFormat from "../molecules/POPrintFormat";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
@@ -9,14 +8,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Input } from "../atoms/input";
 import { Button } from "../atoms/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../atoms/select";
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import MultiSelect, { MultiValue } from "react-select";
 import { DashboardPOTableData, TvendorRegistrationDropdown } from "@/src/types/types";
 import Pagination from "../molecules/Pagination";
-import page from "@/src/app/maintainance/page";
+import { PoListViewRecord } from "@/src/types/po/po.types";
+import { getPoListView } from "@/src/services/purchaseOrder/purchaseOrder.services";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Building2, Eye, FileText, Loader2, Package, Search, UserRound } from "lucide-react";
 
 interface POItemsTable {
   name: string,
@@ -45,17 +46,37 @@ interface PODropdown {
 
 interface Props {
   po_name?: string
-  POTableData: DashboardPOTableData["message"];
-  companyDropdown : TvendorRegistrationDropdown["message"]["data"]["company_master"]
+  POTableData?: DashboardPOTableData["message"]
+  companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"] | undefined
 }
 
+const statusColor = (status?: string) => {
+  if (!status) return "bg-gray-100 text-gray-600 border-gray-200";
+  const s = status.toLowerCase();
+  if (s.includes("approved") || s.includes("released") || s.includes("confirmed"))
+    return "bg-emerald-50 text-emerald-700 border-emerald-200";
+  if (s.includes("awaiting") || s.includes("pending") || s.includes("open"))
+    return "bg-amber-50 text-amber-700 border-amber-200";
+  if (s.includes("reject") || s.includes("cancel")) return "bg-red-50 text-red-700 border-red-200";
+  return "bg-blue-50 text-blue-700 border-blue-200";
+};
+
+const formatDate = (dateStr: string | null | undefined) => {
+  if (!dateStr) return "—";
+  const cleanDate = String(dateStr).trim().split(" ")[0];
+  if (!cleanDate) return "—";
+  const [y, m, d] = cleanDate.split("-");
+  if (!y || !m || !d) return dateStr;
+  return `${d}-${m}-${y}`;
+};
 
 
-const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
+
+const ViewPO = ({ po_name, companyDropdown }: Props) => {
   const [prDetails, setPRDetails] = useState<any>();
   const [isSuccessDialog, setIsSuccessDialog] = useState(false);
 
-  const [poTableData,setPoTableData] = useState<DashboardPOTableData["message"]>(POTableData);
+  const [poTableData,setPoTableData] = useState<PoListViewRecord[]>([]);
 
   const [PRNumber, setPRNumber] = useState<string | undefined>(po_name);
   const [POItemsTable, setPOItemsTable] = useState<POItemsTable[]>([]);
@@ -64,7 +85,12 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
   const [selectedPODropdown, setSelectedPODropdown] = useState<string>("");
   const [PONumberDropdown, setPONumberDropdown] = useState<PODropdown[]>([]);
 
-  const [selectedCompany, setSelectedCompany] = useState<string>("");
+  const [selectedCompany, setSelectedCompany] = useState<string>("_all");
+  const [debouncedVendor, setDebouncedVendor] = useState("");
+  const vendorDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
+  const hasLoadedOnce = useRef(false);
   // const [isPrintFormat, setIPrintFormat] = useState<boolean>(false);
   const [isEmailDialog, setIsEmailDialog] = useState<boolean>(false);
   const email_to = useSearchParams()?.get("email_to");
@@ -74,17 +100,19 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
   const [POFile, setPOFile] = useState<File | null>(null)
   const [vendorName, setVendorName] = useState<string>("");
 
-  const [total_event_list, settotalEventList] = useState(poTableData?.total_count);
-    const [record_per_page, setRecordPerPage] = useState<number>(5);
+  const [total_event_list, settotalEventList] = useState(0);
+    const [record_per_page, setRecordPerPage] = useState<number>(10);
     const [currentPage, setCurrentPage] = useState<number>(1);
 
   const [ccEmailsList, setCCEmailsList] = useState<{ value: string, label: string }[]>([]);
 
   useEffect(() => {
     if (po_name) {
-      handlePOChange(po_name);
+      void handlePOChange(po_name);
+      void fetchPurchaseEmailIds();
     }
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount + po_name from URL only
+  }, [po_name]);
 
 
   // setEmail((prev:any)=>({...prev,to:email_to}));
@@ -94,6 +122,21 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
 
 
   // const base64Image = await toBase64("/images/coronary_balloon_catheters.png");
+
+  const fetchPurchaseEmailIds = async()=>{
+    const response = await fetch(`${API_END_POINTS?.getPurchaseTeamEmailList}?po_no=${po_name}`,{
+      method:"get",
+    });
+    const data = await response?.json();
+    const emails = data?.map((item: any, index: any) => {
+        const obj = {
+          label: item,
+          value: item
+        }
+        return obj;
+      })
+      setCCEmailsList(emails);
+  } 
 
   const handleClose = () => {
     setIsEarlyDeliveryDialog(false);
@@ -128,30 +171,40 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
 
 
   useEffect(() => {
-    if(currentPage || PRNumber || selectedCompany || vendorName){
-      fetchPoTable();
+    if (vendorDebounceRef.current) clearTimeout(vendorDebounceRef.current);
+    vendorDebounceRef.current = setTimeout(() => setDebouncedVendor(vendorName), 400);
+    return () => {
+      if (vendorDebounceRef.current) clearTimeout(vendorDebounceRef.current);
+    };
+  }, [vendorName]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedVendor, selectedCompany, PRNumber]);
+
+  const fetchPoTable = useCallback(async () => {
+    try {
+      if (hasLoadedOnce.current) setIsFetching(true);
+      const res = await getPoListView({
+        search_term: debouncedVendor || PRNumber || "",
+        company: selectedCompany === "_all" ? "" : selectedCompany,
+        page_no: currentPage,
+        page_size: record_per_page,
+      });
+      setPoTableData(res?.data || []);
+      settotalEventList(res?.total_count || 0);
+    } catch (err) {
+      console.error("Error fetching PO table:", err);
+    } finally {
+      hasLoadedOnce.current = true;
+      setIsInitialLoad(false);
+      setIsFetching(false);
     }
-  },[currentPage,PRNumber,selectedCompany,vendorName]);
+  }, [currentPage, debouncedVendor, PRNumber, record_per_page, selectedCompany]);
 
-  const fetchPoTable = async()=>{
-    
-      const dashboardPOTableDataApi: AxiosResponse = await requestWrapper({
-    url: `${API_END_POINTS?.poTable}`,
-    method: "GET",
-    params:{
-      page_no:currentPage,
-      vendor_name:vendorName,
-      po_number:PRNumber,
-      company:selectedCompany
-    }
-  });
-
-  const dashboardPOTableData: DashboardPOTableData["message"] =
-    dashboardPOTableDataApi?.status == 200 ? dashboardPOTableDataApi?.data?.message : "";
-
-    setPoTableData(dashboardPOTableData);
-    settotalEventList(dashboardPOTableData?.total_count || 0);
-  }
+  useEffect(() => {
+    fetchPoTable();
+  }, [fetchPoTable]);
 
 
 
@@ -160,10 +213,25 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
     const url = API_END_POINTS?.getPONumberDropdown;
     const response: AxiosResponse = await requestWrapper({ url: url, method: 'GET' });
     if (response?.status == 200) {
-      // console.log(response?.data?.message?.data,"this is dropdown");
-      setPONumberDropdown(response?.data?.message?.total_po);
+      const raw = response?.data?.message?.total_po;
+      setPONumberDropdown(Array.isArray(raw) ? raw : []);
     }
   }
+
+  const poOptions = useMemo(
+    () =>
+      PONumberDropdown.map((po) => ({
+        value: po.name,
+        label: [po.po_no || po.name, po.company_code].filter(Boolean).join(" · ") || po.name,
+      })),
+    [PONumberDropdown]
+  );
+
+  const selectedPoOption = useMemo(() => {
+    if (!PRNumber) return null;
+    const found = poOptions.find((o) => o.value === PRNumber);
+    return found ?? { value: PRNumber, label: PRNumber };
+  }, [PRNumber, poOptions]);
 
   const handlePoItemsSubmit = async () => {
     const url = API_END_POINTS?.submitPOItems;
@@ -205,24 +273,25 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
 
   const handlePOChange = async (value: string) => {
     if (!value) {
-      setPRNumber("");
-      // setIPrintFormat(false);
+      setPRNumber(undefined);
       setPRDetails(null);
+      setCurrentPage(1);
       return;
     }
     setPRNumber(value);
+    setCurrentPage(1);
     const response: AxiosResponse = await requestWrapper({ url: API_END_POINTS?.dataBasedOnPo, method: "GET", params: { po_number: value } });
     if (response?.status == 200) {
       setEmail((prev: any) => ({ ...prev, to: response?.data?.message?.vendor_emails?.office_email_primary }));
       console.log(response?.data?.message?.team_members?.all_team_user_ids, "this is cc emails")
-      const emailList = response?.data?.message?.team_members?.all_team_user_ids?.map((item: any, index: any) => {
-        const obj = {
-          label: item,
-          value: item
-        }
-        return obj;
-      })
-      setCCEmailsList(emailList);
+      // const emailList = response?.data?.message?.team_members?.all_team_user_ids?.map((item: any, index: any) => {
+      //   const obj = {
+      //     label: item,
+      //     value: item
+      //   }
+      //   return obj;
+      // })
+      // setCCEmailsList(emailList);
     }
   }
 
@@ -233,122 +302,216 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
 
   return (
     <>
-    <div className=" bg-[#f8fafc] space-y-6 text-sm text-black font-sans m-5">
-      {/* Header Section */}
-      <div className="flex items-center justify-between gap-4 bg-white p-4 rounded-md border border-gray-300">
-        <div className="flex gap-4">
-
-        <MultiSelect
-          className="w-60 text-sm"
-          instanceId="po-search-select"
-          options={PONumberDropdown.map(po => ({
-            value: po.name,
-            label: `${po.name} - ${po.company_code || ""}`
-          }))}
-          placeholder="Search PO Number…"
-          isSearchable
-          isClearable
-          onChange={(selectedOption: any) => {
-            handlePOChange(selectedOption?.value || "");
-          }}
-          value={
-            PRNumber
-            ? { value: PRNumber, label: PRNumber }
-            : null
-          }
-          />
-
-          <Select onValueChange={(value) => { setSelectedCompany(value) }} value={selectedCompany}>
-            <SelectTrigger className="w-60">
-              <SelectValue placeholder="Select Company" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  companyDropdown?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.description}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-
-        {/* <div className="flex justify-end gap-5 w-full"> */}
-          {/* <Select onValueChange={(value) => { setSelectedPODropdown(value) }}>
-            <SelectTrigger className="w-60">
-              <SelectValue placeholder="Select Print Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {
-                  printFormatDropdown?.map((item, index) => (
-                    <SelectItem key={index} value={item?.name}>{item?.print_format_name}</SelectItem>
-                  ))
-                }
-              </SelectGroup>
-            </SelectContent>
-          </Select> */}
-
-            <div>
-            <Input placeholder="Vendor Name" onChange={(e) => { setVendorName(e.target.value) }} value={vendorName} />
-            </div>
-
-                  </div>
-
-                <div className="flex gap-4">
-          {/* <Button id="viewPrintBtn" onClick={() => { getPODetails(); }} variant={"nextbtn"} size={"nextbtnsize"} className="px-5 py-2 transition text-nowrap">
-            View PO Details
-          </Button> */}
-          <Button onClick={() => { router.push(`/view-all-po-changes`) }} variant={"nextbtn"} size={"nextbtnsize"} className="px-5 py-2 transition text-nowrap">
-            View All Changed PO Details
-          </Button>
-          <Button onClick={() => { router.push(`/view-invalid-po`) }} variant={"nextbtn"} size={"nextbtnsize"} className="px-5 py-2 transition text-nowrap">
-            View Invalid PO
-          </Button>
-                </div>
+    <div className="p-4 max-w-[1600px] mx-auto space-y-4 text-sm">
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-lg font-bold text-[#0F172A] tracking-tight">Purchase orders</h1>
+          <p className="text-[13px] text-[#64748B] mt-0.5">Search, filter by company or vendor, then open PO details.</p>
         </div>
-      {/* </div> */}
+        {total_event_list > 0 && !isInitialLoad && (
+          <Badge variant="outline" className="w-fit text-[11px] font-semibold border-slate-200 bg-white text-[#475569]">
+            {total_event_list} result{total_event_list !== 1 ? "s" : ""}
+          </Badge>
+        )}
+      </div>
 
-                <Table>
-          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-          <TableHeader className="text-center">
-            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
-              <TableHead className="text-center text-black">Sr No.</TableHead>
-              <TableHead className="text-center text-black">PO No</TableHead>
-              <TableHead className="text-center text-black text-nowrap">PO Date</TableHead>
-              <TableHead className="text-center text-black">Vendor Name</TableHead>
-              <TableHead className="text-center text-black">company</TableHead>
-              <TableHead className="text-center text-black text-nowrap">View PO</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody className="text-center text-black">
-            {poTableData ? (
-              poTableData?.total_po?.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell className="text-center">{(currentPage - 1) * record_per_page + index + 1}</TableCell>
-                  <TableCell className="text-center">{item?.po_no}</TableCell>
-                  <TableCell className="text-center text-nowrap">{item?.po_date}</TableCell>
-                  <TableCell className="text-center text-nowrap">{item?.supplier_name ? item.supplier_name : "-"}</TableCell>
-                   <TableCell className="text-center text-nowrap">{item?.company_code}</TableCell>
-                  <TableCell>
-                    <Button
-                      className={`bg-[#5291CD] hover:bg-white hover:text-black hover:border border-[#5291CD] rounded-[14px] `}
-                      onClick={() => router.push(`/view-po-details?poname=${item?.po_number}`)}
-                    >
-                      View
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={9} className="text-center text-gray-500 py-4">
-                  No results found
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+      <Card className="shadow-sm border-slate-200 overflow-hidden">
+        <CardHeader className="py-3 px-4 border-b border-slate-100 bg-gradient-to-r from-[#F8FAFC] to-white">
+          <div className="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#4F6BED] to-[#7C93F5] flex items-center justify-center shadow-sm flex-shrink-0">
+                <Package className="w-4 h-4 text-white" />
+              </div>
+              <div className="min-w-0">
+                <CardTitle className="text-sm font-bold text-[#0F172A] tracking-tight">PO list</CardTitle>
+                <p className="text-[11px] text-[#94A3B8] mt-0.5 font-medium leading-none">Filters apply to the table below</p>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row flex-wrap gap-3 w-full xl:w-auto xl:min-w-0">
+              <div className="flex-1 min-w-[200px] max-w-md">
+                <label className="sr-only">Search PO</label>
+                <div className="relative">
+                  {/* <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#94A3B8] pointer-events-none z-[1]" /> */}
+                  <div className="pl-7">
+                    <MultiSelect
+                      className="text-sm"
+                      classNamePrefix="view-po-po"
+                      instanceId="po-search-select"
+                      options={poOptions}
+                      placeholder="Search PO number…"
+                      isSearchable
+                      isClearable
+                      onChange={(selectedOption: { value: string } | null) => {
+                        void handlePOChange(selectedOption?.value || "");
+                      }}
+                      value={selectedPoOption}
+                      styles={{
+                        control: (base) => ({
+                          ...base,
+                          borderRadius: "0.5rem",
+                          borderColor: "#e2e8f0",
+                          minHeight: "36px",
+                          fontSize: "0.8125rem",
+                          boxShadow: "none",
+                          "&:hover": { borderColor: "#cbd5e1" },
+                        }),
+                        placeholder: (base) => ({ ...base, color: "#94a3b8", fontSize: "0.8125rem" }),
+                        singleValue: (base) => ({ ...base, fontSize: "0.8125rem", color: "#334155" }),
+                        menu: (base) => ({ ...base, zIndex: 20 }),
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="w-full sm:w-[220px] flex-shrink-0">
+                <label className="sr-only">Company</label>
+                <div className="flex items-center gap-2">
+                  {/* <Building2 className="w-3.5 h-3.5 text-[#94A3B8] flex-shrink-0 hidden sm:block" /> */}
+                  <Select
+                    onValueChange={(value) => {
+                      setSelectedCompany(value);
+                      setCurrentPage(1);
+                    }}
+                    value={selectedCompany}
+                  >
+                    <SelectTrigger className="rounded-lg h-9 border-slate-200 bg-white text-xs w-full">
+                      <SelectValue placeholder="Company" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="_all">All companies</SelectItem>
+                        {companyDropdown?.map((item, index) => (
+                          <SelectItem key={index} value={item?.name}>
+                            {item?.description}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="w-full sm:w-[200px] flex-shrink-0">
+                <label className="sr-only">Vendor name</label>
+                <div className="relative">
+                  <UserRound className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#94A3B8] pointer-events-none" />
+                  <input
+                    placeholder="Vendor name…"
+                    className="h-9 w-full rounded-lg border border-slate-200 bg-white pl-8 pr-2 text-xs text-[#334155] outline-none transition-colors placeholder:text-[#94A3B8] focus:border-[#4F6BED] focus:ring-2 focus:ring-[#4F6BED]/20"
+                    value={vendorName}
+                    onChange={(e) => setVendorName(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="p-0 relative">
+          {isInitialLoad ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="flex flex-col items-center gap-2">
+                <Loader2 className="w-7 h-7 text-[#4F6BED] animate-spin" />
+                <p className="text-xs font-medium text-[#94A3B8]">Loading purchase orders…</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              {isFetching && (
+                <div className="absolute inset-0 z-10 bg-white/55 backdrop-blur-[1px] flex items-center justify-center">
+                  <Loader2 className="w-6 h-6 text-[#4F6BED] animate-spin" />
+                </div>
+              )}
+              <div className="overflow-x-auto">
+                <Table className="table-fixed min-w-[960px] w-full">
+                  <TableHeader>
+                    <TableRow className="bg-[#F8FAFC] hover:bg-[#F8FAFC] border-b border-slate-200">
+                      <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-2 w-11">Sr.</TableHead>
+                      <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-2 text-nowrap">PO no.</TableHead>
+                      <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-2 text-nowrap">PO date</TableHead>
+                      <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-2 min-w-[7rem]">Vendor</TableHead>
+                      <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-2">Company</TableHead>
+                      <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-2">Status</TableHead>
+                      <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-2 text-nowrap">Pur. group</TableHead>
+                      <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-2 text-nowrap">Pur. team</TableHead>
+                      <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-2 text-nowrap">Ack. date</TableHead>
+                      <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-2 w-14">View</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {poTableData && poTableData.length > 0 ? (
+                      poTableData.map((item, index) => (
+                        <TableRow key={item.name ?? index} className="hover:bg-slate-50/80 border-b border-slate-100 transition-colors">
+                          <TableCell className="text-center text-xs text-[#64748B] tabular-nums py-2.5 px-2">
+                            {(currentPage - 1) * record_per_page + index + 1}
+                          </TableCell>
+                          <TableCell className="text-center text-xs font-semibold text-[#0F172A] py-2.5 px-2 min-w-0">
+                            <span className="block truncate text-center" title={item?.name}>{item?.name}</span>
+                          </TableCell>
+                          <TableCell className="text-center text-xs text-[#475569] tabular-nums py-2.5 px-2 whitespace-nowrap">
+                            {formatDate(item?.po_date)}
+                          </TableCell>
+                          <TableCell className="text-center text-xs text-[#64748B] py-2.5 px-2 min-w-0">
+                            <span className="block truncate text-center" title={item?.supplier_name}>{item?.supplier_name || "—"}</span>
+                          </TableCell>
+                          <TableCell className="text-center text-xs text-[#64748B] py-2.5 px-2 min-w-0">
+                            <span className="block truncate text-left text-nowrap" title={item?.company_name}>{item?.company_name}</span>
+                          </TableCell>
+                          <TableCell className="text-center py-2.5 px-2">
+                            <Badge variant="outline" className={`text-[10px] font-semibold px-2 py-0.5 whitespace-nowrap ${statusColor(item?.status)}`}>
+                              {item?.status || "—"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-center text-xs text-[#64748B] py-2.5 px-2 min-w-0">
+                            <span className="block truncate text-center" title={item?.purchase_group}>{item?.purchase_group || "—"}</span>
+                          </TableCell>
+                          <TableCell className="text-center text-xs text-[#64748B] py-2.5 px-2 min-w-0">
+                            <span className="block truncate text-center" title={item?.purchase_team}>{item?.purchase_team || "—"}</span>
+                          </TableCell>
+                          <TableCell className="text-center text-xs text-[#475569] py-2.5 px-2 whitespace-nowrap tabular-nums">
+                            {formatDate(item?.ack_date)}
+                          </TableCell>
+                          <TableCell className="text-center py-2.5 px-2">
+                            <button
+                              type="button"
+                              onClick={() => router.push(`/view-po-details?poname=${encodeURIComponent(item.name)}`)}
+                              className="inline-flex w-8 h-8 rounded-lg bg-[#EEF2FF] items-center justify-center hover:bg-[#4F6BED] hover:text-white text-[#4F6BED] transition-colors"
+                              title="View PO"
+                              aria-label="View purchase order"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={10} className="text-center py-14">
+                          <div className="flex flex-col items-center gap-2">
+                            <FileText className="w-9 h-9 text-slate-300" />
+                            <p className="text-sm font-medium text-[#64748B]">No purchase orders found</p>
+                            <p className="text-xs text-[#94A3B8]">Try different filters or search terms.</p>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+              {poTableData && poTableData.length > 0 && (
+                <div className="px-3 py-2 border-t border-slate-100 bg-[#FAFBFC]">
+                  <Pagination
+                    currentPage={currentPage}
+                    record_per_page={record_per_page}
+                    setCurrentPage={setCurrentPage}
+                    total_event_list={total_event_list}
+                  />
+                </div>
+              )}
+            </>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Early Delivery Button */}
       {/* {isPrintFormat &&
         <div className="flex justify-start text-left space-x-4">
@@ -472,7 +635,6 @@ const ViewPO = ({ po_name,POTableData,companyDropdown }: Props) => {
       )}
 
     </div>
-<Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
 </>
   );
 };

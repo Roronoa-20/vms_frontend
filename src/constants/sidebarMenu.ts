@@ -82,8 +82,8 @@ export const sidebarMenu: SidebarItem[] = [
   },
   {
     logo: "/sidebar-assests/view-grn.svg",
-    name: "View Payment",
-    href: "/view-payment-requisition",
+    name: "Payment",
+    href: "/raise-advance-payment-list",
     children: []
   },
   {

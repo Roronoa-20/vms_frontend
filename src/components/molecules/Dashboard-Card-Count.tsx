@@ -464,7 +464,7 @@ const DashboardCards = ({ ...Props }: Props) => {
               {/* {item.name === "Dispatch Details" && <DashboardDispatchVendorsTable dashboardTableData={Props.dashboardPOTableData} />} */}
               {item.name === "Purchase & Ongoing Orders" && (
                 <PurchaseAndOngoingOrders
-                  dashboardPOTableData={Props.dashboardPOTableData}
+                  // dashboardPOTableData={Props.dashboardPOTableData}
                   companyDropdown={Props?.companyDropdown}
                 />
               )}
