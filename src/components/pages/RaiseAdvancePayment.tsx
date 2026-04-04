@@ -7,10 +7,9 @@ import { PaymentRequestDetails } from '@/src/types/advancePayment/advancePayment
 
 interface Props {
     refno: string;
-    po_no: string;
 }
 
-const RaiseAdvancePayment = async ({ refno, po_no }: Props) => {
+const RaiseAdvancePayment = async ({ refno }: Props) => {
 
     const cookieStore = cookies();
     const cookieHeaderString = cookieStore.toString();
@@ -19,14 +18,13 @@ const RaiseAdvancePayment = async ({ refno, po_no }: Props) => {
     try {
         const res = await getPaymentRequestDetails(refno, cookieHeaderString);
         paymentDetails = res?.data;
-        po_no = paymentDetails?.po_no;
     } catch (error) {
         console.error("Error fetching payment request details:", error);
     }
 
     return (
         <div className="p-4 space-y-5">
-            <AdvancePaymentBasicDetails paymentDetails={paymentDetails} refno={refno} po_no={po_no} />
+            <AdvancePaymentBasicDetails paymentDetails={paymentDetails} refno={refno} po_no={paymentDetails?.po_no} />
             <AdvancePaymentItemsTable paymentDetails={paymentDetails} refno={refno} />
         </div>
     )

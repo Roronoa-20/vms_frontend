@@ -70,7 +70,7 @@ const AdvancePaymentBasicDetails = ({ paymentDetails, refno, po_no }: Props) => 
                         <div className="flex items-center gap-2 flex-wrap justify-end sm:justify-end sm:ml-auto">
                             {refno && (
                                 <Link
-                                    href={`/advance-payment-history?refno=${encodeURIComponent(refno)}&po_no=${encodeURIComponent(po_no)}`}
+                                    href={`/advance-payment-history?refno=${encodeURIComponent(refno)}&po_no=${encodeURIComponent(po_no ?? paymentDetails?.po_no ?? '')}`}
                                     className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-[#475569] shadow-sm transition-colors hover:border-[#4F6BED]/40 hover:bg-[#F8FAFF] hover:text-[#4F6BED]"
                                 >
                                     <History className="h-3.5 w-3.5" />
