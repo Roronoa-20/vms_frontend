@@ -59,3 +59,8 @@ export interface MaterialRequestListResponse {
     pagination: Pagination;
   };
 }
+export interface TableFilters {
+  search?: string;
+  company_name?: string;
+  approval_status?: string;
+}
