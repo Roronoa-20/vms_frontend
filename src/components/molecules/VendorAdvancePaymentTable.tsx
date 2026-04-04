@@ -137,7 +137,7 @@ const VendorAdvancePaymentTable = () => {
                                 </div>
                             )}
                             <div className="overflow-x-auto">
-                                <Table className="table-fixed min-w-[1000px] w-full">
+                                <Table className="min-w-[1000px] w-full">
                                     <TableHeader>
                                         <TableRow className="bg-[#F8FAFC] hover:bg-[#F8FAFC] border-b border-slate-200">
                                             <TableHead className="w-11 text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-2">

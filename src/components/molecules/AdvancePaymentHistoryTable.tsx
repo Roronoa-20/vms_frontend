@@ -105,7 +105,7 @@ const AdvancePaymentHistoryTable = ({ records = [], refno }: Props) => {
                         <Table>
                             <TableHeader>
                                 <TableRow className="bg-[#F8FAFC] hover:bg-[#F8FAFC] border-b border-slate-200">
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-3 w-12">Sr. No.</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-3 w-20">Sr. No.</TableHead>
                                     <TableHead className="text-left text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-3 text-nowrap">Item</TableHead>
                                     <TableHead className="text-left text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-3 text-nowrap">Payment Type</TableHead>
                                     <TableHead className="text-right text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-9 px-3 text-nowrap">Pay %</TableHead>

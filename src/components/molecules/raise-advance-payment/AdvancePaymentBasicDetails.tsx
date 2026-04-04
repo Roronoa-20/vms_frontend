@@ -92,14 +92,14 @@ const AdvancePaymentBasicDetails = ({ paymentDetails, refno, po_no }: Props) => 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-4">
                         <DetailField icon={FileText} label="PO Number" value={paymentDetails?.po_no} />
                         <DetailField icon={CalendarDays} label="PO Date" value={paymentDetails?.po_date} />
-                        <DetailField icon={Hash} label="Vendor Code" value={paymentDetails?.purchase_details?.vendor_code} />
-                        <DetailField icon={UserCircle} label="Vendor Name" value={paymentDetails?.vendor_name} />
-                        <DetailField icon={ShoppingCart} label="Purchase Group" value={paymentDetails?.purchase_details?.purchase_group_name} />
-                        <DetailField icon={Users} label="Contact Person" value={paymentDetails?.purchase_details?.contact_person} />
-                        <DetailField icon={IndianRupee} label="Total Amount" value={paymentDetails?.total_amt ? `${paymentDetails.total_amt} ${paymentDetails.currency || ''}` : undefined} />
-                        <DetailField icon={CalendarDays} label="Request Date" value={paymentDetails?.payment_req_date} />
                         <DetailField icon={Building2} label="Company" value={paymentDetails?.company} />
-                        <DetailField icon={ClipboardList} label="Purchase Team" value={paymentDetails?.purchase_team} />
+                        {/* <DetailField icon={Hash} label="Vendor Code" value={paymentDetails?.purchase_details?.vendor_code} /> */}
+                        <DetailField icon={UserCircle} label="Vendor Name" value={`${paymentDetails?.vendor_name} (${paymentDetails?.purchase_details?.vendor_code})`} />
+                        {/* <DetailField icon={ShoppingCart} label="Purchase Group" value={paymentDetails?.purchase_details?.purchase_group_name} /> */}
+                        <DetailField icon={ClipboardList} label="Purchase Team" value={`${paymentDetails?.purchase_team} (${paymentDetails?.purchase_details?.purchase_group_name})`} />
+                        <DetailField icon={Users} label="Contact Person" value={paymentDetails?.purchase_details?.contact_person} />
+                        <DetailField icon={IndianRupee} label="Total PO Amount" value={paymentDetails?.total_amt ? `${paymentDetails.total_amt} ${paymentDetails.currency || ''}` : undefined} />
+                        <DetailField icon={CalendarDays} label="Request Date" value={paymentDetails?.payment_req_date} />
                     </div>
                 </CardContent>
             </Card>

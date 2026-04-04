@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import {
     FileText, CalendarDays, Hash, UserCircle, ShoppingCart, Users,
     IndianRupee, CreditCard, CheckCircle2, Package,
-    Loader2, Upload, MessageSquare, ClipboardList
+    Loader2, Upload, MessageSquare, ClipboardList, Building2
 } from 'lucide-react'
 
 interface Props {
@@ -254,9 +254,11 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-4">
                         <DetailField icon={FileText} label="PO Number" value={poDetails?.po_no} />
                         <DetailField icon={CalendarDays} label="PO Date" value={poDetails?.po_date} />
-                        <DetailField icon={Hash} label="Vendor Code" value={poDetails?.vendor_code} />
-                        <DetailField icon={UserCircle} label="Vendor Name" value={poDetails?.vendor_name} />
-                        <DetailField icon={ShoppingCart} label="Purchase Group" value={poDetails?.purchase_grp_name} />
+                        <DetailField icon={Building2} label="Company" value={poDetails?.company} />
+                        {/* <DetailField icon={Hash} label="Vendor Code" value={poDetails?.vendor_code} /> */}
+                        <DetailField icon={UserCircle} label="Vendor Name" value={`${poDetails?.vendor_name} (${poDetails?.vendor_code})`} />
+                        {/* <DetailField icon={ShoppingCart} label="Purchase Group" value={poDetails?.purchase_grp_name} /> */}
+                        <DetailField icon={ClipboardList} label="Purchase Team" value={`${poDetails?.purchase_team} (${poDetails?.purchase_grp_name})`} />
                         <DetailField icon={Users} label="Contact Person" value={poDetails?.purchase_person} />
                         <DetailField icon={IndianRupee} label="Total Value" value={poDetails?.total_value} />
                         <DetailField icon={CreditCard} label="Terms of Payment" value={poDetails?.payment_terms_name} />
