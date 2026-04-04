@@ -10,24 +10,62 @@ interface MaterialRequesterDetailsFormProps {
   form: UseFormReturn<any>;
   onSubmit?: () => void;
   MaterialOnboardingDetails?: MaterialRegistrationFormData;
+  MaterialDetails?: any;
 }
 
-const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> = ({ form, MaterialOnboardingDetails }) => {
-  
+const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> = ({ form, MaterialOnboardingDetails, MaterialDetails }) => {
+
   useEffect(() => {
-    if (MaterialOnboardingDetails) {
-      const d = MaterialOnboardingDetails;
-      form.setValue("request_date", d.request_date || "");
-      form.setValue("requested_by", d.requested_by || "");
-      form.setValue("company", d.material_company_name || "");
-      form.setValue("department", d.department || "");
-      form.setValue("sub_department", d.sub_department || "");
-      form.setValue("hod", d.hod || "");
-      form.setValue("immediate_reporting_head", d.immediate_reporting_head || "");
-      form.setValue("contact_information_email", d.contact_information_email || "");
-      form.setValue("contact_information_phone", d.contact_information_phone || "");
+    const listData = MaterialOnboardingDetails;
+    // Flexibility for different API response structures
+    const fullData = MaterialDetails?.requestor_master || 
+                    (MaterialDetails?.doctype === "Requestor Master" ? MaterialDetails : null) || 
+                    MaterialDetails;
+
+    console.log("Requestor Data Resolved:", fullData);
+
+    // Helper to get value from either source, prioritizing fullData (detailed record)
+    const getValue = (field: string, fallbacks: string[] = []) => {
+      // Check primary field in fullData
+      if (fullData?.[field]) return fullData[field];
+      
+      // Check fallbacks in fullData
+      for (const f of fallbacks) {
+        if (fullData?.[f]) return fullData[f];
+      }
+
+      // Check primary field in listData
+      if (listData?.[field]) return listData[field];
+
+      // Check fallbacks in listData
+      for (const f of fallbacks) {
+        if (listData?.[f]) return listData[f];
+      }
+
+      return "";
+    };
+
+    if (listData || fullData) {
+      form.setValue("request_date", getValue("request_date") || "");
+      form.setValue("requested_by", getValue("requested_by", ["requested_by_name"]) || "");
+
+      // Company fallback logic
+      const companyVal = getValue("requestor_company", [
+        "material_company_name",
+        "requestor_company_name",
+        "company_name_display",
+        "company_name"
+      ]) || MaterialDetails?.material_request_item?.company_name_display || "";
+      form.setValue("company", companyVal);
+
+      form.setValue("department", getValue("requestor_department", ["department"]) || "");
+      form.setValue("sub_department", getValue("sub_department") || "");
+      form.setValue("hod", getValue("requestor_hod", ["hod"]) || "");
+      form.setValue("immediate_reporting_head", getValue("immediate_reporting_head") || "");
+      form.setValue("contact_information_email", getValue("contact_information_email", ["requestor_email"]) || "");
+      form.setValue("contact_information_phone", getValue("contact_information_phone", ["requestor_phone"]) || "");
     }
-  }, [MaterialOnboardingDetails, form]);
+  }, [MaterialOnboardingDetails, MaterialDetails, form]);
 
 
   return (

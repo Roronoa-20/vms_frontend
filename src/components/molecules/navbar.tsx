@@ -66,7 +66,7 @@ const Navbar = () => {
         >
           {heading}
         </h1>
-        {status && (
+        {status && pathname === "/pr-request" && (
           <span className={`text-[14px] font-semibold px-3 py-1 rounded-full ${
             status.toLowerCase().includes("draft") ? "bg-gray-100 text-gray-600" :
             status.toLowerCase().includes("awaiting") ? "bg-yellow-100 text-yellow-700" :

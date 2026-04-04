@@ -59,4 +59,5 @@ export const NavbarConstant: Record<string, string> = {
     "/raise-advance-payment-list":"Raise Advance Payment List",
     "/raise-advance-payment":"Raise Advance Payment",
     "/advance-payment-history":"Advance Payment History",
+    "/vendor-asa-list": "ASA List"
 }

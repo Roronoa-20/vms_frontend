@@ -737,7 +737,7 @@ const AssetPR = (props: Props) => {
           headerText="SubItems"
           classname="md:max-w-[1300px]"
         >
-          <Table className=" max-h-40 overflow-y-scroll border border-black/20">
+          <Table className=" max-h-36 overflow-y-scroll border border-black/20">
             <TableHeader className="text-center">
               <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
                 <TableHead className="text-center w-[50px]">Sr No.</TableHead>

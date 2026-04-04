@@ -69,6 +69,7 @@ export default function MaterialFormSections({
             <>
                 <RequesterDetails
                     MaterialOnboardingDetails={props.MaterialOnboardingDetails}
+                    MaterialDetails={props.MaterialDetails}
                     form={props.form}
                 />
 

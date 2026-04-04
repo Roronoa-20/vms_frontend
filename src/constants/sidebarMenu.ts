@@ -355,7 +355,7 @@ export const VendorsidebarMenu: SidebarItem[] = [
   {
     logo: "/sidebar-assests/view-pr.svg",
     name: "ASA Form",
-    href: "/asa-form",
+    href: "/vendor-asa-list",
     children: []
   },
 ];

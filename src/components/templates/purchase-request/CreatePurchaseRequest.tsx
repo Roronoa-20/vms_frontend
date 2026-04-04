@@ -99,7 +99,7 @@ const CreatePurchaseRequest = (props: Props) => {
 
     createPurchaseReqisition(body)
       .then((res) => {
-        alert(res?.message?.message);
+        // alert(res?.message?.message);
         if (nextLoaderRef?.current) {
           nextLoaderRef.current.className = "hidden";
         }

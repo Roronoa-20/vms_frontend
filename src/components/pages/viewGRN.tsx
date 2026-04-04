@@ -41,11 +41,13 @@ const ViewGRNPage = async () => {
   }
 
   return (
-    <ViewGRNForm
-      GRNData={GRNData}
-      user={user}
-      companyDropdown={companyDropdown}
-    />
+    <div className="bg-gray-100 min-h-screen p-3">
+      <ViewGRNForm
+        GRNData={GRNData}
+        user={user}
+        companyDropdown={companyDropdown}
+      />
+    </div>
   );
 };
 
