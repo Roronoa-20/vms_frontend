@@ -1,18 +1,18 @@
 "use client"
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../atoms/table'
 import { Button } from '../atoms/button'
 import Pagination from '../molecules/Pagination'
 import { VendorPoDetailsType } from '@/src/types/view-po-details/poDetailsType'
-import { useRouter } from 'next/navigation'
 import PopUp from '../molecules/PopUp'
+import { BackButton } from '@/src/components/atoms/BackButton'
 import { Input } from '../atoms/input'
 import { acknowledgePo, fetchPoDetails as fetchPoDetailsApi, raiseAdvanceRequest } from '@/src/services/purchaseOrder/purchaseOrder.services'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
     FileText, CalendarDays, Hash, UserCircle, ShoppingCart, Users,
-    IndianRupee, CreditCard, ArrowLeft, CheckCircle2, Package,
+    IndianRupee, CreditCard, CheckCircle2, Package,
     Loader2, Upload, MessageSquare, ClipboardList
 } from 'lucide-react'
 
@@ -30,19 +30,18 @@ const statusColor = (status?: string) => {
 }
 
 const DetailField = ({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value?: string | number | null }) => (
-    <div className="flex items-start gap-3 min-w-0">
-        <div className="mt-0.5 flex-shrink-0 w-8 h-8 rounded-lg bg-[#EEF2FF] flex items-center justify-center">
-            <Icon className="w-4 h-4 text-[#4F6BED]" />
+    <div className="flex items-start gap-2.5 min-w-0">
+        <div className="mt-0.5 flex-shrink-0 w-7 h-7 rounded-md bg-[#EEF2FF] flex items-center justify-center">
+            <Icon className="w-3.5 h-3.5 text-[#4F6BED]" />
         </div>
         <div className="min-w-0">
-            <p className="text-[11px] font-medium text-[#94A3B8] uppercase tracking-wider leading-none">{label}</p>
-            <p className="text-sm font-semibold text-[#1E293B] mt-1 truncate leading-snug">{value ?? '—'}</p>
+            <p className="text-[10px] font-medium text-[#94A3B8] uppercase tracking-wider leading-none">{label}</p>
+            <p className="text-xs font-semibold text-[#1E293B] mt-0.5 truncate leading-snug">{value ?? '—'}</p>
         </div>
     </div>
 )
 
 const ViewVendorPoDetails = ({ poname }: Props) => {
-    const router = useRouter();
     const [poDetails, setPoDetails] = useState<VendorPoDetailsType["data"] | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isDialog, setIsDialog] = useState(false);
@@ -62,13 +61,7 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
     const [record_per_page] = useState<number>(10);
     const [currentPage, setCurrentPage] = useState<number>(1);
 
-    useEffect(() => {
-        if (poname) {
-            fetchPoDetails();
-        }
-    }, [poname]);
-
-    const fetchPoDetails = async () => {
+    const fetchPoDetails = useCallback(async () => {
         try {
             setIsLoading(true);
             const res = await fetchPoDetailsApi(poname);
@@ -79,7 +72,16 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [poname]);
+
+    useEffect(() => {
+        if (poname) {
+            fetchPoDetails();
+        } else {
+            setIsLoading(false);
+            setPoDetails(null);
+        }
+    }, [poname, fetchPoDetails]);
 
     const handleAcknowledge = async () => {
         try {
@@ -89,9 +91,10 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
             setIsSubmitting(false);
             await fetchPoDetails();
             alert(res?.message || "Acknowledged successfully");
-        } catch (err: any) {
+        } catch (err: unknown) {
             setIsSubmitting(false);
-            alert(err?.message || "Failed to acknowledge PO");
+            const message = err instanceof Error ? err.message : "Failed to acknowledge PO";
+            alert(message);
         }
     };
 
@@ -141,9 +144,10 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
             setIsSubmitting(false);
             await fetchPoDetails();
             alert(res?.message || "Advance request raised successfully");
-        } catch (err: any) {
+        } catch (err: unknown) {
             setIsSubmitting(false);
-            alert(err?.message || "Failed to raise advance request");
+            const message = err instanceof Error ? err.message : "Failed to raise advance request";
+            alert(message);
         }
     };
 
@@ -171,6 +175,9 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
     const selectedItemsList = poDetails?.items?.filter((_, index) => selectedItems.has(index)) || [];
     const totalAmount = selectedItemsList.reduce((sum, item) => sum + (Number(item.quantity) * Number(item.rate)), 0);
 
+    const itemStart = (currentPage - 1) * record_per_page;
+    const paginatedItems = poDetails?.items?.slice(itemStart, itemStart + record_per_page) ?? [];
+
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
@@ -183,8 +190,23 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
         );
     }
 
+    if (!poname) {
+        return (
+            <div className="p-4 max-w-[1600px] mx-auto">
+                <div className="flex flex-col items-center justify-center min-h-[50vh] gap-3 text-center">
+                    <Package className="w-10 h-10 text-slate-300" />
+                    <p className="text-sm font-semibold text-[#475569]">No purchase order selected</p>
+                    <p className="text-xs text-[#94A3B8] max-w-sm">Open this page from the vendor PO list and choose View on a row.</p>
+                    <div className="pt-2">
+                        <BackButton />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="p-4 space-y-5">
+        <div className="p-4 space-y-4 max-w-[1600px] mx-auto">
             {isSubmitting && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
                     <div className="flex flex-col items-center gap-3 bg-white rounded-2xl px-8 py-6 shadow-xl">
@@ -197,29 +219,39 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
 
             {/* Basic PO Details */}
             <Card className="shadow-sm border-slate-200">
-                <CardHeader className="pb-4 border-b border-slate-100">
-                    <div className="flex items-center justify-between flex-wrap gap-3">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#4F6BED] to-[#7C93F5] flex items-center justify-center shadow-sm">
-                                <FileText className="w-5 h-5 text-white" />
+                <CardHeader className="py-3 px-4 border-b border-slate-100 bg-gradient-to-r from-[#F8FAFC] to-white">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex items-center gap-3 min-w-0">
+                            <div className="flex-shrink-0">
+                                <BackButton />
                             </div>
-                            <div>
-                                <CardTitle className="text-lg font-bold text-[#0F172A] tracking-tight">Purchase Order Details</CardTitle>
-                                {poDetails?.po_no && <p className="text-xs text-[#94A3B8] mt-0.5 font-medium tracking-wide">PO: {poDetails.po_no}</p>}
+                            <div className="flex items-center gap-2.5 min-w-0">
+                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#4F6BED] to-[#7C93F5] flex items-center justify-center shadow-sm flex-shrink-0">
+                                    <FileText className="w-4 h-4 text-white" />
+                                </div>
+                                <div className="min-w-0">
+                                    <CardTitle className="text-sm font-bold text-[#0F172A] tracking-tight">Purchase Order Details</CardTitle>
+                                    {poDetails?.po_no && (
+                                        <p className="text-[11px] text-[#94A3B8] mt-0.5 font-medium tracking-wide leading-none">PO: {poDetails.po_no}</p>
+                                    )}
+                                </div>
                             </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Badge variant="outline" className={`text-[11px] font-semibold px-3 py-1 tracking-wide ${poDetails?.po_ack_by_vendor === 1 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
+                        <div className="flex items-center gap-2 flex-wrap justify-end sm:ml-auto">
+                            <Badge
+                                variant="outline"
+                                className={`text-[10px] font-semibold px-2.5 py-0.5 tracking-wide ${poDetails?.po_ack_by_vendor === 1 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'}`}
+                            >
                                 {poDetails?.can_acknowledge === 1 ? 'Not Acknowledged' : 'Acknowledged'}
                             </Badge>
-                            <Badge variant="outline" className={`text-[11px] font-semibold px-3 py-1 tracking-wide ${statusColor(poDetails?.status)}`}>
+                            <Badge variant="outline" className={`text-[10px] font-semibold px-2.5 py-0.5 tracking-wide ${statusColor(poDetails?.status)}`}>
                                 {poDetails?.status || 'Unknown'}
                             </Badge>
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent className="pt-5">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-5">
+                <CardContent className="pt-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-4">
                         <DetailField icon={FileText} label="PO Number" value={poDetails?.po_no} />
                         <DetailField icon={CalendarDays} label="PO Date" value={poDetails?.po_date} />
                         <DetailField icon={Hash} label="Vendor Code" value={poDetails?.vendor_code} />
@@ -277,9 +309,11 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                             </TableHeader>
                             <TableBody>
                                 {poDetails?.items && poDetails.items.length > 0 ? (
-                                    poDetails.items.map((item, index) => (
+                                    paginatedItems.map((item, sliceIndex) => {
+                                        const index = itemStart + sliceIndex;
+                                        return (
                                         <TableRow
-                                            key={index}
+                                            key={item?.name ?? index}
                                             className={`hover:bg-slate-50 transition-colors border-b border-slate-100 cursor-pointer ${selectedItems.has(index) ? 'bg-[#F0F4FF]' : ''}`}
                                             onClick={() => handleSelectItem(index)}
                                         >
@@ -292,7 +326,7 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                                                 />
                                             </TableCell>
                                             <TableCell className="text-center text-xs text-[#64748B] tabular-nums py-1.5 px-2">
-                                                {(currentPage - 1) * record_per_page + index + 1}
+                                                {index + 1}
                                             </TableCell>
                                             <TableCell className="text-center text-nowrap text-xs font-semibold text-[#0F172A] py-1.5 px-2">
                                                 {item?.material_code}
@@ -328,7 +362,8 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                                                 {item?.total_advance_requested}
                                             </TableCell>
                                         </TableRow>
-                                    ))
+                                        );
+                                    })
                                 ) : (
                                     <TableRow>
                                         <TableCell colSpan={13} className="text-center py-8">
@@ -343,34 +378,28 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                         </Table>
                     </div>
                     {poDetails?.items && poDetails.items.length > 0 && (
-                        <div className="px-4 pb-2 pt-1">
+                        <div className="px-3 py-2 border-t border-slate-100 bg-[#FAFBFC]">
                             <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
                         </div>
                     )}
                 </CardContent>
             </Card>
 
-            {/* Action Buttons */}
-            <Card className="shadow-sm border-slate-200">
-                <CardContent className="py-4">
-                    <div className="flex items-center justify-between">
-                        <Button
-                            variant={"backbtn"}
-                            size={"backbtnsize"}
-                            className="px-5 rounded-xl flex items-center gap-2 border-slate-200 text-[#475569] hover:bg-slate-50 hover:border-slate-300 shadow-sm transition-colors"
-                            onClick={() => { router.back() }}
-                        >
-                            <ArrowLeft className="w-4 h-4" />
-                            Back
-                        </Button>
-                        <div className="flex items-center gap-3">
-                            {poDetails?.can_raise_advance == 1 && (
+            {/* Actions */}
+            {(poDetails?.can_raise_advance === 1 || poDetails?.can_acknowledge === 1) && (
+                <Card className="shadow-sm border-slate-200">
+                    <CardContent className="py-3 px-4">
+                        <div className="flex items-center justify-end gap-3 flex-wrap">
+                            {poDetails?.can_raise_advance === 1 && (
                                 <Button
                                     variant={"backbtn"}
                                     size={"backbtnsize"}
-                                    className="px-6 rounded-xl flex items-center gap-2 border-[#4F6BED]/30 text-[#4F6BED] hover:bg-[#EEF2FF] hover:border-[#4F6BED]/50 shadow-sm transition-colors"
+                                    className="px-5 rounded-xl flex items-center gap-2 border-[#4F6BED]/30 text-[#4F6BED] hover:bg-[#EEF2FF] hover:border-[#4F6BED]/50 shadow-sm transition-colors text-sm"
                                     onClick={() => {
-                                        if (selectedItems.size === 0) { alert("Please select at least 1 line item"); return; }
+                                        if (selectedItems.size === 0) {
+                                            alert("Please select at least 1 line item");
+                                            return;
+                                        }
                                         setAdvanceCurrentPage(1);
                                         setIsAdvanceDialog(true);
                                     }}
@@ -379,11 +408,11 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                                     Raise Advance
                                 </Button>
                             )}
-                            {poDetails?.can_acknowledge == 1 && (
+                            {poDetails?.can_acknowledge === 1 && (
                                 <Button
                                     variant={"nextbtn"}
                                     size={"nextbtnsize"}
-                                    className="px-6 rounded-xl flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-colors"
+                                    className="px-5 rounded-xl flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-colors text-sm"
                                     onClick={() => setIsDialog(true)}
                                 >
                                     <CheckCircle2 className="w-4 h-4" />
@@ -391,9 +420,9 @@ const ViewVendorPoDetails = ({ poname }: Props) => {
                                 </Button>
                             )}
                         </div>
-                    </div>
-                </CardContent>
-            </Card>
+                    </CardContent>
+                </Card>
+            )}
 
             {/* Acknowledge PO Dialog */}
             {isDialog && (

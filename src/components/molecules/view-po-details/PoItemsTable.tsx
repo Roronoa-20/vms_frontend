@@ -11,7 +11,7 @@ import API_END_POINTS from '@/src/services/apiEndPoints'
 import { sendPoConfirmationEmail } from '@/src/services/purchaseOrder/purchaseOrder.services'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, Send, Package } from 'lucide-react'
+import { Send, Package } from 'lucide-react'
 
 
 interface Props {
@@ -125,80 +125,80 @@ const PoItemsTable = ({ POTableData, poName, po_mail_sent }: Props) => {
     return (
         <div className="space-y-5">
             <Card className="shadow-sm border-slate-200">
-                <CardHeader className="pb-4 border-b border-slate-100">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center shadow-sm">
-                            <Package className="w-5 h-5 text-white" />
+                <CardHeader className="py-3 px-4 border-b border-slate-100">
+                    <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#F59E0B] to-[#F97316] flex items-center justify-center shadow-sm">
+                            <Package className="w-4 h-4 text-white" />
                         </div>
                         <div>
-                            <CardTitle className="text-lg font-bold text-[#0F172A] tracking-tight">PO Items</CardTitle>
-                            <p className="text-xs text-[#94A3B8] mt-0.5 font-medium">{POTableData?.length || 0} item{(POTableData?.length || 0) !== 1 ? 's' : ''} in this order</p>
+                            <CardTitle className="text-sm font-bold text-[#0F172A] tracking-tight">PO Items</CardTitle>
+                            <p className="text-[11px] text-[#94A3B8] mt-0.5 font-medium leading-none">{POTableData?.length || 0} item{(POTableData?.length || 0) !== 1 ? 's' : ''} in this order</p>
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent className="pt-4 px-0">
+                <CardContent className="pt-0 px-0">
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
-                                <TableRow className="bg-[#F8FAFC] text-[13px] hover:bg-[#F8FAFC] border-b border-slate-200">
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider">Sr No.</TableHead>
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider">Product Name</TableHead>
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider">Material Code</TableHead>
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider text-nowrap">Description</TableHead>
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider">HSN Code</TableHead>
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider">UOM</TableHead>
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider text-nowrap">Quantity</TableHead>
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider text-nowrap">Rate</TableHead>
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider text-nowrap">Total Amount</TableHead>
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider text-nowrap">Schedule Date</TableHead>
-                                    <TableHead className="text-center text-[#64748B] font-semibold text-xs uppercase tracking-wider text-nowrap">Schedule Qty</TableHead>
+                                <TableRow className="bg-[#F8FAFC] hover:bg-[#F8FAFC] border-b border-slate-200">
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Sr.</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Product Name</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Material Code</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Description</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">HSN Code</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">UOM</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Qty</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Rate</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Total Amt</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Schedule Date</TableHead>
+                                    <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">Schedule Qty</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {POTableData && POTableData.length > 0 ? (
                                     POTableData.map((item, index) => (
                                         <TableRow key={index} className="hover:bg-slate-50 transition-colors border-b border-slate-100">
-                                            <TableCell className="text-center text-sm text-[#64748B] tabular-nums">
+                                            <TableCell className="text-center text-xs text-[#64748B] tabular-nums py-2 px-2">
                                                 {(currentPage - 1) * record_per_page + index + 1}
                                             </TableCell>
-                                            <TableCell className="text-center text-nowrap text-sm text-[#475569]">
+                                            <TableCell className="text-center text-nowrap text-xs text-[#475569] py-2 px-2">
                                                 {item?.product_name || "—"}
                                             </TableCell>
-                                            <TableCell className="text-center text-nowrap text-sm font-semibold text-[#0F172A]">
+                                            <TableCell className="text-center text-nowrap text-xs font-semibold text-[#0F172A] py-2 px-2">
                                                 {item?.material_code}
                                             </TableCell>
-                                            <TableCell className="text-center text-nowrap text-sm text-[#475569]">
+                                            <TableCell className="text-center text-nowrap text-xs text-[#475569] py-2 px-2">
                                                 {item?.description || "—"}
                                             </TableCell>
-                                            <TableCell className="text-center text-nowrap text-sm text-[#64748B]">
+                                            <TableCell className="text-center text-nowrap text-xs text-[#64748B] py-2 px-2">
                                                 {item?.hsn_code}
                                             </TableCell>
-                                            <TableCell className="text-center text-nowrap text-sm text-[#64748B]">
+                                            <TableCell className="text-center text-nowrap text-xs text-[#64748B] py-2 px-2">
                                                 {item?.uom}
                                             </TableCell>
-                                            <TableCell className="text-center text-nowrap text-sm font-semibold text-[#0F172A] tabular-nums">
+                                            <TableCell className="text-center text-nowrap text-xs font-semibold text-[#0F172A] tabular-nums py-2 px-2">
                                                 {item?.quantity}
                                             </TableCell>
-                                            <TableCell className="text-center text-nowrap text-sm text-[#475569] tabular-nums">
+                                            <TableCell className="text-center text-nowrap text-xs text-[#475569] tabular-nums py-2 px-2">
                                                 {item?.rate}
                                             </TableCell>
-                                            <TableCell className="text-center text-nowrap text-sm font-semibold text-emerald-600 tabular-nums">
+                                            <TableCell className="text-center text-nowrap text-xs font-semibold text-emerald-600 tabular-nums py-2 px-2">
                                                 {item?.total_amount}
                                             </TableCell>
-                                            <TableCell className="text-center text-nowrap text-sm text-[#64748B]">
+                                            <TableCell className="text-center text-nowrap text-xs text-[#64748B] py-2 px-2">
                                                 {item?.schedule_date || "—"}
                                             </TableCell>
-                                            <TableCell className="text-center text-nowrap text-sm text-[#64748B] tabular-nums">
+                                            <TableCell className="text-center text-nowrap text-xs text-[#64748B] tabular-nums py-2 px-2">
                                                 {item?.schedule_qty || "—"}
                                             </TableCell>
                                         </TableRow>
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={11} className="text-center py-10">
+                                        <TableCell colSpan={11} className="text-center py-8">
                                             <div className="flex flex-col items-center gap-2">
-                                                <Package className="w-10 h-10 text-slate-300" />
-                                                <p className="text-sm font-medium text-[#94A3B8]">No items found</p>
+                                                <Package className="w-8 h-8 text-slate-300" />
+                                                <p className="text-xs font-medium text-[#94A3B8]">No items found</p>
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -207,72 +207,69 @@ const PoItemsTable = ({ POTableData, poName, po_mail_sent }: Props) => {
                         </Table>
                     </div>
                     {POTableData && POTableData.length > 0 && (
-                        <div className="px-4 pb-3 pt-1">
+                        <div className="px-4 pb-2 pt-1">
                             <Pagination currentPage={currentPage} record_per_page={record_per_page} setCurrentPage={setCurrentPage} total_event_list={total_event_list} />
                         </div>
                     )}
                 </CardContent>
             </Card>
 
-            <Card className="shadow-sm border-slate-200">
-                <CardContent className="py-4">
-                    <div className="flex items-center justify-between">
-                        <Button
-                            variant={"backbtn"}
-                            size={"backbtnsize"}
-                            className="px-5 rounded-xl flex items-center gap-2 border-slate-200 text-[#475569] hover:bg-slate-50 hover:border-slate-300 shadow-sm transition-colors"
-                            onClick={() => { router.back() }}
-                        >
-                            <ArrowLeft className="w-4 h-4" />
-                            Back
-                        </Button>
-                        {!po_mail_sent && (
+            {!po_mail_sent && (
+                <Card className="shadow-sm border-slate-200">
+                    <CardContent className="py-4">
+                        <div className="flex items-center justify-end gap-3 flex-wrap">
                             <Button
                                 variant={"nextbtn"}
                                 size={"nextbtnsize"}
-                                className="px-6 rounded-xl flex items-center gap-2 shadow-sm"
+                                className="px-6 rounded-xl flex items-center gap-2 shadow-sm transition-colors"
                                 onClick={() => { setIsEmailDialog(true) }}
                             >
                                 <Send className="w-4 h-4" />
                                 Send Email
                             </Button>
-                        )}
-                    </div>
-                </CardContent>
-            </Card>
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
 
             {isEmailDialog && (
-                <PopUp handleClose={handleClose} classname="md:max-h-[400px]" headerText="Send Email" isSubmit={true} Submitbutton={handleSubmit}>
-                    <div className="mb-3">
-                        <label className="text-xs font-semibold text-[#475569] pb-2 block uppercase tracking-wider">To</label>
-                        <div className="flex flex-wrap items-center gap-1.5 border border-slate-200 rounded-lg p-2.5 min-h-[42px] bg-white focus-within:border-[#4F6BED] focus-within:ring-2 focus-within:ring-[#4F6BED]/20 transition-all">
-                            {toTags.map((tag, index) => (
-                                <span key={index} className="inline-flex items-center gap-1 bg-[#EEF2FF] text-[#4F6BED] text-xs px-2.5 py-1 rounded-md font-semibold">
-                                    {tag}
-                                    {index !== 0 && (
-                                        <button type="button" onClick={() => removeToTag(index)} className="text-[#4F6BED]/60 hover:text-red-500 text-xs ml-0.5 transition-colors">&times;</button>
-                                    )}
-                                </span>
-                            ))}
-                            <input
-                                type="text"
-                                value={toInput}
-                                onChange={handleToInputChange}
-                                placeholder={toTags.length === 0 ? "Enter email address..." : ""}
-                                className="flex-1 min-w-[120px] outline-none text-sm border-none bg-transparent text-[#334155]"
+                <PopUp handleClose={handleClose} classname="md:max-w-[500px] md:max-h-[400px]" headerText="Send Email" isSubmit={true} Submitbutton={handleSubmit}>
+                    <div className="mt-4 space-y-4">
+                        <div>
+                            <label className="text-sm font-semibold text-[#1E293B] pb-2 block">To</label>
+                            <div className="flex flex-wrap items-center gap-1.5 border border-slate-200 rounded-lg p-2.5 min-h-[42px] bg-white focus-within:border-[#4F6BED] focus-within:ring-2 focus-within:ring-[#4F6BED]/20 transition-all">
+                                {toTags.map((tag, index) => (
+                                    <span key={index} className="inline-flex items-center gap-1 bg-[#EEF2FF] text-[#4F6BED] text-xs px-2.5 py-1 rounded-md font-semibold">
+                                        {tag}
+                                        {index !== 0 && (
+                                            <button type="button" onClick={() => removeToTag(index)} className="text-[#4F6BED]/60 hover:text-red-500 text-xs ml-0.5 transition-colors">&times;</button>
+                                        )}
+                                    </span>
+                                ))}
+                                <input
+                                    type="text"
+                                    value={toInput}
+                                    onChange={handleToInputChange}
+                                    placeholder={toTags.length === 0 ? "Enter email address..." : ""}
+                                    className="flex-1 min-w-[120px] outline-none text-sm border-none bg-transparent text-[#334155]"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="text-sm font-semibold text-[#1E293B] pb-2 block">CC</label>
+                            <MultiSelect
+                                onChange={(value) => handleCcEmailChange(value)}
+                                instanceId="vendor-type-multiselect"
+                                options={ccEmailsList}
+                                isMulti
+                                required
+                                className="text-sm"
+                                styles={{
+                                    control: (base) => ({ ...base, minHeight: "40px", fontSize: "0.875rem", borderRadius: "0.5rem", borderColor: "#e2e8f0" }),
+                                    multiValue: (base) => ({ ...base, fontSize: "0.8125rem" }),
+                                }}
                             />
                         </div>
-                    </div>
-                    <div>
-                        <label className="text-xs font-semibold text-[#475569] pb-2 block uppercase tracking-wider">CC</label>
-                        <MultiSelect
-                            onChange={(value) => handleCcEmailChange(value)}
-                            instanceId="vendor-type-multiselect"
-                            options={ccEmailsList}
-                            isMulti
-                            required
-                            className="text-[14px] text-black"
-                        />
                     </div>
                 </PopUp>
             )}
