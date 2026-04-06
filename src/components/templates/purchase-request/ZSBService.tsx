@@ -31,7 +31,6 @@ import {
   nbItemsType,
   purchaseRequisitionDataType,
   PurchaseRequisitionMaterialDropdownType,
-  purchaseRequisitionPlantDropdownType,
   purchaseRequisitionPurchaseGroupDropdownType,
   purchaseRequisitionUOMType,
   serviceCodeDropdownType,
@@ -62,7 +61,6 @@ import {
   getCostCenterBasedOnCompanyDropdown,
   getGlAccountBasedOnCompanyDropdown,
   getMaterialGroupDropdown,
-  getPurchaseRequisitionPlantBasedOnCompany,
   getPurchaseRequisitionUom,
   getServiceCodeDropdown,
   getShortTextBasedOnServiceCode,
@@ -76,7 +74,6 @@ import { Button } from "../../atoms/button";
 
 type Props = {
   prData?: purchaseRequisitionDataType;
-  plantDropdown: purchaseRequisitionPlantDropdownType[];
   submitLoaderRef: React.RefObject<HTMLSpanElement | null>;
   handlePurchaseRequisitionSubmit: (isAlert: boolean) => void;
 };
@@ -91,9 +88,6 @@ const ServicePR = (props: Props) => {
   const [uomDrop, setUOM] = useState<purchaseRequisitionUOMType>();
   const [isPurchaseGroupDropdown, setIsPurchaseGroupDropdown] = useState(false);
   const [UOMDropdown, setUOMDropdown] = useState<uomType[]>([]);
-  const [plantBasedOnCompanyDropdown, setPlantBasedCompanyDropdown] = useState<
-    purchaseRequisitionPlantDropdownType[]
-  >([]);
   const [materialGroupDropdown, setMaterialGroupDropdown] = useState<
     MaterialGroupDropdownType[]
   >([]);
@@ -126,7 +120,6 @@ const ServicePR = (props: Props) => {
   useEffect(() => {
     fetchUom();
     if (props?.prData?.company) {
-      fetchPlantBAsedOnCompany(props.prData.company);
       fetchGlAccountBasedOnCommpany(props.prData.company);
       fetchCostCenterBasedOnCompany(props.prData.company);
       fetchMatrialGroup(props?.prData?.company as string);
@@ -140,16 +133,6 @@ const ServicePR = (props: Props) => {
     getPurchaseRequisitionUom("")
       .then((res) => {
         setUOMDropdown(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const fetchPlantBAsedOnCompany = (company: string) => {
-    getPurchaseRequisitionPlantBasedOnCompany(company)
-      .then((res) => {
-        setPlantBasedCompanyDropdown(res);
       })
       .catch((err) => {
         console.log(err);
@@ -313,11 +296,6 @@ const ServicePR = (props: Props) => {
       return;
     }
 
-    if (!singleRowData?.plant) {
-      alert("please select plant");
-      return;
-    }
-
     if (!singleRowData?.quantity) {
       alert("please enter quantity");
       return;
@@ -349,7 +327,6 @@ const ServicePR = (props: Props) => {
         purchase_requisition: props?.prData?.name,
         company: props?.prData?.company,
         material_description: singleRowData?.material_description,
-        plant: singleRowData?.plant,
         requisitioner: props?.prData?.name,
         uom: "AU",
         quantity: singleRowData?.quantity,
@@ -457,7 +434,7 @@ const ServicePR = (props: Props) => {
           props?.prData?.can_edit &&
           <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
             let isAlert = true;
-            if (singleRowData?.material_description || singleRowData?.plant || singleRowData?.quantity || singleRowData?.material_group || singleRowData?.cost_center || singleRowData?.gl_account) {
+            if (singleRowData?.material_description || singleRowData?.quantity || singleRowData?.material_group || singleRowData?.cost_center || singleRowData?.gl_account) {
               alert("You have unsaved changes in the table. Do you want to continue without saving?") 
               isAlert = false;
                 return;
@@ -483,7 +460,6 @@ const ServicePR = (props: Props) => {
               <TableHead className="text-center w-[50px]">Sr No.</TableHead>
               <TableHead className="w-[15%]">Material Description</TableHead>
               <TableHead className="w-[8%]">UOM</TableHead>
-              <TableHead className="w-[10%]">Plant</TableHead>
               <TableHead className="w-[8%]">Quantity</TableHead>
               <TableHead className="w-[12%]">Material Group</TableHead>
               <TableHead className="w-[12%]">Cost Center</TableHead>
@@ -502,7 +478,6 @@ const ServicePR = (props: Props) => {
                   {item.material_description}
                 </TableCell>
                 <TableCell className="font-medium">{item.uom}</TableCell>
-                <TableCell className="font-medium">{item.plant}</TableCell>
                 <TableCell className="font-medium">{item.quantity}</TableCell>
                 <TableCell className="font-medium">
                   {item.material_group}
@@ -671,34 +646,6 @@ const ServicePR = (props: Props) => {
                 </TableCell>
                 <TableCell className="font-medium">
                   <h1>AU</h1>
-                </TableCell>
-                <TableCell className="font-medium">
-                  <MultiSelect
-                    options={plantBasedOnCompanyDropdown?.map(item => ({ label: item?.plant_name || item?.name, value: item?.name })) || []}
-                    value={singleRowData?.plant ? { label: plantBasedOnCompanyDropdown?.find(p => p.name === singleRowData.plant)?.plant_name || singleRowData.plant, value: singleRowData.plant } : null}
-                    onChange={(selectedOption: any) => {
-                      setSingleRowData(
-                        (prev) =>
-                          ({ ...prev, plant: selectedOption?.value }) as zsbServiceItemsType,
-                      );
-                      // fetchMatrialGroup(selectedOption?.value);
-                    }}
-                    instanceId="zsbservice-plant-select"
-                    placeholder="Select Plant..."
-                    className="text-[12px] text-black text-left min-w-[150px]"
-                    styles={{
-                      ...multiSelectStyles,
-                      control: (base: any) => ({
-                        ...base,
-                        minHeight: "36px",
-                        borderRadius: "0.5rem",
-                        borderColor: "#e5e7eb",
-                      }),
-                    }}
-                    menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
-                    menuPlacement="auto"
-                    menuPosition="fixed"
-                  />
                 </TableCell>
                 <TableCell className="font-medium">
                   <Input

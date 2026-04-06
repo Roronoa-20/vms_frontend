@@ -29,7 +29,6 @@ import {
   MaterialGroupDropdownType,
   purchaseRequisitionDataType,
   PurchaseRequisitionMaterialDropdownType,
-  purchaseRequisitionPlantDropdownType,
   purchaseRequisitionPurchaseGroupDropdownType,
   purchaseRequisitionUOMType,
   serviceCodeDropdownType,
@@ -53,7 +52,6 @@ import {
   getCostCenterBasedOnCompanyDropdown,
   getGlAccountBasedOnCompanyDropdown,
   getMaterialGroupDropdown,
-  getPurchaseRequisitionPlantBasedOnCompany,
   getPurchaseRequisitionUom,
   getServiceCodeDropdown,
   getShortTextBasedOnServiceCode,
@@ -81,9 +79,6 @@ const AssetPR = (props: Props) => {
   const [uomDrop, setUOM] = useState<purchaseRequisitionUOMType>();
   const [isPurchaseGroupDropdown, setIsPurchaseGroupDropdown] = useState(false);
   const [UOMDropdown, setUOMDropdown] = useState<uomType[]>([]);
-  const [plantBasedOnCompanyDropdown, setPlantBasedCompanyDropdown] = useState<
-    purchaseRequisitionPlantDropdownType[]
-  >([]);
   const [materialGroupDropdown, setMaterialGroupDropdown] = useState<
     MaterialGroupDropdownType[]
   >([]);
@@ -109,9 +104,6 @@ const AssetPR = (props: Props) => {
 
   useEffect(() => {
     fetchUom();
-    if (props?.prData?.company) {
-      fetchPlantBAsedOnCompany(props.prData.company);
-    }
 
     fetchServiceCode();
 
@@ -122,16 +114,6 @@ const AssetPR = (props: Props) => {
     getPurchaseRequisitionUom("")
       .then((res) => {
         setUOMDropdown(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const fetchPlantBAsedOnCompany = (company: string) => {
-    getPurchaseRequisitionPlantBasedOnCompany(company)
-      .then((res) => {
-        setPlantBasedCompanyDropdown(res);
       })
       .catch((err) => {
         console.log(err);
@@ -253,11 +235,6 @@ const AssetPR = (props: Props) => {
       return;
     }
 
-    if (!singleRowData?.plant) {
-      alert("please select plant");
-      return;
-    }
-
     if (!singleRowData?.quantity) {
       alert("please enter quantity");
       return;
@@ -284,7 +261,6 @@ const AssetPR = (props: Props) => {
         purchase_requisition: props?.prData?.name,
         company: props?.prData?.company,
         material_description: singleRowData?.material_description,
-        plant: singleRowData?.plant,
         requisitioner: props?.prData?.name,
         uom: "AU",
         quantity: singleRowData?.quantity,
@@ -390,7 +366,7 @@ const AssetPR = (props: Props) => {
           props?.prData?.can_edit &&
           <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
             let isAlert = true;
-            if (singleRowData?.material_description || singleRowData?.plant || singleRowData?.quantity || singleRowData?.asset_code || singleRowData?.material_group || singleRowData?.short_text) {
+            if (singleRowData?.material_description || singleRowData?.quantity || singleRowData?.asset_code || singleRowData?.material_group || singleRowData?.short_text) {
               if (!confirm("You have unsaved changes in the table. Do you want to continue without saving?")) {
                 return;
               }
@@ -417,7 +393,6 @@ const AssetPR = (props: Props) => {
               <TableHead className="text-center w-[50px]">Sr No.</TableHead>
               <TableHead className="w-[20%] text-center">Material Description</TableHead>
               <TableHead className="w-[10%] text-center">UOM</TableHead>
-              <TableHead className="w-[10%] text-center">Plant</TableHead>
               <TableHead className="w-[10%] text-center">Quantity</TableHead>
               <TableHead className="w-[15%] text-center">Material Group</TableHead>
               <TableHead className="w-[10%] text-center">Asset Code</TableHead>
@@ -435,7 +410,6 @@ const AssetPR = (props: Props) => {
                   {item.material_description}
                 </TableCell>
                 <TableCell className="font-medium text-center">{item.uom}</TableCell>
-                <TableCell className="font-medium text-center">{item.plant}</TableCell>
                 <TableCell className="font-medium text-center">{item.quantity}</TableCell>
                 <TableCell className="font-medium text-center">
                   {item.material_group}
@@ -598,33 +572,6 @@ const AssetPR = (props: Props) => {
                 </TableCell>
                 <TableCell className="font-medium">
                   <h1 className="text-center">AU</h1>
-                </TableCell>
-                <TableCell className="font-medium">
-                  <MultiSelect
-                    options={plantBasedOnCompanyDropdown?.map(item => ({ label: item?.plant_name || item?.name, value: item?.name })) || []}
-                    value={singleRowData?.plant ? { label: plantBasedOnCompanyDropdown?.find(p => p.name === singleRowData.plant)?.plant_name || singleRowData.plant, value: singleRowData.plant } : null}
-                    onChange={(selectedOption: any) => {
-                      setSingleRowData(
-                        (prev) =>
-                          ({ ...prev, plant: selectedOption?.value }) as zsbAssetItemsType,
-                      );
-                    }}
-                    instanceId="zsbasset-plant-select"
-                    placeholder="Select Plant..."
-                    className="text-[12px] text-black text-left min-w-[150px]"
-                    styles={{
-                      ...multiSelectStyles,
-                      control: (base: any) => ({
-                        ...base,
-                        minHeight: "36px",
-                        borderRadius: "0.5rem",
-                        borderColor: "#e5e7eb",
-                      }),
-                    }}
-                    menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
-                    menuPlacement="auto"
-                    menuPosition="fixed"
-                  />
                 </TableCell>
                 <TableCell className="font-medium">
                   <Input

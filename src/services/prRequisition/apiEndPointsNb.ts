@@ -14,6 +14,7 @@ const API_END_POINTS = {
   updatePurchaseRequisitionNBItems: `${url}/api/method/vms.APIs.purchase_api.nb_normal_api.update_nb_normal_item`,
   submitPurchaseRequisition: `${url}/api/method/vms.APIs.purchase_api.vms_pr_api.submit_vms_pr`,
 
+  getMaterialsByPlant: `${url}/api/method/vms.APIs.purchase_api.vms_pr_utility_api.get_materials_by_plant`,
   getPlantByMaterial: `${url}/api/method/vms.APIs.purchase_api.vms_pr_utility_api.get_plant_by_material`,
   getMaterialNameByCode: `${url}/api/method/vms.APIs.purchase_api.vms_pr_utility_api.get_material_name_by_code`,
   //   CAPEX API END POINTS

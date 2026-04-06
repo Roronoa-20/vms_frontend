@@ -140,6 +140,28 @@ export const getPurchaseRequisitionPlantDropdown = async (company: string, cooki
     }
 }
 
+export const getMaterialsByPlant = async (plant: string, search_term?: string, cookie?: string): Promise<any[]> => {
+    try {
+        const response = await fetch(`${API_END_POINTS.getMaterialsByPlant}?plant=${plant}&search_term=${search_term || ""}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': cookie as string
+            },
+            credentials: 'include',
+        });
+        if (response.ok) {
+            return Promise.resolve(response.json()?.then((data) => data?.message?.data));
+        } else {
+            const Response = await response.json();
+            return Promise.reject(Response);
+        }
+    } catch (error) {
+        console.error("Error Fetching Materials By Plant :", error);
+        return Promise.reject("error fetching materials by plant");
+    }
+}
+
 export const getPlantByMaterial = async (material: string, cookie?: string): Promise<any> => {
     try {
         const response = await fetch(`${API_END_POINTS.getPlantByMaterial}?material_code=${material}`, {

@@ -16,12 +16,14 @@ import {
   companyDropdownBasedOnUserType,
   purchaseRequisitionDataType,
   purchaseRequisitionTypeDropdownType,
+  purchaseRequisitionPlantDropdownType,
 } from "@/src/types/prRequisition/prRequisition.types";
 import jsCookie from "js-cookie";
 import { useAuth } from "@/src/context/AuthContext";
 import {
   createPurchaseReqisition,
   getPurchaseReqisitionData,
+  getPurchaseRequisitionPlantDropdown,
 } from "@/src/services/prRequisition/prRequisitionNb.services";
 import { useRouter } from "next/navigation";
 import {
@@ -45,6 +47,7 @@ interface Props {
 type FormType = {
   pr_type: string;
   company: string;
+  plant: string;
   requisitioner_name: string;
   requisition_date: string;
   account_assignment_category: string;
@@ -53,6 +56,7 @@ type FormType = {
 const CreatePurchaseRequest = (props: Props) => {
   const { role, name, designation } = useAuth();
   const [form, setForm] = useState<FormType>({ ...(props.prData as any) });
+  const [plantDropdown, setPlantDropdown] = useState<purchaseRequisitionPlantDropdownType[]>([]);
   const router = useRouter();
   const nextLoaderRef = useRef<HTMLSpanElement>(null);
 
@@ -61,6 +65,19 @@ const CreatePurchaseRequest = (props: Props) => {
       setForm((prev) => ({ ...prev, ...(props.prData as any) }));
     }
   }, [props.prData]);
+
+  React.useEffect(() => {
+    if (form?.company) {
+      const cookie = jsCookie.get("access_token");
+      getPurchaseRequisitionPlantDropdown(form.company, cookie)
+        .then((res) => {
+          setPlantDropdown(res);
+        })
+        .catch((err) => {
+          console.error("Error fetching plant dropdown:", err);
+        });
+    }
+  }, [form?.company]);
 
   const fetchPrData = () => {
     getPurchaseReqisitionData(props?.pr_id as string).then((res) => {
@@ -83,8 +100,15 @@ const CreatePurchaseRequest = (props: Props) => {
       return;
     }
 
-    const body = {
-      ...form,
+    if (!form?.plant) {
+      alert("please select plant");
+      return;
+    }
+
+    const body: any = {
+      pr_type: form.pr_type,
+      company: form.company,
+      plant: form.plant,
       requisitioner_name: name,
       requisition_date: new Date().toISOString().split("T")[0], // current date in YYYY-MM-DD format
     };
@@ -198,6 +222,29 @@ const CreatePurchaseRequest = (props: Props) => {
                 <SelectGroup>
                   {props?.companyDropdown?.map((item) => (
                     <SelectItem key={item?.name} value={item?.name}>{item?.company_name}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-semibold text-[#475569] flex items-center gap-1.5 uppercase tracking-wider">
+              <Building2 className="w-3.5 h-3.5 text-[#94A3B8]" />
+              Plant
+            </label>
+            <Select
+              disabled={!!props?.pr_id || !form?.company}
+              value={form?.plant ?? ""}
+              onValueChange={(value) => { setForm((prev: any) => ({ ...prev, plant: value })); }}
+            >
+              <SelectTrigger className="rounded-lg h-10 border-slate-200 bg-white">
+                <SelectValue placeholder="Select plant" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {plantDropdown?.map((item) => (
+                    <SelectItem key={item?.name} value={item?.plant_code}>{item?.plant_name}</SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>

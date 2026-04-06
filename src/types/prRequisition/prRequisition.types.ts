@@ -56,6 +56,7 @@ export type purchaseRequisitionDataType = {
     is_submitted:number
     pr_type:string,
     company:string,
+    plant:string,
     nb_normal_items:nbItemsType[],
     nb_capex_items:nbCapexItemsType[],
     zsb_asset_items:zsbAssetItemsType[],

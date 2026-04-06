@@ -5,7 +5,7 @@ import CreatePurchaseRequest from '../templates/purchase-request/CreatePurchaseR
 import { Button } from '../atoms/button'
 import NormalPR from '../templates/purchase-request/NormalPR'
 import CapexPR from '../templates/purchase-request/CapexPR'
-import { companyDropdownBasedOnUserType, purchaseRequisitionDataType, PurchaseRequisitionMaterialDropdownType, purchaseRequisitionPlantDropdownType, purchaseRequisitionTypeDropdownType } from '@/src/types/prRequisition/prRequisition.types'
+import { companyDropdownBasedOnUserType, purchaseRequisitionDataType, PurchaseRequisitionMaterialDropdownType, purchaseRequisitionTypeDropdownType } from '@/src/types/prRequisition/prRequisition.types'
 import { getPurchaseReqisitionData, processApprovalAction, submitPurchaseRequisition } from '@/src/services/prRequisition/prRequisitionNb.services'
 import ZSBService from '../templates/purchase-request/ZSBService'
 import ZSBAsset from '../templates/purchase-request/ZSBAsset'
@@ -22,7 +22,6 @@ interface Props {
     prData?: purchaseRequisitionDataType
     pr_id?: string
     materialDropdown: PurchaseRequisitionMaterialDropdownType[] | []
-    plantDropdown: purchaseRequisitionPlantDropdownType[]
 }
 
 enum PurchaseType {
@@ -143,7 +142,7 @@ const PrRequest = (props: Props) => {
 
             {props?.prData?.pr_type === PurchaseType.nbCapex && <CapexPR prData={prData} materialDropdown={props?.materialDropdown} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />}
 
-            {props?.prData?.pr_type === PurchaseType.zsbService && <ZSBService prData={prData} plantDropdown={props?.plantDropdown} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />}
+            {props?.prData?.pr_type === PurchaseType.zsbService && <ZSBService prData={prData} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />}
 
             {props?.prData?.pr_type === PurchaseType.zsbAsset && <ZSBAsset prData={prData} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />}
 
