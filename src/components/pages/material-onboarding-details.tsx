@@ -24,7 +24,7 @@ export default function MaterialOnboardingDetails() {
 
   const [loading, setLoading] = useState(true);
   const [MaterialOnboardingDetails, setMaterialOnboardingDetails] = useState<MaterialRegistrationFormData | null>(null);
-  const [MaterialDetails, setMaterialDetails] = useState<MaterialRequestData[]>([]);
+  const [MaterialDetails, setMaterialDetails] = useState<MaterialRequestData | null>(null);
   const [CompanyJson, setCompanyJson] = useState<Company[]>([]);
   const [PlantJson, setPlantJson] = useState<Plant[]>([]);
   const [DivisionJson, setDivisionJson] = useState<division[]>([]);
@@ -149,7 +149,10 @@ export default function MaterialOnboardingDetails() {
         const detailsData = detailsRes?.data?.message?.data;
 
         if (tableData) setMaterialOnboardingDetails(tableData);
-        if (detailsData) setMaterialDetails(detailsData);
+        if (detailsData) {
+          // If detailsData is an array, take the first item
+          setMaterialDetails(Array.isArray(detailsData) ? detailsData[0] : detailsData);
+        }
 
       } catch (err) {
         console.error("Error fetching material onboarding data:", err);
