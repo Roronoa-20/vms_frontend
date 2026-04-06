@@ -24,7 +24,7 @@ const MaterialOnboarding: React.FC<Props> = ({ companyDropdown }) => {
     try {
       const offset = (page - 1) * recordPerPage;
       const { search, ...restFilters } = currentFilters;
-      
+
       // Clean filters: remove empty strings, null, undefined
       const cleanFilters = Object.fromEntries(
         Object.entries(restFilters).filter(([_, v]) => v !== "" && v !== null && v !== undefined)
@@ -46,7 +46,7 @@ const MaterialOnboarding: React.FC<Props> = ({ companyDropdown }) => {
         url: url,
         method: "GET",
       });
-      
+
       const apiData = response.data?.message;
       setAllData(apiData?.data || []);
       setTotalRecords(apiData?.pagination?.total_count || apiData?.total_count || 0);

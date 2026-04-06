@@ -17,6 +17,7 @@ import {
   EmployeeDetail,
   MaterialRequestData,
 } from "@/src/types/MaterialCodeRequestFormTypes";
+import { CheckCircle } from "lucide-react";
 
 interface MaterialApprovalFormProps {
   form: UseFormReturn<MaterialRegistrationFormData>;
@@ -88,31 +89,32 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({
   }, [MaterialOnboardingDetails, form]);
 
   return (
-    <div className="bg-[#F4F4F6] overflow-hidden">
-      <div className="flex flex-col justify-between bg-white rounded-[8px] p-1">
-        <div className="space-y-1">
-          <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
-            Additional Information & Approvals
+    <div className="bg-transparent">
+      <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-800 border-b border-slate-200 pb-2 mb-2">
+            <CheckCircle className="w-4 h-4 text-[#0C72F5]" />
+            <span>Additional Information & Approvals</span>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Requested By - Name */}
             <FormField
               control={form.control}
               name="requested_by_name"
               render={({ field }: { field: ControllerRenderProps<FieldValues, "requested_by_name"> }) => (
-                <FormItem>
-                  <FormLabel>Requested By - Name</FormLabel>
+                <FormItem className="space-y-1.5">
+                  <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Requested By - Name</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      className="p-3 w-full text-sm placeholder:text-gray-400"
+                      className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed disabled:opacity-50"
                       placeholder="Enter Name"
                       readOnly
                       disabled={role === "Material User"}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-[10px]" />
                 </FormItem>
               )}
             />
@@ -122,30 +124,28 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({
               control={form.control}
               name="requested_by_place"
               render={({ field }: { field: ControllerRenderProps<FieldValues, "requested_by_place"> }) => (
-                <FormItem>
-                  <FormLabel>Requested By - Place</FormLabel>
+                <FormItem className="space-y-1.5">
+                  <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Requested By - Place</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      className="p-3 w-full text-sm placeholder:text-gray-400"
+                      className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700 placeholder:text-slate-400 disabled:opacity-50"
                       placeholder="Enter Place"
                       disabled={role === "Material User"}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-[10px]" />
                 </FormItem>
               )}
             />
-          </div>
 
-          <div className="grid grid-cols-3 gap-4">
             {/* Approved By - Name */}
             <FormField
               control={form.control}
               name="approved_by_name"
               render={({ field }: { field: ControllerRenderProps<FieldValues, "approved_by_name"> }) => (
-                <FormItem>
-                  <FormLabel>Approved By - Name</FormLabel>
+                <FormItem className="space-y-1.5">
+                  <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Approved By - Name</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -153,9 +153,10 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({
                       readOnly
                       disabled={role === "Material User"}
                       onChange={() => { }}
+                      className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed disabled:opacity-50"
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-[10px]" />
                 </FormItem>
               )}
             />
@@ -165,31 +166,31 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({
               control={form.control}
               name="approved_by_place"
               render={({ field }: { field: ControllerRenderProps<FieldValues, "approved_by_place"> }) => (
-                <FormItem>
-                  <FormLabel>Approved By - Place</FormLabel>
+                <FormItem className="space-y-1.5">
+                  <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Approved By - Place</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      className="p-3 w-full text-sm placeholder:text-gray-400"
+                      className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700 placeholder:text-slate-400 disabled:opacity-50"
                       placeholder="Enter Place"
                       disabled={role === "Material User"}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-[10px]" />
                 </FormItem>
               )}
             />
 
             {/* Approval Date */}
-            <div className="space-y-2 col-span-1">
-              <Label htmlFor="approval_date" className="text-sm font-medium text-gray-700">
+            <div className="space-y-1.5">
+              <Label htmlFor="approval_date" className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
                 Approval Date
               </Label>
               <input
                 type="text"
                 id="approval_date"
                 name="approval_date"
-                className="w-full px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-md placeholder:text-[14px]"
+                className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed disabled:opacity-50"
                 readOnly
                 disabled={role === "Material User"}
                 value={

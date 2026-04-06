@@ -8,6 +8,7 @@ import UOMConversionModal from "@/src/components/molecules/material-onboarding-m
 import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
 import { MaterialRegistrationFormData, EmployeeDetail, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, MaterialCategory, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialRequestData, MaterialType, MaterialMaster } from "@/src/types/MaterialCodeRequestFormTypes";
 import { TcompanyNameBasedDropdown } from "@/src/types/types";
+import { ShoppingCart } from "lucide-react";
 
 interface UOMConversionData {
   numerator: string;
@@ -136,22 +137,23 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
   }, [form.watch("numerator_purchase_uom"), form.watch("denominator_purchase_uom"), baseUOM, purchaseUOM]);
 
   return (
-    <div className="bg-[#F4F4F6] overflow-hidden">
-      <div className="flex flex-col justify-between bg-white rounded-[8px] p-1">
-        <div className="space-y-1">
-          <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
-            Purchasing Data
+    <div className="bg-transparent">
+      <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-800 border-b border-slate-200 pb-2 mb-2">
+            <ShoppingCart className="w-4 h-4 text-[#0C72F5]" />
+            <span>Purchasing Data</span>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Purchasing Group */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <FormField
                 control={form.control}
                 name="purchasing_group"
                 key="purchasing_group"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "purchasing_group"> }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
                       Purchasing Group <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
@@ -166,8 +168,8 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                             : ""
                         }
                       >
-                        <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
-                          <SelectValue placeholder="Select Purchasing Group" />
+                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                          <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent className="max-h-60 overflow-y-scroll">
                           {/* Search */}
@@ -181,28 +183,28 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                                   e.stopPropagation();
                                 }
                               }}
-                              placeholder="Search Purchasing Group..."
-                              className="w-full p-2 border border-gray-300 rounded text-sm"
+                              placeholder="Search..."
+                              className="w-full h-8 p-2 border border-slate-200 rounded text-sm"
                             />
                           </div>
 
                           <SelectGroup>
                             {filteredPurchaseGroupOptions?.length > 0 ? (
                               filteredPurchaseGroupOptions.map((pgroup) => (
-                                <SelectItem key={pgroup.name} value={pgroup.name}>
+                                <SelectItem key={pgroup.name} value={pgroup.name} className="text-xs">
                                   {pgroup.description}
                                 </SelectItem>
                               ))
                             ) : (
-                              <div className="px-3 py-2 text-sm text-gray-500">
-                                No matching groups found
+                              <div className="px-3 py-2 text-xs text-slate-500">
+                                No records found
                               </div>
                             )}
                           </SelectGroup>
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-[10px]" />
                   </FormItem>
                 )}
               />
@@ -210,22 +212,22 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
 
             {/* GR Processing Time (conditional) */}
             {!isZCAPMaterial && (
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <FormField
                   control={form.control}
                   name="gr_processing_time"
                   key="gr_processing_time"
                   render={({ field }: { field: ControllerRenderProps<FieldValues, "gr_processing_time"> }) => (
                     <FormItem>
-                      <FormLabel>GR Processing Time</FormLabel>
+                      <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">GR Processing Time</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
-                          className="p-3 w-full text-sm placeholder:text-gray-500"
-                          placeholder="Enter GR Processing Time"
+                          className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700"
+                          placeholder="Enter Time"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-[10px]" />
                     </FormItem>
                   )}
                 />
@@ -233,29 +235,24 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
             )}
 
             {/* Purchase UOM */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <FormField
                 control={form.control}
                 name="purchase_uom"
                 key="purchase_uom"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "purchase_uom"> }) => (
                   <FormItem>
-                    <FormLabel>Purchase UOM</FormLabel>
+                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Purchase UOM</FormLabel>
                     <FormControl>
                       <Select
                         onValueChange={(val) => {
                           field.onChange(val);
                           setPurchaseUOMSearch("");
                         }}
-                        // value={
-                        //   PurchaseUOMOptions.some((opt) => opt.name === field.value)
-                        //     ? field.value
-                        //     : ""
-                        // }
                         value={field.value || ""}
                       >
-                        <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
-                          <SelectValue placeholder="Select Purchase UOM" />
+                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                          <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent className="max-h-60 overflow-y-auto">
                           <div className="px-2 py-1">
@@ -268,55 +265,43 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                                   e.stopPropagation();
                                 }
                               }}
-                              placeholder="Search UOM..."
-                              className="w-full p-2 border border-gray-300 rounded text-sm"
+                              placeholder="Search..."
+                              className="w-full h-8 p-2 border border-slate-200 rounded text-sm"
                             />
                           </div>
                           {PurchaseUOMOptions?.length > 0 ? (
                             PurchaseUOMOptions.map((uom) => (
-                              <SelectItem key={uom.name} value={uom.name}>
+                              <SelectItem key={uom.name} value={uom.name} className="text-xs">
                                 {uom.name} - {uom.description}
                               </SelectItem>
                             ))
                           ) : (
-                            <div className="px-3 py-2 text-sm text-gray-500">
-                              No matching UOM found
+                            <div className="px-3 py-2 text-xs text-slate-500">
+                              No records found
                             </div>
                           )}
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-[10px]" />
                   </FormItem>
                 )}
               />
             </div>
 
-            {/* UOM Conversion Modal */}
-            <UOMConversionModal
-              open={showConversionModal}
-              onClose={() => setShowConversionModal(false)}
-              baseUOM={baseUOM}
-              purchaseUOM={purchaseUOM}
-              onSubmit={handleUOMConversionSubmit}
-            />
-
-            <input type="hidden" {...form.register("numerator_purchase_uom")} />
-            <input type="hidden" {...form.register("denominator_purchase_uom")} />
-
             {/* Lead Time */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <FormField
                 control={form.control}
                 name="lead_time"
                 key="lead_time"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "lead_time"> }) => (
                   <FormItem>
-                    <FormLabel>Lead Time</FormLabel>
+                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Lead Time</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        className="p-3 w-full text-sm placeholder:text-gray-500"
+                        className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700"
                         placeholder="Enter Lead Time"
                         onChange={(e) => {
                           const formattedValue = e.target.value
@@ -326,30 +311,29 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                         }}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-[10px]" />
                   </FormItem>
                 )}
               />
             </div>
 
             {/* Purchasing Value Key */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <FormField
                 control={form.control}
                 name="purchasing_value_key"
                 key="purchasing_value_key"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "purchasing_value_key"> }) => (
                   <FormItem>
-                    <FormLabel>Purchasing Value Key</FormLabel>
+                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Purchasing Value Key</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        // value={field.value || "3"}
                         readOnly
-                        className="p-3 w-full text-sm placeholder:text-gray-500"
+                        className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-[10px]" />
                   </FormItem>
                 )}
               />
@@ -357,14 +341,14 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
 
             {/* Min Lot Size (conditional) */}
             {!isZCAPMaterial && (
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <FormField
                   control={form.control}
                   name="min_lot_size"
                   key="min_lot_size"
                   render={({ field }: { field: ControllerRenderProps<FieldValues, "min_lot_size"> }) => (
                     <FormItem>
-                      <FormLabel>Min Lot Size</FormLabel>
+                      <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Min Lot Size</FormLabel>
                       <FormControl>
                         <Select
                           onValueChange={(val) => {
@@ -372,14 +356,9 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                             setLotsizeSearch("");
                           }}
                           value={field.value || ""}
-                        // value={
-                        //   filteredLotSizeOptions.some((opt) => opt.name === field.value)
-                        //     ? field.value
-                        //     : ""
-                        // }
                         >
-                          <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
-                            <SelectValue placeholder="Select Min Lot Size" />
+                          <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                            <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent className="max-h-60 overflow-y-auto">
                             <div className="px-2 py-1">
@@ -392,25 +371,25 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                                     e.stopPropagation();
                                   }
                                 }}
-                                placeholder="Search Min. Lot Size..."
-                                className="w-full p-2 border border-gray-300 rounded text-sm"
+                                placeholder="Search..."
+                                className="w-full h-8 p-2 border border-slate-200 rounded text-sm"
                               />
                             </div>
                             {filteredLotSizeOptions?.length > 0 ? (
                               filteredLotSizeOptions.map((lot) => (
-                                <SelectItem key={lot.name} value={lot.name}>
+                                <SelectItem key={lot.name} value={lot.name} className="text-xs">
                                   {lot.name} - {lot.description}
                                 </SelectItem>
                               ))
                             ) : (
-                              <div className="px-3 py-2 text-sm text-gray-500">
-                                No matching Lot Size found
+                              <div className="px-3 py-2 text-xs text-slate-500">
+                                No records found
                               </div>
                             )}
                           </SelectContent>
                         </Select>
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-[10px]" />
                     </FormItem>
                   )}
                 />
@@ -419,19 +398,19 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
 
             {/* Purchase Order Text */}
             {!isZCAPMaterial && (
-              <div className="col-span-3 space-y-2">
+              <div className="col-span-1 md:col-span-2 space-y-1.5">
                 <FormField
                   control={form.control}
                   name="purchase_order_text"
                   key="purchase_order_text"
                   render={({ field }: { field: ControllerRenderProps<FieldValues, "purchase_order_text"> }) => (
                     <FormItem>
-                      <FormLabel>Purchase Order Text</FormLabel>
+                      <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Purchase Order Text</FormLabel>
                       <FormControl>
                         <textarea
                           {...field}
                           rows={2}
-                          className="w-full p-3 text-sm placeholder:text-gray-500 border border-gray-300 rounded-[8px]"
+                          className="w-full px-3 py-2 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700 resize-none min-h-[36px]"
                           placeholder="Enter PO Text"
                           onChange={(e) => {
                             const formattedValue = e.target.value
@@ -441,7 +420,7 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                           }}
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-[10px]" />
                     </FormItem>
                   )}
                 />
@@ -450,10 +429,22 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
 
             {/* Conversion Ratio */}
             {conversionRatio && (
-              <div className="col-span-3 text-sm text-blue-600 pb-3 font-bold">
+              <div className="col-span-1 md:col-span-4 text-[11px] text-blue-600 font-bold bg-blue-50/50 p-2 rounded-md border border-blue-100 italic">
                 Conversion Ratio: {conversionRatio}
               </div>
             )}
+
+            {/* UOM Conversion Modal */}
+            <UOMConversionModal
+              open={showConversionModal}
+              onClose={() => setShowConversionModal(false)}
+              baseUOM={baseUOM}
+              purchaseUOM={purchaseUOM}
+              onSubmit={handleUOMConversionSubmit}
+            />
+
+            <input type="hidden" {...form.register("numerator_purchase_uom")} />
+            <input type="hidden" {...form.register("denominator_purchase_uom")} />
           </div>
         </div>
       </div>

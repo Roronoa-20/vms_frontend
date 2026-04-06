@@ -6,6 +6,7 @@ import { FormField, FormControl, FormItem, FormLabel, FormMessage } from "@/comp
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/newselect";
 import { Controller, ControllerRenderProps, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 import { ExpirationDate, MaterialRequestData, MaterialType, InspectionType } from "@/src/types/MaterialCodeRequestFormTypes";
+import { ShieldCheck } from "lucide-react";
 
 interface MaterialOnboardingData {
     minimum_remaining_shell_life?: string;
@@ -82,131 +83,158 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, ExpirationDat
     };
 
     return (
-        <div className="bg-[#F4F4F6] overflow-hidden">
-            <div className="flex flex-col justify-between pb-2 bg-white rounded-[8px] p-1">
-                <div className="space-y-1">
-                    <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
-                        QA/QC Data
+        <div className="bg-transparent">
+            <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
+                <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-800 border-b border-slate-200 pb-2 mb-2">
+                        <ShieldCheck className="w-4 h-4 text-[#0C72F5]" />
+                        <span>QA/QC Data</span>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         {/* Minimum Remaining Shelf Life */}
-                        <FormField
-                            control={form.control}
-                            name="minimum_remaining_shell_life"
-                            key="minimum_remaining_shell_life"
-                            render={({ field }: { field: ControllerRenderProps<FieldValues, "minimum_remaining_shell_life"> }) => (
-                                <FormItem>
-                                    <FormLabel>Minimum Remaining Shell Life</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            className="p-3 w-full text-sm placeholder:text-gray-400"
-                                            placeholder="Enter minimum remaining shell life"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
+                        <div className="space-y-1.5">
+                            <FormField
+                                control={form.control}
+                                name="minimum_remaining_shell_life"
+                                key="minimum_remaining_shell_life"
+                                render={({ field }: { field: ControllerRenderProps<FieldValues, "minimum_remaining_shell_life"> }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Min. Remaining Life</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700"
+                                                placeholder="Enter value"
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
                         {/* Total Shelf Life */}
-                        <FormField
-                            control={form.control}
-                            name="total_shell_life"
-                            render={({ field }: { field: ControllerRenderProps<FieldValues, "total_shell_life"> }) => (
-                                <FormItem>
-                                    <FormLabel>Total Shell Life</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            className="p-3 w-full text-sm placeholder:text-gray-400"
-                                            placeholder="Enter total shelf life"
-                                            onChange={(e) => field.onChange(e.target.value)}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className="space-y-1.5">
+                            <FormField
+                                control={form.control}
+                                name="total_shell_life"
+                                render={({ field }: { field: ControllerRenderProps<FieldValues, "total_shell_life"> }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Total Shell Life</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700"
+                                                placeholder="Enter shell life"
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
                         {/* Expiration Date */}
-                        <FormField
-                            control={form.control}
-                            name="expiration_date"
-                            render={({ field }: { field: ControllerRenderProps<FieldValues, "expiration_date"> }) => (
-                                <FormItem>
-                                    <FormLabel>Period Indicator for Shell Life Expiration Date</FormLabel>
-                                    <FormControl>
-                                        <Select value={field.value ?? undefined} onValueChange={(val) => {
-                                            if (val !== field.value) field.onChange(val);
-                                        }}
-                                        >
-                                            <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
-                                                <SelectValue placeholder="Select Expiration Date Type" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {expirationMemo.map((exp) => (
-                                                    <SelectItem key={exp.name} value={exp.name}>
-                                                        {exp.description}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className="space-y-1.5">
+                            <FormField
+                                control={form.control}
+                                name="expiration_date"
+                                render={({ field }: { field: ControllerRenderProps<FieldValues, "expiration_date"> }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block leading-tight">Shelf Life Indicator</FormLabel>
+                                        <FormControl>
+                                            <Select value={field.value ?? undefined} onValueChange={(val) => {
+                                                if (val !== field.value) field.onChange(val);
+                                            }}
+                                            >
+                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                                                    <SelectValue placeholder="Select indicator" />
+                                                </SelectTrigger>
+                                                <SelectContent className="max-h-60 overflow-y-auto">
+                                                    {expirationMemo.map((exp) => (
+                                                        <SelectItem key={exp.name} value={exp.name} className="text-xs">
+                                                            {exp.description}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
-                        {/* Inspection Require - whole row */}
-                        <div className="col-span-3 grid grid-cols-3 gap-4">
+                        {/* Inspection Require */}
+                        <div className="space-y-1.5">
                             <FormField
                                 control={form.control}
                                 name="inspection_require"
                                 render={({ field }: { field: ControllerRenderProps<FieldValues, "inspection_require"> }) => (
                                     <FormItem>
-                                        <FormLabel>Inspection Require</FormLabel>
+                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Inspection Required</FormLabel>
                                         <FormControl>
                                             <Select
                                                 value={field.value ?? ""}
                                                 onValueChange={makeOnValueChangeGuarded(field as any)}
                                             >
-                                                <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
-                                                    <SelectValue placeholder="Select Yes or No" />
+                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                                                    <SelectValue placeholder="Select" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="Yes">Yes</SelectItem>
-                                                    <SelectItem value="No">No</SelectItem>
+                                                    <SelectItem value="Yes" className="text-xs">Yes</SelectItem>
+                                                    <SelectItem value="No" className="text-xs">No</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage className="text-[10px]" />
                                     </FormItem>
                                 )}
                             />
+                        </div>
 
-                            {/* Conditionally Render QA Fields */}
-                            {inspectionRequire === "Yes" && (
-                                <>
-                                    <div className="grid grid-cols-2 gap-4 mt-[36.8px]">
+                        {/* Conditionally Render QA Fields */}
+                        {inspectionRequire === "Yes" && (
+                            <>
+                                <div className="space-y-1.5">
+                                    <FormField
+                                        control={form.control}
+                                        name="inspection_interval"
+                                        render={({ field }: { field: ControllerRenderProps<FieldValues, "inspection_interval"> }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Interval (Days)</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        type="number"
+                                                        className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700"
+                                                        placeholder="Enter days"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage className="text-[10px]" />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
+                                <div className="space-y-1.5 col-span-1 md:col-span-2">
+                                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Inspection Protocols</FormLabel>
+                                    <div className="flex items-center gap-6 h-9">
                                         <FormField
                                             control={form.control}
                                             name="incoming_inspection_01"
                                             render={({ field }: { field: ControllerRenderProps<FieldValues, "incoming_inspection_01"> }) => (
-                                                <FormItem>
-                                                    <div className="flex items-center gap-2">
-                                                        <FormControl>
-                                                            <input
-                                                                type="checkbox"
-                                                                className="w-4 h-4 accent-blue-600"
-                                                                checked={!!field.value}
-                                                                onChange={(e) => field.onChange(e.target.checked)}
-                                                            />
-                                                        </FormControl>
-                                                        <FormLabel className="text-[16px] m-0">Incoming Inspection 01</FormLabel>
-                                                    </div>
+                                                <FormItem className="flex items-center gap-2 space-y-0">
+                                                    <FormControl>
+                                                        <input
+                                                            type="checkbox"
+                                                            className="w-4 h-4 rounded border-slate-300 text-[#0C72F5] focus:ring-[#0C72F5] transition-colors cursor-pointer"
+                                                            checked={!!field.value}
+                                                            onChange={(e) => field.onChange(e.target.checked)}
+                                                        />
+                                                    </FormControl>
+                                                    <FormLabel className="text-xs font-medium text-slate-600 m-0 cursor-pointer">Incoming 01</FormLabel>
                                                 </FormItem>
                                             )}
                                         />
@@ -215,45 +243,23 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, ExpirationDat
                                             control={form.control}
                                             name="incoming_inspection_09"
                                             render={({ field }: { field: ControllerRenderProps<FieldValues, "incoming_inspection_09"> }) => (
-                                                <FormItem>
-                                                    <div className="flex items-center gap-2">
-                                                        <FormControl>
-                                                            <input
-                                                                type="checkbox"
-                                                                className="w-4 h-4 accent-blue-600"
-                                                                checked={!!field.value}
-                                                                onChange={(e) => field.onChange(e.target.checked)}
-                                                            />
-                                                        </FormControl>
-                                                        <FormLabel className="text-[16px] m-0">Incoming Inspection 09</FormLabel>
-                                                    </div>
+                                                <FormItem className="flex items-center gap-2 space-y-0">
+                                                    <FormControl>
+                                                        <input
+                                                            type="checkbox"
+                                                            className="w-4 h-4 rounded border-slate-300 text-[#0C72F5] focus:ring-[#0C72F5] transition-colors cursor-pointer"
+                                                            checked={!!field.value}
+                                                            onChange={(e) => field.onChange(e.target.checked)}
+                                                        />
+                                                    </FormControl>
+                                                    <FormLabel className="text-xs font-medium text-slate-600 m-0 cursor-pointer">Incoming 09</FormLabel>
                                                 </FormItem>
                                             )}
                                         />
                                     </div>
-
-                                    <FormField
-                                        control={form.control}
-                                        name="inspection_interval"
-                                        render={({ field }: { field: ControllerRenderProps<FieldValues, "inspection_interval"> }) => (
-                                            <FormItem>
-                                                <FormLabel>Inspection Interval (In Days)</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        {...field}
-                                                        type="number"
-                                                        className="p-3 w-full text-sm placeholder:text-gray-400"
-                                                        placeholder="Enter Inspection interval in days"
-                                                        onChange={(e) => field.onChange(e.target.value)}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </>
-                            )}
-                        </div>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

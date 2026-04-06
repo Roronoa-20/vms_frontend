@@ -39,7 +39,7 @@ const RemarkDialog: React.FC<RemarkDialogProps> = ({ isOpen, onClose, onConfirm 
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Enter Remark</DialogTitle>
+          <DialogTitle className="text-xl font-bold tracking-tight text-slate-800">Enter Remark</DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
           <textarea
@@ -47,9 +47,8 @@ const RemarkDialog: React.FC<RemarkDialogProps> = ({ isOpen, onClose, onConfirm 
             value={remark}
             rows={3}
             onChange={(e) => setRemark(e.target.value)}
-            className={`w-full p-2 border rounded-md text-sm ${
-              error ? "border-red-500" : "border-gray-300"
-            } focus:outline-none focus:ring-1 focus:ring-blue-400`}
+            className={`w-full px-4 py-3 text-sm rounded-lg bg-white border shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 disabled:opacity-50 ${error ? "border-red-500 focus:ring-red-500/20" : "border-slate-200 focus:ring-[#0C72F5]/20 focus:border-[#0C72F5] hover:border-slate-300"
+              }`}
           />
           {error && <p className="text-red-500 text-sm">Remark is required.</p>}
         </div>

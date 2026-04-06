@@ -83,7 +83,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
       if (selectedStatus) filters["approval_status"] = selectedStatus;
 
       const offset = (currentPage - 1) * pagination.limit;
-      
+
       let url = `${API_END_POINTS.getRequestorMasterTableList}?limit=${pagination.limit}&offset=${offset}`;
 
       if (debouncedSearchName) {
@@ -93,7 +93,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
       if (Object.keys(filters).length > 0) {
         url += `&filters=${encodeURIComponent(JSON.stringify(filters))}`;
       }
-      
+
       url += `&_t=${Date.now()}`;
 
       const materialrequestAPI: AxiosResponse = await requestWrapper({ url, method: "GET" });

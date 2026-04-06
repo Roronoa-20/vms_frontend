@@ -397,12 +397,12 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
 
 
     return (
-        <div className="bg-[#F4F4F6] overflow-hidden">
-            <div className="flex flex-col justify-between bg-white rounded-[8px] pt-3 p-1">
-                <div className="space-y-1">
-                    <div className="grid grid-cols-3 gap-4">
-                        {/* Material Description */}
-                        <div className="col-span-2 relative">
+        <div className="bg-transparent">
+            <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300 mt-3">
+                <div className="space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {/* Material Description - 2 columns */}
+                        <div className="col-span-1 md:col-span-2 relative space-y-1.5">
                             <FormField
                                 control={form.control}
                                 name="material_name_description"
@@ -410,13 +410,12 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                 rules={{ required: "Material Name/Description is required." }}
                                 render={({ field }: { field: ControllerRenderProps<FieldValues, "material_name_description"> }) => (
                                     <FormItem>
-                                        <FormLabel className="font-bold">
-                                            Material Name/Description <span className="text-red-500">*</span>
+                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                                            Material Name/Description <span className="text-red-500 ml-1">*</span>
                                         </FormLabel>
                                         <FormControl>
-                                            <div>
+                                            <div className="relative">
                                                 <textarea
-                                                    // disabled={!hideMaterialCode}
                                                     disabled={isSAPGenerated || !uiState.showCodeInput || isExistingMaterial}
                                                     ref={field.ref}
                                                     value={field.value || ""}
@@ -433,21 +432,16 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                                         }
                                                     }}
                                                     rows={1}
-                                                    className="w-full p-[9px] text-sm text-gray-700 border border-gray-300 rounded-md placeholder:text-gray-400 hover:border-blue-400 focus:border-blue-400 focus:outline-none"
-                                                    placeholder="Enter or Search Material Name/Description"
+                                                    className="w-full min-h-[36px] px-3 py-1.5 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700 placeholder:text-slate-400 disabled:bg-slate-50 disabled:text-slate-500 disabled:cursor-not-allowed resize-none"
+                                                    placeholder="Enter or Search description"
                                                 />
-                                                {/* {uiState.showHint && (
-                                                    <span className="text-xs text-blue-600 italic">
-                                                        **change the material description to create new material code
-                                                    </span>
-                                                )} */}
                                                 {showSuggestions && searchResults.length > 0 && (
-                                                    <div className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-md w-full max-h-40 overflow-y-auto">
+                                                    <div className="absolute z-50 bg-white border border-slate-200 rounded-md shadow-lg w-full max-h-40 overflow-y-auto mt-1 py-1">
                                                         {searchResults.map((item, idx) => (
                                                             <div
                                                                 key={idx}
                                                                 tabIndex={-1}
-                                                                className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm material-suggestion"
+                                                                className="px-3 py-1.5 hover:bg-slate-50 cursor-pointer text-xs material-suggestion text-slate-600 border-b border-slate-50 last:border-0"
                                                                 onClick={() => handleMaterialSelect(item)}
                                                             >
                                                                 {item.material_description} - {item.material_code || item.name}
@@ -457,304 +451,274 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                                 )}
                                             </div>
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage className="text-[10px]" />
                                     </FormItem>
                                 )}
                             />
                         </div>
 
-                        {/* Right column: Material Code area + New Code toggle */}
-                        <div className="space-y-2">
-                            <div className="col-span-1 relative">
-                                <FormField
-                                    control={form.control}
-                                    name="material_code_revised"
-                                    render={({ field }: { field: { value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; ref: React.Ref<HTMLInputElement> } }) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Material Code <span className="text-red-500">*</span><span className="text-[10px]">(Max. Char 18)</span></FormLabel>
-                                                <div className="relative">
-                                                    <FormControl>
-                                                        <Input
-                                                            {...field}
-                                                            className="p-3 w-full text-sm placeholder:text-gray-500"
-                                                            placeholder="Enter Revised Material Code"
-                                                            maxLength={18}
-                                                            // onChange={(e) => {
-                                                            //   setMaterialCodeAutoFetched(false);
-                                                            //   field.onChange(e);
-                                                            // }}
-                                                            onChange={(e) => {
-                                                                if (isExistingMaterial && !selectedCodeLogic) return;
-
-                                                                if (materialSelectedFromList) {
-                                                                    field.onChange(e);
-                                                                    return;
-                                                                }
-
-                                                                let value = e.target.value;
-
-                                                                const prefix =
-                                                                    selectedCodeLogic
-                                                                        ? `${selectedCodeLogic}-`
-                                                                        : selectedMaterialCategory === "R"
-                                                                            ? "R"
-                                                                            : selectedMaterialCategory === "P"
-                                                                                ? "P"
-                                                                                : "";
-
-                                                                if (prefix) {
-                                                                    const stripped = value.replace(/^(R|P|[A-Z]+-)/gi, "")
-                                                                    value = prefix + stripped;
-                                                                }
-                                                                setMaterialCodeAutoFetched(false);
-                                                                field.onChange({
-                                                                    ...e,
-                                                                    target: { ...e.target, value },
-                                                                });
-                                                            }}
-                                                            disabled={isCodeDisabled || isExistingMaterial}
-                                                        />
-                                                    </FormControl>
-
-                                                    {!isCodeDisabled && isNewMaterial && (
-                                                        <div className="absolute right-3 top-[32%] -translate-y-1/2">
-                                                            {materialCodeStatus === "checking" && (
-                                                                <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
-                                                            )}
-                                                            {materialCodeStatus === "available" && (
-                                                                <CheckCircle className="w-4 h-4 text-green-600" />
-                                                            )}
-                                                            {materialCodeStatus === "exists" && (
-                                                                <XCircle className="w-4 h-4 text-red-600" />
-                                                            )}
-                                                        </div>
-                                                    )}
-
-                                                    {!isCodeDisabled && isNewMaterial && latestCodeSuggestions && !materialSelectedFromList && (
-                                                        <>
-                                                            {latestCodeSuggestions.next && (
-                                                                <p className="mt-1 text-xs text-green-600">
-                                                                    Next Suggested Code:{" "}
-                                                                    <span className="font-semibold">
-                                                                        {latestCodeSuggestions.next}
-                                                                    </span>
-                                                                </p>
-                                                            )}
-
-                                                            {/* {latestCodeSuggestions.sap && (
-                                                                <p className="text-xs text-gray-500">
-                                                                    Latest existing SAP code:{" "}
-                                                                    <span className="font-semibold">
-                                                                        {latestCodeSuggestions.sap}
-                                                                    </span>
-                                                                </p>
-                                                            )}
-
-                                                            {latestCodeSuggestions.onboarding && (
-                                                                <p className="text-xs text-gray-500">
-                                                                    Last used material code in portal:{" "}
-                                                                    <span className="font-semibold">
-                                                                        {latestCodeSuggestions.onboarding}
-                                                                    </span>
-                                                                </p>
-                                                            )} */}
-                                                        </>
-                                                    )}
-                                                </div>
-                                                <FormMessage />
-                                            </FormItem>
-                                        );
-                                    }}
-                                />
-                            </div>
-
-                        </div>
-
-                        {/* Material Specifications + User Comment side-by-side */}
-                        <div className="col-span-3">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <FormField
-                                        control={form.control}
-                                        key="material_specifications"
-                                        name="material_specifications"
-                                        render={({ field }: { field: ControllerRenderProps<FieldValues, "material_specifications"> }) => (
-                                            <FormItem>
-                                                <FormLabel>Material Specifications</FormLabel>
+                        {/* Material Code - 2 columns */}
+                        <div className="col-span-1 md:col-span-2 relative space-y-1.5">
+                            <FormField
+                                control={form.control}
+                                name="material_code_revised"
+                                render={({ field }: { field: { value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; ref: React.Ref<HTMLInputElement> } }) => {
+                                    return (
+                                        <FormItem>
+                                            <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Material Code <span className="text-red-500 ml-1">*</span><span className="text-[9px] ml-2 text-slate-400 lowercase tracking-normal">(Max 18)</span></FormLabel>
+                                            <div className="relative">
                                                 <FormControl>
-                                                    <textarea
+                                                    <Input
                                                         {...field}
-                                                        rows={2}
-                                                        className="w-full p-3 text-sm rounded-md placeholder:text-gray-400 border border-gray-300 hover:border-blue-500 focus:border-blue-500 focus:outline-none"
-                                                        placeholder="Enter Material Specifications"
-                                                        value={field.value || ""}
-                                                        readOnly={!shouldShowAllFields}
+                                                        className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700 placeholder:text-slate-400 disabled:bg-slate-50 disabled:text-slate-500 disabled:cursor-not-allowed"
+                                                        placeholder="Revised Material Code"
+                                                        maxLength={18}
+                                                        onChange={(e) => {
+                                                            if (isExistingMaterial && !selectedCodeLogic) return;
+
+                                                            if (materialSelectedFromList) {
+                                                                field.onChange(e);
+                                                                return;
+                                                            }
+
+                                                            let value = e.target.value;
+
+                                                            const prefix =
+                                                                selectedCodeLogic
+                                                                    ? `${selectedCodeLogic}-`
+                                                                    : selectedMaterialCategory === "R"
+                                                                        ? "R"
+                                                                        : selectedMaterialCategory === "P"
+                                                                            ? "P"
+                                                                            : "";
+
+                                                            if (prefix) {
+                                                                const stripped = value.replace(/^(R|P|[A-Z]+-)/gi, "")
+                                                                value = prefix + stripped;
+                                                            }
+                                                            setMaterialCodeAutoFetched(false);
+                                                            field.onChange({
+                                                                ...e,
+                                                                target: { ...e.target, value },
+                                                            });
+                                                        }}
+                                                        disabled={isCodeDisabled || isExistingMaterial}
                                                     />
                                                 </FormControl>
-                                                <FormMessage />
+
+                                                {!isCodeDisabled && isNewMaterial && (
+                                                    <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                                        {materialCodeStatus === "checking" && (
+                                                            <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-400" />
+                                                        )}
+                                                        {materialCodeStatus === "available" && (
+                                                            <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                                                        )}
+                                                        {materialCodeStatus === "exists" && (
+                                                            <XCircle className="w-3.5 h-3.5 text-red-500" />
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                            {!isCodeDisabled && isNewMaterial && latestCodeSuggestions && !materialSelectedFromList && (
+                                                <div className="mt-1">
+                                                    {latestCodeSuggestions.next && (
+                                                        <p className="text-[10px] text-green-600 font-medium">
+                                                            Suggested: <span className="underline">{latestCodeSuggestions.next}</span>
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            )}
+                                            <FormMessage className="text-[10px]" />
+                                        </FormItem>
+                                    );
+                                }}
+                            />
+                        </div>
+
+                        {/* Material Specifications - 2 columns */}
+                        <div className="col-span-1 md:col-span-2 space-y-1.5">
+                            <FormField
+                                control={form.control}
+                                key="material_specifications"
+                                name="material_specifications"
+                                render={({ field }: { field: ControllerRenderProps<FieldValues, "material_specifications"> }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Specifications</FormLabel>
+                                        <FormControl>
+                                            <textarea
+                                                {...field}
+                                                rows={2}
+                                                className="w-full min-h-[60px] px-3 py-1.5 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700 placeholder:text-slate-400 disabled:bg-slate-50 disabled:text-slate-500 disabled:cursor-not-allowed resize-none"
+                                                placeholder="Enter Material Specifications"
+                                                value={field.value || ""}
+                                                readOnly={!shouldShowAllFields}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        {/* User Comment - 2 columns */}
+                        {shouldShowAllFields && (
+                            <div className="col-span-1 md:col-span-2 space-y-1.5">
+                                <FormField
+                                    control={form.control}
+                                    name="comment_by_user"
+                                    key="comment_by_user"
+                                    rules={{ required: !shouldShowAllFields ? "Comment is required when material is selected." : false }}
+                                    render={({ field }: { field: ControllerRenderProps<FieldValues, "comment_by_user"> }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                                                User Comment {!shouldShowAllFields && <span className="text-red-500 ml-1">*</span>}
+                                            </FormLabel>
+                                            <FormControl>
+                                                <textarea
+                                                    {...field}
+                                                    rows={2}
+                                                    className="w-full min-h-[60px] px-3 py-1.5 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700 placeholder:text-slate-400 disabled:bg-slate-50 disabled:text-slate-500 disabled:cursor-not-allowed resize-none"
+                                                    placeholder="Provide a reason for selecting this material"
+                                                    onChange={field.onChange}
+                                                    value={field.value || ""}
+                                                    readOnly={shouldShowAllFields}
+                                                />
+                                            </FormControl>
+                                            <FormMessage className="text-[10px]" />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        )}
+
+                        {/* Advanced Fields - 4 columns container if visible */}
+                        {(uiState.showAdvancedFields && (role === "Material CP" || role === "Store")) && (
+                            <>
+                                {/* Division */}
+                                <div className="col-span-1 md:col-span-2 space-y-1.5">
+                                    <FormField
+                                        control={form.control}
+                                        name="division"
+                                        key="division"
+                                        render={({ field }: { field: ControllerRenderProps<FieldValues, "division"> }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Division <span className="text-red-500 ml-1">*</span></FormLabel>
+                                                <FormControl>
+                                                    <Select
+                                                        onValueChange={(val) => {
+                                                            field.onChange(val);
+                                                            setDivisionSearch("");
+                                                        }}
+                                                        value={field.value || undefined}
+                                                    >
+                                                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                                                            <SelectValue placeholder="Select Division" />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="max-h-60 overflow-y-auto">
+                                                            <div className="px-2 py-1">
+                                                                <input
+                                                                    type="text"
+                                                                    value={divisionSearch}
+                                                                    onChange={(e) => setDivisionSearch(e.target.value)}
+                                                                    onKeyDown={(e) => {
+                                                                        if (!["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
+                                                                            e.stopPropagation();
+                                                                        }
+                                                                    }}
+                                                                    placeholder="Search..."
+                                                                    className="w-full h-8 p-2 border border-slate-200 rounded text-sm"
+                                                                />
+                                                            </div>
+                                                            {filteredDivisionOptions?.length > 0 ? (
+                                                                filteredDivisionOptions.map((division) => (
+                                                                    <SelectItem
+                                                                        key={division.division_name}
+                                                                        value={division.division_name ?? ""}
+                                                                        className="text-xs"
+                                                                    >
+                                                                        {division.division_name}
+                                                                    </SelectItem>
+                                                                ))
+                                                            ) : (
+                                                                <div className="px-3 py-2 text-xs text-slate-500">No records found</div>
+                                                            )}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormControl>
+                                                <FormMessage className="text-[10px]" />
                                             </FormItem>
                                         )}
                                     />
                                 </div>
 
-                                <div>
-                                    {shouldShowAllFields && (
-                                        <FormField
-                                            control={form.control}
-                                            name="comment_by_user"
-                                            key="comment_by_user"
-                                            rules={{ required: !shouldShowAllFields ? "Comment is required when material is selected." : false }}
-                                            render={({ field }: { field: ControllerRenderProps<FieldValues, "comment_by_user"> }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        User Comment {!shouldShowAllFields && <span className="text-red-500">*</span>}
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <textarea
-                                                            {...field}
-                                                            rows={2}
-                                                            className="w-full p-3 text-sm text-gray-700 border border-gray-300 rounded-md placeholder:text-gray-400 hover:border-blue-400 focus:border-blue-400 focus:outline-none"
-                                                            placeholder="Provide a reason for selecting this material"
-                                                            onChange={field.onChange}
-                                                            value={field.value || ""}
-                                                            readOnly={shouldShowAllFields}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    )}
+                                {/* Storage Location */}
+                                <div className="col-span-1 md:col-span-2 space-y-1.5">
+                                    <FormField
+                                        control={form.control}
+                                        name="storage_location"
+                                        render={({ field }: { field: ControllerRenderProps<FieldValues, "storage_location"> }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                                                    Storage Location <span className="text-red-500 ml-1">*</span>
+                                                </FormLabel>
+
+                                                <FormControl>
+                                                    <Select
+                                                        required
+                                                        value={field.value || undefined}
+                                                        onValueChange={(value) => {
+                                                            field.onChange(value);
+                                                            setStorageSearch("");
+                                                        }}
+                                                    >
+                                                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                                                            <SelectValue placeholder="Select" />
+                                                        </SelectTrigger>
+
+                                                        <SelectContent className="max-h-60 overflow-y-auto">
+                                                            <div className="sticky top-0 bg-white px-2 py-1 z-10">
+                                                                <input
+                                                                    type="text"
+                                                                    value={storageSearch}
+                                                                    onChange={(e) => setStorageSearch(e.target.value)}
+                                                                    onKeyDown={(e) => {
+                                                                        if (!["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
+                                                                            e.stopPropagation();
+                                                                        }
+                                                                    }}
+                                                                    placeholder="Search..."
+                                                                    className="w-full h-8 p-2 border border-slate-200 rounded text-sm"
+                                                                />
+                                                            </div>
+
+                                                            <SelectGroup>
+                                                                {filteredStorageOptions?.length ? (
+                                                                    filteredStorageOptions.map((storage) => (
+                                                                        <SelectItem
+                                                                            key={storage.name}
+                                                                            value={storage.name}
+                                                                            className="text-xs"
+                                                                        >
+                                                                            {storage.name}
+                                                                        </SelectItem>
+                                                                    ))
+                                                                ) : (
+                                                                    <div className="px-3 py-2 text-xs text-slate-500">
+                                                                        No records found
+                                                                    </div>
+                                                                )}
+                                                            </SelectGroup>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormControl>
+                                                <FormMessage className="text-[10px]" />
+                                            </FormItem>
+                                        )}
+                                    />
                                 </div>
-                            </div>
-                        </div>
-
-                        {/* Remaining fields: show only when shouldShowAllFields is true AND user clicked New Code AND role is CP/Store */}
-                        <div className={(uiState.showAdvancedFields && (role === "Material CP" || role === "Store")) ? "col-span-3 grid grid-cols-2 gap-4" : "hidden"}>
-                            {/* Division */}
-                            <div className="space-y-2">
-                                <FormField
-                                    control={form.control}
-                                    name="division"
-                                    key="division"
-                                    render={({ field }: { field: ControllerRenderProps<FieldValues, "division"> }) => (
-                                        <FormItem>
-                                            <FormLabel>Division <span className="text-red-500">*</span></FormLabel>
-                                            <FormControl>
-                                                <Select
-                                                    onValueChange={(val) => {
-                                                        field.onChange(val);
-                                                        setDivisionSearch("");
-                                                    }}
-                                                    value={field.value || undefined}
-                                                // disabled={isZCAPMaterial}
-                                                >
-                                                    <SelectTrigger className={`p-3 w-full text-sm data-[placeholder]:text-gray-600`}>
-                                                        <SelectValue placeholder="Select Division" />
-                                                    </SelectTrigger>
-                                                    <SelectContent className="max-h-60 overflow-y-auto">
-                                                        <div className="px-2 py-1">
-                                                            <input
-                                                                type="text"
-                                                                value={divisionSearch}
-                                                                onChange={(e) => setDivisionSearch(e.target.value)}
-                                                                onKeyDown={(e) => {
-                                                                    if (!["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
-                                                                        e.stopPropagation();
-                                                                    }
-                                                                }}
-                                                                placeholder="Search Division..."
-                                                                className="w-full p-2 border border-gray-300 rounded text-sm"
-                                                            />
-                                                        </div>
-                                                        {filteredDivisionOptions?.length > 0 ? (
-                                                            filteredDivisionOptions.map((division) => (
-                                                                <SelectItem
-                                                                    key={division.division_name}
-                                                                    value={division.division_name ?? ""}
-                                                                >
-                                                                    {division.division_name}
-                                                                </SelectItem>
-                                                            ))
-                                                        ) : (
-                                                            <div className="px-3 py-2 text-sm text-gray-500">No matching divisions</div>
-                                                        )}
-                                                    </SelectContent>
-                                                </Select>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-
-                            {/* Storage Location */}
-                            <div className="space-y-2">
-                                <FormField
-                                    control={form.control}
-                                    name="storage_location"
-                                    render={({ field }: { field: ControllerRenderProps<FieldValues, "storage_location"> }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Storage Location <span className="text-red-500">*</span>
-                                            </FormLabel>
-
-                                            <FormControl>
-                                                <Select
-                                                    required
-                                                    value={field.value || undefined}
-                                                    onValueChange={(value) => {
-                                                        field.onChange(value);
-                                                        setStorageSearch("");
-                                                    }}
-                                                >
-                                                    <SelectTrigger className="p-3 w-full text-sm">
-                                                        <SelectValue placeholder="Select Storage Location" />
-                                                    </SelectTrigger>
-
-                                                    <SelectContent className="max-h-60 overflow-y-scroll">
-                                                        {/* Search box */}
-                                                        <div className="sticky top-0 bg-white px-2 py-1 z-10">
-                                                            <input
-                                                                type="text"
-                                                                value={storageSearch}
-                                                                onChange={(e) => setStorageSearch(e.target.value)}
-                                                                onKeyDown={(e) => {
-                                                                    if (!["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
-                                                                        e.stopPropagation();
-                                                                    }
-                                                                }}
-                                                                placeholder="Search Storage Location..."
-                                                                className="w-full p-2 border border-gray-300 rounded text-sm"
-                                                            />
-                                                        </div>
-
-                                                        <SelectGroup>
-                                                            {filteredStorageOptions?.length ? (
-                                                                filteredStorageOptions.map((storage) => (
-                                                                    <SelectItem
-                                                                        key={storage.name}
-                                                                        value={storage.name}
-                                                                    >
-                                                                        {storage.name}
-                                                                    </SelectItem>
-                                                                ))
-                                                            ) : (
-                                                                <div className="px-3 py-2 text-sm text-gray-500">
-                                                                    No storage locations found
-                                                                </div>
-                                                            )}
-                                                        </SelectGroup>
-                                                    </SelectContent>
-                                                </Select>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                        </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

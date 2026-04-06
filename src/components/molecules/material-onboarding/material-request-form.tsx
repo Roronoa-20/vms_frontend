@@ -10,7 +10,7 @@ import { MaterialRegistrationFormData, Company, Plant, MaterialCategory, Materia
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
-import { CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { CheckCircle, XCircle, Loader2, Package } from "lucide-react";
 import { EmployeeDetail } from "@/src/types/MaterialCodeRequestFormTypes";
 
 
@@ -303,7 +303,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
     } else {
       form.register("material_code_revised");
     }
-    
+
     if (isCodeGeneratedBySAP || isUseExistingCode) {
       form.clearErrors("material_code_revised");
     }
@@ -319,13 +319,14 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
 
   return (
     <div className="bg-[#F4F4F6]">
-      <div className="flex flex-col justify-between bg-white rounded-[8px]">
-        <div>
-          <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
-            Basic Data
+      <div className="flex flex-col justify-between bg-white rounded-xl shadow-sm border border-slate-200 p-6 transition-all duration-300 hover:shadow-md">
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 text-2xl font-bold tracking-tight text-slate-800 border-b-2 border-slate-100 pb-4 mb-6">
+            <Package className="w-6 h-6 text-[#0C72F5]" />
+            <span>Basic Data</span>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 pt-3">
+          <div className="grid grid-cols-3 gap-x-6 gap-y-8">
             {/* Company Code */}
             <FormField
               control={form.control}
@@ -333,7 +334,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
               key="material_company_code"
               render={({ field }: { field: { value?: string; onChange: (value: string) => void; ref?: React.Ref<any> } }) => (
                 <FormItem>
-                  <FormLabel>Company Code</FormLabel>
+                  <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">Company Code</FormLabel>
                   <FormControl>
                     <Select
                       onValueChange={(value) => {
@@ -342,7 +343,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                       }}
                       value={field.value || ""}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full px-4 py-3 text-sm rounded-lg bg-white border border-slate-200 shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#0C72F5]/20 focus:border-[#0C72F5] hover:border-slate-300 text-slate-800 data-[placeholder]:text-slate-400">
                         <SelectValue placeholder="Select Company" />
                       </SelectTrigger>
                       <SelectContent>
@@ -375,7 +376,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                 key="plant_name"
                 render={({ field }: { field: { value?: string; onChange: (value: string) => void; ref?: React.Ref<any> } }) => (
                   <FormItem>
-                    <FormLabel>Plant Code <span className="text-red-500">*</span></FormLabel>
+                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">Plant Code <span className="text-red-500 ml-1">*</span></FormLabel>
                     <FormControl>
                       <Select
                         onValueChange={(value) => {
@@ -384,10 +385,10 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                         }}
                         value={field.value || ""}
                       >
-                        <SelectTrigger className={`p-3 w-full text-sm data-[placeholder]:text-gray-500`}>
+                        <SelectTrigger className="w-full px-4 py-3 text-sm rounded-lg bg-white border border-slate-200 shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#0C72F5]/20 focus:border-[#0C72F5] hover:border-slate-300 text-slate-800 data-[placeholder]:text-slate-400">
                           <SelectValue placeholder="Select Plant Code" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="max-h-60 overflow-y-auto">
                           <div className="px-2 py-1">
                             <input
                               type="text"
@@ -428,10 +429,10 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
               key="material_category"
               render={({ field }: { field: { value?: string; onChange: (value: string) => void; ref?: React.Ref<any> } }) => (
                 <FormItem>
-                  <FormLabel>Material Category <span className="text-red-500">*</span></FormLabel>
+                  <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">Material Category <span className="text-red-500 ml-1">*</span></FormLabel>
                   <FormControl>
                     <Select onValueChange={field.onChange} value={field.value || ""}>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full px-4 py-3 text-sm rounded-lg bg-white border border-slate-200 shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#0C72F5]/20 focus:border-[#0C72F5] hover:border-slate-300 text-slate-800 data-[placeholder]:text-slate-400">
                         <SelectValue placeholder="Select Category" />
                       </SelectTrigger>
                       <SelectContent>
@@ -456,8 +457,8 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                 key="material_type"
                 render={({ field }: { field: { value?: string; onChange: (value: string) => void; ref?: React.Ref<any> } }) => (
                   <FormItem>
-                    <FormLabel>
-                      Material Type <span className="text-red-500">*</span>
+                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                      Material Type <span className="text-red-500 ml-1">*</span>
                     </FormLabel>
                     <FormControl>
                       <Select
@@ -485,10 +486,10 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                           }
                         }}
                       >
-                        <SelectTrigger className={`p-2 w-full text-sm data-[placeholder]:text-gray-500`}>
+                        <SelectTrigger className="w-full px-4 py-3 text-sm rounded-lg bg-white border border-slate-200 shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#0C72F5]/20 focus:border-[#0C72F5] hover:border-slate-300 text-slate-800 data-[placeholder]:text-slate-400">
                           <SelectValue placeholder="Select Material Type" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="max-h-60 overflow-y-auto">
                           <div className="px-2 py-1">
                             <Input
                               type="text"
@@ -529,8 +530,8 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                 rules={{ required: "Material Type Category is required." }}
                 render={({ field }: { field: { value?: string; onChange: (value: string) => void; ref?: React.Ref<any> } }) => (
                   <FormItem>
-                    <FormLabel>
-                      Material Type Category <span className="text-red-500">*</span>
+                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                      Material Type Category <span className="text-red-500 ml-1">*</span>
                     </FormLabel>
                     <FormControl>
                       <Select
@@ -544,10 +545,10 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                           }
                         }}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full px-4 py-3 text-sm rounded-lg bg-white border border-slate-200 shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#0C72F5]/20 focus:border-[#0C72F5] hover:border-slate-300 text-slate-800 data-[placeholder]:text-slate-400">
                           <SelectValue placeholder="Select Material Category Type" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="max-h-60 overflow-y-auto">
                           {materialCategoryTypeOptions.map((item) => (
                             <SelectItem
                               key={item.material_category_type}
@@ -573,7 +574,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
               rules={{ required: "Base UOM is required." }}
               render={({ field }: { field: { value?: string; onChange: (value: string) => void; ref?: React.Ref<any> } }) => (
                 <FormItem>
-                  <FormLabel>Base Unit of Measure <span className="text-red-500">*</span></FormLabel>
+                  <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">Base Unit of Measure <span className="text-red-500 ml-1">*</span></FormLabel>
                   <FormControl>
                     <Select
                       onValueChange={(value) => {
@@ -582,10 +583,10 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                       }}
                       value={field.value || ""}
                     >
-                      <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
+                      <SelectTrigger className="w-full px-4 py-3 text-sm rounded-lg bg-white border border-slate-200 shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#0C72F5]/20 focus:border-[#0C72F5] hover:border-slate-300 text-slate-800 data-[placeholder]:text-slate-400">
                         <SelectValue placeholder="Select UOM" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="max-h-60 overflow-y-auto">
                         <div className="px-2 py-1">
                           <input
                             type="text"
@@ -620,7 +621,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-4 pt-3">
+          <div className="grid grid-cols-3 gap-x-6 gap-y-8 mt-4">
             {/* Material Description */}
             <div className="col-span-2 relative">
               <FormField
@@ -629,8 +630,8 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                 rules={{ required: "Material Name/Description is required." }}
                 render={({ field }: { field: { value: string; onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void; ref: React.Ref<HTMLTextAreaElement> } }) => (
                   <FormItem>
-                    <FormLabel>
-                      Material Name/Description <span className="text-red-500">*</span><span className="text-[10px]">(Max Char 40)</span>
+                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                      Material Name/Description <span className="text-red-500 ml-1">*</span><span className="text-[10px] ml-2 text-slate-400 lowercase tracking-normal">(Max Char 40)</span>
                     </FormLabel>
                     <FormControl>
                       <div className="relative">
@@ -654,7 +655,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                           }}
                           rows={2}
                           maxLength={40}
-                          className="w-full p-[9px] text-sm text-gray-700 border border-gray-300 rounded-md placeholder:text-gray-500 hover:border-blue-400 focus:border-blue-400 focus:outline-none"
+                          className="w-full px-4 py-3 text-sm rounded-lg bg-white border border-slate-200 shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#0C72F5]/20 focus:border-[#0C72F5] hover:border-slate-300 text-slate-800 placeholder:text-slate-400 disabled:bg-gradient-to-r disabled:from-white disabled:to-slate-50/50 disabled:border-slate-200/80 disabled:cursor-default disabled:opacity-50"
                           placeholder="Enter or Search Material Name/Description"
                           disabled={isCodeGeneratedBySAP}
 
@@ -697,12 +698,12 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                   render={({ field }: { field: { value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; ref: React.Ref<HTMLInputElement> } }) => {
                     return (
                       <FormItem>
-                        <FormLabel>Material Code <span className="text-red-500">*</span><span className="text-[10px]">(Max. Char 18)</span></FormLabel>
+                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">Material Code <span className="text-red-500 ml-1">*</span><span className="text-[10px] ml-2 text-slate-400 lowercase tracking-normal">(Max. Char 18)</span></FormLabel>
                         <div className="relative">
                           <FormControl>
                             <Input
                               {...field}
-                              className="p-3 w-full text-sm placeholder:text-gray-500"
+                              className="w-full px-4 py-3 text-sm rounded-lg bg-white border border-slate-200 shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#0C72F5]/20 focus:border-[#0C72F5] hover:border-slate-300 text-slate-800 placeholder:text-slate-400 disabled:bg-gradient-to-r disabled:from-white disabled:to-slate-50/50 disabled:border-slate-200/80 disabled:cursor-default disabled:opacity-50"
                               placeholder="Enter Revised Material Code"
                               maxLength={18}
                               // onChange={(e) => {
@@ -778,9 +779,8 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
               </div>
             )}
           </div>
-
           {/* Comment By User */}
-          <div className="col-span-3 grid grid-cols-12 items-center gap-4">
+          <div className="grid grid-cols-12 items-start gap-x-6 gap-y-8 mt-8">
             {/* Material specifications*/}
             <div className="col-span-6">
               <FormField
@@ -789,12 +789,12 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                 key="material_specifications"
                 render={({ field }: { field: { value: string; onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void; ref: React.Ref<HTMLTextAreaElement> } }) => (
                   <FormItem>
-                    <FormLabel>Material Specifications <span className="text-red-500">*</span></FormLabel>
+                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">Material Specifications <span className="text-red-500 ml-1">*</span></FormLabel>
                     <FormControl>
                       <textarea
                         {...field}
                         rows={2}
-                        className="w-full p-2 text-sm rounded-md placeholder:text-gray-400 border border-gray-300 hover:border-blue-500 focus:border-blue-500 focus:outline-none"
+                        className="w-full px-4 py-3 text-sm rounded-lg bg-white border border-slate-200 shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#0C72F5]/20 focus:border-[#0C72F5] hover:border-slate-300 text-slate-800 placeholder:text-slate-400 disabled:opacity-50"
                         placeholder="Enter Material Specifications"
                         onChange={field.onChange}
                         value={field.value || ""}
@@ -814,14 +814,14 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
                 rules={{ required: "Comment is required when material is selected." }}
                 render={({ field }: { field: { value: string; onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void; ref: React.Ref<HTMLTextAreaElement> } }) => (
                   <FormItem>
-                    <FormLabel>
-                      Comment <span className="text-red-500">*</span>
+                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                      Comment <span className="text-red-500 ml-1">*</span>
                     </FormLabel>
                     <FormControl>
                       <textarea
                         {...field}
                         rows={2}
-                        className="w-full p-2 text-sm text-gray-700 border border-gray-300 rounded-md placeholder:text-gray-500 hover:border-blue-400 focus:border-blue-400 focus:outline-none"
+                        className="w-full px-4 py-3 text-sm rounded-lg bg-white border border-slate-200 shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#0C72F5]/20 focus:border-[#0C72F5] hover:border-slate-300 text-slate-800 placeholder:text-slate-400 disabled:opacity-50"
                         placeholder="Provide a reason for selecting this material"
                         onChange={field.onChange}
                         value={field.value || ""}
@@ -884,6 +884,6 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 }

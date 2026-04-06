@@ -95,10 +95,10 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({
 
     return (
         <>
-            <div className="mt-2 border rounded-xl overflow-hidden shadow-md p-4 bg-white">
+            <div className="mt-2 bg-white rounded-xl shadow-sm border border-slate-200 p-4 transition-all duration-300 hover:shadow-md">
                 <div>
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-3 gap-3 md:gap-0">
-                        {TableTitle && <h2 className="text-lg font-semibold text-gray-800 mb-3">{TableTitle}</h2>}
+                        {TableTitle && <h2 className="text-xl font-bold tracking-tight text-slate-800 mb-4">{TableTitle}</h2>}
                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 mt-2 md:mt-0">
                             <Input
                                 type="text"
@@ -152,17 +152,17 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({
                     {paginatedData.length ? (
                         <Table>
                             <TableHeader>
-                                <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] text-center">
-                                    <TableHead className="text-center text-black text-nowrap">Sr.No.</TableHead>
-                                    {/* <TableHead className="text-center text-black text-nowrap">Requestor Ref No</TableHead> */}
-                                    <TableHead className="text-center text-black text-nowrap">Request ID</TableHead>
-                                    <TableHead className="text-center text-black text-nowrap">Request Date</TableHead>
-                                    <TableHead className="text-center text-black text-nowrap">Company</TableHead>
-                                    {/* <TableHead className="text-center text-black text-nowrap">Plant Name</TableHead> */}
-                                    <TableHead className="text-center text-black text-nowrap">Material Type</TableHead>
-                                    <TableHead className="text-center text-black text-nowrap">Material Description</TableHead>
-                                    <TableHead className="text-center text-black text-nowrap">Status</TableHead>
-                                    <TableHead className="text-center text-black text-nowrap">View Details</TableHead>
+                                <TableRow className="bg-slate-50 border-y border-slate-200">
+                                    <TableHead className="text-center text-xs font-bold uppercase tracking-wider text-slate-500 py-4 text-nowrap">Sr.No.</TableHead>
+                                    {/* <TableHead className="text-center text-xs font-bold uppercase tracking-wider text-slate-500 py-4 text-nowrap">Requestor Ref No</TableHead> */}
+                                    <TableHead className="text-center text-xs font-bold uppercase tracking-wider text-slate-500 py-4 text-nowrap">Request ID</TableHead>
+                                    <TableHead className="text-center text-xs font-bold uppercase tracking-wider text-slate-500 py-4 text-nowrap">Request Date</TableHead>
+                                    <TableHead className="text-center text-xs font-bold uppercase tracking-wider text-slate-500 py-4 text-nowrap">Company</TableHead>
+                                    {/* <TableHead className="text-center text-xs font-bold uppercase tracking-wider text-slate-500 py-4 text-nowrap">Plant Name</TableHead> */}
+                                    <TableHead className="text-center text-xs font-bold uppercase tracking-wider text-slate-500 py-4 text-nowrap">Material Type</TableHead>
+                                    <TableHead className="text-center text-xs font-bold uppercase tracking-wider text-slate-500 py-4 text-nowrap">Material Description</TableHead>
+                                    <TableHead className="text-center text-xs font-bold uppercase tracking-wider text-slate-500 py-4 text-nowrap">Status</TableHead>
+                                    <TableHead className="text-center text-xs font-bold uppercase tracking-wider text-slate-500 py-4 text-nowrap">View Details</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -193,7 +193,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({
                                             <Link
                                                 href={`/material-onboarding-details?name=${encodeURIComponent(item.requestor_ref_no)}&material_name=${encodeURIComponent(item.child_name)}`}
                                             >
-                                                <Button className="bg-[#5291CD] rounded-[16px] hover:bg-white hover:border border-[#5291CD] hover:text-black">View</Button>
+                                                <Button size="sm" className="bg-[#0C72F5] hover:bg-[#0C72F5]/90 text-white font-medium shadow-sm transition-all rounded-lg">View</Button>
                                             </Link>
                                         </TableCell>
                                     </TableRow>

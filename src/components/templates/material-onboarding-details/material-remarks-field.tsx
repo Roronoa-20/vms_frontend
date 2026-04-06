@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
 import { MaterialRequestData, MaterialOnboarding } from "@/src/types/MaterialCodeRequestFormTypes";
+import { MessageSquare } from "lucide-react";
 
 interface MaterialRemarksFormProps {
     form: UseFormReturn<any>;
@@ -33,15 +34,16 @@ const MaterialRemarksForm: React.FC<MaterialRemarksFormProps> = ({
     }, [MaterialDetails, form]);
 
     return (
-        <div className="bg-[#F4F4F6] overflow-hidden">
-            <div className="flex flex-col justify-between bg-white rounded-[8px] p-1">
-                <div className="space-y-1">
-                    <div className="text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
-                        Comments
+        <div className="bg-transparent">
+            <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
+                <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-800 border-b border-slate-200 pb-2 mb-2">
+                        <MessageSquare className="w-4 h-4 text-[#0C72F5]" />
+                        <span>Comments</span>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* User Comment Field */}
-                        <div className="space-y-2">
+                        <div className="space-y-1.5">
                             <FormField
                                 control={form.control}
                                 name="comment_by_user"
@@ -52,27 +54,27 @@ const MaterialRemarksForm: React.FC<MaterialRemarksFormProps> = ({
                                 }}
                                 render={({ field }: { field: ControllerRenderProps<FieldValues, "comment_by_user"> }) => (
                                     <FormItem>
-                                        <FormLabel>
+                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
                                             User Comment
-                                            <span className="text-red-500">*</span>
+                                            <span className="text-red-500 ml-1">*</span>
                                         </FormLabel>
                                         <FormControl>
                                             <textarea
                                                 {...field}
                                                 rows={2}
-                                                className="w-full p-2 text-sm text-gray-700 border border-gray-300 rounded-md placeholder:text-gray-400 hover:border-blue-400 focus:border-blue-400 focus:outline-none"
+                                                className="w-full px-3 py-2 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed min-h-[60px]"
                                                 placeholder="Provide a reason for selecting this material"
                                                 readOnly
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage className="text-[10px]" />
                                     </FormItem>
                                 )}
                             />
                         </div>
 
                         {/* Store Comment Field */}
-                        <div className="space-y-2">
+                        <div className="space-y-1.5">
                             <FormField
                                 control={form.control}
                                 name="comment_by_store"
@@ -83,19 +85,19 @@ const MaterialRemarksForm: React.FC<MaterialRemarksFormProps> = ({
                                 }}
                                 render={({ field }: { field: ControllerRenderProps<FieldValues, "comment_by_store"> }) => (
                                     <FormItem>
-                                        <FormLabel>
+                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
                                             Store Comment
-                                            <span className="text-red-500">*</span>
+                                            <span className="text-red-500 ml-1">*</span>
                                         </FormLabel>
                                         <FormControl>
                                             <textarea
                                                 {...field}
                                                 rows={2}
-                                                className="w-full p-2 text-sm text-gray-700 border border-gray-300 rounded-md placeholder:text-gray-400 hover:border-blue-400 focus:border-blue-400 focus:outline-none"
+                                                className="w-full px-3 py-2 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700 placeholder:text-slate-400 min-h-[60px]"
                                                 placeholder="Provide a reason for selecting this material"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage className="text-[10px]" />
                                     </FormItem>
                                 )}
                             />

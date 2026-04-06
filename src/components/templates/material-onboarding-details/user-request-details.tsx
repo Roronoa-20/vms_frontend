@@ -6,6 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
 import { MaterialCode } from "@/src/types/PurchaseRequestType";
 import { MaterialRegistrationFormData, Company, Plant, division, MaterialType, StorageLocation, MaterialCategory, MaterialRequestData, UOMMaster } from "@/src/types/MaterialCodeRequestFormTypes";
+import { Info } from "lucide-react";
 
 interface UserRequestFormProps {
     form: UseFormReturn<any>;
@@ -133,155 +134,172 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
     }, [MaterialDetails, filteredPlants, filteredMaterialType, MaterialOnboardingDetails, AllMaterialCodes, form, setMaterialCompanyCode, setSelectedMaterialType]);
 
     return (
-        <div className="bg-[#F4F4F6]">
-            <div className="flex flex-col justify-between bg-white rounded-[8px] p-1">
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between text-[20px] font-semibold text-[#03111F] border-b border-slate-500 pb-1">
+        <div className="bg-transparent">
+            <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
+                <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-800 border-b border-slate-200 pb-2 mb-2">
+                        <Info className="w-4 h-4 text-[#0C72F5]" />
                         <span>Basic Data</span>
                     </div>
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         {/* Company Code */}
-                        <FormField
-                            control={form.control}
-                            rules={{ required: "Company Code is required." }}
-                            name="material_company_code"
-                            render={({ field }: { field: ControllerRenderProps<FieldValues, "material_company_code"> }) => (
-                                <FormItem>
-                                    <FormLabel>Company Code <span className="text-red-500">*</span></FormLabel>
-                                    <FormControl>
-                                        <Select onValueChange={val => { field.onChange(val); setMaterialCompanyCode(val); }} value={field.value || ""} disabled>
-                                            <SelectTrigger className="p-3 w-full text-sm"><SelectValue placeholder="Select Company Code" /></SelectTrigger>
-                                            <SelectContent>
-                                                {companyName?.map(c =>
-                                                    <SelectItem key={c.name} value={c.name}>
-                                                        {c.company_name}
-                                                    </SelectItem>
-                                                )}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {/* Plant Name */}
-                        <FormField
-                            control={form.control}
-                            rules={{ required: "Plant Code is required." }}
-                            name="plant_name"
-                            render={({ field }: { field: ControllerRenderProps<FieldValues, "plant_name"> }) => (
-                                <FormItem>
-                                    <FormLabel>Plant Code <span className="text-red-500">*</span></FormLabel>
-                                    <FormControl>
-                                        <Select onValueChange={field.onChange} value={field.value || ""} disabled>
-                                            <SelectTrigger className="p-3 w-full text-sm"><SelectValue placeholder="Select Plant Code" /></SelectTrigger>
-                                            <SelectContent>
-                                                {filteredPlants?.map(p => <SelectItem key={p.name} value={p.name ?? ""}>{p.plant_name}</SelectItem>)}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {/* Material Category */}
-                        <FormField
-                            control={form.control}
-                            rules={{ required: "Material Category is required." }}
-                            name="material_category"
-                            render={({ field }: { field: ControllerRenderProps<FieldValues, "material_category"> }) => (
-                                <FormItem>
-                                    <FormLabel>Material Category <span className="text-red-500">*</span></FormLabel>
-                                    <FormControl>
-                                        <Select value={field.value || ""} onValueChange={val => { field.onChange(val); setSelectedMaterialType(val); }} disabled>
-                                            <SelectTrigger className="w-full text-sm"><SelectValue placeholder="Select Material Type" /></SelectTrigger>
-                                            <SelectContent>
-                                                {MaterialCategory?.map(m => <SelectItem key={m.name} value={m.name}>{m.description}</SelectItem>)}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {/* Material Type */}
-                        <FormField
-                            control={form.control}
-                            rules={{ required: "Material Type is required." }}
-                            name="material_type"
-                            render={({ field }: { field: ControllerRenderProps<FieldValues, "material_type"> }) => (
-                                <FormItem>
-                                    <FormLabel>Material Type <span className="text-red-500">*</span></FormLabel>
-                                    <FormControl>
-                                        <Select value={field.value || ""} onValueChange={val => { field.onChange(val); setSelectedMaterialType(val); }} disabled>
-                                            <SelectTrigger className="w-full text-sm"><SelectValue placeholder="Select Material Type" /></SelectTrigger>
-                                            <SelectContent>
-                                                {filteredMaterialType?.map(m => <SelectItem key={m.name} value={m.name}>{m.name}</SelectItem>)}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className="space-y-1.5">
+                            <FormField
+                                control={form.control}
+                                rules={{ required: "Company Code is required." }}
+                                name="material_company_code"
+                                render={({ field }: { field: ControllerRenderProps<FieldValues, "material_company_code"> }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Company Code <span className="text-red-500">*</span></FormLabel>
+                                        <FormControl>
+                                            <Select onValueChange={val => { field.onChange(val); setMaterialCompanyCode(val); }} value={field.value || ""} disabled>
+                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed"><SelectValue placeholder="Select" /></SelectTrigger>
+                                                <SelectContent>
+                                                    {companyName?.map(c =>
+                                                        <SelectItem key={c.name} value={c.name} className="text-xs">
+                                                            {c.company_name}
+                                                        </SelectItem>
+                                                    )}
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
-                        <FormField
-                            control={form.control}
-                            name="material_type_category"
-                            rules={{ required: "Material Type Category is required." }}
-                            render={({ field }: { field: ControllerRenderProps<FieldValues, "material_type_category"> }) => (
-                                <FormItem>
-                                    <FormLabel>
-                                        Material Type Category <span className="text-red-500">*</span>
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Select
-                                            key={materialCategoryTypeOptions.length}
-                                            value={field.value || ""}
-                                            onValueChange={(value) => { field.onChange(value); }}
-                                            disabled
-                                        >
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select Material Category Type" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {materialCategoryTypeOptions.map((item) => (
-                                                    <SelectItem
-                                                        key={item.material_type_category}
-                                                        value={item.material_type_category}
-                                                    >
-                                                        {item.material_type_category}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        {/* Plant Name */}
+                        <div className="space-y-1.5">
+                            <FormField
+                                control={form.control}
+                                rules={{ required: "Plant Code is required." }}
+                                name="plant_name"
+                                render={({ field }: { field: ControllerRenderProps<FieldValues, "plant_name"> }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Plant Code <span className="text-red-500">*</span></FormLabel>
+                                        <FormControl>
+                                            <Select onValueChange={field.onChange} value={field.value || ""} disabled>
+                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed"><SelectValue placeholder="Select" /></SelectTrigger>
+                                                <SelectContent>
+                                                    {filteredPlants?.map(p => <SelectItem key={p.name} value={p.name ?? ""} className="text-xs">{p.plant_name}</SelectItem>)}
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        {/* Material Category */}
+                        <div className="space-y-1.5">
+                            <FormField
+                                control={form.control}
+                                rules={{ required: "Material Category is required." }}
+                                name="material_category"
+                                render={({ field }: { field: ControllerRenderProps<FieldValues, "material_category"> }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Material Category <span className="text-red-500">*</span></FormLabel>
+                                        <FormControl>
+                                            <Select value={field.value || ""} onValueChange={val => { field.onChange(val); setSelectedMaterialType(val); }} disabled>
+                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed"><SelectValue placeholder="Select" /></SelectTrigger>
+                                                <SelectContent>
+                                                    {MaterialCategory?.map(m => <SelectItem key={m.name} value={m.name} className="text-xs">{m.description}</SelectItem>)}
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        {/* Material Type */}
+                        <div className="space-y-1.5">
+                            <FormField
+                                control={form.control}
+                                rules={{ required: "Material Type is required." }}
+                                name="material_type"
+                                render={({ field }: { field: ControllerRenderProps<FieldValues, "material_type"> }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Material Type <span className="text-red-500">*</span></FormLabel>
+                                        <FormControl>
+                                            <Select value={field.value || ""} onValueChange={val => { field.onChange(val); setSelectedMaterialType(val); }} disabled>
+                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed"><SelectValue placeholder="Select" /></SelectTrigger>
+                                                <SelectContent>
+                                                    {filteredMaterialType?.map(m => <SelectItem key={m.name} value={m.name} className="text-xs">{m.name}</SelectItem>)}
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <FormField
+                                control={form.control}
+                                name="material_type_category"
+                                rules={{ required: "Material Type Category is required." }}
+                                render={({ field }: { field: ControllerRenderProps<FieldValues, "material_type_category"> }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                                            Material Type Category <span className="text-red-500">*</span>
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Select
+                                                key={materialCategoryTypeOptions.length}
+                                                value={field.value || ""}
+                                                onValueChange={(value) => { field.onChange(value); }}
+                                                disabled
+                                            >
+                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed">
+                                                    <SelectValue placeholder="Select" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {materialCategoryTypeOptions.map((item) => (
+                                                        <SelectItem
+                                                            key={item.material_type_category}
+                                                            value={item.material_type_category}
+                                                            className="text-xs"
+                                                        >
+                                                            {item.material_type_category}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
 
                         {/* UOM */}
-                        <FormField
-                            control={form.control}
-                            rules={{ required: "Base Unit of Measure is required." }}
-                            name="base_unit_of_measure"
-                            render={({ field }: { field: ControllerRenderProps<FieldValues, "base_unit_of_measure"> }) => (
-                                <FormItem>
-                                    <FormLabel>Base Unit of Measure <span className="text-red-500">*</span></FormLabel>
-                                    <FormControl>
-                                        <Select onValueChange={field.onChange} value={field.value || ""} disabled>
-                                            <SelectTrigger className="p-3 w-full text-sm"><SelectValue placeholder="Select Unit of Measure" /></SelectTrigger>
-                                            <SelectContent>
-                                                {UnitOfMeasure?.map(u => <SelectItem key={u.name} value={u.name}>{u.name} - {u.description}</SelectItem>)}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className="space-y-1.5">
+                            <FormField
+                                control={form.control}
+                                rules={{ required: "Base Unit of Measure is required." }}
+                                name="base_unit_of_measure"
+                                render={({ field }: { field: ControllerRenderProps<FieldValues, "base_unit_of_measure"> }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Base UOM <span className="text-red-500">*</span></FormLabel>
+                                        <FormControl>
+                                            <Select onValueChange={field.onChange} value={field.value || ""} disabled>
+                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed"><SelectValue placeholder="Select" /></SelectTrigger>
+                                                <SelectContent>
+                                                    {UnitOfMeasure?.map(u => <SelectItem key={u.name} value={u.name} className="text-xs">{u.name} - {u.description}</SelectItem>)}
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/newselect";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Pencil } from "lucide-react";
+import { Pencil, ListChecks } from "lucide-react";
 import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
 import { MaterialRequestData } from "@/src/types/MaterialCodeRequestFormTypes";
 
@@ -40,31 +40,32 @@ const MaterialSpecificationsForm: React.FC<MaterialSpecificationsFormProps> = ({
   }, [MaterialDetails, form]);
 
   return (
-    <div className="bg-[#F4F4F6] overflow-hidden">
-      <div className="flex flex-col justify-between bg-white rounded-[8px] p-1">
-        <div className="space-y-1">
-          <div className="flex items-center justify-between text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
+    <div className="bg-transparent">
+      <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-800 border-b border-slate-200 pb-2 mb-2">
+            <ListChecks className="w-4 h-4 text-[#0C72F5]" />
             <span>Characteristics & Specifications</span>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {!isZCAPMaterial && (
               <>
                 {/* Storage Requirements */}
-                <div className="space-y-2">
+                <div className="col-span-1 md:col-span-2 lg:col-span-4 space-y-1.5">
                   <FormField
                     control={form.control}
                     name="storage_requirements"
                     key="storage_requirements"
                     render={({ field }: { field: ControllerRenderProps<FieldValues, "storage_requirements"> }) => (
                       <FormItem>
-                        <FormLabel>Storage Requirements</FormLabel>
+                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Storage Requirements</FormLabel>
                         <FormControl>
                           <textarea
                             {...field}
-                            rows={4}
+                            rows={3}
                             placeholder="Enter storage requirements"
-                            className="w-full p-3 text-sm rounded-md placeholder:text-gray-400 border border-gray-300 hover:border-blue-500 focus:border-blue-500 focus:outline-none"
+                            className="w-full px-3 py-2 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700 placeholder:text-slate-400 min-h-[80px]"
                             onChange={(e) => {
                               const formattedValue = e.target.value
                                 .toLowerCase()
@@ -73,27 +74,27 @@ const MaterialSpecificationsForm: React.FC<MaterialSpecificationsFormProps> = ({
                             }}
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-[10px]" />
                       </FormItem>
                     )}
                   />
                 </div>
 
                 {/* Intended Usage / Application */}
-                <div className="space-y-2">
+                <div className="col-span-1 md:col-span-2 lg:col-span-4 space-y-1.5">
                   <FormField
                     control={form.control}
                     name="intended_usage_application"
                     key="intended_usage_application"
                     render={({ field }: { field: ControllerRenderProps<FieldValues, "intended_usage_application"> }) => (
                       <FormItem>
-                        <FormLabel>Intended Usage / Application</FormLabel>
+                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Intended Usage / Application</FormLabel>
                         <FormControl>
                           <textarea
                             {...field}
-                            rows={4}
+                            rows={3}
                             placeholder="Enter intended usage / application"
-                            className="w-full p-3 text-sm rounded-md placeholder:text-gray-400 border border-gray-300 hover:border-blue-400 focus:border-blue-400 focus:outline-none"
+                            className="w-full px-3 py-2 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700 placeholder:text-slate-400 min-h-[80px]"
                             onChange={(e) => {
                               const formattedValue = e.target.value
                                 .toLowerCase()
@@ -102,36 +103,36 @@ const MaterialSpecificationsForm: React.FC<MaterialSpecificationsFormProps> = ({
                             }}
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-[10px]" />
                       </FormItem>
                     )}
                   />
                 </div>
 
                 {/* Hazardous Material */}
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <FormField
                     control={form.control}
                     name="hazardous_material"
                     key="hazardous_material"
                     render={({ field }: { field: ControllerRenderProps<FieldValues, "hazardous_material"> }) => (
                       <FormItem>
-                        <FormLabel>Hazardous Material (Y/N)</FormLabel>
+                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Hazardous Material (Y/N)</FormLabel>
                         <FormControl>
                           <Select
                             value={field.value}
                             onValueChange={field.onChange}
                           >
-                            <SelectTrigger className="w-full text-sm whitespace-nowrap rounded-md data-[placeholder]:text-gray-500">
+                            <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
                               <SelectValue placeholder="Select" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="Yes">Yes</SelectItem>
-                              <SelectItem value="No">No</SelectItem>
+                              <SelectItem value="Yes" className="text-xs">Yes</SelectItem>
+                              <SelectItem value="No" className="text-xs">No</SelectItem>
                             </SelectContent>
                           </Select>
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-[10px]" />
                       </FormItem>
                     )}
                   />

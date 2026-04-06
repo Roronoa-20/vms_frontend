@@ -61,7 +61,7 @@ export default function MaterialOnboardingDetails() {
           url: `${API_END_POINTS.getEmployeeDetails}?user=${user_email}`,
           method: "GET",
         });
-        console.log("Employee Details ------>",res)
+        console.log("Employee Details ------>", res)
         setEmployeeDetailsJSON(res?.data?.message?.data || null);
       } catch (err) {
         console.error("Error fetching employee details:", err);
@@ -96,7 +96,7 @@ export default function MaterialOnboardingDetails() {
           requestWrapper({ url: API_END_POINTS.getexpirationDateMaster, method: "GET" }),
           requestWrapper({ url: API_END_POINTS.getMRPGroupMaster, method: "GET" }),
         ]);
-       
+
         setCompanyJson(companyRes?.data?.data);
         setPlantJson(plantRes?.data?.message?.data);
         setDivisionJson(divisionRes?.data?.data);
@@ -264,9 +264,10 @@ export default function MaterialOnboardingDetails() {
       const response: AxiosResponse<any> = await requestWrapper({
         url: API_END_POINTS.sendrevertemailtouser,
         method: "POST",
-        params: { doc_name: name,
+        params: {
+          doc_name: name,
           remark: remark,
-         },
+        },
       });
 
       const result = response?.data;

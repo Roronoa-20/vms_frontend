@@ -55,15 +55,15 @@ const ExportMaterialExcelDialog: React.FC<ExportMaterialExcelDialogProps> = ({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Export Excel</DialogTitle>
+          <DialogTitle className="text-xl font-bold tracking-tight text-slate-800">Export Excel</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-3 py-2">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">
             Select Request Date
           </label>
           <select
-            className="w-full p-2 border rounded-md"
+            className="w-full px-4 py-3 text-sm rounded-lg bg-white border border-slate-200 shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#0C72F5]/20 focus:border-[#0C72F5] hover:border-slate-300 text-slate-800"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
           >
@@ -77,10 +77,10 @@ const ExportMaterialExcelDialog: React.FC<ExportMaterialExcelDialogProps> = ({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={onClose} className="border-slate-200 hover:bg-slate-50 text-slate-700">
             Close
           </Button>
-          <Button onClick={handleExport} disabled={!selectedDate}>
+          <Button onClick={handleExport} disabled={!selectedDate} className="bg-[#0C72F5] hover:bg-[#0C72F5]/90 text-white shadow-sm">
             Export
           </Button>
         </DialogFooter>

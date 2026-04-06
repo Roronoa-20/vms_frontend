@@ -51,11 +51,11 @@ const MaterialOnboardingCards = ({ cardData, companyDropdown }: Props) => {
       }
 
       let url = `${API_END_POINTS.getRequestorMasterTableList}?limit=${recordPerPage}&offset=${(page - 1) * recordPerPage}`;
-      
+
       if (searchTerm) {
         url += `&search_term=${encodeURIComponent(searchTerm)}`;
       }
-      
+
       // Clean filters: remove empty strings, null, undefined
       const cleanFilters = Object.fromEntries(
         Object.entries(filters).filter(([_, v]) => v !== "" && v !== null && v !== undefined)
@@ -64,7 +64,7 @@ const MaterialOnboardingCards = ({ cardData, companyDropdown }: Props) => {
       if (Object.keys(cleanFilters).length > 0) {
         url += `&filters=${encodeURIComponent(JSON.stringify(cleanFilters))}`;
       }
-      
+
       url += `&_t=${Date.now()}`;
 
       const response = await requestWrapper({
@@ -142,21 +142,23 @@ const MaterialOnboardingCards = ({ cardData, companyDropdown }: Props) => {
   return (
     <div>
       <Tabs value={activeTab} onValueChange={handleTabChange} className="">
-        <TabsList className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 h-full pb-6 bg-white">
+        <TabsList className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 h-full pb-4 bg-white">
           {allCardData.map((item) => (
             <TabsTrigger
               key={item.name}
               value={item.name}
-              className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-black text-gray-500 rounded-2xl p-0 transition-all duration-300 ease-in-out"
+              className="data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-black text-gray-500 rounded-xl p-0 transition-all duration-300 ease-in-out h-full"
             >
               <div
-                className={`group w-full h-full rounded-2xl ${item.bg_color} flex flex-col p-3 ${item.text_color} justify-between border-2 ${item.hover} hover:scale-105 transition duration-300 transform cursor-pointer shadow-md`}
+                className={`group w-full h-full rounded-xl ${item.bg_color} flex flex-col p-3 ${item.text_color} justify-between border-2 border-transparent ${item.hover} hover:scale-[1.02] transition duration-300 transform cursor-pointer shadow-sm`}
               >
-                <div className="flex w-full justify-between">
-                  <h1 className="text-[13px]">{item.name}</h1>
-                  <Image src={item.icon} alt="" width={25} height={30} />
+                <div className="flex w-full justify-between items-start">
+                  <h1 className="text-[13px] font-semibold leading-tight text-left">{item.name}</h1>
+                  <div className="p-1 px-1.5 rounded-lg bg-white/40 backdrop-blur-sm -mt-1 -mr-1">
+                    <Image src={item.icon} alt="" width={18} height={18} className="opacity-80" />
+                  </div>
                 </div>
-                <div className="text-[20px] text-start font-bold">{item.count}</div>
+                <div className="text-2xl text-start font-bold mt-2 tracking-tight">{item.count}</div>
               </div>
             </TabsTrigger>
           ))}

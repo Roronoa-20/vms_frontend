@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGr
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { MaterialRegistrationFormData, Company, Plant, ClassType, UOMMaster, MaterialGroupMaster, ProfitCenter, AvailabilityCheck, SerialNumber, MaterialType, MaterialRequestData } from "@/src/types/MaterialCodeRequestFormTypes";
 import { ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
+import { Store } from "lucide-react";
 
 
 interface MaterialStoreFieldsProps {
@@ -104,22 +105,23 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
   }, [classTypeSelected, ClassType, form, serialNumberProfile, SerialProfile]);
 
   return (
-    <div className="bg-[#F4F4F6] overflow-hidden">
-      <div className="flex flex-col justify-between bg-white rounded-[8px] p-1">
-        <div className="space-y-1">
-          <div className="flex items-center justify-between text-[20px] font-semibold leading-[24px] text-[#03111F] border-b border-slate-500 pb-1">
+    <div className="bg-transparent">
+      <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-800 border-b border-slate-200 pb-2 mb-2">
+            <Store className="w-4 h-4 text-[#0C72F5]" />
             <span>Store Data</span>
           </div>
-          <div className="grid grid-cols-3 gap-4 pb-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Material Group */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <FormField
                 control={form.control}
                 name="material_group"
                 key="material_group"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "material_group"> }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
                       Material Group <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
@@ -130,8 +132,8 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                         }}
                         value={field.value || ""}
                       >
-                        <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
-                          <SelectValue placeholder="Select Material Group" />
+                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                          <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent className="max-h-60 overflow-y-scroll">
                           {/* Search */}
@@ -145,173 +147,178 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                                   e.stopPropagation();
                                 }
                               }}
-                              placeholder="Search Material Group..."
-                              className="w-full p-2 border border-gray-300 rounded text-sm"
+                              placeholder="Search..."
+                              className="w-full h-8 p-2 border border-slate-200 rounded text-sm"
                             />
                           </div>
 
                           <SelectGroup>
                             {materialGroupOptions.length > 0 ? (
                               materialGroupOptions.map((group) => (
-                                <SelectItem key={group.name} value={group.name}>
-                                  {group.material_group_name} –{" "}
-                                  {group.material_group_description}
+                                <SelectItem key={group.name} value={group.name} className="text-xs">
+                                  {group.material_group_name} – {group.material_group_description}
                                 </SelectItem>
                               ))
                             ) : (
-                              <div className="px-3 py-2 text-sm text-gray-500">
-                                No material group found
+                              <div className="px-3 py-2 text-xs text-slate-500">
+                                No records found
                               </div>
                             )}
                           </SelectGroup>
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-[10px]" />
                   </FormItem>
                 )}
               />
             </div>
 
             {!isZCAPMaterial && (
-              <>
-                {/* Batch Management Required */}
-                <div className="space-y-2">
-                  <FormField
-                    control={form.control}
-                    name="batch_requirements_yn"
-                    key="batch_requirements_yn"
-                    render={({ field }: { field: ControllerRenderProps<FieldValues, "batch_requirements_yn"> }) => (
-                      <FormItem>
-                        <FormLabel>Batch Management Required (Y/N)</FormLabel>
-                        <FormControl>
-                          <Select value={field.value} onValueChange={field.onChange}>
-                            <SelectTrigger className="w-full text-sm whitespace-nowrap data-[placeholder]:text-gray-500">
-                              <SelectValue placeholder="Select" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Yes">Yes</SelectItem>
-                              <SelectItem value="No">No</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </>
+              <div className="space-y-1.5">
+                <FormField
+                  control={form.control}
+                  name="batch_requirements_yn"
+                  key="batch_requirements_yn"
+                  render={({ field }: { field: ControllerRenderProps<FieldValues, "batch_requirements_yn"> }) => (
+                    <FormItem>
+                      <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block leading-tight">Batch Management Required</FormLabel>
+                      <FormControl>
+                        <Select value={field.value} onValueChange={field.onChange}>
+                          <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                            <SelectValue placeholder="Select" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Yes" className="text-xs">Yes</SelectItem>
+                            <SelectItem value="No" className="text-xs">No</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  )}
+                />
+              </div>
             )}
 
-            {/* Brand / Make */}
-            {/* <div className="space-y-2">
-                  <FormField
-                    control={form.control}
-                    name="brand_make"
-                    key="brand_make"
-                    render={({ field }: { field: ControllerRenderProps<FieldValues, "brand_make"> }) => (
-                      <FormItem>
-                        <FormLabel>Brand / Make (if required)</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className="p-3 w-full text-sm placeholder:text-gray-500"
-                            placeholder="Enter Brand / Make Name"
-                            onChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div> */}
-
             {/* Availability Check */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <FormField
                 control={form.control}
                 name="availability_check"
                 key="availability_check"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "availability_check"> }) => (
                   <FormItem>
-                    <FormLabel>Availability Check</FormLabel>
+                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Availability Check</FormLabel>
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
                         value={field.value || undefined}
                       >
-                        <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
-                          <SelectValue placeholder="Select Availability Check" />
+                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                          <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
                           {AvailabilityCheck.map((check) => (
-                            <SelectItem key={check.name} value={check.name}>
+                            <SelectItem key={check.name} value={check.name} className="text-xs">
                               {check.name} - {check.description}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-[10px]" />
                   </FormItem>
                 )}
               />
             </div>
 
-            {/* Conditional Fields */}
+            {/* Serial Number Profile */}
+            {!isZCAPMaterial && (
+              <div className="space-y-1.5">
+                <FormField
+                  control={form.control}
+                  name="serial_number_profile"
+                  key="serial_number_profile"
+                  render={({ field }: { field: ControllerRenderProps<FieldValues, "serial_number_profile"> }) => (
+                    <FormItem>
+                      <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Serial Profile</FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value || undefined}
+                        >
+                          <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                            <SelectValue placeholder="Select" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {SerialProfile.map((serial) => (
+                              <SelectItem key={serial.name} value={serial.name} className="text-xs">
+                                {serial.serial_no_profile}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
+
+            {/* Conditional Fields: Class Type & Class Number */}
             {!isZCAPMaterial && batchRequirement === "Yes" && (
               <>
-                {/* Class Type */}
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <FormField
                     control={form.control}
                     name="class_type"
                     key="class_type"
                     render={({ field }: { field: ControllerRenderProps<FieldValues, "class_type"> }) => (
                       <FormItem>
-                        <FormLabel>Class Type</FormLabel>
+                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Class Type</FormLabel>
                         <FormControl>
                           <Select
                             onValueChange={field.onChange}
                             value={field.value || undefined}
                           >
-                            <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
-                              <SelectValue placeholder="Select Class Type" />
+                            <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                              <SelectValue placeholder="Select" />
                             </SelectTrigger>
                             <SelectContent>
                               {ClassType.map((classtype) => (
-                                <SelectItem key={classtype.name} value={classtype.name}>
+                                <SelectItem key={classtype.name} value={classtype.name} className="text-xs">
                                   {classtype.name}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-[10px]" />
                       </FormItem>
                     )}
                   />
                 </div>
 
-                {/* Class Number (Auto-populated) */}
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <FormField
                     control={form.control}
                     name="class_number"
                     key="class_number"
                     render={({ field }: { field: ControllerRenderProps<FieldValues, "class_number"> }) => (
                       <FormItem>
-                        <FormLabel>Class Number</FormLabel>
+                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Class Number</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             type="text"
                             readOnly
-                            className="p-3 w-full text-sm placeholder:text-gray-500"
-                            placeholder="Class Number will be auto-filled"
+                            className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed"
+                            placeholder="Auto-filled"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-[10px]" />
                       </FormItem>
                     )}
                   />
@@ -319,70 +326,34 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
               </>
             )}
 
-            {/* Serial Number Profile */}
-            {!isZCAPMaterial && (
-              <>
-                <div className="space-y-2">
-                  <FormField
-                    control={form.control}
-                    name="serial_number_profile"
-                    key="serial_number_profile"
-                    render={({ field }: { field: ControllerRenderProps<FieldValues, "serial_number_profile"> }) => (
-                      <FormItem>
-                        <FormLabel>Serial Number Profile</FormLabel>
-                        <FormControl>
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value || undefined}
-                          >
-                            <SelectTrigger className="p-3 w-full text-sm data-[placeholder]:text-gray-500">
-                              <SelectValue placeholder="Select Serial Number Profile" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {SerialProfile.map((serial) => (
-                                <SelectItem key={serial.name} value={serial.name}>
-                                  {serial.serial_no_profile}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Serialization Level */}
-                {serialNumberProfile && (
-                  <div className="space-y-2">
-                    <FormField
-                      control={form.control}
-                      name="serialization_level"
-                      key="serialization_level"
-                      render={({ field }: { field: ControllerRenderProps<FieldValues, "serialization_level"> }) => (
-                        <FormItem>
-                          <FormLabel>Serialization Level</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              className="p-3 w-full text-sm placeholder:text-gray-400"
-                              placeholder="Enter Serialization Level"
-                              readOnly
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                )}
-              </>
+            {/* Serialization Level */}
+            {!isZCAPMaterial && serialNumberProfile && (
+              <div className="space-y-1.5">
+                <FormField
+                  control={form.control}
+                  name="serialization_level"
+                  key="serialization_level"
+                  render={({ field }: { field: ControllerRenderProps<FieldValues, "serialization_level"> }) => (
+                    <FormItem>
+                      <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Serialization Level</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed"
+                          placeholder="Auto-filled"
+                          readOnly
+                        />
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  )}
+                />
+              </div>
             )}
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 
