@@ -216,11 +216,13 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
         if (hasInitialized.current) return;
 
         if (isSAPGenerated && MaterialOnboardingDetails) {
-            form.reset({
-                material_code_revised: MaterialOnboardingDetails.material_code_revised || "",
-                material_name_description: MaterialOnboardingDetails.material_name_description || "",
-                material_specifications: MaterialOnboardingDetails.material_specifications || "",
-            });
+            const sapCode = MaterialOnboardingDetails.material_code_revised || "";
+            const sapDesc = MaterialOnboardingDetails.material_name_description || "";
+            const sapSpec = MaterialOnboardingDetails.material_specifications || "";
+
+            if (sapCode) form.setValue("material_code_revised", sapCode);
+            if (sapDesc) form.setValue("material_name_description", sapDesc);
+            if (sapSpec) form.setValue("material_specifications", sapSpec);
 
             hasInitialized.current = true;
             return;
@@ -230,7 +232,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
             const item = MaterialDetails.material_request_item;
             const storage = MaterialDetails.material_master;
 
-            form.reset({
+            const fields: any = {
                 material_name_description: item.material_name_description || "",
                 material_specifications: item.material_specifications || "",
                 comment_by_user: item.comment_by_user || "",
@@ -241,10 +243,13 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                 material_company_code: item.company_name || "",
                 division: storage.division || "",
                 storage_location: storage.storage_location || "",
-                material_code_revised:
-                    item.material_code_revised ||
-                    storage.material_code_revised ||
-                    "",
+                material_code_revised: item.material_code_revised || storage.material_code_revised || "",
+            };
+
+            Object.entries(fields).forEach(([key, value]) => {
+                if (value !== undefined && value !== null) {
+                    form.setValue(key as any, value);
+                }
             });
 
             setMaterialCompanyCode(item.company_name || "");
@@ -252,7 +257,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
 
             hasInitialized.current = true;
         }
-    }, []);
+    }, [isSAPGenerated, MaterialOnboardingDetails, MaterialDetails, form, setMaterialCompanyCode, setSelectedMaterialType]);
 
     useEffect(() => {
         if (isSAPGenerated || isExistingMaterial) return;

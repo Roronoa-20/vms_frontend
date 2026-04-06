@@ -15,58 +15,70 @@ interface MaterialRequesterDetailsFormProps {
 
 const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> = ({ form, MaterialOnboardingDetails, MaterialDetails }) => {
 
-  useEffect(() => {
-    const listData = MaterialOnboardingDetails;
-    // Flexibility for different API response structures
-    const fullData = MaterialDetails?.requestor_master || 
-                    (MaterialDetails?.doctype === "Requestor Master" ? MaterialDetails : null) || 
-                    MaterialDetails;
+  const listData = MaterialOnboardingDetails;
+  console.log("[RequesterDetails] Props received -> MaterialOnboardingDetails:", MaterialOnboardingDetails, "MaterialDetails:", MaterialDetails);
 
-    console.log("Requestor Data Resolved:", fullData);
+  // Safety check for array structure if it persists through prop
+  const details = Array.isArray(MaterialDetails) ? MaterialDetails[0] : MaterialDetails;
+  console.log("[RequesterDetails] details (after array check):", details);
 
-    // Helper to get value from either source, prioritizing fullData (detailed record)
-    const getValue = (field: string, fallbacks: string[] = []) => {
-      // Check primary field in fullData
-      if (fullData?.[field]) return fullData[field];
-      
-      // Check fallbacks in fullData
-      for (const f of fallbacks) {
-        if (fullData?.[f]) return fullData[f];
-      }
+  // Flexibility for different API response structures
+  const fullData = details?.requestor_master || 
+                  (details?.doctype === "Requestor Master" ? details : null) || 
+                  details;
+  console.log("[RequesterDetails] fullData resolved:", fullData);
 
-      // Check primary field in listData
-      if (listData?.[field]) return listData[field];
-
-      // Check fallbacks in listData
-      for (const f of fallbacks) {
-        if (listData?.[f]) return listData[f];
-      }
-
+  // Helper to get value from either source, prioritizing fullData (detailed record)
+  const getValue = (field: string, fallbacks: string[] = []) => {
+    if (!fullData && !listData) {
+      console.log(`[RequesterDetails] getValue('${field}') -> Failed: No fullData and no listData available.`);
       return "";
-    };
+    }
 
+    // List of sources to check in order
+    const sources = [fullData, listData];
+    const allFields = [field, ...fallbacks];
+
+    for (const [index, source] of sources.entries()) {
+      if (!source) continue;
+      for (const f of allFields) {
+        if (source[f] !== undefined && source[f] !== null && source[f] !== "") {
+          console.log(`[RequesterDetails] getValue('${field}') -> Found in source[${index === 0 ? 'fullData' : 'listData'}] using key '${f}':`, source[f]);
+          return source[f];
+        }
+      }
+    }
+
+    console.log(`[RequesterDetails] getValue('${field}') -> Not found in any source or fallback fields:`, allFields);
+    return "";
+  };
+
+  useEffect(() => {
+    console.log("[RequesterDetails] useEffect triggered. Evaluating if form.setValue should run. listData:", !!listData, "fullData:", !!fullData);
     if (listData || fullData) {
+      console.log("[RequesterDetails] Setting form values...");
       form.setValue("request_date", getValue("request_date") || "");
       form.setValue("requested_by", getValue("requested_by", ["requested_by_name"]) || "");
 
       // Company fallback logic
       const companyVal = getValue("requestor_company", [
         "material_company_name",
+        "requestor_company_code",
         "requestor_company_name",
         "company_name_display",
         "company_name"
-      ]) || MaterialDetails?.material_request_item?.company_name_display || "";
+      ]) || details?.material_request_item?.company_name_display || "";
+      console.log("[RequesterDetails] Final resolved company value:", companyVal);
       form.setValue("company", companyVal);
 
-      form.setValue("department", getValue("requestor_department", ["department"]) || "");
+      form.setValue("department", getValue("requestor_department", ["department", "requestor_department_name"]) || "");
       form.setValue("sub_department", getValue("sub_department") || "");
-      form.setValue("hod", getValue("requestor_hod", ["hod"]) || "");
+      form.setValue("hod", getValue("requestor_hod", ["hod", "requestor_hod_name"]) || "");
       form.setValue("immediate_reporting_head", getValue("immediate_reporting_head") || "");
       form.setValue("contact_information_email", getValue("contact_information_email", ["requestor_email"]) || "");
       form.setValue("contact_information_phone", getValue("contact_information_phone", ["requestor_phone"]) || "");
     }
-  }, [MaterialOnboardingDetails, MaterialDetails, form]);
-
+  }, [MaterialOnboardingDetails, MaterialDetails, form, fullData, listData, details]);
 
   return (
     <div className="bg-[#F4F4F6] overflow-hidden">
@@ -91,10 +103,10 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                       <FormControl>
                         <input
                           type="date"
-                          className="flex-1 px-3 py-2 text-sm rounded"
+                          className="flex-1 px-3 py-2 text-sm rounded bg-gray-50 border border-gray-200"
                           readOnly
-                          // {...field}
-                          value={field.value || ""}
+                          {...field}
+                          value={field.value || getValue("request_date") || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -113,11 +125,10 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                       <FormControl>
                         <input
                           type="text"
-                          className="flex-1 px-3 py-2 text-sm rounded"
-                          // {...field}
-                          value={field.value || ""}
-                          // value={MaterialOnboardingDetails?.requested_by || ""}
+                          className="flex-1 px-3 py-2 text-sm rounded bg-gray-50 border border-gray-200"
                           readOnly
+                          {...field}
+                          value={field.value || getValue("requested_by", ["requested_by_name"]) || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -128,7 +139,16 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                 <FormField
                   control={form.control}
                   name="company"
-                  render={({ field }: { field: ControllerRenderProps<any, string> }) => (
+                  render={({ field }: { field: ControllerRenderProps<any, string> }) => {
+                    const companyVal = getValue("requestor_company", [
+                      "material_company_name",
+                      "requestor_company_code",
+                      "requestor_company_name",
+                      "company_name_display",
+                      "company_name"
+                    ]) || details?.material_request_item?.company_name_display || "";
+                    
+                    return (
                     <FormItem className="flex items-center gap-2">
                       <FormLabel className="w-40 font-medium text-sm">
                         Company <span className="text-red-500">*</span> :
@@ -136,16 +156,15 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                       <FormControl>
                         <input
                           type="text"
-                          className="flex-1 px-3 py-2 text-sm rounded"
-                          // {...field}
-                          value={field.value || ""}
-                          // value={`${MaterialOnboardingDetails?.requestor_company || ""} - ${MaterialOnboardingDetails?.requestor_company_name || ""}`}
+                          className="flex-1 px-3 py-2 text-sm rounded bg-gray-50 border border-gray-200"
                           readOnly
+                          {...field}
+                          value={field.value || companyVal || ""}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
-                  )}
+                  )}}
                 />
               </div>
 
@@ -162,11 +181,10 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                       <FormControl>
                         <input
                           type="text"
-                          className="flex-1 px-3 py-2 text-sm rounded"
-                          // {...field}
-                          value={field.value || ""}
-                          // value={MaterialOnboardingDetails?.requestor_department || ""}
+                          className="flex-1 px-3 py-2 text-sm rounded bg-gray-50 border border-gray-200"
                           readOnly
+                          {...field}
+                          value={field.value || getValue("requestor_department", ["department", "requestor_department_name"]) || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -185,11 +203,10 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                       <FormControl>
                         <input
                           type="text"
-                          className="flex-1 px-3 py-2 text-sm rounded"
-                          // {...field}
-                          value={field.value || ""}
-                          // value={MaterialOnboardingDetails?.sub_department || ""}
+                          className="flex-1 px-3 py-2 text-sm rounded bg-gray-50 border border-gray-200"
                           readOnly
+                          {...field}
+                          value={field.value || getValue("sub_department") || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -208,11 +225,10 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                       <FormControl>
                         <input
                           type="text"
-                          className="flex-1 px-3 py-2 text-sm rounded"
-                          // {...field}
-                          value={field.value || ""}
-                          // value={MaterialOnboardingDetails?.requestor_hod || ""}
+                          className="flex-1 px-3 py-2 text-sm rounded bg-gray-50 border border-gray-200"
                           readOnly
+                          {...field}
+                          value={field.value || getValue("requestor_hod", ["hod", "requestor_hod_name"]) || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -234,11 +250,10 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                       <FormControl>
                         <input
                           type="text"
-                          className="flex-1 px-3 py-2 text-sm rounded"
-                          // {...field}
-                          value={field.value || ""}
-                          // value={MaterialOnboardingDetails?.immediate_reporting_head || ""}
+                          className="flex-1 px-3 py-2 text-sm rounded bg-gray-50 border border-gray-200"
                           readOnly
+                          {...field}
+                          value={field.value || getValue("immediate_reporting_head") || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -257,11 +272,10 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                       <FormControl>
                         <input
                           type="email"
-                          className="flex-1 px-3 py-2 text-sm rounded"
-                          // {...field}
-                          value={field.value || ""}
-                          // value={MaterialOnboardingDetails?.contact_information_email || ""}
+                          className="flex-1 px-3 py-2 text-sm rounded bg-gray-50 border border-gray-200"
                           readOnly
+                          {...field}
+                          value={field.value || getValue("contact_information_email", ["requestor_email"]) || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -280,11 +294,10 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
                       <FormControl>
                         <input
                           type="text"
-                          className="flex-1 px-3 py-2 text-sm rounded"
-                          // {...field}
-                          value={field.value || ""}
-                          // value={MaterialOnboardingDetails?.contact_information_phone || ""}
+                          className="flex-1 px-3 py-2 text-sm rounded bg-gray-50 border border-gray-200"
                           readOnly
+                          {...field}
+                          value={field.value || getValue("contact_information_phone", ["requestor_phone"]) || ""}
                         />
                       </FormControl>
                       <FormMessage />
