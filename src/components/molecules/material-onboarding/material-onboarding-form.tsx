@@ -79,7 +79,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, o
                     <Button
                         variant="backbtn"
                         size="backbtnsize"
-                        className="py-2.5"
+                        className="py-2.5 bg-white"
                         onClick={onCancel}
                     >
                         Cancel
