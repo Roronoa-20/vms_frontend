@@ -286,7 +286,7 @@ const MaterialInformationForm: React.FC<MaterialInformationFormProps> = ({
 
 
   return (
-    <div className="bg-transparent">
+    <div className="bg-gray-50">
       <div className="flex flex-col justify-between">
         <div className="space-y-4">
           <UserRequestDetails

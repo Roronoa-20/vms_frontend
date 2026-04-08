@@ -82,8 +82,8 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
   }, [MaterialOnboardingDetails, MaterialDetails, form, fullData, listData, details]);
 
   return (
-    <div className="bg-transparent">
-      <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
+    <div className="bg-gray-50">
+      <div className="flex flex-col justify-between rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-800 border-b border-slate-200 pb-2 mb-2">
             <FileText className="w-4 h-4 text-[#0C72F5]" />
@@ -97,13 +97,13 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
               name="request_date"
               render={({ field }: { field: ControllerRenderProps<any, string> }) => (
                 <FormItem className="space-y-1.5">
-                  <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                  <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                     Request Date <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <input
                       type="date"
-                      className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-slate-500 font-medium cursor-not-allowed"
+                      className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-black font-medium cursor-not-allowed"
                       readOnly
                       {...field}
                       value={field.value || getValue("request_date") || ""}
@@ -120,13 +120,13 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
               name="requested_by"
               render={({ field }: { field: ControllerRenderProps<any, string> }) => (
                 <FormItem className="space-y-1.5">
-                  <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                  <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                     Requested By <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <input
                       type="text"
-                      className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-slate-500 font-medium cursor-not-allowed"
+                      className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-black font-medium cursor-not-allowed"
                       readOnly
                       {...field}
                       value={field.value || getValue("requested_by", ["requested_by_name"]) || ""}
@@ -152,13 +152,13 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
 
                 return (
                   <FormItem className="space-y-1.5">
-                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                    <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                       Company <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
                       <input
                         type="text"
-                        className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-slate-500 font-medium cursor-not-allowed"
+                        className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-black font-medium cursor-not-allowed"
                         readOnly
                         {...field}
                         value={field.value || companyVal || ""}
@@ -176,13 +176,13 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
               name="department"
               render={({ field }: { field: ControllerRenderProps<any, string> }) => (
                 <FormItem className="space-y-1.5">
-                  <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                  <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                     Department <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <input
                       type="text"
-                      className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-slate-500 font-medium cursor-not-allowed"
+                      className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-black font-medium cursor-not-allowed"
                       readOnly
                       {...field}
                       value={field.value || getValue("requestor_department", ["department", "requestor_department_name"]) || ""}
@@ -199,13 +199,13 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
               name="sub_department"
               render={({ field }: { field: ControllerRenderProps<any, string> }) => (
                 <FormItem className="space-y-1.5">
-                  <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                  <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                     Sub-Department <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <input
                       type="text"
-                      className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-slate-500 font-medium cursor-not-allowed"
+                      className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-black font-medium cursor-not-allowed"
                       readOnly
                       {...field}
                       value={field.value || getValue("sub_department") || ""}
@@ -222,13 +222,13 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
               name="hod"
               render={({ field }: { field: ControllerRenderProps<any, string> }) => (
                 <FormItem className="space-y-1.5">
-                  <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                  <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                     HOD <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <input
                       type="text"
-                      className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-slate-500 font-medium cursor-not-allowed"
+                      className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-black font-medium cursor-not-allowed"
                       readOnly
                       {...field}
                       value={field.value || getValue("requestor_hod", ["hod", "requestor_hod_name"]) || ""}
@@ -245,13 +245,13 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
               name="immediate_reporting_head"
               render={({ field }: { field: ControllerRenderProps<any, string> }) => (
                 <FormItem className="space-y-1.5">
-                  <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                  <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                     Reporting Head <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <input
                       type="text"
-                      className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-slate-500 font-medium cursor-not-allowed"
+                      className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-black font-medium cursor-not-allowed"
                       readOnly
                       {...field}
                       value={field.value || getValue("immediate_reporting_head") || ""}
@@ -268,13 +268,13 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
               name="contact_information_email"
               render={({ field }: { field: ControllerRenderProps<any, string> }) => (
                 <FormItem className="space-y-1.5">
-                  <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                  <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                     Email <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <input
                       type="email"
-                      className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-slate-500 font-medium cursor-not-allowed"
+                      className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-black font-medium cursor-not-allowed"
                       readOnly
                       {...field}
                       value={field.value || getValue("contact_information_email", ["requestor_email"]) || ""}
@@ -291,13 +291,13 @@ const MaterialRequesterDetailsForm: React.FC<MaterialRequesterDetailsFormProps> 
               name="contact_information_phone"
               render={({ field }: { field: ControllerRenderProps<any, string> }) => (
                 <FormItem className="space-y-1.5">
-                  <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                  <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                     Phone <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <input
                       type="text"
-                      className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-slate-500 font-medium cursor-not-allowed"
+                      className="w-full h-9 px-3 py-1 text-sm rounded-md border border-slate-200 text-black font-medium cursor-not-allowed"
                       readOnly
                       {...field}
                       value={field.value || getValue("contact_information_phone", ["requestor_phone"]) || ""}

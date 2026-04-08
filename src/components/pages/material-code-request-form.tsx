@@ -298,22 +298,24 @@ export default function MaterialRegistration() {
     );
 
   return (
-    <div className="pt-4 pl-[1%] pr-[1%] bg-slate-300">
-      <Form {...form}>
-        <MaterialOnboardingForm
-          form={form}
-          onCancel={onCancel}
-          onSubmit={onSubmit}
-          onUpdate={onUpdate}
-          onError={onError}
-          EmployeeDetailsJSON={EmployeeDetailsJSON}
-          masters={masters}
-          showAlert={showAlert}
-          isLoading={isLoading}
-          isButtonDisabled={isButtonDisabled}
-          materialRequestList={(materialRequestList.length > 0 ? materialRequestList[0] : undefined) as any}
-        />
-      </Form>
+    <div className="bg-slate-100/80 pt-2">
+      <div className="max-w-[75rem] mx-auto">
+        <Form {...form}>
+          <MaterialOnboardingForm
+            form={form}
+            onCancel={onCancel}
+            onSubmit={onSubmit}
+            onUpdate={onUpdate}
+            onError={onError}
+            EmployeeDetailsJSON={EmployeeDetailsJSON}
+            masters={masters}
+            showAlert={showAlert}
+            isLoading={isLoading}
+            isButtonDisabled={isButtonDisabled}
+            materialRequestList={(materialRequestList.length > 0 ? materialRequestList[0] : undefined) as any}
+          />
+        </Form>
+      </div>
     </div>
   );
 }

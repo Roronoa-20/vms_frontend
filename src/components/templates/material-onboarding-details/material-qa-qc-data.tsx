@@ -51,7 +51,7 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, ExpirationDat
             const incoming = (data as any)[field];
             const current = (currentValues as any)[field];
 
-            if (incoming !== undefined && incoming !== null && incoming !== current) {
+            if (incoming !== undefined && incoming !== null && (current === "" || current === undefined || current === null)) {
                 form.setValue(field as any, incoming, {
                     shouldDirty: false,
                     shouldTouch: false,
@@ -83,8 +83,8 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, ExpirationDat
     };
 
     return (
-        <div className="bg-transparent">
-            <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
+        <div className="bg-gray-50">
+            <div className="flex flex-col justify-between rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
                 <div className="space-y-3">
                     <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-800 border-b border-slate-200 pb-2 mb-2">
                         <ShieldCheck className="w-4 h-4 text-[#0C72F5]" />
@@ -100,11 +100,11 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, ExpirationDat
                                 key="minimum_remaining_shell_life"
                                 render={({ field }: { field: ControllerRenderProps<FieldValues, "minimum_remaining_shell_life"> }) => (
                                     <FormItem>
-                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Min. Remaining Life</FormLabel>
+                                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Min. Remaining Life</FormLabel>
                                         <FormControl>
                                             <Input
                                                 {...field}
-                                                className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700"
+                                                className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black"
                                                 placeholder="Enter value"
                                             />
                                         </FormControl>
@@ -121,11 +121,11 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, ExpirationDat
                                 name="total_shell_life"
                                 render={({ field }: { field: ControllerRenderProps<FieldValues, "total_shell_life"> }) => (
                                     <FormItem>
-                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Total Shell Life</FormLabel>
+                                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Total Shell Life</FormLabel>
                                         <FormControl>
                                             <Input
                                                 {...field}
-                                                className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700"
+                                                className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black"
                                                 placeholder="Enter shell life"
                                             />
                                         </FormControl>
@@ -142,18 +142,18 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, ExpirationDat
                                 name="expiration_date"
                                 render={({ field }: { field: ControllerRenderProps<FieldValues, "expiration_date"> }) => (
                                     <FormItem>
-                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block leading-tight">Shelf Life Indicator</FormLabel>
+                                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block leading-tight">Shelf Life Indicator</FormLabel>
                                         <FormControl>
                                             <Select value={field.value ?? undefined} onValueChange={(val) => {
                                                 if (val !== field.value) field.onChange(val);
                                             }}
                                             >
-                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black">
                                                     <SelectValue placeholder="Select indicator" />
                                                 </SelectTrigger>
                                                 <SelectContent className="max-h-60 overflow-y-auto">
                                                     {expirationMemo.map((exp) => (
-                                                        <SelectItem key={exp.name} value={exp.name} className="text-xs">
+                                                        <SelectItem key={exp.name} value={exp.name} className="text-sm">
                                                             {exp.description}
                                                         </SelectItem>
                                                     ))}
@@ -173,18 +173,18 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, ExpirationDat
                                 name="inspection_require"
                                 render={({ field }: { field: ControllerRenderProps<FieldValues, "inspection_require"> }) => (
                                     <FormItem>
-                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Inspection Required</FormLabel>
+                                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Inspection Required</FormLabel>
                                         <FormControl>
                                             <Select
                                                 value={field.value ?? ""}
                                                 onValueChange={makeOnValueChangeGuarded(field as any)}
                                             >
-                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black">
                                                     <SelectValue placeholder="Select" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="Yes" className="text-xs">Yes</SelectItem>
-                                                    <SelectItem value="No" className="text-xs">No</SelectItem>
+                                                    <SelectItem value="Yes" className="text-sm">Yes</SelectItem>
+                                                    <SelectItem value="No" className="text-sm">No</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
@@ -203,12 +203,12 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, ExpirationDat
                                         name="inspection_interval"
                                         render={({ field }: { field: ControllerRenderProps<FieldValues, "inspection_interval"> }) => (
                                             <FormItem>
-                                                <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Interval (Days)</FormLabel>
+                                                <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Interval (Days)</FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         {...field}
                                                         type="number"
-                                                        className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700"
+                                                        className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black"
                                                         placeholder="Enter days"
                                                     />
                                                 </FormControl>
@@ -219,7 +219,7 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, ExpirationDat
                                 </div>
 
                                 <div className="space-y-1.5 col-span-1 md:col-span-2">
-                                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Inspection Protocols</FormLabel>
+                                    <label className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Inspection Protocols</label>
                                     <div className="flex items-center gap-6 h-9">
                                         <FormField
                                             control={form.control}
@@ -230,11 +230,11 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, ExpirationDat
                                                         <input
                                                             type="checkbox"
                                                             className="w-4 h-4 rounded border-slate-300 text-[#0C72F5] focus:ring-[#0C72F5] transition-colors cursor-pointer"
-                                                            checked={!!field.value}
-                                                            onChange={(e) => field.onChange(e.target.checked)}
+                                                            checked={field.value === 1 || field.value === true}
+                                                            onChange={(e) => field.onChange(e.target.checked ? 1 : 0)}
                                                         />
                                                     </FormControl>
-                                                    <FormLabel className="text-xs font-medium text-slate-600 m-0 cursor-pointer">Incoming 01</FormLabel>
+                                                    <FormLabel className="text-sm font-medium text-slate-600 m-0 cursor-pointer">Incoming 01</FormLabel>
                                                 </FormItem>
                                             )}
                                         />
@@ -248,11 +248,11 @@ const MaterialQAQCForm: React.FC<MaterialQAQCFormProps> = ({ form, ExpirationDat
                                                         <input
                                                             type="checkbox"
                                                             className="w-4 h-4 rounded border-slate-300 text-[#0C72F5] focus:ring-[#0C72F5] transition-colors cursor-pointer"
-                                                            checked={!!field.value}
-                                                            onChange={(e) => field.onChange(e.target.checked)}
+                                                            checked={field.value === 1 || field.value === true}
+                                                            onChange={(e) => field.onChange(e.target.checked ? 1 : 0)}
                                                         />
                                                     </FormControl>
-                                                    <FormLabel className="text-xs font-medium text-slate-600 m-0 cursor-pointer">Incoming 09</FormLabel>
+                                                    <FormLabel className="text-sm font-medium text-slate-600 m-0 cursor-pointer">Incoming 09</FormLabel>
                                                 </FormItem>
                                             )}
                                         />

@@ -117,7 +117,8 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
     const fields = ["mrp_type", "mrp_group", "mrp_controller_revised", "lot_size_key", "procurement_type", "scheduling_margin_key", "numerator_issue_uom", "denominator_issue_uom"] as const;
 
     fields.forEach((field) => {
-      if (data[field] !== undefined && data[field] !== null) {
+      const currentValue = form.getValues(field);
+      if (data[field] !== undefined && data[field] !== null && (currentValue === "" || currentValue === undefined || currentValue === null)) {
         form.setValue(field, data[field], {
           shouldDirty: false,
           shouldValidate: false,
@@ -132,8 +133,8 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
 
 
   return (
-    <div className="bg-transparent">
-      <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
+    <div className="bg-gray-50">
+      <div className="flex flex-col justify-between rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-800 border-b border-slate-200 pb-2 mb-2">
             <Package className="w-4 h-4 text-[#0C72F5]" />
@@ -149,7 +150,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                 key="mrp_type"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "mrp_type"> }) => (
                   <FormItem>
-                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">MRP Type</FormLabel>
+                    <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">MRP Type</FormLabel>
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
@@ -160,7 +161,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                         </SelectTrigger>
                         <SelectContent className="max-h-60 overflow-y-auto">
                           {MRPType?.map((mrp) => (
-                            <SelectItem key={mrp.name} value={mrp.name} className="text-xs">
+                            <SelectItem key={mrp.name} value={mrp.name} className="text-sm">
                               {mrp.name} - {mrp.mrp_name}
                             </SelectItem>
                           ))}
@@ -183,7 +184,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                     key="mrp_group"
                     render={({ field }: { field: ControllerRenderProps<FieldValues, "mrp_group"> }) => (
                       <FormItem>
-                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">MRP Group</FormLabel>
+                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">MRP Group</FormLabel>
                         <FormControl>
                           <Select
                             onValueChange={field.onChange}
@@ -194,7 +195,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                             </SelectTrigger>
                             <SelectContent className="max-h-60 overflow-y-auto">
                               {MRPGroup?.map((mrp) => (
-                                <SelectItem key={mrp.name} value={mrp.name} className="text-xs">
+                                <SelectItem key={mrp.name} value={mrp.name} className="text-sm">
                                   {mrp.description}
                                 </SelectItem>
                               ))}
@@ -215,7 +216,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                     key="mrp_controller_revised"
                     render={({ field }: { field: ControllerRenderProps<FieldValues, "mrp_controller_revised"> }) => (
                       <FormItem>
-                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block leading-tight">MRP Controller (Revised)</FormLabel>
+                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block leading-tight">MRP Controller (Revised)</FormLabel>
                         <FormControl>
                           <Select
                             onValueChange={(val) => {
@@ -251,13 +252,13 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                                   <SelectItem
                                     key={mrpcontroller.name}
                                     value={mrpcontroller.name}
-                                    className="text-xs"
+                                    className="text-sm"
                                   >
                                     {mrpcontroller.mrp_controller} - {mrpcontroller.description}
                                   </SelectItem>
                                 ))
                               ) : (
-                                <div className="px-3 py-2 text-xs text-slate-500">
+                                <div className="px-3 py-2 text-sm text-black">
                                   No records found
                                 </div>
                               )}
@@ -278,7 +279,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                     key="lot_size_key"
                     render={({ field }: { field: ControllerRenderProps<FieldValues, "lot_size_key"> }) => (
                       <FormItem>
-                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Lot Size Key</FormLabel>
+                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Lot Size Key</FormLabel>
                         <FormControl>
                           <Select
                             onValueChange={(val) => {
@@ -309,12 +310,12 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                               </div>
                               {filteredLotSizeOptions?.length ? (
                                 filteredLotSizeOptions.map((lot) => (
-                                  <SelectItem key={lot.name} value={lot.name} className="text-xs">
+                                  <SelectItem key={lot.name} value={lot.name} className="text-sm">
                                     {lot.name} - {lot.description}
                                   </SelectItem>
                                 ))
                               ) : (
-                                <div className="px-3 py-2 text-xs text-slate-500">
+                                <div className="px-3 py-2 text-sm text-black">
                                   No records found
                                 </div>
                               )}
@@ -335,7 +336,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                     key="procurement_type"
                     render={({ field }: { field: ControllerRenderProps<FieldValues, "procurement_type"> }) => (
                       <FormItem>
-                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                           Procurement Type <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
@@ -348,7 +349,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                             </SelectTrigger>
                             <SelectContent className="max-h-60 overflow-y-auto">
                               {ProcurementType?.map((procurement) => (
-                                <SelectItem key={procurement.name} value={procurement.procurement_type_code} className="text-xs">
+                                <SelectItem key={procurement.name} value={procurement.procurement_type_code} className="text-sm">
                                   {procurement.procurement_type_code} -{" "}
                                   {procurement.procurement_type_name}
                                 </SelectItem>
@@ -372,7 +373,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                   key="scheduling_margin_key"
                   render={({ field }: { field: ControllerRenderProps<FieldValues, "scheduling_margin_key"> }) => (
                     <FormItem>
-                      <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block leading-tight">Scheduling Margin Key</FormLabel>
+                      <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block leading-tight">Scheduling Margin Key</FormLabel>
                       <FormControl>
                         <Select
                           onValueChange={field.onChange}
@@ -383,7 +384,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                           </SelectTrigger>
                           <SelectContent className="max-h-60 overflow-y-auto">
                             {SMK?.map((smk) => (
-                              <SelectItem key={smk.name} value={smk.name} className="text-xs">
+                              <SelectItem key={smk.name} value={smk.name} className="text-sm">
                                 {smk.name}
                               </SelectItem>
                             ))}
@@ -405,7 +406,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                   key="issue_unit"
                   render={({ field }: { field: ControllerRenderProps<FieldValues, "issue_unit"> }) => (
                     <FormItem>
-                      <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Issue Unit</FormLabel>
+                      <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Issue Unit</FormLabel>
                       <FormControl>
                         <Select
                           onValueChange={(val) => {
@@ -436,12 +437,12 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
                             </div>
                             {IssueUOMOptions?.length ? (
                               IssueUOMOptions.map((uom) => (
-                                <SelectItem key={uom.name} value={uom.name} className="text-xs">
+                                <SelectItem key={uom.name} value={uom.name} className="text-sm">
                                   {uom.name} - {uom.description}
                                 </SelectItem>
                               ))
                             ) : (
-                              <div className="px-3 py-2 text-xs text-slate-500">
+                              <div className="px-3 py-2 text-sm text-black">
                                 No records found
                               </div>
                             )}
@@ -457,7 +458,7 @@ const MaterialMRPForm: React.FC<MaterialMRPFormProps> = ({ form, ProcurementType
 
             {/* Conversion Ratio */}
             {conversionRatio && (
-              <div className="col-span-1 md:col-span-4 text-[11px] text-blue-600 font-bold bg-blue-50/50 p-2 rounded-md border border-blue-100 italic">
+              <div className="col-span-1 md:col-span-4 text-[12px] text-blue-600 font-bold bg-blue-50/50 p-2 rounded-md border border-blue-100 italic">
                 Conversion Ratio: {conversionRatio}
               </div>
             )}

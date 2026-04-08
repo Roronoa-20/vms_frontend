@@ -128,7 +128,8 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
     const fields = ["price_control", "hsn_code", "do_not_cost", "material_information", "profit_center", "valuation_class"];
 
     fields.forEach((field) => {
-      if ((data as any)[field]) {
+      const currentValue = form.getValues(field);
+      if ((data as any)[field] && (currentValue === "" || currentValue === undefined || currentValue === null)) {
         form.setValue(field, (data as any)[field]);
         if (field === "material_information") {
           const fileUrl = (data as any)[field];
@@ -147,8 +148,8 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
 
 
   return (
-    <div className="bg-transparent">
-      <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
+    <div className="bg-gray-50">
+      <div className="flex flex-col justify-between rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-800 border-b border-slate-200 pb-2 mb-2">
             <Layers className="w-4 h-4 text-[#0C72F5]" />
@@ -165,7 +166,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                 key="profit_center"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "profit_center"> }) => (
                   <FormItem>
-                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                    <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                       Profit Center <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
@@ -176,7 +177,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                         }}
                         value={field.value || ""}
                       >
-                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent className="max-h-60 overflow-y-auto">
@@ -196,12 +197,12 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                           </div>
                           {filteredProfitCenterOptions?.length > 0 ? (
                             filteredProfitCenterOptions.map((profit) => (
-                              <SelectItem key={profit.name} value={profit.name} className="text-xs">
+                              <SelectItem key={profit.name} value={profit.name} className="text-sm">
                                 {profit.name} - {profit.description}
                               </SelectItem>
                             ))
                           ) : (
-                            <div className="px-3 py-2 text-xs text-slate-500">
+                            <div className="px-3 py-2 text-sm text-black">
                               No records found
                             </div>
                           )}
@@ -214,6 +215,8 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
               />
             </div>
 
+            {!isZCAPMaterial && (
+              <>
             {/* Valuation Class */}
             <div className="space-y-1.5">
               <FormField
@@ -222,7 +225,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                 key="valuation_class"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "valuation_class"> }) => (
                   <FormItem>
-                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                    <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                       Valuation Class <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
@@ -230,12 +233,12 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                         onValueChange={field.onChange}
                         value={field.value || undefined}
                       >
-                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent className="max-h-60 overflow-y-auto">
                           {filteredValuationClass.map((vclass) => (
-                            <SelectItem key={vclass.name} value={vclass.name} className="text-xs">
+                            <SelectItem key={vclass.name} value={vclass.name} className="text-sm">
                               {vclass.valuation_class_code} - {vclass.valuation_class_name}
                             </SelectItem>
                           ))}
@@ -256,7 +259,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                 key="price_control"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "price_control"> }) => (
                   <FormItem>
-                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                    <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                       Price Control <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
@@ -264,12 +267,12 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                         onValueChange={field.onChange}
                         value={field.value || undefined}
                       >
-                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
                           {PriceControl.map((price) => (
-                            <SelectItem key={price.name} value={price.name} className="text-xs">
+                            <SelectItem key={price.name} value={price.name} className="text-sm">
                               {price.name} - {price.description}
                             </SelectItem>
                           ))}
@@ -290,7 +293,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                 key="hsn_code"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "hsn_code"> }) => (
                   <FormItem>
-                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">HSN Code</FormLabel>
+                    <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">HSN Code</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -298,7 +301,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                         maxLength={8}
                         inputMode="numeric"
                         pattern="\d{8}"
-                        className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700"
+                        className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black"
                         placeholder="Enter Code"
                         onChange={(e) => {
                           const formattedValue = e.target.value
@@ -324,7 +327,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                 key="do_not_cost"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "do_not_cost"> }) => (
                   <FormItem>
-                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Do Not Cost</FormLabel>
+                    <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Do Not Cost</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -332,7 +335,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                         onChange={(e) => field.onChange(e.target.value || null)}
                         readOnly
                         disabled={form.watch("price_control") === "S"}
-                        className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed disabled:opacity-50"
+                        className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-black font-medium cursor-not-allowed disabled:opacity-50"
                       />
                     </FormControl>
                     <FormMessage className="text-[10px]" />
@@ -343,7 +346,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
 
             {(role === "Material CP" || role === "Store") && (
               <div className="col-span-1 md:col-span-2 space-y-1.5">
-                <Label htmlFor="material_information_fileinput" className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block leading-tight">
+                <Label htmlFor="material_information_fileinput" className="text-[12px] font-semibold uppercase tracking-wider text-black mb-3 block leading-tight">
                   Upload Material Information File
                 </Label>
                 <div
@@ -365,7 +368,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                       {isFileUploading ? (
                         <div className="flex items-center gap-2 w-full">
                           <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-[#0C72F5]"></div>
-                          <span className="text-[11px] text-slate-500">Uploading...</span>
+                          <span className="text-[12px] text-black">Uploading...</span>
                         </div>
                       ) : !fileSelected ? (
                         <>
@@ -373,7 +376,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                             size={14}
                             className="text-[#0C72F5]"
                           />
-                          <span className="text-[11px] text-slate-500 truncate">
+                          <span className="text-[12px] text-black truncate">
                             Click to upload file
                           </span>
                         </>
@@ -386,7 +389,7 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                             }
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[11px] text-[#0C72F5] hover:underline truncate"
+                            className="text-[12px] text-[#0C72F5] hover:underline truncate"
                             onClick={(e) => e.stopPropagation()}
                           >
                             {fileName}
@@ -408,6 +411,8 @@ const MaterialOthersData: React.FC<MaterialProcurementFormProps> = ({ form, role
                   </div>
                 </div>
               </div>
+            )}
+            </>
             )}
           </div>
         </div>

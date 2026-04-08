@@ -319,14 +319,14 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
 
   return (
     <div className="bg-[#F4F4F6]">
-      <div className="flex flex-col justify-between bg-white rounded-xl shadow-sm border border-slate-200 p-6 transition-all duration-300 hover:shadow-md">
+      <div className="flex flex-col justify-between bg-white rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300 hover:shadow-md">
         <div className="space-y-4">
-          <div className="flex items-center gap-2 text-2xl font-bold tracking-tight text-slate-800 border-b-2 border-slate-100 pb-4 mb-6">
+          <div className="flex items-center gap-2 text-2xl font-bold tracking-tight text-slate-800 border-b-2 border-slate-100">
             <Package className="w-6 h-6 text-[#0C72F5]" />
             <span>Basic Data</span>
           </div>
 
-          <div className="grid grid-cols-3 gap-x-6 gap-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-8">
             {/* Company Code */}
             <FormField
               control={form.control}
@@ -621,7 +621,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-x-6 gap-y-8 mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-8 mt-4">
             {/* Material Description */}
             <div className="col-span-2 relative">
               <FormField
@@ -780,9 +780,9 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
             )}
           </div>
           {/* Comment By User */}
-          <div className="grid grid-cols-12 items-start gap-x-6 gap-y-8 mt-8">
+          <div className="grid grid-cols-1 md:grid-cols-12 items-start gap-x-6 gap-y-8 mt-8">
             {/* Material specifications*/}
-            <div className="col-span-6">
+            <div className="col-span-1 md:col-span-6">
               <FormField
                 control={form.control}
                 name="material_specifications"
@@ -806,7 +806,7 @@ export default function UserMaterialRequestForm({ form, masters, MaterialOnboard
               />
             </div>
             {/* Comment By User */}
-            <div className="col-span-6">
+            <div className="col-span-1 md:col-span-6">
               <FormField
                 control={form.control}
                 name="comment_by_user"

@@ -8,15 +8,15 @@ export default function RootLayout({
 }>) {
   return (
     <AuthProvider>
-    <div className="h-screen w-full flex overflow-y-hidden">
-      <div className="hidden md:flex">
-      <Sidebar />
+      <div className="fixed inset-0 w-full flex overflow-hidden bg-[#F4F4F6]">
+        <div className="hidden md:flex h-full">
+          <Sidebar />
+        </div>
+        <div className="w-full h-full overflow-y-auto overflow-x-hidden">
+          <Navbar />
+          {children}
+        </div>
       </div>
-      <div className="w-full overflow-y-scroll">
-        <Navbar />
-        {children}
-      </div>
-    </div>
     </AuthProvider>
   );
 }

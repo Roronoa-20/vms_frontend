@@ -89,8 +89,8 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({
   }, [MaterialOnboardingDetails, form]);
 
   return (
-    <div className="bg-transparent">
-      <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
+    <div className="bg-gray-50">
+      <div className="flex flex-col justify-between rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-800 border-b border-slate-200 pb-2 mb-2">
             <CheckCircle className="w-4 h-4 text-[#0C72F5]" />
@@ -104,11 +104,11 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({
               name="requested_by_name"
               render={({ field }: { field: ControllerRenderProps<FieldValues, "requested_by_name"> }) => (
                 <FormItem className="space-y-1.5">
-                  <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Requested By - Name</FormLabel>
+                  <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Requested By - Name</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed disabled:opacity-50"
+                      className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-black font-medium cursor-not-allowed disabled:opacity-50"
                       placeholder="Enter Name"
                       readOnly
                       disabled={role === "Material User"}
@@ -125,7 +125,7 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({
               name="requested_by_place"
               render={({ field }: { field: ControllerRenderProps<FieldValues, "requested_by_place"> }) => (
                 <FormItem className="space-y-1.5">
-                  <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Requested By - Place</FormLabel>
+                  <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Requested By - Place</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -145,7 +145,7 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({
               name="approved_by_name"
               render={({ field }: { field: ControllerRenderProps<FieldValues, "approved_by_name"> }) => (
                 <FormItem className="space-y-1.5">
-                  <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Approved By - Name</FormLabel>
+                  <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Approved By - Name</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -153,7 +153,7 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({
                       readOnly
                       disabled={role === "Material User"}
                       onChange={() => { }}
-                      className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed disabled:opacity-50"
+                      className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-black font-medium cursor-not-allowed disabled:opacity-50"
                     />
                   </FormControl>
                   <FormMessage className="text-[10px]" />
@@ -167,7 +167,7 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({
               name="approved_by_place"
               render={({ field }: { field: ControllerRenderProps<FieldValues, "approved_by_place"> }) => (
                 <FormItem className="space-y-1.5">
-                  <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Approved By - Place</FormLabel>
+                  <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Approved By - Place</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -183,14 +183,14 @@ const MaterialApprovalForm: React.FC<MaterialApprovalFormProps> = ({
 
             {/* Approval Date */}
             <div className="space-y-1.5">
-              <Label htmlFor="approval_date" className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+              <Label htmlFor="approval_date" className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                 Approval Date
               </Label>
               <input
                 type="text"
                 id="approval_date"
                 name="approval_date"
-                className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed disabled:opacity-50"
+                className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-black font-medium cursor-not-allowed disabled:opacity-50"
                 readOnly
                 disabled={role === "Material User"}
                 value={

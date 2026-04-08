@@ -247,7 +247,8 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
             };
 
             Object.entries(fields).forEach(([key, value]) => {
-                if (value !== undefined && value !== null) {
+                const currentValue = form.getValues(key as any);
+                if (value !== undefined && value !== null && (currentValue === "" || currentValue === undefined || currentValue === null)) {
                     form.setValue(key as any, value);
                 }
             });
@@ -397,8 +398,8 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
 
 
     return (
-        <div className="bg-transparent">
-            <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300 mt-3">
+        <div className="bg-gray-50">
+            <div className="flex flex-col justify-between rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300 mt-3">
                 <div className="space-y-3">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         {/* Material Description - 2 columns */}
@@ -410,7 +411,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                 rules={{ required: "Material Name/Description is required." }}
                                 render={({ field }: { field: ControllerRenderProps<FieldValues, "material_name_description"> }) => (
                                     <FormItem>
-                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                                             Material Name/Description <span className="text-red-500 ml-1">*</span>
                                         </FormLabel>
                                         <FormControl>
@@ -441,7 +442,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                                             <div
                                                                 key={idx}
                                                                 tabIndex={-1}
-                                                                className="px-3 py-1.5 hover:bg-slate-50 cursor-pointer text-xs material-suggestion text-slate-600 border-b border-slate-50 last:border-0"
+                                                                className="px-3 py-1.5 hover:bg-slate-50 cursor-pointer text-sm material-suggestion text-slate-600 border-b border-slate-50 last:border-0"
                                                                 onClick={() => handleMaterialSelect(item)}
                                                             >
                                                                 {item.material_description} - {item.material_code || item.name}
@@ -465,7 +466,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                 render={({ field }: { field: { value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; ref: React.Ref<HTMLInputElement> } }) => {
                                     return (
                                         <FormItem>
-                                            <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Material Code <span className="text-red-500 ml-1">*</span><span className="text-[9px] ml-2 text-slate-400 lowercase tracking-normal">(Max 18)</span></FormLabel>
+                                            <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Material Code <span className="text-red-500 ml-1">*</span><span className="text-[9px] ml-2 text-slate-400 lowercase tracking-normal">(Max 18)</span></FormLabel>
                                             <div className="relative">
                                                 <FormControl>
                                                     <Input
@@ -493,7 +494,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                                                             : "";
 
                                                             if (prefix) {
-                                                                const stripped = value.replace(/^(R|P|[A-Z]+-)/gi, "")
+                                                                const stripped = value.replace(/^([A-Z]+-|R|P)/gi, "")
                                                                 value = prefix + stripped;
                                                             }
                                                             setMaterialCodeAutoFetched(false);
@@ -523,13 +524,13 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                             {!isCodeDisabled && isNewMaterial && latestCodeSuggestions && !materialSelectedFromList && (
                                                 <div className="mt-1">
                                                     {latestCodeSuggestions.next && (
-                                                        <p className="text-[10px] text-green-600 font-medium">
+                                                        <p className="text-[12px] text-green-600 font-bold">
                                                             Suggested: <span className="underline">{latestCodeSuggestions.next}</span>
                                                         </p>
                                                     )}
                                                 </div>
                                             )}
-                                            <FormMessage className="text-[10px]" />
+                                            <FormMessage className="text-[12px]" />
                                         </FormItem>
                                     );
                                 }}
@@ -544,7 +545,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                 name="material_specifications"
                                 render={({ field }: { field: ControllerRenderProps<FieldValues, "material_specifications"> }) => (
                                     <FormItem>
-                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Specifications</FormLabel>
+                                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Specifications</FormLabel>
                                         <FormControl>
                                             <textarea
                                                 {...field}
@@ -571,7 +572,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                     rules={{ required: !shouldShowAllFields ? "Comment is required when material is selected." : false }}
                                     render={({ field }: { field: ControllerRenderProps<FieldValues, "comment_by_user"> }) => (
                                         <FormItem>
-                                            <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                                            <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                                                 User Comment {!shouldShowAllFields && <span className="text-red-500 ml-1">*</span>}
                                             </FormLabel>
                                             <FormControl>
@@ -603,7 +604,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                         key="division"
                                         render={({ field }: { field: ControllerRenderProps<FieldValues, "division"> }) => (
                                             <FormItem>
-                                                <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Division <span className="text-red-500 ml-1">*</span></FormLabel>
+                                                <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Division <span className="text-red-500 ml-1">*</span></FormLabel>
                                                 <FormControl>
                                                     <Select
                                                         onValueChange={(val) => {
@@ -635,13 +636,13 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                                                     <SelectItem
                                                                         key={division.division_name}
                                                                         value={division.division_name ?? ""}
-                                                                        className="text-xs"
+                                                                        className="text-sm"
                                                                     >
                                                                         {division.division_name}
                                                                     </SelectItem>
                                                                 ))
                                                             ) : (
-                                                                <div className="px-3 py-2 text-xs text-slate-500">No records found</div>
+                                                                <div className="px-3 py-2 text-sm text-slate-500">No records found</div>
                                                             )}
                                                         </SelectContent>
                                                     </Select>
@@ -659,7 +660,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                         name="storage_location"
                                         render={({ field }: { field: ControllerRenderProps<FieldValues, "storage_location"> }) => (
                                             <FormItem>
-                                                <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                                                <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                                                     Storage Location <span className="text-red-500 ml-1">*</span>
                                                 </FormLabel>
 
@@ -698,13 +699,13 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, plantcode, AllM
                                                                         <SelectItem
                                                                             key={storage.name}
                                                                             value={storage.name}
-                                                                            className="text-xs"
+                                                                            className="text-sm"
                                                                         >
                                                                             {storage.name}
                                                                         </SelectItem>
                                                                     ))
                                                                 ) : (
-                                                                    <div className="px-3 py-2 text-xs text-slate-500">
+                                                                    <div className="px-3 py-2 text-sm text-slate-500">
                                                                         No records found
                                                                     </div>
                                                                 )}

@@ -28,20 +28,22 @@ const MaterialSpecificationsForm: React.FC<MaterialSpecificationsFormProps> = ({
       ] as const;
 
       fields.forEach((field) => {
-        if (data[field]) {
+        const currentValue = form.getValues(field);
+        if (data[field] && (currentValue === "" || currentValue === undefined || currentValue === null)) {
           form.setValue(field, data[field]);
         }
       });
     }
 
-    if (requestItem?.material_specifications) {
+    const currentSpecs = form.getValues("material_specifications");
+    if (requestItem?.material_specifications && (currentSpecs === "" || currentSpecs === undefined || currentSpecs === null)) {
       form.setValue("material_specifications", requestItem.material_specifications);
     }
   }, [MaterialDetails, form]);
 
   return (
-    <div className="bg-transparent">
-      <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
+    <div className="bg-gray-50">
+      <div className="flex flex-col justify-between rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-800 border-b border-slate-200 pb-2 mb-2">
             <ListChecks className="w-4 h-4 text-[#0C72F5]" />
@@ -59,13 +61,13 @@ const MaterialSpecificationsForm: React.FC<MaterialSpecificationsFormProps> = ({
                     key="storage_requirements"
                     render={({ field }: { field: ControllerRenderProps<FieldValues, "storage_requirements"> }) => (
                       <FormItem>
-                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Storage Requirements</FormLabel>
+                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Storage Requirements</FormLabel>
                         <FormControl>
                           <textarea
                             {...field}
                             rows={3}
                             placeholder="Enter storage requirements"
-                            className="w-full px-3 py-2 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700 placeholder:text-slate-400 min-h-[80px]"
+                            className="w-full px-3 py-2 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black placeholder:text-slate-400 min-h-[80px]"
                             onChange={(e) => {
                               const formattedValue = e.target.value
                                 .toLowerCase()
@@ -88,13 +90,13 @@ const MaterialSpecificationsForm: React.FC<MaterialSpecificationsFormProps> = ({
                     key="intended_usage_application"
                     render={({ field }: { field: ControllerRenderProps<FieldValues, "intended_usage_application"> }) => (
                       <FormItem>
-                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Intended Usage / Application</FormLabel>
+                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Intended Usage / Application</FormLabel>
                         <FormControl>
                           <textarea
                             {...field}
                             rows={3}
                             placeholder="Enter intended usage / application"
-                            className="w-full px-3 py-2 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700 placeholder:text-slate-400 min-h-[80px]"
+                            className="w-full px-3 py-2 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black placeholder:text-slate-400 min-h-[80px]"
                             onChange={(e) => {
                               const formattedValue = e.target.value
                                 .toLowerCase()
@@ -117,18 +119,18 @@ const MaterialSpecificationsForm: React.FC<MaterialSpecificationsFormProps> = ({
                     key="hazardous_material"
                     render={({ field }: { field: ControllerRenderProps<FieldValues, "hazardous_material"> }) => (
                       <FormItem>
-                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Hazardous Material (Y/N)</FormLabel>
+                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Hazardous Material (Y/N)</FormLabel>
                         <FormControl>
                           <Select
                             value={field.value}
                             onValueChange={field.onChange}
                           >
-                            <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                            <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black">
                               <SelectValue placeholder="Select" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="Yes" className="text-xs">Yes</SelectItem>
-                              <SelectItem value="No" className="text-xs">No</SelectItem>
+                              <SelectItem value="Yes" className="text-sm">Yes</SelectItem>
+                              <SelectItem value="No" className="text-sm">No</SelectItem>
                             </SelectContent>
                           </Select>
                         </FormControl>

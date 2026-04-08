@@ -103,7 +103,7 @@ export default function MaterialFormFooter(props: Props) {
                   Use Existing Material Code
                 </Button>
               )
-              ) : (
+            ) : (
               <>
                 {!hideDraft && (
                   <Button

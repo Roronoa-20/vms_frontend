@@ -140,6 +140,7 @@ export default function MaterialFormSections({
                     handleRemoveFile={handleRemoveFile}
                     isFileUploading={isFileUploading}
                     localLineItemFiles={localLineItemFiles}
+                    isZCAPMaterial={isZCAPMaterial}
                 />
             );
 

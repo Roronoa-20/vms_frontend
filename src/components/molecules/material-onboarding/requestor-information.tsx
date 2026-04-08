@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { MaterialRegistrationFormData, EmployeeDetail } from "@/src/types/MaterialCodeRequestFormTypes";
+import { Package } from "lucide-react";
 
 
 
@@ -47,220 +48,215 @@ export default function RequestorInformation({ form, EmployeeDetails, MaterialOn
 
     return (
         <div className="bg-[#F4F4F6]">
-            <div className="flex flex-col justify-between bg-white rounded-xl shadow-sm border border-slate-200 p-4 transition-all duration-300 hover:shadow-md mb-4">
+            <div className="flex flex-col justify-between bg-white rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300 hover:shadow-md mb-4">
                 <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-2xl font-bold tracking-tight text-slate-800 border-b-2 border-slate-100 pb-3 mb-4">
+                    <div className="flex items-center gap-2 text-2xl font-bold tracking-tight text-slate-800 border-b-2 border-slate-100">
+                        <Package className="w-6 h-6 text-[#0C72F5]" />
                         <span>Requestor Information</span>
                     </div>
-                    <div className="grid grid-cols-3 gap-4 mt-4">
-
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6">
                         {/* Column 1 */}
-                        <div className="space-y-4">
-                            <FormField
-                                control={form.control}
-                                name="request_date"
-                                render={({ field }: { field: any }) => (
-                                    <FormItem className="flex flex-col space-y-2">
-                                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                                            Request Date <span className="text-red-500 ml-1">*</span>
-                                        </FormLabel>
-                                        <FormControl>
-                                            <input
-                                                type="date"
-                                                className="w-full px-3 py-2 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
-                                                value={field.value ?? ""}
-                                                onChange={field.onChange}
-                                                readOnly
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                        <FormField
+                            control={form.control}
+                            name="request_date"
+                            render={({ field }: { field: any }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                                        Request Date <span className="text-red-500 ml-1">*</span>
+                                    </FormLabel>
+                                    <FormControl>
+                                        <input
+                                            type="date"
+                                            className="w-full px-4 py-3 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
+                                            value={field.value ?? ""}
+                                            onChange={field.onChange}
+                                            readOnly
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                            <FormField
-                                control={form.control}
-                                name="requested_by"
-                                render={({ field }: { field: any }) => (
-                                    <FormItem className="flex flex-col space-y-2">
-                                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                                            Requested By <span className="text-red-500 ml-1">*</span>
-                                        </FormLabel>
-                                        <FormControl>
-                                            <input
-                                                type="text"
-                                                className="w-full px-4 py-3 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
-                                                value={field.value ?? ""}
-                                                readOnly
-                                                onChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                        <FormField
+                            control={form.control}
+                            name="requested_by"
+                            render={({ field }: { field: any }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                                        Requested By <span className="text-red-500 ml-1">*</span>
+                                    </FormLabel>
+                                    <FormControl>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-3 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
+                                            value={field.value ?? ""}
+                                            readOnly
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                            <FormField
-                                control={form.control}
-                                name="company"
-                                key="company"
-                                render={({ field }: { field: any }) => (
-                                    <FormItem className="flex flex-col space-y-2">
-                                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                                            Company <span className="text-red-500 ml-1">*</span>
-                                        </FormLabel>
-                                        <FormControl>
-                                            <input
-                                                type="text"
-                                                className="w-full px-4 py-3 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
-                                                value={field.value ?? ""}
-                                                readOnly
-                                                onChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
+                        <FormField
+                            control={form.control}
+                            name="company"
+                            key="company"
+                            render={({ field }: { field: any }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                                        Company <span className="text-red-500 ml-1">*</span>
+                                    </FormLabel>
+                                    <FormControl>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-3 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
+                                            value={field.value ?? ""}
+                                            readOnly
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
 
                         {/* Column 2 */}
-                        <div className="space-y-6">
-                            <FormField
-                                control={form.control}
-                                name="department"
-                                render={({ field }: { field: any }) => (
-                                    <FormItem className="flex flex-col space-y-2">
-                                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                                            Department <span className="text-red-500 ml-1">*</span>
-                                        </FormLabel>
-                                        <FormControl>
-                                            <input
-                                                type="text"
-                                                className="w-full px-4 py-3 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
-                                                value={field.value ?? ""}
-                                                readOnly
-                                                onChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                        <FormField
+                            control={form.control}
+                            name="department"
+                            render={({ field }: { field: any }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                                        Department <span className="text-red-500 ml-1">*</span>
+                                    </FormLabel>
+                                    <FormControl>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-3 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
+                                            value={field.value ?? ""}
+                                            readOnly
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                            <FormField
-                                control={form.control}
-                                name="sub_department"
-                                render={({ field }: { field: any }) => (
-                                    <FormItem className="flex flex-col space-y-2">
-                                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                                            Sub-Department <span className="text-red-500 ml-1">*</span>
-                                        </FormLabel>
-                                        <FormControl>
-                                            <input
-                                                type="text"
-                                                className="w-full px-4 py-3 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
-                                                value={field.value ?? ""}
-                                                readOnly
-                                                onChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                        <FormField
+                            control={form.control}
+                            name="sub_department"
+                            render={({ field }: { field: any }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                                        Sub-Department <span className="text-red-500 ml-1">*</span>
+                                    </FormLabel>
+                                    <FormControl>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-3 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
+                                            value={field.value ?? ""}
+                                            readOnly
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                            <FormField
-                                control={form.control}
-                                name="hod"
-                                render={({ field }: { field: any }) => (
-                                    <FormItem className="flex flex-col space-y-2">
-                                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                                            HOD <span className="text-red-500 ml-1">*</span>
-                                        </FormLabel>
-                                        <FormControl>
-                                            <input
-                                                type="text"
-                                                className="w-full px-4 py-3 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
-                                                value={field.value ?? ""}
-                                                readOnly
-                                                onChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
+                        <FormField
+                            control={form.control}
+                            name="hod"
+                            render={({ field }: { field: any }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                                        HOD <span className="text-red-500 ml-1">*</span>
+                                    </FormLabel>
+                                    <FormControl>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-3 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
+                                            value={field.value ?? ""}
+                                            readOnly
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
                         {/* Column 3 */}
-                        <div className="space-y-6">
-                            <FormField
-                                control={form.control}
-                                name="immediate_reporting_head"
-                                render={({ field }: { field: any }) => (
-                                    <FormItem className="flex flex-col space-y-2">
-                                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                                            Immediate Reporting Head <span className="text-red-500 ml-1">*</span>
-                                        </FormLabel>
-                                        <FormControl>
-                                            <input
-                                                type="text"
-                                                className="w-full px-4 py-3 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
-                                                value={field.value ?? ""}
-                                                readOnly
-                                                onChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                        <FormField
+                            control={form.control}
+                            name="immediate_reporting_head"
+                            render={({ field }: { field: any }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                                        Immediate Reporting Head <span className="text-red-500 ml-1">*</span>
+                                    </FormLabel>
+                                    <FormControl>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-3 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
+                                            value={field.value ?? ""}
+                                            readOnly
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                            <FormField
-                                control={form.control}
-                                name="contact_information_email"
-                                render={({ field }: { field: any }) => (
-                                    <FormItem className="flex flex-col space-y-2">
-                                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                                            Email <span className="text-red-500 ml-1">*</span>
-                                        </FormLabel>
-                                        <FormControl>
-                                            <input
-                                                type="email"
-                                                className="w-full px-4 py-3 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
-                                                value={field.value ?? ""}
-                                                readOnly
-                                                onChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                        <FormField
+                            control={form.control}
+                            name="contact_information_email"
+                            render={({ field }: { field: any }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                                        Email <span className="text-red-500 ml-1">*</span>
+                                    </FormLabel>
+                                    <FormControl>
+                                        <input
+                                            type="email"
+                                            className="w-full px-4 py-3 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
+                                            value={field.value ?? ""}
+                                            readOnly
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                            <FormField
-                                control={form.control}
-                                name="contact_information_phone"
-                                render={({ field }: { field: any }) => (
-                                    <FormItem className="flex flex-col space-y-2">
-                                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                                            Contact Number <span className="text-red-500 ml-1">*</span>
-                                        </FormLabel>
-                                        <FormControl>
-                                            <input
-                                                type="text"
-                                                className="w-full px-4 py-3 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
-                                                value={field.value ?? ""}
-                                                readOnly
-                                                onChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
+                        <FormField
+                            control={form.control}
+                            name="contact_information_phone"
+                            render={({ field }: { field: any }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                                        Contact Number <span className="text-red-500 ml-1">*</span>
+                                    </FormLabel>
+                                    <FormControl>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-3 text-sm rounded-lg bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/80 shadow-sm text-slate-800 font-medium transition-all duration-300 hover:shadow-md hover:border-blue-400 focus:outline-none cursor-default"
+                                            value={field.value ?? ""}
+                                            readOnly
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
                     </div>
                 </div>

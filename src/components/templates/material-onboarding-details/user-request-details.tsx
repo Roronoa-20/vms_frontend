@@ -134,8 +134,8 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
     }, [MaterialDetails, filteredPlants, filteredMaterialType, MaterialOnboardingDetails, AllMaterialCodes, form, setMaterialCompanyCode, setSelectedMaterialType]);
 
     return (
-        <div className="bg-transparent">
-            <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
+        <div className="bg-gray-50">
+            <div className="flex flex-col justify-between rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
                 <div className="space-y-3">
                     <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-800 border-b border-slate-200 pb-2 mb-2">
                         <Info className="w-4 h-4 text-[#0C72F5]" />
@@ -150,13 +150,13 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
                                 name="material_company_code"
                                 render={({ field }: { field: ControllerRenderProps<FieldValues, "material_company_code"> }) => (
                                     <FormItem>
-                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Company Code <span className="text-red-500">*</span></FormLabel>
+                                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Company Code <span className="text-red-500">*</span></FormLabel>
                                         <FormControl>
                                             <Select onValueChange={val => { field.onChange(val); setMaterialCompanyCode(val); }} value={field.value || ""} disabled>
-                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed"><SelectValue placeholder="Select" /></SelectTrigger>
+                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-black font-medium cursor-not-allowed"><SelectValue placeholder="Select" /></SelectTrigger>
                                                 <SelectContent>
                                                     {companyName?.map(c =>
-                                                        <SelectItem key={c.name} value={c.name} className="text-xs">
+                                                        <SelectItem key={c.name} value={c.name} className="text-sm">
                                                             {c.company_name}
                                                         </SelectItem>
                                                     )}
@@ -177,12 +177,12 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
                                 name="plant_name"
                                 render={({ field }: { field: ControllerRenderProps<FieldValues, "plant_name"> }) => (
                                     <FormItem>
-                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Plant Code <span className="text-red-500">*</span></FormLabel>
+                                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Plant Code <span className="text-red-500">*</span></FormLabel>
                                         <FormControl>
                                             <Select onValueChange={field.onChange} value={field.value || ""} disabled>
-                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed"><SelectValue placeholder="Select" /></SelectTrigger>
+                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-black font-medium cursor-not-allowed"><SelectValue placeholder="Select" /></SelectTrigger>
                                                 <SelectContent>
-                                                    {filteredPlants?.map(p => <SelectItem key={p.name} value={p.name ?? ""} className="text-xs">{p.plant_name}</SelectItem>)}
+                                                    {filteredPlants?.map(p => <SelectItem key={p.name} value={p.name ?? ""} className="text-sm">{p.plant_name}</SelectItem>)}
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
@@ -200,12 +200,12 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
                                 name="material_category"
                                 render={({ field }: { field: ControllerRenderProps<FieldValues, "material_category"> }) => (
                                     <FormItem>
-                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Material Category <span className="text-red-500">*</span></FormLabel>
+                                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Material Category <span className="text-red-500">*</span></FormLabel>
                                         <FormControl>
                                             <Select value={field.value || ""} onValueChange={val => { field.onChange(val); setSelectedMaterialType(val); }} disabled>
-                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed"><SelectValue placeholder="Select" /></SelectTrigger>
+                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-black font-medium cursor-not-allowed"><SelectValue placeholder="Select" /></SelectTrigger>
                                                 <SelectContent>
-                                                    {MaterialCategory?.map(m => <SelectItem key={m.name} value={m.name} className="text-xs">{m.description}</SelectItem>)}
+                                                    {MaterialCategory?.map(m => <SelectItem key={m.name} value={m.name} className="text-sm">{m.description}</SelectItem>)}
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
@@ -223,12 +223,12 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
                                 name="material_type"
                                 render={({ field }: { field: ControllerRenderProps<FieldValues, "material_type"> }) => (
                                     <FormItem>
-                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Material Type <span className="text-red-500">*</span></FormLabel>
+                                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Material Type <span className="text-red-500">*</span></FormLabel>
                                         <FormControl>
                                             <Select value={field.value || ""} onValueChange={val => { field.onChange(val); setSelectedMaterialType(val); }} disabled>
-                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed"><SelectValue placeholder="Select" /></SelectTrigger>
+                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-black font-medium cursor-not-allowed"><SelectValue placeholder="Select" /></SelectTrigger>
                                                 <SelectContent>
-                                                    {filteredMaterialType?.map(m => <SelectItem key={m.name} value={m.name} className="text-xs">{m.name}</SelectItem>)}
+                                                    {filteredMaterialType?.map(m => <SelectItem key={m.name} value={m.name} className="text-sm">{m.name}</SelectItem>)}
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
@@ -245,7 +245,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
                                 rules={{ required: "Material Type Category is required." }}
                                 render={({ field }: { field: ControllerRenderProps<FieldValues, "material_type_category"> }) => (
                                     <FormItem>
-                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                                             Material Type Category <span className="text-red-500">*</span>
                                         </FormLabel>
                                         <FormControl>
@@ -255,7 +255,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
                                                 onValueChange={(value) => { field.onChange(value); }}
                                                 disabled
                                             >
-                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed">
+                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-black font-medium cursor-not-allowed">
                                                     <SelectValue placeholder="Select" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -263,7 +263,7 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
                                                         <SelectItem
                                                             key={item.material_type_category}
                                                             value={item.material_type_category}
-                                                            className="text-xs"
+                                                            className="text-sm"
                                                         >
                                                             {item.material_type_category}
                                                         </SelectItem>
@@ -286,12 +286,12 @@ const UserRequestForm: React.FC<UserRequestFormProps> = ({ form, companyName, pl
                                 name="base_unit_of_measure"
                                 render={({ field }: { field: ControllerRenderProps<FieldValues, "base_unit_of_measure"> }) => (
                                     <FormItem>
-                                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Base UOM <span className="text-red-500">*</span></FormLabel>
+                                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Base UOM <span className="text-red-500">*</span></FormLabel>
                                         <FormControl>
                                             <Select onValueChange={field.onChange} value={field.value || ""} disabled>
-                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed"><SelectValue placeholder="Select" /></SelectTrigger>
+                                                <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-black font-medium cursor-not-allowed"><SelectValue placeholder="Select" /></SelectTrigger>
                                                 <SelectContent>
-                                                    {UnitOfMeasure?.map(u => <SelectItem key={u.name} value={u.name} className="text-xs">{u.name} - {u.description}</SelectItem>)}
+                                                    {UnitOfMeasure?.map(u => <SelectItem key={u.name} value={u.name} className="text-sm">{u.name} - {u.description}</SelectItem>)}
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>

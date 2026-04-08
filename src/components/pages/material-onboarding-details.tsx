@@ -8,7 +8,7 @@ import { AxiosResponse } from "axios";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import VendorRegistrationSchemas from "@/src/schemas/vendorRegistrationSchema";
+import MaterialOnboardingSchemas from "@/src/schemas/MaterialOnboardingSchema";
 import { useAuth } from "@/src/context/AuthContext";
 import { TcompanyNameBasedDropdown } from "@/src/types/types";
 import type { MaterialRegistrationFormData, MaterialRequestData, EmployeeDetail, EmployeeAPIResponse, Company, Plant, division, industry, ClassType, UOMMaster, MRPType, ValuationClass, procurementType, ValuationCategory, MaterialGroupMaster, ProfitCenter, AvailabilityCheck, PriceControl, MRPController, StorageLocation, InspectionType, SerialNumber, LotSize, SchedulingMarginKey, ExpirationDate, MaterialType, MRPGroup } from "@/src/types/MaterialCodeRequestFormTypes";
@@ -16,7 +16,7 @@ import type { MaterialRegistrationFormData, MaterialRequestData, EmployeeDetail,
 
 
 export default function MaterialOnboardingDetails() {
-  const form = useForm<any>({ resolver: zodResolver(VendorRegistrationSchemas) });
+  const form = useForm<any>({ resolver: zodResolver(MaterialOnboardingSchemas) });
   const searchParams = useSearchParams();
   const name = searchParams.get("name");
   const material_name = searchParams.get("material_name");

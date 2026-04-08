@@ -71,6 +71,7 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
   const batchRequirement = form.watch("batch_requirements_yn");
   const classTypeSelected = form.watch("class_type");
   const serialNumberProfile = form.watch("serial_number_profile");
+  const materialCategory = form.watch("material_category");
 
   useEffect(() => {
     if (batchRequirement === "No") {
@@ -105,8 +106,8 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
   }, [classTypeSelected, ClassType, form, serialNumberProfile, SerialProfile]);
 
   return (
-    <div className="bg-transparent">
-      <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
+    <div className="bg-gray-50">
+      <div className="flex flex-col justify-between rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-800 border-b border-slate-200 pb-2 mb-2">
             <Store className="w-4 h-4 text-[#0C72F5]" />
@@ -121,7 +122,7 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                 key="material_group"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "material_group"> }) => (
                   <FormItem>
-                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                    <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                       Material Group <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
@@ -132,7 +133,7 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                         }}
                         value={field.value || ""}
                       >
-                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent className="max-h-60 overflow-y-scroll">
@@ -155,12 +156,12 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                           <SelectGroup>
                             {materialGroupOptions.length > 0 ? (
                               materialGroupOptions.map((group) => (
-                                <SelectItem key={group.name} value={group.name} className="text-xs">
+                                <SelectItem key={group.name} value={group.name} className="text-sm">
                                   {group.material_group_name} – {group.material_group_description}
                                 </SelectItem>
                               ))
                             ) : (
-                              <div className="px-3 py-2 text-xs text-slate-500">
+                              <div className="px-3 py-2 text-sm text-black">
                                 No records found
                               </div>
                             )}
@@ -182,15 +183,15 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                   key="batch_requirements_yn"
                   render={({ field }: { field: ControllerRenderProps<FieldValues, "batch_requirements_yn"> }) => (
                     <FormItem>
-                      <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block leading-tight">Batch Management Required</FormLabel>
+                      <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block leading-tight">Batch Management Required</FormLabel>
                       <FormControl>
                         <Select value={field.value} onValueChange={field.onChange}>
-                          <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                          <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Yes" className="text-xs">Yes</SelectItem>
-                            <SelectItem value="No" className="text-xs">No</SelectItem>
+                            <SelectItem value="Yes" className="text-sm">Yes</SelectItem>
+                            <SelectItem value="No" className="text-sm">No</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -209,18 +210,18 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                 key="availability_check"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "availability_check"> }) => (
                   <FormItem>
-                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Availability Check</FormLabel>
+                    <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Availability Check</FormLabel>
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
                         value={field.value || undefined}
                       >
-                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
                           {AvailabilityCheck.map((check) => (
-                            <SelectItem key={check.name} value={check.name} className="text-xs">
+                            <SelectItem key={check.name} value={check.name} className="text-sm">
                               {check.name} - {check.description}
                             </SelectItem>
                           ))}
@@ -234,7 +235,7 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
             </div>
 
             {/* Serial Number Profile */}
-            {!isZCAPMaterial && (
+            {!isZCAPMaterial && materialCategory !== "C" && materialCategory !== "G" && (
               <div className="space-y-1.5">
                 <FormField
                   control={form.control}
@@ -242,18 +243,18 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                   key="serial_number_profile"
                   render={({ field }: { field: ControllerRenderProps<FieldValues, "serial_number_profile"> }) => (
                     <FormItem>
-                      <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Serial Profile</FormLabel>
+                      <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Serial Profile</FormLabel>
                       <FormControl>
                         <Select
                           onValueChange={field.onChange}
                           value={field.value || undefined}
                         >
-                          <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                          <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent>
                             {SerialProfile.map((serial) => (
-                              <SelectItem key={serial.name} value={serial.name} className="text-xs">
+                              <SelectItem key={serial.name} value={serial.name} className="text-sm">
                                 {serial.serial_no_profile}
                               </SelectItem>
                             ))}
@@ -277,18 +278,18 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                     key="class_type"
                     render={({ field }: { field: ControllerRenderProps<FieldValues, "class_type"> }) => (
                       <FormItem>
-                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Class Type</FormLabel>
+                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Class Type</FormLabel>
                         <FormControl>
                           <Select
                             onValueChange={field.onChange}
                             value={field.value || undefined}
                           >
-                            <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                            <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black">
                               <SelectValue placeholder="Select" />
                             </SelectTrigger>
                             <SelectContent>
                               {ClassType.map((classtype) => (
-                                <SelectItem key={classtype.name} value={classtype.name} className="text-xs">
+                                <SelectItem key={classtype.name} value={classtype.name} className="text-sm">
                                   {classtype.name}
                                 </SelectItem>
                               ))}
@@ -308,13 +309,13 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                     key="class_number"
                     render={({ field }: { field: ControllerRenderProps<FieldValues, "class_number"> }) => (
                       <FormItem>
-                        <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Class Number</FormLabel>
+                        <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Class Number</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             type="text"
                             readOnly
-                            className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed"
+                            className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-black font-medium cursor-not-allowed"
                             placeholder="Auto-filled"
                           />
                         </FormControl>
@@ -327,7 +328,7 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
             )}
 
             {/* Serialization Level */}
-            {!isZCAPMaterial && serialNumberProfile && (
+            {!isZCAPMaterial && materialCategory !== "C" && materialCategory !== "G" && serialNumberProfile && (
               <div className="space-y-1.5">
                 <FormField
                   control={form.control}
@@ -335,11 +336,11 @@ const Storefields: React.FC<MaterialStoreFieldsProps> = ({ form, MaterialGroup, 
                   key="serialization_level"
                   render={({ field }: { field: ControllerRenderProps<FieldValues, "serialization_level"> }) => (
                     <FormItem>
-                      <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Serialization Level</FormLabel>
+                      <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Serialization Level</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
-                          className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed"
+                          className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-black font-medium cursor-not-allowed"
                           placeholder="Auto-filled"
                           readOnly
                         />

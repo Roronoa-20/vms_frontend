@@ -291,7 +291,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = (props) =>
 
   const tabFieldValidationMap: Record<string, string[]> = {
     "basic-data": shouldShowAllFields ? ["material_code_revised", "division", "storage_location"] : ["material_code_revised"],
-    "others-data": ["profit_center", "valuation_class", "price_control"],
+    "others-data": isZCAPMaterial ? ["profit_center"] : ["profit_center", "valuation_class", "price_control"],
 
   };
 

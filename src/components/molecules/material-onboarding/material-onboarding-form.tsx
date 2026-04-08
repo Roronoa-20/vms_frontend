@@ -48,8 +48,8 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, o
     };
 
     return (
-        <form onSubmit={form.handleSubmit(onSubmit, onError)} className="bg-white p-4 rounded shadow">
-            <div className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit, onError)} className="bg-transparent space-y-4 border-none shadow-none">
+            <div className="space-y-2">
 
                 {/* === SAP MODAL === */}
                 <SAPMaterialModal
@@ -74,7 +74,7 @@ const MaterialOnboardingForm: React.FC<MaterialOnboardingFormProps> = ({ form, o
                 />
             </div>
 
-            <div className="mt-12">
+            <div className="mt-6 pb-3">
                 <div className="flex justify-end space-x-6 items-center">
                     <Button
                         variant="backbtn"

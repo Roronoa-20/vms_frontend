@@ -120,7 +120,8 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
 
     Object.entries(fieldMap).forEach(([formField, apiField]) => {
       const value = MaterialDetails.material_master[apiField];
-      if (value != null) {
+      const currentValue = form.getValues(formField as any);
+      if (value != null && (currentValue === "" || currentValue === undefined || currentValue === null)) {
         form.setValue(formField, value, { shouldDirty: false, shouldTouch: false });
       }
     });
@@ -137,8 +138,8 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
   }, [form.watch("numerator_purchase_uom"), form.watch("denominator_purchase_uom"), baseUOM, purchaseUOM]);
 
   return (
-    <div className="bg-transparent">
-      <div className="flex flex-col justify-between bg-gray-100 rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
+    <div className="bg-gray-50">
+      <div className="flex flex-col justify-between rounded-xl shadow-sm border border-slate-200 p-3 transition-all duration-300">
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-800 border-b border-slate-200 pb-2 mb-2">
             <ShoppingCart className="w-4 h-4 text-[#0C72F5]" />
@@ -153,7 +154,7 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                 key="purchasing_group"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "purchasing_group"> }) => (
                   <FormItem>
-                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">
+                    <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">
                       Purchasing Group <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
@@ -168,7 +169,7 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                             : ""
                         }
                       >
-                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent className="max-h-60 overflow-y-scroll">
@@ -191,12 +192,12 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                           <SelectGroup>
                             {filteredPurchaseGroupOptions?.length > 0 ? (
                               filteredPurchaseGroupOptions.map((pgroup) => (
-                                <SelectItem key={pgroup.name} value={pgroup.name} className="text-xs">
+                                <SelectItem key={pgroup.name} value={pgroup.name} className="text-sm">
                                   {pgroup.description}
                                 </SelectItem>
                               ))
                             ) : (
-                              <div className="px-3 py-2 text-xs text-slate-500">
+                              <div className="px-3 py-2 text-sm text-black">
                                 No records found
                               </div>
                             )}
@@ -219,11 +220,11 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                   key="gr_processing_time"
                   render={({ field }: { field: ControllerRenderProps<FieldValues, "gr_processing_time"> }) => (
                     <FormItem>
-                      <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">GR Processing Time</FormLabel>
+                      <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">GR Processing Time</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
-                          className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700"
+                          className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black"
                           placeholder="Enter Time"
                         />
                       </FormControl>
@@ -242,7 +243,7 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                 key="purchase_uom"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "purchase_uom"> }) => (
                   <FormItem>
-                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Purchase UOM</FormLabel>
+                    <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Purchase UOM</FormLabel>
                     <FormControl>
                       <Select
                         onValueChange={(val) => {
@@ -251,7 +252,7 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                         }}
                         value={field.value || ""}
                       >
-                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                        <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent className="max-h-60 overflow-y-auto">
@@ -271,12 +272,12 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                           </div>
                           {PurchaseUOMOptions?.length > 0 ? (
                             PurchaseUOMOptions.map((uom) => (
-                              <SelectItem key={uom.name} value={uom.name} className="text-xs">
+                              <SelectItem key={uom.name} value={uom.name} className="text-sm">
                                 {uom.name} - {uom.description}
                               </SelectItem>
                             ))
                           ) : (
-                            <div className="px-3 py-2 text-xs text-slate-500">
+                            <div className="px-3 py-2 text-sm text-black">
                               No records found
                             </div>
                           )}
@@ -297,11 +298,11 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                 key="lead_time"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "lead_time"> }) => (
                   <FormItem>
-                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Lead Time</FormLabel>
+                    <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Lead Time</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700"
+                        className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black"
                         placeholder="Enter Lead Time"
                         onChange={(e) => {
                           const formattedValue = e.target.value
@@ -325,12 +326,12 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                 key="purchasing_value_key"
                 render={({ field }: { field: ControllerRenderProps<FieldValues, "purchasing_value_key"> }) => (
                   <FormItem>
-                    <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Purchasing Value Key</FormLabel>
+                    <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Purchasing Value Key</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         readOnly
-                        className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-slate-500 font-medium cursor-not-allowed"
+                        className="w-full h-9 px-3 py-1 text-sm rounded-md !bg-white !disabled:bg-white !opacity-100 !disabled:opacity-100 border border-slate-200 text-black font-medium cursor-not-allowed"
                       />
                     </FormControl>
                     <FormMessage className="text-[10px]" />
@@ -348,7 +349,7 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                   key="min_lot_size"
                   render={({ field }: { field: ControllerRenderProps<FieldValues, "min_lot_size"> }) => (
                     <FormItem>
-                      <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Min Lot Size</FormLabel>
+                      <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black mb-1 block">Min Lot Size</FormLabel>
                       <FormControl>
                         <Select
                           onValueChange={(val) => {
@@ -357,7 +358,7 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                           }}
                           value={field.value || ""}
                         >
-                          <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700">
+                          <SelectTrigger className="w-full h-9 px-3 py-1 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent className="max-h-60 overflow-y-auto">
@@ -377,12 +378,12 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                             </div>
                             {filteredLotSizeOptions?.length > 0 ? (
                               filteredLotSizeOptions.map((lot) => (
-                                <SelectItem key={lot.name} value={lot.name} className="text-xs">
+                                <SelectItem key={lot.name} value={lot.name} className="text-sm">
                                   {lot.name} - {lot.description}
                                 </SelectItem>
                               ))
                             ) : (
-                              <div className="px-3 py-2 text-xs text-slate-500">
+                              <div className="px-3 py-2 text-sm text-black">
                                 No records found
                               </div>
                             )}
@@ -405,12 +406,12 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
                   key="purchase_order_text"
                   render={({ field }: { field: ControllerRenderProps<FieldValues, "purchase_order_text"> }) => (
                     <FormItem>
-                      <FormLabel className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Purchase Order Text</FormLabel>
+                      <FormLabel className="text-[12px] font-semibold uppercase tracking-wider text-black block">Purchase Order Text</FormLabel>
                       <FormControl>
                         <textarea
                           {...field}
                           rows={2}
-                          className="w-full px-3 py-2 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-slate-700 resize-none min-h-[36px]"
+                          className="w-full px-3 py-2 text-sm rounded-md bg-white border border-slate-200 shadow-sm transition-all focus:ring-2 focus:ring-[#0C72F5]/10 focus:border-[#0C72F5] hover:border-slate-300 text-black resize-none min-h-[36px]"
                           placeholder="Enter PO Text"
                           onChange={(e) => {
                             const formattedValue = e.target.value
@@ -429,7 +430,7 @@ const MaterialPurchasingDataForm: React.FC<MaterialPurchasingDataFormProps> = ({
 
             {/* Conversion Ratio */}
             {conversionRatio && (
-              <div className="col-span-1 md:col-span-4 text-[11px] text-blue-600 font-bold bg-blue-50/50 p-2 rounded-md border border-blue-100 italic">
+              <div className="col-span-1 md:col-span-4 text-[12px] text-blue-600 font-bold bg-blue-50/50 p-2 rounded-md border border-blue-100 italic">
                 Conversion Ratio: {conversionRatio}
               </div>
             )}
