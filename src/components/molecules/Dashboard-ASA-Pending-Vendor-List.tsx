@@ -67,7 +67,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
         }
     };
 
-    console.log("Register Table--->",table)
+    console.log("Register Table--->", table)
 
     const sendReminderEmail = async () => {
         try {
@@ -104,7 +104,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
 
     return (
         <>
-            <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
+            <div className="bg-[#f6f6f7] p-4 rounded-2xl shadow-sm">
                 <div className="flex w-full justify-between pb-4">
                     <h1 className="text-[20px] text-[#03111F] font-semibold">
                         Pending Vendor List
@@ -133,7 +133,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
                 </div>
                 <Table>
                     <TableHeader className="text-center">
-                        <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
+                        <TableRow className="bg-rose-100 text-rose-800 text-[14px] hover:bg-rose-100 text-center font-bold">
                             <TableHead className="w-[80px]">Sr No.</TableHead>
                             <TableHead className="text-center">Ref No.</TableHead>
                             <TableHead className="text-center">Vendor Name</TableHead>

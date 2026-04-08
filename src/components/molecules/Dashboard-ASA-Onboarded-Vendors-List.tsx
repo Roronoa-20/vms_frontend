@@ -115,7 +115,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
 
   return (
     <>
-      <div className="shadow- bg-[#f6f6f7] p-4 rounded-2xl">
+      <div className="bg-[#f6f6f7] p-4 rounded-2xl shadow-sm">
         <div className="flex w-full justify-between pb-4">
           <h1 className="text-[20px] text-[#03111F] font-semibold">
             Onboarded Vendors List
@@ -140,7 +140,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
         </div>
         <Table>
           <TableHeader className="text-center">
-            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center">
+            <TableRow className="bg-emerald-100 text-emerald-800 text-[14px] hover:bg-emerald-100 text-center font-bold">
               <TableHead className="w-[100px]">Sr No.</TableHead>
               <TableHead className="text-center">Ref No.</TableHead>
               <TableHead className="text-center">Vendor Name</TableHead>

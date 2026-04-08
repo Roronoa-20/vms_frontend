@@ -8,7 +8,7 @@ export default function RootLayout({
 }>) {
   return (
     <AuthProvider>
-      <div className="fixed inset-0 w-full flex overflow-hidden bg-[#F4F4F6]">
+      <div className="fixed inset-0 w-full flex overflow-hidden">
         <div className="hidden md:flex h-full">
           <Sidebar />
         </div>
