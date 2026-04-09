@@ -9,8 +9,10 @@ import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
 import requestWrapper from "@/src/services/apiCall";
 import { Input } from "@/components/ui/input";
-import { Users, CheckCircle, Upload, IdCard } from "lucide-react";
+import { Users, CheckCircle, Upload, IdCard, FileSearch } from "lucide-react";
 import CountUp from "react-countup";
+import PurchaseASAVendorTable from "@/src/components/templates/PurchaseASAVendorTable";
+import { useAuth } from "@/src/context/AuthContext";
 
 interface ApiResponse {
   message: {
@@ -43,7 +45,8 @@ const AllVendors = () => {
   const [searchVendorType, setSearchVendorType] = useState<string>("All");
   const [vendorTypeOptions, setVendorTypeOptions] = useState<any[]>([]);
   const [defaultTab, setDefaultTab] = useState<string>("1000");
-  const [activeVendorTab, setActiveVendorTab] = useState<"vms_registered" | "imported_vendors" | "both_registered_and_import">("vms_registered");
+  const [activeVendorTab, setActiveVendorTab] = useState<"vms_registered" | "imported_vendors" | "both_registered_and_import" | "asa_vendors">("vms_registered");
+  const [asaCount, setAsaCount] = useState(0);
   const [pagination, setPagination] = useState({
     current_page: 1,
     total_pages: 0,
@@ -98,6 +101,24 @@ const AllVendors = () => {
     fetchVendorTypes();
   }, []);
 
+  useEffect(() => {
+    const fetchAsaCount = async () => {
+      try {
+        const res: AxiosResponse<any> = await requestWrapper({
+          url: API_END_POINTS.getasaallvendors,
+          method: "GET",
+          params: { page: 1, page_size: 1 }
+        });
+        if (res.data?.message) {
+          setAsaCount(res.data.message.total_count || 0);
+        }
+      } catch (err) {
+        console.error("Error fetching ASA count:", err);
+      }
+    };
+    fetchAsaCount();
+  }, []);
+
   /* ================= FETCH VENDORS ================= */
 
   useEffect(() => {
@@ -145,7 +166,9 @@ const AllVendors = () => {
       }
     };
 
-    fetchVendors();
+    if (activeVendorTab !== "asa_vendors") {
+      fetchVendors();
+    }
   }, [activeVendorTab, defaultTab, tablePage]);
 
   /* ================= UI SEARCH FILTER ================= */
@@ -180,12 +203,14 @@ const AllVendors = () => {
     setSearchCountry("");
   }, [defaultTab, activeVendorTab]);
 
+  const { asaResponsibleUser } = useAuth();
+
   /* ================= RENDER ================= */
 
   return (
     <div className="min-h-screen bg-gray-50 p-2">
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6 mt-2">
+      <div className={`grid grid-cols-1 md:grid-cols-${asaResponsibleUser === 1 ? '5' : '4'} gap-6 mb-6 mt-2`}>
         <StatCard
           icon={<Users className="h-5 w-5 text-blue-600" />}
           label="Total Vendors"
@@ -216,100 +241,118 @@ const AllVendors = () => {
           onClick={() => setActiveVendorTab("both_registered_and_import")}
           color="purple"
         />
-        {/* <StatCard
-          icon={<IdCard className="h-6 w-6 text-indigo-600" />}
-          label="Vendor Code Count"
-          value={analytics.total_vc_code}
-        /> */}
+        {asaResponsibleUser === 1 && (
+          <StatCard
+            icon={<FileSearch className="h-5 w-5 text-emerald-600" />}
+            label="ASA Vendors"
+            value={asaCount}
+            active={activeVendorTab === "asa_vendors"}
+            onClick={() => setActiveVendorTab("asa_vendors")}
+            color="emerald"
+          />
+        )}
       </div>
 
       {/* Company Tabs */}
-      <div className="bg-white rounded-2xl shadow p-4 mb-6">
-        <h2 className="text-base font-semibold text-gray-700 mb-4">
-          Meril Verticals
-        </h2>
+      {activeVendorTab !== "asa_vendors" && (
+        <div className="bg-white rounded-2xl shadow p-4 mb-6">
+          <h2 className="text-base font-semibold text-gray-700 mb-4">
+            Meril Verticals
+          </h2>
 
-        <div className="flex flex-wrap gap-2">
-          {[...companyAnalytics]
-            .sort((a, b) => Number(a.company_id) - Number(b.company_id))
-            .map((company) => {
-              const isActive = defaultTab === company.company_id;
+          <div className="flex flex-wrap gap-2">
+            {[...companyAnalytics]
+              .sort((a, b) => Number(a.company_id) - Number(b.company_id))
+              .map((company) => {
+                const isActive = defaultTab === company.company_id;
 
-              return (
-                <button
-                  key={company.company_id}
-                  onClick={() => setDefaultTab(company.company_id)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
-              inline-flex items-center gap-1
-              ${isActive
-                      ? "bg-blue-600 text-white border-blue-600"
-                      : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
-                    }
-            `}
-                >
-                  <span className="font-semibold">
-                    {company.company_id}
-                  </span>
-                  <span className="opacity-70">
-                    {company.company_short_form}
-                  </span>
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={company.company_id}
+                    onClick={() => setDefaultTab(company.company_id)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
+                inline-flex items-center gap-1
+                ${isActive
+                        ? "bg-blue-600 text-white border-blue-600"
+                        : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
+                      }
+              `}
+                  >
+                    <span className="font-semibold">
+                      {company.company_id}
+                    </span>
+                    <span className="opacity-70">
+                      {company.company_short_form}
+                    </span>
+                  </button>
+                );
+              })}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Search */}
-      <div className="bg-white rounded-2xl shadow p-3 mb-6">
-        <h2 className="text-lg font-semibold text-gray-700 mb-4">
-          Search Vendors
-        </h2>
-        <div className="flex flex-wrap gap-4">
-          <Input
-            placeholder="Search by vendor name..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full md:w-1/2"
-          />
-          <Input
-            placeholder="Search by country..."
-            value={searchCountry}
-            onChange={(e) => setSearchCountry(e.target.value)}
-            className="w-full md:w-1/3"
-          />
+      {activeVendorTab !== "asa_vendors" && (
+        <div className="bg-white rounded-2xl shadow p-3 mb-6">
+          <h2 className="text-lg font-semibold text-gray-700 mb-4">
+            Search Vendors
+          </h2>
+          <div className="flex flex-wrap gap-4">
+            <Input
+              placeholder="Search by vendor name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full md:w-1/2"
+            />
+            <Input
+              placeholder="Search by country..."
+              value={searchCountry}
+              onChange={(e) => setSearchCountry(e.target.value)}
+              className="w-full md:w-1/3"
+            />
+          </div>
         </div>
-      </div>
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-semibold text-gray-700">
-          {activeVendorTab === "vms_registered" && "VMS Registered Vendors"}
-          {activeVendorTab === "imported_vendors" && "Imported Vendors"}
-          {activeVendorTab === "both_registered_and_import" && "Registered & Imported Vendors"}
-        </h2>
-      </div>
+      )}
+
+      {activeVendorTab !== "asa_vendors" && (
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-semibold text-gray-700">
+            {activeVendorTab === "vms_registered" && "VMS Registered Vendors"}
+            {activeVendorTab === "imported_vendors" && "Imported Vendors"}
+            {activeVendorTab === "both_registered_and_import" && "Registered & Imported Vendors"}
+          </h2>
+        </div>
+      )}
 
 
       {/* Table */}
       <div className="bg-white rounded-2xl shadow p-3 relative">
-        {loading && (
-          <div className="absolute inset-0 bg-white/70 backdrop-blur-sm flex items-center justify-center z-10">
-            <div className="text-sm font-medium text-gray-600 animate-pulse">
-              Loading vendors...
-            </div>
-          </div>
-        )}
+        {activeVendorTab === "asa_vendors" ? (
+          <PurchaseASAVendorTable />
+        ) : (
+          <>
+            {loading && (
+              <div className="absolute inset-0 bg-white/70 backdrop-blur-sm flex items-center justify-center z-10">
+                <div className="text-sm font-medium text-gray-600 animate-pulse">
+                  Loading vendors...
+                </div>
+              </div>
+            )}
 
-        <VendorTable
-          vendors={filteredVendors}
-          activeTab={defaultTab}
-          currentPage={pagination.current_page}
-          totalPages={pagination.total_pages}
-          totalRecords={pagination.total_records}
-          setCurrentPage={setTablePage}
-          pageSize={pageSize}
-          searchVendorType={searchVendorType}
-          setSearchVendorType={setSearchVendorType}
-          vendorTypeOptions={vendorTypeOptions}
-        />
+            <VendorTable
+              vendors={filteredVendors}
+              activeTab={defaultTab}
+              currentPage={pagination.current_page}
+              totalPages={pagination.total_pages}
+              totalRecords={pagination.total_records}
+              setCurrentPage={setTablePage}
+              pageSize={pageSize}
+              searchVendorType={searchVendorType}
+              setSearchVendorType={setSearchVendorType}
+              vendorTypeOptions={vendorTypeOptions}
+            />
+          </>
+        )}
       </div>
     </div>
   );
@@ -325,7 +368,7 @@ interface StatCardProps {
   value: number;
   active?: boolean;
   onClick?: () => void;
-  color: "blue" | "green" | "indigo" | "purple";
+  color: "blue" | "green" | "indigo" | "purple" | "emerald";
 }
 
 const StatCard: React.FC<StatCardProps> = ({ icon, label, value, active, onClick, color }) => {
@@ -334,6 +377,7 @@ const StatCard: React.FC<StatCardProps> = ({ icon, label, value, active, onClick
     green: "text-green-600 bg-green-50 border-green-200",
     indigo: "text-indigo-600 bg-indigo-50 border-indigo-200",
     purple: "text-purple-600 bg-purple-50 border-purple-200",
+    emerald: "text-emerald-600 bg-emerald-50 border-emerald-200",
   };
 
   const activeColorMap = {
@@ -341,6 +385,7 @@ const StatCard: React.FC<StatCardProps> = ({ icon, label, value, active, onClick
     green: "ring-green-500 bg-green-50/50 shadow-green-100",
     indigo: "ring-indigo-500 bg-indigo-50/50 shadow-indigo-100",
     purple: "ring-purple-500 bg-purple-50/50 shadow-purple-100",
+    emerald: "ring-emerald-500 bg-emerald-50/50 shadow-emerald-100",
   };
 
   return (
@@ -358,7 +403,7 @@ const StatCard: React.FC<StatCardProps> = ({ icon, label, value, active, onClick
           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">{label}</p>
         </div>
         {active && (
-          <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${color === 'blue' ? 'bg-blue-500' : color === 'green' ? 'bg-green-500' : color === 'indigo' ? 'bg-indigo-500' : 'bg-purple-500'}`} />
+          <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${color === 'blue' ? 'bg-blue-500' : color === 'green' ? 'bg-green-500' : color === 'indigo' ? 'bg-indigo-500' : color === 'emerald' ? 'bg-emerald-500' : 'bg-purple-500'}`} />
         )}
       </div>
       <div className="pl-11">

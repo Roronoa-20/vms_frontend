@@ -16,8 +16,8 @@ export default function ASAFormTab() {
   const currentTab = (params.get('tabtype') || '').toLowerCase();
   const vmsRefNo = params.get('vms_ref_no') || '';
   const [openTab, setOpenTab] = useState<string | null>(null);
-  const { designation } = useAuth();
-  console.log("Desingatn of the user---->", designation)
+  const { designation, asaResponsibleUser } = useAuth();
+  console.log("Designation of the user---->", designation);
 
   const isVendor = designation?.toLowerCase() === "vendor";
   const isASA = designation?.toLowerCase() === "asa";
@@ -27,7 +27,9 @@ export default function ASAFormTab() {
   const isVendorLocked = isVendor && isverified === 0;
   const totalScore = asaFormSubmitData?.total_esg_score;
   const status = asaFormSubmitData?.status?.toLowerCase();
-  const shouldShowScore = isASA && totalScore !== null && totalScore !== undefined;
+  
+  const isInternal = asaResponsibleUser === 1 || isASA;
+  const shouldShowScore = isInternal && totalScore !== null && totalScore !== undefined;
   console.log("Checking score rendering------->", shouldShowScore, totalScore);
   useEffect(() => {
     const parentTab = ASAFormTabs.find(tab => tab.children.some(child => child.key === currentTab));

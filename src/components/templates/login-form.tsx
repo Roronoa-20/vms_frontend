@@ -65,15 +65,17 @@ export default function LoginForm({ loginType }: { loginType: "default" | "mater
         const roles = data?.message?.employee?.roles || [];
         Cookies.set("role", JSON.stringify(roles));
 
-        const savedRole = Cookies.get("role");
-        const savedName = Cookies.get("full_name");
-        const savedid = Cookies.get("user_id");
+        const fullName = data?.message?.employee?.employee_name;
+        const userId = data?.message?.employee?.user_id;
         const designation = data?.message?.employee?.designation as string;
         const designationVendor = data?.message?.designation as string;
         const VendorASA = data?.message?.asa_reqd as string;
         const VendorRefNo = data?.message?.ref_no as string;
-        console.log("Vendor Ref---->", designation);
-        console.log("Vendor Ref1123---->", designationVendor);
+        const asaResponsibleUser = data?.message?.employee?.asa_responsible;
+
+        console.log("Employee Designation---->", designation);
+        console.log("Is it Vendor Designation?---->", designationVendor);
+
         if (designationVendor) {
           reset();
           resetVendorCode();
@@ -81,15 +83,27 @@ export default function LoginForm({ loginType }: { loginType: "default" | "mater
             addMultipleVendorCode(item)
           ))
         }
+
+        if (fullName) Cookies.set("full_name", fullName);
+        if (userId) Cookies.set("user_id", userId);
         Cookies.set("designation", designation || designationVendor);
         Cookies.set("VendorRef", VendorRefNo);
         Cookies.set("VendorASA", VendorASA);
+        Cookies.set("asa_responsible_user", asaResponsibleUser);
 
         const apiModules = data?.message?.modules || [];
         setModules(apiModules);
 
-        console.log("Checking the saved role----->", savedRole)
-        setAuthData(savedRole, savedName, savedid, designation || designationVendor, VendorRefNo, VendorASA);
+        setAuthData(
+          JSON.stringify(roles),
+          fullName,
+          userId,
+          designation || designationVendor,
+          VendorRefNo,
+          userId,
+          Number(VendorASA),
+          Number(asaResponsibleUser)
+        );
         if (designationVendor) {
           router.push("/vendor-dashboard");
           return

@@ -45,7 +45,7 @@ const VendorTable: React.FC<Props> = ({
 }) => {
     console.log("Vendors of the table-------->", vendors);
     const router = useRouter();
-    const { userid } = useAuth();
+    const { userid, asaResponsibleUser } = useAuth();
     const [isVendorCodeDialog, setIsVendorCodeDialog] = React.useState(false);
     const [selectedVendorCodes, setSelectedVendorCodes] = React.useState<CompanyVendorCodeRecord[] | null>(null);
     const [copiedRow, setCopiedRow] = React.useState<RowData | null>(null);
@@ -544,7 +544,7 @@ const VendorTable: React.FC<Props> = ({
                                                         <TooltipContent side="bottom" sideOffset={5}>View Details</TooltipContent>
                                                     </Tooltip>
 
-                                                    {(row.vendor_type?.includes("Material") ||
+                                                    {(asaResponsibleUser === 1) && (row.vendor_type?.includes("Material") ||
                                                         row.vendor_types?.some(vt => vt.vendor_type?.includes("Material"))) && (
                                                             <Tooltip>
                                                                 <TooltipTrigger asChild>

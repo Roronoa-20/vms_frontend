@@ -14,6 +14,7 @@ interface AuthContextType {
   asaReqd?: number | null;
   modules: ApiModule[];
   status?: string | null | undefined;
+  asaResponsibleUser?: number | null;
 
   setAuthData: (
     role: string | null | undefined,
@@ -22,7 +23,8 @@ interface AuthContextType {
     designation?: string | null | undefined,
     VendorRefNo?: string | null | undefined,
     user_email?: string | null | undefined,
-    asaReqd?: number | null
+    asaReqd?: number | null,
+    asaResponsibleUser?: number | null
   ) => void;
 
   setModules: (modules: ApiModule[]) => void;
@@ -43,6 +45,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [asaReqd, setAsaReqd] = useState<number | null>(null);
   const [modules, setModulesState] = useState<ApiModule[]>([]);
   const [status, setStatus] = useState<string | null | undefined>(null);
+  const [asaResponsibleUser, setAsaResponsibleUser] = useState<number | null>(null);
 
   useEffect(() => {
     setcontextfunction();
@@ -56,6 +59,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const user_email = Cookies.get("user_id");
     const vendorRef = Cookies.get("VendorRef") ?? null;
     const savedAsaReqd = Cookies.get("VendorASA");
+    const savedAsaResponsible = Cookies.get("asa_responsible_user");
 
     if (savedRole) setRole(savedRole);
     if (savedName) setName(savedName);
@@ -64,6 +68,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (user_email) setUser_Email(user_email);
     if (vendorRef) setvendorRef(vendorRef);
     if (savedAsaReqd) setAsaReqd(Number(savedAsaReqd));
+    if (savedAsaResponsible) setAsaResponsibleUser(Number(savedAsaResponsible));
 
     const savedModules = localStorage.getItem("sidebar_modules");
     if (savedModules) {
@@ -75,7 +80,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }
 
-  const setAuthData = useCallback((newRole: string | null | undefined, newName: string | null | undefined, userid: string | null | undefined, designation?: string | null | undefined, VendorRefNo?: string | null | undefined,  user_email?: string | null | undefined, asaReqd?: number | null) => {
+  const setAuthData = useCallback((newRole: string | null | undefined, newName: string | null | undefined, userid: string | null | undefined, designation?: string | null | undefined, VendorRefNo?: string | null | undefined,  user_email?: string | null | undefined, asaReqd?: number | null, asaResponsibleUser?: number | null) => {
     setRole(newRole);
     setName(newName);
     setUserId(userid);
@@ -83,6 +88,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (VendorRefNo) setvendorRef(VendorRefNo);
     if (user_email) setUser_Email(user_email);
     if (asaReqd !== undefined) setAsaReqd(asaReqd);
+    if (asaResponsibleUser !== undefined) setAsaResponsibleUser(asaResponsibleUser);
   }, []);
 
   const setModules = useCallback((newModules: ApiModule[]) => {
@@ -98,13 +104,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setvendorRef(null);
     setUser_Email(null);
     setAsaReqd(null);
+    setAsaResponsibleUser(null);
     setModulesState([]);
     localStorage.removeItem("sidebar_modules");
   }, []);
 
   const contextValue = useMemo(() => ({
-    role, name, userid, designation, vendorRef, user_email, asaReqd, modules, status, setAuthData, setModules, setStatus, clearAuthData
-  }), [role, name, userid, designation, vendorRef, user_email, asaReqd, modules, status, setAuthData, setModules, setStatus, clearAuthData]);
+    role, name, userid, designation, vendorRef, user_email, asaReqd, asaResponsibleUser, modules, status, setAuthData, setModules, setStatus, clearAuthData
+  }), [role, name, userid, designation, vendorRef, user_email, asaReqd, asaResponsibleUser, modules, status, setAuthData, setModules, setStatus, clearAuthData]);
 
   return (
     <AuthContext.Provider value={contextValue}>

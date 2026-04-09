@@ -80,7 +80,7 @@ const DashboardCards = ({ ...Props }: Props) => {
   console.log(Props?.cardData, "this is card data");
   const { MultipleVendorCode } = useMultipleVendorCodeStore();
   const { cardCounts, setCardCounts, updateCardCount } = useDashboardCardCountStore();
-  const { designation } = useAuth();
+  const { designation, asaResponsibleUser } = useAuth();
   const user = designation as string;
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
@@ -90,33 +90,35 @@ const DashboardCards = ({ ...Props }: Props) => {
   console.log(user, "this is desingation");
   let allCardData: any[] = [];
 
+  const asaCards = [
+    {
+      name: "Total ASA Vendor",
+      count: cardCounts.asa_onboarded_count ?? 0,
+      icon: "/dashboard-assests/cards_icon/file-search.svg",
+      text_color: "text-emerald-800",
+      bg_color: "bg-emerald-100",
+      hover: "hover:border-emerald-400",
+    },
+    {
+      name: "Submitted ASA Form",
+      count: cardCounts.asa_form_count ?? 0,
+      icon: "/dashboard-assests/cards_icon/file-search.svg",
+      text_color: "text-violet-800",
+      bg_color: "bg-violet-100",
+      hover: "hover:border-violet-400",
+    },
+    {
+      name: "Pending ASA Form",
+      count: cardCounts.asa_pending_count ?? 0,
+      icon: "/dashboard-assests/cards_icon/file-search.svg",
+      text_color: "text-rose-800",
+      bg_color: "bg-rose-100",
+      hover: "hover:border-rose-400",
+    },
+  ];
+
   if (user === "ASA") {
-    allCardData = [
-      {
-        name: "Total ASA Vendor",
-        count: cardCounts.asa_onboarded_count ?? 0,
-        icon: "/dashboard-assests/cards_icon/file-search.svg",
-        text_color: "text-emerald-800",
-        bg_color: "bg-emerald-100",
-        hover: "hover:border-emerald-400",
-      },
-      {
-        name: "Submitted ASA Form",
-        count: cardCounts.asa_form_count ?? 0,
-        icon: "/dashboard-assests/cards_icon/file-search.svg",
-        text_color: "text-violet-800",
-        bg_color: "bg-violet-100",
-        hover: "hover:border-violet-400",
-      },
-      {
-        name: "Pending ASA Form",
-        count: cardCounts.asa_pending_count ?? 0,
-        icon: "/dashboard-assests/cards_icon/file-search.svg",
-        text_color: "text-rose-800",
-        bg_color: "bg-rose-100",
-        hover: "hover:border-rose-400",
-      },
-    ];
+    allCardData = [...asaCards];
   } else if (user == "Purchase Team" || user == "Purchase Head") {
     allCardData = [
       {
@@ -185,6 +187,9 @@ const DashboardCards = ({ ...Props }: Props) => {
         hover: "hover:border-violet-400",
       },
     ];
+    if (asaResponsibleUser === 1) {
+      allCardData = [...allCardData, ...asaCards];
+    }
   } else if (designation === "Treasury") {
     allCardData = [
       {
@@ -204,6 +209,9 @@ const DashboardCards = ({ ...Props }: Props) => {
         hover: "hover:border-violet-400",
       },
     ];
+    if (asaResponsibleUser === 1) {
+      allCardData = [...allCardData, ...asaCards];
+    }
   } else {
     allCardData = [
       {
@@ -271,6 +279,9 @@ const DashboardCards = ({ ...Props }: Props) => {
         hover: "hover:border-violet-400",
       },
     ];
+    if (asaResponsibleUser === 1) {
+      allCardData = [...allCardData, ...asaCards];
+    }
   }
 
   const cardData = useMemo(() => {
@@ -397,7 +408,7 @@ const DashboardCards = ({ ...Props }: Props) => {
           </TabsList>
         </div>
         {cardData.map((item, index) => {
-          if (user === "ASA") {
+          if (asaCards.some(ac => ac.name === item.name)) {
             return (
               <TabsContent key={item.name} value={item.name}>
                 {item.name === "Total ASA Vendor" && (

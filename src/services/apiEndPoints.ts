@@ -205,6 +205,7 @@ const API_END_POINTS = {
   asaonboardedvendorlist: `${url}/api/method/vms.APIs.assessment_apis.asa_dashboard.approved_vendor_list`,
   verifyasaform: `${url}/api/method/vms.APIs.assessment_apis.asa.verify_asa_form`,
   revertasaform: `${url}/api/method/vms.APIs.assessment_apis.asa.revert_asa_form`,
+  getasaallvendors: `${url}/api/method/vms.APIs.assessment_apis.asa.get_asa_all_vendors`,
 
   // All Approved Vendors Speicfy Detail API
   allvendorsdetails: `${url}/api/method/vms.APIs.dashboard_api.vendor_brief.get_vendors_with_pagination_next`,
