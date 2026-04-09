@@ -82,6 +82,7 @@ export type prAttachmentType = {
 export type nbItemsType = {
     name?:string,
     material:string,
+    material_description:string,
     plant:string,
     quantity:number,
     uom:string,
@@ -92,6 +93,7 @@ export type nbItemsType = {
 export type nbCapexItemsType = {
     name?:string,
     material:string,
+    material_description:string,
     plant:string,
     quantity:number,
     uom:string,
