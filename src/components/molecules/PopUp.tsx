@@ -53,6 +53,9 @@ import { X } from "lucide-react";
 import { useOutsideClick } from "@/src/hooks/useOutsideClick";
 import { cn } from "@/lib/utils";
 
+/** Matches the app `Sidebar` rail width (`w-[115px]`) for layout-aligned overlays. */
+export const APP_SIDEBAR_WIDTH_PX = 115;
+
 type Props = {
   handleClose: () => void;
   children?: ReactNode;
@@ -62,15 +65,38 @@ type Props = {
   classname?: string;
   disableRef?: boolean;
   disableSubmit?: boolean;
-  isHeaderTextUnderline?:boolean
+  isHeaderTextUnderline?: boolean;
+  /** md+: dim and center only in the main column (right of the app sidebar). */
+  containInMainColumn?: boolean;
+  /** Smaller header, padding, and footer actions (e.g. PR flows). */
+  compact?: boolean;
 };
 
-const PopUp = ({ handleClose, children, headerText, isSubmit, Submitbutton, classname, disableRef, disableSubmit,isHeaderTextUnderline }: Props) => {
+const PopUp = ({
+  handleClose,
+  children,
+  headerText,
+  isSubmit,
+  Submitbutton,
+  classname,
+  disableRef,
+  disableSubmit,
+  isHeaderTextUnderline,
+  containInMainColumn,
+  compact,
+}: Props) => {
   const DialogRef = useOutsideClick<HTMLDivElement>(handleClose);
 
   return (
-    // 👇 fixed instead of absolute
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" style={{ "margin": "0" }}>
+    <div
+      className={cn(
+        "fixed z-50 flex items-center justify-center bg-black/20",
+        containInMainColumn
+          ? "inset-0 md:inset-y-0 md:right-0 md:left-[115px]"
+          : "inset-0",
+      )}
+      style={{ margin: 0 }}
+    >
       <div
         ref={!disableRef ? null : DialogRef}
         className={cn(
@@ -78,25 +104,47 @@ const PopUp = ({ handleClose, children, headerText, isSubmit, Submitbutton, clas
           classname
         )}
       >
-        <div className={`flex justify-between items-center w-full p-4 flex-shrink-0 ${isHeaderTextUnderline?"border-b border-black":""}`}>
-          <h1 className={`text-2xl font-poppins`}>{headerText}</h1>
+        <div
+          className={cn(
+            "flex justify-between items-center w-full flex-shrink-0",
+            compact ? "p-3" : "p-4",
+            isHeaderTextUnderline ? "border-b border-slate-200" : "",
+          )}
+        >
+          <h1
+            className={cn(
+              compact
+                ? "text-base font-semibold tracking-tight text-[#0F172A]"
+                : "text-2xl font-poppins",
+            )}
+          >
+            {headerText}
+          </h1>
           <Button
             variant="ghost"
             size="icon"
-            className="cursor-pointer"
+            className={cn("cursor-pointer", compact && "h-8 w-8")}
             onClick={handleClose}
           >
-            <X className="h-6 w-6" />
+            <X className={compact ? "h-4 w-4" : "h-6 w-6"} />
           </Button>
         </div>
 
-        <div className="overflow-y-auto flex-1 px-4">
+        <div className={cn("overflow-y-auto flex-1", compact ? "px-3" : "px-4")}>
           {children}
         </div>
 
-        <div className="flex justify-end items-center gap-3 w-full p-4 flex-shrink-0 border-t bg-white">
+        <div
+          className={cn(
+            "flex justify-end items-center w-full flex-shrink-0 border-t bg-white",
+            compact ? "gap-2 p-3" : "gap-3 p-4",
+          )}
+        >
           <Button
-            className="py-2 px-4 whitespace-nowrap"
+            className={cn(
+              "whitespace-nowrap",
+              compact ? "h-8 px-3 py-0 text-xs" : "py-2 px-4",
+            )}
             variant={"backbtn"}
             size={"backbtnsize"}
             onClick={handleClose}
@@ -106,7 +154,11 @@ const PopUp = ({ handleClose, children, headerText, isSubmit, Submitbutton, clas
           {isSubmit && (
             <Button
               disabled={disableSubmit}
-              className={`py-2 px-4 whitespace-nowrap ${disableSubmit ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={cn(
+                "whitespace-nowrap",
+                compact ? "h-8 px-3 py-0 text-xs" : "py-2 px-4",
+                disableSubmit ? "opacity-50 cursor-not-allowed" : "",
+              )}
               variant={"nextbtn"}
               size={"nextbtnsize"}
               onClick={() => {

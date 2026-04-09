@@ -23,6 +23,8 @@ type Props<T> = {
     customSearchFn?: (items: T[], query: string) => T[];
     disabled?: boolean;
     mode?: "single" | "multiple";
+    /** Merged onto the trigger button (e.g. compact PR tables). */
+    triggerClassName?: string;
 }
 
 const SearchSelectComponent = <T extends object>({
@@ -39,6 +41,7 @@ const SearchSelectComponent = <T extends object>({
     disabled = false,
     placeholder,
     mode = "single",
+    triggerClassName,
 }: Props<T>) => {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -186,13 +189,20 @@ const SearchSelectComponent = <T extends object>({
                     role="combobox"
                     aria-expanded={open}
                     disabled={disabled}
-                    className={`${mode === "multiple" ? "h-fit max-h-[150px]" : "w-full" } relative justify-between shadow border hover:shadow-md active:shadow-lg lg:text-sm rounded-lg gap-[9px] text-[9px] font-normal ${disabled && "cursor-pointer"}`}
+                    className={cn(
+                      mode === "multiple"
+                        ? "h-fit max-h-[150px] min-h-8 w-full"
+                        : "h-8 min-h-8 w-full text-xs",
+                      "relative justify-between rounded-md border shadow-sm hover:shadow-md active:shadow-lg gap-1.5 font-normal px-2",
+                      disabled && "cursor-pointer",
+                      triggerClassName,
+                    )}
                 >
                     {renderButtonLabel()}
                     {!open ? 
-                        <ChevronDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                        <ChevronDown className='ml-1 h-3.5 w-3.5 shrink-0 opacity-50' />
                         :
-                        <ChevronUp className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                        <ChevronUp className='ml-1 h-3.5 w-3.5 shrink-0 opacity-50' />
                     }
                 </Button>
             </PopoverTrigger>
