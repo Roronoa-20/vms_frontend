@@ -155,7 +155,7 @@ const DashboardPurchaseInquiryVendorsTable = ({ dashboardTableData, companyDropd
                       <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.cart_date ? formatDate(new Date(item.cart_date)) : "-"}</TableCell>
                       <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.company}</TableCell>
                       {designation !== "Enquirer" && (
-                        <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.created_by_user_name}</TableCell>
+                        <TableCell className="text-nowrap text-center whitespace-nowrap">{item?.created_by}</TableCell>
                       )}
                       <TableCell className="text-nowrap text-center whitespace-nowrap"><Link href={`${designation == "Enquirer" ? `/pr-enquiry?cart_id=${item?.name}` : `view-pr-enquiry?cart_id=${item?.name}`}`}><Button className="bg-[#5291CD] text-white hover:bg-white hover:text-black rounded-[16px]">View</Button></Link></TableCell>
                     </TableRow>
