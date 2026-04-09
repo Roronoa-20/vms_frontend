@@ -19,7 +19,8 @@ interface Props {
   prId: string;
   canEdit?: boolean;
   fetchPrData: (prId?: string) => void;
-  isSubmittingRef?: React.RefObject<boolean>;
+  /** When true, blocks file add/delete while PR submit is in progress (ref updates do not re-render). */
+  isSubmittingRef?: React.RefObject<boolean | null>;
 }
 
 const FileList = ({ data, prId, canEdit, fetchPrData, isSubmittingRef }: Props) => {
@@ -37,6 +38,10 @@ const FileList = ({ data, prId, canEdit, fetchPrData, isSubmittingRef }: Props) 
   }
 
   const handleDelete = async (name: string) => {
+    if (isSubmittingRef?.current) {
+      alert("Please wait until the purchase requisition finishes submitting.");
+      return;
+    }
     if (!confirm("Are you sure you want to delete this file?")) return;
     try {
       await deletePrDocument(name);
@@ -47,7 +52,10 @@ const FileList = ({ data, prId, canEdit, fetchPrData, isSubmittingRef }: Props) 
   }
 
   const handleAdd = async () => {
-    if (isSubmittingRef?.current || isUploadingRef.current) return;
+    if (isSubmittingRef?.current) {
+      alert("Please wait until the purchase requisition finishes submitting.");
+      return;
+    }
     if (!file) {
       alert("Please select a file");
       return;
@@ -70,37 +78,37 @@ const FileList = ({ data, prId, canEdit, fetchPrData, isSubmittingRef }: Props) 
 
   return (
     <Card className="shadow-sm border-slate-200">
-      <CardHeader className="pb-4 border-b border-slate-100">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#F59E0B] to-[#F97316] flex items-center justify-center shadow-sm">
-            <FileText className="w-5 h-5 text-white" />
+      <CardHeader className="pb-3 border-b border-slate-100">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#F59E0B] to-[#F97316] flex items-center justify-center shadow-sm">
+            <FileText className="w-4 h-4 text-white" />
           </div>
           <div>
-            <CardTitle className="text-lg font-bold text-[#0F172A] tracking-tight">File List</CardTitle>
-            <p className="text-xs text-[#94A3B8] mt-0.5 font-medium">{data?.length || 0} file{(data?.length || 0) !== 1 ? 's' : ''} attached</p>
+            <CardTitle className="text-base font-bold text-[#0F172A] tracking-tight">File List</CardTitle>
+            <p className="text-[11px] text-[#94A3B8] mt-0.5 font-medium">{data?.length || 0} file{(data?.length || 0) !== 1 ? 's' : ''} attached</p>
           </div>
         </div>
       </CardHeader>
-      <CardContent className="pt-4 px-0">
+      <CardContent className="pt-3 px-0">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-[#F8FAFC] text-xs hover:bg-[#F8FAFC] border-b border-slate-200">
-                <TableHead className="text-[#64748B] font-semibold uppercase tracking-wider">Sr No.</TableHead>
-                <TableHead className="text-[#64748B] font-semibold uppercase tracking-wider">File Name</TableHead>
-                <TableHead className="text-[#64748B] font-semibold uppercase tracking-wider">Amount</TableHead>
-                {canEdit && <TableHead className="text-center text-[#64748B] font-semibold uppercase tracking-wider w-[10%]">Action</TableHead>}
+              <TableRow className="bg-[#F8FAFC] hover:bg-[#F8FAFC] border-b border-slate-200">
+                <TableHead className="h-9 py-0 text-[11px] text-[#64748B] font-semibold uppercase tracking-wide">Sr No.</TableHead>
+                <TableHead className="h-9 py-0 text-[11px] text-[#64748B] font-semibold uppercase tracking-wide">File Name</TableHead>
+                <TableHead className="h-9 py-0 text-[11px] text-[#64748B] font-semibold uppercase tracking-wide">Amount</TableHead>
+                {canEdit && <TableHead className="h-9 py-0 text-center text-[11px] text-[#64748B] font-semibold uppercase tracking-wide w-[10%]">Action</TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
               {data && data.length > 0 ? (
                 data.map((item, index) => (
                   <TableRow key={index} className="hover:bg-slate-50 transition-colors border-b border-slate-100">
-                    <TableCell className="text-sm text-[#64748B] tabular-nums">{index + 1}</TableCell>
-                    <TableCell className="text-sm">
+                    <TableCell className="py-2 text-xs text-[#64748B] tabular-nums leading-snug">{index + 1}</TableCell>
+                    <TableCell className="py-2 text-xs leading-snug">
                       <Link href={item?.url} target="_blank" className="font-medium text-[#4F6BED] hover:text-[#3B54D4] hover:underline transition-colors">{item?.filename}</Link>
                     </TableCell>
-                    <TableCell className="text-sm font-semibold text-[#0F172A] tabular-nums">{item?.amount}</TableCell>
+                    <TableCell className="py-2 text-xs font-semibold text-[#0F172A] tabular-nums leading-snug">{item?.amount}</TableCell>
                     {canEdit && (
                       <TableCell>
                         <div className="flex justify-center">
@@ -121,10 +129,10 @@ const FileList = ({ data, prId, canEdit, fetchPrData, isSubmittingRef }: Props) 
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={canEdit ? 4 : 3} className="text-center py-10">
-                    <div className="flex flex-col items-center gap-2">
-                      <FileText className="w-10 h-10 text-slate-300" />
-                      <p className="text-sm font-medium text-[#94A3B8]">No files attached</p>
+                  <TableCell colSpan={canEdit ? 4 : 3} className="text-center py-8">
+                    <div className="flex flex-col items-center gap-1.5">
+                      <FileText className="w-8 h-8 text-slate-300" />
+                      <p className="text-xs font-medium text-[#94A3B8]">No files attached</p>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -134,9 +142,9 @@ const FileList = ({ data, prId, canEdit, fetchPrData, isSubmittingRef }: Props) 
                   <TableCell></TableCell>
                   <TableCell>
                     <div className="flex gap-2 items-center">
-                      <label htmlFor="pr-file-upload" className="border-2 border-dashed rounded-lg py-2 px-4 flex items-center cursor-pointer truncate gap-2 bg-white hover:border-[#4F6BED] hover:bg-[#F8F9FF] transition-colors">
-                        <Upload className="w-4 h-4 text-[#4F6BED]" />
-                        <span className="text-sm font-medium text-[#334155]">{file ? file.name : "Choose File"}</span>
+                      <label htmlFor="pr-file-upload" className="border-2 border-dashed rounded-md py-1.5 px-3 flex items-center cursor-pointer truncate gap-2 bg-white hover:border-[#4F6BED] hover:bg-[#F8F9FF] transition-colors min-h-8">
+                        <Upload className="w-3.5 h-3.5 text-[#4F6BED] shrink-0" />
+                        <span className="text-xs font-medium text-[#334155]">{file ? file.name : "Choose File"}</span>
                         <Input id="pr-file-upload" className="hidden" type="file" ref={fileInputRef} onChange={(e) => setFile(e?.target?.files?.[0] || null)} />
                       </label>
                       {file && (
@@ -147,15 +155,15 @@ const FileList = ({ data, prId, canEdit, fetchPrData, isSubmittingRef }: Props) 
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Input type="number" min="0" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Enter amount" className="rounded-lg h-9 border-slate-200 text-sm" />
+                    <Input type="number" min="0" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Enter amount" className="rounded-md h-8 border-slate-200 text-xs px-2" />
                   </TableCell>
                   <TableCell>
                     <div className="flex justify-center">
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <button onClick={handleAdd} className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center hover:bg-emerald-100 transition-colors border border-emerald-200">
-                              <Plus className="w-4 h-4 text-emerald-600" />
+                            <button onClick={handleAdd} className="w-7 h-7 rounded-md bg-emerald-50 flex items-center justify-center hover:bg-emerald-100 transition-colors border border-emerald-200">
+                              <Plus className="w-3.5 h-3.5 text-emerald-600" />
                             </button>
                           </TooltipTrigger>
                           <TooltipContent><p>Add File</p></TooltipContent>
