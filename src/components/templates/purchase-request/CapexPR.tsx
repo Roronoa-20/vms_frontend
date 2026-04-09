@@ -119,6 +119,7 @@ const CapexPR = (props: Props) => {
         purchase_requisition: props?.prData?.name,
         company: props?.prData?.company,
         material: singleRowData?.material,
+        material_description: singleRowData?.material_description,
         requisitioner: props?.prData?.name,
         uom: singleRowData?.uom,
         quantity: singleRowData?.quantity,
@@ -238,6 +239,7 @@ const CapexPR = (props: Props) => {
           <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[11px] hover:bg-[#DDE8FE] text-center text-nowrap">
             <TableHead className="text-center w-[50px]">Sr No.</TableHead>
             <TableHead className="text-center w-[20%]">Materials</TableHead>
+            <TableHead className="text-center w-[25%]">Material Description</TableHead>
             <TableHead className="text-center w-[10%]">UOM</TableHead>
             <TableHead className="text-center w-[15%]">Asset Code</TableHead>
             <TableHead className="text-center w-[10%]">Quantity</TableHead>
@@ -255,6 +257,7 @@ const CapexPR = (props: Props) => {
               <TableRow key={index}>
                 <TableCell className="py-1.5 text-xs font-medium text-center w-[50px] leading-snug">{index + 1}</TableCell>
                 <TableCell className="py-1.5 text-xs font-medium text-center max-w-[200px] truncate leading-snug" title={item.material}>{item.material}</TableCell>
+                <TableCell className="py-1.5 text-xs font-medium text-center max-w-[200px] truncate leading-snug" title={item.material_description}>{item.material_description}</TableCell>
                 <TableCell className="py-1.5 text-xs font-medium text-center max-w-[100px] truncate leading-snug" title={item.uom}>{item.uom}</TableCell>
                 <TableCell className="py-1.5 text-xs font-medium text-center max-w-[150px] truncate leading-snug" title={item.asset_code}>{item.asset_code}</TableCell>
                 <TableCell className="py-1.5 text-xs font-medium text-center max-w-[120px] truncate leading-snug tabular-nums" title={item.quantity?.toString()}>{item.quantity}</TableCell>

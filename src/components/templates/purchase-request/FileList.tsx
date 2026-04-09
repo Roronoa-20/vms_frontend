@@ -127,16 +127,7 @@ const FileList = ({ data, prId, canEdit, fetchPrData, isSubmittingRef }: Props) 
                     )}
                   </TableRow>
                 ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={canEdit ? 4 : 3} className="text-center py-8">
-                    <div className="flex flex-col items-center gap-1.5">
-                      <FileText className="w-8 h-8 text-slate-300" />
-                      <p className="text-xs font-medium text-[#94A3B8]">No files attached</p>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )}
+              ) : null}
               {canEdit && (
                 <TableRow className="bg-[#FAFBFC]">
                   <TableCell></TableCell>
