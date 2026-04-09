@@ -380,6 +380,7 @@ export type ASAForm = {
   vendor_ref_no: string;
   vendor_name: string;
   total_count: string;
+  total_esg_score: string | number;
   overall_total_asa: string,
   page_no: string,
   page_length: string,

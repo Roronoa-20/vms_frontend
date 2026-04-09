@@ -140,15 +140,15 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
         </div>
         <Table>
           <TableHeader className="text-center">
-            <TableRow className="bg-emerald-100 text-emerald-800 text-[14px] hover:bg-emerald-100 text-center font-bold">
-              <TableHead className="w-[100px]">Sr No.</TableHead>
-              <TableHead className="text-center">Ref No.</TableHead>
-              <TableHead className="text-center">Vendor Name</TableHead>
-              <TableHead className="text-center">Email</TableHead>
-              <TableHead className="text-center">Vendor Code</TableHead>
-              <TableHead className="text-center">Country</TableHead>
-              <TableHead className="text-center">Register By</TableHead>
-              <TableHead className="text-center">Register Date</TableHead>
+            <TableRow className="bg-[#6aa2d8] text-black text-[14px] hover:bg-[#6aa2d8] rounded-xl text-center font-bold">
+              <TableHead className="w-[75px] h-[2.5rem] text-center text-black">Sr No.</TableHead>
+              <TableHead className="text-center text-black">Ref No.</TableHead>
+              <TableHead className="text-center text-black">Vendor Name</TableHead>
+              <TableHead className="text-center text-black">Email</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Vendor Code</TableHead>
+              <TableHead className="text-center text-black">Country</TableHead>
+              <TableHead className="text-center text-black">Register By</TableHead>
+              <TableHead className="text-center text-black text-nowrap">Register Date</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="text-center">

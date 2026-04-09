@@ -112,13 +112,13 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
         </div>
         <Table>
           <TableHeader className="text-center">
-            <TableRow className="bg-violet-100 text-violet-800 text-[14px] hover:bg-violet-100 text-center font-bold">
-              <TableHead className="w-[80px]">Sr No.</TableHead>
-              <TableHead className="text-center">Ref No.</TableHead>
-              <TableHead className="text-center">Vendor Name</TableHead>
-              <TableHead className="text-center">Vendor Ref No</TableHead>
-              <TableHead className="text-center">Form Submitted On</TableHead>
-              <TableHead className="text-center">View Detials</TableHead>
+            <TableRow className="bg-[#6aa2d8] text-black text-[14px] hover:bg-[#6aa2d8] rounded-xl text-center font-bold">
+              <TableHead className="w-[75px] h-[2.5rem] text-black">Sr No.</TableHead>
+              <TableHead className="text-center text-black">Ref No.</TableHead>
+              <TableHead className="text-center text-black">Vendor Name</TableHead>
+              <TableHead className="text-center text-black">Vendor Ref No</TableHead>
+              <TableHead className="text-center text-black">Form Submitted On</TableHead>
+              <TableHead className="text-center text-black">View Detials</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="text-center">

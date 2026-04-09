@@ -133,15 +133,15 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
                 </div>
                 <Table>
                     <TableHeader className="text-center">
-                        <TableRow className="bg-rose-100 text-rose-800 text-[14px] hover:bg-rose-100 text-center font-bold">
-                            <TableHead className="w-[80px]">Sr No.</TableHead>
-                            <TableHead className="text-center">Ref No.</TableHead>
-                            <TableHead className="text-center">Vendor Name</TableHead>
-                            <TableHead className="text-center">Email Address</TableHead>
-                            <TableHead className="text-center">Mobile Number</TableHead>
-                            <TableHead className="text-center">Country</TableHead>
-                            <TableHead className="text-center">Register Date</TableHead>
-                            <TableHead className="text-center">Send Email</TableHead>
+                        <TableRow className="bg-[#6aa2d8] text-black text-[14px] hover:bg-[#6aa2d8] rounded-xl text-center font-bold">
+                            <TableHead className="w-[75px] h-[2.5rem] text-center text-black">Sr No.</TableHead>
+                            <TableHead className="text-center text-black">Ref No.</TableHead>
+                            <TableHead className="text-center text-black">Vendor Name</TableHead>
+                            <TableHead className="text-center text-black">Email Address</TableHead>
+                            <TableHead className="text-center text-black">Mobile Number</TableHead>
+                            <TableHead className="text-center text-black">Country</TableHead>
+                            <TableHead className="text-center text-black">Register Date</TableHead>
+                            <TableHead className="text-center text-black">Send Email</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody className="text-center">
@@ -149,7 +149,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
                             table.map((item, index) => (
                                 <TableRow key={item.name}>
                                     <TableCell>{(currentPage - 1) * record_per_page + index + 1}</TableCell>
-                                    <TableCell>{item.name}</TableCell>
+                                    <TableCell className="text-nowrap">{item.name}</TableCell>
                                     <TableCell>{item.vendor_name}</TableCell>
                                     <TableCell>{item.office_email_primary}</TableCell>
                                     <TableCell>{item.mobile_number}</TableCell>

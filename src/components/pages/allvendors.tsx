@@ -373,28 +373,31 @@ interface StatCardProps {
 
 const StatCard: React.FC<StatCardProps> = ({ icon, label, value, active, onClick, color }) => {
   const colorMap = {
-    blue: "text-blue-600 bg-blue-50 border-blue-200",
-    green: "text-green-600 bg-green-50 border-green-200",
-    indigo: "text-indigo-600 bg-indigo-50 border-indigo-200",
-    purple: "text-purple-600 bg-purple-50 border-purple-200",
-    emerald: "text-emerald-600 bg-emerald-50 border-emerald-200",
+    blue: "text-blue-600 bg-blue-50/80 border-blue-100",
+    green: "text-green-600 bg-green-50/80 border-green-100",
+    indigo: "text-indigo-600 bg-indigo-50/80 border-indigo-100",
+    purple: "text-purple-600 bg-purple-50/80 border-purple-100",
+    emerald: "text-emerald-600 bg-emerald-50/80 border-emerald-100",
   };
 
   const activeColorMap = {
-    blue: "ring-blue-500 bg-blue-50/50 shadow-blue-100",
-    green: "ring-green-500 bg-green-50/50 shadow-green-100",
-    indigo: "ring-indigo-500 bg-indigo-50/50 shadow-indigo-100",
-    purple: "ring-purple-500 bg-purple-50/50 shadow-purple-100",
-    emerald: "ring-emerald-500 bg-emerald-50/50 shadow-emerald-100",
+    blue: "ring-blue-600/20 bg-blue-50/40 shadow-blue-200/50 border-blue-200",
+    green: "ring-green-600/20 bg-green-50/40 shadow-green-200/50 border-green-200",
+    indigo: "ring-indigo-600/20 bg-indigo-50/40 shadow-indigo-200/50 border-indigo-200",
+    purple: "ring-purple-600/20 bg-purple-50/40 shadow-purple-200/50 border-purple-200",
+    emerald: "ring-emerald-600/20 bg-emerald-50/40 shadow-emerald-200/50 border-emerald-200",
   };
 
   return (
     <div
       onClick={onClick}
-      className={`group cursor-pointer bg-white rounded-2xl p-2 flex flex-col transition-all duration-300 border border-gray-100 hover:shadow-md hover:-translate-y-0.5
-        ${active ? `ring-2 shadow-lg ${activeColorMap[color]}` : "shadow-sm"}
+      className={`group cursor-pointer bg-white rounded-2xl p-2.5 flex flex-col transition-all duration-500 border border-gray-100 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden
+        ${active ? `ring-2 shadow-2xl scale-[1.02] z-10 ${activeColorMap[color]}` : "shadow-sm opacity-80 hover:opacity-100"}
       `}
     >
+      {active && (
+        <div className={`absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full opacity-10 blur-2xl ${colorMap[color].split(' ')[1]}`} />
+      )}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className={`p-2 rounded-xl transition-colors duration-300 ${colorMap[color]}`}>
