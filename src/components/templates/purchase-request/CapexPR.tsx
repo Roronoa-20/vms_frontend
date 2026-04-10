@@ -39,6 +39,7 @@ type Props = {
   materialDropdown: PurchaseRequisitionMaterialDropdownType[]
   submitLoaderRef: React.RefObject<HTMLSpanElement | null>
   handlePurchaseRequisitionSubmit: (isAlert: boolean) => void
+  onItemsChanged?: () => void
 };
 
 
@@ -53,7 +54,11 @@ const CapexPR = (props: Props) => {
 
   const [tableData, setTableData] = useState<nbCapexItemsType[]>(props?.prData?.nb_capex_items || []);
 
-  const [materialDropdown, setMaterialDropdown] = useState<any[]>([]);
+  const [materialDropdown, setMaterialDropdown] = useState<any[]>(props?.materialDropdown || []);
+
+  useEffect(() => {
+    setMaterialDropdown(props?.materialDropdown || []);
+  }, [props?.materialDropdown]);
 
   const getPurchaseGroupBasedOnMaterial = (material: string) => {
     getPurchaseRequisitionPurchaseGroupDropdown(material).then((res: any) => {
@@ -139,6 +144,7 @@ const CapexPR = (props: Props) => {
         setIsPurchaseGroupDropdown(false);
         setUOM(undefined);
         fetchPrData();
+        props?.onItemsChanged?.();
       }).catch((err) => {
         alert(err);
       })
@@ -151,6 +157,7 @@ const CapexPR = (props: Props) => {
         setIsPurchaseGroupDropdown(false);
         setUOM(undefined);
         fetchPrData();
+        props?.onItemsChanged?.();
       }).catch((err) => {
         console.log(err);
       })
@@ -165,6 +172,7 @@ const CapexPR = (props: Props) => {
     deletePurchaseRequisitionNBItems(name, "NB-CAPEX").then((res) => {
       alert(res);
       fetchPrData();
+      props?.onItemsChanged?.();
       setSingleRowData(undefined);
       setIsPurchaseGroupDropdown(false);
       setUOM(undefined);

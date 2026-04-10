@@ -6,7 +6,7 @@ import { Button } from '../atoms/button'
 import NormalPR from '../templates/purchase-request/NormalPR'
 import CapexPR from '../templates/purchase-request/CapexPR'
 import { companyDropdownBasedOnUserType, purchaseRequisitionDataType, PurchaseRequisitionMaterialDropdownType, purchaseRequisitionTypeDropdownType } from '@/src/types/prRequisition/prRequisition.types'
-import { getPurchaseReqisitionData, processApprovalAction, submitPurchaseRequisition } from '@/src/services/prRequisition/prRequisitionNb.services'
+import { getMaterialsByPlant, getPurchaseReqisitionData, processApprovalAction, submitPurchaseRequisition } from '@/src/services/prRequisition/prRequisitionNb.services'
 import ZSBService from '../templates/purchase-request/ZSBService'
 import ZSBAsset from '../templates/purchase-request/ZSBAsset'
 import PopUp from '../molecules/PopUp'
@@ -32,11 +32,18 @@ enum PurchaseType {
 
 const PrRequest = (props: Props) => {
     const [prData, setPrData] = useState<purchaseRequisitionDataType>(props?.prData as purchaseRequisitionDataType);
+    const [materialDropdown, setMaterialDropdown] = useState<PurchaseRequisitionMaterialDropdownType[] | []>(props?.materialDropdown || []);
     const {setStatus} = useAuth();
 
     useEffect(() => {
         setStatus(props?.prData?.status ?? "");
     }, [props?.prData, setStatus]);
+
+    useEffect(() => {
+        if (prData?.plant) {
+            fetechMaterialDropdown(prData.plant);
+        }
+    }, [prData?.plant])
     
     const submitLoaderRef = useRef<HTMLSpanElement>(null);
     const isSubmittingRef = useRef<boolean>(false);
@@ -51,6 +58,8 @@ const PrRequest = (props: Props) => {
         actualAmount: props?.prData?.actual_amount?.toString() || "",
     });
 
+    const hasItems = (prData?.nb_normal_items?.length > 0) || (prData?.nb_capex_items?.length > 0) || (prData?.zsb_asset_items?.length > 0) || (prData?.zsb_service_items?.length > 0);
+
     const isFinanceApproval = prData?.is_finance_visible === 1 && prData?.can_approve === 1;
     const isNormalPR = props?.prData?.pr_type === PurchaseType.nbNormal;
     const showFinanceFields = isFinanceApproval && isNormalPR;
@@ -63,6 +72,14 @@ const PrRequest = (props: Props) => {
             console.error("Error fetching PR data:", err);
         })
     }
+
+    const fetechMaterialDropdown = (plant: string) => {
+        getMaterialsByPlant(plant,"").then((res) => {
+            setMaterialDropdown(res);
+        }).catch((err) => {
+            console.error("Error fetching material dropdown:", err);
+        })
+    }   
 
     const handleApprove = () => {
         if (isFinanceApproval && isNormalPR) {
@@ -112,6 +129,10 @@ const PrRequest = (props: Props) => {
     }
 
     const handlePurchaseRequisitionSubmit = (isAlert:boolean) => {
+        if(!props?.prData?.plant){
+            alert("Please select plant before submitting the purchase requisition.");
+            return;
+        }
         if(isAlert){
             if (!confirm("Are you sure you want to submit this purchase requisition?")) {
                 return;
@@ -128,8 +149,7 @@ const PrRequest = (props: Props) => {
                     submitLoaderRef.current.className = "hidden";
                 }
             }).catch((err) => {
-                alert(err || `Error creating PR:- ${err}`);
-                console.error(err);
+                alert(err?.message || `Error submitting PR:- ${err?.message}`);
                 if (submitLoaderRef?.current) {
                     submitLoaderRef.current.className = "hidden";
                 }
@@ -140,13 +160,13 @@ const PrRequest = (props: Props) => {
 
     return (
         <div className="pr-request-page p-4 space-y-5 text-xs leading-snug text-[#334155] antialiased [&_textarea]:text-xs [&_textarea]:leading-snug">
-            <CreatePurchaseRequest purchaseRequisitionTypeDropdown={props.purchaseRequisitionTypeDropdown} companyDropdown={props?.companyDropdown} prData={prData} pr_id={props?.pr_id} fetchPrData={fetchPrData} />
+            <CreatePurchaseRequest purchaseRequisitionTypeDropdown={props.purchaseRequisitionTypeDropdown} companyDropdown={props?.companyDropdown} prData={prData} pr_id={props?.pr_id} fetchPrData={fetchPrData} onPlantChange={(plant) => { setPrData(prev => ({ ...prev, plant })); }} hasItems={hasItems} />
 
             {props?.pr_id && <FileList data={prData?.attachment || []} fetchPrData={fetchPrData} prId={prData?.name} canEdit={!!prData?.can_edit} isSubmittingRef={isSubmittingRef}/>}
 
-            {props?.prData?.pr_type === PurchaseType.nbNormal && <NormalPR prData={prData} materialDropdown={props?.materialDropdown} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />}
+            {props?.prData?.pr_type === PurchaseType.nbNormal && <NormalPR prData={prData} materialDropdown={materialDropdown} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} onItemsChanged={() => fetchPrData()} />}
 
-            {props?.prData?.pr_type === PurchaseType.nbCapex && <CapexPR prData={prData} materialDropdown={props?.materialDropdown} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />}
+            {props?.prData?.pr_type === PurchaseType.nbCapex && <CapexPR prData={prData} materialDropdown={materialDropdown} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} onItemsChanged={() => fetchPrData()} />}
 
             {props?.prData?.pr_type === PurchaseType.zsbService && <ZSBService prData={prData} handlePurchaseRequisitionSubmit={handlePurchaseRequisitionSubmit} submitLoaderRef={submitLoaderRef} />}
 

@@ -43,6 +43,8 @@ interface Props {
   prData?: purchaseRequisitionDataType;
   pr_id?: string;
   fetchPrData: (prId?: string) => void
+  onPlantChange?: (plant: string) => void
+  hasItems?: boolean
 }
 
 type FormType = {
@@ -84,6 +86,8 @@ const CreatePurchaseRequest = (props: Props) => {
   const router = useRouter();
   const nextLoaderRef = useRef<HTMLSpanElement>(null);
 
+  const pr_id = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get("pr_id");
+
   React.useEffect(() => {
     if (props.prData) {
       setForm((prev) => ({ ...prev, ...(props.prData as any) }));
@@ -123,17 +127,19 @@ const CreatePurchaseRequest = (props: Props) => {
       return;
     }
 
-    if (!form?.plant) {
-      alert("please select plant");
-      return;
-    }
+    // if (!form?.plant) {
+    //   alert("please select plant");
+    //   return;
+    // }
 
     const body: any = {
+      name: props?.pr_id ? props?.pr_id : "",
       pr_type: form.pr_type,
       company: form.company,
       plant: form.plant,
       requisitioner: form.requisitioner,
       requisition_date: new Date().toISOString().split("T")[0], // current date in YYYY-MM-DD format
+      // name:pr_id as string
     };
 
     if (form?.pr_type === "NB-Capex") {
@@ -268,9 +274,9 @@ const CreatePurchaseRequest = (props: Props) => {
               Plant
             </label>
             <ReactSelect
-              isDisabled={!!props?.pr_id || !form?.company}
+              isDisabled={props?.prData?.is_submitted == 1 || !form?.company || !!props?.hasItems}
               value={plantDropdown?.filter((item) => item?.name === form?.plant)?.map((item) => ({ value: item?.name, label: item?.plant_name }))?.[0] ?? null}
-              onChange={(selected: any) => { setForm((prev: any) => ({ ...prev, plant: selected?.value ?? "" })); }}
+              onChange={(selected: any) => { setForm((prev: any) => ({ ...prev, plant: selected?.value ?? "" })); props?.onPlantChange?.(selected?.value ?? ""); }}
               options={plantDropdown?.map((item) => ({ value: item?.name, label: item?.plant_name }))}
               placeholder="Select plant"
               instanceId="plant-select"
@@ -284,7 +290,7 @@ const CreatePurchaseRequest = (props: Props) => {
           </div>
         </div>
 
-        {!props?.pr_id && (
+        {!props?.prData?.is_submitted && (
           <div className="mt-4 flex justify-end">
             <Button
               variant={"nextbtn"}
@@ -318,6 +324,19 @@ const CreatePurchaseRequest = (props: Props) => {
               <InfoField label="Budget Amount" value={props.prData.budget_amount} />
               <InfoField label="Actual Amount" value={props.prData.actual_amount} />
             </div>
+          </div>
+        )}
+
+        {!props?.prData?.is_submitted && (
+          <div className="mt-4 flex justify-end">
+            <Button
+              variant={"nextbtn"}
+              size={"nextbtnsize"}
+              className="h-8 px-4 rounded-lg text-xs flex items-center gap-1.5 shadow-sm"
+              onClick={handleNextButton}
+            >
+              {props?.pr_id ? "Update" : "Next"}
+            </Button>
           </div>
         )}
       </CardContent>
