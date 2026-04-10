@@ -43,6 +43,8 @@ const PrRequest = (props: Props) => {
     const [isApprovalDialog, setIsApprovalDialog] = useState<boolean>(false);
     const [isRejectionDialog, setIsRejectionDialog] = useState<boolean>(false);
     const [remarks, setRemarks] = useState<string>("");
+    const [isApprovalLoading, setIsApprovalLoading] = useState<boolean>(false);
+    const [isRejectionLoading, setIsRejectionLoading] = useState<boolean>(false);
     const [financeFields, setFinanceFields] = useState({
         costCenter: props?.prData?.cost_center || "",
         budgetAmount: props?.prData?.budget_amount?.toString() || "",
@@ -82,23 +84,25 @@ const PrRequest = (props: Props) => {
             budget_amount: financeFields.budgetAmount,
             actual_amount: financeFields.actualAmount,
         } : undefined;
+        setIsApprovalLoading(true);
         processApprovalAction(props.pr_id as string, "Approve", remarks, financeData).then((res) => {
             alert(res?.message || "Approved Successfully");
             fetchPrData();
         }).catch((err) => {
             console.error(err);
             alert(err?.message || "Error approving PR");
-        }).finally(() => { setIsApprovalDialog(false); setRemarks(""); });
+        }).finally(() => { setIsApprovalLoading(false); setIsApprovalDialog(false); setRemarks(""); });
     }
 
     const handleReject = () => {
+        setIsRejectionLoading(true);
         processApprovalAction(props.pr_id as string, "Reject", remarks).then((res) => {
             alert(res?.message || "Rejected Successfully");
             fetchPrData();
         }).catch((err) => {
             console.error(err);
             alert(err?.message || "Error rejecting PR");
-        }).finally(() => { setIsRejectionDialog(false); setRemarks(""); });
+        }).finally(() => { setIsRejectionLoading(false); setIsRejectionDialog(false); setRemarks(""); });
     }
 
     const handleClose = () => {
@@ -181,7 +185,7 @@ const PrRequest = (props: Props) => {
             )}
 
             {isApprovalDialog &&
-                <PopUp Submitbutton={handleApprove} isSubmit={true} headerText='Approve Purchase Requisition' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[500px] md:max-h-[380px]' compact>
+                <PopUp Submitbutton={handleApprove} isSubmit={true} headerText='Approve Purchase Requisition' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[500px] md:max-h-[380px]' compact isLoading={isApprovalLoading}>
                     <div className="mt-3">
                         <label className="text-[11px] font-semibold uppercase tracking-wide text-[#475569] pb-1.5 block">Comments</label>
                         <textarea
@@ -196,7 +200,7 @@ const PrRequest = (props: Props) => {
             }
 
             {isRejectionDialog &&
-                <PopUp Submitbutton={handleReject} isSubmit={true} headerText='Reject Purchase Requisition' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[500px] md:max-h-[380px]' compact>
+                <PopUp Submitbutton={handleReject} isSubmit={true} headerText='Reject Purchase Requisition' handleClose={handleClose} classname='pb-3 md:w-full md:max-w-[500px] md:max-h-[380px]' compact isLoading={isRejectionLoading}>
                     <div className="mt-3">
                         <label className="text-[11px] font-semibold uppercase tracking-wide text-[#475569] pb-1.5 block">
                             Comments <span className="text-[10px] normal-case text-[#94A3B8] font-normal">(Provide a reason for rejection)</span>
