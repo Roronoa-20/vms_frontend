@@ -103,6 +103,7 @@ const AllVendors = () => {
 
   useEffect(() => {
     const fetchAsaCount = async () => {
+      if (activeVendorTab === "asa_vendors") return;
       try {
         const res: AxiosResponse<any> = await requestWrapper({
           url: API_END_POINTS.getasaallvendors,
@@ -117,7 +118,7 @@ const AllVendors = () => {
       }
     };
     fetchAsaCount();
-  }, []);
+  }, [activeVendorTab]);
 
   /* ================= FETCH VENDORS ================= */
 
@@ -328,7 +329,7 @@ const AllVendors = () => {
       {/* Table */}
       <div className="bg-white rounded-2xl shadow p-3 relative">
         {activeVendorTab === "asa_vendors" ? (
-          <PurchaseASAVendorTable />
+          <PurchaseASAVendorTable setAsaCount={setAsaCount} />
         ) : (
           <>
             {loading && (

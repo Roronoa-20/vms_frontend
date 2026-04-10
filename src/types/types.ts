@@ -1393,6 +1393,7 @@ export type ASAFormResponse = {
   page_no: number;
   page_length: number;
   pending_asa_vendors: ASAForm[];
+  pending_vendors: ASAForm[];
   approved_vendors: ASAForm[];
   name: string,
   vendor_name: string,

@@ -35,7 +35,7 @@ const useDebounce = (value: any, delay: any) => {
 const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Props) => {
     console.log("Dashboard Pending table ASA---->", dashboardTableData)
 
-    const [table, setTable] = useState<ASAForm[]>(dashboardTableData?.pending_asa_vendors || []);
+    const [table, setTable] = useState<ASAForm[]>(dashboardTableData?.pending_vendors || (dashboardTableData as any)?.data || []);
     const [selectedCompany, setSelectedCompany] = useState<string>("");
     const [search, setSearch] = useState<string>("");
     const [total_event_list, settotalEventList] = useState(dashboardTableData?.overall_count || 0);
@@ -44,7 +44,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
 
     useEffect(() => {
         if (dashboardTableData) {
-            setTable(dashboardTableData.pending_asa_vendors || []);
+            setTable(dashboardTableData.pending_vendors || (dashboardTableData as any).data || []);
             settotalEventList(
                 dashboardTableData.overall_count ||
                 dashboardTableData.total_count ||
@@ -75,7 +75,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
         console.log("Pending API Response:", dashboardASAPendingVendorTableDataApi?.data);
         if (dashboardASAPendingVendorTableDataApi?.status == 200) {
             const msg = dashboardASAPendingVendorTableDataApi?.data?.message;
-            setTable(msg?.pending_asa_vendors || []);
+            setTable(msg?.pending_vendors || msg?.data || []);
             settotalEventList(msg?.overall_count || msg?.total_count || msg?.overall_total_asa || 0);
             setRecordPerPage(record_per_page);
         }
@@ -186,7 +186,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={5} className="text-center text-gray-500 py-4">
+                                <TableCell colSpan={8} className="text-center text-gray-500 py-4">
                                     No results found
                                 </TableCell>
                             </TableRow>

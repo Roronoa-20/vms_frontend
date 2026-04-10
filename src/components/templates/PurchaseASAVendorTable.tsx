@@ -20,6 +20,7 @@ import { FileSearch } from "lucide-react";
 
 interface ESGForm {
     form_name: string;
+    form_date: string;
     total_esg_score: string;
     status: string;
     form_is_submitted: number;
@@ -47,7 +48,7 @@ const useDebounce = (value: string, delay: number) => {
     return debouncedValue;
 };
 
-const PurchaseASAVendorTable = () => {
+const PurchaseASAVendorTable = ({ setAsaCount }: { setAsaCount?: (count: number) => void }) => {
     const router = useRouter();
     const { asaResponsibleUser } = useAuth();
     const [vendors, setVendors] = useState<ASAVendor[]>([]);
@@ -57,6 +58,7 @@ const PurchaseASAVendorTable = () => {
     const [filterStatus, setFilterStatus] = useState("All");
     const [minScore, setMinScore] = useState("");
     const [maxScore, setMaxScore] = useState("");
+    const [filterYear, setFilterYear] = useState("All");
 
     const debouncedSearch = useDebounce(searchTerm, 500);
     const debouncedUsers = useDebounce(filterUsers, 500);
@@ -89,6 +91,7 @@ const PurchaseASAVendorTable = () => {
                 esg_status: (filterStatus === "All" || isPendingFilter) ? "" : filterStatus,
                 min_score: debouncedMinScore,
                 max_score: debouncedMaxScore,
+                year: filterYear === "All" ? "" : filterYear,
             });
 
             const res: AxiosResponse<any> = await requestWrapper({
@@ -111,6 +114,10 @@ const PurchaseASAVendorTable = () => {
                     total_records: isPendingFilter ? finalData.length : total_count,
                     total_pages: isPendingFilter ? 1 : Math.ceil(total_count / page_size),
                 }));
+
+                if (setAsaCount) {
+                    setAsaCount(total_count || 0);
+                }
             }
         } catch (error) {
             console.error("Error fetching ASA vendors:", error);
@@ -121,7 +128,7 @@ const PurchaseASAVendorTable = () => {
 
     useEffect(() => {
         fetchASAVendors(1);
-    }, [debouncedSearch, debouncedUsers, filterStatus, debouncedMinScore, debouncedMaxScore]);
+    }, [debouncedSearch, debouncedUsers, filterStatus, debouncedMinScore, debouncedMaxScore, filterYear]);
 
     const handleResetFilters = () => {
         setSearchTerm("");
@@ -129,6 +136,7 @@ const PurchaseASAVendorTable = () => {
         setFilterStatus("All");
         setMinScore("");
         setMaxScore("");
+        setFilterYear("All");
     };
 
     const handleSendReminder = (name: string) => {
@@ -221,7 +229,7 @@ const PurchaseASAVendorTable = () => {
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
                         <div className="space-y-1.5">
                             <Label className="text-[11px] font-bold text-gray-400 uppercase ml-1">Vendor Name</Label>
                             <Input
@@ -241,9 +249,23 @@ const PurchaseASAVendorTable = () => {
                             />
                         </div>
                         <div className="space-y-1.5">
+                            <Label className="text-[11px] font-bold text-gray-400 uppercase ml-1">Assessment Year</Label>
+                            <div className="h-9">
+                                <select
+                                    value={filterYear}
+                                    onChange={(e) => setFilterYear(e.target.value)}
+                                    className="w-full h-full px-3 text-sm bg-gray-50/50 border border-gray-100 rounded-lg outline-none focus:bg-white transition-all"
+                                >
+                                    <option value="All">All Year</option>
+                                    <option value="2026">2026</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="space-y-1.5">
                             <Label className="text-[11px] font-bold text-gray-400 uppercase ml-1">ESG Status</Label>
                             <div className="h-9">
-                                {/* Using a simple native select or keeping standard Select from UI if available */}
                                 <select
                                     value={filterStatus}
                                     onChange={(e) => setFilterStatus(e.target.value)}
@@ -406,6 +428,7 @@ const PurchaseASAVendorTable = () => {
                                                                             <TableRow className="hover:bg-transparent border-b border-gray-100">
                                                                                 <TableHead className="h-10 py-0 text-[10px] font-semibold text-black uppercase text-center">S.No</TableHead>
                                                                                 <TableHead className="h-10 py-0 text-[10px] font-semibold text-black uppercase text-center">ASA Form Name</TableHead>
+                                                                                <TableHead className="h-10 py-0 text-[10px] font-semibold text-black uppercase text-center">Submission Date</TableHead>
                                                                                 <TableHead className="h-10 py-0 text-[10px] font-semibold text-black uppercase text-center">Submission Status</TableHead>
                                                                                 <TableHead className="h-10 py-0 text-[10px] font-semibold text-black uppercase text-center">ESG Performance Score</TableHead>
                                                                                 <TableHead className="h-10 py-0 text-[10px] font-semibold text-black uppercase text-center pr-6">Management Action</TableHead>
@@ -424,6 +447,9 @@ const PurchaseASAVendorTable = () => {
                                                                                             </div>
                                                                                             <span className="text-[13px] font-bold text-gray-900 tracking-tight">{form.form_name}</span>
                                                                                         </div>
+                                                                                    </TableCell>
+                                                                                    <TableCell className="py-4 text-center">
+                                                                                        <span className="text-[13px] font-medium text-gray-600">{form.form_date}</span>
                                                                                     </TableCell>
                                                                                     <TableCell className="py-4 text-center">
                                                                                         <Badge className={cn("text-[10px] font-black px-3 py-1 border-none shadow-sm capitalize", getStatusColor(form.status))}>
