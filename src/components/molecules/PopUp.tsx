@@ -49,7 +49,7 @@
 // export default PopUp;
 import React, { ReactNode } from "react";
 import { Button } from "@/src/components/atoms/button";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import { useOutsideClick } from "@/src/hooks/useOutsideClick";
 import { cn } from "@/lib/utils";
 
@@ -70,6 +70,8 @@ type Props = {
   containInMainColumn?: boolean;
   /** Smaller header, padding, and footer actions (e.g. PR flows). */
   compact?: boolean;
+  /** Show a loading spinner on the submit button and disable it. */
+  isLoading?: boolean;
 };
 
 const PopUp = ({
@@ -84,6 +86,7 @@ const PopUp = ({
   isHeaderTextUnderline,
   containInMainColumn,
   compact,
+  isLoading,
 }: Props) => {
   const DialogRef = useOutsideClick<HTMLDivElement>(handleClose);
 
@@ -153,11 +156,11 @@ const PopUp = ({
           </Button>
           {isSubmit && (
             <Button
-              disabled={disableSubmit}
+              disabled={disableSubmit || isLoading}
               className={cn(
                 "whitespace-nowrap",
                 compact ? "h-8 px-3 py-0 text-xs" : "py-2 px-4",
-                disableSubmit ? "opacity-50 cursor-not-allowed" : "",
+                (disableSubmit || isLoading) ? "opacity-50 cursor-not-allowed" : "",
               )}
               variant={"nextbtn"}
               size={"nextbtnsize"}
@@ -165,7 +168,7 @@ const PopUp = ({
                 Submitbutton && Submitbutton();
               }}
             >
-              Submit
+              {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Submit"}
             </Button>
           )}
         </div>

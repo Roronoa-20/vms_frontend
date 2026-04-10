@@ -2,6 +2,8 @@
 import React, { useState, useRef } from "react";
 
 import { Loader2, ClipboardList, Building2, UserCircle, ArrowRight } from "lucide-react";
+import ReactSelect from "react-select";
+import { multiSelectStyles } from "@/src/components/common/sharedStyles";
 import {
   Select,
   SelectContent,
@@ -50,6 +52,29 @@ type FormType = {
   requisitioner: string;
   requisition_date: string;
   account_assignment_category: string;
+};
+
+const plantSelectStyles = {
+  ...multiSelectStyles,
+  control: (base: any, state: any) => ({
+    ...multiSelectStyles.control(base),
+    minHeight: "2rem",
+    height: "2rem",
+    borderRadius: "0.375rem",
+    borderColor: state.isFocused ? "#94a3b8" : "#e2e8f0",
+    backgroundColor: "#fff",
+    fontSize: "0.75rem",
+    boxShadow: "none",
+    "&:hover": { borderColor: "#94a3b8" },
+  }),
+  valueContainer: (base: any) => ({ ...base, padding: "0 0.5rem", fontSize: "0.75rem" }),
+  input: (base: any) => ({ ...multiSelectStyles.input(base), margin: "0", padding: "0", fontSize: "0.75rem" }),
+  placeholder: (base: any) => ({ ...base, fontSize: "0.75rem", color: "#a1a1aa" }),
+  singleValue: (base: any) => ({ ...multiSelectStyles.singleValue(base), fontSize: "0.75rem" }),
+  indicatorsContainer: (base: any) => ({ ...base, height: "2rem" }),
+  dropdownIndicator: (base: any) => ({ ...base, padding: "4px" }),
+  clearIndicator: (base: any) => ({ ...base, padding: "4px" }),
+  option: (base: any) => ({ ...multiSelectStyles.option(base), fontSize: "0.75rem" }),
 };
 
 const CreatePurchaseRequest = (props: Props) => {
@@ -242,22 +267,20 @@ const CreatePurchaseRequest = (props: Props) => {
               <Building2 className="w-3 h-3 text-[#94A3B8]" />
               Plant
             </label>
-            <Select
-              disabled={!!props?.pr_id || !form?.company}
-              value={form?.plant ?? ""}
-              onValueChange={(value) => { setForm((prev: any) => ({ ...prev, plant: value })); }}
-            >
-              <SelectTrigger className="rounded-md h-8 border-slate-200 bg-white text-xs">
-                <SelectValue placeholder="Select plant" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {plantDropdown?.map((item) => (
-                    <SelectItem key={item?.name} value={item?.name}>{item?.plant_name}</SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            <ReactSelect
+              isDisabled={!!props?.pr_id || !form?.company}
+              value={plantDropdown?.filter((item) => item?.name === form?.plant)?.map((item) => ({ value: item?.name, label: item?.plant_name }))?.[0] ?? null}
+              onChange={(selected: any) => { setForm((prev: any) => ({ ...prev, plant: selected?.value ?? "" })); }}
+              options={plantDropdown?.map((item) => ({ value: item?.name, label: item?.plant_name }))}
+              placeholder="Select plant"
+              instanceId="plant-select"
+              className="text-xs"
+              menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+              styles={plantSelectStyles}
+              menuPlacement="auto"
+              menuPosition="fixed"
+              isClearable
+            />
           </div>
         </div>
 

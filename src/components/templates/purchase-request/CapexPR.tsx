@@ -145,7 +145,7 @@ const CapexPR = (props: Props) => {
     } else {
 
       addPurchaseRequisitionNBItems(body, "NB-CAPEX").then((res) => {
-        alert(res);
+        // alert(res);
         // setTableData(prev=>[...prev,singleRowData as nbItemsType]);
         setSingleRowData(undefined);
         setIsPurchaseGroupDropdown(false);
@@ -352,6 +352,11 @@ const CapexPR = (props: Props) => {
               </TableCell>
               <TableCell className="font-medium align-middle">
                 <span className="flex h-8 w-full items-center justify-center rounded-md border border-slate-200 bg-white text-xs font-medium tabular-nums text-slate-600">
+                  {singleRowData?.material_description ?? "—"}
+                </span>
+              </TableCell>
+              <TableCell className="font-medium align-middle">
+                <span className="flex h-8 w-full items-center justify-center rounded-md border border-slate-200 bg-white text-xs font-medium tabular-nums text-slate-600">
                   {singleRowData?.uom ?? "—"}
                 </span>
               </TableCell>
@@ -372,7 +377,7 @@ const CapexPR = (props: Props) => {
                         setSingleRowData(prev => ({ ...prev, purchasing_group: selectedOption?.value } as nbCapexItemsType));
                       }}
                       instanceId="capexpr-pg-select"
-                      placeholder="Select Purchase Group..."
+                      placeholder="Select"
                       className="min-w-[120px] text-left text-xs text-black"
                       styles={itemsRowSelectStyles("min(18rem, 90vw)")}
                       menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}

@@ -84,7 +84,7 @@ const FileList = ({ data, prId, canEdit, fetchPrData, isSubmittingRef }: Props) 
             <FileText className="w-4 h-4 text-white" />
           </div>
           <div>
-            <CardTitle className="text-base font-bold text-[#0F172A] tracking-tight">File List</CardTitle>
+            <CardTitle className="text-base font-bold text-[#0F172A] tracking-tight">Quotation List</CardTitle>
             <p className="text-[11px] text-[#94A3B8] mt-0.5 font-medium">{data?.length || 0} file{(data?.length || 0) !== 1 ? 's' : ''} attached</p>
           </div>
         </div>
