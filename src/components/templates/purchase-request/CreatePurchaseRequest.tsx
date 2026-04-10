@@ -43,6 +43,8 @@ interface Props {
   prData?: purchaseRequisitionDataType;
   pr_id?: string;
   fetchPrData: (prId?: string) => void
+  onPlantChange?: (plant: string) => void
+  hasItems?: boolean
 }
 
 type FormType = {
@@ -83,6 +85,8 @@ const CreatePurchaseRequest = (props: Props) => {
   const [plantDropdown, setPlantDropdown] = useState<purchaseRequisitionPlantDropdownType[]>([]);
   const router = useRouter();
   const nextLoaderRef = useRef<HTMLSpanElement>(null);
+
+  const pr_id = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get("pr_id");
 
   React.useEffect(() => {
     if (props.prData) {
@@ -135,6 +139,7 @@ const CreatePurchaseRequest = (props: Props) => {
       plant: form.plant,
       requisitioner: form.requisitioner,
       requisition_date: new Date().toISOString().split("T")[0], // current date in YYYY-MM-DD format
+      // name:pr_id as string
     };
 
     if (form?.pr_type === "NB-Capex") {
@@ -268,11 +273,10 @@ const CreatePurchaseRequest = (props: Props) => {
               <Building2 className="w-3 h-3 text-[#94A3B8]" />
               Plant
             </label>
-<<<<<<< Updated upstream
             <ReactSelect
-              isDisabled={!!props?.pr_id || !form?.company}
+              isDisabled={props?.prData?.is_submitted == 1 || !form?.company || !!props?.hasItems}
               value={plantDropdown?.filter((item) => item?.name === form?.plant)?.map((item) => ({ value: item?.name, label: item?.plant_name }))?.[0] ?? null}
-              onChange={(selected: any) => { setForm((prev: any) => ({ ...prev, plant: selected?.value ?? "" })); }}
+              onChange={(selected: any) => { setForm((prev: any) => ({ ...prev, plant: selected?.value ?? "" })); props?.onPlantChange?.(selected?.value ?? ""); }}
               options={plantDropdown?.map((item) => ({ value: item?.name, label: item?.plant_name }))}
               placeholder="Select plant"
               instanceId="plant-select"
@@ -283,26 +287,25 @@ const CreatePurchaseRequest = (props: Props) => {
               menuPosition="fixed"
               isClearable
             />
-=======
-            <Select
-              // disabled={!!props?.pr_id || !form?.company}
-              value={form?.plant ?? ""}
-              onValueChange={(value) => { setForm((prev: any) => ({ ...prev, plant: value })); }}
-            >
-              <SelectTrigger className="rounded-md h-8 border-slate-200 bg-white text-xs">
-                <SelectValue placeholder="Select plant" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {plantDropdown?.map((item) => (
-                    <SelectItem key={item?.name} value={item?.name}>{item?.plant_name}</SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
->>>>>>> Stashed changes
           </div>
         </div>
+
+        {!props?.prData?.is_submitted && (
+          <div className="mt-4 flex justify-end">
+            <Button
+              variant={"nextbtn"}
+              size={"nextbtnsize"}
+              className="h-8 px-4 rounded-lg text-xs flex items-center gap-1.5 shadow-sm"
+              onClick={handleNextButton}
+            >
+              Next
+              <ArrowRight className="w-3.5 h-3.5" />
+              <span ref={nextLoaderRef} className="hidden">
+                <Loader2 className="w-3.5 h-3.5 text-white" />
+              </span>
+            </Button>
+          </div>
+        )}
 
         {props?.pr_id && (
           <div className="mt-4 pt-4 border-t border-slate-100">

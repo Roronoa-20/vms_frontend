@@ -1,4 +1,4 @@
-import React, { useState,useRef, ReactElement, ReactSVGElement } from "react";
+import React, { useState, useEffect, useRef, ReactElement, ReactSVGElement } from "react";
 import {
   Table,
   TableBody,
@@ -39,6 +39,7 @@ type Props = {
   materialDropdown: PurchaseRequisitionMaterialDropdownType[]
   submitLoaderRef:  React.RefObject<HTMLSpanElement | null>
   handlePurchaseRequisitionSubmit:(isAlert:boolean)=>void
+  onItemsChanged?:()=>void
 };
 
 
@@ -53,7 +54,11 @@ const NormalPR = (props: Props) => {
 
   const [tableData, setTableData] = useState<nbItemsType[]>(props?.prData?.nb_normal_items || []);
 
-  const [materialDropdown, setMaterialDropdown] = useState<any[]>([]);
+  const [materialDropdown, setMaterialDropdown] = useState<any[]>(props?.materialDropdown || []);
+
+  useEffect(() => {
+    setMaterialDropdown(props?.materialDropdown || []);
+  }, [props?.materialDropdown]);
 
   const getPurchaseGroupBasedOnMaterial = (material: string) => {
     getPurchaseRequisitionPurchaseGroupDropdown(material).then((res: any) => {
@@ -128,6 +133,7 @@ const NormalPR = (props: Props) => {
         setIsPurchaseGroupDropdown(false);
         setUOM(undefined);
         fetchPrData();
+        props?.onItemsChanged?.();
       }).catch((err) => {
         alert(err);
       })
@@ -140,6 +146,7 @@ const NormalPR = (props: Props) => {
         setIsPurchaseGroupDropdown(false);
         setUOM(undefined);
         fetchPrData();
+        props?.onItemsChanged?.();
       }).catch((err) => {
         console.log(err);
       })
@@ -154,6 +161,7 @@ const NormalPR = (props: Props) => {
     deletePurchaseRequisitionNBItems(name, "NB-Normal").then((res) => {
       alert(res);
       fetchPrData();
+      props?.onItemsChanged?.();
       setSingleRowData(undefined);
       setIsPurchaseGroupDropdown(false);
       setUOM(undefined);

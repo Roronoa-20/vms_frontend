@@ -1,4 +1,4 @@
-import { getPurchaseReqisitionData, getPurchaseRequisitionMaterialDropdown, GetPurchaseRequisitionTypeDropdown } from '@/src/services/prRequisition/prRequisitionNb.services'
+import { getMaterialsByPlant, getPurchaseReqisitionData, getPurchaseRequisitionMaterialDropdown, GetPurchaseRequisitionTypeDropdown } from '@/src/services/prRequisition/prRequisitionNb.services'
 import PrRequest from '../../../../src/components/pages/PRRequest'
 import React from 'react'
 import { cookies } from 'next/headers'
@@ -36,12 +36,12 @@ const page = async ({ searchParams }: PageProps) => {
 
   let getMaterialDropdown: PurchaseRequisitionMaterialDropdownType[] | null = null;
   if (pr_id) {
-    getMaterialDropdown = await getPurchaseRequisitionMaterialDropdown("", prData?.company as string, cookieHeaderString);
+    getMaterialDropdown = await getMaterialsByPlant(prData?.plant as string, "",cookieHeaderString);
   }
 
 
   return (
-    <PrRequest purchaseRequisitionTypeDropdown={purchaseRequisitionTypeDropdown} companyDropdown={getCompanyDropdown} prData={prData as purchaseRequisitionDataType} pr_id={pr_id} materialDropdown={getMaterialDropdown ? getMaterialDropdown : []} />
+    <PrRequest purchaseRequisitionTypeDropdown={purchaseRequisitionTypeDropdown} companyDropdown={getCompanyDropdown} prData={prData as purchaseRequisitionDataType} pr_id={pr_id} materialDropdown={getMaterialDropdown as PurchaseRequisitionMaterialDropdownType[]}/>
   )
 }
 
