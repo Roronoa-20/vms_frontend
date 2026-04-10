@@ -298,7 +298,7 @@ const CreatePurchaseRequest = (props: Props) => {
               className="h-8 px-4 rounded-lg text-xs flex items-center gap-1.5 shadow-sm"
               onClick={handleNextButton}
             >
-              Next
+              {props?.pr_id ? "Update" : "Next"}
               <ArrowRight className="w-3.5 h-3.5" />
               <span ref={nextLoaderRef} className="hidden">
                 <Loader2 className="w-3.5 h-3.5 text-white" />
@@ -327,7 +327,7 @@ const CreatePurchaseRequest = (props: Props) => {
           </div>
         )}
 
-        {!props?.prData?.is_submitted && (
+        {/* {!props?.prData?.is_submitted && (
           <div className="mt-4 flex justify-end">
             <Button
               variant={"nextbtn"}
@@ -338,7 +338,7 @@ const CreatePurchaseRequest = (props: Props) => {
               {props?.pr_id ? "Update" : "Next"}
             </Button>
           </div>
-        )}
+        )} */}
       </CardContent>
     </Card>
   );
