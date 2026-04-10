@@ -101,9 +101,9 @@ const PurchaseASAVendorTable = ({ setAsaCount }: { setAsaCount?: (count: number)
 
             if (res.data?.message) {
                 const { data, total_count, page_size } = res.data.message;
-                
+
                 // Frontend filter for Pending (no forms)
-                const finalData = isPendingFilter 
+                const finalData = isPendingFilter
                     ? (data || []).filter((v: any) => !v.esg_forms || v.esg_forms.length === 0)
                     : (data || []);
 
@@ -191,7 +191,7 @@ const PurchaseASAVendorTable = ({ setAsaCount }: { setAsaCount?: (count: number)
 
         // Priority: Verified > Awaiting Verification > Draft > Rejected
         if (forms.some(f => f.status === "Verified")) return "Verified";
-        if (forms.some(f => f.status === "Awaiting Verification")) return "Awaiting Verification";
+        // if (forms.some(f => f.status === "Awaiting Verification")) return "Awaiting Verification";
         if (forms.some(f => f.status === "Draft")) return "Draft";
         if (forms.some(f => f.status === "Rejected")) return "Rejected";
 
@@ -363,7 +363,7 @@ const PurchaseASAVendorTable = ({ setAsaCount }: { setAsaCount?: (count: number)
                                                         </div>
                                                     </TableCell>
                                                     <TableCell className="text-center">
-                                                        <Badge className={cn("text-[10px] font-black px-2 py-1 border-none shadow-sm", getStatusColor(mainStatus))}>
+                                                        <Badge className={cn("text-[10px] font-black px-2 py-1 border-none shadow-sm cursor-default hover:bg-inherit", getStatusColor(mainStatus))}>
                                                             {mainStatus}
                                                         </Badge>
                                                     </TableCell>
@@ -408,7 +408,7 @@ const PurchaseASAVendorTable = ({ setAsaCount }: { setAsaCount?: (count: number)
                                                     <TableRow className="bg-[#5291CD]/5 hover:bg-[#5291CD]/10 border-b border-gray-100">
                                                         <TableCell colSpan={6} className="p-0 border-none outline-none">
                                                             <div className="p-4 bg-white/40 backdrop-blur-sm">
-                                                                    <div className="bg-white rounded-2xl border border-[#5291CD]/20 shadow-xl overflow-hidden ring-1 ring-black/5">
+                                                                <div className="bg-white rounded-2xl border border-[#5291CD]/20 shadow-xl overflow-hidden ring-1 ring-black/5">
                                                                     <div className="px-4 py-3 bg-[#5291CD]/10 border-b border-[#5291CD]/20 flex items-center justify-between">
                                                                         <div className="flex items-center gap-2">
                                                                             <div className="p-1.5 bg-[#5291CD] rounded-lg shadow-sm shadow-[#5291CD]/20">
@@ -452,7 +452,7 @@ const PurchaseASAVendorTable = ({ setAsaCount }: { setAsaCount?: (count: number)
                                                                                         <span className="text-[13px] font-medium text-gray-600">{form.form_date}</span>
                                                                                     </TableCell>
                                                                                     <TableCell className="py-4 text-center">
-                                                                                        <Badge className={cn("text-[10px] font-black px-3 py-1 border-none shadow-sm capitalize", getStatusColor(form.status))}>
+                                                                                        <Badge className={cn("text-[10px] font-black px-3 py-1 border-none shadow-sm capitalize cursor-default hover:bg-inherit", getStatusColor(form.status))}>
                                                                                             <span className="w-1.5 h-1.5 rounded-full bg-current mr-2 opacity-50" />
                                                                                             {form.status}
                                                                                         </Badge>
@@ -481,13 +481,26 @@ const PurchaseASAVendorTable = ({ setAsaCount }: { setAsaCount?: (count: number)
                                                                                                     Notify
                                                                                                 </button>
                                                                                             )}
-                                                                                            <button
-                                                                                                onClick={() => handleViewAsaForm(vendor.vendor_id, vendor.vendor_name)}
-                                                                                                className="flex items-center gap-2 text-[11px] font-black text-white bg-[#5291CD] px-4 py-2 rounded-xl hover:bg-[#5291CD] transition-all shadow-lg active:scale-95 shadow-[#5291CD]/20"
-                                                                                            >
-                                                                                                <Eye className="w-4 h-4" />
-                                                                                                View Report
-                                                                                            </button>
+                                                                                            <Tooltip>
+                                                                                                <TooltipTrigger asChild>
+                                                                                                    <button
+                                                                                                        disabled={form.form_is_submitted !== 1}
+                                                                                                        onClick={() => handleViewAsaForm(vendor.vendor_id, vendor.vendor_name)}
+                                                                                                        className={cn(
+                                                                                                            "flex items-center gap-2 text-[11px] font-black text-white bg-[#5291CD] px-4 py-2 rounded-xl transition-all shadow-lg active:scale-95 shadow-[#5291CD]/20",
+                                                                                                            form.form_is_submitted !== 1 ? "opacity-50 grayscale cursor-not-allowed pointer-events-none" : "hover:bg-[#5291CD]"
+                                                                                                        )}
+                                                                                                    >
+                                                                                                        <Eye className="w-4 h-4" />
+                                                                                                        View Report
+                                                                                                    </button>
+                                                                                                </TooltipTrigger>
+                                                                                                {form.form_is_submitted !== 1 && (
+                                                                                                    <TooltipContent side="top">
+                                                                                                        Vendor has not submitted the ASA Form
+                                                                                                    </TooltipContent>
+                                                                                                )}
+                                                                                            </Tooltip>
                                                                                         </div>
                                                                                     </TableCell>
                                                                                 </TableRow>

@@ -281,7 +281,7 @@ const AllVendors = () => {
                   >
                     <span className="font-semibold">
                       {company.company_id}
-                    </span>
+                    </span> -
                     <span className="opacity-70">
                       {company.company_short_form}
                     </span>

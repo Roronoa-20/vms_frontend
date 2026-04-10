@@ -219,7 +219,7 @@ const MaterialRequestTable: React.FC<MaterialRequestTableProps> = ({ data = [], 
                   </TableCell>
                   <TableCell className="text-center whitespace-nowrap">{item.request_id}</TableCell>
                   <TableCell className="text-center whitespace-nowrap">{formatDate(item.request_date)}</TableCell>
-                  <TableCell className="text-center whitespace-nowrap">{item.company_name}</TableCell>
+                  <TableCell className="text-center whitespace-nowrap">{item.company_code}</TableCell>
                   <TableCell className="text-center whitespace-nowrap">{item.plant || "-"}</TableCell>
                   <TableCell className="text-center whitespace-nowrap">{item.material_type}</TableCell>
                   <TableCell className="text-center whitespace-nowrap">{item.material_description}</TableCell>
