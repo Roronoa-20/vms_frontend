@@ -224,7 +224,7 @@ const AssetPR = (props: Props) => {
     } else {
       addSublineItem(body, "asset")
         .then((res) => {
-          alert(res?.message);
+          // alert(res?.message);
           setSubLineItem(undefined);
           fetchPrData();
         })
@@ -307,7 +307,7 @@ const AssetPR = (props: Props) => {
     } else {
       addZsbLineItems(body, "asset")
         .then((res) => {
-          alert(res?.message);
+          // alert(res?.message);
           // setTableData(prev=>[...prev,singleRowData as nbItemsType]);
           setSingleRowData(undefined);
           if (addLoaderRef?.current) {

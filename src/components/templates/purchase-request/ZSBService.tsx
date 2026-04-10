@@ -287,7 +287,7 @@ const ServicePR = (props: Props) => {
     } else {
       addSublineItem(body, "service")
         .then((res) => {
-          alert(res?.message);
+          // alert(res?.message);
           setSubLineItem(undefined);
           fetchPrData();
         })
@@ -375,7 +375,7 @@ const ServicePR = (props: Props) => {
     } else {
       addZsbLineItems(body, "service")
         .then((res) => {
-          alert(res?.message);
+          // alert(res?.message);
           // setTableData(prev=>[...prev,singleRowData as nbItemsType]);
           setSingleRowData(undefined);
           if (addLoaderRef?.current) {
