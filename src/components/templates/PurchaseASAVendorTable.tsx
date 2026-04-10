@@ -195,11 +195,11 @@ const PurchaseASAVendorTable = ({ setAsaCount }: { setAsaCount?: (count: number)
         if (forms.some(f => f.status === "Draft")) return "Draft";
         if (forms.some(f => f.status === "Rejected")) return "Rejected";
 
-        return forms[0].status;
+        return forms[0].status || "Pending";
     };
 
     const getStatusColor = (status: string) => {
-        switch (status.toLowerCase()) {
+        switch (status?.toLowerCase() || "pending") {
             case "verified": return "bg-emerald-100 text-emerald-700 border-emerald-200";
             case "pending": return "bg-amber-100 text-amber-700 border-amber-200";
             case "rejected": return "bg-rose-100 text-rose-700 border-rose-200";

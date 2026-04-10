@@ -177,11 +177,11 @@ const AllVendors = () => {
   const filteredVendors = useMemo(() => {
     return vendors
       .filter((vendor) => {
-        if (searchTerm && !vendor.vendor_name?.toLowerCase().includes(searchTerm.toLowerCase())) {
+        if (searchTerm && !(vendor.vendor_name?.toLowerCase() ?? "").includes(searchTerm.toLowerCase())) {
           return false;
         }
 
-        if (searchCountry && !vendor.bank_details?.currency?.toLowerCase().includes(searchCountry.toLowerCase())) {
+        if (searchCountry && !(vendor.bank_details?.currency?.toLowerCase() ?? "").includes(searchCountry.toLowerCase())) {
           return false;
         }
 
