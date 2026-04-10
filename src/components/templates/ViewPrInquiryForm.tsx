@@ -157,7 +157,7 @@ const ViewPRInquiryForm = ({PRInquiryData}:Props) => {
                   <TableHead className="w-[100px]">Sr No.</TableHead>
                   <TableHead className="text-center">Product Type</TableHead>
                   <TableHead className="text-center">Product Name</TableHead>
-                  <TableHead className="text-center">Is Asset Code? </TableHead>
+                  {/* <TableHead className="text-center">Is Asset Code? </TableHead> */}
                   <TableHead className="text-center">Product Quantity</TableHead>
                   <TableHead className="text-center">location</TableHead>
                   <TableHead className="text-center">User Specification</TableHead>
@@ -181,7 +181,7 @@ const ViewPRInquiryForm = ({PRInquiryData}:Props) => {
                     <TableCell className="font-medium">{index + 1}</TableCell>
                     <TableCell className=''>{item?.purchase_type ?? ""}</TableCell>
                     <TableCell>{item?.product_details?.product_name}</TableCell> 
-                    <TableCell className='flex justify-center'><Input className='w-5' type='checkbox' onChange={(e)=>{handleAssestCodeCheck(index,e.target?.checked)}} checked={item?.need_asset_code?true:false} disabled={item?.can_acknowledge == 0?true:false}/></TableCell>
+                    {/* <TableCell className='flex justify-center'><Input className='w-5' type='checkbox' onChange={(e)=>{handleAssestCodeCheck(index,e.target?.checked)}} checked={item?.need_asset_code?true:false} disabled={item?.can_acknowledge == 0?true:false}/></TableCell> */}
                     <TableCell>{item?.product_quantity}</TableCell>
                     <TableCell>{item?.plant_details?.plant_name ?? ""}</TableCell>
                     <TableCell>{item?.user_specifications}</TableCell>

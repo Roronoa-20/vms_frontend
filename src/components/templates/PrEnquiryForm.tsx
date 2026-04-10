@@ -859,9 +859,9 @@ const PRInquiryForm = ({
                   <TableHead className="w-[100px]">Sr No.</TableHead>
                   <TableHead className="text-center">Product Type</TableHead>
                   <TableHead className="text-center">Product Name</TableHead>
-                  <TableHead className="text-center">
+                  {/* <TableHead className="text-center">
                     Is Assest Code?{" "}
-                  </TableHead>
+                  </TableHead> */}
                   <TableHead className="text-center">
                     Product Quantity
                   </TableHead>
@@ -917,14 +917,14 @@ const PRInquiryForm = ({
                       {item?.purchase_type ?? ""}
                     </TableCell>
                     <TableCell>{item?.product_details?.product_name}</TableCell>
-                    <TableCell className="flex justify-center items-center">
+                    {/* <TableCell className="flex justify-center items-center">
                       <Input
                         className="w-5"
                         type="checkbox"
                         checked={item?.need_asset_code ? true : false}
                         disabled
                       />
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>{item?.product_quantity}</TableCell>
                     <TableCell>
                       {item?.location_details?.location_name ?? ""}
