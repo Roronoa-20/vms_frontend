@@ -64,13 +64,24 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
     setIsVendorCodeDialog(true);
   };
 
-  const [table, setTable] = useState<ASAForm[]>([]);
+  const [table, setTable] = useState<ASAForm[]>(dashboardTableData?.approved_vendors || []);
   const [selectedCompany, setSelectedCompany] = useState<string>("")
   const [search, setSearch] = useState<string>("");
 
-  const [total_event_list, settotalEventList] = useState(0);
-  const [record_per_page, setRecordPerPage] = useState<number>(10);
+  const [total_event_list, settotalEventList] = useState(dashboardTableData?.overall_count || 0);
+  const [record_per_page, setRecordPerPage] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
+
+  useEffect(() => {
+    if (dashboardTableData) {
+      setTable(dashboardTableData.approved_vendors || []);
+      settotalEventList(
+        dashboardTableData.overall_count || 
+        dashboardTableData.total_count || 
+        (dashboardTableData as any).overall_total_asa || 0
+      );
+    }
+  }, [dashboardTableData]);
 
   const user = Cookies?.get("user_id");
 
@@ -88,13 +99,15 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
 
   const fetchTable = async () => {
     const dashboardASAOnboardedVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.asaonboardedvendorlist}?vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
+      url: `${API_END_POINTS?.asaonboardedvendorlist}?usr=${user}&vendor_name=${search}&page_no=${currentPage}&page_length=${record_per_page}`,
       method: "GET",
     });
+    console.log("Onboarded API Response:", dashboardASAOnboardedVendorTableDataApi?.data);
     if (dashboardASAOnboardedVendorTableDataApi?.status == 200) {
-      setTable(dashboardASAOnboardedVendorTableDataApi?.data?.message?.approved_vendors);
-      settotalEventList(dashboardASAOnboardedVendorTableDataApi?.data?.message?.overall_count)
-      setRecordPerPage(10);
+      const msg = dashboardASAOnboardedVendorTableDataApi?.data?.message;
+      setTable(msg?.approved_vendors || []);
+      settotalEventList(msg?.overall_count || msg?.total_count || msg?.overall_total_asa || 0);
+      setRecordPerPage(record_per_page);
     }
   };
 
@@ -140,7 +153,7 @@ const DashboardApprovedVendorsTable = ({ dashboardTableData }: Props) => {
         </div>
         <Table>
           <TableHeader className="text-center">
-            <TableRow className="bg-[#6aa2d8] text-black text-[14px] hover:bg-[#6aa2d8] rounded-xl text-center font-bold">
+            <TableRow className="bg-[#DDE8FE] text-black text-[14px] hover:bg-[#DDE8FE] rounded-xl text-center font-bold">
               <TableHead className="w-[75px] h-[2.5rem] text-center text-black">Sr No.</TableHead>
               <TableHead className="text-center text-black">Ref No.</TableHead>
               <TableHead className="text-center text-black">Vendor Name</TableHead>

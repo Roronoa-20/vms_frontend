@@ -10,6 +10,8 @@ import requestWrapper from "@/src/services/apiCall";
 import { AxiosResponse } from "axios";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import Pagination from "./Pagination";
+import Cookies from "js-cookie";
+import { FileSearch } from "lucide-react";
 
 type Props = {
   dashboardTableData: ASAFormResponse;
@@ -37,9 +39,20 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
   const [selectedCompany, setSelectedCompany] = useState<string>("")
   const [search, setSearch] = useState<string>("");
 
-  const [total_event_list, settotalEventList] = useState(0);
+  const [total_event_list, settotalEventList] = useState(dashboardTableData?.overall_total_asa || 0);
   const [record_per_page, setRecordPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
+
+  useEffect(() => {
+    if (dashboardTableData) {
+      setTable(dashboardTableData.data || []);
+      settotalEventList(
+        dashboardTableData.overall_total_asa ||
+        dashboardTableData.total_count ||
+        (dashboardTableData as any).overall_count || 0
+      );
+    }
+  }, [dashboardTableData]);
 
   const debouncedSearchName = useDebounce(search, 300);
 
@@ -55,15 +68,17 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
   }
 
   const fetchTable = async () => {
+    const user = Cookies?.get("user_id");
     const dashboardASAOnboardedVendorTableDataApi: AxiosResponse = await requestWrapper({
-      url: `${API_END_POINTS?.asavendorListdashboard}?vendor_name=${search}&page_no=${currentPage}&page_size=${record_per_page}`,
+      url: `${API_END_POINTS?.asavendorListdashboard}?usr=${user}&vendor_name=${search}&page_no=${currentPage}&page_length=${record_per_page}`,
       method: "GET",
     });
-    console.log("Response--------->", dashboardASAOnboardedVendorTableDataApi)
+    console.log("Form Table API Response:", dashboardASAOnboardedVendorTableDataApi?.data);
     if (dashboardASAOnboardedVendorTableDataApi?.status == 200) {
-      setTable(dashboardASAOnboardedVendorTableDataApi?.data?.message?.data);
-      settotalEventList(dashboardASAOnboardedVendorTableDataApi?.data?.message?.overall_total_asa)
-      setRecordPerPage(10);
+      const msg = dashboardASAOnboardedVendorTableDataApi?.data?.message;
+      setTable(msg?.data || []);
+      settotalEventList(msg?.overall_total_asa || msg?.total_count || msg?.overall_count || 0);
+      setRecordPerPage(record_per_page);
     }
   };
 
@@ -112,7 +127,7 @@ const DashboardASAVendorFormTable = ({ dashboardTableData, companyDropdown }: Pr
         </div>
         <Table>
           <TableHeader className="text-center">
-            <TableRow className="bg-[#6aa2d8] text-black text-[14px] hover:bg-[#6aa2d8] rounded-xl text-center font-bold">
+            <TableRow className="bg-[#DDE8FE] text-black text-[14px] hover:bg-[#DDE8FE] rounded-xl text-center font-bold">
               <TableHead className="w-[75px] h-[2.5rem] text-black">Sr No.</TableHead>
               <TableHead className="text-center text-black">Ref No.</TableHead>
               <TableHead className="text-center text-black">Vendor Name</TableHead>

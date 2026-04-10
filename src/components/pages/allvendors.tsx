@@ -210,7 +210,7 @@ const AllVendors = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-2">
       {/* Stats */}
-      <div className={`grid grid-cols-1 md:grid-cols-${asaResponsibleUser === 1 ? '5' : '4'} gap-6 mb-6 mt-2`}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-6 mt-2">
         <StatCard
           icon={<Users className="h-5 w-5 text-blue-600" />}
           label="Total Vendors"
@@ -260,7 +260,7 @@ const AllVendors = () => {
             Meril Verticals
           </h2>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-5 md:grid-cols-5 lg:grid-cols-5 xl:grid-cols-6 gap-3">
             {[...companyAnalytics]
               .sort((a, b) => Number(a.company_id) - Number(b.company_id))
               .map((company) => {

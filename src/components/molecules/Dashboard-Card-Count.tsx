@@ -189,9 +189,6 @@ const DashboardCards = ({ ...Props }: Props) => {
         hover: "hover:border-violet-400",
       },
     ];
-    if (asaResponsibleUser === 1) {
-      allCardData = [...allCardData, ...asaCards];
-    }
   } else if (designation === "Treasury") {
     allCardData = [
       {
@@ -211,9 +208,6 @@ const DashboardCards = ({ ...Props }: Props) => {
         hover: "hover:border-violet-400",
       },
     ];
-    if (asaResponsibleUser === 1) {
-      allCardData = [...allCardData, ...asaCards];
-    }
   } else {
     allCardData = [
       {
@@ -281,9 +275,6 @@ const DashboardCards = ({ ...Props }: Props) => {
         hover: "hover:border-violet-400",
       },
     ];
-    if (asaResponsibleUser === 1) {
-      allCardData = [...allCardData, ...asaCards];
-    }
   }
 
   const cardData = useMemo(() => {
@@ -424,35 +415,35 @@ const DashboardCards = ({ ...Props }: Props) => {
                 {item.name === "Submitted ASA Form" && (
                   <Tabs defaultValue="list" className="w-full">
                     <div className="flex items-center justify-between mb-4 bg-gray-50/50 p-2 rounded-xl border border-gray-100">
-                        <div className="flex items-center gap-2 px-2">
-                            <FileSearch className="w-5 h-5 text-violet-600" />
-                            <h3 className="text-sm font-bold text-gray-700 tracking-tight uppercase">Submitted Forms Management</h3>
-                        </div>
-                        <TabsList className="bg-white shadow-sm border border-gray-100 rounded-lg h-9">
-                            <TabsTrigger value="list" className="text-xs font-semibold data-[state=active]:bg-violet-600 data-[state=active]:text-white">Table View</TabsTrigger>
-                            <TabsTrigger value="graph" className="text-xs font-semibold data-[state=active]:bg-violet-600 data-[state=active]:text-white">Analytics View</TabsTrigger>
-                        </TabsList>
+                      <div className="flex items-center gap-2 px-2">
+                        <FileSearch className="w-5 h-5 text-violet-600" />
+                        <h3 className="text-sm font-bold text-gray-700 tracking-tight uppercase">Submitted Forms Management</h3>
+                      </div>
+                      <TabsList className="bg-white shadow-sm border border-gray-100 rounded-lg h-9">
+                        <TabsTrigger value="list" className="text-xs font-semibold data-[state=active]:bg-violet-600 data-[state=active]:text-white">Table View</TabsTrigger>
+                        <TabsTrigger value="graph" className="text-xs font-semibold data-[state=active]:bg-violet-600 data-[state=active]:text-white">Analytics View</TabsTrigger>
+                      </TabsList>
                     </div>
-                    
+
                     <TabsContent value="list" className="mt-0">
-                        <DashboardASAFormTable
+                      <DashboardASAFormTable
                         dashboardTableData={Props.dashboardASAFormTableData}
                         companyDropdown={Props?.companyDropdown}
-                        />
+                      />
                     </TabsContent>
 
                     <TabsContent value="graph" className="mt-0 space-y-6">
-                        <ASAESGDashboardStats 
-                            tableData={Props.dashboardASAFormTableData.data || []} 
+                      <ASAESGDashboardStats
+                        tableData={Props.dashboardASAFormTableData.data || []}
+                      />
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <ASAVendorMonthWiseChart
+                          tableData={Props.dashboardASAFormTableData.data || []}
                         />
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <ASAVendorMonthWiseChart
-                                tableData={Props.dashboardASAFormTableData.data || []}
-                            />
-                            <ASAESGPieChart 
-                                tableData={Props.dashboardASAFormTableData.data || []} 
-                            />
-                        </div>
+                        <ASAESGPieChart
+                          tableData={Props.dashboardASAFormTableData.data || []}
+                        />
+                      </div>
                     </TabsContent>
                   </Tabs>
                 )}
