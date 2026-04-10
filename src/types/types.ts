@@ -1470,7 +1470,8 @@ export type TPRInquiryTable = {
     hod: string,
     purchase_team: string,
     purchase_type: string,
-    created_by_user_name: string
+    created_by_user_name: string,
+    created_by: string,
     pr_button_show: boolean
     second_stage_approval_status: string
     pr_created: string,
@@ -1519,6 +1520,7 @@ export type CartDetails = {
   transfer_reason: string | null;
   transfer_status: string; // e.g., "Not Transferred"
   user: string; // email
+  created_by?: string | null;
   created_by_user_name: string | null,
   _assign: string | null;
   _comments: string | null;

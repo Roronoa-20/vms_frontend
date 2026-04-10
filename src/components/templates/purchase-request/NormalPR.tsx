@@ -1,4 +1,4 @@
-import React, { useState,useRef, ReactElement, ReactSVGElement } from "react";
+import React, { useState, useEffect, useRef, ReactElement, ReactSVGElement } from "react";
 import {
   Table,
   TableBody,
@@ -16,28 +16,30 @@ import {
   SelectValue,
 } from "../../atoms/select";
 import { Input } from "../../atoms/input";
-import { Loader2, Trash2 } from "lucide-react";
+import { Loader2, ListOrdered, Trash2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { nbItemsType, purchaseRequisitionDataType, PurchaseRequisitionMaterialDropdownType, purchaseRequisitionPlantDropdownType, purchaseRequisitionPurchaseGroupDropdownType, purchaseRequisitionUOMType } from "@/src/types/prRequisition/prRequisition.types";
-import { addPurchaseRequisitionNBItems, deletePurchaseRequisitionNBItems, getPurchaseReqisitionData, getPurchaseRequisitionMaterialDropdown, getPurchaseRequisitionPurchaseGroupDropdown, getPurchaseRequisitionUOM, updatePurchaseRequisitionNBItems, getPlantByMaterial, getMaterialNameByCode } from "@/src/services/prRequisition/prRequisitionNb.services";
+import { nbItemsType, purchaseRequisitionDataType, PurchaseRequisitionMaterialDropdownType, purchaseRequisitionPurchaseGroupDropdownType, purchaseRequisitionUOMType } from "@/src/types/prRequisition/prRequisition.types";
+import { addPurchaseRequisitionNBItems, deletePurchaseRequisitionNBItems, getPurchaseReqisitionData, getPurchaseRequisitionPurchaseGroupDropdown, getPurchaseRequisitionUOM, updatePurchaseRequisitionNBItems, getMaterialNameByCode, getMaterialsByPlant } from "@/src/services/prRequisition/prRequisitionNb.services";
 import { set } from "nprogress";
 import { useSearchParams } from "next/navigation";
 import { deleteEnquiryItems } from "@/src/services/prEnquiry/prEnquiry.services";
 import SearchSelectComponent from "../../molecules/Selectsearchcomponent";
 import MultiSelect from 'react-select';
-import { multiSelectStyles } from "../../common/sharedStyles";
+import { itemsRowSelectStyles } from "../../common/sharedStyles";
 import { Button } from "../../atoms/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type Props = {
   prData?: purchaseRequisitionDataType
   materialDropdown: PurchaseRequisitionMaterialDropdownType[]
   submitLoaderRef:  React.RefObject<HTMLSpanElement | null>
   handlePurchaseRequisitionSubmit:(isAlert:boolean)=>void
+  onItemsChanged?:()=>void
 };
 
 
@@ -47,14 +49,16 @@ const NormalPR = (props: Props) => {
   const [purchaseGroupDropdown, setPurchaseGroupDropdown] = useState<purchaseRequisitionPurchaseGroupDropdownType[]>([]);
   const [uomDrop, setUOM] = useState<purchaseRequisitionUOMType>();
   const [isPurchaseGroupDropdown, setIsPurchaseGroupDropdown] = useState(false);
-  const [isPlantDropdown, setIsPlantDropdown] = useState(false);
-  const [plantDropdown, setPlantDropdown] = useState<string[]>();
 
   const [singleRowData, setSingleRowData] = useState<nbItemsType>();
 
   const [tableData, setTableData] = useState<nbItemsType[]>(props?.prData?.nb_normal_items || []);
 
-  const [materialDropdown, setMaterialDropdown] = useState<PurchaseRequisitionMaterialDropdownType[]>([]);
+  const [materialDropdown, setMaterialDropdown] = useState<any[]>(props?.materialDropdown || []);
+
+  useEffect(() => {
+    setMaterialDropdown(props?.materialDropdown || []);
+  }, [props?.materialDropdown]);
 
   const getPurchaseGroupBasedOnMaterial = (material: string) => {
     getPurchaseRequisitionPurchaseGroupDropdown(material).then((res: any) => {
@@ -87,28 +91,9 @@ const NormalPR = (props: Props) => {
     })
   }
 
-  const getPlantBasedOnMaterial = (material: string) => {
-    getPlantByMaterial(material).then((res: any) => {
-      if (Array.isArray(res?.plants)) {
-        setPlantDropdown(res?.plants);
-        setIsPlantDropdown(true);
-      } else {
-        setSingleRowData(prev => ({ ...prev, plant: res?.plants?.[0] }) as nbItemsType);
-        setIsPlantDropdown(false);
-      }
-    }).catch((err) => {
-      console.log(err);
-    })
-  }
-
   const handleTableAdd = () => {
     if (!singleRowData?.material) {
       alert("please select material");
-      return;
-    }
-
-    if (!singleRowData?.plant) {
-      alert("please select plant");
       return;
     }
 
@@ -132,7 +117,7 @@ const NormalPR = (props: Props) => {
         purchase_requisition: props?.prData?.name,
         company: props?.prData?.company,
         material: singleRowData?.material,
-        plant: singleRowData?.plant,
+        material_description: singleRowData?.material_description,
         requisitioner: props?.prData?.name,
         uom: singleRowData?.uom,
         quantity: singleRowData?.quantity,
@@ -146,22 +131,22 @@ const NormalPR = (props: Props) => {
         alert(res);
         setSingleRowData(undefined);
         setIsPurchaseGroupDropdown(false);
-        setIsPlantDropdown(false);
         setUOM(undefined);
         fetchPrData();
+        props?.onItemsChanged?.();
       }).catch((err) => {
         alert(err);
       })
     } else {
 
       addPurchaseRequisitionNBItems(body, "NB-Normal").then((res) => {
-        alert(res);
+        // alert(res);
         // setTableData(prev=>[...prev,singleRowData as nbItemsType]);
         setSingleRowData(undefined);
         setIsPurchaseGroupDropdown(false);
-        setIsPlantDropdown(false);
         setUOM(undefined);
         fetchPrData();
+        props?.onItemsChanged?.();
       }).catch((err) => {
         console.log(err);
       })
@@ -176,9 +161,9 @@ const NormalPR = (props: Props) => {
     deletePurchaseRequisitionNBItems(name, "NB-Normal").then((res) => {
       alert(res);
       fetchPrData();
+      props?.onItemsChanged?.();
       setSingleRowData(undefined);
       setIsPurchaseGroupDropdown(false);
-      setIsPlantDropdown(false);
       setUOM(undefined);
     }).catch((err) => {
       console.log(err);
@@ -189,17 +174,16 @@ const NormalPR = (props: Props) => {
     const materialName = await getMaterialNameByCode(tableData[index]?.material);
     getPurchaseGroupBasedOnMaterial(materialName?.material_name as string);
     getUOMBasedOnMaterial(materialName?.material_name as string);
-    getPlantBasedOnMaterial(materialName?.material_name as string);
-    fetchMaterialDropdown(materialName?.material_name as string);
+    fetchMaterialsByPlant();
     setSingleRowData({ ...tableData[index], material: materialName?.material_name });
   }
 
 
-  const fetchMaterialDropdown = (query?: string): Promise<PurchaseRequisitionMaterialDropdownType[]> => {
-    return getPurchaseRequisitionMaterialDropdown(query as string, props?.prData?.company as string)
-      .then((res) => { setMaterialDropdown(res); return res })
-      .catch((err) => {
-        console.error(err);
+  const fetchMaterialsByPlant = (query?: string): Promise<any[]> => {
+    return getMaterialsByPlant(props?.prData?.plant as string, query)
+      .then((res: any) => { setMaterialDropdown(res); return res; })
+      .catch((err: any) => {
+        console.error("Error fetching materials by plant:", err);
         return [];
       });
   }
@@ -210,37 +194,31 @@ const NormalPR = (props: Props) => {
 
   return (
     <>
-    <div className='flex justify-end'>
-                {
-                    props?.prData?.can_edit &&
-                    <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
-                      let isAlert = true;
-                      if (singleRowData?.material || singleRowData?.quantity || singleRowData?.plant || singleRowData?.purchasing_group || singleRowData?.required_delivery_date) {
-                        alert("You have unsaved changes in the table.") 
-                        isAlert = false;
-                          return;
-                        
-                      }
-                      props?.handlePurchaseRequisitionSubmit(isAlert);
-                    }}>
-                        Submit PR
-                        <span ref={props?.submitLoaderRef} className="hidden">
-                            <Loader2 className="w-5 h-5" />
-                        </span>
-                    </Button>
-                }
-            </div>
-    <div className="">
-      <div className="flex w-full justify-between pb-4">
-        <h1 className="text-[20px] text-[#03111F] font-semibold">Items List</h1>
-      </div>
-      <Table className=" max-h-40 overflow-y-scroll border border-black/20">
+    <Card className="shadow-sm border-slate-200">
+      <CardHeader className="pb-3 border-b border-slate-100">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#4F6BED] to-[#6366F1] shadow-sm">
+            <ListOrdered className="h-4 w-4 text-white" aria-hidden />
+          </div>
+          <div className="min-w-0">
+            <CardTitle className="text-base font-bold tracking-tight text-[#0F172A]">
+              Items list
+            </CardTitle>
+            <p className="mt-0.5 text-[11px] font-medium text-[#94A3B8]">
+              {tableData?.length ?? 0} line item{(tableData?.length ?? 0) !== 1 ? "s" : ""}
+            </p>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="px-0 pb-3 pt-3">
+        <div className="max-h-[min(40vh,320px)] overflow-auto">
+      <Table className="w-full min-w-[720px] border border-slate-200">
         <TableHeader className="text-center">
-          <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
+          <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[11px] hover:bg-[#DDE8FE] text-center text-nowrap">
             <TableHead className="text-center w-[50px]">Sr No.</TableHead>
             <TableHead className="text-center w-[25%]">Materials</TableHead>
+            <TableHead className="text-center w-[25%]">Material Description</TableHead>
             <TableHead className="text-center w-[10%]">UOM</TableHead>
-            <TableHead className="text-center w-[15%]">Plant</TableHead>
             <TableHead className="text-center w-[10%]">Quantity</TableHead>
             <TableHead className="text-center w-[20%]">Purchasing Group</TableHead>
             <TableHead className="text-center w-[15%]">Required Delivery Date</TableHead>
@@ -254,13 +232,13 @@ const NormalPR = (props: Props) => {
           {
             tableData?.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="font-medium text-center w-[50px]">{index + 1}</TableCell>
-                <TableCell className="font-medium text-center max-w-[200px] truncate" title={item.material}>{item.material}</TableCell>
-                <TableCell className="font-medium text-center max-w-[100px] truncate" title={item.uom}>{item.uom}</TableCell>
-                <TableCell className="font-medium text-center max-w-[150px] truncate" title={item.plant}>{item.plant}</TableCell>
-                <TableCell className="font-medium text-center max-w-[120px] truncate" title={item.quantity?.toString()}>{item.quantity}</TableCell>
-                <TableCell className="font-medium text-center max-w-[200px] truncate" title={item.purchasing_group}>{item.purchasing_group}</TableCell>
-                <TableCell className="font-medium text-center max-w-[150px] truncate" title={item.required_delivery_date}>{item.required_delivery_date}</TableCell>
+                <TableCell className="py-1.5 text-xs font-medium text-center w-[50px] leading-snug">{index + 1}</TableCell>
+                <TableCell className="py-1.5 text-xs font-medium text-center max-w-[200px] truncate leading-snug" title={item.material}>{item.material}</TableCell>
+                <TableCell className="py-1.5 text-xs font-medium text-center max-w-[200px] truncate leading-snug" title={item.material_description}>{item.material_description}</TableCell>
+                <TableCell className="py-1.5 text-xs font-medium text-center max-w-[100px] truncate leading-snug" title={item.uom}>{item.uom}</TableCell>
+                <TableCell className="py-1.5 text-xs font-medium text-center max-w-[120px] truncate leading-snug tabular-nums" title={item.quantity?.toString()}>{item.quantity}</TableCell>
+                <TableCell className="py-1.5 text-xs font-medium text-center max-w-[200px] truncate leading-snug" title={item.purchasing_group}>{item.purchasing_group}</TableCell>
+                <TableCell className="py-1.5 text-xs font-medium text-center max-w-[150px] truncate leading-snug" title={item.required_delivery_date}>{item.required_delivery_date}</TableCell>
                 {
 
                   props?.prData?.can_edit &&
@@ -273,8 +251,8 @@ const NormalPR = (props: Props) => {
                             <svg
                               onClick={() => { handleUpdateItem(index) }}
                               className="hover:cursor-pointer"
-                              width="22"
-                              height="22"
+                              width="18"
+                              height="18"
                               viewBox="0 0 22 22"
                               fill="none"
                               xmlns="http://www.w3.org/2000/svg"
@@ -297,7 +275,7 @@ const NormalPR = (props: Props) => {
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Trash2 className="text-red-400 hover:cursor-pointer" onClick={() => { handleDeleteItem(item?.name as string) }} />
+                            <Trash2 className="h-4 w-4 text-red-400 hover:cursor-pointer" onClick={() => { handleDeleteItem(item?.name as string) }} />
                           </TooltipTrigger>
                           <TooltipContent>
                             <p>Delete Item</p>
@@ -338,49 +316,28 @@ const NormalPR = (props: Props) => {
                 </SelectContent>
               </Select> */}
                 <SearchSelectComponent
-                  searchApi={fetchMaterialDropdown}
-                  getLabel={(item) => item?.material_description}
-                  getValue={(item) => item?.name}
+                  searchApi={fetchMaterialsByPlant}
+                  getLabel={(item: any) => item?.material_description}
+                  getValue={(item: any) => item?.name}
                   setDropdown={setMaterialDropdown}
                   dropdown={materialDropdown}
-                  setData={(value) => { setSingleRowData((prev: any) => ({ ...prev, material: value ?? "" })); getPurchaseGroupBasedOnMaterial(value as string); getUOMBasedOnMaterial(value as string); getPlantBasedOnMaterial(value as string); }}
+                  setData={(value) => { setSingleRowData((prev: any) => ({ ...prev, material: value ?? "" })); getPurchaseGroupBasedOnMaterial(value as string); getUOMBasedOnMaterial(value as string); }}
                   data={singleRowData?.material}
+                  placeholder="Search material..."
                 />
               </TableCell>
-              <TableCell className="font-medium">
-                <h1 className="text-center">{singleRowData?.uom}</h1>
+              <TableCell className="font-medium align-middle">
+                <span className="flex h-8 w-full items-center justify-center rounded-md border border-slate-200 bg-white text-xs font-medium tabular-nums text-slate-600">
+                  {singleRowData?.material_description ?? "—"}
+                </span>
+              </TableCell>
+              <TableCell className="font-medium align-middle">
+                <span className="flex h-8 w-full items-center justify-center rounded-md border border-slate-200 bg-white text-xs font-medium tabular-nums text-slate-600">
+                  {singleRowData?.uom ?? "—"}
+                </span>
               </TableCell>
               <TableCell className="font-medium">
-                {
-                  isPlantDropdown ?
-                    <MultiSelect
-                      options={plantDropdown?.map(item => ({ label: item || item, value: item })) || []}
-                      value={singleRowData?.plant ? { label: plantDropdown?.find(p => p === singleRowData.plant)|| singleRowData.plant, value: singleRowData.plant } : null}
-                      onChange={(selectedOption: any) => {
-                        setSingleRowData(prev => ({ ...prev, plant: selectedOption?.value } as nbItemsType));
-                      }}
-                      instanceId="normalpr-plant-select"
-                      placeholder="Select Plant..."
-                      className="text-[12px] text-black text-left min-w-[150px]"
-                      styles={{
-                        ...multiSelectStyles,
-                        control: (base: any) => ({
-                          ...base,
-                          minHeight: "36px",
-                          borderRadius: "0.5rem", // matches tailwind's rounded-lg
-                          borderColor: "#e5e7eb", // standard Tailwind border-gray-200
-                        }),
-                      }}
-                      menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
-                      menuPlacement="auto"
-                      menuPosition="fixed"
-                    />
-                    :
-                    <Input value={singleRowData?.plant ?? ""} onChange={(e) => { setSingleRowData(prev => ({ ...prev, plant: e.target.value } as nbItemsType)) }} disabled />
-                }
-              </TableCell>
-              <TableCell className="font-medium">
-                <Input type="number" value={singleRowData?.quantity ?? ""} onChange={(e) => { setSingleRowData(prev => ({ ...prev, quantity: Number(e.target.value) } as nbItemsType)) }} />
+                <Input type="number" className="h-8 text-xs rounded-md px-2" value={singleRowData?.quantity ?? ""} onChange={(e) => { setSingleRowData(prev => ({ ...prev, quantity: Number(e.target.value) } as nbItemsType)) }} />
               </TableCell>
               <TableCell className="font-medium">
                 {
@@ -393,27 +350,20 @@ const NormalPR = (props: Props) => {
                         setSingleRowData(prev => ({ ...prev, purchasing_group: selectedOption?.value } as nbItemsType));
                       }}
                       instanceId="normalpr-pg-select"
-                      placeholder="Select Purchase Group..."
-                      className="text-[12px] text-black text-left min-w-[150px]"
-                      styles={{
-                        ...multiSelectStyles,
-                        control: (base: any) => ({
-                          ...base,
-                          minHeight: "36px",
-                          borderRadius: "0.5rem", // matches tailwind's rounded-lg
-                          borderColor: "#e5e7eb", // standard Tailwind border-gray-200
-                        }),
-                      }}
+                      placeholder="Select"
+                      className="min-w-[120px] text-left text-xs text-black"
+                      styles={itemsRowSelectStyles("min(18rem, 90vw)")}
                       menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
                       menuPlacement="auto"
                       menuPosition="fixed"
                     />
                     :
-                    <Input value={singleRowData?.purchasing_group ?? ""} onChange={(e) => { setSingleRowData(prev => ({ ...prev, purchasing_group: e.target.value } as nbItemsType)) }} disabled />
+                    <Input value={singleRowData?.purchasing_group ?? ""} className="h-8 text-xs rounded-md px-2" onChange={(e) => { setSingleRowData(prev => ({ ...prev, purchasing_group: e.target.value } as nbItemsType)) }} disabled />
                 }
               </TableCell>
               <TableCell className="font-medium">
                 <Input type="date"
+                  className="h-8 text-xs rounded-md px-2"
                   value={singleRowData?.required_delivery_date ?? ""}
                   min={new Date().toISOString().split('T')[0]}
                   onChange={(e) => { setSingleRowData(prev => ({ ...prev, required_delivery_date: e.target.value } as nbItemsType)) }}
@@ -424,7 +374,7 @@ const NormalPR = (props: Props) => {
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="bg-[#D1FAE5] flex justify-center items-center text-2xl  text-[#065F46] w-[30px] h-[30px] hover:cursor-pointer" onClick={() => { handleTableAdd() }}>
+                        <div className="bg-[#D1FAE5] flex justify-center items-center text-lg font-semibold text-[#065F46] w-7 h-7 rounded-md hover:cursor-pointer" onClick={() => { handleTableAdd() }}>
                           {singleRowData?.name ? "✓" : "+"}
                         </div>
                       </TooltipTrigger>
@@ -439,11 +389,10 @@ const NormalPR = (props: Props) => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div
-                            className="bg-red-100 flex justify-center items-center text-lg text-red-600 w-[30px] h-[30px] hover:cursor-pointer rounded-full"
+                            className="bg-red-100 flex justify-center items-center text-sm font-semibold text-red-600 w-7 h-7 hover:cursor-pointer rounded-md"
                             onClick={() => {
                               setSingleRowData(undefined);
                               setIsPurchaseGroupDropdown(false);
-                              setIsPlantDropdown(false);
                               setUOM(undefined);
                             }}
                           >
@@ -462,6 +411,29 @@ const NormalPR = (props: Props) => {
           }
         </TableBody>
       </Table>
+        </div>
+      </CardContent>
+    </Card>
+
+    <div className='flex justify-end'>
+        {
+            props?.prData?.can_edit &&
+            <Button className='mt-4 h-8 bg-[#5291CD] text-white text-xs rounded-md px-4 py-0 hover:bg-[#65a4e7]' onClick={() => {
+              let isAlert = true;
+              if (singleRowData?.material || singleRowData?.quantity || singleRowData?.purchasing_group || singleRowData?.required_delivery_date) {
+                alert("You have unsaved changes in the table.") 
+                isAlert = false;
+                  return;
+                
+              }
+              props?.handlePurchaseRequisitionSubmit(isAlert);
+            }}>
+                Submit PR
+                <span ref={props?.submitLoaderRef} className="hidden">
+                    <Loader2 className="w-5 h-5" />
+                </span>
+            </Button>
+        }
     </div>
     </>
   );

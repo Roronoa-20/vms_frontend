@@ -2,17 +2,19 @@
 import React, { useRef, useState } from 'react'
 import { Input } from '../../atoms/input'
 import { Button } from '../../atoms/button'
-import { Cross, Italic, Trash2 } from 'lucide-react'
-import { deleteFileApi, uploadFileApi } from './apiCalls'
-import { PoDetailsType } from '@/src/types/view-po-details/poDetailsType'
+import { Trash2, FileText, CalendarDays, Hash, UserCircle, Users, ShoppingCart, IndianRupee, CreditCard, Upload, Paperclip, X } from 'lucide-react'
+import { deleteFileApi } from './apiCalls'
+import { uploadPoDocument as uploadPoDocumentApi, fetchPoDetails } from '@/src/services/purchaseOrder/purchaseOrder.services'
+import { VendorPoDetailsType } from '@/src/types/view-po-details/poDetailsType'
 import Link from 'next/link'
-import { fetchPoDetailsData } from './fetchData'
-import { set } from 'nprogress'
 import PopUp from '../PopUp'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../atoms/table'
 import API_END_POINTS from '@/src/services/apiEndPoints'
 import { AxiosResponse } from 'axios'
 import requestWrapper from '@/src/services/apiCall'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { BackButton } from '@/src/components/atoms/BackButton'
 
 interface POItemsTable {
     requested_for_earlydelivery?: boolean;
@@ -27,13 +29,34 @@ interface POItemsTable {
 }
 
 interface Props {
-    poBasicDetails: PoDetailsType["message"]
+    poBasicDetails: VendorPoDetailsType["data"]
 }
+
+const statusColor = (status?: string) => {
+    if (!status) return 'bg-gray-100 text-gray-600 border-gray-200'
+    const s = status.toLowerCase()
+    if (s.includes('approved') || s.includes('completed') || s.includes('confirmed')) return 'bg-emerald-50 text-emerald-700 border-emerald-200'
+    if (s.includes('pending') || s.includes('draft') || s.includes('open')) return 'bg-amber-50 text-amber-700 border-amber-200'
+    if (s.includes('reject') || s.includes('cancel')) return 'bg-red-50 text-red-700 border-red-200'
+    return 'bg-blue-50 text-blue-700 border-blue-200'
+}
+
+const DetailField = ({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value?: string | number | null }) => (
+    <div className="flex items-start gap-2.5 min-w-0">
+        <div className="mt-0.5 flex-shrink-0 w-7 h-7 rounded-md bg-[#EEF2FF] flex items-center justify-center">
+            <Icon className="w-3.5 h-3.5 text-[#4F6BED]" />
+        </div>
+        <div className="min-w-0">
+            <p className="text-[10px] font-medium text-[#94A3B8] uppercase tracking-wider leading-none">{label}</p>
+            <p className="text-xs font-semibold text-[#1E293B] mt-0.5 truncate leading-snug">{value ?? '—'}</p>
+        </div>
+    </div>
+)
 
 const BasicPoDetilails = ({poBasicDetails}: Props) => {
     const [poAttachment,setPoAttachment] = useState<File | null>(null);
     const uploadPoRef = useRef<HTMLInputElement>(null);
-    const [poBasicDetailsState, setPoBasicDetailsState] = useState<PoDetailsType["message"]>(poBasicDetails);
+    const [poBasicDetailsState, setPoBasicDetailsState] = useState<VendorPoDetailsType["data"]>(poBasicDetails as VendorPoDetailsType["data"]);
     const [POItemsTable, setPOItemsTable] = useState<POItemsTable[]>([]);
     const [isEarlyDeliveryDialog, setIsEarlyDeliveryDialog] = useState<boolean>(false);
 
@@ -48,20 +71,22 @@ const BasicPoDetilails = ({poBasicDetails}: Props) => {
             alert("Please select a file to upload");
             return;
         }
-        await uploadFileApi(poAttachment, poBasicDetailsState.po_name).then(async (res)=>{
+        await uploadPoDocumentApi(poBasicDetailsState.po_no, poAttachment).then(async () => {
                 alert("File uploaded successfully");
                 resetFileUpload();
                 setPoAttachment(null);
-                const poDetails:PoDetailsType | undefined = await fetchPoDetailsData(poBasicDetailsState.po_name);
-            setPoBasicDetailsState(poDetails?.message as PoDetailsType["message"]);
+                const poDetails = await fetchPoDetails(poBasicDetailsState.po_no);
+            setPoBasicDetailsState(poDetails?.data);
+        }).catch((err: any) => {
+            alert(err?.message || "Failed to upload file");
         });
     }
 
     const deletePoDocument = async() => {
-        await deleteFileApi(poBasicDetailsState.po_name).then(async(res)=>{
+        await deleteFileApi(poBasicDetailsState.po_no).then(async()=>{
                 alert("File deleted successfully");
-            const poDetails:PoDetailsType | undefined = await fetchPoDetailsData(poBasicDetailsState.po_name);
-            setPoBasicDetailsState(poDetails?.message as PoDetailsType["message"]);
+            const poDetails = await fetchPoDetails(poBasicDetailsState.po_no);
+            setPoBasicDetailsState(poDetails?.data);
         }
     ).catch((err)=>{
         alert("Failed to delete file");
@@ -70,7 +95,6 @@ const BasicPoDetilails = ({poBasicDetails}: Props) => {
 
 
     const handleTableChange = (index: number, name: string, value: string | boolean) => {
-    // const { name, value } = e.target;
     setPOItemsTable((prev) => {
       const updated = [...prev];
       if (updated[index]) {
@@ -82,7 +106,7 @@ const BasicPoDetilails = ({poBasicDetails}: Props) => {
 
   const handlePoItemsSubmit = async () => {
     const url = API_END_POINTS?.submitPOItems;
-    const updatedData = { items: POItemsTable, po_name: poBasicDetailsState.po_name };
+    const updatedData = { items: POItemsTable, po_name: poBasicDetailsState.po_no };
     const response: AxiosResponse = await requestWrapper({ url: url, method: "POST", data: { data: updatedData } });
     if (response?.status == 200) {
       alert("submitted successfully");
@@ -91,10 +115,6 @@ const BasicPoDetilails = ({poBasicDetails}: Props) => {
 
   const handleClose = () => {
     setIsEarlyDeliveryDialog(false);
-    // setIsEmailDialog(false);
-    // setDate("");
-    // setComments("");
-    // setEmail((prev: any) => ({ ...prev, cc: [] }));
   }
 
   const handleOpen = () => {
@@ -103,7 +123,7 @@ const BasicPoDetilails = ({poBasicDetails}: Props) => {
   }
 
   const fetchPOItems = async () => {
-    const url = `${API_END_POINTS?.POItemsTable}?po_name=${poBasicDetailsState.po_name}`;
+    const url = `${API_END_POINTS?.POItemsTable}?po_name=${poBasicDetailsState.po_no}`;
     const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
     if (response?.status == 200) {
       setPOItemsTable(response?.data?.message?.items)
@@ -111,115 +131,163 @@ const BasicPoDetilails = ({poBasicDetails}: Props) => {
   }
 
   return (
-    <>
-    <div className='bg-white shadow-md border grid grid-cols-3 gap-3 p-4 rounded-xl mt-3 mx-2'>
-        <div className='flex gap-2'>
-            <h1 className='font-semibold'>PO Number: </h1>
-            <p>{poBasicDetailsState?.po_name}</p>
-        </div>
-        <div className='flex gap-2'>
-            <h1 className='font-semibold'>PO Date: </h1>
-            <p>{poBasicDetailsState?.po_date}</p>
-        </div>
-        <div className='flex gap-2'>
-            <h1 className='font-semibold'>Vendor Code: </h1>
-            <p>{poBasicDetailsState?.vendor_code}</p>
-        </div>
-        <div className='flex gap-2'>
-            <h1 className='font-semibold'>Vendor Name: </h1>
-            <p>{poBasicDetailsState?.supplier_name}</p>
-        </div>
-        <div className='flex gap-2'>
-            <h1 className='font-semibold'>Purchase Group: </h1>
-            <p>{poBasicDetailsState?.purchase_group_name}</p>
-        </div>
-        <div className='flex gap-2'>
-            <h1 className='font-semibold'>Purchase Contact Person: </h1>
-            <p>{poBasicDetailsState?.contact_person}</p>
-        </div>
-        <div className="flex gap-2">
-            <h1 className='font-semibold'>Status: </h1>
-            <p>{poBasicDetailsState?.po_status}</p>
-        </div>
+    <div className="space-y-4">
+        <Card className="shadow-sm border-slate-200">
+            <CardHeader className="py-3 px-4 border-b border-slate-100">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-3 min-w-0">
+                        <div className="flex-shrink-0">
+                            <BackButton />
+                        </div>
+                        <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#4F6BED] to-[#7C93F5] flex items-center justify-center shadow-sm flex-shrink-0">
+                                <FileText className="w-4 h-4 text-white" />
+                            </div>
+                            <div className="min-w-0">
+                                <CardTitle className="text-sm font-bold text-[#0F172A] tracking-tight">Purchase Order Details</CardTitle>
+                                {poBasicDetailsState?.po_no && <p className="text-[11px] text-[#94A3B8] mt-0.5 font-medium tracking-wide leading-none">PO: {poBasicDetailsState.po_no}</p>}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-wrap justify-end sm:ml-auto">
+                        <Badge variant="outline" className={`text-[11px] font-semibold px-3 py-1 tracking-wide ${poBasicDetailsState?.po_ack_by_vendor === 1 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
+                            {poBasicDetailsState?.po_ack_by_vendor === 1 ? 'Acknowledged' : 'Not Acknowledged'}
+                        </Badge>
+                        <Badge variant="outline" className={`text-[11px] font-semibold px-3 py-1 tracking-wide ${statusColor(poBasicDetailsState?.status)}`}>
+                            {poBasicDetailsState?.status || 'Unknown'}
+                        </Badge>
+                    </div>
+                </div>
+            </CardHeader>
+            <CardContent className="pt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-4">
+                    <DetailField icon={FileText} label="PO Number" value={poBasicDetailsState?.po_no} />
+                    <DetailField icon={CalendarDays} label="PO Date" value={poBasicDetailsState?.po_date} />
+                    <DetailField icon={Hash} label="Vendor Code" value={poBasicDetailsState?.vendor_code} />
+                    <DetailField icon={UserCircle} label="Vendor Name" value={poBasicDetailsState?.vendor_name} />
+                    <DetailField icon={ShoppingCart} label="Purchase Group" value={poBasicDetailsState?.purchase_grp_name} />
+                    <DetailField icon={Users} label="Contact Person" value={poBasicDetailsState?.purchase_person} />
+                    <DetailField icon={IndianRupee} label="Total Value of PO/SO" value={poBasicDetailsState?.total_value} />
+                    <DetailField icon={CreditCard} label="Terms of Payment" value={poBasicDetailsState?.payment_terms_name} />
+                </div>
+            </CardContent>
+        </Card>
+
+        <Card className="shadow-sm border-slate-200">
+            <CardHeader className="py-3 px-4 border-b border-slate-100">
+                <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#F59E0B] to-[#F97316] flex items-center justify-center shadow-sm">
+                        <Paperclip className="w-4 h-4 text-white" />
+                    </div>
+                    <div>
+                        <CardTitle className="text-sm font-bold text-[#0F172A] tracking-tight">PO Attachment</CardTitle>
+                        <p className="text-[11px] text-[#94A3B8] mt-0.5 font-medium leading-none">Upload purchase order document (PDF only) <span className="text-red-500">*</span></p>
+                    </div>
+                </div>
+            </CardHeader>
+            <CardContent className="pt-4">
+                <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-3 flex-wrap">
+                        <label
+                            htmlFor={poBasicDetailsState?.po_mail_sent === 1 ? undefined : 'file'}
+                            className={`border-2 border-dashed rounded-xl py-3 px-5 flex items-center gap-3 bg-[#FAFBFC] transition-colors ${poBasicDetailsState?.po_mail_sent === 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-[#4F6BED] hover:bg-[#F8F9FF]'}`}
+                        >
+                            <Upload className="w-5 h-5 text-[#4F6BED]" />
+                            <div className="text-sm">
+                                <span className="font-medium text-[#334155]">{poAttachment ? poAttachment.name : 'Choose File'}</span>
+                                {!poAttachment && <span className="text-[#94A3B8] ml-1">— No file chosen</span>}
+                            </div>
+                            <Input id="file" className="hidden" type="file" ref={uploadPoRef} disabled={poBasicDetailsState?.po_mail_sent === 1} onChange={(e) => { setPoAttachment(e.target.files?.[0] || null); }} />
+                        </label>
+
+                        {poAttachment && (
+                            <button
+                                onClick={() => { setPoAttachment(null); resetFileUpload(); }}
+                                className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center hover:bg-red-100 transition-colors"
+                            >
+                                <Trash2 className="w-4 h-4 text-red-500" />
+                            </button>
+                        )}
+
+                        {poBasicDetailsState?.po_mail_sent !== 1 && (
+                            <Button
+                                variant={"nextbtn"}
+                                size={"nextbtnsize"}
+                                className="px-4 rounded-xl flex items-center gap-2 shadow-sm"
+                                onClick={() => uploadPoDocument()}
+                            >
+                                <Upload className="w-4 h-4" />
+                                Upload
+                            </Button>
+                        )}
+                    </div>
+
+                    {poBasicDetailsState?.po_attachment?.url && (
+                        <div className="flex items-center gap-3 bg-[#F8FAFC] rounded-lg px-4 py-3 border border-slate-100">
+                            <FileText className="w-5 h-5 text-[#4F6BED] flex-shrink-0" />
+                            <Link
+                                target="_blank"
+                                href={poBasicDetailsState.po_attachment.url}
+                                className="text-sm font-medium text-[#4F6BED] hover:text-[#3B54D4] hover:underline transition-colors truncate"
+                            >
+                                {poBasicDetailsState.po_attachment.file_name}
+                            </Link>
+                            {poBasicDetailsState?.po_mail_sent !== 1 && (
+                                <button
+                                    onClick={() => { deletePoDocument(); }}
+                                    className="ml-auto w-7 h-7 rounded-md bg-red-50 flex items-center justify-center hover:bg-red-100 transition-colors flex-shrink-0"
+                                >
+                                    <X className="w-3.5 h-3.5 text-red-500" />
+                                </button>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </CardContent>
+        </Card>
+
+        {isEarlyDeliveryDialog && (
+            <PopUp classname="w-full md:max-w-[60vw] md:max-h-[60vh] h-full overflow-y-scroll" handleClose={handleClose} isSubmit={true} Submitbutton={handlePoItemsSubmit}>
+                <h2 className="text-sm font-bold text-[#0F172A] pb-3 tracking-tight">Purchase Order Items</h2>
+                <div className="bg-[#F8FAFC] mb-4 p-4 rounded-xl border border-slate-100">
+                    <Table className="max-h-40 overflow-y-auto overflow-x-auto">
+                        <TableHeader>
+                            <TableRow className="bg-[#F8FAFC] hover:bg-[#F8FAFC] border-b border-slate-200 text-nowrap">
+                                <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Select</TableHead>
+                                <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Product Name</TableHead>
+                                <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Material Code</TableHead>
+                                <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Description</TableHead>
+                                <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Plant</TableHead>
+                                <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Schedule Date</TableHead>
+                                <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Qty</TableHead>
+                                <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Early Delivery</TableHead>
+                                <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">Remarks</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {POItemsTable?.map((item, index) => (
+                                <TableRow key={index} className="hover:bg-slate-50 transition-colors border-b border-slate-100">
+                                    <TableCell className="text-center py-2 px-2"><input type="checkbox" name="requested_for_earlydelivery" onChange={(e) => { handleTableChange(index, e.target.name, e.target.checked) }} checked={item?.requested_for_earlydelivery ?? false} className="w-4 h-4 rounded border-slate-300 text-[#4F6BED] focus:ring-[#4F6BED]" /></TableCell>
+                                    <TableCell className="text-center text-xs text-[#475569] py-2 px-2">{item?.product_name}</TableCell>
+                                    <TableCell className="text-center text-nowrap text-xs font-semibold text-[#0F172A] py-2 px-2">{item?.material_code}</TableCell>
+                                    <TableCell className="text-center text-nowrap text-xs text-[#475569] py-2 px-2">{item?.short_text}</TableCell>
+                                    <TableCell className="text-center text-xs text-[#475569] py-2 px-2">{item?.plant}</TableCell>
+                                    <TableCell className="text-center text-xs text-[#475569] tabular-nums py-2 px-2">{item?.schedule_date}</TableCell>
+                                    <TableCell className="text-center py-2 px-2">
+                                        <div className="flex justify-center">
+                                            <Input type="number" name="quantity" onChange={(e) => { handleTableChange(index, e.target.name, e.target.value) }} value={item?.quantity ?? ""} className="w-16 h-8 rounded-lg border-slate-200 text-xs" />
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="text-center py-2 px-2"><div className="flex justify-center"><Input type="date" name="early_delivery_date" onChange={(e) => { handleTableChange(index, e.target.name, e.target.value) }} value={item?.early_delivery_date ?? ""} className="w-36 h-8 rounded-lg border-slate-200 text-xs" /></div></TableCell>
+                                    <TableCell className="py-2 px-2"><div className="flex justify-center"><Input name="purchase_team_remarks" onChange={(e) => { handleTableChange(index, e.target.name, e.target.value) }} value={item?.purchase_team_remarks ?? ""} className="w-24 h-8 rounded-lg border-slate-200 text-xs" /></div></TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
+            </PopUp>
+        )}
     </div>
-    <div className='bg-white shadow-md border gap-3 p-4 rounded-xl mt-3 mx-2'>
-        <div className='flex flex-col relative w-[30%] justify-center'>
-          <div className='flex gap-5 justify-start'>
-        <h1 className='pb-2 font-semibold'>Attach PO</h1>
-        <div className='absolute left-20 top-0 text-red-500 text-xl'>*</div>
-        <span className='text-sm font-light flex justify-end' style={{fontFamily:'sans-serif'}}>(Only PDF)</span>
-          </div>
-        <div className='flex gap-2 items-center justify-start'>
-          
-        <label htmlFor='file' className='border-2 border-dashed rounded-xl py-3 px-4 flex justify-center items-center cursor-pointer truncate gap-2 bg-[#FCFCFC]'>
-        <svg className='' width="30" height="23" viewBox="0 0 21 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M20.1883 10.4122L10.9983 19.6022C9.87249 20.7281 8.34552 21.3606 6.75334 21.3606C5.16115 21.3606 3.63418 20.7281 2.50834 19.6022C1.38249 18.4764 0.75 16.9494 0.75 15.3572C0.75 13.765 1.38249 12.2381 2.50834 11.1122L11.6983 1.92222C12.4489 1.17166 13.4669 0.75 14.5283 0.75C15.5898 0.75 16.6078 1.17166 17.3583 1.92222C18.1089 2.67279 18.5306 3.69077 18.5306 4.75222C18.5306 5.81368 18.1089 6.83166 17.3583 7.58222L8.15834 16.7722C7.78306 17.1475 7.27406 17.3583 6.74334 17.3583C6.21261 17.3583 5.70362 17.1475 5.32834 16.7722C4.95306 16.3969 4.74222 15.888 4.74222 15.3572C4.74222 14.8265 4.95306 14.3175 5.32834 13.9422L13.8183 5.46222" stroke="#5291CD" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-</svg>
-        <span className=' font-medium'>{!poAttachment && "Choose File"}</span>
-        <span>{poAttachment ? poAttachment?.name : "No file chosen"}</span>
-        <Input id="file" className='hidden' type='file' ref={uploadPoRef} onChange={(e)=>{setPoAttachment(e.target.files?.[0] || null);}}/>
-        </label>
-
-        <Trash2 className={`cursor-pointer text-xl text-red-500 ${poAttachment ? '' : 'hidden'}`} onClick={(e)=>{setPoAttachment(null);resetFileUpload();}}/>
-            <Button variant={"nextbtn"} size={"nextbtnsize"} className="px-4 mx-2 rounded-xl" onClick={()=>uploadPoDocument()}>Upload</Button>
-        </div>
-        <div className='flex gap-4 items-end justify-start mt-2 pl-4'>
-        <h1 className='text-blue-500 mt-2'><Link target='blank' href={poBasicDetailsState?.po_details_attachment?.url}>{poBasicDetailsState?.po_details_attachment?.file_name}</Link></h1>
-        <h1 className={`cursor-pointer text-lg text-red-500 ${poBasicDetailsState?.po_details_attachment?.url ? '' : 'hidden'}`} onClick={()=>{deletePoDocument();}}> X </h1>
-        </div>
-        </div>
-
-        
-        
-        <div></div>
-    </div>
-    <Button variant={"nextbtn"} size={"nextbtnsize"} className="px-4 mt-4 mx-2 rounded-xl" onClick={handleOpen}>Early Delivery</Button>
-
-
-    {isEarlyDeliveryDialog &&
-        <PopUp classname="w-full md:max-w-[60vw] md:max-h-[60vh] h-full overflow-y-scroll" handleClose={handleClose} isSubmit={true} Submitbutton={handlePoItemsSubmit}>
-          <h1 className="text-[16px] font-medium pb-3 pl-1">Purchase Order Items</h1>
-          <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
-            <Table className=" max-h-40 overflow-y-scroll overflow-x-scroll">
-              <TableHeader className="text-center">
-                <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                  <TableHead className="text-center">Select</TableHead>
-                  <TableHead className="text-center">Product Name</TableHead>
-                  <TableHead className="text-center">Material Code</TableHead>
-                  <TableHead className="text-center">Material Description</TableHead>
-                  <TableHead className="text-center">Plant</TableHead>
-                  <TableHead className="text-center">Schedule Date</TableHead>
-                  <TableHead className="text-center">Quantity</TableHead>
-                  <TableHead className="text-center">Early Delivery Date</TableHead>
-                  <TableHead className="text-center">Remarks</TableHead>
-
-                </TableRow>
-              </TableHeader>
-              <TableBody className="text-center">
-                {POItemsTable?.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell className='text-center'><input type="checkbox" name="requested_for_earlydelivery" onChange={(e) => { handleTableChange(index, e.target.name, e.target.checked) }} checked={item?.requested_for_earlydelivery ?? undefined} /></TableCell>
-                    <TableCell className='text-center'>{item?.product_name}</TableCell>
-                    <TableCell className='text-center text-nowrap'>{item?.material_code}</TableCell>
-                    <TableCell className='text-center text-nowrap'>{item?.short_text}</TableCell>
-                    <TableCell className='text-center'>{item?.plant}</TableCell>
-                    <TableCell className='text-center'>{item?.schedule_date}</TableCell>
-                    <TableCell className='text-center'>
-                      <div className={`flex justify-center`}>
-                        <Input type="number" name="quantity" onChange={(e) => { handleTableChange(index, e.target.name, e.target.value) }} value={item?.quantity ?? ""} className='w-16 disabled:opacity-100' />
-                      </div>
-                    </TableCell>
-                    <TableCell className={`flex justify-center`}><Input type="date" name="early_delivery_date" onChange={(e) => { handleTableChange(index, e.target.name, e.target.value) }} value={item?.early_delivery_date ?? ""} className='w-36 disabled:opacity-100' /></TableCell>
-                    <TableCell><div className={`flex justify-center`}> <Input name="purchase_team_remarks" onChange={(e) => { handleTableChange(index, e.target.name, e.target.value) }} value={item?.purchase_team_remarks ?? ""} className='w-24 disabled:opacity-100' /></div></TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </PopUp>
-      }
-
-    </>
   )
 }
 

@@ -3,7 +3,7 @@ import DashboardCardCounter from "../molecules/Finance-Dashboard-Card-Count";
 import requestWrapper from "@/src/services/apiCall";
 import API_END_POINTS from "@/src/services/apiEndPoints";
 import { AxiosResponse } from "axios";
-import { DashboardPOTableData, dashboardCardData, DashboardTableType, TvendorRegistrationDropdown, TuserRegistrationDropdown, TPRInquiryTable, PurchaseRequisition, RFQTable } from "@/src/types/types";
+import { dashboardCardData, DashboardTableType, TvendorRegistrationDropdown, TuserRegistrationDropdown, TPRInquiryTable, PurchaseRequisition, RFQTable } from "@/src/types/types";
 import { cookies } from "next/headers";
 
 const Dashboard = async () => {
@@ -24,19 +24,6 @@ const Dashboard = async () => {
     dashboardCardApi?.status == 200 ? dashboardCardApi?.data?.message : "";
 
   console.log(CardData, "CardData-------------------------")
-
-  //po table 
-  const dashboardPOTableDataApi: AxiosResponse = await requestWrapper({
-    url: `${API_END_POINTS?.poTable}`,
-    method: "GET",
-    headers: {
-      cookie: cookieHeaderString
-    }
-  });
-  const dashboardPOTableData: DashboardPOTableData["message"] =
-    dashboardPOTableDataApi?.status == 200 ? dashboardPOTableDataApi?.data?.message : "";
-
-  console.log(dashboardPOTableData, "dashboardPOTableData-------------------------")
 
   //total vendor table
   const dashboardTotalVendorTableDataApi: AxiosResponse = await requestWrapper({
@@ -127,7 +114,6 @@ const Dashboard = async () => {
         cardData={CardData}
         companyDropdown={companyDropdown}
         filterregisteredby={filterregisteredby}
-        dashboardPOTableData={dashboardPOTableData}
         dashboardTotalVendorTableData={dashboardTotalVendorTableData}
         dashboardApprovedVendorTableData={dashboardApprovedVendorTableData}
         prInquiryData={prInquiryData}

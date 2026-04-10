@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react'
 import Link from 'next/link'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../atoms/table'
 import { Input } from '../../atoms/input'
-import { Trash2 } from 'lucide-react'
+import { Trash2, FileText, Upload, Plus } from 'lucide-react'
 import { purchaseRequisitionDataType } from '@/src/types/prRequisition/prRequisition.types'
 import { deletePrDocument, uploadPrDocument } from '@/src/services/prRequisition/prRequisitionNb.services'
 import {
@@ -12,13 +12,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface Props {
   data: purchaseRequisitionDataType["attachment"];
   prId: string;
   canEdit?: boolean;
   fetchPrData: (prId?: string) => void;
-  isSubmittingRef?: React.RefObject<boolean>;
+  /** When true, blocks file add/delete while PR submit is in progress (ref updates do not re-render). */
+  isSubmittingRef?: React.RefObject<boolean | null>;
 }
 
 const FileList = ({ data, prId, canEdit, fetchPrData, isSubmittingRef }: Props) => {
@@ -36,6 +38,10 @@ const FileList = ({ data, prId, canEdit, fetchPrData, isSubmittingRef }: Props) 
   }
 
   const handleDelete = async (name: string) => {
+    if (isSubmittingRef?.current) {
+      alert("Please wait until the purchase requisition finishes submitting.");
+      return;
+    }
     if (!confirm("Are you sure you want to delete this file?")) return;
     try {
       await deletePrDocument(name);
@@ -46,7 +52,10 @@ const FileList = ({ data, prId, canEdit, fetchPrData, isSubmittingRef }: Props) 
   }
 
   const handleAdd = async () => {
-    if (isSubmittingRef?.current || isUploadingRef.current) return;
+    if (isSubmittingRef?.current) {
+      alert("Please wait until the purchase requisition finishes submitting.");
+      return;
+    }
     if (!file) {
       alert("Please select a file");
       return;
@@ -68,92 +77,98 @@ const FileList = ({ data, prId, canEdit, fetchPrData, isSubmittingRef }: Props) 
   }
 
   return (
-    <div className="mt-4">
-      <div className="flex w-full justify-between pb-4">
-        <h1 className="text-[20px] text-[#03111F] font-semibold">File List</h1>
-      </div>
-      <Table className="border border-black/20">
-        <TableHeader className="text-center">
-          <TableRow className="bg-[#DDE8FE] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-            <TableHead className="">Sr No.</TableHead>
-            <TableHead className="">File Name</TableHead>
-            <TableHead className="">Amount</TableHead>
-            {canEdit && <TableHead className="text-center w-[10%]">Action</TableHead>}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data && data.length > 0 ? (
-            data.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-medium ">{index + 1}</TableCell>
-                <TableCell className="font-medium ">
-                  <Link href={item?.url} target="_blank" className="text-blue-500 hover:underline">{item?.filename}</Link>
-                </TableCell>
-                <TableCell className="font-medium ">{item?.amount}</TableCell>
-                {canEdit && (
-                  <TableCell className="font-medium">
-                    <div className="flex ">
+    <Card className="shadow-sm border-slate-200">
+      <CardHeader className="pb-3 border-b border-slate-100">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#F59E0B] to-[#F97316] flex items-center justify-center shadow-sm">
+            <FileText className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <CardTitle className="text-base font-bold text-[#0F172A] tracking-tight">Quotation List</CardTitle>
+            <p className="text-[11px] text-[#94A3B8] mt-0.5 font-medium">{data?.length || 0} file{(data?.length || 0) !== 1 ? 's' : ''} attached</p>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="pt-3 px-0">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-[#F8FAFC] hover:bg-[#F8FAFC] border-b border-slate-200">
+                <TableHead className="h-9 py-0 text-[11px] text-[#64748B] font-semibold uppercase tracking-wide">Sr No.</TableHead>
+                <TableHead className="h-9 py-0 text-[11px] text-[#64748B] font-semibold uppercase tracking-wide">File Name</TableHead>
+                <TableHead className="h-9 py-0 text-[11px] text-[#64748B] font-semibold uppercase tracking-wide">Amount</TableHead>
+                {canEdit && <TableHead className="h-9 py-0 text-center text-[11px] text-[#64748B] font-semibold uppercase tracking-wide w-[10%]">Action</TableHead>}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data && data.length > 0 ? (
+                data.map((item, index) => (
+                  <TableRow key={index} className="hover:bg-slate-50 transition-colors border-b border-slate-100">
+                    <TableCell className="py-2 text-xs text-[#64748B] tabular-nums leading-snug">{index + 1}</TableCell>
+                    <TableCell className="py-2 text-xs leading-snug">
+                      <Link href={item?.url} target="_blank" className="font-medium text-[#4F6BED] hover:text-[#3B54D4] hover:underline transition-colors">{item?.filename}</Link>
+                    </TableCell>
+                    <TableCell className="py-2 text-xs font-semibold text-[#0F172A] tabular-nums leading-snug">{item?.amount}</TableCell>
+                    {canEdit && (
+                      <TableCell>
+                        <div className="flex justify-center">
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <button onClick={() => handleDelete(item?.name)} className="w-7 h-7 rounded-md bg-red-50 flex items-center justify-center hover:bg-red-100 transition-colors">
+                                  <Trash2 className="w-3.5 h-3.5 text-red-500" />
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent><p>Delete File</p></TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))
+              ) : null}
+              {canEdit && (
+                <TableRow className="bg-[#FAFBFC]">
+                  <TableCell></TableCell>
+                  <TableCell>
+                    <div className="flex gap-2 items-center">
+                      <label htmlFor="pr-file-upload" className="border-2 border-dashed rounded-md py-1.5 px-3 flex items-center cursor-pointer truncate gap-2 bg-white hover:border-[#4F6BED] hover:bg-[#F8F9FF] transition-colors min-h-8">
+                        <Upload className="w-3.5 h-3.5 text-[#4F6BED] shrink-0" />
+                        <span className="text-xs font-medium text-[#334155]">{file ? file.name : "Choose File"}</span>
+                        <Input id="pr-file-upload" className="hidden" type="file" ref={fileInputRef} onChange={(e) => setFile(e?.target?.files?.[0] || null)} />
+                      </label>
+                      {file && (
+                        <button onClick={handleReset} className="w-7 h-7 rounded-md bg-red-50 flex items-center justify-center hover:bg-red-100 transition-colors">
+                          <Trash2 className="w-3.5 h-3.5 text-red-500" />
+                        </button>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Input type="number" min="0" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Enter amount" className="rounded-md h-8 border-slate-200 text-xs px-2" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex justify-center">
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Trash2 className="text-red-400 hover:cursor-pointer" onClick={() => handleDelete(item?.name)} />
+                            <button onClick={handleAdd} className="w-7 h-7 rounded-md bg-emerald-50 flex items-center justify-center hover:bg-emerald-100 transition-colors border border-emerald-200">
+                              <Plus className="w-3.5 h-3.5 text-emerald-600" />
+                            </button>
                           </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Delete File</p>
-                          </TooltipContent>
+                          <TooltipContent><p>Add File</p></TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
                     </div>
                   </TableCell>
-                )}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={canEdit ? 4 : 3} className="text-center text-gray-500 py-4">
-                No files found
-              </TableCell>
-            </TableRow>
-          )}
-          {canEdit && (
-            <TableRow>
-              <TableCell className="font-medium "></TableCell>
-              <TableCell className="font-medium">
-                <div className="flex gap-2 items-center">
-                  <label htmlFor="pr-file-upload" className="border-2 border-dashed rounded-xl py-2 px-4 flex items-center cursor-pointer truncate gap-2 bg-[#FCFCFC]">
-                    <svg width="20" height="18" viewBox="0 0 21 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M20.1883 10.4122L10.9983 19.6022C9.87249 20.7281 8.34552 21.3606 6.75334 21.3606C5.16115 21.3606 3.63418 20.7281 2.50834 19.6022C1.38249 18.4764 0.75 16.9494 0.75 15.3572C0.75 13.765 1.38249 12.2381 2.50834 11.1122L11.6983 1.92222C12.4489 1.17166 13.4669 0.75 14.5283 0.75C15.5898 0.75 16.6078 1.17166 17.3583 1.92222C18.1089 2.67279 18.5306 3.69077 18.5306 4.75222C18.5306 5.81368 18.1089 6.83166 17.3583 7.58222L8.15834 16.7722C7.78306 17.1475 7.27406 17.3583 6.74334 17.3583C6.21261 17.3583 5.70362 17.1475 5.32834 16.7722C4.95306 16.3969 4.74222 15.888 4.74222 15.3572C4.74222 14.8265 4.95306 14.3175 5.32834 13.9422L13.8183 5.46222" stroke="#5291CD" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    <span className="text-sm">{file ? file.name : "Choose File"}</span>
-                    <Input id="pr-file-upload" className="hidden" type="file" ref={fileInputRef} onChange={(e) => setFile(e?.target?.files?.[0] || null)} />
-                  </label>
-                  {file && <Trash2 className="cursor-pointer text-red-500 w-5 h-5" onClick={handleReset} />}
-                </div>
-              </TableCell>
-              <TableCell className="font-medium">
-                <Input type="number" min="0" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Enter amount" />
-              </TableCell>
-              <TableCell>
-                <div className="flex">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className={`flex justify-center items-center text-2xl w-[30px] h-[30px] ${isSubmittingRef?.current ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-[#D1FAE5] text-[#065F46] hover:cursor-pointer"}`} onClick={handleAdd}>
-                          +
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Add Row</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+    </Card>
   )
 }
 
