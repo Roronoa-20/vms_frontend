@@ -189,14 +189,7 @@ const SearchSelectComponent = <T extends object>({
                     role="combobox"
                     aria-expanded={open}
                     disabled={disabled}
-                    className={cn(
-                      mode === "multiple"
-                        ? "h-fit max-h-[150px] min-h-8 w-full"
-                        : "h-8 min-h-8 w-full text-xs",
-                      "relative justify-between rounded-md border shadow-sm hover:shadow-md active:shadow-lg gap-1.5 font-normal px-2",
-                      disabled && "cursor-pointer",
-                      triggerClassName,
-                    )}
+                    className={`${mode === "multiple" ? "h-fit max-h-[150px]" : "w-full" } relative justify-between shadow border hover:shadow-md active:shadow-lg lg:text-sm rounded-lg gap-[9px] text-[9px] font-normal ${disabled && "cursor-pointer"}`}
                 >
                     {renderButtonLabel()}
                     {!open ? 

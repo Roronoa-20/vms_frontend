@@ -123,12 +123,13 @@ const CreatePurchaseRequest = (props: Props) => {
       return;
     }
 
-    if (!form?.plant) {
-      alert("please select plant");
-      return;
-    }
+    // if (!form?.plant) {
+    //   alert("please select plant");
+    //   return;
+    // }
 
     const body: any = {
+      name: props?.pr_id ? props?.pr_id : "",
       pr_type: form.pr_type,
       company: form.company,
       plant: form.plant,
@@ -267,6 +268,7 @@ const CreatePurchaseRequest = (props: Props) => {
               <Building2 className="w-3 h-3 text-[#94A3B8]" />
               Plant
             </label>
+<<<<<<< Updated upstream
             <ReactSelect
               isDisabled={!!props?.pr_id || !form?.company}
               value={plantDropdown?.filter((item) => item?.name === form?.plant)?.map((item) => ({ value: item?.name, label: item?.plant_name }))?.[0] ?? null}
@@ -281,25 +283,26 @@ const CreatePurchaseRequest = (props: Props) => {
               menuPosition="fixed"
               isClearable
             />
+=======
+            <Select
+              // disabled={!!props?.pr_id || !form?.company}
+              value={form?.plant ?? ""}
+              onValueChange={(value) => { setForm((prev: any) => ({ ...prev, plant: value })); }}
+            >
+              <SelectTrigger className="rounded-md h-8 border-slate-200 bg-white text-xs">
+                <SelectValue placeholder="Select plant" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {plantDropdown?.map((item) => (
+                    <SelectItem key={item?.name} value={item?.name}>{item?.plant_name}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+>>>>>>> Stashed changes
           </div>
         </div>
-
-        {!props?.pr_id && (
-          <div className="mt-4 flex justify-end">
-            <Button
-              variant={"nextbtn"}
-              size={"nextbtnsize"}
-              className="h-8 px-4 rounded-lg text-xs flex items-center gap-1.5 shadow-sm"
-              onClick={handleNextButton}
-            >
-              Next
-              <ArrowRight className="w-3.5 h-3.5" />
-              <span ref={nextLoaderRef} className="hidden">
-                <Loader2 className="w-3.5 h-3.5 text-white" />
-              </span>
-            </Button>
-          </div>
-        )}
 
         {props?.pr_id && (
           <div className="mt-4 pt-4 border-t border-slate-100">
@@ -318,6 +321,19 @@ const CreatePurchaseRequest = (props: Props) => {
               <InfoField label="Budget Amount" value={props.prData.budget_amount} />
               <InfoField label="Actual Amount" value={props.prData.actual_amount} />
             </div>
+          </div>
+        )}
+
+        {!props?.prData?.is_submitted && (
+          <div className="mt-4 flex justify-end">
+            <Button
+              variant={"nextbtn"}
+              size={"nextbtnsize"}
+              className="h-8 px-4 rounded-lg text-xs flex items-center gap-1.5 shadow-sm"
+              onClick={handleNextButton}
+            >
+              {props?.pr_id ? "Update" : "Next"}
+            </Button>
           </div>
         )}
       </CardContent>

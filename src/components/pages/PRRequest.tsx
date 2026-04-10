@@ -128,8 +128,7 @@ const PrRequest = (props: Props) => {
                     submitLoaderRef.current.className = "hidden";
                 }
             }).catch((err) => {
-                alert(err || `Error creating PR:- ${err}`);
-                console.error(err);
+                alert(err?.message || `Error submitting PR:- ${err?.message}`);
                 if (submitLoaderRef?.current) {
                     submitLoaderRef.current.className = "hidden";
                 }
