@@ -2,8 +2,6 @@
 import Image from "next/image";
 import {
   dashboardCardData,
-  DashboardPOTableData,
-  DashboardPOTableItem,
   DashboardTableType,
   PurchaseRequisition,
   RFQTable,
@@ -50,7 +48,6 @@ import DashboardAccountsSAPErrorTable from "./Dashboard-Accounts-SAPError-Table"
 
 type Props = {
   cardData: dashboardCardData;
-  dashboardPOTableData: DashboardPOTableData["message"];
   dashboardTotalVendorTableData: DashboardTableType;
   dashboardApprovedVendorTableData: DashboardTableType;
   companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"];
@@ -176,10 +173,7 @@ const DashboardCards = ({ ...Props }: Props) => {
             )}
 
             {item.name === "Purchase & Ongoing Orders" && (
-              <PurchaseAndOngoingOrders
-                dashboardPOTableData={Props.dashboardPOTableData}
-                companyDropdown={Props?.companyDropdown}
-              />
+              <PurchaseAndOngoingOrders companyDropdown={Props?.companyDropdown} />
             )}
 
             {item.name === "Purchase Requisition Request" && (

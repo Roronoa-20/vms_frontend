@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "../../atoms/select";
 import { Input } from "../../atoms/input";
-import { Trash2, Loader2 } from "lucide-react";
+import { Trash2, Loader2, Plus, Eye, Pencil, X, ListOrdered } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -31,7 +31,6 @@ import {
   nbItemsType,
   purchaseRequisitionDataType,
   PurchaseRequisitionMaterialDropdownType,
-  purchaseRequisitionPlantDropdownType,
   purchaseRequisitionPurchaseGroupDropdownType,
   purchaseRequisitionUOMType,
   serviceCodeDropdownType,
@@ -53,7 +52,7 @@ import { set } from "nprogress";
 import { useSearchParams } from "next/navigation";
 import { deleteEnquiryItems } from "@/src/services/prEnquiry/prEnquiry.services";
 import MultiSelect from 'react-select';
-import { multiSelectStyles } from "../../common/sharedStyles";
+import { itemsRowSelectStyles } from "../../common/sharedStyles";
 import {
   addSublineItem,
   addZsbLineItems,
@@ -62,7 +61,6 @@ import {
   getCostCenterBasedOnCompanyDropdown,
   getGlAccountBasedOnCompanyDropdown,
   getMaterialGroupDropdown,
-  getPurchaseRequisitionPlantBasedOnCompany,
   getPurchaseRequisitionUom,
   getServiceCodeDropdown,
   getShortTextBasedOnServiceCode,
@@ -73,10 +71,16 @@ import {
 import { get } from "http";
 import PopUp from "../../molecules/PopUp";
 import { Button } from "../../atoms/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+const itemsTableIconBtn =
+  "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6BED]/25";
+
+const subItemDialogIconBtn =
+  "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6BED]/25";
 
 type Props = {
   prData?: purchaseRequisitionDataType;
-  plantDropdown: purchaseRequisitionPlantDropdownType[];
   submitLoaderRef: React.RefObject<HTMLSpanElement | null>;
   handlePurchaseRequisitionSubmit: (isAlert: boolean) => void;
 };
@@ -91,9 +95,6 @@ const ServicePR = (props: Props) => {
   const [uomDrop, setUOM] = useState<purchaseRequisitionUOMType>();
   const [isPurchaseGroupDropdown, setIsPurchaseGroupDropdown] = useState(false);
   const [UOMDropdown, setUOMDropdown] = useState<uomType[]>([]);
-  const [plantBasedOnCompanyDropdown, setPlantBasedCompanyDropdown] = useState<
-    purchaseRequisitionPlantDropdownType[]
-  >([]);
   const [materialGroupDropdown, setMaterialGroupDropdown] = useState<
     MaterialGroupDropdownType[]
   >([]);
@@ -126,7 +127,6 @@ const ServicePR = (props: Props) => {
   useEffect(() => {
     fetchUom();
     if (props?.prData?.company) {
-      fetchPlantBAsedOnCompany(props.prData.company);
       fetchGlAccountBasedOnCommpany(props.prData.company);
       fetchCostCenterBasedOnCompany(props.prData.company);
       fetchMatrialGroup(props?.prData?.company as string);
@@ -134,22 +134,13 @@ const ServicePR = (props: Props) => {
 
     fetchServiceCode();
 
+    fetchMatrialGroup(props?.prData?.company ?? "");
   }, []);
 
   const fetchUom = () => {
     getPurchaseRequisitionUom("")
       .then((res) => {
         setUOMDropdown(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const fetchPlantBAsedOnCompany = (company: string) => {
-    getPurchaseRequisitionPlantBasedOnCompany(company)
-      .then((res) => {
-        setPlantBasedCompanyDropdown(res);
       })
       .catch((err) => {
         console.log(err);
@@ -296,7 +287,7 @@ const ServicePR = (props: Props) => {
     } else {
       addSublineItem(body, "service")
         .then((res) => {
-          alert(res?.message);
+          // alert(res?.message);
           setSubLineItem(undefined);
           fetchPrData();
         })
@@ -310,11 +301,6 @@ const ServicePR = (props: Props) => {
 
     if (!singleRowData?.material_description) {
       alert("please enter material description");
-      return;
-    }
-
-    if (!singleRowData?.plant) {
-      alert("please select plant");
       return;
     }
 
@@ -342,6 +328,10 @@ const ServicePR = (props: Props) => {
       alert("please enter short text");
       return;
     }
+    if (!singleRowData?.required_delivery_date) {
+      alert("please select required delivery date");
+      return;
+    }
 
     const body = {
       data: {
@@ -349,7 +339,6 @@ const ServicePR = (props: Props) => {
         purchase_requisition: props?.prData?.name,
         company: props?.prData?.company,
         material_description: singleRowData?.material_description,
-        plant: singleRowData?.plant,
         requisitioner: props?.prData?.name,
         uom: "AU",
         quantity: singleRowData?.quantity,
@@ -358,6 +347,7 @@ const ServicePR = (props: Props) => {
         short_text: singleRowData?.short_text,
         gl_account: singleRowData?.gl_account,
         cost_center: singleRowData?.cost_center,
+        required_delivery_date: singleRowData?.required_delivery_date,
       },
     };
 
@@ -385,7 +375,7 @@ const ServicePR = (props: Props) => {
     } else {
       addZsbLineItems(body, "service")
         .then((res) => {
-          alert(res?.message);
+          // alert(res?.message);
           // setTableData(prev=>[...prev,singleRowData as nbItemsType]);
           setSingleRowData(undefined);
           if (addLoaderRef?.current) {
@@ -450,634 +440,651 @@ const ServicePR = (props: Props) => {
     });
   }
 
+  const subDlgActions = !!(props?.prData?.can_edit && !isSubItemsView);
+
   return (
     <>
-      <div className='flex justify-end'>
-        {
-          props?.prData?.can_edit &&
-          <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
-            let isAlert = true;
-            if (singleRowData?.material_description || singleRowData?.plant || singleRowData?.quantity || singleRowData?.material_group || singleRowData?.cost_center || singleRowData?.gl_account) {
-              alert("You have unsaved changes in the table. Do you want to continue without saving?") 
-              isAlert = false;
-                return;
-            }
-            props?.handlePurchaseRequisitionSubmit(isAlert);
-          }}>
-            Submit PR
-            <span ref={props?.submitLoaderRef} className="hidden">
-              <Loader2 className="w-5 h-5" />
-            </span>
-          </Button>
-        }
-      </div>
-      <div className="">
-        <div className="flex w-full justify-between pb-4">
-          <h1 className="text-[20px] text-[#03111F] font-semibold">
-            Items List
-          </h1>
-        </div>
-        <Table className=" max-h-40 overflow-y-scroll border border-black/20">
-          <TableHeader className="text-center">
-            <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-              <TableHead className="text-center w-[50px]">Sr No.</TableHead>
-              <TableHead className="w-[15%]">Material Description</TableHead>
-              <TableHead className="w-[8%]">UOM</TableHead>
-              <TableHead className="w-[10%]">Plant</TableHead>
-              <TableHead className="w-[8%]">Quantity</TableHead>
-              <TableHead className="w-[12%]">Material Group</TableHead>
-              <TableHead className="w-[12%]">Cost Center</TableHead>
-              <TableHead className="w-[12%]">G/L Account</TableHead>
-              <TableHead className="w-[13%]">Short Text</TableHead>
-              <TableHead className="w-[10%]">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody className="">
-            {tableData?.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-medium text-center w-[50px]">
-                  {index + 1}
-                </TableCell>
-                <TableCell className="font-medium">
-                  {item.material_description}
-                </TableCell>
-                <TableCell className="font-medium">{item.uom}</TableCell>
-                <TableCell className="font-medium">{item.plant}</TableCell>
-                <TableCell className="font-medium">{item.quantity}</TableCell>
-                <TableCell className="font-medium">
-                  {item.material_group}
-                </TableCell>
-                <TableCell className="font-medium">
-                  {item.cost_center}
-                </TableCell>
-                <TableCell className="font-medium">{item.gl_account}</TableCell>
-                <TableCell className="font-medium">{item.short_text}</TableCell>
-
-                <TableCell className="font-medium">
-                  <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
-                    {
-                      props?.prData?.can_edit &&
-                      <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div
-                                className="bg-[#D1FAE5] flex justify-center items-center text-2xl  text-[#065F46] w-[30px] h-[30px] hover:cursor-pointer"
-                                onClick={() => {
-                                  setIsSubItemDialog(true);
-                                  setIsSubItemView(false);
-                                  setSelectedSubItemIndex({ index: index, parent_id: item?.name });
-                                }}
-                              >
-                                +
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Add Sub Item</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                    }
-
-                    {/* eye icom */}
-                    {
-
-                      !props?.prData?.can_edit &&
-                      <div className="flex items-end gap-1">
-
-
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <svg
-                                onClick={() => {
-                                  setIsSubItemDialog(true);
-                                  setIsSubItemView(true);
-                                  setSelectedSubItemIndex({ index: index, parent_id: item?.name });
-                                }}
-                                width="22"
-                                height="16"
-                                viewBox="0 0 22 16"
-                                fill="none"
-                                className="hover:cursor-pointer"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  d="M1.01387 8.46318C0.877686 8.24754 0.809592 8.13972 0.771474 7.97342C0.742842 7.8485 0.742842 7.6515 0.771474 7.52658C0.809592 7.36028 0.877685 7.25246 1.01387 7.03682C2.13928 5.25484 5.48915 0.75 10.5942 0.75C15.6992 0.75 19.049 5.25484 20.1744 7.03682C20.3106 7.25246 20.3787 7.36028 20.4168 7.52658C20.4455 7.6515 20.4455 7.8485 20.4168 7.97342C20.3787 8.13972 20.3106 8.24754 20.1744 8.46318C19.049 10.2452 15.6992 14.75 10.5942 14.75C5.48915 14.75 2.13928 10.2452 1.01387 8.46318Z"
-                                  stroke="#5291CD"
-                                  strokeWidth="1.5"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                                <path
-                                  d="M10.5942 10.75C12.251 10.75 13.5942 9.40685 13.5942 7.75C13.5942 6.09315 12.251 4.75 10.5942 4.75C8.9373 4.75 7.59415 6.09315 7.59415 7.75C7.59415 9.40685 8.9373 10.75 10.5942 10.75Z"
-                                  stroke="#5291CD"
-                                  strokeWidth="1.5"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>View Sub Items</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                    }
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <h1 className="cursor-default">{item?.sub_items?.length}</h1>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Sub Line Items Count</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    {
-                      props?.prData?.can_edit &&
-                      <>
-                        {/* Pencil Icon */}
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <svg
-                                onClick={() => {
-                                  handleUpdateItem(index);
-                                }}
-                                className="hover:cursor-pointer"
-                                width="22"
-                                height="22"
-                                viewBox="0 0 22 22"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  d="M12 20.0008H20.0001M14.0001 4.00045L18.0001 8.00054M20.1741 5.81249C20.7028 5.2839 20.9999 4.56693 21 3.8193C21.0001 3.07167 20.7032 2.35462 20.1746 1.8259C19.646 1.29718 18.9291 1.00009 18.1814 1C17.4338 0.999906 16.7168 1.29681 16.1881 1.8254L2.84195 15.1747C2.60977 15.4062 2.43806 15.6912 2.34195 16.0047L1.02093 20.3568C0.99509 20.4433 0.993138 20.5352 1.01529 20.6227C1.03743 20.7102 1.08286 20.7901 1.14673 20.8538C1.21061 20.9176 1.29056 20.9629 1.3781 20.9849C1.46564 21.0069 1.5575 21.0048 1.64394 20.9788L5.99698 19.6588C6.31015 19.5636 6.59516 19.3929 6.82699 19.1618L20.1741 5.81249Z"
-                                  stroke="#03111F"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Edit Item</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Trash2
-                                className="text-red-400 hover:cursor-pointer"
-                                onClick={() => {
-                                  handleDeleteItem(item?.name as string);
-                                }}
-                              />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Delete Item</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </>
-                    }
-                  </div>
-                </TableCell>
-
-              </TableRow>
-            ))}
-
-            {props?.prData?.can_edit && (
-              <TableRow>
-                <TableCell className="font-medium text-center"></TableCell>
-                <TableCell className="font-medium">
-                  <Input
-                    value={singleRowData?.material_description ?? ""}
-                    onChange={(e) => {
-                      setSingleRowData(
-                        (prev) =>
-                          ({
-                            ...prev,
-                            material_description: e.target.value,
-                          }) as zsbServiceItemsType,
-                      );
-                    }}
-                  />
-                </TableCell>
-                <TableCell className="font-medium">
-                  <h1>AU</h1>
-                </TableCell>
-                <TableCell className="font-medium">
-                  <MultiSelect
-                    options={plantBasedOnCompanyDropdown?.map(item => ({ label: item?.plant_name || item?.name, value: item?.name })) || []}
-                    value={singleRowData?.plant ? { label: plantBasedOnCompanyDropdown?.find(p => p.name === singleRowData.plant)?.plant_name || singleRowData.plant, value: singleRowData.plant } : null}
-                    onChange={(selectedOption: any) => {
-                      setSingleRowData(
-                        (prev) =>
-                          ({ ...prev, plant: selectedOption?.value }) as zsbServiceItemsType,
-                      );
-                      // fetchMatrialGroup(selectedOption?.value);
-                    }}
-                    instanceId="zsbservice-plant-select"
-                    placeholder="Select Plant..."
-                    className="text-[12px] text-black text-left min-w-[150px]"
-                    styles={{
-                      ...multiSelectStyles,
-                      control: (base: any) => ({
-                        ...base,
-                        minHeight: "36px",
-                        borderRadius: "0.5rem",
-                        borderColor: "#e5e7eb",
-                      }),
-                    }}
-                    menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
-                    menuPlacement="auto"
-                    menuPosition="fixed"
-                  />
-                </TableCell>
-                <TableCell className="font-medium">
-                  <Input
-                    type="number"
-                    min="0"
-                    value={singleRowData?.quantity ?? ""}
-                    onChange={(e) => {
-                      const val = Number(e.target.value);
-                      if (val < 0) return;
-                      setSingleRowData(
-                        (prev) =>
-                          ({
-                            ...prev,
-                            quantity: val,
-                          }) as zsbServiceItemsType,
-                      );
-                    }}
-                  />
-                </TableCell>
-                <TableCell className="font-medium">
-                  <MultiSelect
-                    options={materialGroupDropdown?.map(item => ({ label: item?.material_group_description || item?.name, value: item?.name })) || []}
-                    value={singleRowData?.material_group ? { label: materialGroupDropdown?.find(p => p.name === singleRowData.material_group)?.material_group_description || singleRowData.material_group, value: singleRowData.material_group } : null}
-                    onChange={(selectedOption: any) => {
-                      setSingleRowData(
-                        (prev) =>
-                          ({
-                            ...prev,
-                            material_group: selectedOption?.value,
-                          }) as zsbServiceItemsType,
-                      );
-                    }}
-                    instanceId="zsbservice-mg-select"
-                    placeholder="Select Material Group..."
-                    className="text-[12px] text-black text-left min-w-[150px]"
-                    styles={{
-                      ...multiSelectStyles,
-                      control: (base: any) => ({
-                        ...base,
-                        minHeight: "36px",
-                        borderRadius: "0.5rem",
-                        borderColor: "#e5e7eb",
-                      }),
-                    }}
-                    menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
-                    menuPlacement="auto"
-                    menuPosition="fixed"
-                  />
-                  {/* <Input value={singleRowData?.material_group ?? ""} onChange={(e)=>{setSingleRowData(prev=>({...prev,material_group:e.target.value} as zsbServiceItemsType))}} /> */}
-                </TableCell>
-                <TableCell>
-                  <MultiSelect
-                    options={costCenterDropdown?.map(item => ({ label: item?.cost_center_name || item?.name, value: item?.name })) || []}
-                    value={singleRowData?.cost_center ? { label: costCenterDropdown?.find(p => p.name === singleRowData.cost_center)?.cost_center_name || singleRowData.cost_center, value: singleRowData.cost_center } : null}
-                    onChange={(selectedOption: any) => {
-                      setSingleRowData(
-                        (prev) =>
-                          ({
-                            ...prev,
-                            cost_center: selectedOption?.value,
-                          }) as zsbServiceItemsType,
-                      );
-                    }}
-                    instanceId="zsbservice-cc-select"
-                    placeholder="Select Cost Center..."
-                    className="text-[12px] text-black text-left min-w-[150px]"
-                    styles={{
-                      ...multiSelectStyles,
-                      control: (base: any) => ({
-                        ...base,
-                        minHeight: "36px",
-                        borderRadius: "0.5rem",
-                        borderColor: "#e5e7eb",
-                      }),
-                    }}
-                    menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
-                    menuPlacement="auto"
-                    menuPosition="fixed"
-                  />
-                </TableCell>
-                <TableCell>
-                  <MultiSelect
-                    options={glAccountDropdown?.map(item => ({ label: item?.gl_account_name || item?.name, value: item?.name })) || []}
-                    value={singleRowData?.gl_account ? { label: glAccountDropdown?.find(p => p.name === singleRowData.gl_account)?.gl_account_name || singleRowData.gl_account, value: singleRowData.gl_account } : null}
-                    onChange={(selectedOption: any) => {
-                      setSingleRowData(
-                        (prev) =>
-                          ({
-                            ...prev,
-                            gl_account: selectedOption?.value,
-                          }) as zsbServiceItemsType,
-                      );
-                    }}
-                    instanceId="zsbservice-gl-select"
-                    placeholder="Select GL Account..."
-                    className="text-[12px] text-black text-left min-w-[150px]"
-                    styles={{
-                      ...multiSelectStyles,
-                      control: (base: any) => ({
-                        ...base,
-                        minHeight: "36px",
-                        borderRadius: "0.5rem",
-                        borderColor: "#e5e7eb",
-                      }),
-                    }}
-                    menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
-                    menuPlacement="auto"
-                    menuPosition="fixed"
-                  />
-                </TableCell>
-                <TableCell className="font-medium">
-                  <Input
-                    type=""
-                    value={singleRowData?.short_text ?? ""}
-                    onChange={(e) => {
-                      setSingleRowData(
-                        (prev) =>
-                          ({
-                            ...prev,
-                            short_text: e.target.value,
-                          }) as zsbServiceItemsType,
-                      );
-                    }}
-                  />
-                </TableCell>
-                <TableCell className="">
-                  {/* <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
-                    <div
-                      className="bg-[#D1FAE5] flex justify-center items-center text-2xl  text-[#065F46] w-[30px] h-[30px] hover:cursor-pointer"
-                      onClick={() => {
-                        handleTableAdd();
-                      }}
+      <Card className="shadow-sm border-slate-200">
+        <CardHeader className="pb-3 border-b border-slate-100">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#4F6BED] to-[#6366F1] shadow-sm">
+              <ListOrdered className="h-4 w-4 text-white" aria-hidden />
+            </div>
+            <div className="min-w-0">
+              <CardTitle className="text-base font-bold tracking-tight text-[#0F172A]">
+                Items list
+              </CardTitle>
+              <p className="mt-0.5 text-[11px] font-medium text-[#94A3B8]">
+                {tableData?.length ?? 0} line item{(tableData?.length ?? 0) !== 1 ? "s" : ""}
+              </p>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3 px-0 pb-3 pt-3">
+          <div className="w-full overflow-x-auto">
+            <div className="max-h-[min(65vh,560px)] min-w-[1120px] overflow-y-auto">
+              <Table className="w-full border-collapse">
+                <TableHeader className="sticky top-0 z-[1] bg-slate-50 shadow-[0_1px_0_0_rgb(226_232_240)]">
+                  <TableRow className="border-b border-slate-200 hover:bg-slate-50">
+                    <TableHead className="h-9 w-[4%] px-1.5 text-center text-[11px] font-semibold uppercase tracking-wide text-[#475569]">
+                      #
+                    </TableHead>
+                    <TableHead className="h-9 w-[15%] px-2 text-center text-[11px] font-semibold uppercase tracking-wide text-[#475569]">
+                      Material description
+                    </TableHead>
+                    <TableHead className="h-9 w-[4%] px-1 text-center text-[11px] font-semibold uppercase tracking-wide text-[#475569]">
+                      UOM
+                    </TableHead>
+                    <TableHead className="h-9 w-[10%] px-1 text-center text-[11px] font-semibold uppercase tracking-wide text-[#475569]">
+                      Qty
+                    </TableHead>
+                    <TableHead className="h-9 w-[14%] px-2 text-center text-[11px] font-semibold uppercase tracking-wide text-[#475569]">
+                      Material group
+                    </TableHead>
+                    <TableHead className="h-9 w-[13%] px-2 text-center text-[11px] font-semibold uppercase tracking-wide text-[#475569]">
+                      Cost center
+                    </TableHead>
+                    <TableHead className="h-9 w-[14%] px-2 text-center text-[11px] font-semibold uppercase tracking-wide text-[#475569]">
+                      G/L account
+                    </TableHead>
+                    <TableHead className="h-9 w-[12%] px-2 text-center text-[11px] font-semibold uppercase tracking-wide text-[#475569]">
+                      Short text
+                    </TableHead>
+                    <TableHead className="h-9 w-[16%] px-2 text-center text-[11px] font-semibold uppercase tracking-wide text-[#475569]">
+                      Required Delivery Date
+                    </TableHead>
+                    <TableHead className="h-9 w-[30%] px-2 text-center text-[11px] font-semibold uppercase tracking-wide text-[#475569]">
+                      Action
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {tableData?.map((item, index) => (
+                    <TableRow
+                      key={index}
+                      className="border-b border-slate-100 transition-colors hover:bg-slate-50/60"
                     >
-                      +
-                    </div>
-                  </div> */}
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-        {props?.prData?.can_edit && (
-          <div className='flex gap-4'>
-            <Button className='mt-5 bg-[#5291CD] text-white rounded-lg px-6 py-2 hover:bg-[#65a4e7]' onClick={() => {
-              handleTableAdd();
-            }}>
-              {singleRowData?.name ? "Update Row" : "Add Row"}
+                      <TableCell className="px-1.5 py-2 text-center text-xs font-medium tabular-nums leading-snug text-[#334155]">
+                        {index + 1}
+                      </TableCell>
+                      <TableCell className="min-w-0 px-2 py-2 align-middle text-center text-xs leading-snug text-[#334155]">
+                        <span className="line-clamp-2 break-words" title={item.material_description}>
+                          {item.material_description}
+                        </span>
+                      </TableCell>
+                      <TableCell className="min-w-0 px-1 py-2 text-center align-middle text-xs leading-snug text-[#334155]">
+                        <span className="block truncate" title={item.uom}>
+                          {item.uom}
+                        </span>
+                      </TableCell>
+                      <TableCell className="min-w-0 px-1 py-2 text-center align-middle text-xs font-medium tabular-nums leading-snug text-[#334155]">
+                        {item.quantity}
+                      </TableCell>
+                      <TableCell className="min-w-0 px-2 py-2 align-middle text-center text-xs leading-snug text-[#334155]">
+                        <span className="line-clamp-2 break-words" title={item.material_group}>
+                          {item.material_group}
+                        </span>
+                      </TableCell>
+                      <TableCell className="min-w-0 px-2 py-2 align-middle text-center text-xs leading-snug text-[#334155]">
+                        <span className="line-clamp-2 break-words" title={item.cost_center}>
+                          {item.cost_center}
+                        </span>
+                      </TableCell>
+                      <TableCell className="min-w-0 px-2 py-2 align-middle text-center text-xs leading-snug text-[#334155]">
+                        <span className="line-clamp-2 break-words" title={item.gl_account}>
+                          {item.gl_account}
+                        </span>
+                      </TableCell>
+                      <TableCell className="min-w-0 px-2 py-2 align-middle text-center text-xs leading-snug text-[#334155]">
+                        <span className="line-clamp-2 break-words" title={item.short_text}>
+                          {item.short_text}
+                        </span>
+                      </TableCell>
+                      <TableCell className="min-w-0 px-2 py-2 align-middle text-center text-xs leading-snug text-[#334155]">
+                        <span className="line-clamp-2 break-words" title={item.required_delivery_date}>
+                          {item.required_delivery_date}
+                        </span>
+                      </TableCell>
+                      <TableCell className="min-w-0 px-1 py-1.5 align-middle">
+                        <div className="flex flex-wrap items-center justify-center gap-2">
+                          <div className="flex flex-nowrap items-center justify-center gap-1.5 rounded-lg bg-slate-50/90 px-1.5 py-1 ring-1 ring-slate-200/80">
+                            {props?.prData?.can_edit && (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      type="button"
+                                      className={`${itemsTableIconBtn} border-emerald-200/90 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-300`}
+                                      onClick={() => {
+                                        setIsSubItemDialog(true);
+                                        setIsSubItemView(false);
+                                        setSelectedSubItemIndex({ index: index, parent_id: item?.name });
+                                      }}
+                                    >
+                                      <Plus className="h-3.5 w-3.5" strokeWidth={2.25} />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Add sub line item</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
+                            {!props?.prData?.can_edit && (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      type="button"
+                                      className={`${itemsTableIconBtn} border-slate-200 bg-white text-slate-600 hover:border-[#4F6BED]/30 hover:bg-slate-50 hover:text-[#4F6BED]`}
+                                      onClick={() => {
+                                        setIsSubItemDialog(true);
+                                        setIsSubItemView(true);
+                                        setSelectedSubItemIndex({ index: index, parent_id: item?.name });
+                                      }}
+                                    >
+                                      <Eye className="h-3.5 w-3.5" strokeWidth={2} />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>View sub line items</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <span
+                                    className="inline-flex min-h-8 min-w-8 cursor-default items-center justify-center rounded-md bg-white px-1.5 text-[11px] font-semibold tabular-nums text-slate-700 ring-1 ring-inset ring-slate-200/90"
+                                    title="Sub line items count"
+                                  >
+                                    {item?.sub_items?.length ?? 0}
+                                  </span>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Sub line items count</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
+                          {props?.prData?.can_edit && (
+                            <div className="flex flex-nowrap items-center justify-center gap-1.5">
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      type="button"
+                                      className={`${itemsTableIconBtn} border-slate-200 bg-white text-slate-600 hover:border-[#4F6BED]/35 hover:bg-slate-50 hover:text-[#4F6BED]`}
+                                      onClick={() => {
+                                        handleUpdateItem(index);
+                                      }}
+                                    >
+                                      <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Edit row</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      type="button"
+                                      className={`${itemsTableIconBtn} border-red-200/90 bg-red-50 text-red-600 hover:bg-red-100`}
+                                      onClick={() => {
+                                        handleDeleteItem(item?.name as string);
+                                      }}
+                                    >
+                                      <Trash2 className="h-3.5 w-3.5" strokeWidth={2} />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Delete row</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+
+                  {props?.prData?.can_edit && (
+                    <TableRow className="border-t border-slate-200 bg-slate-50/50 hover:bg-slate-50/50">
+                      <TableCell className="px-2 py-2" />
+                      <TableCell className="min-w-0 px-2 py-2 align-middle">
+                        <Input
+                          value={singleRowData?.material_description ?? ""}
+                          onChange={(e) => {
+                            setSingleRowData(
+                              (prev) =>
+                                ({
+                                  ...prev,
+                                  material_description: e.target.value,
+                                }) as zsbServiceItemsType,
+                            );
+                          }}
+                          className="h-8 w-full min-w-0 rounded-md border-slate-200 px-2 text-xs"
+                        />
+                      </TableCell>
+                      <TableCell className="min-w-0 px-1 py-2 text-center align-middle">
+                        <span className="inline-flex h-8 w-full items-center justify-center rounded-md border border-slate-200 bg-white px-1 text-xs font-medium tabular-nums text-slate-600">
+                          AU
+                        </span>
+                      </TableCell>
+                      <TableCell className="min-w-0 px-1 py-2 align-middle">
+                        <Input
+                          type="number"
+                          min={0}
+                          value={singleRowData?.quantity ?? ""}
+                          onChange={(e) => {
+                            setSingleRowData(
+                              (prev) =>
+                                ({
+                                  ...prev,
+                                  quantity: Number(e.target.value),
+                                }) as zsbServiceItemsType,
+                            );
+                          }}
+                          className="h-8 w-full min-w-0 rounded-md border-slate-200 px-2 text-center text-xs tabular-nums"
+                        />
+                      </TableCell>
+                      <TableCell className="min-w-0 px-2 py-2 align-middle">
+                        <MultiSelect
+                          options={materialGroupDropdown?.map(item => ({ label: item?.material_group_description || item?.name, value: item?.name })) || []}
+                          value={singleRowData?.material_group ? { label: materialGroupDropdown?.find(p => p.name === singleRowData.material_group)?.material_group_description || singleRowData.material_group, value: singleRowData.material_group } : null}
+                          onChange={(selectedOption: any) => {
+                            setSingleRowData(
+                              (prev) =>
+                                ({
+                                  ...prev,
+                                  material_group: selectedOption?.value,
+                                }) as zsbServiceItemsType,
+                            );
+                          }}
+                          instanceId="zsbservice-mg-select"
+                          placeholder="Material group"
+                          className="w-full min-w-0 text-left text-xs text-black"
+                          styles={itemsRowSelectStyles("min(24rem, 90vw)")}
+                          menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+                          menuPlacement="auto"
+                          menuPosition="fixed"
+                        />
+                      </TableCell>
+                      <TableCell className="min-w-0 px-2 py-2 align-middle">
+                        <MultiSelect
+                          options={costCenterDropdown?.map(item => ({ label: item?.cost_center_name || item?.name, value: item?.name })) || []}
+                          value={singleRowData?.cost_center ? { label: costCenterDropdown?.find(p => p.name === singleRowData.cost_center)?.cost_center_name || singleRowData.cost_center, value: singleRowData.cost_center } : null}
+                          onChange={(selectedOption: any) => {
+                            setSingleRowData(
+                              (prev) =>
+                                ({
+                                  ...prev,
+                                  cost_center: selectedOption?.value,
+                                }) as zsbServiceItemsType,
+                            );
+                          }}
+                          instanceId="zsbservice-cc-select"
+                          placeholder="Cost center"
+                          className="w-full min-w-0 text-left text-xs text-black"
+                          styles={itemsRowSelectStyles("min(28rem, 90vw)")}
+                          menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+                          menuPlacement="auto"
+                          menuPosition="fixed"
+                        />
+                      </TableCell>
+                      <TableCell className="min-w-0 px-2 py-2 align-middle">
+                        <MultiSelect
+                          options={glAccountDropdown?.map(item => ({ label: item?.gl_account_name || item?.name, value: item?.name })) || []}
+                          value={singleRowData?.gl_account ? { label: glAccountDropdown?.find(p => p.name === singleRowData.gl_account)?.gl_account_name || singleRowData.gl_account, value: singleRowData.gl_account } : null}
+                          onChange={(selectedOption: any) => {
+                            setSingleRowData(
+                              (prev) =>
+                                ({
+                                  ...prev,
+                                  gl_account: selectedOption?.value,
+                                }) as zsbServiceItemsType,
+                            );
+                          }}
+                          instanceId="zsbservice-gl-select"
+                          placeholder="G/L account"
+                          className="w-full min-w-0 text-left text-xs text-black"
+                          styles={itemsRowSelectStyles("min(30rem, 92vw)")}
+                          menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+                          menuPlacement="auto"
+                          menuPosition="fixed"
+                        />
+                      </TableCell>
+                      <TableCell className="min-w-0 px-2 py-2 align-middle">
+                        <Input
+                          type="text"
+                          value={singleRowData?.short_text ?? ""}
+                          onChange={(e) => {
+                            setSingleRowData(
+                              (prev) =>
+                                ({
+                                  ...prev,
+                                  short_text: e.target.value,
+                                }) as zsbServiceItemsType,
+                            );
+                          }}
+                          className="h-8 w-full min-w-0 rounded-md border-slate-200 px-2 text-xs"
+                        />
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        <Input type="date"
+                          className="h-8 text-xs rounded-md px-2"
+                          value={singleRowData?.required_delivery_date ?? ""}
+                          min={new Date().toISOString().split('T')[0]}
+                          onChange={(e) => { setSingleRowData(prev => ({ ...prev, required_delivery_date: e.target.value } as zsbServiceItemsType)) }}
+                        />
+                      </TableCell>
+                      <TableCell className="min-w-0 px-1 py-2 align-middle" />
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+          {props?.prData?.can_edit && (
+          <div className="flex flex-wrap items-center gap-2 border-t border-slate-100 px-4 pt-3">
+            <Button
+              className="h-8 rounded-lg bg-[#4F6BED] px-4 text-xs text-white shadow-sm hover:bg-[#3d56c7]"
+              onClick={() => {
+                handleTableAdd();
+              }}
+            >
+              {singleRowData?.name ? "Update row" : "Add row"}
               <span ref={addLoaderRef} className="hidden">
-                <Loader2 className="w-5 h-5" />
+                <Loader2 className="w-4 h-4" />
               </span>
             </Button>
             {singleRowData?.name && (
-              <Button className='mt-5 bg-red-100 text-red-600 rounded-lg px-6 py-2 hover:bg-red-200' onClick={() => {
-                setSingleRowData(undefined);
-                setIsPurchaseGroupDropdown(false);
-                setUOM(undefined);
-              }}>
+              <Button
+                variant="backbtn"
+                size="backbtnsize"
+                className="h-8 rounded-lg border-red-200 text-xs text-red-600 hover:bg-red-50"
+                onClick={() => {
+                  setSingleRowData(undefined);
+                  setIsPurchaseGroupDropdown(false);
+                  setUOM(undefined);
+                }}
+              >
                 Cancel
               </Button>
             )}
           </div>
-        )}
+          )}
+        </CardContent>
+      </Card>
 
+      <div className="flex justify-end pt-1">
+        {
+          props?.prData?.can_edit &&
+          <Button className="mt-3 h-8 rounded-lg bg-[#4F6BED] px-4 text-xs text-white shadow-sm hover:bg-[#3d56c7]" onClick={() => {
+            let isAlert = true;
+            if (singleRowData?.material_description || singleRowData?.quantity || singleRowData?.material_group || singleRowData?.cost_center || singleRowData?.gl_account) {
+              alert("You have unsaved changes in the table. Do you want to continue without saving?") 
+              isAlert = false;
+                return;
+              }
+            //   isAlert = false;
+            // }
+            props?.handlePurchaseRequisitionSubmit(isAlert);
+          }}>
+            Submit PR
+            <span ref={props?.submitLoaderRef} className="hidden">
+              <Loader2 className="w-4 h-4" />
+            </span>
+          </Button>
+        }
       </div>
       {isSubItemDialog && (
         <PopUp
           handleClose={handleClose}
-          headerText="SubItems"
-          classname="md:max-w-[1300px]"
+          headerText="Sub line items"
+          isHeaderTextUnderline
+          containInMainColumn
+          compact
+          classname="min-w-0 mx-auto w-[calc(100%-2rem)] max-w-[calc(100vw-1.5rem)] md:max-w-[min(64rem,calc(100vw-115px-2rem))] md:max-h-[min(88vh,720px)]"
         >
-          <Table className=" max-h-40 overflow-y-scroll border border-black/20">
-            <TableHeader className="text-center">
-              <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                <TableHead className="text-center w-[50px]">Sr No.</TableHead>
-                <TableHead className="w-[15%]">Service No</TableHead>
-                <TableHead className="w-[40%]">Short Text</TableHead>
-                <TableHead className="w-[15%]">UOM</TableHead>
-                <TableHead className="w-[15%]">Quantity</TableHead>
-                {props?.prData?.can_edit && !isSubItemsView && (
-                  <TableHead className="w-[15%]">Action</TableHead>
-                )}
-              </TableRow>
-            </TableHeader>
-            <TableBody className="">
-              {tableData?.[selectedSubItemIndex?.index as number]?.sub_items?.map(
-                (item, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium text-center w-[50px]">
-                      {index + 1}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {item.service_code}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {item.short_text}
-                    </TableCell>
-                    <TableCell className="font-medium">{item.uom}</TableCell>
-                    <TableCell className="font-medium">
-                      {item.quantity}
-                    </TableCell>
-                    {props?.prData?.can_edit && !isSubItemsView && (
-                      <TableCell className="font-medium">
-                        <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
-
-                          {/* Pencil Icon */}
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <svg
-                                  onClick={() => {
-                                    handleUpdateSubItem(index);
-                                  }}
-                                  className="hover:cursor-pointer"
-                                  width="22"
-                                  height="22"
-                                  viewBox="0 0 22 22"
-                                  fill="none"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path
-                                    d="M12 20.0008H20.0001M14.0001 4.00045L18.0001 8.00054M20.1741 5.81249C20.7028 5.2839 20.9999 4.56693 21 3.8193C21.0001 3.07167 20.7032 2.35462 20.1746 1.8259C19.646 1.29718 18.9291 1.00009 18.1814 1C17.4338 0.999906 16.7168 1.29681 16.1881 1.8254L2.84195 15.1747C2.60977 15.4062 2.43806 15.6912 2.34195 16.0047L1.02093 20.3568C0.99509 20.4433 0.993138 20.5352 1.01529 20.6227C1.03743 20.7102 1.08286 20.7901 1.14673 20.8538C1.21061 20.9176 1.29056 20.9629 1.3781 20.9849C1.46564 21.0069 1.5575 21.0048 1.64394 20.9788L5.99698 19.6588C6.31015 19.5636 6.59516 19.3929 6.82699 19.1618L20.1741 5.81249Z"
-                                    stroke="#03111F"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                  />
-                                </svg>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Edit Sub Item</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Trash2
-                                  className="text-red-400 hover:cursor-pointer"
-                                  onClick={() => {
-                                    handleSublineItemDelete(item?.name as string);
-                                  }}
-                                />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Delete Sub Item</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </div>
-                      </TableCell>
+          <p className="mb-3 border-b border-slate-100 pb-2 text-xs leading-snug text-[#64748B]">
+            {isSubItemsView
+              ? "Read-only list of sub line items for this row."
+              : "Add or edit sub line items. Use the bottom row, then add."}
+          </p>
+          <div className="mb-4 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+            <div className="max-h-[min(52vh,480px)] overflow-y-auto overflow-x-auto pb-3">
+              <Table className="w-max min-w-full table-auto">
+                <TableHeader className="sticky top-0 z-[1] bg-slate-50 shadow-[0_1px_0_0_rgb(226_232_240)]">
+                  <TableRow className="border-b border-slate-200 hover:bg-slate-50">
+                    <TableHead className="h-9 w-14 shrink-0 px-2 text-center text-[11px] font-semibold uppercase tracking-wide text-[#475569]">
+                      Sr no.
+                    </TableHead>
+                    <TableHead className="h-9 min-w-[13rem] px-3 text-left text-[11px] font-semibold uppercase tracking-wide text-[#475569]">
+                      Service no.
+                    </TableHead>
+                    <TableHead className="h-9 min-w-[16rem] px-3 text-left text-[11px] font-semibold uppercase tracking-wide text-[#475569]">
+                      Short text
+                    </TableHead>
+                    <TableHead className="h-9 min-w-[11rem] px-2 text-center text-[11px] font-semibold uppercase tracking-wide text-[#475569]">
+                      UOM
+                    </TableHead>
+                    <TableHead className="h-9 w-20 min-w-[4.5rem] shrink-0 px-2 text-center text-[11px] font-semibold uppercase tracking-wide text-[#475569]">
+                      Qty
+                    </TableHead>
+                    {subDlgActions && (
+                      <TableHead className="h-9 w-24 shrink-0 px-2 text-center text-[11px] font-semibold uppercase tracking-wide text-[#475569]">
+                        Action
+                      </TableHead>
                     )}
                   </TableRow>
-                ),
-              )}
+                </TableHeader>
+                <TableBody>
+                  {tableData?.[selectedSubItemIndex?.index as number]?.sub_items?.map(
+                    (item, index) => (
+                      <TableRow
+                        key={index}
+                        className="border-b border-slate-100 transition-colors hover:bg-slate-50/70"
+                      >
+                        <TableCell className="px-2 py-2 text-center text-xs font-medium leading-snug tabular-nums text-[#334155]">
+                          {index + 1}
+                        </TableCell>
+                        <TableCell className="max-w-xs px-3 py-2 text-xs leading-snug text-[#334155]">
+                          <span className="block break-words" title={item.service_code}>
+                            {item.service_code}
+                          </span>
+                        </TableCell>
+                        <TableCell className="max-w-md px-3 py-2 text-xs leading-snug text-[#334155]">
+                          <span className="block break-words" title={item.short_text}>
+                            {item.short_text}
+                          </span>
+                        </TableCell>
+                        <TableCell className="max-w-[10rem] px-2 py-2 text-center text-xs leading-snug text-[#334155]">
+                          <span className="block break-words" title={item.uom}>
+                            {item.uom}
+                          </span>
+                        </TableCell>
+                        <TableCell className="px-2 py-2 text-center text-xs font-medium leading-snug tabular-nums text-[#334155]">
+                          {item.quantity}
+                        </TableCell>
+                        {subDlgActions && (
+                          <TableCell className="px-2 py-2">
+                            <div className="flex items-center justify-center gap-1">
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      type="button"
+                                      className={`${subItemDialogIconBtn} border-slate-200 bg-white text-slate-600 hover:border-[#4F6BED]/35 hover:bg-slate-50 hover:text-[#4F6BED]`}
+                                      onClick={() => {
+                                        handleUpdateSubItem(index);
+                                      }}
+                                    >
+                                      <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Edit sub line item</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
 
-              {props?.prData?.can_edit && !isSubItemsView && (
-                <TableRow>
-                  <TableCell className="font-medium text-center"></TableCell>
-                  <TableCell className="font-medium">
-                    <Select
-                      value={subLineItem?.service_code ?? ""}
-                      onValueChange={(value) => {
-                        fetchUomBasedOnServiceCode(value);
-                        fetchShortTextBasedOnServiceCode(value);
-                        setSubLineItem(
-                          (prev) =>
-                            ({
-                              ...prev,
-                              service_code: value,
-                            }) as zsbServiceSubItemsType,
-                        );
-                      }}
-                    >
-                      <SelectTrigger className="rounded-xl">
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {serviceCodeDropdown?.map((item) => (
-                            <SelectItem key={item?.name} value={item?.name}>
-                              {item?.service_code}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    <Input
-                      disabled={isSubItemShortText ? true : false}
-                      value={subLineItem?.short_text ?? ""}
-                      onChange={(e) => {
-                        setSubLineItem(
-                          (prev) =>
-                            ({
-                              ...prev,
-                              short_text: e.target.value,
-                            }) as zsbServiceSubItemsType,
-                        );
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    <MultiSelect
-                      isDisabled={isSubItemUom ? true : false}
-                      options={UOMDropdown?.map(item => ({ label: item?.description || item?.name, value: item?.name })) || []}
-                      value={subLineItem?.uom ? { label: UOMDropdown?.find(p => p.name === subLineItem.uom)?.description || subLineItem.uom, value: subLineItem.uom } : null}
-                      onChange={(selectedOption: any) => {
-                        setSubLineItem(
-                          (prev) =>
-                            ({ ...prev, uom: selectedOption?.value }) as zsbServiceSubItemsType,
-                        );
-                      }}
-                      instanceId="zsbservice-subuom-select"
-                      placeholder="Select UOM..."
-                      className="text-[12px] text-black text-left min-w-[150px]"
-                      styles={{
-                        ...multiSelectStyles,
-                        control: (base: any) => ({
-                          ...base,
-                          minHeight: "36px",
-                          borderRadius: "0.5rem",
-                          borderColor: "#e5e7eb",
-                        }),
-                      }}
-                      menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
-                      menuPlacement="auto"
-                      menuPosition="fixed"
-                    />
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    <Input type="number" min="0" value={subLineItem?.quantity ?? ""} onChange={(e) => { if (Number(e.target.value) < 0) return; setSubLineItem((prev: any) => ({ ...prev, quantity: e.target.value })) }} />
-                  </TableCell>
-                  <TableCell className="">
-                    <div className="flex gap-4 justify-center items-center p-0 m-0 w-fit">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div
-                              className="bg-[#D1FAE5] flex justify-center items-center text-2xl  text-[#065F46] w-[30px] h-[30px] hover:cursor-pointer"
-                              onClick={() => {
-                                handleSubItemAdd();
-                              }}
-                            >
-                              +
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      type="button"
+                                      className={`${subItemDialogIconBtn} border-red-200/90 bg-red-50 text-red-600 hover:bg-red-100`}
+                                      onClick={() => {
+                                        handleSublineItemDelete(item?.name as string);
+                                      }}
+                                    >
+                                      <Trash2 className="h-3.5 w-3.5" strokeWidth={2} />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Delete sub line item</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Add Sub Item</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    ),
+                  )}
 
-                      {subLineItem?.name && (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div
-                                className="bg-red-100 flex justify-center items-center text-lg text-red-600 w-[30px] h-[30px] hover:cursor-pointer rounded-full"
-                                onClick={() => {
-                                  setSubLineItem(undefined);
-                                }}
-                              >
-                                ✕
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Cancel Sub Item Update</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                  {subDlgActions && (
+                    <TableRow className="border-t border-slate-200 bg-slate-50/50 hover:bg-slate-50/50">
+                      <TableCell className="px-2 py-2 text-center" />
+                      <TableCell className="min-w-[13rem] px-3 py-2">
+                        <Select
+                          value={subLineItem?.service_code ?? ""}
+                          onValueChange={(value) => {
+                            fetchUomBasedOnServiceCode(value);
+                            fetchShortTextBasedOnServiceCode(value);
+                            setSubLineItem(
+                              (prev) =>
+                                ({
+                                  ...prev,
+                                  service_code: value,
+                                }) as zsbServiceSubItemsType,
+                            );
+                          }}
+                        >
+                          <SelectTrigger className="h-8 w-full min-w-[12rem] rounded-md border-slate-200 bg-white text-xs">
+                            <SelectValue placeholder="Service no." />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-72 min-w-[var(--radix-select-trigger-width)] sm:min-w-[26rem]">
+                            <SelectGroup>
+                              {serviceCodeDropdown?.map((item) => (
+                                <SelectItem key={item?.name} value={item?.name}>
+                                  {item?.service_code}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell className="min-w-[16rem] px-3 py-2">
+                        <Input
+                          disabled={isSubItemShortText ? true : false}
+                          value={subLineItem?.short_text ?? ""}
+                          onChange={(e) => {
+                            setSubLineItem(
+                              (prev) =>
+                                ({
+                                  ...prev,
+                                  short_text: e.target.value,
+                                }) as zsbServiceSubItemsType,
+                            );
+                          }}
+                          className="h-8 w-full min-w-[14rem] rounded-md border-slate-200 px-2 text-xs"
+                        />
+                      </TableCell>
+                      <TableCell className="min-w-[11rem] px-2 py-2">
+                        <MultiSelect
+                          isDisabled={isSubItemUom ? true : false}
+                          options={UOMDropdown?.map(item => ({ label: item?.description || item?.name, value: item?.name })) || []}
+                          value={subLineItem?.uom ? { label: UOMDropdown?.find(p => p.name === subLineItem.uom)?.description || subLineItem.uom, value: subLineItem.uom } : null}
+                          onChange={(selectedOption: any) => {
+                            setSubLineItem(
+                              (prev) =>
+                                ({ ...prev, uom: selectedOption?.value }) as zsbServiceSubItemsType,
+                            );
+                          }}
+                          instanceId="zsbservice-subuom-select"
+                          placeholder="UOM"
+                          className="min-w-[10rem] text-left text-xs text-black"
+                          styles={itemsRowSelectStyles("min(12rem, calc(100vw - 2rem))")}
+                          menuPortalTarget={typeof document !== "undefined" ? document.body : undefined}
+                          menuPlacement="auto"
+                          menuPosition="fixed"
+                        />
+                      </TableCell>
+                      <TableCell className="w-20 min-w-[4.5rem] px-2 py-2">
+                        <Input
+                          value={subLineItem?.quantity ?? ""}
+                          onChange={(e) => {
+                            setSubLineItem((prev: any) => ({ ...prev, quantity: e.target.value }));
+                          }}
+                          className="h-8 w-full rounded-md border-slate-200 px-2 text-xs tabular-nums"
+                        />
+                      </TableCell>
+                      <TableCell className="w-24 px-2 py-2">
+                        <div className="flex items-center justify-center gap-1">
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <button
+                                  type="button"
+                                  className={`${subItemDialogIconBtn} border-emerald-200/90 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-300`}
+                                  onClick={() => {
+                                    handleSubItemAdd();
+                                  }}
+                                >
+                                  <Plus className="h-3.5 w-3.5" strokeWidth={2.25} />
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Add sub line item</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+
+                          {subLineItem?.name && (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <button
+                                    type="button"
+                                    className={`${subItemDialogIconBtn} border-red-200/90 bg-white text-red-600 hover:bg-red-50`}
+                                    onClick={() => {
+                                      setSubLineItem(undefined);
+                                    }}
+                                  >
+                                    <X className="h-3.5 w-3.5" strokeWidth={2.25} />
+                                  </button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Cancel update</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
         </PopUp>
       )}
     </>

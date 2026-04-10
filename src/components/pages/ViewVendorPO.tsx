@@ -1,318 +1,355 @@
 "use client"
-import React, { useEffect, useState } from "react";
-import POPrintFormat from "../molecules/POPrintFormat";
-import API_END_POINTS from "@/src/services/apiEndPoints";
-import { AxiosResponse } from "axios";
-import requestWrapper from "@/src/services/apiCall";
-import PopUp from "../molecules/PopUp";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../atoms/table";
-import { Input } from "../atoms/input";
-import { Button } from "../atoms/button";
 import { useRouter } from "next/navigation";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../atoms/select";
-import PODialog from '@/src/components/molecules/PODialog';
-
-
-interface POItemsTable {
-  name: string,
-  product_name: string,
-  material_code: string,
-  plant: string,
-  schedule_date: string,
-  quantity: string,
-  early_delivery_date: string
-  purchase_team_remarks: string,
-  requested_for_earlydelivery: boolean,
-  vendor_remarks: string,
-  rejected_by_vendor: boolean,
-  approved_by_vendor: boolean
-}
+import MultiSelect from "react-select";
+import { TvendorRegistrationDropdown } from "@/src/types/types";
+import Pagination from "../molecules/Pagination";
+import { useAuth } from "@/src/context/AuthContext";
+import { PoListViewRecord } from "@/src/types/po/po.types";
+import { getPoListView } from "@/src/services/purchaseOrder/purchaseOrder.services";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  FileText,
+  Search,
+  Building2,
+  Eye,
+  Package,
+  Loader2,
+} from "lucide-react";
 
 interface PODropdown {
-  name: string,
-  po_no: string,
-  company_code: string
+  name: string;
+  po_no: string;
+  company_code: string;
 }
 
 interface Props {
-  po_name?: string
-  dropdown: any
+  po_name?: string;
+  dropdown: PODropdown[];
+  companyDropdown: TvendorRegistrationDropdown["message"]["data"]["company_master"] | undefined;
 }
 
-interface PRDetails {
-  approved_from_vendor?: number;
-  [key: string]: any;
-}
+const statusColor = (status?: string) => {
+  if (!status) return "bg-gray-100 text-gray-600 border-gray-200";
+  const s = status.toLowerCase();
+  if (s.includes("approved") || s.includes("released") || s.includes("confirmed"))
+    return "bg-emerald-50 text-emerald-700 border-emerald-200";
+  if (s.includes("awaiting") || s.includes("pending") || s.includes("open"))
+    return "bg-amber-50 text-amber-700 border-amber-200";
+  if (s.includes("reject") || s.includes("cancel")) return "bg-red-50 text-red-700 border-red-200";
+  return "bg-blue-50 text-blue-700 border-blue-200";
+};
 
-const ViewVendorPO = ({ po_name, dropdown }: Props) => {
+const ViewVendorPO = ({ po_name, dropdown, companyDropdown }: Props) => {
   const router = useRouter();
-  const [prDetails, setPRDetails] = useState<PRDetails | PRDetails[] | null>(null);
+  const { vendorRef } = useAuth();
+
   const [PRNumber, setPRNumber] = useState<string | undefined>(po_name);
-  const [POItemsTable, setPOItemsTable] = useState<POItemsTable[]>([]);
-  const [isEarlyDeliveryDialog, setIsEarlyDeliveryDialog] = useState<boolean>(false);
-  const [PONumberDropdown, setPONumberDropdown] = useState<PODropdown[]>([]);
-  const [isPrintFormat, setIPrintFormat] = useState<boolean>(false);
-  const [status, setStatus] = useState<"approve" | "reject" | "">("");
-  const [comments, setComments] = useState("");
-  const [isDialog, setIsDialog] = useState(false);
-  const [date, setDate] = useState("");
-  const [poNumber, setPONumber] = useState("");
+  const [tableData, setTableData] = useState<PoListViewRecord[]>([]);
+  const [selectedCompany, setSelectedCompany] = useState<string>("_all");
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
+  const hasLoadedOnce = useRef(false);
 
-  const getPODetails = async () => {
-    if (!PRNumber) {
-      alert("Please Select PO Number");
-      return;
-    }
-    const url = `${API_END_POINTS?.getPrintFormatData}?po_name=${PRNumber}`;
-    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" })
-    if (response?.status == 200) {
-      // console.log(response?.data?.message,"this is response")
-      setPRDetails(response?.data?.message?.data);
-    }
-    setIPrintFormat(true)
-  }
-
-
-
-  const handleClose = () => {
-    setIsEarlyDeliveryDialog(false);
-  }
+  const [total_event_list, settotalEventList] = useState(0);
+  const [record_per_page] = useState<number>(10);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   useEffect(() => {
-    if (po_name) {
-      const button = document.getElementById("viewPrintBtn");
-      if (button) {
-        button.click();
+    if (po_name) setPRNumber(po_name);
+  }, [po_name]);
+
+  const poOptions = useMemo(
+    () =>
+      (dropdown || []).map((po: PODropdown) => ({
+        value: po.name,
+        label: [po.po_no || po.name, po.company_code].filter(Boolean).join(" · ") || po.name,
+      })),
+    [dropdown]
+  );
+
+  const selectedPoOption = useMemo(() => {
+    if (!PRNumber) return null;
+    const found = poOptions.find((o) => o.value === PRNumber);
+    return found ?? { value: PRNumber, label: PRNumber };
+  }, [PRNumber, poOptions]);
+
+  const fetchPoTable = useCallback(async () => {
+    try {
+      if (hasLoadedOnce.current) {
+        setIsFetching(true);
       }
+      const res = await getPoListView({
+        search_term: PRNumber || "",
+        company: selectedCompany === "_all" ? "" : selectedCompany,
+        page_no: currentPage,
+        page_size: record_per_page,
+      });
+      setTableData(res?.data || []);
+      settotalEventList(res?.total_count || 0);
+    } catch (err) {
+      console.error("Error fetching PO table:", err);
+    } finally {
+      hasLoadedOnce.current = true;
+      setIsInitialLoad(false);
+      setIsFetching(false);
     }
-  }, [])
+  }, [PRNumber, selectedCompany, currentPage, record_per_page]);
 
+  useEffect(() => {
+    fetchPoTable();
+  }, [vendorRef, fetchPoTable]);
 
-  const handleOpen = () => {
-    fetchPOItems();
-    setIsEarlyDeliveryDialog(true);
-  }
-
-
-  const fetchPOItems = async () => {
-    const url = `${API_END_POINTS?.POItemsTable}?po_name=${PRNumber}`;
-    const response: AxiosResponse = await requestWrapper({ url: url, method: "GET" });
-    if (response?.status == 200) {
-      setPOItemsTable(response?.data?.message?.items)
-    }
-  }
-
-
-  const handleTableChange = (index: number, name: string, value: string | boolean) => {
-    // const { name, value } = e.target;
-    setPOItemsTable((prev) => {
-      const updated = [...prev];
-      if (updated[index]) {
-        updated[index] = { ...updated[index], [name]: value };
-      }
-      return updated;
-    });
-  }
-
-
-  const handlePoItemsSubmit = async () => {
-    const url = API_END_POINTS?.POItemsApproval;
-    const updatedData = { items: POItemsTable, po_name: PRNumber };
-    const response: AxiosResponse = await requestWrapper({ url: url, method: "POST", data: { data: updatedData } });
-    if (response?.status == 200) {
-      alert("submitted successfully");
-    }
+  const handlePOChange = (value: string) => {
+    setPRNumber(value || undefined);
+    setCurrentPage(1);
   };
 
-  const handleApproval = async (status: "approve" | "reject" | "") => {
-    const url = {
-      approve: `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.vendors_dashboards_api.po_approve_reject.po_approve`,
-      reject: `${process.env.NEXT_PUBLIC_BACKEND_END}/api/method/vms.APIs.vendors_dashboards_api.po_approve_reject.po_reject`,
-    };
-    let apiUrl = "";
-    if (status) {
-      apiUrl = url[status];
-    }
-    const response: AxiosResponse = await requestWrapper({ url: apiUrl, data: { data: { po_name: poNumber, tentative_date: status == "approve" ? date : "", reason_for_rejection: status == "reject" ? comments : "" } }, method: "POST" });
-    if (response?.status == 200) {
-      if (status == "approve") {
-        alert("approved successfully");
-        location.reload();
-      } else {
-        alert("rejected successfully")
-      }
-    }
+  const formatDate = (dateStr: string | null | undefined) => {
+    if (!dateStr) return "—";
+    const cleanDate = dateStr.trim().split(" ")[0];
+    if (!cleanDate) return "—";
+    const [year, month, day] = cleanDate.split("-");
+    if (!year || !month || !day) return "—";
+    return `${day}-${month}-${year}`;
   };
-
-  const handleBack = () => {
-    setIsDialog(false);
-    setDate("");
-    setComments("");
-  };
-
-  const approvedFromVendor =
-    Array.isArray(prDetails)
-      ? prDetails[0]?.approved_from_vendor
-      : prDetails?.approved_from_vendor;
-
-
-  // const getPODropdown = async()=>{
-  //   const url = API_END_POINTS?.getPONumberDropdown;
-  //   const response:AxiosResponse = await requestWrapper({url:url,method:'GET'});
-  //   if(response?.status == 200){
-  //     // console.log(response?.data?.message?.data,"this is dropdown");
-  //     setPONumberDropdown(response?.data?.message?.total_po);
-  //     console.log(response?.data?.message?.total_po);
-  //   }
-  // }
-  console.log(prDetails, "this is pr details")
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] space-y-6 text-sm text-black font-sans m-5">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-md border border-gray-300">
-        {/* <input
-        onChange={(e)=>{setPRNumber(e.target.value)}}
-          type="text"
-          className="w-full md:w-1/2 border border-gray-300 rounded px-4 py-2 focus:outline-none hover:border-blue-700 transition"
-        /> */}
-        <Select onValueChange={(value) => { setPRNumber(value) }} value={PRNumber ?? ""}>
-          <SelectTrigger className="w-60">
-            <SelectValue placeholder="Select PO Number" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {
-                dropdown?.map((item: any, index: any) => (
-                  <SelectItem key={index} value={item?.name}>{item?.name}</SelectItem>
-                ))
-              }
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <div className="flex gap-2 md:gap-4">
-          <Button id="viewPrintBtn" onClick={() => { getPODetails() }} variant={"nextbtn"} size={"nextbtnsize"} className="py-2 transition text-nowrap rounded-[16px]">
-            View PO Details
-          </Button>
-          <Button onClick={() => { router.push(`/view-po-line-items?po_name=${PRNumber}`) }} variant={"nextbtn"} size={"nextbtnsize"} className="py-2 transition text-nowrap rounded-[16px]">
-            View All Changed PO Details
-          </Button>
+    <div className="p-4 space-y-4 max-w-[1600px] mx-auto">
+      {/* Page intro */}
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-lg font-bold text-[#0F172A] tracking-tight">Vendor purchase orders</h1>
+          <p className="text-[13px] text-[#64748B] mt-0.5">
+            Search by PO, filter by company, then open a PO to acknowledge or raise advance.
+          </p>
         </div>
+        {total_event_list > 0 && (
+          <Badge variant="outline" className="w-fit text-[11px] font-semibold border-slate-200 bg-white text-[#475569]">
+            {total_event_list} result{total_event_list !== 1 ? "s" : ""}
+          </Badge>
+        )}
       </div>
 
-      {/* Early Delivery Button */}
-      {/* <div className="text-left">
-        <button onClick={()=>{handleOpen()}} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-          Early Delivery
-        </button>
-      </div> */}
+      {/* Filters + table */}
+      <Card className="shadow-sm border-slate-200 overflow-hidden">
+        <CardHeader className="py-3 px-4 border-b border-slate-100 bg-gradient-to-r from-[#F8FAFC] to-white">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#4F6BED] to-[#7C93F5] flex items-center justify-center shadow-sm flex-shrink-0">
+                <Package className="w-4 h-4 text-white" />
+              </div>
+              <div className="min-w-0">
+                <CardTitle className="text-sm font-bold text-[#0F172A] tracking-tight">Purchase order list</CardTitle>
+                <p className="text-[11px] text-[#94A3B8] mt-0.5 font-medium leading-none">
+                  Filter and select a row to view details
+                </p>
+              </div>
+            </div>
 
-      {/* PO Main Section */}
-      {
-        isPrintFormat &&
-        <POPrintFormat prDetails={prDetails} />
-      }
-      {/* End of Print Format */}
-
-      {
-        isEarlyDeliveryDialog &&
-        <PopUp classname="w-full md:max-w-[60vw] md:max-h-[60vh] h-full overflow-y-scroll" handleClose={handleClose}>
-          <h1 className="pl-5">Purchase Inquiry Items</h1>
-          <div className="shadow- bg-[#f6f6f7] mb-4 p-4 rounded-2xl">
-            <Table className=" max-h-40 overflow-y-scroll overflow-x-scroll">
-              <TableHeader className="text-center">
-                <TableRow className="bg-[#DDE8FE] text-[#2568EF] text-[14px] hover:bg-[#DDE8FE] text-center text-nowrap">
-                  <TableHead className="text-center">Product Name</TableHead>
-                  <TableHead className="text-center">Material Code</TableHead>
-                  <TableHead className="text-center">Plant</TableHead>
-                  <TableHead className="text-center">Schedule Date</TableHead>
-                  <TableHead className="text-center">Quantity</TableHead>
-                  <TableHead className="text-center">Early Delivery Date</TableHead>
-                  <TableHead className="text-center">Remarks</TableHead>
-                  <TableHead className="text-center">Approved</TableHead>
-                  <TableHead className="text-center">Rejected</TableHead>
-                  <TableHead className="text-center">Vendor Remarks</TableHead>
-
-                </TableRow>
-              </TableHeader>
-              <TableBody className="text-center">
-                {POItemsTable?.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{item?.product_name}</TableCell>
-                    <TableCell className='text-center'>{item?.material_code}</TableCell>
-                    <TableCell>{item?.plant}</TableCell>
-                    <TableCell>{item?.schedule_date}</TableCell>
-                    <TableCell>{item?.quantity}</TableCell>
-                    <TableCell className={`flex justify-center`}>{item?.early_delivery_date}</TableCell>
-                    <TableCell>{item?.purchase_team_remarks}</TableCell>
-                    {/* <TableCell>
-                  <div className={`flex justify-center gap-2`}>
-                    <div className="flex flex-col gap-2 w-3">
-                  <Input  type="radio" name="early_delivery_date" onChange={(e)=>{handleTableChange(index,e.target.name,e.target.value)}} value={item?.early_delivery_date ?? ""}  className=' disabled:opacity-100' />
-                  <h1>approved</h1>
-                    </div>
-                    <div className="flex flex-col gap-2 w-3">
-                  <Input  type="radio" name="early_delivery_date" onChange={(e)=>{handleTableChange(index,e.target.name,e.target.value)}} value={item?.early_delivery_date ?? ""}  className=' disabled:opacity-100' />
-                  <h1>rejected</h1>
-                    </div>
+            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto lg:min-w-0">
+              <div className="flex-1 min-w-[200px] max-w-md">
+                <label className="sr-only">Search PO</label>
+                <div className="relative">
+                  {/* <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#94A3B8] pointer-events-none z-[1]" /> */}
+                  <div className="pl-7">
+                    <MultiSelect
+                      className="text-sm"
+                      classNamePrefix="vendor-po"
+                      instanceId="vendor-po-search-select"
+                      options={poOptions}
+                      placeholder="Search PO number…"
+                      isSearchable
+                      isClearable
+                      onChange={(selectedOption: { value: string } | null) => {
+                        handlePOChange(selectedOption?.value || "");
+                      }}
+                      value={selectedPoOption}
+                      styles={{
+                        control: (base) => ({
+                          ...base,
+                          borderRadius: "0.5rem",
+                          borderColor: "#e2e8f0",
+                          minHeight: "36px",
+                          fontSize: "0.8125rem",
+                          boxShadow: "none",
+                          "&:hover": { borderColor: "#cbd5e1" },
+                        }),
+                        placeholder: (base) => ({ ...base, color: "#94a3b8", fontSize: "0.8125rem" }),
+                        singleValue: (base) => ({ ...base, fontSize: "0.8125rem", color: "#334155" }),
+                        menu: (base) => ({ ...base, zIndex: 20 }),
+                      }}
+                    />
                   </div>
-                  </TableCell> */}
-                    <TableCell>
-                      <input
-                        className="w-4"
-                        type="radio"
-                        name={`vendor_response_${index}`}
-                        checked={item.approved_by_vendor}
-                        onChange={() => {
-                          handleTableChange(index, "approved_by_vendor", true);
-                          handleTableChange(index, "rejected_by_vendor", false);
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <input
-                        className="w-4"
-                        type="radio"
-                        name={`vendor_response_${index}`}
-                        checked={item.rejected_by_vendor}
-                        onChange={() => {
-                          handleTableChange(index, "approved_by_vendor", false);
-                          handleTableChange(index, "rejected_by_vendor", true);
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell><div className={`flex justify-center`}> <Input name="vendor_remarks" onChange={(e) => { handleTableChange(index, e.target.name, e.target.value) }} value={item?.vendor_remarks ?? ""} className=' w-36 disabled:opacity-100' /></div></TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </div>
+              </div>
+              <div className="w-full sm:w-[220px] flex-shrink-0">
+                <label className="sr-only">Company</label>
+                <div className="flex items-center gap-2">
+                  {/* <Building2 className="w-3.5 h-3.5 text-[#94A3B8] flex-shrink-0 hidden sm:block" /> */}
+                  <Select
+                    onValueChange={(value) => {
+                      setSelectedCompany(value);
+                      setCurrentPage(1);
+                    }}
+                    value={selectedCompany}
+                  >
+                    <SelectTrigger className="rounded-lg h-9 border-slate-200 bg-white text-xs w-full">
+                      <SelectValue placeholder="Company" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="_all">All companies</SelectItem>
+                        {companyDropdown?.map((item, index) => (
+                          <SelectItem key={index} value={item?.name}>
+                            {item?.description}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
           </div>
-          <Button onClick={() => { handlePoItemsSubmit() }}>Submit</Button>
-        </PopUp>
-      }
-      {(approvedFromVendor === 1) && isPrintFormat &&
-        <div className="flex gap-2 md:gap-4">
-          <Button
-            variant={"nextbtn"}
-            size={"nextbtnsize"}
-            className="py-2 hover:bg-white hover:text-black border border-transparent hover:border-[#5291CD] rounded-[14px]"
-            onClick={() => { setStatus("approve"); setIsDialog((prev) => !prev); setPONumber(PRNumber ?? ""); }}>
-            Approve
-          </Button>
-          <Button
-            variant={"backbtn"}
-            size={"backbtnsize"}
-            className="py-2 hover:bg-[#5291CD] hover:text-white hover:border-[#5291CD] rounded-[14px]"
-            onClick={() => { setStatus("reject"); setIsDialog((prev) => !prev); setPONumber(PRNumber ?? ""); }}>
-            Reject
-          </Button>
-        </div>
-      }
-      {isDialog &&
-        <div className="absolute z-50 flex pt-10 items-center justify-center bg-black bg-opacity-50 inset-0">
-          <PODialog Submitbutton={handleApproval} handleClose={handleBack} handleComment={setComments} handleDate={setDate} status={status} />
-        </div>
-      }
+        </CardHeader>
+
+        <CardContent className="p-0 relative">
+          {isInitialLoad ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="flex flex-col items-center gap-2">
+                <Loader2 className="w-7 h-7 text-[#4F6BED] animate-spin" />
+                <p className="text-xs font-medium text-[#94A3B8]">Loading purchase orders…</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              {isFetching && (
+                <div className="absolute inset-0 z-10 bg-white/55 backdrop-blur-[1px] flex items-center justify-center">
+                  <Loader2 className="w-6 h-6 text-[#4F6BED] animate-spin" />
+                </div>
+              )}
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-[#F8FAFC] hover:bg-[#F8FAFC] border-b border-slate-200">
+                      <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 w-12">
+                        Sr.
+                      </TableHead>
+                      <TableHead className="text-left text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">
+                        PO No.
+                      </TableHead>
+                      <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">
+                        PO Date
+                      </TableHead>
+                      <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">
+                        Delivery
+                      </TableHead>
+                      <TableHead className="text-left text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">
+                        Company
+                      </TableHead>
+                      <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2">
+                        Status
+                      </TableHead>
+                      <TableHead className="text-left text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">
+                        Pur. group
+                      </TableHead>
+                      <TableHead className="text-left text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">
+                        Pur. team
+                      </TableHead>
+                      <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 text-nowrap">
+                        Ack. date
+                      </TableHead>
+                      <TableHead className="text-center text-[#64748B] font-semibold text-[10px] uppercase tracking-wider h-8 px-2 w-14">
+                        View
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {tableData && tableData.length > 0 ? (
+                      tableData.map((item, index) => (
+                        <TableRow
+                          key={item?.name ?? index}
+                          className="hover:bg-slate-50/80 transition-colors border-b border-slate-100"
+                        >
+                          <TableCell className="text-center text-xs text-[#64748B] tabular-nums py-2 px-2">
+                            {(currentPage - 1) * record_per_page + index + 1}
+                          </TableCell>
+                          <TableCell className="text-left text-xs font-semibold text-[#0F172A] py-2 px-2 max-w-[140px] truncate" title={item?.name}>
+                            {item?.name}
+                          </TableCell>
+                          <TableCell className="text-center text-nowrap text-xs text-[#475569] py-2 px-2">
+                            {formatDate(item?.po_date)}
+                          </TableCell>
+                          <TableCell className="text-center text-nowrap text-xs text-[#475569] py-2 px-2">
+                            {formatDate(item?.delivery_date)}
+                          </TableCell>
+                          <TableCell className="text-left text-xs text-[#64748B] py-2 px-2 max-w-[100px] truncate" title={item?.company_code}>
+                            {item?.company_code}
+                          </TableCell>
+                          <TableCell className="text-center py-2 px-2">
+                            <Badge
+                              variant="outline"
+                              className={`text-[10px] font-semibold px-2 py-0 tracking-wide whitespace-nowrap ${statusColor(item?.status)}`}
+                            >
+                              {item?.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-left text-xs text-[#64748B] py-2 px-2 max-w-[120px] truncate" title={item?.purchase_group}>
+                            {item?.purchase_group || "—"}
+                          </TableCell>
+                          <TableCell className="text-left text-xs text-[#64748B] py-2 px-2 max-w-[120px] truncate" title={item?.purchase_team}>
+                            {item?.purchase_team || "—"}
+                          </TableCell>
+                          <TableCell className="text-center text-nowrap text-xs text-[#475569] py-2 px-2">
+                            {formatDate(item?.ack_date)}
+                          </TableCell>
+                          <TableCell className="text-center py-2 px-2">
+                            <button
+                              type="button"
+                              onClick={() => router.push(`/view-vendor-po-details?poname=${encodeURIComponent(item?.name || "")}`)}
+                              className="inline-flex w-8 h-8 rounded-lg bg-[#EEF2FF] items-center justify-center hover:bg-[#4F6BED] hover:text-white text-[#4F6BED] transition-colors mx-auto"
+                              title="View PO"
+                              aria-label="View purchase order"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={10} className="text-center py-14">
+                          <div className="flex flex-col items-center gap-2">
+                            <FileText className="w-9 h-9 text-slate-300" />
+                            <p className="text-sm font-medium text-[#64748B]">No purchase orders found</p>
+                            <p className="text-xs text-[#94A3B8] max-w-sm">
+                              Try another PO search or company filter.
+                            </p>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+              {tableData && tableData.length > 0 && (
+                <div className="px-3 py-2 border-t border-slate-100 bg-[#FAFBFC]">
+                  <Pagination
+                    currentPage={currentPage}
+                    record_per_page={record_per_page}
+                    setCurrentPage={setCurrentPage}
+                    total_event_list={total_event_list}
+                  />
+                </div>
+              )}
+            </>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };

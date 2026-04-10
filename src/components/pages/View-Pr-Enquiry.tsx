@@ -76,7 +76,6 @@ const PrInquiryPage = async({refno}:Props) => {
     const categoryDropdownUrl = API_END_POINTS?.getInquiryDropdown;
 
 const purchaseEnquiryData = await getPurchaseEnquiryData(refno as string,cookieHeaderString)
-console.log(purchaseEnquiryData,"this is ")
 return (
      <ViewPrInquiryForm PRInquiryData={purchaseEnquiryData}  />
 )

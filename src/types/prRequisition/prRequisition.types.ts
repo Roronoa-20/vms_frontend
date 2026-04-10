@@ -56,6 +56,7 @@ export type purchaseRequisitionDataType = {
     is_submitted:number
     pr_type:string,
     company:string,
+    plant:string,
     nb_normal_items:nbItemsType[],
     nb_capex_items:nbCapexItemsType[],
     zsb_asset_items:zsbAssetItemsType[],
@@ -81,6 +82,7 @@ export type prAttachmentType = {
 export type nbItemsType = {
     name?:string,
     material:string,
+    material_description:string,
     plant:string,
     quantity:number,
     uom:string,
@@ -91,6 +93,7 @@ export type nbItemsType = {
 export type nbCapexItemsType = {
     name?:string,
     material:string,
+    material_description:string,
     plant:string,
     quantity:number,
     uom:string,
